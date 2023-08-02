@@ -6,7 +6,7 @@
           v-if="
             $route.path === '/config/organismConfigDetail'
           "
-          class="col-6 text-h5 text-capitalize">{{ organismConfigNameName }}
+          class="col-6 text-h5 text-capitalize">{{ organismConfigName }}
         </div>
         <div 
           v-if="
@@ -211,7 +211,7 @@
           </q-item>
         </div>
       </div>
-      <q-dialog v-model="newFunctionDialog">
+      <q-dialog v-model="newFunctionDialog" @hide="functionDialogClosed">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
             <div class="text-h6 text-center">Nova função</div>
@@ -273,8 +273,7 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
-      organismConfigNameName: '',
-      organismConfigName: null,
+      organismConfigName: '',
       typeSelected: null,
       valueSelected: "",
       tab: "createConfig",
@@ -282,7 +281,7 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
-        requiredTitle: ''
+        requiredTitle: null
       },
       functions: [],
       titlesOptions: [],
@@ -448,9 +447,9 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.organismConfigNameName = r.data.organismConfigNameName;
+          this.organismConfigName = r.data.organismConfigName;
           this.organismFields = r.data.organismFields;
-          this.selectedType = r.data.organismConfigNameName;
+          this.selectedType = r.data.organismConfigName;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -468,6 +467,13 @@ export default defineComponent({
         this.functions.push({...this.newFunction})
         this.newFunctionDialog = false
       } else this.$q.notify('preencha os campos obrigatórios!')
+    },
+    functionDialogClosed () {
+      this.newFunction = {
+        name: '',
+        description: '',
+        requiredTitle: null
+      }
     }
   },
 });
