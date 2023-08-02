@@ -1,0 +1,457 @@
+<template>
+  <q-page-container class="no-padding">
+    <q-page>
+      <div class="q-pa-md q-ml-sm row justify-between">
+        <div 
+          class="col-6 text-h5 text-capitalize">Criar configuração de usuário
+        </div>
+        <div class="col text-right">
+          <q-btn
+            @click="createUsersConfig"
+            rounded
+            color="primary"
+            unelevated
+            no-caps
+          >
+            Salvar
+          </q-btn>
+        </div>
+      </div>
+      <q-separator class="q-mx-md" />
+      <div class="text-right q-pa-md" >
+        <q-btn 
+          outline 
+          rounded 
+          no-caps 
+          color="primary" 
+          icon="add" 
+          label="Adicionar nova aba"
+          @click="dialogNewTab.open = true"
+        />
+      </div>
+      <div class="row justify-center q-pa-md">
+        <div class="col-12 q-gutter-md" align="start">
+          <div class="row">
+            <div
+              v-for="(tabCard, tabIndex) in userDataTabs"
+              :key="tabIndex"
+              class="col-6 q-py-md"
+            >
+              <q-card class="userDataTabs-card bg-grey-1">
+                <div class="row justify-start">
+                  <div class="text-h6 q-mx-md">{{ tabCard.tabLabel }}</div>
+                </div>
+                <div class="row justify-end">
+                  <div class="col-5">
+                    <q-btn
+                      rounded
+                      color="primary"
+                      no-caps
+                      unelevated
+                      outline
+                      @click="clkAddTabData(tabIndex)"
+                      label="Adicionar campos"
+                    />
+                  </div>
+                </div>
+                <div
+                  v-for="(field, i) in tabCard.fields"
+                  :key="i"
+                  class="q-my-md"
+                >
+                  <div class="row q-gutter-sm items-center">
+                    <div class="col-8">
+                      <q-input
+                        v-if="field.type.type !== 'boolean'"
+                        readonly
+                        :label="field.label"
+                        :hint="field.hint"
+                        outlined
+                      >
+                        <template
+                          v-slot:append
+                        >
+                          <q-btn
+                            disabled
+                            icon="add"
+                            color="primary"
+                            flat
+                            round
+                            @click="addMultipleField"
+                          >
+                            <q-tooltip
+                              >Adicionar multiplo
+                              {{ field.type.label }}</q-tooltip
+                            >
+                          </q-btn>
+                        </template>
+                      </q-input>
+                      <q-checkbox
+                        v-if="field.type.type === 'boolean'"
+                        class="q-pt-lg"
+                        readonly
+                        :label="field.label"
+                        :hint="field.hint"
+                      />
+                    </div>
+                    <div class="col-2 q-mb-md">
+                      <q-badge class="q-pa-xs">{{
+                        field.type.label
+                      }}</q-badge
+                      ><br />
+                      <q-badge color="orange" class="q-pa-xs">
+                        {{ field.required ? "obrigatório" : "opcional" }}
+                      </q-badge>
+                    </div>
+                    <div class="col-1">
+                      <q-btn
+                        icon="delete"
+                        size="large"
+                        class="q-mb-md"
+                        rounded
+                        @click="userDataTabs[i].fields[i].splice(i, 1)"
+                        flat
+                        color="primary"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <q-card-section class="q-gutter-sm">
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <q-dialog v-model="dialogInsertFields.open">
+        <div class="row">
+          <div class="col-10">
+            <q-card class="card-insert-fields">
+              <div
+                class="text-h5 q-pa-md text-center"
+              >
+                Adicione os campos de preenchimento
+              </div>
+              <div class="q-gutter-y-md">
+                <q-input
+                  outlined
+                  hint="Nome do dado que será solicitado na hora do cadastro do organismo"
+                  label="Novo dado"
+                  v-model="newField.label"
+                />
+                <q-input
+                  outlined
+                  hint="Descrição abaixo do campo para facilitar entendimento"
+                  label="Dica"
+                  v-model="newField.hint"
+                />
+                <q-select
+                  outlined
+                  hint="O tipo do dado"
+                  label="Tipo de dado"
+                  option-label="label"
+                  :options="fieldTypesOptions"
+                  v-model="newField.type"
+                />
+              </div>
+              <div class="text-center q-gutter-x-md"> 
+                <q-checkbox
+                  class="q-pt-lg"
+                  v-model="newField.required"
+                  label="Preenchimento Obrigatório"
+                />
+                <q-checkbox
+                  :disable="
+                    newField.type ? newField.type.type === 'boolean' : false
+                  "
+                  class="q-pt-lg"
+                  v-model="newField.multiple"
+                  label="Campo múltiplo"
+                />
+              </div>
+              <div
+                class="row justify-center q-pa-sm"
+              >
+                <q-btn
+                  label="Adicionar campo"
+                  no-caps
+                  rounded
+                  unelevated
+                  @click="addField"
+                  color="primary"
+                />
+              </div>
+            </q-card>
+          </div>
+        </div>
+      </q-dialog>
+      <q-dialog v-model="dialogNewTab.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div
+              class="text-h5"
+            >
+              Informe o nome da aba
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              outlined
+              class="q-ml-sm"
+              hint="Nome da aba que será exibida na tela de criar usuário e envolverá todos os dados criados a seguir"
+              label="Nome"
+              v-model="tabLabel"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="dialogNewTab.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="addTab"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </q-page>
+  </q-page-container>
+</template>
+<script>
+import { defineComponent } from "vue";
+import useFetch from "../../boot/useFetch";
+export default defineComponent({
+  name: "CreateUserConfig",
+  data() {
+    return {
+      tabSelected: '',
+      organismTypesOptions: [],
+      fieldTypesOptions: [],
+      organismTypeName: '',
+      titlesList: [],
+      organismTypeId: null,
+      typeSelected: null,
+      valueSelected: "",
+      dialogNewTab: {
+        open: false,
+      },
+      dialogInsertFields: {
+        open: false,
+      },
+      userDataTabs: [
+        {
+          tabLabel: "Dados obrigatórios",
+          fields:[
+            {
+              hint: 'Informe o nome completo',
+              label: 'Nome',
+              required: true,
+              type: {
+                _id: '64ad55727cb57d0bd22b10d5',
+                type: 'string',
+                label: 'Texto',
+              }
+            },
+            {
+              hint: 'Preencha um e-mail válido',
+              label: 'E-mail',
+              required: true,
+              type: {
+                _id: '64ad55727cb57d0bd22b10d5',
+                type: 'string',
+                label: 'Texto',
+              }
+            },
+            {
+              hint: 'Informe se o usuário acessará o sistema',
+              label: 'Permissão de acesso ao sistema',
+              required: true,
+              type: {
+                _id: '64ad563c7cb57d0bd22b10db',
+                type: 'boolean',
+                label: 'Sim ou não',
+              }
+            },
+          ]
+        },
+      ],
+      tabLabel: null,
+      newField: {
+        label: null,
+        type: null,
+        hint: null,
+        required: true,
+      },
+      tabIndexToAddField: '',
+      selectedType: "",
+    };
+  },
+  mounted() {
+    this.$q.loading.hide();
+  },
+  beforeMount() {
+    // this.getUsersConfig();
+    this.getOrganismsTypes();
+    // this.getTitlesByStatus();
+    this.getFieldTypes();
+  },
+  methods: {
+    clkAddTabData(tabIndex){
+      this.dialogInsertFields.open = true
+      this.tabIndexToAddField = tabIndex
+    },
+    addTab() {
+      this.userDataTabs.push({
+        tabLabel: this.tabLabel,
+        fields: []
+      });
+      this.dialogNewTab.open = false
+      this.tabLabel = ''
+    },
+    addField() {
+      const tabIndex = this.tabIndexToAddField;
+      console.log(tabIndex, 'OPKSPOASDOPKASPODPOSAKDPOSKAOPD')
+      if (this.newField.label && this.newField.hint && this.newField.type) {
+        this.userDataTabs[tabIndex].fields.push({ ...this.newField });
+        this.newField.label = null;
+        this.newField.hint = null;
+        this.newField.type = null;
+        this.newField.required = true;
+        // this.newField.multiple = false;
+        this.dialogInsertFields.open = false; // Feche o diálogo após adicionar o campo
+      } else {
+        this.$q.notify("Preencha todos os dados antes de adicionar um campo");
+      }
+    },
+    addMultipleField() {
+      this.dialogConfirmMultipleFields.open = false;
+      this.userData.generalData.phones.push(this.valueSelected);
+      this.newPhone = "";
+      this.typeSelected = null;
+    },
+    getTitlesByStatus() {
+      const opt = {
+        route: "/desktop/adm/getTitlesByStatus",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.titlesList = r.data.list;
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    getOrganismsTypes() {
+      const opt = {
+        route: "/desktop/config/getOrganismsTypes",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.organismTypesOptions = r.data;
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    getFieldTypes() {
+      const opt = {
+        route: "/desktop/config/getDataTypesList",
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.fieldTypesOptions = r.data;
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+
+    createUsersConfig() {
+      const opt = {
+        route: "/desktop/config/createUsersConfig",
+        body: {
+          userDataTabs: this.userDataTabs,
+        },
+      };
+      useFetch(opt).then(r => {
+        if (!r.error) {
+          this.$q.notify("Configuração de usuário criada com sucesso!");
+          // this.position = "";
+          // this.multiple = "";
+          // this.organismName = "";
+          this.$router.push('/config/usersConfigList')
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    updateOrganismConfig() {
+      const _id = this.$route.query._id;
+      const opt = {
+        route: "/desktop/config/updateOrganismConfig",
+        body: {
+          organismConfigId: _id,
+          userDataTabs: this.userDataTabs,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.$q.notify("Os campos foram atualizados com sucesso!");
+          this.$router.push('/config/organismConfigurationList')
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    getUsersConfig() {
+      const opt = {
+        route: "/desktop/config/getUsersConfig",
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.organismTypeName = r.data.organismTypeName;
+          this.userDataTabs = r.data.userDataTabs;
+          this.selectedType = r.data.organismTypeName;
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    clkSaveConfig() {
+      if (this.$route.path === "/config/organismConfigDetail") {
+        this.updateOrganismConfig();
+      } else {
+        this.createOrganismsConfig();
+      }
+    },
+  },
+});
+</script>
+<style scoped>
+.card-insert-fields {
+  border-radius: 1rem; 
+  width: 556px;
+  padding: 16px;
+}
+.userDataTabs-card {
+  height: auto; 
+  width: auto;
+  padding: 10px;
+  border-radius: 1rem;
+}
+</style>
+
