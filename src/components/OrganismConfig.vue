@@ -6,7 +6,7 @@
           v-if="
             $route.path === '/config/organismConfigDetail'
           "
-          class="col-6 text-h5 text-capitalize">{{ organismTypeName }}
+          class="col-6 text-h5 text-capitalize">{{ organismConfigNameName }}
         </div>
         <div 
           v-if="
@@ -16,9 +16,6 @@
         </div>
         <div class="col text-right">
           <q-btn
-            v-if="
-              organismTypeId || $route.path === '/config/organismConfigDetail'
-            "
             @click="clkSaveConfig"
             rounded
             color="primary"
@@ -36,56 +33,27 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-center q-pa-md">
-        <div class="col-8 q-gutter-md" align="start">
-          <div 
-            class="text-h5" 
-            v-if="$route.path !== '/config/organismConfigDetail'">
-            Selecione o Tipo de organismo
+        <div class="col-7 q-gutter-md" align="start">
+          <div
+            class="text-h5"
+          >
+            Nome
           </div>
-          <div 
-            class="text-h5" 
-            v-if="$route.path === '/config/organismConfigDetail'">
-            Tipo de organismo
-          </div>
-          <q-select
-            v-if="$route.path !== '/config/organismConfigDetail'"
-            outlined
-            label="Tipo de organismo"
-            option-label="name"
-            :option-value="(item) => item._id"
-            emit-value
-            map-options
-            hint="Informe o tipo de organismo que a configuração será aplicada para prosseguir"
-            v-model="organismTypeId"
-            :options="organismTypesOptions"
-          />
           <q-input
-            v-else
-            readonly
+            :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
             label="Tipo de organismo"
-            v-model="selectedType"
+            hint="Informe o tipo de organismo que a configuração será aplicada para prosseguir"
+            v-model="organismConfigName"
           />
           <q-separator
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
           />
           <div
             class="text-h5"
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
           >
             Adicione os campos de preenchimento
           </div>
           <div
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
             class="row q-gutter-x-sm q-mx-none"
           >
             <div class="col">
@@ -118,10 +86,6 @@
           </div>
 
           <q-checkbox
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
             class="q-pt-lg"
             v-model="newField.required"
             label="Preenchimento Obrigatório"
@@ -130,19 +94,11 @@
             :disable="
               newField.type ? newField.type.type === 'boolean' : false
             "
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
             class="q-pt-lg"
             v-model="newField.multiple"
             label="Campo múltiplo"
           />
           <div
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
             class="row justify-center"
           >
             <q-btn
@@ -155,25 +111,13 @@
             />
           </div>
           <q-separator
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
           />
           <div
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
             class="text-h5"
           >
             Visualização
           </div>
           <div
-            v-if="
-              organismTypeId ||
-              $route.path === '/config/organismConfigDetail'
-            "
           >
             <div
               v-for="(field, i) in organismFields"
@@ -235,7 +179,89 @@
             </div>
           </div>
         </div>
+        <q-separator class="q-mx-md" vertical/>
+        <div class="col-4">
+          <div class="row">
+            <div
+              class="text-h5"
+            >
+              Funções
+            </div>
+            <q-btn
+              @click="newFunctionDialog = true"
+              class="q-mx-md"
+              label="Adicionar"
+              rounded
+              flat
+              color="primary"
+              no-caps
+              icon-right="add"
+            />
+          </div>
+          <q-item 
+            style="border-radius: 1rem"
+            class="bg-grey-3 q-ma-sm q-pa-md"
+            v-for="(item,i) in functions" :key="i"
+          >
+            <q-item-section>
+              <div class="text-subtitle2">{{ item.name }}</div>
+              <div>Descrição: {{ item.description }}</div>
+              <div class="text-caption text-grey-7">Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}</div>
+            </q-item-section>
+          </q-item>
+        </div>
       </div>
+      <q-dialog v-model="newFunctionDialog">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Nova função</div>
+          </q-card-section>
+          <q-card-section>
+            <div class="q-gutter-md">
+              <q-input
+                label="Escreva o nome"
+                outlined
+                hint="Nome da função"
+                v-model="newFunction.name"
+              />
+              <q-input
+                outlined
+                autogrow
+                hint="Uma descrição completa sobre a função"
+                label="Descrição"
+                v-model="newFunction.description"
+              />
+              <q-select
+                outlined
+                clearable
+                option-label="titleName"
+                emit-value
+                map-options
+                label="Título (opcional)"
+                :options="titlesOptions"
+                v-model="newFunction.requiredTitle"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center" class="q-mb-md">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="newFunctionDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="addFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -246,18 +272,20 @@ export default defineComponent({
   name: "OrganismsConfig",
   data() {
     return {
-      organismTypesOptions: [],
       fieldTypesOptions: [],
-      organismTypeName: '',
-      titlesList: [],
-      organismTypeId: null,
+      organismConfigNameName: '',
+      organismConfigName: null,
       typeSelected: null,
       valueSelected: "",
       tab: "createConfig",
-      dialogConfirmMultipleFields: {
-        open: false,
+      newFunctionDialog: false,
+      newFunction: {
+        name: '',
+        description: '',
+        requiredTitle: ''
       },
-      
+      functions: [],
+      titlesOptions: [],
       organismFields: [
         {
           label: "Nome",
@@ -302,7 +330,7 @@ export default defineComponent({
       this.getOrganismsTypes();
     }
     
-    this.getTitlesByStatus();
+    this.getTitleConfigsList();
     this.getFieldTypes();
   },
   methods: {
@@ -310,7 +338,7 @@ export default defineComponent({
       if (
         this.newField.label &&
         this.newField.hint &&
-        (this.organismTypeId ||
+        (this.organismConfigName ||
           this.$route.path === "/config/organismConfigDetail")
       ) {
         this.organismFields.push({ ...this.newField });
@@ -324,21 +352,22 @@ export default defineComponent({
       this.$q.notify("preencha todos os dados antes de adicionar um campo");
     },
     addMultipleField() {
-      this.dialogConfirmMultipleFields.open = false;
       this.userData.generalData.phones.push(this.valueSelected);
       this.newPhone = "";
       this.typeSelected = null;
     },
-    getTitlesByStatus() {
+    getTitleConfigsList () {
       const opt = {
-        route: "/desktop/adm/getTitlesByStatus",
+        route: "/desktop/config/getTitleConfigsList",
         body: {
-          isActive: 1,
+          isActive: 1
         },
       };
-      useFetch(opt).then((r) => {
+      this.$q.loading.show();
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
         if (!r.error) {
-          this.titlesList = r.data.list;
+          this.titlesOptions = r.data
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -353,7 +382,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.organismTypesOptions = r.data;
+          this.organismConfigNamesOptions = r.data;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -376,16 +405,15 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
-          organismTypeId: this.organismTypeId,
+          organismConfigName: this.organismConfigName,
           organismFields: this.organismFields,
+          functions: this.functions
         },
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify("Organismo cadastrado com sucesso!");
-          this.position = "";
           this.multiple = "";
-          this.organismName = "";
           this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
@@ -420,9 +448,9 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.organismTypeName = r.data.organismTypeName;
+          this.organismConfigNameName = r.data.organismConfigNameName;
           this.organismFields = r.data.organismFields;
-          this.selectedType = r.data.organismTypeName;
+          this.selectedType = r.data.organismConfigNameName;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -435,6 +463,12 @@ export default defineComponent({
         this.createOrganismsConfig();
       }
     },
+    addFunction () {
+      if (this.newFunction.name && this.newFunction.description) {
+        this.functions.push({...this.newFunction})
+        this.newFunctionDialog = false
+      } else this.$q.notify('preencha os campos obrigatórios!')
+    }
   },
 });
 </script>
