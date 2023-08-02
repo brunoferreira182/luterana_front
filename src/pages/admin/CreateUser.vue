@@ -104,6 +104,7 @@
                     <div class="text-h6">Endereços</div>
                     Nenhum endereço vinculado
                   </div>
+                  
                     <q-list
                       class="no-margin"
                       v-if="field.address"

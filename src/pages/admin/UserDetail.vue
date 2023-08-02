@@ -97,7 +97,6 @@
                       @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                     />
                   </div>
-                  
                   <div
                     v-if="field.type.type === 'address' && !field.address"
                     class="text-subtilte1 text-start"
@@ -105,10 +104,12 @@
                     <div class="text-h6">Endereços</div>
                     Nenhum endereço vinculado
                   </div>
+                  
                     <q-list
                       class="no-margin"
                       v-if="field.address"
                     >
+                      <div class="text-h6 q-px-md">Endereços</div>
                       <q-item
                         v-for="(item, i) in field.address"
                         :key="item + i"
@@ -273,11 +274,11 @@ export default defineComponent({
       this.userData.generalData.email.splice(i, 1);
     },
     getUserDetailById() {
-      const _id = this.$route.query._id;
+      const userId = this.$route.query.userId;
       const opt = {
         route: "/desktop/adm/getUserDetailById",
         body: {
-          _id: _id,
+          _id: userId,
         },
       };
       this.$q.loading.show();

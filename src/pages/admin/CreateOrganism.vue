@@ -17,15 +17,15 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-center q-pa-md">
         <div class="col-8 q-gutter-md" align="start">
-          <div class="text-h5">Selecione o Tipo de organismo</div>
+          <div class="text-h5">Selecione o tipo de configuração de organismo</div>
           <q-select
             outlined
-            label="Tipo de organismo"
+            label="Nome da configuração"
             option-label="name"
             :option-value="(item) => item._id"
             emit-value
             map-options
-            hint="Informe o tipo de organismo que a configuração será aplicada"
+            hint="Informe qual o tipo de configuração que está aplicando"
             v-model="organismData.organismTypeId"
             :options="organismTypesOptions"
             @update:modelValue="getOrganismConfigByType"

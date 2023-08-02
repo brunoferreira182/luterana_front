@@ -38,26 +38,21 @@ const routes = [
 
       //configurations//organismos
       
-      {
-        path: "/config/organismTypeList",
-        component: () => import("pages/config/OrganismTypeList.vue"),
-      },
-      {
-        path: "/config/organismTypeDetail",
-        component: () => import("pages/config/OrganismTypeDetail.vue"),
-      },
-      {
-        path: "/config/createOrganismsConfig",
-        component: () => import("pages/config/CreateOrganismsConfig.vue"),
-      },
-      {
-        path: "/config/createOrganismsConfig",
-        component: () => import("pages/config/CreateOrganismsConfig.vue"),
-      },
+      { path: "/config", redirect: "/config/OrganismConfigurationList" },
+      
       {
         path: "/config/organismConfigurationList",
         component: () => import("pages/config/OrganismConfigurationList.vue"),
       },
+      {
+        path: "/config/createOrganismsConfig",
+        component: () => import("pages/config/CreateOrganismsConfig.vue"),
+      },
+      {
+        path: "/config/createOrganismsConfig",
+        component: () => import("pages/config/CreateOrganismsConfig.vue"),
+      },
+    
       {
         path: "/config/organismConfigDetail",
         component: () => import("pages/config/OrganismConfigDetail.vue"),
@@ -88,32 +83,6 @@ const routes = [
         component: () => import("pages/config/TitleConfigList.vue"),
       },
 
-      //configurations//tipos de estruturas
-      {
-        path: "/config/createStructureType",
-        component: () => import("pages/config/CreateStructureType.vue"),
-      },
-      {
-        path: "/config/structuresTypesList",
-        component: () => import("pages/config/StructuresTypesList.vue"),
-      },
-      {
-        path: "/config/structureTypeDetail",
-        component: () => import("pages/config/StructureTypeDetail.vue"),
-      },
-      //configurations//estruturas
-      {
-        path: "/config/createStructure",
-        component: () => import("pages/config/CreateStructure.vue"),
-      },
-      {
-        path: "/config/structuresList",
-        component: () => import("pages/config/StructuresList.vue"),
-      },
-      {
-        path: "/config/structureDetail",
-        component: () => import("pages/config/StructureDetail.vue"),
-      },
       //configurations//funções
       {
         path: "/config/createFunction",

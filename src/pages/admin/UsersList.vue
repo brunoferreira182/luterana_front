@@ -127,9 +127,9 @@ export default defineComponent({
       return isActive === 0 ? "red" : "primary";
     },
     clkOpenUserDetail(e, r, i) {
-      const _id = r._id;
+      const userId = r._id;
       console.log(e, r, i);
-      this.$router.push("/admin/userDetail?_id=" + _id);
+      this.$router.push("/admin/userDetail?userId=" + userId);
     },
     getSelectedString() {
       return this.selected.length === 0

@@ -202,11 +202,11 @@ const useUtils = {
           route: "/config/titleConfigurationList",
           icon: "list",
         },
-        {
-          label: "Funções",
-          route: "/config/functionsList",
-          icon: "list",
-        },
+        // {
+        //   label: "Funções",
+        //   route: "/config/functionsList",
+        //   icon: "list",
+        // },
       ],
       attach: [
         {
