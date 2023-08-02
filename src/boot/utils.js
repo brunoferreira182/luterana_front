@@ -188,24 +188,8 @@ const useUtils = {
       ],
       config: [
         {
-          label: "Tipos de organismos",
-          route: "/config/organismTypeList",
-          icon: "list",
-        },
-        {
           label: "Configuração de Organismos",
           route: "/config/organismConfigurationList",
-          icon: "list",
-        },
-
-        {
-          label: "Tipos de estruturas",
-          route: "/config/structuresTypesList",
-          icon: "list",
-        },
-        {
-          label: "Estruturas",
-          route: "/config/structuresList",
           icon: "list",
         },
         {

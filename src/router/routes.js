@@ -37,11 +37,6 @@ const routes = [
       },
 
       //configurations//organismos
-      { path: "/config", redirect: "/config/OrganismTypeList" },
-      {
-        path: "/config/createOrganismType",
-        component: () => import("pages/config/CreateOrganismType.vue"),
-      },
       
       {
         path: "/config/organismTypeList",
