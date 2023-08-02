@@ -12,60 +12,13 @@
             color="primary"
             unelevated
             no-caps
-          >
-            Criar função
-          </q-btn>
+            label="Criar função"
+          />
         </div>
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-5 q-gutter-md" align="start">
-          <div class="text-h5">Tipo de organismo</div>
-          <div class="row q-gutter-x-sm q-mx-none">
-            <div class="col q-ml-md">
-              <q-select
-                outlined
-                option-label="name"
-                :option-value="(item) => item._id"
-                emit-value
-                map-options
-                hint="Informe qual tipo de organismo esta função está atrelada"
-                label="Tipo de organismo"
-                :options="organismTypesOptions"
-                v-model="functionInfo.organismTypeId"
-              />
-            </div>
-          </div>
-          <div class="text-h5">Tipo de estrutura</div>
-            <q-select
-              outlined
-              option-label="name"
-              @update:model-value="getStructures"
-              :option-value="(item) => item._id"
-              emit-value
-              map-options
-              hint="Informe o tipo de estrutura ao qual esta função pertencerá"
-              label="Tipo"
-              :options="structuresTypeOptions"
-              v-model="functionInfo.structureTypeId"
-            />
-          
-          <div class="text-h5">Estrutura</div>
-            <q-select
-              outlined
-              option-label="name"
-              :option-value="(item) => item._id"
-              emit-value
-              map-options
-              hint="Informe a estrutura"
-              label="Estrutura"
-              :options="structuresOptions"
-              v-model="functionInfo.structureId"
-            />
-          
-        </div>
-        <div class="separator"></div>
-        <div class="col-5 q-gutter-md" align="start">
+        <div class="col-8 q-gutter-md" align="start">
           <div class="text-h5">Nome</div>
           <q-input
             label="Escreva o nome"
@@ -74,34 +27,25 @@
             v-model="functionInfo.name"
           />
           <div class="text-h5">Escreva uma descrição de forma sugestiva</div>
-          <div class="row q-gutter-x-sm q-mx-none">
-            <div class="col">
-              <q-input
-                outlined
-                class="q-ml-sm"
-                autogrow
-                hint="Uma descrição completa sobre a função"
-                label="Descrição"
-                v-model="functionInfo.description"
-              />
-            </div>
-          </div>
+          <q-input
+            outlined
+            autogrow
+            hint="Uma descrição completa sobre a função"
+            label="Descrição"
+            v-model="functionInfo.description"
+          />
           <div class="text-h5">Esta função requer algum título específico?</div>
-          <div class="row q-gutter-x-sm q-mx-none">
-            <div class="col q-ml-md">
-              <q-select
-                outlined
-                clearable
-                option-label="titleName"
-                :option-value="(item) => item._id"
-                emit-value
-                map-options
-                label="Título (opcional)"
-                :options="titlesOptions"
-                v-model="functionInfo.requiredTitleId"
-              />
-            </div>
-          </div>
+          <q-select
+            outlined
+            clearable
+            option-label="titleName"
+            :option-value="(item) => item._id"
+            emit-value
+            map-options
+            label="Título (opcional)"
+            :options="titlesOptions"
+            v-model="functionInfo.requiredTitleId"
+          />
         </div>
       </div>
     </q-page>
