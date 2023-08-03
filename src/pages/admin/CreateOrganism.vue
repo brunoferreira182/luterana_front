@@ -15,20 +15,20 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="row justify-center q-pa-md">
-        <div class="col-8 q-gutter-md" align="start">
+      <div class="row justify-around q-pa-md">
+        <div class="col-7 q-gutter-md" align="start">
           <div class="text-h5">Selecione o tipo de configuração de organismo</div>
           <q-select
             outlined
             label="Nome da configuração"
-            option-label="name"
+            option-label="organismConfigName"
             :option-value="(item) => item._id"
             emit-value
             map-options
             hint="Informe qual o tipo de configuração que está aplicando"
-            v-model="organismData.organismTypeId"
-            :options="organismTypesOptions"
-            @update:modelValue="getOrganismConfigByType"
+            v-model="organismData.organismConfigTypeId"
+            :options="organismConfigOptions"
+            @update:modelValue="getOrganismConfigById"
           />
           <q-separator v-if="organismData.fields.length" />
           <div v-if="organismData.fields.length" class="text-h5">
@@ -45,6 +45,7 @@
                 :prefix="field.type.type === 'money' ? 'R$' : null"
                 :label="field.label + (field.required ? '' : ' (Opcional)')"
                 :mask="field.type.mask"
+                :hint="field.hint"
               >
                 <template v-slot:append v-if="field.multiple">
                   <q-btn
@@ -89,6 +90,7 @@
               :prefix="field.type.type === 'money' ? 'R$' : null"
               :label="field.label + (field.required ? '' : ' (Opcional)')"
               :mask="field.type.mask"
+              :hint="field.hint"
             />
             <q-checkbox
               v-else
@@ -97,6 +99,72 @@
             ></q-checkbox>
           </div>
         </div>
+        <q-separator vertical class="q-ma-md" />
+        <div class="col-4">
+          <div class="row">
+            <div
+              class="text-h5"
+            >
+              Funções
+            </div>
+            <q-btn
+              @click="newFunctionDialog = true"
+              class="q-mx-md"
+              label="Adicionar"
+              rounded
+              flat
+              color="primary"
+              no-caps
+              icon-right="add"
+            />
+          </div>
+          <q-item 
+            style="border-radius: 1rem"
+            class="bg-grey-3 q-ma-sm q-pa-md"
+            v-for="(item,i) in functions" :key="i"
+          >
+            <q-item-section>
+              <div class="text-subtitle2">{{ item.name }}</div>
+              <div>Descrição: {{ item.description }}</div>
+              <div class="text-caption text-grey-7">Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}</div>
+            </q-item-section>
+          </q-item>
+        </div>
+        <q-dialog v-model="newFunctionDialog">
+          <q-card style="border-radius: 1rem; width: 400px">
+            <q-card-section>
+              <div class="text-h6 text-center">Nova função</div>
+            </q-card-section>
+            <q-card-section>
+              <q-select
+                outlined
+                clearable
+                option-label="titleName"
+                emit-value
+                map-options
+                label="Nome da função"
+                :options="titlesOptions"
+              />
+            </q-card-section>
+            <q-card-actions align="center" class="q-mb-md">
+              <q-btn
+                flat
+                label="Depois"
+                no-caps
+                color="primary"
+                @click="newFunctionDialog = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Confirmar"
+                no-caps
+                color="primary"
+                @click="addFunction"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </q-page>
   </q-page-container>
@@ -110,8 +178,9 @@ export default defineComponent({
   data() {
     return {
       userSelected: '',
-      usersOptions: [],
-      organismTypesOptions: [],
+      teste: [],
+      organismConfigOptions: [],
+      functions: [],
       organismTypeId: null,
       newOrganism: {},
       newMultipleValue: "",
@@ -120,17 +189,42 @@ export default defineComponent({
         organismTypeId: null,
         functionId: null,
       },
+      newFunctionDialog: false,
       organismData: {
-        organismConfigId: null,
+        organismConfigTypeId: null,
         fields: [],
       },
-      
     };
   },
   mounted() {
-    this.getOrganismsTypes();
+    this.$q.loading.hide()
+  },
+  beforeMount(){
+    this.getOrganismsConfigs()
   },
   methods: {
+    addFunction () {
+      if (this.newFunction.name && this.newFunction.description) {
+        this.functions.push({...this.newFunction})
+        this.newFunctionDialog = false
+      } else this.$q.notify('preencha os campos obrigatórios!')
+    },
+    getOrganismConfigById() {
+      const opt = {
+        route: "/desktop/adm/getOrganismConfigById",
+        body: {
+          _id: this.organismData.organismConfigTypeId
+        }
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.organismData.fields = r.data.organismFields;
+          this.functions = r.data.functions
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
     addMultipleField(field) {
       if (!field.value) {
         field.value = [];
@@ -152,17 +246,15 @@ export default defineComponent({
         }
       });
     },
-    getOrganismConfigByType() {
+    getOrganismsConfigs() {
       const opt = {
-        route: "/desktop/adm/getOrganismConfigByType",
-        body: {
-          organismTypeId: this.organismData.organismTypeId,
-        },
+        route: "/desktop/adm/getOrganismsConfigs",
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.organismData.organismConfigId = r.data.organismConfigId
-          this.organismData.fields = r.data.organismFields;
+          this.organismConfigOptions = r.data
+          // this.organismData.organismConfigId = r.data.organismConfigId
+          // this.organismData.fields = r.data.organismFields;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -210,5 +302,14 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.separator {
+  position: absolute;
+  top: 64px;
+  right: 386px;
+  border-left: 2px solid rgb(216, 216, 216);
+  height: 806px;
+}
+</style>
 
 
