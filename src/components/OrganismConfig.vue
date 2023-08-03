@@ -396,7 +396,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitle: null,
-        isRequired: true
+        isRequired: false
       },
       editFunctionDialog: {
         open: false,
