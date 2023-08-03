@@ -150,26 +150,32 @@
                 caption="Clique para ver ou adicionar"
               >
                 <q-item
-                  style="border-radius: 1rem"
-                  class="bg-white q-ma-sm"
+                  style="border-radius: 0.5rem"
+                  class="bg-white"
                 >
+                <q-item-section avatar>
+                  <q-avatar rounded>
+                    <img src="https://cdn.quasar.dev/img/avatar.png">
+                  </q-avatar>
+                </q-item-section>
                 <q-item-section
+                  class="text-capitalize"
                   v-for="user in organismData.functions"
                   :key="user"
                 >
                   {{ user.userName }}
                 </q-item-section>
-                <q-item-section align="left">
-                    <q-btn
-                      label="Adicionar pessoa"
-                      flat
-                      color="primary"
-                      dense
-                      no-caps
-                      @click="linkUserToFunction(func, funcIndex)"
-                    />
-                  </q-item-section>
-                </q-item>
+              </q-item>
+              <q-item-section align="left">
+                <q-btn
+                  label="Adicionar pessoa"
+                  flat
+                  color="primary"
+                  dense
+                  no-caps
+                  @click="linkUserToFunction(func, funcIndex)"
+                />
+              </q-item-section>
               </q-expansion-item>
             </q-card>
           </div>
