@@ -18,7 +18,7 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="text-right q-pa-md" >
+      <div class="text-right q-px-md q-pt-md" >
         <q-btn 
           outline 
           rounded 
@@ -29,98 +29,104 @@
           @click="dialogNewTab.open = true"
         />
       </div>
-      <div class="row justify-center q-pa-md">
-        <div class="col-12 q-gutter-md" align="start">
-          <div class="row">
-            <div
-              v-for="(tabCard, tabIndex) in userDataTabs"
-              :key="tabIndex"
-              class="col-6 q-py-md"
-            >
-              <q-card class="userDataTabs-card bg-grey-1">
-                <div class="row justify-start">
-                  <div class="text-h6 q-mx-md">{{ tabCard.tabLabel }}</div>
-                </div>
-                <div class="row justify-end">
-                  <div class="col-5">
-                    <q-btn
-                      rounded
-                      color="primary"
-                      no-caps
-                      unelevated
-                      outline
-                      @click="clkAddTabData(tabIndex)"
-                      label="Adicionar campos"
-                    />
-                  </div>
-                </div>
-                <div
-                  v-for="(field, i) in tabCard.fields"
-                  :key="i"
-                  class="q-my-md"
-                >
-                  <div class="row q-gutter-sm items-center">
-                    <div class="col-8">
-                      <q-input
-                        v-if="field.type.type !== 'boolean'"
-                        readonly
-                        :label="field.label"
-                        :hint="field.hint"
-                        outlined
-                      >
-                        <template
-                          v-slot:append
-                        >
-                          <q-btn
-                            disabled
-                            icon="add"
-                            color="primary"
-                            flat
-                            round
-                            @click="addMultipleField"
-                          >
-                            <q-tooltip
-                              >Adicionar multiplo
-                              {{ field.type.label }}</q-tooltip
-                            >
-                          </q-btn>
-                        </template>
-                      </q-input>
-                      <q-checkbox
-                        v-if="field.type.type === 'boolean'"
-                        class="q-pt-lg"
-                        readonly
-                        :label="field.label"
-                        :hint="field.hint"
-                      />
-                    </div>
-                    <div class="col-2 q-mb-md">
-                      <q-badge class="q-pa-xs">{{
-                        field.type.label
-                      }}</q-badge
-                      ><br />
-                      <q-badge color="orange" class="q-pa-xs">
-                        {{ field.required ? "obrigatório" : "opcional" }}
-                      </q-badge>
-                    </div>
-                    <div class="col-1">
-                      <q-btn
-                        icon="delete"
-                        size="large"
-                        class="q-mb-md"
-                        rounded
-                        @click="userDataTabs[i].fields[i].splice(i, 1)"
-                        flat
-                        color="primary"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <q-card-section class="q-gutter-sm">
-                </q-card-section>
-              </q-card>
+      <div class="row q-ma-md q-col-gutter-md" >
+        <div
+          v-for="(tabCard, tabIndex) in userDataTabs"
+          :key="tabIndex"
+          class="col-6"
+        >
+          <q-card class="userDataTabs-card bg-grey-1">
+            <div class="row">
+                <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
+                <q-btn
+                  rounded
+                  color="primary"
+                  no-caps
+                  unelevated
+                  outline
+                  icon="add"
+                  @click="clkAddTabData(tabIndex)"
+                  label="Adicionar campo"
+                />                    
+              <q-btn
+                v-if="tabIndex > 0"
+                rounded
+                style="margin-left: auto;"
+                color="grey-7"
+                no-caps
+                flat
+                icon="close"
+                @click="dialogDeleteTab.open = true,
+                  dialogDeleteTab.tabIndex = tabIndex"
+              >
+                <q-tooltip>Excluir aba</q-tooltip>
+              </q-btn>
             </div>
-          </div>
+            <div
+              v-for="(field, i) in tabCard.fields"
+              :key="i"
+              class="q-my-md"
+            >
+              <div class="row q-gutter-sm items-center">
+                <div class="col-8">
+                  <q-input
+                    v-if="field.type.type !== 'boolean'"
+                    readonly
+                    :label="field.label"
+                    :hint="field.hint"
+                    outlined
+                  >
+                    <template
+                      v-slot:append
+                    >
+                      <q-btn
+                        disabled
+                        icon="add"
+                        color="primary"
+                        flat
+                        round
+                        @click="addMultipleField"
+                      >
+                        <q-tooltip
+                          >Adicionar multiplo
+                          {{ field.type.label }}</q-tooltip
+                        >
+                      </q-btn>
+                    </template>
+                  </q-input>
+                  <q-checkbox
+                    v-if="field.type.type === 'boolean'"
+                    class="q-pt-lg"
+                    readonly
+                    :label="field.label"
+                    :hint="field.hint"
+                  />
+                </div>
+                <div class="col-2 q-mb-md">
+                  <q-badge class="q-pa-xs">{{
+                    field.type.label
+                  }}</q-badge
+                  ><br />
+                  <q-badge color="orange" class="q-pa-xs">
+                    {{ field.required ? "obrigatório" : "opcional" }}
+                  </q-badge>
+                </div>
+                <div class="col-1">
+                  <q-btn
+                    icon="delete"
+                    size="large"
+                    class="q-mb-md"
+                    rounded
+                    @click="userDataTabs[i].fields[i].splice(i, 1)"
+                    flat
+                    color="primary"
+                  />
+                </div>
+              </div>
+            </div>
+            <q-card-section class="q-gutter-sm">
+            </q-card-section>
+          </q-card>
         </div>
       </div>
       <q-dialog v-model="dialogInsertFields.open">
@@ -222,6 +228,35 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="dialogDeleteTab.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div
+              class="text-h5"
+            >
+              Deseja mesmo excluir essa aba?
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Cancelar"
+              no-caps
+              color="primary"
+              @click="dialogDeleteTab.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Excluir"
+              no-caps
+              color="primary"
+              @click="userDataTabs.splice(dialogDeleteTab.tabIndex,1),
+                dialogDeleteTab.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -270,19 +305,13 @@ export default defineComponent({
                 label: 'Texto',
               }
             },
-            {
-              hint: 'Informe se o usuário acessará o sistema',
-              label: 'Permissão de acesso ao sistema',
-              required: true,
-              type: {
-                _id: '64ad563c7cb57d0bd22b10db',
-                type: 'boolean',
-                label: 'Sim ou não',
-              }
-            },
           ]
         },
       ],
+      dialogDeleteTab: {
+        open: false,
+        tabIndex: null
+      },
       tabLabel: null,
       newField: {
         label: null,
@@ -448,8 +477,6 @@ export default defineComponent({
   padding: 16px;
 }
 .userDataTabs-card {
-  height: auto; 
-  width: auto;
   padding: 10px;
   border-radius: 1rem;
 }
