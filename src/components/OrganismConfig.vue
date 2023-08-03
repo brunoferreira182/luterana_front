@@ -198,15 +198,38 @@
               icon-right="add"
             />
           </div>
-          <q-item 
+          <q-item
             style="border-radius: 1rem"
             class="bg-grey-3 q-ma-sm q-pa-md"
-            v-for="(item,i) in functions" :key="i"
+            v-for="(item,i) in functions" 
+            :key="i"
           >
             <q-item-section>
               <div class="text-subtitle2">{{ item.name }}</div>
               <div>Descrição: {{ item.description }}</div>
-              <div class="text-caption text-grey-7">Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}</div>
+              <div class="text-caption text-grey-7">
+                Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}
+              </div>
+            </q-item-section>
+            <q-item-section top side>
+              <div>
+                <q-btn
+                  flat
+                  color="primary"
+                  icon="edit"
+                  dense
+                  size="sm"
+                  @click="editFunction(item)"
+                />
+                <q-btn
+                  flat
+                  dense
+                  color="red-9"
+                  icon="delete"
+                  size="sm"
+                  @click="deleteFunction(item)"
+                />
+              </div>
             </q-item-section>
           </q-item>
         </div>
@@ -240,6 +263,10 @@
                 label="Título (opcional)"
                 :options="titlesOptions"
                 v-model="newFunction.requiredTitle"
+              />
+              <q-checkbox
+                label="Obrigatória?"
+                v-model="newFunction.isRequired"
               />
             </div>
           </q-card-section>
@@ -281,7 +308,8 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
-        requiredTitle: null
+        requiredTitle: null,
+        isRequired: true
       },
       functions: [],
       titlesOptions: [],
@@ -367,6 +395,7 @@ export default defineComponent({
         this.$q.loading.hide();
         if (!r.error) {
           this.titlesOptions = r.data
+        
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -449,6 +478,7 @@ export default defineComponent({
         if (!r.error) {
           this.organismConfigName = r.data.organismConfigName;
           this.organismFields = r.data.organismFields;
+          this.functions = r.data.functions
           this.selectedType = r.data.organismConfigName;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
@@ -478,4 +508,3 @@ export default defineComponent({
   },
 });
 </script>
-
