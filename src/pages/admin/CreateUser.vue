@@ -62,7 +62,7 @@
                       :label="field.label"
                       :hint="field.hint"
                       :type="field.type.type"
-                      v-model="field.newValue"
+                      v-model="field.value"
                       outlined
                     >
                       <template
@@ -141,7 +141,7 @@
                     readonly
                     :label="field.label"
                     :hint="field.hint"
-                    v-model="field.newValue"
+                    v-model="field.value"
                   />
                 </div>
               </div>
@@ -295,7 +295,7 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
-      userData: [],
+      userData: {},
     };
   },
   mounted() {

@@ -99,7 +99,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "email",
         align: "left",
         label: "E-mail",
-        field: (row) => row.userDataTabs[0].fields[1].newValue,
+        field: (row) => row.email,
         sortable: true,
       },
       {

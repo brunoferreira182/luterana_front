@@ -37,7 +37,7 @@
           <div
             class="text-h5"
           >
-            Nome
+            Informações
           </div>
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
@@ -46,6 +46,13 @@
             hint="Informe o tipo de organismo que a configuração será aplicada para prosseguir"
             v-model="organismConfigName"
           />
+          <q-checkbox
+            v-model="requiresLink"
+            label="Vínculo obrigatório?"
+          >
+
+          <div class="text-caption text-grey-7">Organismos desse tipo deverão estar vinculados a outro organismo para serem criados</div>
+          </q-checkbox>
           <q-separator
           />
           <div
@@ -289,6 +296,85 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="editFunctionDialog.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Editar função</div>
+          </q-card-section>
+          <q-card-section>
+            <div class="q-gutter-md">
+              <q-input
+                label="Escreva o nome"
+                outlined
+                hint="Nome da função"
+                v-model="editFunctionDialog.function.name"
+              />
+              <q-input
+                outlined
+                autogrow
+                hint="Uma descrição completa sobre a função"
+                label="Descrição"
+                v-model="editFunctionDialog.function.description"
+              />
+              <q-select
+                outlined
+                clearable
+                option-label="titleName"
+                emit-value
+                map-options
+                label="Título (opcional)"
+                :options="titlesOptions"
+                v-model="editFunctionDialog.function.requiredTitle"
+              />
+              <q-checkbox
+                label="Obrigatória?"
+                v-model="editFunctionDialog.function.isRequired"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center" class="q-mb-md">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="newFunctionDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="updateFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="dialogDeleteFunction.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Tem certeza que deseja deletar essa função?</div>
+          </q-card-section>
+          <q-card-actions align="center" class="q-mb-md">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="newFunctionDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="confirmDeleteFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -302,6 +388,7 @@ export default defineComponent({
       fieldTypesOptions: [],
       organismConfigName: '',
       typeSelected: null,
+      requiresLink: false,
       valueSelected: "",
       tab: "createConfig",
       newFunctionDialog: false,
@@ -310,6 +397,24 @@ export default defineComponent({
         description: '',
         requiredTitle: null,
         isRequired: true
+      },
+      editFunctionDialog: {
+        open: false,
+        function: {
+          name: '',
+          description: '',
+          requiredTitle: null,
+          isRequired: true
+        } 
+      },
+      dialogDeleteFunction: {
+        open: false,
+        function: {
+          name: '',
+          description: '',
+          requiredTitle: null,
+          isRequired: true
+        } 
       },
       functions: [],
       titlesOptions: [],
@@ -434,6 +539,7 @@ export default defineComponent({
         route: "/desktop/config/createOrganismsConfig",
         body: {
           organismConfigName: this.organismConfigName,
+          requiresLink: this.requiresLink,
           organismFields: this.organismFields,
           functions: this.functions
         },
@@ -455,6 +561,7 @@ export default defineComponent({
         body: {
           organismConfigId: _id,
           organismFields: this.organismFields,
+          requiresLink: this.requiresLink,
         },
       };
       useFetch(opt).then((r) => {
@@ -480,6 +587,7 @@ export default defineComponent({
           this.organismFields = r.data.organismFields;
           this.functions = r.data.functions
           this.selectedType = r.data.organismConfigName;
+          this.requiresLink = r.data.requiresLink
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -494,9 +602,31 @@ export default defineComponent({
     },
     addFunction () {
       if (this.newFunction.name && this.newFunction.description) {
-        this.functions.push({...this.newFunction})
+        if (this.$route.path === '/config/organismConfigDetail') {
+          this.createNewFunction()
+        } else {
+          this.functions.push({...this.newFunction})
+        }
         this.newFunctionDialog = false
       } else this.$q.notify('preencha os campos obrigatórios!')
+    },
+    createNewFunction() {
+      const _id = this.$route.query._id;
+      const opt = {
+        route: "/desktop/config/createOrganismFunctionConfig",
+        body: {
+          organismConfigId: _id,
+          functionData: this.newFunction
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.newFunctionDialog = false
+          this.getOrganismConfigById()
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     },
     functionDialogClosed () {
       this.newFunction = {
@@ -505,6 +635,48 @@ export default defineComponent({
         requiredTitle: null,
         isRequired: true,
       }
+    },
+    editFunction (item) {
+      this.editFunctionDialog.open = true
+      this.editFunctionDialog.function = item
+    },
+    updateFunction () {
+      const opt = {
+        route: "/desktop/config/updateOrganismFunctionConfig",
+        body: {
+          organismFunctionConfigId: this.editFunctionDialog.function.organismFunctionId,
+          functionData: this.editFunctionDialog.function
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.editFunctionDialog.open = false
+          this.getOrganismConfigById()
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    deleteFunction (item) {
+      this.dialogDeleteFunction.open = true
+      this.dialogDeleteFunction.function = item
+    },
+    confirmDeleteFunction () {
+      const opt = {
+        route: "/desktop/config/updateOrganismFunctionConfig",
+        body: {
+          organismFunctionConfigId: this.dialogDeleteFunction.function.organismFunctionId,
+          isActive: 0
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.dialogDeleteFunction.open = false
+          this.getOrganismConfigById()
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     }
   },
 });
