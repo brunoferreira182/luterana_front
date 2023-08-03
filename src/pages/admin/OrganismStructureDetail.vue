@@ -339,8 +339,8 @@ export default defineComponent({
       organismId: "",
       selectedSector: "",
       selectedFunc: "",
-      selectedSectorIndex: "",
       selectedFuncIndex: "",
+      selectedSectorIndex: "",
       structureId: "",
       organismStructureFunctionId: "",
     };

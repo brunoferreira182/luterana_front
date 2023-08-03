@@ -3,7 +3,7 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col-6 text-h5 text-capitalize">novo organismo</div>
-        <div v-if="organismData.fields.length" class="col-2">
+        <div class="col-2">
           <q-btn
             @click="createOrganism"
             no-caps
@@ -108,7 +108,7 @@
               Funções
             </div>
             <q-btn
-              @click="newFunctionDialog = true"
+              @click="checkOrganismSelected"
               class="q-mx-md"
               label="Adicionar"
               rounded
@@ -118,17 +118,61 @@
               icon-right="add"
             />
           </div>
-          <q-item 
-            style="border-radius: 1rem"
-            class="bg-grey-3 q-ma-sm q-pa-md"
-            v-for="(item,i) in functions" :key="i"
-          >
-            <q-item-section>
-              <div class="text-subtitle2">{{ item.name }}</div>
-              <div>Descrição: {{ item.description }}</div>
-              <div class="text-caption text-grey-7">Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}</div>
-            </q-item-section>
-          </q-item>
+          <div v-for="(func, funcIndex) in functions" :key="func">
+            <q-card
+              style="border-radius: 1rem"
+              class="bg-grey-3 q-ma-sm"
+              flat
+            >
+              <q-item 
+            
+              >
+                <q-item-section top left>
+                  <div class="text-subtitle2 text-capitalize">{{ func.name }}</div>
+                  <div>Descrição: {{ func.description }}</div>
+                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
+            
+                </q-item-section>
+                
+                <q-item-section top align="right">
+                  <div class="text-subtitle2">
+                    <q-badge color="orange-8" v-if="func.isRequired">
+                      Obrigatório
+                    </q-badge>
+                  </div>
+                </q-item-section>
+              </q-item>
+              <q-expansion-item
+                icon="group"
+                color="primary"
+                class="q-pa-sm"
+                label="Participantes"
+                caption="Clique para ver ou adicionar"
+              >
+                <q-item
+                  style="border-radius: 1rem"
+                  class="bg-white q-ma-sm"
+                >
+                <q-item-section
+                  v-for="user in organismData.functions"
+                  :key="user"
+                >
+                  {{ user.userName }}
+                </q-item-section>
+                <q-item-section align="left">
+                    <q-btn
+                      label="Adicionar pessoa"
+                      flat
+                      color="primary"
+                      dense
+                      no-caps
+                      @click="linkUserToFunction(func, funcIndex)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </q-expansion-item>
+            </q-card>
+          </div>
         </div>
         <q-dialog v-model="newFunctionDialog">
           <q-card style="border-radius: 1rem; width: 400px">
@@ -165,7 +209,7 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-dialog v-model="dialogInsertUserInFunction" @hide="clearDialogAndFunctions">
+        <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
           <q-card style="border-radius: 1rem; width: 400px">
             <q-card-section>
               <div class="text-h6 text-center">
@@ -182,7 +226,7 @@
                 label="Nome do usuário"
                 :options="usersOptions"
                 @keyup="getUsers"
-                :option-value="(item) => item._id"
+                :option-value="(item) => item"
                 emit-value
                 map-options
               >
@@ -201,7 +245,7 @@
                 label="Data início"
                 type="date"
                 hint="Informe a data início da ocupação da função"
-                v-model="dialogInsertUser.initialDate"
+                v-model="dialogInsertUserInFunction.initialDate"
               />
             </q-card-section>
             <q-card-actions align="center">
@@ -211,7 +255,7 @@
                 no-caps
                 rounded
                 color="primary"
-                @click="dialogInsertUser.open = false"
+                @click="dialogInsertUserInFunction.open = false"
               />
               <q-btn
                 unelevated
@@ -219,7 +263,7 @@
                 label="Confirmar"
                 no-caps
                 color="primary"
-                @click="saveUserFunction"
+                @click="assignUserToFunction"
               />
             </q-card-actions>
           </q-card>
@@ -238,10 +282,12 @@ export default defineComponent({
   data() {
     return {
       userSelected: '',
+      selectedFunc: "",
+      selectedFuncIndex: "",
       usersOptions: [],
       organismConfigOptions: [],
       functions: [],
-      organismTypeId: null,
+      organismFunctionConfigId: null,
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
@@ -250,13 +296,14 @@ export default defineComponent({
       newMultipleValue: "",
       structureInfo: {
         description: '',
-        organismTypeId: null,
+        organismFunctionConfigId: null,
         functionId: null,
       },
       newFunctionDialog: false,
       organismData: {
         organismConfigTypeId: null,
         fields: [],
+        functions: []
       },
     };
   },
@@ -267,6 +314,85 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    linkUserToFunction(func, funcIndex ) {
+      this.selectedFuncIndex = funcIndex;
+      this.selectedFunc = func;
+      this.dialogInsertUserInFunction.open = true;
+    },
+    assignUserToFunction() {
+      if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+        this.$q.notify("Preencha usuário e a data início");
+        return;
+      }
+      this.organismData.functions.push({
+        organismFunctionConfigId: this.selectedFunc.organismFunctionId,
+        userName: this.userSelected.userName,
+        functionName: this.selectedFunc.name,
+        userId: this.userSelected._id,
+        initialDate: this.dialogInsertUserInFunction.initialDate,
+      });
+      this.clearDialogAndFunctions();
+    },
+    // assignUserToFunction() {
+    //   const { selectedFunc, userSelected } = this;
+    //   if (!selectedFunc.userSelected) {
+    //     selectedFunc.userSelected = [];
+    //   }
+    //   selectedFunc.userSelected.push(userSelected);
+    //   this.dialogInsertUserInFunction.open = false;
+    //   this.userSelected = "";
+    // },
+    saveUserFunction() {
+      if (
+        this.userSelected === "" ||
+        this.dialogInsertUserInFunction.initialDate === ""
+      ) {
+        this.$q.notify("Preencha usuário e a data início");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/saveUserFunction",
+        body: {
+          initialDate: this.dialogInsertUserInFunction.initialDate,
+          userId: this.userSelected,
+          organismFunctionConfigId:
+            this.selectedFunc.organismStructureFunctionId,
+          functionId: this.selectedFunc.functionId,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.getOrganismStructureDetailById();
+          this.$q.notify("Usuário vinculado na função com sucesso!");
+          this.clearDialogAndFunctions();
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    clearDialogAndFunctions() {
+      this.selectedFunc = {};
+      this.userSelected = "";
+      this.functionSelected = "";
+      // this.dialogOpenObservation.data = {};
+      // this.dialogDeleteUserFromFunction.data = {};
+      // this.dialogDeleteUserFromFunction.finalDate = "";
+      // this.dialogDeleteUserFromFunction.functionUserId = "";
+      // this.dialogDeleteUserFromFunction.obsText = "";
+      // this.dialogOpenObservation.obsText = "";
+      // this.dialogDeleteUserFromFunction.open = false;
+      // this.dialogOpenObservation.open = false;
+      this.dialogInsertUserInFunction.open = false;
+    },
+    checkOrganismSelected(){
+      if(this.organismData.organismConfigTypeId === null){
+        this.$q.notify('Preencha o nome da configuração para adicionar funções')
+        return
+      }
+      this.newFunctionDialog = true
+    },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
@@ -284,6 +410,7 @@ export default defineComponent({
         this.usersOptions = r.data;
       });
     },
+   
     addFunction () {
       if (this.newFunction.name && this.newFunction.description) {
         this.functions.push({...this.newFunction})
@@ -297,7 +424,9 @@ export default defineComponent({
           _id: this.organismData.organismConfigTypeId
         }
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (!r.error) {
           this.organismData.fields = r.data.organismFields;
           this.functions = r.data.functions
@@ -383,14 +512,5 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.separator {
-  position: absolute;
-  top: 64px;
-  right: 386px;
-  border-left: 2px solid rgb(216, 216, 216);
-  height: 806px;
-}
-</style>
 
 

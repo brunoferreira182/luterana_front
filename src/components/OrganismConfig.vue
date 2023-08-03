@@ -309,7 +309,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitle: null,
-        isRequired: false
+        isRequired: true
       },
       functions: [],
       titlesOptions: [],
@@ -383,7 +383,7 @@ export default defineComponent({
       this.newPhone = "";
       this.typeSelected = null;
     },
-    getTitleConfigsList () {
+    getTitleConfigsList() {
       const opt = {
         route: "/desktop/config/getTitleConfigsList",
         body: {
@@ -502,7 +502,8 @@ export default defineComponent({
       this.newFunction = {
         name: '',
         description: '',
-        requiredTitle: null
+        requiredTitle: null,
+        isRequired: true,
       }
     }
   },
