@@ -165,6 +165,65 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <q-dialog v-model="dialogInsertUserInFunction" @hide="clearDialogAndFunctions">
+          <q-card style="border-radius: 1rem; width: 400px">
+            <q-card-section>
+              <div class="text-h6 text-center">
+                Informe o usuário que ocupará a função
+              </div>
+            </q-card-section>
+            <q-card-section align="center">
+              <q-select
+                v-model="userSelected"
+                filled
+                use-input
+                option-label="userName"
+                input-debounce="100"
+                label="Nome do usuário"
+                :options="usersOptions"
+                @keyup="getUsers"
+                :option-value="(item) => item._id"
+                emit-value
+                map-options
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </q-card-section>
+            <q-card-section align="center">
+              <q-input
+                filled
+                label="Data início"
+                type="date"
+                hint="Informe a data início da ocupação da função"
+                v-model="dialogInsertUser.initialDate"
+              />
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Depois"
+                no-caps
+                rounded
+                color="primary"
+                @click="dialogInsertUser.open = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Confirmar"
+                no-caps
+                color="primary"
+                @click="saveUserFunction"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </q-page>
   </q-page-container>
@@ -173,15 +232,20 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import { date } from "quasar";
 export default defineComponent({
   name: "CreateOrganism",
   data() {
     return {
       userSelected: '',
-      teste: [],
+      usersOptions: [],
       organismConfigOptions: [],
       functions: [],
       organismTypeId: null,
+      dialogInsertUserInFunction:{
+        initialDate: '',
+        open: false,
+      },
       newOrganism: {},
       newMultipleValue: "",
       structureInfo: {
@@ -203,6 +267,23 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    formatDate(newDate) {
+      return date.formatDate(newDate, "DD/MM/YYYY");
+    },
+    getUsers() {
+      const opt = {
+        route: "/desktop/adm/getUsers",
+        body: {
+          searchString: this.userSelected,
+          isActive: 1,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        this.usersOptions = r.data;
+      });
+    },
     addFunction () {
       if (this.newFunction.name && this.newFunction.description) {
         this.functions.push({...this.newFunction})
