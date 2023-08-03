@@ -149,65 +149,7 @@
           </q-card>
         </div>
       </div>
-      <q-dialog v-model="dialogInsertUser.open" @hide="clearDialogAndFunctions">
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Informe o usuário que ocupará a função
-            </div>
-          </q-card-section>
-          <q-card-section align="center">
-            <q-select
-              v-model="userSelected"
-              filled
-              use-input
-              option-label="userName"
-              input-debounce="100"
-              label="Nome do usuário"
-              :options="usersOptions"
-              @keyup="getUsers"
-              :option-value="(item) => item._id"
-              emit-value
-              map-options
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-section align="center">
-            <q-input
-              filled
-              label="Data início"
-              type="date"
-              hint="Informe a data início da ocupação da função"
-              v-model="dialogInsertUser.initialDate"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              rounded
-              color="primary"
-              @click="dialogInsertUser.open = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="saveUserFunction"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      
       <q-dialog
         v-model="dialogInsertFunction.open"
         @hide="clearDialogAndFunctions"
@@ -355,7 +297,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
-import { date } from "quasar";
+
 export default defineComponent({
   name: "OrganismStructureDetail",
   data() {
@@ -498,23 +440,8 @@ export default defineComponent({
         this.functionsOptions = r.data;
       });
     },
-    formatDate(newDate) {
-      return date.formatDate(newDate, "DD/MM/YYYY");
-    },
-    getUsers() {
-      const opt = {
-        route: "/desktop/adm/getUsers",
-        body: {
-          searchString: this.userSelected,
-          isActive: 1,
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        this.usersOptions = r.data;
-      });
-    },
+   
+    
     assignUserToFunction() {
       const { selectedFunc, userSelected } = this;
       if (!selectedFunc.userSelected) {
