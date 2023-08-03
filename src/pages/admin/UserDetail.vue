@@ -63,7 +63,7 @@
                       :label="field.label"
                       :hint="field.hint"
                       :type="field.type.type"
-                      v-model="field.newValue"
+                      v-model="field.value"
                       outlined
                     >
                       <template
@@ -142,7 +142,7 @@
                     readonly
                     :label="field.label"
                     :hint="field.hint"
-                    v-model="field.newValue"
+                    v-model="field.value"
                   />
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         this.tab = r.data.userDataTabs[0].tabValue
-        this.userName =  r.data.userDataTabs[0].fields[0].newValue
+        this.userName =  r.data.userDataTabs[0].fields[0].value
         this.userData = r.data;
         this.userId = r.data.userId;
         this.getCompanyPermissions();
