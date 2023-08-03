@@ -309,7 +309,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitle: null,
-        isRequired: true
+        isRequired: false
       },
       functions: [],
       titlesOptions: [],
