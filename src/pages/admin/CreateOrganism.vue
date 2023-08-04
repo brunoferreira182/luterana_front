@@ -3,7 +3,7 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col-6 text-h5 text-capitalize">novo organismo</div>
-        <div class="col-2">
+        <div class="col-2 text-center">
           <q-btn
             @click="createOrganism"
             no-caps
@@ -26,7 +26,7 @@
             emit-value
             map-options
             hint="Informe qual o tipo de configuração que está aplicando"
-            v-model="organismData.organismConfigTypeId"
+            v-model="organismData.organismConfigId"
             :options="organismConfigOptions"
             @update:modelValue="getOrganismConfigById"
           />
@@ -60,11 +60,6 @@
                 </template>
               </q-input>
               <div
-                style="
-                  border: 1px solid #c2c2c2;
-                  border-radius: 3px;
-                  padding: 5px;
-                "
                 v-if="field.value && field.value.length"
                 class="q-mt-sm"
               >
@@ -77,7 +72,7 @@
                   v-for="(value, i) in field.value"
                   :key="i"
                 >
-                  {{ field.label }} {{ i + 1 }} - {{ value }}
+                  {{ value }}
                 </q-chip>
               </div>
             </div>
@@ -88,7 +83,7 @@
               :type="getInputType(field.type.type)"
               :reverse-fill-mask="field.type.type === 'money'"
               :prefix="field.type.type === 'money' ? 'R$' : null"
-              :label="field.label + (field.required ? '' : ' (Opcional)')"
+              :label="field.label + (field.required ? ' (Obrigatório)' : ' (Opcional)')"
               :mask="field.type.mask"
               :hint="field.hint"
             />
@@ -107,33 +102,19 @@
             >
               Funções
             </div>
-            <q-btn
-              @click="checkOrganismSelected"
-              class="q-mx-md"
-              label="Adicionar"
-              rounded
-              flat
-              color="primary"
-              no-caps
-              icon-right="add"
-            />
           </div>
-          <div v-for="(func, funcIndex) in functions" :key="func">
+          <div v-for="(func, funcIndex) in functions" :key="funcIndex">
             <q-card
               style="border-radius: 1rem"
               class="bg-grey-3 q-ma-sm"
               flat
             >
-              <q-item 
-            
-              >
+              <q-item>
                 <q-item-section top left>
                   <div class="text-subtitle2 text-capitalize">{{ func.name }}</div>
                   <div>Descrição: {{ func.description }}</div>
                   <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
-            
                 </q-item-section>
-                
                 <q-item-section top align="right">
                   <div class="text-subtitle2">
                     <q-badge color="orange-8" v-if="func.isRequired">
@@ -143,39 +124,78 @@
                 </q-item-section>
               </q-item>
               <q-expansion-item
-                icon="group"
                 color="primary"
                 class="q-pa-sm"
-                label="Participantes"
+                icon="group"
+                :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
                 caption="Clique para ver ou adicionar"
               >
                 <q-item
-                  style="border-radius: 0.5rem"
+                  v-for="(user, userIndex) in func.users"
+                  :key="userIndex"
+                  style="border-radius: 0.5rem; margin-top: 8px;"
                   class="bg-white"
+                  transition="user-bounce"
                 >
-                <q-item-section avatar>
-                  <q-avatar rounded>
-                    <img src="https://cdn.quasar.dev/img/avatar.png">
-                  </q-avatar>
+                  <q-item-section avatar>
+                    <q-avatar rounded>
+                      <img src="https://cdn.quasar.dev/img/avatar.png" />
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section class="text-capitalize text-wrap" lines="2">
+                    {{ user.userName }}
+                    <div class="text-caption text-grey-7">
+                      Data Início:
+                      {{ formatDate(user.initialDate) }}
+                    </div>
+                    <div
+                      v-if="user.dataFim"
+                      class="text-caption text-grey-7"
+                    >
+                      Data Fim: {{ formatDate(user.dataFim) }}
+                    </div>
+                  </q-item-section>
+                  <q-item-section side>
+                    <div class="text-grey-8 q-gutter-xs">
+                      <!-- <q-btn
+                        @click="dialogInsertObservation(user)"
+                        class="gt-xs"
+                        size="12px"
+                        color="secondary"
+                        flat
+                        dense
+                        round
+                        icon="library_books"
+                      >
+                        <q-tooltip> Observações </q-tooltip>
+                      </q-btn> -->
+                      <q-btn
+                        @click="deleteUserFromFunction(user, funcIndex)"
+                        class="gt-xs"
+                        size="12px"
+                        color="red-8"
+                        flat
+                        dense
+                        round
+                        icon="delete"
+                      >
+                        <q-tooltip> Deletar usuário da função </q-tooltip>
+                      </q-btn>
+                    </div>
+                  </q-item-section>
+                </q-item>
+                <q-item-section class="q-pa-xs">
+                  <q-btn
+                    label="Adicionar pessoa"
+                    color="primary"
+                    dense
+                    icon="add"
+                    rounded
+                    flat
+                    no-caps
+                    @click="linkUserToFunction(func, funcIndex)"
+                  />
                 </q-item-section>
-                <q-item-section
-                  class="text-capitalize"
-                  v-for="user in organismData.functions"
-                  :key="user"
-                >
-                  {{ user.userName }}
-                </q-item-section>
-              </q-item>
-              <q-item-section align="left">
-                <q-btn
-                  label="Adicionar pessoa"
-                  flat
-                  color="primary"
-                  dense
-                  no-caps
-                  @click="linkUserToFunction(func, funcIndex)"
-                />
-              </q-item-section>
               </q-expansion-item>
             </q-card>
           </div>
@@ -211,6 +231,52 @@
                 no-caps
                 color="primary"
                 @click="addFunction"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-dialog
+          v-model="dialogDeleteUserFromFunction.open"
+          @hide="clearDialogAndFunctions"
+        >
+          <q-card style="border-radius: 1rem; width: 400px">
+            <q-card-section>
+              <div class="text-h6 text-center">
+                Tem certeza que deseja inativar
+                {{ dialogDeleteUserFromFunction.data.userName }}?
+              </div>
+            </q-card-section>
+            <q-card-section align="center" class="q-gutter-sm">
+              <q-input
+                filled
+                label="Observação"
+                v-model="dialogDeleteUserFromFunction.obsText"
+                hint="Informe o motivo"
+              />
+              <q-input
+                filled
+                type="date"
+                label="Data final"
+                v-model="dialogDeleteUserFromFunction.finalDate"
+                hint="Informe a data final da ocupação da função"
+              />
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Depois"
+                no-caps
+                rounded
+                color="primary"
+                @click="dialogDeleteUserFromFunction.open = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Confirmar"
+                no-caps
+                color="primary"
+                @click="inactivateUserFromFunction"
               />
             </q-card-actions>
           </q-card>
@@ -274,6 +340,61 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <q-dialog
+          v-model="dialogOpenObservation.open"
+          @hide="clearDialogAndFunctions"
+        >
+          <q-card style="border-radius: 1rem; width: 400px">
+            <q-card-section>
+              <div class="text-h6 text-center">Observações:</div>
+              <q-item
+                style="
+                  border-radius: 0.5rem;
+                  background-color: #e7e7e7;
+                margin: 10px;
+                "
+                v-for="(obs, i) in dialogOpenObservation.data.userObs"
+                :key="i"
+              >
+                <q-item-section>
+                  {{ obs.obsText }}
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+            <q-card-section>
+              <div class="text-h6 text-center">
+                Insira observação à respeito de
+                {{ dialogOpenObservation.data.userName }}
+              </div>
+            </q-card-section>
+            <q-card-section align="center" class="q-gutter-sm">
+              <q-input
+                filled
+                label="Observação"
+                v-model="dialogOpenObservation.obsText"
+                hint="Insira aqui sua observação"
+              />
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Depois"
+                no-caps
+                rounded
+                color="primary"
+                @click="dialogDeleteUserFromFunction.open = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Confirmar"
+                no-caps
+                color="primary"
+                @click="addObservationForFunctionUser"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </q-page>
   </q-page-container>
@@ -282,21 +403,35 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import DOMPurify from 'dompurify';
 import { date } from "quasar";
 export default defineComponent({
   name: "CreateOrganism",
   data() {
     return {
+      userInput: '',
       userSelected: '',
       selectedFunc: "",
       selectedFuncIndex: "",
       usersOptions: [],
       organismConfigOptions: [],
-      functions: [],
       organismFunctionConfigId: null,
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
+      },
+      dialogOpenObservation: {
+        open: false,
+        functionUserId: "",
+        obsText: "",
+        data: {},
+      },
+      dialogDeleteUserFromFunction: {
+        obsText: "",
+        finalDate: "",
+        functionUserId: "",
+        open: false,
+        data: {},
       },
       newOrganism: {},
       newMultipleValue: "",
@@ -307,10 +442,10 @@ export default defineComponent({
       },
       newFunctionDialog: false,
       organismData: {
-        organismConfigTypeId: null,
+        organismConfigId: null,
         fields: [],
-        functions: []
       },
+      functions: [],
     };
   },
   mounted() {
@@ -320,17 +455,69 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    sanitizeHtml(html) {
+      return DOMPurify.sanitize(html);
+    },
+    teste(){
+      const dirty = this.userSelected
+      const clean = DOMPurify.sanitize(dirty);
+      console.log(clean)
+    },
+    dialogInsertObservation(user) {
+      this.dialogOpenObservation.data = user;
+      this.dialogOpenObservation.open = true;
+      this.dialogOpenObservation.functionUserId = user._id;
+    },
+    deleteUserFromFunction(user, funcIndex){
+      const functionData = this.functions[funcIndex];
+      
+      const userId = user.functionUserId;
+      const userIndex = functionData.users.findIndex(user => user._id === userId);
+
+      if (userIndex !== -1) {
+        functionData.users.splice(userIndex, 1);
+      }
+    },
+    dialogOpenDeleteUserFromFunction(user, funcIndex) {
+      this.dialogDeleteUserFromFunction.open = true;
+      this.dialogDeleteUserFromFunction.data = user;
+      this.dialogDeleteUserFromFunction.functionUserId = user._id;
+      this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
+    },
     linkUserToFunction(func, funcIndex ) {
+      console.log(func, 'FUNC OASDKAPKDOPAS')
+      console.log(funcIndex, 'funcIndex OASDKAPKDOPAS')
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;
     },
+    inactivateUserFromFunction() {
+      const funcIndex = this.dialogDeleteUserFromFunction.funcIndex;
+      const functionData = this.functions[funcIndex];
+      
+      const userId = this.dialogDeleteUserFromFunction.functionUserId;
+      const userIndex = functionData.users.findIndex(user => user._id === userId);
+
+      if (userIndex !== -1) {
+        functionData.users.splice(userIndex, 1);
+        this.dialogDeleteUserFromFunction.open = false;
+        this.dialogDeleteUserFromFunction.data = {};
+        this.dialogDeleteUserFromFunction.functionUserId = "";
+      }
+    },
     assignUserToFunction() {
+      const selectedFuncIndex = this.selectedFuncIndex;
+      console.log(selectedFuncIndex, 'OPKASPODKOSAP selectedFuncIndex');
       if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
       }
-      this.organismData.functions.push({
+
+      if (!this.functions[selectedFuncIndex].users) {
+        this.functions[selectedFuncIndex].users = [];
+      }
+
+      this.functions[selectedFuncIndex].users.push({
         organismFunctionConfigId: this.selectedFunc.organismFunctionId,
         userName: this.userSelected.userName,
         functionName: this.selectedFunc.name,
@@ -339,15 +526,6 @@ export default defineComponent({
       });
       this.clearDialogAndFunctions();
     },
-    // assignUserToFunction() {
-    //   const { selectedFunc, userSelected } = this;
-    //   if (!selectedFunc.userSelected) {
-    //     selectedFunc.userSelected = [];
-    //   }
-    //   selectedFunc.userSelected.push(userSelected);
-    //   this.dialogInsertUserInFunction.open = false;
-    //   this.userSelected = "";
-    // },
     saveUserFunction() {
       if (
         this.userSelected === "" ||
@@ -393,7 +571,7 @@ export default defineComponent({
       this.dialogInsertUserInFunction.open = false;
     },
     checkOrganismSelected(){
-      if(this.organismData.organismConfigTypeId === null){
+      if(this.organismData.organismConfigId === null){
         this.$q.notify('Preencha o nome da configuração para adicionar funções')
         return
       }
@@ -416,18 +594,11 @@ export default defineComponent({
         this.usersOptions = r.data;
       });
     },
-   
-    addFunction () {
-      if (this.newFunction.name && this.newFunction.description) {
-        this.functions.push({...this.newFunction})
-        this.newFunctionDialog = false
-      } else this.$q.notify('preencha os campos obrigatórios!')
-    },
     getOrganismConfigById() {
       const opt = {
         route: "/desktop/adm/getOrganismConfigById",
         body: {
-          _id: this.organismData.organismConfigTypeId
+          _id: this.organismData.organismConfigId
         }
       };
       this.$q.loading.show()
@@ -469,8 +640,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.organismConfigOptions = r.data
-          // this.organismData.organismConfigId = r.data.organismConfigId
-          // this.organismData.fields = r.data.organismFields;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -478,24 +647,39 @@ export default defineComponent({
     },
     createOrganism() {
       if (this.checkRequiredFields()) {
+        const userData = [];
+        for (const func of this.functions) {
+          if (func.users && func.users.length > 0) {
+            for (const user of func.users) {
+              userData.push({
+                organismFunctionConfigId: user.organismFunctionConfigId,
+                userId: user.userId
+              });
+            }
+          }
+        }
         const opt = {
           route: "/desktop/adm/createOrganism",
           body: {
             organismData: this.organismData,
+            functions: userData
           },
         };
-        useFetch(opt).then((r) => {
+        this.$q.loading.show()
+        useFetch(opt).then(r => {
+          this.$q.loading.hide()
           if (!r.error) {
-            this.$q.notify('Organismo criado com sucesso!')
+            this.$q.notify('Organismo criado com sucesso!');
             const organismId = r.data
             this.$router.push('/admin/organismDetail?organismId=' + organismId)
           } else {
             this.$q.notify("Ocorreu um erro, tente novamente por favor");
           }
         });
-      } else console.log("Há campos obrigatórios não preenchidos");
+      } else {
+        console.log("Há campos obrigatórios não preenchidos");
+      }
     },
-    
     checkRequiredFields() {
       let allRight = true;
       this.organismData.fields.forEach((field) => {
