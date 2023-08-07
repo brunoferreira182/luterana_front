@@ -217,6 +217,15 @@
               <div class="text-caption text-grey-7">
                 Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}
               </div>
+              <div>
+                <q-icon name="visibility" color="primary" size="sm"/>
+                <q-chip
+                  v-for="(vision,i) in item.visions"
+                  :key="i"
+                >
+                {{ vision.name }}
+                </q-chip>
+              </div>
             </q-item-section>
             <q-item-section top side>
               <div>
@@ -271,8 +280,27 @@
                 :options="titlesOptions"
                 v-model="newFunction.requiredTitle"
               />
+              <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
+              <div class="visions-field q-mt-none row">
+                <div
+                  v-for="(vision,i) in visionsList"
+                  :key="i"
+                  class="col-12 q-my-xs"
+                >
+                  <q-checkbox 
+                    :label="vision.name"
+                    :val="vision"
+                    v-model="newFunction.visions"
+                  >
+                    <div class="text-caption text-grey-7">
+                      {{ vision.description }}
+                    </div>
+                  </q-checkbox>
+                </div>
+              </div>
               <q-checkbox
-                label="Obrigatória?"
+                class="q-px-sm"
+                label="Preenchimento da função é obrigatório?"
                 v-model="newFunction.isRequired"
               />
             </div>
@@ -326,8 +354,27 @@
                 :options="titlesOptions"
                 v-model="editFunctionDialog.function.requiredTitle"
               />
+              <div class="text-subtitle1 q-px-xs">Visões:</div>
+              <div class="visions-field q-mt-none row">
+                <div
+                  v-for="(vision,i) in visionsList"
+                  :key="i"
+                  class="col-12 q-my-xs"
+                >
+                  <q-checkbox 
+                    :label="vision.name"
+                    :val="vision"
+                    v-model="editFunctionDialog.function.visions"
+                  >
+                    <div class="text-caption text-grey-7">
+                      {{ vision.description }}
+                    </div>
+                  </q-checkbox>
+                </div>
+              </div>
               <q-checkbox
-                label="Obrigatória?"
+                class="q-px-sm"
+                label="Preenchimento da função é obrigatório?"
                 v-model="editFunctionDialog.function.isRequired"
               />
             </div>
@@ -362,7 +409,7 @@
               label="Depois"
               no-caps
               color="primary"
-              @click="newFunctionDialog = false"
+              @click="dialogDeleteFunction.open = false"
             />
             <q-btn
               unelevated
@@ -396,7 +443,8 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitle: null,
-        isRequired: true
+        isRequired: true,
+        visions: []
       },
       editFunctionDialog: {
         open: false,
@@ -404,7 +452,8 @@ export default defineComponent({
           name: '',
           description: '',
           requiredTitle: null,
-          isRequired: true
+          isRequired: true,
+          visions: []
         } 
       },
       dialogDeleteFunction: {
@@ -450,6 +499,7 @@ export default defineComponent({
         multiple: false,
       },
       selectedType: "",
+      visionsList: []
     };
   },
   mounted() {
@@ -464,6 +514,7 @@ export default defineComponent({
     
     this.getTitleConfigsList();
     this.getFieldTypes();
+    this.getVisions()
   },
   methods: {
     addField() {
@@ -548,7 +599,7 @@ export default defineComponent({
         if (!r.error) {
           this.$q.notify("Organismo cadastrado com sucesso!");
           this.multiple = "";
-          this.$router.push('/config/organismConfigurationList')
+          // this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -585,7 +636,9 @@ export default defineComponent({
         if (!r.error) {
           this.organismConfigName = r.data.organismConfigName;
           this.organismFields = r.data.organismFields;
-          this.functions = r.data.functions
+          r.data.functions[0].organismFunctionId ?
+          this.functions = r.data.functions :
+          this.functions = []
           this.selectedType = r.data.organismConfigName;
           this.requiresLink = r.data.requiresLink
         } else {
@@ -634,11 +687,22 @@ export default defineComponent({
         description: '',
         requiredTitle: null,
         isRequired: true,
+        visions: []
       }
     },
     editFunction (item) {
       this.editFunctionDialog.open = true
       this.editFunctionDialog.function = item
+      this.editFunctionDialog.function.visions.forEach((dialogVision,i) => {
+        console.log('1q')
+        this.visionsList.forEach(vision => {
+          console.log('2q')
+          if (dialogVision.visionId === vision.visionId) {
+            this.editFunctionDialog.function.visions[i] = vision 
+            console.log('entrou aquii')
+          }
+        })
+      })
     },
     updateFunction () {
       const opt = {
@@ -677,7 +741,33 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
-    }
+    },
+    getVisions() {
+      const opt = {
+        route: "/desktop/config/getVisions",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.visionsList = r.data.map(vision => {
+          return {
+            name: vision.visionInfo.name,
+            visionId: vision._id, 
+            description: vision.visionInfo.description
+          }
+        });
+      });
+    },
   },
 });
 </script>
+<style scoped>
+.visions-field {
+  border: 1px solid #c2c2c2;
+  padding: 7px;
+  border-radius: 0.2rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+</style>
