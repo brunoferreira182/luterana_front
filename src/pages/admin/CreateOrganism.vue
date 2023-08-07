@@ -30,6 +30,21 @@
             :options="organismConfigOptions"
             @update:modelValue="getOrganismConfigById"
           />
+          <div v-if="organismList.length">
+            <q-separator class="q-ma-md" />
+            <div class="text-h5 q-ma-sm">Selecione o organismo que deseja vincular a este</div>
+            <q-select
+              outlined
+              label="Nome do organismo a ser vinculado"
+              option-label="nome"
+              :option-value="(item) => item.organismId"
+              emit-value
+              map-options
+              hint="Informe qual o tipo de configuração que está aplicando"
+              v-model="organismData.relatedOrganismId"
+              :options="organismList"
+            />
+          </div>
           <q-separator v-if="organismData.fields.length" />
           <div v-if="organismData.fields.length" class="text-h5">
             Preencha os dados necessários:
@@ -340,61 +355,6 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-dialog
-          v-model="dialogOpenObservation.open"
-          @hide="clearDialogAndFunctions"
-        >
-          <q-card style="border-radius: 1rem; width: 400px">
-            <q-card-section>
-              <div class="text-h6 text-center">Observações:</div>
-              <q-item
-                style="
-                  border-radius: 0.5rem;
-                  background-color: #e7e7e7;
-                margin: 10px;
-                "
-                v-for="(obs, i) in dialogOpenObservation.data.userObs"
-                :key="i"
-              >
-                <q-item-section>
-                  {{ obs.obsText }}
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-            <q-card-section>
-              <div class="text-h6 text-center">
-                Insira observação à respeito de
-                {{ dialogOpenObservation.data.userName }}
-              </div>
-            </q-card-section>
-            <q-card-section align="center" class="q-gutter-sm">
-              <q-input
-                filled
-                label="Observação"
-                v-model="dialogOpenObservation.obsText"
-                hint="Insira aqui sua observação"
-              />
-            </q-card-section>
-            <q-card-actions align="center">
-              <q-btn
-                flat
-                label="Depois"
-                no-caps
-                rounded
-                color="primary"
-                @click="dialogDeleteUserFromFunction.open = false"
-              />
-              <q-btn
-                unelevated
-                rounded
-                label="Confirmar"
-                no-caps
-                color="primary"
-                @click="addObservationForFunctionUser"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
       </div>
     </q-page>
   </q-page-container>
@@ -420,12 +380,6 @@ export default defineComponent({
         initialDate: '',
         open: false,
       },
-      dialogOpenObservation: {
-        open: false,
-        functionUserId: "",
-        obsText: "",
-        data: {},
-      },
       dialogDeleteUserFromFunction: {
         obsText: "",
         finalDate: "",
@@ -443,9 +397,11 @@ export default defineComponent({
       newFunctionDialog: false,
       organismData: {
         organismConfigId: null,
+        relatedOrganismId: null,
         fields: [],
       },
       functions: [],
+      organismList: [],
     };
   },
   mounted() {
@@ -548,6 +504,14 @@ export default defineComponent({
         }
       });
     },
+    getOrganismsList() {
+      const opt = {
+        route: "/desktop/adm/getOrganismsList",
+      };
+      useFetch(opt).then((r) => {
+        this.organismList = r.data.list;
+      });
+    },
     clearDialogAndFunctions() {
       this.selectedFunc = {};
       this.userSelected = "";
@@ -597,8 +561,15 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (!r.error) {
-          this.organismData.fields = r.data.organismFields;
-          this.functions = r.data.functions
+          if(r.data.requiresLink){
+            this.getOrganismsList()
+            this.organismData.fields = r.data.organismFields;
+            this.functions = r.data.functions
+          } else if(!r.data.requiresLink){
+            this.organismList = []
+            this.organismData.fields = r.data.organismFields;
+            this.functions = r.data.functions
+          }
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -646,7 +617,9 @@ export default defineComponent({
               userData.push({
                 organismFunctionConfigId: user.organismFunctionConfigId,
                 userId: user.userId,
-                initalDate: user.initialDate
+                dates: {
+                  initialDate: user.initialDate
+                }
               });
             }
           }
@@ -655,7 +628,8 @@ export default defineComponent({
           route: "/desktop/adm/createOrganism",
           body: {
             organismData: this.organismData,
-            functions: userData
+            functions: userData,
+            relatedOrganismId: this.organismData.relatedOrganismId
           },
         };
         this.$q.loading.show()

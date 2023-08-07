@@ -81,8 +81,8 @@
                 caption="Clique para ver ou adicionar"
               >
                 <q-item
-                  v-for="(user, userIndex) in func.users"
-                  :key="userIndex"
+                  v-for="user in func.users"
+                  :key="user"
                   style="border-radius: 0.5rem; margin-top: 8px;"
                   class="bg-white"
                   transition="user-bounce"
@@ -96,13 +96,13 @@
                     {{ user.userName }}
                     <div class="text-caption text-grey-7">
                       Data Início:
-                      {{ formatDate(user.initialDate) }}
+                      {{ formatDate(user.dates.initialDate) }}
                     </div>
                     <div
                       v-if="user.dataFim"
                       class="text-caption text-grey-7"
                     >
-                      Data Fim: {{ formatDate(user.dataFim) }}
+                      Data Fim: {{ formatDate(user.dates.finalDate) }}
                     </div>
                   </q-item-section>
                   <q-item-section side>
@@ -213,24 +213,37 @@
             >
               <q-card style="border-radius: 1rem; width: 400px">
                 <q-card-section>
-                  <div class="text-h6 text-center">Observações:</div>
+                  <div 
+                    v-if="dialogOpenObservation.data.obs.length"
+                    class="text-subtitle1 text-center">
+                    Histórico de observações:
+                  </div>
                   <q-item
                     style="
                       border-radius: 0.5rem;
                       background-color: #e7e7e7;
-                    margin: 10px;
+                      margin: 10px;
                     "
-                    v-for="(obs, i) in dialogOpenObservation.data.userObs"
-                    :key="i"
+                    v-for="obs in dialogOpenObservation.data.obs"
+                    :key="obs"
                   >
+                    
                     <q-item-section>
                       {{ obs.obsText }}
+                    </q-item-section>
+                    <q-item-section align="end" class="text-caption">
+                      <div>
+                        Publicado em
+                      </div>
+                      <div>
+                        {{ obs.createdAt.createdAtOnlyDate }}
+                      </div>
                     </q-item-section>
                   </q-item>
                 </q-card-section>
                 <q-card-section>
                   <div class="text-h6 text-center">
-                    Insira observação à respeito de
+                    Insira uma observação à respeito de
                     {{ dialogOpenObservation.data.userName }}
                   </div>
                 </q-card-section>
@@ -249,7 +262,7 @@
                     no-caps
                     rounded
                     color="primary"
-                    @click="dialogDeleteUserFromFunction.open = false"
+                    @click="dialogOpenObservation.open = false"
                   />
                   <q-btn
                     unelevated
@@ -363,9 +376,36 @@ export default defineComponent({
   },
   methods: {
     dialogInsertObservation(user) {
+      console.log(user, 'OPKAOPKSDOP USER USER')
       this.dialogOpenObservation.data = user;
       this.dialogOpenObservation.open = true;
       this.dialogOpenObservation.functionUserId = user.userIdMongo
+    },
+    addObservationForFunctionUser() {
+      if (
+        this.dialogOpenObservation.obsText === ''
+      ) {
+        this.$q.notify("Preencha o campo observação");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/addObservationForFunctionUser",
+        body: {
+          obsText: this.dialogOpenObservation.obsText,
+          functionUserId: this.dialogOpenObservation.functionUserId
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.getOrganismDetailById();
+          this.$q.notify("Observação inserida com sucesso!");
+          this.clearDialogAndFunctions();
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     },
     clearDialogAndFunctions() {
       this.selectedFunc = {};
