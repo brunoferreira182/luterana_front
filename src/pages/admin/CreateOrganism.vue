@@ -125,12 +125,27 @@
               flat
             >
               <q-item>
-                <q-item-section top left>
+                <q-item-section >
                   <div class="text-subtitle2 text-capitalize">{{ func.name }}</div>
                   <div>Descrição: {{ func.description }}</div>
-                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
+                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div> 
+                  <div>
+                    <q-icon name="visibility" color="primary" size="sm"/>
+                    <q-chip
+                      v-for="(vision,i) in func.visions"
+                      :key="i"
+                    >
+                    {{ vision.name }}
+                    </q-chip>
+                    <span 
+                      class="text-caption text-grey-7"
+                      v-if="!func.visions.length"
+                    >
+                      Nenhuma visão
+                    </span>
+                  </div>
                 </q-item-section>
-                <q-item-section top align="right">
+                <q-item-section top side>
                   <div class="text-subtitle2">
                     <q-badge color="orange-8" v-if="func.isRequired">
                       Obrigatório
