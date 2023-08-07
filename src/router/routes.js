@@ -97,6 +97,20 @@ const routes = [
         component: () => import("pages/config/FunctionDetail.vue"),
       },
 
+      //configurations//visões
+      {
+        path: "/config/visionsList",
+        component: () => import("pages/config/VisionsList.vue"),
+      },
+      {
+        path: "/config/visionDetail",
+        component: () => import("pages/config/VisionDetail.vue"),
+      },
+      {
+        path: "/config/createVision",
+        component: () => import("pages/config/CreateVision.vue"),
+      },
+
       //attachments
 
       { path: "/attach", redirect: "/attach/createAttachment" },
