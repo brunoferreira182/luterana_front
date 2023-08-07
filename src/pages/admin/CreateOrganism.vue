@@ -516,14 +516,6 @@ export default defineComponent({
       this.selectedFunc = {};
       this.userSelected = "";
       this.functionSelected = "";
-      // this.dialogOpenObservation.data = {};
-      // this.dialogDeleteUserFromFunction.data = {};
-      // this.dialogDeleteUserFromFunction.finalDate = "";
-      // this.dialogDeleteUserFromFunction.functionUserId = "";
-      // this.dialogDeleteUserFromFunction.obsText = "";
-      // this.dialogOpenObservation.obsText = "";
-      // this.dialogDeleteUserFromFunction.open = false;
-      // this.dialogOpenObservation.open = false;
       this.dialogInsertUserInFunction.open = false;
     },
     checkOrganismSelected(){

@@ -214,8 +214,9 @@
               <q-card style="border-radius: 1rem; width: 400px">
                 <q-card-section>
                   <div 
-                    v-if="dialogOpenObservation.data.obs.length"
-                    class="text-subtitle1 text-center">
+                    v-if="dialogOpenObservation.data.obs && dialogOpenObservation.data.obs.length"
+                    class="text-subtitle1 text-center"
+                  >
                     Histórico de observações:
                   </div>
                   <q-item
