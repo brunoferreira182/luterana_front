@@ -152,7 +152,7 @@
                       v-if="user.dataFim"
                       class="text-caption text-grey-7"
                     >
-                      Data Fim: {{ formatDate(user.dataFim) }}
+                      Data Fim: {{ formatDate(user.finalDate) }}
                     </div>
                   </q-item-section>
                   <q-item-section side>
@@ -258,7 +258,7 @@
                 type="date"
                 label="Data final"
                 v-model="dialogDeleteUserFromFunction.finalDate"
-                hint="Informe a data final da ocupação da função"
+                hint="Informe a data final de ocupação da função"
               />
             </q-card-section>
             <q-card-actions align="center">
@@ -316,7 +316,7 @@
                 filled
                 label="Data início"
                 type="date"
-                hint="Informe a data início da ocupação da função"
+                hint="Informe a data início de ocupação da função"
                 v-model="dialogInsertUserInFunction.initialDate"
               />
             </q-card-section>
@@ -455,14 +455,6 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
-    sanitizeHtml(html) {
-      return DOMPurify.sanitize(html);
-    },
-    teste(){
-      const dirty = this.userSelected
-      const clean = DOMPurify.sanitize(dirty);
-      console.log(clean)
-    },
     dialogInsertObservation(user) {
       this.dialogOpenObservation.data = user;
       this.dialogOpenObservation.open = true;
@@ -653,7 +645,8 @@ export default defineComponent({
             for (const user of func.users) {
               userData.push({
                 organismFunctionConfigId: user.organismFunctionConfigId,
-                userId: user.userId
+                userId: user.userId,
+                initalDate: user.initialDate
               });
             }
           }
