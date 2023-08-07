@@ -363,7 +363,6 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
-import DOMPurify from 'dompurify';
 import { date } from "quasar";
 export default defineComponent({
   name: "CreateOrganism",
