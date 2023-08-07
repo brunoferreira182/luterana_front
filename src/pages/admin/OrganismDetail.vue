@@ -64,6 +64,21 @@
                   <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
                   <div>Descrição: {{ func.functionDescription }}</div>
                   <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
+                  <div>
+                    <q-icon name="visibility" color="primary" size="sm"/>
+                    <q-chip
+                      v-for="(vision,i) in func.visions"
+                      :key="i"
+                    >
+                    {{ vision.name }}
+                    </q-chip>
+                    <span 
+                      class="text-caption text-grey-7"
+                      v-if="!func.visions || !func.visions.length"
+                    >
+                      Nenhuma visão
+                    </span>
+                  </div>
                 </q-item-section>
                 <q-item-section top align="right">
                   <div class="text-subtitle2">
