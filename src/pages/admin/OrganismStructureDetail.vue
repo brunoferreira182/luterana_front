@@ -213,7 +213,7 @@
               type="date"
               label="Data final"
               v-model="dialogDeleteUserFromFunction.finalDate"
-              hint="Informe a data final da ocupação da função"
+              hint="Informe a data final de ocupação da função"
             />
           </q-card-section>
           <q-card-actions align="center">
@@ -287,6 +287,52 @@
               no-caps
               color="primary"
               @click="addObservationForFunctionUser"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogDeleteUserFromFunction.open"
+        @hide="clearDialogAndFunctions"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Tem certeza que deseja inativar
+              {{ dialogDeleteUserFromFunction.data.userName }}?
+            </div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              filled
+              label="Observação"
+              v-model="dialogDeleteUserFromFunction.obsText"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              label="Data final"
+              v-model="dialogDeleteUserFromFunction.finalDate"
+              hint="Informe a data final de ocupação da função"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogDeleteUserFromFunction.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="inactivateUserFromFunction"
             />
           </q-card-actions>
         </q-card>
