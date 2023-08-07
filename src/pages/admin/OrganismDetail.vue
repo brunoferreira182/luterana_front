@@ -105,7 +105,7 @@
                   </q-item-section>
                   <q-item-section side>
                     <div class="text-grey-8 q-gutter-xs">
-                      <!-- <q-btn
+                      <q-btn
                         @click="dialogInsertObservation(user)"
                         class="gt-xs"
                         size="12px"
@@ -116,7 +116,7 @@
                         icon="library_books"
                       >
                         <q-tooltip> Observações </q-tooltip>
-                      </q-btn> -->
+                      </q-btn>
                       <q-btn
                         @click="deleteUserFromFunction(user, funcIndex)"
                         class="gt-xs"
@@ -170,12 +170,6 @@ export default defineComponent({
       organism: null,
       fields: [],
       newOrganism: {},
-      // organismData: {
-      //   structureData: {
-      //     structureId: null,
-      //     description: "",
-      //   },
-      // },
       organismData: {
         organismConfigId: null,
         fields: [],
@@ -193,16 +187,12 @@ export default defineComponent({
     this.getOrganismDetailById();
   },
   methods: {
-    clkEditStructureDetail(sector){
-      const organismStructureId = sector._id
-      this.$router.push('/admin/OrganismStructureDetail?organismStructureId=' + organismStructureId)
-    },
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
-          organismId: 'opaskdopksaopd',
+          organismId: organismId,
         },
       };
       useFetch(opt).then((r) => {
