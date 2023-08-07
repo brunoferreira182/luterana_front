@@ -202,6 +202,11 @@ const useUtils = {
           route: "/config/titleConfigurationList",
           icon: "list",
         },
+        {
+          label: "Visões",
+          route: "/config/visionsList",
+          icon: "visibility",
+        },
       ],
       attach: [
         {

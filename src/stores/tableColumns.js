@@ -126,5 +126,21 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    visionsConfigList: [
+      {
+        name: "userId",
+        align: "left",
+        label: "Título",
+        field: (row) => row.visionInfo.name,
+        sortable: true,
+      },
+      {
+        name: "creationDate",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.createdAt.createdAtOnlyDate,
+        sortable: true,
+      },
+    ],
   }),
 });
