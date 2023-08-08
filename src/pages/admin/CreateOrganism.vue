@@ -15,8 +15,8 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="row justify-around q-pa-md">
-        <div class="col-7 q-gutter-md" align="start">
+      <div class="row justify-around q-ma-md">
+        <div class="col q-gutter-md" align="start">
           <div class="text-h5">Selecione o tipo de configuração de organismo</div>
           <q-select
             outlined
@@ -30,19 +30,14 @@
             :options="organismConfigOptions"
             @update:modelValue="getOrganismConfigById"
           />
+          <q-separator class="q-ma-md" />
           <div v-if="organismList.length">
-            <q-separator class="q-ma-md" />
-            <div class="text-h5 q-ma-sm">Selecione o organismo que deseja vincular a este</div>
-            <q-select
-              outlined
-              label="Nome do organismo a ser vinculado"
-              option-label="nome"
-              :option-value="(item) => item.organismId"
-              emit-value
-              map-options
-              hint="Informe qual o tipo de configuração que está aplicando"
-              v-model="organismData.relatedOrganismId"
-              :options="organismList"
+            <q-btn
+              label="Gerenciar Vínculos"
+              color="primary"
+              rounded
+              unelevated
+              @click="dialogLinks = true"
             />
           </div>
           <q-separator v-if="organismData.fields.length" />
@@ -110,7 +105,7 @@
           </div>
         </div>
         <q-separator vertical class="q-ma-md" />
-        <div class="col-4">
+        <div class="col">
           <div class="row">
             <div
               class="text-h5"
@@ -311,7 +306,74 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
+        <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6 text-center">
+                Vínculos
+              </div>
+            </q-card-section>
+            <q-card-section>
+              <div  class="text-subtitle2 q-mb-sm">
+                Organismos vinculados:
+              </div>
+              <q-input v-if="organismLinks.length" label="Buscar" outlined/>
+              <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
+                <q-item
+                  clickable
+                  @click="removeLink(organism,i)"
+                  v-for="(organism,i) in organismLinks"
+                  :key="i"
+                >
+                  <q-item-section>
+                    {{ organism.nome }}
+                  </q-item-section>
+                  <q-item-section class="text-primary" side>
+                    Remover
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
+            </q-card-section>
+            <q-card-section>
+              <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
+              <q-input 
+                label="Buscar"
+                outlined
+                v-model="organismSearch" 
+                @update:model-value="getOrganismsList($event)"
+              />
+              <q-list bordered class="q-mt-sm">
+                <q-item
+                  clickable
+                  :disable="organismLinks.includes(organism)"
+                  @click="addNewLink(organism,i)"
+                  v-for="(organism,i) in organismList"
+                  :key="i"
+                >
+                  <q-item-section>
+                    {{ organism.nome }}
+                  </q-item-section>
+                  <q-item-section class="text-primary" side>
+                    {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Fechar"
+                no-caps
+                rounded
+                color="primary"
+                @click="dialogLinks = false"
+              />
+
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-dialog v-model="dialogInsertUserInFunction.open">
           <q-card style="border-radius: 1rem; width: 400px">
             <q-card-section>
               <div class="text-h6 text-center">
@@ -411,11 +473,13 @@ export default defineComponent({
       newFunctionDialog: false,
       organismData: {
         organismConfigId: null,
-        relatedOrganismId: null,
         fields: [],
       },
       functions: [],
       organismList: [],
+      organismLinks: [],
+      organismSearch: '',
+      dialogLinks: false
     };
   },
   mounted() {
@@ -521,6 +585,9 @@ export default defineComponent({
     getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
+        body: {
+          searchString: this.organismSearch
+        }
       };
       useFetch(opt).then((r) => {
         this.organismList = r.data.list;
@@ -567,15 +634,9 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (!r.error) {
-          if(r.data.requiresLink){
-            this.getOrganismsList()
-            this.organismData.fields = r.data.organismFields;
-            this.functions = r.data.functions
-          } else if(!r.data.requiresLink){
-            this.organismList = []
-            this.organismData.fields = r.data.organismFields;
-            this.functions = r.data.functions
-          }
+          this.getOrganismsList()
+          this.organismData.fields = r.data.organismFields;
+          this.functions = r.data.functions
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -630,12 +691,14 @@ export default defineComponent({
             }
           }
         }
+        const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
         const opt = {
           route: "/desktop/adm/createOrganism",
           body: {
             organismData: this.organismData,
             functions: userData,
-            relatedOrganismId: this.organismData.relatedOrganismId
+            organismLinks: organismLinksIds
+
           },
         };
         this.$q.loading.show()
@@ -672,6 +735,13 @@ export default defineComponent({
           return "text";
       }
     },
+    addNewLink (organism,i) {
+      this.organismLinks.push(organism)
+    },
+    removeLink(organism,i) {
+      this.organismLinks.splice(i,1)
+    }
+
   },
 });
 </script>

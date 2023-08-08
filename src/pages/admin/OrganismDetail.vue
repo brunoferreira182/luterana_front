@@ -20,8 +20,15 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-7 q-gutter-md" align="start">
-          <div class="text-h5">Organismo</div>
-          <q-separator v-if="fields.length" />
+          <div v-if="organismList.length">
+            <q-btn
+              label="Gerenciar Vínculos"
+              color="primary"
+              rounded
+              unelevated
+              @click="dialogLinks = true"
+            />
+          </div>
           <div v-if="fields.length" class="text-h5">
             Dados
           </div>
@@ -60,7 +67,7 @@
               flat
             >
               <q-item>
-                <q-item-section top left>
+                <q-item-section top>
                   <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
                   <div>Descrição: {{ func.functionDescription }}</div>
                   <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
@@ -80,7 +87,7 @@
                     </span>
                   </div>
                 </q-item-section>
-                <q-item-section top align="right">
+                <q-item-section top side>
                   <div class="text-subtitle2">
                     <q-badge color="orange-8" v-if="func.isRequired">
                       Obrigatório
@@ -366,6 +373,72 @@
                 </q-card-actions>
               </q-card>
             </q-dialog>
+            <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
+              <q-card>
+                <q-card-section>
+                  <div class="text-h6 text-center">
+                    Vínculos
+                  </div>
+                </q-card-section>
+                <q-card-section>
+                  <div  class="text-subtitle2 q-mb-sm">
+                    Organismos vinculados:
+                  </div>
+                  <q-input v-if="organismLinks.length" label="Buscar" outlined/>
+                  <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
+                    <q-item
+                      clickable
+                      @click="removeLink(organism,i)"
+                      v-for="(organism,i) in organismLinks"
+                      :key="i"
+                    >
+                      <q-item-section>
+                        {{ organism.nome }}
+                      </q-item-section>
+                      <q-item-section class="text-primary" side>
+                        Remover
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                  <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
+                </q-card-section>
+                <q-card-section>
+                  <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
+                  <q-input 
+                    label="Buscar"
+                    outlined
+                    v-model="organismSearch" 
+                    @update:model-value="getOrganismsList($event)"
+                  />
+                  <q-list bordered class="q-mt-sm">
+                    <q-item
+                      clickable
+                      :disable="organismLinks.includes(organism)"
+                      @click="console.log('fazer rota no back')"
+                      v-for="(organism,i) in organismList"
+                      :key="i"
+                    >
+                      <q-item-section>
+                        {{ organism.nome }}
+                      </q-item-section>
+                      <q-item-section class="text-primary" side>
+                        {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn
+                    flat
+                    label="Fechar"
+                    no-caps
+                    rounded
+                    color="primary"
+                    @click="dialogLinks = false"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
           </div>
         </div>
       </div>
@@ -411,6 +484,10 @@ export default defineComponent({
         fields: [],
       },
       functions: [],
+      organismList: [],
+      organismLinks: [],
+      organismSearch: '',
+      dialogLinks: false
     };
   },
   mounted() {
@@ -418,6 +495,8 @@ export default defineComponent({
   },
   beforeMount(){
     this.getOrganismDetailById();
+    this.getOrganismsList()
+    this.getRelatedOrganismsById()
   },
   methods: {
     dialogInsertObservation(user) {
@@ -471,6 +550,28 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.data = user;
       this.dialogDeleteUserFromFunction.functionUserId = user.userIdMongo;
       this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
+    },
+    getOrganismsList() {
+      const opt = {
+        route: "/desktop/adm/getOrganismsList",
+        body: {
+          searchString: this.organismSearch
+        }
+      };
+      useFetch(opt).then((r) => {
+        this.organismList = r.data.list;
+      });
+    },
+    getRelatedOrganismsById() {
+      const opt = {
+        route: "/desktop/adm/getRelatedOrganismsById",
+        body: {
+          organismId: this.$route.query.organismId
+        }
+      };
+      useFetch(opt).then((r) => {
+        this.organismList = r.data.list;
+      });
     },
     inactivateUserFromFunction() {
       if (
