@@ -6,7 +6,7 @@
         class="bg-accent"
         title="Tipos de organismos"
         :columns="columnsData"
-        :rows="organismList"
+        :rows="organismTypeList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsList"
+                @update:model-value="getOrganismsTypes"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsList"
+                @keyup="getOrganismsTypes"
                 outlined
                 dense
                 debounce="300"
@@ -109,12 +109,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsList();
+    this.getOrganismsTypes();
   },
   methods: {
     clkOpenOrganismTypeConfigDetail(e, r, i) {
-      const organismId = r.organismId;
-      this.$router.push("/admin/organismDetail?organismId=" + organismId);
+      const organismTypeId = r._id;
+      this.$router.push("/config/organismDetail?organismTypeId=" + organismTypeId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -128,11 +128,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsList();
+      // this.getOrganismsTypes();
     },
-    getOrganismsList() {
+    getOrganismsTypes() {
       const opt = {
-        route: "/desktop/adm/getOrganismsList",
+        route: "/desktop/config/getOrganismsTypes",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,
@@ -144,7 +144,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismList = r.data.list;
+        this.organismTypeList = r.data;
       });
     },
   },

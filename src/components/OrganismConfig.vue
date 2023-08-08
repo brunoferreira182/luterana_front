@@ -38,12 +38,23 @@
             class="text-h5"
           >
             Informações
+            <div class="text-caption">
+              Selecione o tipo de organismo que a configuração será aplicada
+            </div>
           </div>
+          <q-chip
+            v-for="org in organismConfigNamesOptions"
+            :key="org._id"
+            clickable
+            @click="chipClicked(org)"
+          >
+            <q-icon v-if="org.selected" name="check" size="sm" color="green-8" />
+            {{ org.organismTypeData.name }}
+          </q-chip>
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
-            label="Tipo de organismo"
-            hint="Informe o tipo de organismo que a configuração será aplicada para prosseguir"
+            label="Nome do tipo de organismo"
             v-model="organismConfigName"
           />
           <q-checkbox
@@ -51,7 +62,7 @@
             label="Vínculo obrigatório?"
           >
 
-          <div class="text-caption text-grey-7">Organismos desse tipo deverão estar vinculados a outro organismo para serem criados</div>
+            <div class="text-caption text-grey-7">Organismos desse tipo deverão estar vinculados a outro organismo para serem criados</div>
           </q-checkbox>
           <q-separator
           />
@@ -433,6 +444,7 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
+      organismConfigNamesOptions: [],
       organismConfigName: '',
       typeSelected: null,
       requiresLink: false,
@@ -517,6 +529,12 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    chipClicked(org) {
+      this.organismConfigNamesOptions.forEach(o => {
+        o.selected = o === org;
+      });
+      this.organismTypeId = org._id
+    },
     addField() {
       if (
         this.newField.label &&
@@ -589,6 +607,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
+          organismTypeId: this.organismTypeId,
           organismConfigName: this.organismConfigName,
           requiresLink: this.requiresLink,
           organismFields: this.organismFields,
@@ -597,7 +616,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.$q.notify("Organismo cadastrado com sucesso!");
+          this.$q.notify("Configuração de organismo cadastrado com sucesso!");
           this.multiple = "";
           // this.$router.push('/config/organismConfigurationList')
         } else {
