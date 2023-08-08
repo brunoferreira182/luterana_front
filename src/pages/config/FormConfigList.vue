@@ -4,16 +4,16 @@
       <q-table
         flat
         class="bg-accent"
-        title="Tipos de organismos"
+        title="Configurações de formulários"
         :columns="columnsData"
-        :rows="organismTypeList"
+        :rows="formConfigList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
-        no-data-label="Procure por um tipo de organismo para visualizar relacionados"
+        no-data-label="Procure por um formulário para visualizar relacionados"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenOrganismTypeConfigDetail"
+        @row-click="clkOpenFormConfigDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsTypes"
+                @update:model-value="getFormConfigList"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsTypes"
+                @keyup="getFormConfigList"
                 outlined
                 dense
                 debounce="300"
@@ -47,13 +47,13 @@
             </div>
             <div class="col">
               <q-btn
-                @click="$router.push('/config/createOrganismTypeConfig')"
+                @click="$router.push('/config/CreateFormConfig')"
                 color="primary"
                 unelevated
                 no-caps
                 rounded
                 dense
-                label="Criar tipo de organismo"
+                label="Nova configuração"
               />
             </div>
           </div>
@@ -89,11 +89,11 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "OrganismTypeConfigList",
+  name: "FormConfigList",
   data() {
     return {
-      columnsData: useTableColumns().organismTypeList,
-      organismTypeList: [],
+      columnsData: useTableColumns().formConfigList,
+      formConfigList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -109,12 +109,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsTypes();
+    this.getFormConfigList();
   },
   methods: {
-    clkOpenOrganismTypeConfigDetail(e, r, i) {
-      const organismTypeId = r._id;
-      this.$router.push("/config/organismTypeConfigDetail?organismTypeId=" + organismTypeId);
+    clkOpenFormConfigDetail(e, r, i) {
+      const formId = r._id;
+      this.$router.push("/config/formConfigDetail?formId=" + formId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -128,11 +128,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsTypes();
+      // this.getFormConfigList();
     },
-    getOrganismsTypes() {
+    getFormConfigList() {
       const opt = {
-        route: "/desktop/config/getOrganismsTypes",
+        route: "/desktop/config/getForms",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,
@@ -144,7 +144,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismTypeList = r.data;
+        this.formConfigList = r.data;
       });
     },
   },

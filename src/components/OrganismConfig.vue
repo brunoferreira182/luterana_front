@@ -298,7 +298,7 @@
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row">
                 <div
-                  v-for="(vision,i) in visionsList"
+                  v-for="(vision, i) in visionsList"
                   :key="i"
                   class="col-12 q-my-xs"
                 >

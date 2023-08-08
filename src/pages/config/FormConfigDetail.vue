@@ -3,27 +3,18 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          v-if="
-            $route.path === '/config/organismConfigDetail'
-          "
-          class="col-6 text-h5 text-capitalize">{{ formConfigName }}
-        </div>
-        <div 
-          v-if="
-            $route.path === '/config/CreateFormConfig'
-          "
-          class="col-6 text-h5 text-capitalize">Criar configuração de formulário
+          class="col-6 text-h5 text-capitalize">Formulário {{ formConfigName }}
         </div>
         <div class="col text-right">
           <q-btn
-            @click="createFormConfig"
+            @click="updateForm"
             rounded
             color="primary"
             unelevated
             no-caps
           >
             {{
-              $route.path === "/config/organismConfigDetail"
+              $route.path === "/config/formConfigDetail"
                 ? "Salvar"
                 : "Criar"
             }}
@@ -185,7 +176,7 @@
           </div>
           <div class="visions-field q-mt-none row">
             <div
-              v-for="(vision,i) in visionsList"
+              v-for="(vision, i) in visionsList"
               :key="i"
               class="col-12 q-my-xs"
             >
@@ -209,7 +200,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
-  name: "CreateFormConfig",
+  name: "FormConfigDetail",
   data() {
     return {
       fieldTypesOptions: [],
@@ -233,7 +224,7 @@ export default defineComponent({
             type: "date",
             label: "Data",
           },
-          hint: "Data de criação do organismo",
+          hint: "Data de criação do formulário",
           required: true,
           model: "data_de_criacao",
         },
@@ -247,15 +238,19 @@ export default defineComponent({
         multiple: false,
       },
       selectedType: "",
-      visionsList: []
+      visionsList: [],
+      checkedVisionsList: []
     };
   },
   mounted() {
     this.$q.loading.hide();
   },
-  beforeMount() {
-    this.getFieldTypes()
+  created(){
     this.getVisions()
+  },
+  beforeMount() {
+    // this.getFieldTypes()
+    this.getFormDetailById()
   },
   methods: {
     getVisions() {
@@ -275,13 +270,39 @@ export default defineComponent({
         });
       });
     },
-    createFormConfig() {
+    getFormDetailById() {
+      const formId = this.$route.query.formId
+      const opt = {
+        route: "/desktop/config/getFormDetailById",
+        body: {
+          formId: formId
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.formConfigName = r.data.formName
+          this.formFields = r.data.formFields
+          this.checkedVisionsList = r.data.visions
+          this.checkedVisionsList.forEach((check,i) => {
+            this.visionsList.forEach(vision => {
+              if (check.visionId === vision.visionId) {
+                this.visions[i] = vision 
+              }
+            })
+          })
+          
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    updateForm() {
       // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
       //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
       //   return
       // }
       const opt = {
-        route: "/desktop/config/createForm",
+        route: "/desktop/config/updateForm",
         body: {
           formName: this.formConfigName,
           formFields: this.formFields,

@@ -18,6 +18,29 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    formConfigList: [
+      {
+        name: "formName",
+        align: "left",
+        label: "Nome do formulário",
+        field: "formName",
+        sortable: true,
+      },
+      {
+        name: "data_de_criacao",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.createdAt.createdAtOnlyDate,
+        sortable: true,
+      },
+      {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: "status",
+        sortable: true,
+      },
+    ],
     organismTypeList: [
       {
         name: "nome",
