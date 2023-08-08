@@ -108,12 +108,12 @@
                   </q-item-section>
                   <q-item-section class="text-capitalize text-wrap" lines="2">
                     {{ user.userName }}
-                    <div class="text-caption text-grey-7">
+                    <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
                       Data Início:
                       {{ formatDate(user.dates.initialDate) }}
                     </div>
                     <div
-                      v-if="user.dataFim"
+                      v-if="user.dates && user.dates.finalDate"
                       class="text-caption text-grey-7"
                     >
                       Data Fim: {{ formatDate(user.dates.finalDate) }}
