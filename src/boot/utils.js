@@ -212,6 +212,11 @@ const useUtils = {
           route: "/config/visionsList",
           icon: "visibility",
         },
+        {
+          label: "Configuração de formulário",
+          route: "/config/formConfigList",
+          icon: "list",
+        },
       ],
       attach: [
         {

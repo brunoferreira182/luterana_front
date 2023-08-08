@@ -7,14 +7,12 @@
         </div>
         <div class="col text-right">
           <q-btn
-            v-if="tab !== 'permissions'"
             rounded
             no-caps
             unelevated
             color="primary"
-            :label="isSaving ? '' : 'Salvar'"
-            @click="salvar"
-            :disable="isSaving"
+            label="Salvar edição"
+            @click="clkUpdateUser"
           />
         </div>
       </div>
@@ -151,22 +149,6 @@
         </div>
         </q-tab-panel>
       </q-tab-panels>
-      <div class="row full-width justify-end footer q-pt-md">
-        <div class="col-6 text-right">
-          <!-- Botão Salvar -->
-        </div>
-      </div>
-      <!-- <div class="row q-mt-xl">
-      <q-btn
-        class="full-width"
-        rounded
-        no-caps
-        unelevated
-        color="primary"
-        label="Salvar"
-        @click="clkCreateUser"
-      />
-    </div> -->
     </q-page>
   </q-page-container>
 </template>
@@ -213,65 +195,15 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
-    onDrop(dropResult) {
-      this.userData.generalData.phones = this.applyDrag(
-        this.userData.generalData.phones,
-        dropResult,
-        "IASDOIAJDOIASKDOSP"
-      );
-    },
-    applyDrag(arr, dragResult) {
-      console.log(dragResult, " dragresult");
-      const { removedIndex, addedIndex, payload } = dragResult;
-
-      if (removedIndex === null && addedIndex === null) return arr;
-      const result = [...arr];
-      let itemToAdd = payload;
-
-      if (removedIndex !== null) {
-        itemToAdd = result.splice(removedIndex, 1)[0];
-      }
-      if (addedIndex !== null) {
-        result.splice(addedIndex, 0, itemToAdd);
-      }
-      return result;
-    },
-    getGhostParent() {
-      return document.body;
-    },
-    onDropReady(dropResult) {
-      console.log("drop ready", dropResult);
-    },
     salvar() {
-      this.isSaving = true; // Desabilita o botão "Salvar"
-      // Lógica para salvar os dados
-
-      // Simulando um tempo de espera antes de reabilitar o botão e parar a animação de carregamento
-      this.clkCreateUser();
+      this.isSaving = true; 
+      this.clkUpdateUser();
       setTimeout(() => {
-        this.isSaving = false; // Reabilita o botão "Salvar"
-      }, 1000); // Tempo de espera em milissegundos
+        this.isSaving = false; 
+      }, 1000); 
     },
-    addPhone() {
-      this.userData.generalData.phones.push({ phone: this.newPhone });
-      this.newPhone = "";
-    },
-    addEmail() {
-      this.userData.generalData.email.push({ email: this.newEmail });
-      this.newEmail = "";
-    },
-    addAddress() {
-      this.userData.generalData.address.push({ address: this.newAddress });
-      this.newAddress = "";
-    },
-    removePhone(i) {
-      this.userData.generalData.phones.splice(i, 1);
-    },
-    removeAddress(i) {
-      this.userData.generalData.address.splice(i, 1);
-    },
-    removeEmail(i) {
-      this.userData.generalData.email.splice(i, 1);
+    clkUpdateUser(){
+      this.$q.notify('Edição não implementada')
     },
     getUserDetailById() {
       const userId = this.$route.query.userId;

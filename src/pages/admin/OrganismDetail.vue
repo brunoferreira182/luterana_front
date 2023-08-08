@@ -115,12 +115,12 @@
                   </q-item-section>
                   <q-item-section class="text-capitalize text-wrap" lines="2">
                     {{ user.userName }}
-                    <div class="text-caption text-grey-7">
+                    <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
                       Data Início:
                       {{ formatDate(user.dates.initialDate) }}
                     </div>
                     <div
-                      v-if="user.dataFim"
+                      v-if="user.dates && user.dates.finalDate"
                       class="text-caption text-grey-7"
                     >
                       Data Fim: {{ formatDate(user.dates.finalDate) }}
@@ -250,16 +250,46 @@
                     :key="obs"
                   >
                     
-                    <q-item-section>
-                      <q-item-label> {{ obs.createdBy.name }}: {{ obs.obsText }}</q-item-label>
+                    <!-- <q-item-section avatar>
+                      <q-avatar rounded>
+                        <img src="https://cdn.quasar.dev/img/avatar.png" />
+                      </q-avatar>
                     </q-item-section>
-                    <q-item-section align="end" class="text-caption">
-                      <q-item-label>
+                    <q-item-section class="text-capitalize text-bold text-wrap" lines="2">
+                      {{ obs.createdBy.name }}
+                      <div class="text-caption text-grey-7">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta unde quasi corporis quas voluptate voluptatem, minima similique veniam deleniti cumque, hic quisquam iure molestiae? Culpa fugiat nulla odio qui consequuntur.
+                      </div>
+                    </q-item-section>
+                    <q-item-section side>
+                      <div class="text-grey-8 q-gutter-xs text-right" >
                         Publicado em
-                      </q-item-label>
-                      <q-item-label>
+                      </div>
+                      <div class="text-caption">
                         {{ obs.createdAt.createdAtOnlyDate }}
-                      </q-item-label>
+                      </div>
+                    </q-item-section> -->
+                    <q-item-section class="text-wrap">
+                      <div class="row justify-end">
+                        
+                        <div class="col text-capitalize text-bold">
+                          <q-avatar size="lg" rounded >
+                            <img src="https://cdn.quasar.dev/img/avatar.png" />
+                          </q-avatar>
+                          {{ obs.createdBy.name }}
+                        </div>
+                        <div class="col text-right" >
+                          <div>
+                            Publicado em
+                          </div>
+                          <div class="text-caption">
+                            {{ obs.createdAt.createdAtOnlyDate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        {{ obs.obsText }}
+                      </div>
                     </q-item-section>
                   </q-item>
                 </q-card-section>
