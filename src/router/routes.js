@@ -35,11 +35,22 @@ const routes = [
         path: "/admin/OrganismStructureDetail",
         component: () => import("pages/admin/OrganismStructureDetail.vue"),
       },
-
+      
+      //configurations// tipos de organismos
+      { path: "/config", redirect: "/config/OrganismTypeConfigList" },
+      {
+        path: "/config/organismTypeConfigList",
+        component: () => import("pages/config/OrganismTypeConfigList.vue"),
+      },
+      {
+        path: "/config/createOrganismTypeConfig",
+        component: () => import("pages/config/CreateOrganismTypeConfig.vue"),
+      },
+      {
+        path: "/config/organismTypeConfigDetail",
+        component: () => import("pages/config/organismTypeConfigDetail.vue"),
+      },
       //configurations//organismos
-      
-      { path: "/config", redirect: "/config/OrganismConfigurationList" },
-      
       {
         path: "/config/organismConfigurationList",
         component: () => import("pages/config/OrganismConfigurationList.vue"),
@@ -48,11 +59,6 @@ const routes = [
         path: "/config/createOrganismsConfig",
         component: () => import("pages/config/CreateOrganismsConfig.vue"),
       },
-      {
-        path: "/config/createOrganismsConfig",
-        component: () => import("pages/config/CreateOrganismsConfig.vue"),
-      },
-    
       {
         path: "/config/organismConfigDetail",
         component: () => import("pages/config/OrganismConfigDetail.vue"),

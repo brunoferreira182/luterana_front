@@ -18,6 +18,22 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    organismTypeList: [
+      {
+        name: "nome",
+        align: "left",
+        label: "Nome do tipo de organismo",
+        field: "nome",
+        sortable: true,
+      },
+      {
+        name: "data_de_criacao",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.data_de_criacao.dateLocale,
+        sortable: true,
+      },
+    ],
     functionsList: [
       {
         name: "name",

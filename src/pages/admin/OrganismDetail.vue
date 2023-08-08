@@ -100,7 +100,6 @@
                   :key="user"
                   style="border-radius: 0.5rem; margin-top: 8px;"
                   class="bg-white"
-                  transition="user-bounce"
                 >
                   <q-item-section avatar>
                     <q-avatar rounded>
@@ -245,15 +244,15 @@
                   >
                     
                     <q-item-section>
-                      {{ obs.obsText }}
+                      <q-item-label> {{ obs.createdBy.name }}: {{ obs.obsText }}</q-item-label>
                     </q-item-section>
                     <q-item-section align="end" class="text-caption">
-                      <div>
+                      <q-item-label>
                         Publicado em
-                      </div>
-                      <div>
+                      </q-item-label>
+                      <q-item-label>
                         {{ obs.createdAt.createdAtOnlyDate }}
-                      </div>
+                      </q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-card-section>
