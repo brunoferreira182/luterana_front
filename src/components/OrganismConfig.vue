@@ -37,7 +37,7 @@
           <div
             class="text-h5"
           >
-            Informações
+            Informações 
             <div class="text-caption">
               Selecione o tipo de organismo que a configuração será aplicada
             </div>
@@ -54,9 +54,12 @@
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
-            label="Nome do tipo de organismo"
+            label="Nome da configuração"
             v-model="organismConfigName"
           />
+          <div class="text-caption no-margin q-pl-md q-py-sm">
+            Informe qual será o nome da configuração do organismo
+          </div>
           <q-checkbox
             v-model="requiresLink"
             label="Vínculo obrigatório?"
@@ -203,7 +206,7 @@
             <div
               class="text-h5"
             >
-              Funções
+              Funções 
             </div>
             <q-btn
               @click="newFunctionDialog = true"
@@ -215,6 +218,7 @@
               no-caps
               icon-right="add"
             />
+            
           </div>
           <q-item
             style="border-radius: 1rem"
@@ -446,6 +450,7 @@ export default defineComponent({
       fieldTypesOptions: [],
       organismConfigNamesOptions: [],
       organismConfigName: '',
+      organismTypeId: '',
       typeSelected: null,
       requiresLink: false,
       valueSelected: "",
@@ -604,6 +609,10 @@ export default defineComponent({
     },
 
     createOrganismsConfig() {
+      if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
+        this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
+        return
+      }
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
