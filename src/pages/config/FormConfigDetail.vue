@@ -249,7 +249,7 @@ export default defineComponent({
     this.getVisions()
   },
   beforeMount() {
-    // this.getFieldTypes()
+    this.getFieldTypes()
     this.getFormDetailById()
   },
   methods: {
@@ -297,6 +297,7 @@ export default defineComponent({
       });
     },
     updateForm() {
+      const formId = this.$route.query.formId
       // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
       //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
       //   return
@@ -304,6 +305,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/updateForm",
         body: {
+          formId: formId,
           formName: this.formConfigName,
           formFields: this.formFields,
           visions: this.visions
