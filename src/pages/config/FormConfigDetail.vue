@@ -313,9 +313,9 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.$q.notify("Configuração de formulário criada com sucesso!");
+          this.$q.notify("Configuração de formulário atualizado com sucesso!");
           this.multiple = "";
-          // this.$router.push('/config/organismConfigurationList')
+          this.$router.push('/config/formConfigList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
