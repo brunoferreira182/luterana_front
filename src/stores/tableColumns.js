@@ -146,7 +146,7 @@ export const useTableColumns = defineStore("tableColumns", {
       {
         name: "userId",
         align: "left",
-        label: "Título",
+        label: "Visão",
         field: (row) => row.visionInfo.name,
         sortable: true,
       },

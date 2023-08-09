@@ -4,16 +4,16 @@
       <q-table
         flat
         class="bg-accent"
-        title="Títulos"
+        title="Visões"
         :columns="columnsData"
-        :rows="organismConfigList"
+        :rows="visionsConfigList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado foi encontrado"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenTitleDetail"
+        @row-click="clkOpenVisionDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         v-model:pagination="pagination"
@@ -53,9 +53,8 @@
                 rounded
                 no-caps
                 icon="add"
-              >
-                Título
-              </q-btn>
+                label="Nova visão"
+              />
             </div>
           </div>
         </template>
@@ -94,7 +93,7 @@ export default defineComponent({
   data() {
     return {
       columnsData: useTableColumns().visionsConfigList,
-      organismConfigList: [],
+      visionsConfigList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Ativos",
@@ -113,9 +112,9 @@ export default defineComponent({
     this.getVisionsConfigs();
   },
   methods: {
-    clkOpenTitleDetail(e, r, i) {
-      const _id = r._id;
-      this.$router.push("/config/visionDetail?visionId=" + _id);
+    clkOpenVisionDetail(e, r, i) {
+      const visionId = r._id;
+      this.$router.push("/config/visionDetail?visionId=" + visionId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -146,7 +145,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismConfigList = r.data;
+        this.visionsConfigList = r.data;
       });
     },
   },

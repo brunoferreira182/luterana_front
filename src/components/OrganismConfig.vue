@@ -266,7 +266,7 @@
         </div>
       </div>
       <q-dialog v-model="newFunctionDialog" @hide="functionDialogClosed">
-        <q-card style="border-radius: 1rem; width: 400px">
+        <q-card style="border-radius: 1rem; width: 586px">
           <q-card-section>
             <div class="text-h6 text-center">Nova função</div>
           </q-card-section>
@@ -297,12 +297,54 @@
               />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row">
-                <div
-                  v-for="(vision, i) in visionsList"
-                  :key="i"
+                <!-- <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
+                  <div class="text-subtitle1">{{ vision.name }}</div>
+                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
+                  <div v-for="(permission, permissionIndex) in vision.permissions"
+                    :key="permissionIndex"
+                  >
+                    <q-chip
+                      clickable
+                      @click="selectedPermission(org)"
+                    >
+                      <q-icon v-if="org.selected" name="check" size="sm" color="green-8" />
+                      {{ org.organismTypeData.name }}
+                    </q-chip>
+                    <q-radio
+                      :label="permission.label"
+                      :val="permission.name"
+                      @update:model-value="handleCheckboxInput(vision, permission)"
+                      v-model="selectedPermissions[visionIndex]"
+                    />
+                  </div>
+                </div> -->
+                <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
+                  <div class="text-subtitle1">{{ vision.name }}</div>
+                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
+                  <div v-for="permission in vision.permissions"
+                    :key="permission.name"
+                  >
+                    <q-chip
+                      clickable
+                      @click="handlePermissions(vision, permission)"
+                    >
+                      <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
+                        {{ permission.short }}
+                      </q-chip>
+                    <!-- <q-radio
+                      :label="permission.label"
+                      :val="permission.name"
+                      @update:model-value="handleCheckboxInput(vision, permission)"
+                      v-model="selectedPermissions[visionIndex]"
+                    /> -->
+                  </div>
+                </div>
+                <!-- <div
+                  v-for="vision in visionsList"
+                  :key="vision"
                   class="col-12 q-my-xs"
                 >
-                  <q-checkbox 
+                  <q-checkbox
                     :label="vision.name"
                     :val="vision"
                     v-model="newFunction.visions"
@@ -311,7 +353,7 @@
                       {{ vision.description }}
                     </div>
                   </q-checkbox>
-                </div>
+                </div> -->
               </div>
               <q-checkbox
                 class="q-px-sm"
@@ -448,6 +490,7 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
+      selectedPermissions: [],
       organismConfigNamesOptions: [],
       organismConfigName: '',
       organismTypeId: '',
@@ -516,7 +559,8 @@ export default defineComponent({
         multiple: false,
       },
       selectedType: "",
-      visionsList: []
+      visionsList: [],
+      permissionName: '',
     };
   },
   mounted() {
@@ -528,12 +572,56 @@ export default defineComponent({
     } else {
       this.getOrganismsTypes();
     }
-    
     this.getTitleConfigsList();
     this.getFieldTypes();
     this.getVisions()
   },
   methods: {
+    handlePermissions(vision, permission){
+      console.log(vision, 'DKASOPDKO VISISISIS')
+      vision.permissions.forEach(p => {
+        p.selected = p === permission;
+      });
+      this.permissionName = permission.name
+      console.log(this.permissionName, 'NAMENAME VISISISIS')
+      this.newFunction.visions.push({
+          name: vision.name,
+          description: vision.description,
+          visionId: visionId,
+          permission: this.permissionName
+        });
+      }
+    },
+    // handleCheckboxInput(vision, permission) {
+    //   console.log(permission, 'NEAMEMEAEKEMKAEM');
+    //   const visionId = vision.visionId; // Create a unique identifier
+    //   const visionIndex = this.newFunction.visions.findIndex(
+    //     v => v.visionId === visionId
+    //   );
+    //   console.log(visionIndex , 'oldosl');
+    //   if (visionIndex !== -1) {
+    //     this.newFunction.visions[visionIndex].permission = permission.name;
+    //   } else {
+    //     this.newFunction.visions.push({
+    //       name: vision.name,
+    //       description: vision.description,
+    //       visionId: visionId,
+    //       permission: permission.name
+    //     });
+    //   }
+    // },
+    // handleCheckboxInput(vision, visionIndex, permission, permissionIndex) {
+    //   this.newFunction.visions.push({
+    //     name: vision.name,
+    //     description: vision.description,
+    //     visionId: vision.visionId,
+    //     permission: permission.name
+    //   })
+    //   // console.log(vision, 'vision kkkkkk')
+    //   // console.log(visionIndex, 'vision INDEX jjjjjj')
+    //   // console.log(permission, 'permission iiiii')
+    //   // console.log(permissionIndex, 'permission INDEX lllll')
+    // },
     chipClicked(org) {
       this.organismConfigNamesOptions.forEach(o => {
         o.selected = o === org;
@@ -782,7 +870,8 @@ export default defineComponent({
           return {
             name: vision.visionInfo.name,
             visionId: vision._id, 
-            description: vision.visionInfo.description
+            description: vision.visionInfo.description,
+            permissions: vision.visionInfo.permissions
           }
         });
       });
