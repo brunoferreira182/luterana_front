@@ -296,64 +296,21 @@
                 v-model="newFunction.requiredTitle"
               />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
-              <div class="visions-field q-mt-none row">
-                <!-- <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
-                  <div class="text-subtitle1">{{ vision.name }}</div>
-                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
-                  <div v-for="(permission, permissionIndex) in vision.permissions"
-                    :key="permissionIndex"
-                  >
-                    <q-chip
-                      clickable
-                      @click="selectedPermission(org)"
-                    >
-                      <q-icon v-if="org.selected" name="check" size="sm" color="green-8" />
-                      {{ org.organismTypeData.name }}
-                    </q-chip>
-                    <q-radio
-                      :label="permission.label"
-                      :val="permission.name"
-                      @update:model-value="handleCheckboxInput(vision, permission)"
-                      v-model="selectedPermissions[visionIndex]"
-                    />
-                  </div>
-                </div> -->
+              <div class="visions-field q-mt-none row ">
                 <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
                   <div class="text-subtitle1">{{ vision.name }}</div>
                   <div class="text-caption text-grey-7">{{ vision.description }}</div>
-                  <div v-for="permission in vision.permissions"
-                    :key="permission.name"
+                  <q-chip
+                    v-for="permission in vision.permissions" :key="permission.name"
+                    :class="{ 'selected-chip': permission.selected }"
+                    clickable
+                    @click="handlePermissions(vision, permission)"
                   >
-                    <q-chip
-                      clickable
-                      @click="handlePermissions(vision, permission)"
-                    >
-                      <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
-                        {{ permission.short }}
-                      </q-chip>
-                    <!-- <q-radio
-                      :label="permission.label"
-                      :val="permission.name"
-                      @update:model-value="handleCheckboxInput(vision, permission)"
-                      v-model="selectedPermissions[visionIndex]"
-                    /> -->
-                  </div>
+                    <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
+                    {{ permission.short }}
+                    <q-tooltip>{{ permission.label }}</q-tooltip>
+                  </q-chip>
                 </div>
-                <!-- <div
-                  v-for="vision in visionsList"
-                  :key="vision"
-                  class="col-12 q-my-xs"
-                >
-                  <q-checkbox
-                    :label="vision.name"
-                    :val="vision"
-                    v-model="newFunction.visions"
-                  >
-                    <div class="text-caption text-grey-7">
-                      {{ vision.description }}
-                    </div>
-                  </q-checkbox>
-                </div> -->
               </div>
               <q-checkbox
                 class="q-px-sm"
@@ -382,7 +339,7 @@
         </q-card>
       </q-dialog>
       <q-dialog v-model="editFunctionDialog.open">
-        <q-card style="border-radius: 1rem; width: 400px">
+        <q-card style="border-radius: 1rem; width:586px">
           <q-card-section>
             <div class="text-h6 text-center">Editar função</div>
           </q-card-section>
@@ -412,21 +369,20 @@
                 v-model="editFunctionDialog.function.requiredTitle"
               />
               <div class="text-subtitle1 q-px-xs">Visões:</div>
-              <div class="visions-field q-mt-none row">
-                <div
-                  v-for="(vision,i) in visionsList"
-                  :key="i"
-                  class="col-12 q-my-xs"
-                >
-                  <q-checkbox 
-                    :label="vision.name"
-                    :val="vision"
-                    v-model="editFunctionDialog.function.visions"
+              <div class="visions-field q-mt-none row ">
+                <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
+                  <div class="text-subtitle1">{{ vision.name }}</div>
+                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
+                  <q-chip
+                    v-for="permission in vision.permissions" :key="permission.name"
+                    :class="{ 'selected-chip': permission.selected }"
+                    clickable
+                    @click="handlePermissions(vision, permission)"
                   >
-                    <div class="text-caption text-grey-7">
-                      {{ vision.description }}
-                    </div>
-                  </q-checkbox>
+                    <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
+                    {{ permission.short }}
+                    <q-tooltip>{{ permission.label }}</q-tooltip>
+                  </q-chip>
                 </div>
               </div>
               <q-checkbox
@@ -498,6 +454,7 @@ export default defineComponent({
       requiresLink: false,
       valueSelected: "",
       tab: "createConfig",
+      
       newFunctionDialog: false,
       newFunction: {
         name: '',
@@ -577,51 +534,44 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
-    handlePermissions(vision, permission){
-      console.log(vision, 'DKASOPDKO VISISISIS')
-      vision.permissions.forEach(p => {
-        p.selected = p === permission;
-      });
-      this.permissionName = permission.name
-      console.log(this.permissionName, 'NAMENAME VISISISIS')
-      this.newFunction.visions.push({
+    handlePermissions(vision, permission) {
+      const visionId = vision.visionId;
+      
+      const existingIndex = this.newFunction.visions.findIndex(
+        item => item.visionId === visionId
+      );
+      
+      if (existingIndex !== -1) {
+        const currentPermission = this.newFunction.visions[existingIndex].permission;
+        
+        if (currentPermission === permission.name) {
+          this.newFunction.visions.splice(existingIndex, 1);
+          permission.selected = false;
+        } else {
+          this.newFunction.visions[existingIndex].permission = permission.name;
+          permission.selected = true;
+          const prevPermission = vision.permissions.find(p => p !== permission && p.selected);
+          if (prevPermission) {
+            prevPermission.selected = false;
+            const prevIndex = this.newFunction.visions.findIndex(
+              item => item.visionId === visionId && item.permission === prevPermission.name
+            );
+            if (prevIndex !== -1) {
+              this.newFunction.visions.splice(prevIndex, 1);
+            }
+          }
+        }
+      } else {
+        vision.permissions.forEach(p => {
+          p.selected = p === permission;
+        });
+        this.newFunction.visions.push({
           name: vision.name,
-          description: vision.description,
           visionId: visionId,
-          permission: this.permissionName
+          permission: permission.name
         });
       }
     },
-    // handleCheckboxInput(vision, permission) {
-    //   console.log(permission, 'NEAMEMEAEKEMKAEM');
-    //   const visionId = vision.visionId; // Create a unique identifier
-    //   const visionIndex = this.newFunction.visions.findIndex(
-    //     v => v.visionId === visionId
-    //   );
-    //   console.log(visionIndex , 'oldosl');
-    //   if (visionIndex !== -1) {
-    //     this.newFunction.visions[visionIndex].permission = permission.name;
-    //   } else {
-    //     this.newFunction.visions.push({
-    //       name: vision.name,
-    //       description: vision.description,
-    //       visionId: visionId,
-    //       permission: permission.name
-    //     });
-    //   }
-    // },
-    // handleCheckboxInput(vision, visionIndex, permission, permissionIndex) {
-    //   this.newFunction.visions.push({
-    //     name: vision.name,
-    //     description: vision.description,
-    //     visionId: vision.visionId,
-    //     permission: permission.name
-    //   })
-    //   // console.log(vision, 'vision kkkkkk')
-    //   // console.log(visionIndex, 'vision INDEX jjjjjj')
-    //   // console.log(permission, 'permission iiiii')
-    //   // console.log(permissionIndex, 'permission INDEX lllll')
-    // },
     chipClicked(org) {
       this.organismConfigNamesOptions.forEach(o => {
         o.selected = o === org;
@@ -715,6 +665,7 @@ export default defineComponent({
         if (!r.error) {
           this.$q.notify("Configuração de organismo cadastrado com sucesso!");
           this.multiple = "";
+          this.newFunction.visions = []
           // this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
@@ -772,14 +723,14 @@ export default defineComponent({
     addFunction () {
       if (this.newFunction.name && this.newFunction.description) {
         if (this.$route.path === '/config/organismConfigDetail') {
-          this.createNewFunction()
+          this.createOrganismFunctionConfig()
         } else {
           this.functions.push({...this.newFunction})
         }
         this.newFunctionDialog = false
       } else this.$q.notify('preencha os campos obrigatórios!')
     },
-    createNewFunction() {
+    createOrganismFunctionConfig() {
       const _id = this.$route.query._id;
       const opt = {
         route: "/desktop/config/createOrganismFunctionConfig",
@@ -807,6 +758,7 @@ export default defineComponent({
       }
     },
     editFunction (item) {
+      this.editFunctionDialog.function = item
       this.editFunctionDialog.open = true
       this.editFunctionDialog.function = item
       this.editFunctionDialog.function.visions.forEach((dialogVision,i) => {
@@ -814,7 +766,8 @@ export default defineComponent({
         this.visionsList.forEach(vision => {
           console.log('2q')
           if (dialogVision.visionId === vision.visionId) {
-            this.editFunctionDialog.function.visions[i] = vision 
+            console.log(dialogVision, 'DIALOGVISION kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+            this.editFunctionDialog.function.visions[i] = dialogVision 
             console.log('entrou aquii')
           }
         })
@@ -886,5 +839,9 @@ export default defineComponent({
   border-radius: 0.2rem;
   max-height: 300px;
   overflow-y: auto;
+}
+.selected-chip {
+  background-color: #4caf50; /* Cor de fundo para chips selecionados */
+  color: white; /* Cor do texto para chips selecionados */
 }
 </style>

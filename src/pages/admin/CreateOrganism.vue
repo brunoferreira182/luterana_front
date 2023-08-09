@@ -533,16 +533,13 @@ export default defineComponent({
     },
     assignUserToFunction() {
       const selectedFuncIndex = this.selectedFuncIndex;
-      console.log(selectedFuncIndex, 'OPKASPODKOSAP selectedFuncIndex');
       if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
       }
-
       if (!this.functions[selectedFuncIndex].users) {
         this.functions[selectedFuncIndex].users = [];
       }
-
       this.functions[selectedFuncIndex].users.push({
         organismFunctionConfigId: this.selectedFunc.organismFunctionId,
         userName: this.userSelected.userName,
