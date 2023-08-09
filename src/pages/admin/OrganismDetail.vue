@@ -564,7 +564,7 @@ export default defineComponent({
     },
     getRelatedOrganismsById() {
       const opt = {
-        route: "/desktop/adm/getRelatedOrganismsById",
+        route: "/desktop/adm/getParentOrganismsById",
         body: {
           organismId: this.$route.query.organismId
         }
