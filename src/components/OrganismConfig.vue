@@ -251,7 +251,11 @@
                   dense
                   size="sm"
                   @click="editFunction(item)"
-                />
+                >
+                  <q-tooltip>
+                    Editar função
+                  </q-tooltip>
+                </q-btn>
                 <q-btn
                   flat
                   dense
@@ -259,7 +263,11 @@
                   icon="delete"
                   size="sm"
                   @click="deleteFunction(item)"
-                />
+                >
+                  <q-tooltip>
+                    Deletar função
+                  </q-tooltip>
+                </q-btn>
               </div>
             </q-item-section>
           </q-item>
@@ -369,22 +377,39 @@
                 v-model="editFunctionDialog.function.requiredTitle"
               />
               <div class="text-subtitle1 q-px-xs">Visões:</div>
-              <div class="visions-field q-mt-none row ">
-                <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
+              <div class="visions-field q-mt-none row">
+                <div v-for="(vision, visionIndex) in editFunctionDialog.function.visions" :key="visionIndex" class="col-6 q-my-md">
+                  <div class="text-subtitle1">{{ vision.name }}</div>
+                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
+                  <q-chip
+                    v-for="permission in vision.permissions"
+                    :key="permission.name"
+                    :class="{ 'selected-chip': permission.name === vision.selectedPermission }"
+                    clickable
+                    @click="handlePermissionOnEdit(vision, permission)"
+                  >
+                    <q-icon v-if="permission.name === vision.selectedPermission" name="check" size="sm" color="green-8" />
+                    {{ permission.short }}
+                    <q-tooltip>{{ permission.label }}</q-tooltip>
+                  </q-chip>
+                </div>
+              </div>
+              <!-- <div class="visions-field q-mt-none row ">
+                <div v-for="(vision, visionIndex) in editFunctionDialog.function.visions" :key="visionIndex" class="col-6 q-my-md">
                   <div class="text-subtitle1">{{ vision.name }}</div>
                   <div class="text-caption text-grey-7">{{ vision.description }}</div>
                   <q-chip
                     v-for="permission in vision.permissions" :key="permission.name"
                     :class="{ 'selected-chip': permission.selected }"
                     clickable
-                    @click="handlePermissions(vision, permission)"
+                    @click="handlePermissionOnEdit(vision, permission)"
                   >
                     <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
                     {{ permission.short }}
                     <q-tooltip>{{ permission.label }}</q-tooltip>
                   </q-chip>
                 </div>
-              </div>
+              </div> -->
               <q-checkbox
                 class="q-px-sm"
                 label="Preenchimento da função é obrigatório?"
@@ -398,15 +423,25 @@
               label="Depois"
               no-caps
               color="primary"
-              @click="newFunctionDialog = false"
+              @click="editFunctionDialog.open = false"
             />
             <q-btn
+              v-if="$route.query === '/config/organismConfigDetail'"
               unelevated
               rounded
               label="Confirmar"
               no-caps
               color="primary"
               @click="updateFunction"
+            />
+            <q-btn
+              v-else
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="editFunctionDialog.open = false"
             />
           </q-card-actions>
         </q-card>
@@ -534,6 +569,35 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    handlePermissionOnEdit(vision, permission) {
+      const visionId = vision.visionId;
+      
+      // Encontrar o objeto vision correspondente no array
+      const visionIndex = this.editFunctionDialog.function.visions.findIndex(
+        item => item.visionId === visionId
+      );
+      
+      if (visionIndex !== -1) {
+        const selectedPermission = this.editFunctionDialog.function.visions[visionIndex].selectedPermission;
+
+        if (selectedPermission === permission.name) {
+          // Deselecionar o chip atual
+          this.editFunctionDialog.function.visions[visionIndex].selectedPermission = null;
+        } else {
+          // Deselecionar o chip anteriormente selecionado (se houver)
+          if (selectedPermission) {
+            const prevPermission = vision.permissions.find(p => p.name === selectedPermission);
+            if (prevPermission) {
+              prevPermission.selected = false;
+            }
+          }
+
+          // Selecionar o novo chip
+          this.editFunctionDialog.function.visions[visionIndex].selectedPermission = permission.name;
+          permission.selected = true;
+        }
+      }
+    },
     handlePermissions(vision, permission) {
       const visionId = vision.visionId;
       
@@ -568,7 +632,8 @@ export default defineComponent({
         this.newFunction.visions.push({
           name: vision.name,
           visionId: visionId,
-          permission: permission.name
+          selectedPermission: permission.name,
+          permissions: this.visionsList[0].permissions,
         });
       }
     },
@@ -647,10 +712,17 @@ export default defineComponent({
     },
 
     createOrganismsConfig() {
-      if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
+      if (this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0) {
         this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
         return
       }
+      
+      // Remover o array "permissions" de cada objeto dentro de "visions"
+      this.functions.forEach((func) => {
+        func.visions.forEach((vision) => {
+          delete vision.permissions;
+        });
+      });
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
@@ -661,17 +733,26 @@ export default defineComponent({
           functions: this.functions
         },
       };
+      
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify("Configuração de organismo cadastrado com sucesso!");
           this.multiple = "";
-          this.newFunction.visions = []
+          this.newFunction.visions = [];
+          this.organismConfigName = ''
+          this.editFunctionDialog.function = {
+            name: '',
+            description: '',
+            requiredTitle: null,
+            isRequired: true,
+            visions: []
+          } 
           // this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
-    },
+},
     updateOrganismConfig() {
       const _id = this.$route.query._id;
       const opt = {
