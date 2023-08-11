@@ -10,7 +10,7 @@
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado foi encontrado"
+        no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="clkOpenTitleDetail"

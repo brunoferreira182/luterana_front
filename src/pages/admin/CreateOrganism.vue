@@ -30,7 +30,7 @@
             :options="organismConfigOptions"
             @update:modelValue="getOrganismConfigById"
           />
-          <q-separator class="q-ma-md" />
+          <q-separator class="q-ma-md" v-if="organismList.length"/>
           <div v-if="organismList.length">
             <q-btn
               label="Gerenciar Vínculos"

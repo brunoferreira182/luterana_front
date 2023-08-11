@@ -486,6 +486,7 @@ export default defineComponent({
       functions: [],
       organismList: [],
       organismLinks: [],
+      parent: [],
       organismSearch: '',
       dialogLinks: false
     };
@@ -496,7 +497,7 @@ export default defineComponent({
   beforeMount(){
     this.getOrganismDetailById();
     this.getOrganismsList()
-    this.getRelatedOrganismsById()
+    // this.getParentOrganismsById()
   },
   methods: {
     dialogInsertObservation(user) {
@@ -562,7 +563,7 @@ export default defineComponent({
         this.organismList = r.data.list;
       });
     },
-    getRelatedOrganismsById() {
+    getParentOrganismsById() {
       const opt = {
         route: "/desktop/adm/getParentOrganismsById",
         body: {
@@ -570,7 +571,7 @@ export default defineComponent({
         }
       };
       useFetch(opt).then((r) => {
-        this.organismList = r.data.list;
+        this.parent = r.data;
       });
     },
     inactivateUserFromFunction() {

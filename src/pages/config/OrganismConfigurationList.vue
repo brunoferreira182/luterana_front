@@ -10,7 +10,7 @@
         virtual-scroll
         row-key="_id"
         rows-per-page-label="Registros por página"
-        no-data-label="Faça uma pesquisa para visualizar relacionados"
+        no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="clkOpenOrganismDetail"

@@ -318,8 +318,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify("Configuração de formulário criada com sucesso!");
-          this.multiple = "";
-          // this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
