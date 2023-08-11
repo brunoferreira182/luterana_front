@@ -38,7 +38,7 @@
             class="text-h5"
           >
             Informações 
-            <div class="text-caption">
+            <div class="text-caption" v-if="$route.query === '/config/organismConfigDetail'">
               Selecione o tipo de organismo que a configuração será aplicada
             </div>
           </div>
@@ -571,15 +571,12 @@ export default defineComponent({
   methods: {
     handlePermissionOnEdit(vision, permission) {
       const visionId = vision.visionId;
-      
       // Encontrar o objeto vision correspondente no array
       const visionIndex = this.editFunctionDialog.function.visions.findIndex(
         item => item.visionId === visionId
       );
-      
       if (visionIndex !== -1) {
         const selectedPermission = this.editFunctionDialog.function.visions[visionIndex].selectedPermission;
-
         if (selectedPermission === permission.name) {
           // Deselecionar o chip atual
           this.editFunctionDialog.function.visions[visionIndex].selectedPermission = null;
@@ -591,7 +588,6 @@ export default defineComponent({
               prevPermission.selected = false;
             }
           }
-
           // Selecionar o novo chip
           this.editFunctionDialog.function.visions[visionIndex].selectedPermission = permission.name;
           permission.selected = true;
@@ -600,14 +596,11 @@ export default defineComponent({
     },
     handlePermissions(vision, permission) {
       const visionId = vision.visionId;
-      
       const existingIndex = this.newFunction.visions.findIndex(
         item => item.visionId === visionId
       );
-      
       if (existingIndex !== -1) {
         const currentPermission = this.newFunction.visions[existingIndex].permission;
-        
         if (currentPermission === permission.name) {
           this.newFunction.visions.splice(existingIndex, 1);
           permission.selected = false;
@@ -716,8 +709,6 @@ export default defineComponent({
         this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
         return
       }
-      
-      // Remover o array "permissions" de cada objeto dentro de "visions"
       this.functions.forEach((func) => {
         func.visions.forEach((vision) => {
           delete vision.permissions;
@@ -733,26 +724,27 @@ export default defineComponent({
           functions: this.functions
         },
       };
-      
+      console.log(opt)
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (!r.error) {
           this.$q.notify("Configuração de organismo cadastrado com sucesso!");
           this.multiple = "";
           this.newFunction.visions = [];
           this.organismConfigName = ''
-          this.editFunctionDialog.function = {
-            name: '',
-            description: '',
-            requiredTitle: null,
-            isRequired: true,
-            visions: []
-          } 
+          this.functions = []
+          this.getOrganismsTypes()
           // this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
-},
+    },
+    clkOpenEditFunction(){
+      this.editFunctionDialog.open = true
+      this.getVisions()
+    },
     updateOrganismConfig() {
       const _id = this.$route.query._id;
       const opt = {
@@ -805,8 +797,10 @@ export default defineComponent({
       if (this.newFunction.name && this.newFunction.description) {
         if (this.$route.path === '/config/organismConfigDetail') {
           this.createOrganismFunctionConfig()
+          this.getVisions()
         } else {
           this.functions.push({...this.newFunction})
+          this.getVisions()
         }
         this.newFunctionDialog = false
       } else this.$q.notify('preencha os campos obrigatórios!')

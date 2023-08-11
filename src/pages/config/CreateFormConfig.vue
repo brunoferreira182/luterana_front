@@ -39,6 +39,17 @@
           >
             Informações 
           </div>
+          <q-select
+            outlined
+            label="Configuração de organismo"
+            option-label="organismConfigName"
+            :option-value="(item) => item._id"
+            emit-value
+            map-options
+            hint="Informe a qual configuração de organismo pertencerá esse formulário"
+            v-model="organismConfigId"
+            :options="organismConfigOptions"
+          />
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
@@ -213,6 +224,7 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
+      organismConfigId: '',
       visions: [],
       formFields: [
         {
@@ -247,7 +259,8 @@ export default defineComponent({
         multiple: false,
       },
       selectedType: "",
-      visionsList: []
+      visionsList: [],
+      organismConfigOptions: [],
     };
   },
   mounted() {
@@ -255,9 +268,21 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFieldTypes()
+    this.getOrganismsConfigs()
     this.getVisions()
   },
   methods: {
+    getOrganismsConfigs() {
+      const opt = {
+        route: "/desktop/config/getOrganismsConfigs",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.organismConfigOptions = r.data;
+      });
+    },
     getVisions() {
       const opt = {
         route: "/desktop/config/getVisions",
@@ -283,9 +308,11 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createForm",
         body: {
+          organismConfigId: this.organismConfigId,
           formName: this.formConfigName,
           formFields: this.formFields,
-          visions: this.visions
+          visions: this.visions,
+          
         },
       };
       useFetch(opt).then((r) => {
