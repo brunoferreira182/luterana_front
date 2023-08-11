@@ -10,7 +10,7 @@
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
-        no-data-label="Procure por um formulário para visualizar relacionados"
+        no-data-label="Faça uma pesquisa para visualizar relacionados"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="clkOpenFormConfigDetail"
@@ -132,7 +132,7 @@ export default defineComponent({
     },
     getFormConfigList() {
       const opt = {
-        route: "/desktop/config/getForms",
+        route: "/desktop/config/getFormsList",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,

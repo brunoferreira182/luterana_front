@@ -741,10 +741,6 @@ export default defineComponent({
         }
       });
     },
-    clkOpenEditFunction(){
-      this.editFunctionDialog.open = true
-      this.getVisions()
-    },
     updateOrganismConfig() {
       const _id = this.$route.query._id;
       const opt = {
