@@ -30,6 +30,17 @@
           >
             Informações 
           </div>
+          <q-select
+            outlined
+            label="Configuração de organismo"
+            option-label="organismConfigName"
+            :option-value="(item) => item._id"
+            emit-value
+            map-options
+            hint="Informe a qual configuração de organismo pertencerá esse formulário"
+            v-model="organismConfigId"
+            :options="organismConfigOptions"
+          />
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
@@ -239,6 +250,9 @@ export default defineComponent({
       },
       selectedType: "",
       visionsList: [],
+      organismConfigId: '',
+      organismConfigName: '',
+      organismConfigOptions: [],
       checkedVisionsList: []
     };
   },
@@ -246,13 +260,25 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   created(){
-    this.getVisions()
-  },
-  beforeMount() {
-    this.getFieldTypes()
     this.getFormDetailById()
   },
+  beforeMount() {
+    this.getOrganismsConfigs()
+    this.getVisions()
+    this.getFieldTypes()
+  },
   methods: {
+    getOrganismsConfigs() {
+      const opt = {
+        route: "/desktop/config/getOrganismsConfigs",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.organismConfigOptions = r.data;
+      });
+    },
     getVisions() {
       const opt = {
         route: "/desktop/config/getVisions",
@@ -281,6 +307,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.formConfigName = r.data.formName
+          this.organismConfigId = r.data.organismConfigId
           this.formFields = r.data.formFields
           this.checkedVisionsList = r.data.visions
           this.checkedVisionsList.forEach((check,i) => {
@@ -290,7 +317,6 @@ export default defineComponent({
               }
             })
           })
-          
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
