@@ -52,7 +52,6 @@
             {{ org.organismTypeData.name }}
           </q-chip>
           <q-input
-            :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
             label="Nome da configuração"
             v-model="organismConfigName"
@@ -724,7 +723,6 @@ export default defineComponent({
           functions: this.functions
         },
       };
-      console.log(opt)
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -743,9 +741,16 @@ export default defineComponent({
     },
     updateOrganismConfig() {
       const _id = this.$route.query._id;
+      this.functions.forEach((func) => {
+        func.visions.forEach((vision) => {
+          delete vision.permissions;
+        });
+      });
       const opt = {
         route: "/desktop/config/updateOrganismConfig",
         body: {
+          organismConfigName: this.organismConfigName,
+          functions: this.functions,
           organismConfigId: _id,
           organismFields: this.organismFields,
           requiresLink: this.requiresLink,

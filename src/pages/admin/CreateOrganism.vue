@@ -317,8 +317,25 @@
               <div  class="text-subtitle2 q-mb-sm">
                 Organismos vinculados:
               </div>
-              <q-input v-if="organismLinks.length" label="Buscar" outlined/>
-              <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
+              <q-input 
+                v-if="organismLinks.length" 
+                label="Buscar" 
+                outlined
+                v-model="organismVinculated"
+                @update:model-value="filterInOrganismLinks"
+                type="search"
+              >
+                <template v-slot:append>
+                  <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <div v-if="organismLinks.length">
+                <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
+                  {{ chip.nome }}
+                </q-chip>
+              </div>
+              <!-- <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
                 <q-item
                   clickable
                   @click="removeLink(organism,i)"
@@ -332,23 +349,27 @@
                     Remover
                   </q-item-section>
                 </q-item>
-              </q-list>
+              </q-list> -->
               <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
             </q-card-section>
             <q-card-section>
-              <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
-              <q-select
+              <div class="text-subtitle2 q-mb-sm">
+                Vincular novo organismo:
+                
+              </div>
+              <!-- <q-select
                 v-model="organismSelected"
                 filled
                 use-input
                 hint="Faça uma busca para visualizar os organismos disponíveis"
                 option-label="nome"
+                clearable
                 input-debounce="0"
                 label="Buscar"
                 :options="organismList"
                 emit-value
                 map-options
-                :option-value="(item) => item.organismId"
+                :option-value="(item) => item.nome"
                 @filter="getOrganismsList"
               >
                 <template v-slot:no-option>
@@ -358,17 +379,21 @@
                     </q-item-section>
                   </q-item>
                 </template>
-              </q-select>
-              <!-- <q-input 
+              </q-select> -->
+              <q-input 
                 label="Buscar"
                 outlined
+                type="search"
+                v-model="organismSelected"
                 hint="Faça uma busca para visualizar os organismos disponíveis"
-                v-model="organismSelected" 
-                @update:model-value="getOrganismsList($event)"
+                @update:model-value="getOrganismsList"
               >
-  
-              </q-input> -->
-              <!-- <q-list bordered class="q-mt-sm" v-if="organismLinkEvent === organismSelected">
+              <template v-slot:append>
+                <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                <q-icon name="search" />
+              </template>
+              </q-input>
+              <q-list bordered class="q-mt-sm">
                 <q-item
                   clickable
                   :disable="organismLinks.includes(organism)"
@@ -384,9 +409,6 @@
                   </q-item-section>
                 </q-item>
               </q-list>
-              <div v-else-if="organismLinkEvent !== undefined" class="text-center">
-                Nenhum organismo selecionado <q-icon size="large" name="warning"></q-icon>
-              </div> -->
             </q-card-section>
             <q-card-actions align="center">
               <q-btn
@@ -397,7 +419,13 @@
                 color="primary"
                 @click="dialogLinks = false"
               />
-
+              <q-btn 
+                label="Salvar vínculo"
+                no-caps
+                rounded
+                unelevated
+                color="primary"
+              />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -509,7 +537,8 @@ export default defineComponent({
       organismList: [],
       organismLinks: [],
       organismLinkEvent: '',
-      organismSelected: ref(null),
+      organismSelected: '',
+      organismVinculated: '',
       dialogLinks: false
     };
   },
@@ -520,20 +549,18 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
-    getOrganismsList(val, update) {
-      console.log(val, 'QUI val')
+    filterInOrganismLinks(val){
+      console.log(val)
+    },
+    getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          searchString: val
+          searchString: this.organismSelected
         }
       };
       useFetch(opt).then(r => {
         this.organismList = r.data.list;
-        const options = ref(this.organismList)
-        update(() => {
-          options.value = this.organismList.filter(v => v.nome)
-        })
       })
     },
     dialogInsertObservation(user) {
