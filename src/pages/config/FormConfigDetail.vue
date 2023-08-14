@@ -260,12 +260,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   created(){
+    this.getVisions()
     this.getFormDetailById()
   },
   beforeMount() {
-    this.getOrganismsConfigs()
-    this.getVisions()
     this.getFieldTypes()
+    this.getOrganismsConfigs()
   },
   methods: {
     getOrganismsConfigs() {

@@ -338,16 +338,16 @@
             <q-card-section>
               <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
               <q-select
-                v-model="organismSearchString"
+                v-model="organismSelected"
                 filled
                 use-input
-                hide-selected
                 hint="Faça uma busca para visualizar os organismos disponíveis"
                 option-label="nome"
                 input-debounce="0"
                 label="Buscar"
                 :options="organismList"
                 emit-value
+                map-options
                 :option-value="(item) => item.organismId"
                 @filter="getOrganismsList"
               >
@@ -363,12 +363,12 @@
                 label="Buscar"
                 outlined
                 hint="Faça uma busca para visualizar os organismos disponíveis"
-                v-model="organismSearchString" 
+                v-model="organismSelected" 
                 @update:model-value="getOrganismsList($event)"
               >
   
               </q-input> -->
-              <!-- <q-list bordered class="q-mt-sm" v-if="organismLinkEvent === organismSearchString">
+              <!-- <q-list bordered class="q-mt-sm" v-if="organismLinkEvent === organismSelected">
                 <q-item
                   clickable
                   :disable="organismLinks.includes(organism)"
@@ -469,6 +469,8 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
+import { ref } from 'vue'
+
 export default defineComponent({
   name: "CreateOrganism",
   data() {
@@ -507,7 +509,7 @@ export default defineComponent({
       organismList: [],
       organismLinks: [],
       organismLinkEvent: '',
-      organismSearchString: '',
+      organismSelected: ref(null),
       dialogLinks: false
     };
   },
@@ -518,16 +520,20 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
-    getOrganismsList(searchString) {
-      console.log(searchString, 'QUI val')
+    getOrganismsList(val, update) {
+      console.log(val, 'QUI val')
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          searchString: searchString
+          searchString: val
         }
       };
       useFetch(opt).then(r => {
         this.organismList = r.data.list;
+        const options = ref(this.organismList)
+        update(() => {
+          options.value = this.organismList.filter(v => v.nome)
+        })
       })
     },
     dialogInsertObservation(user) {
