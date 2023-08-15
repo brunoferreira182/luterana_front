@@ -372,6 +372,7 @@
                 emit-value
                 map-options
                 label="Título (opcional)"
+                :option-value="(item) => item._id"
                 :options="titlesOptions"
                 v-model="editFunctionDialog.function.requiredTitle"
               />

@@ -21,6 +21,18 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-7 q-gutter-md" align="start">
+          <div class="text-h5">Tipo de configuração de organismo</div>
+          <q-select
+            outlined
+            label="Nome da configuração"
+            option-label="organismConfigName"
+            :option-value="(item) => item._id"
+            emit-value
+            map-options
+            hint="O tipo de configuração que está aplicado"
+            v-model="organismConfigName"
+            :options="organismConfigOptions"
+          />
           <div v-if="organismList.length">
             <q-btn
               label="Gerenciar Vínculos"
@@ -485,6 +497,7 @@ export default defineComponent({
       userSelected: '',
       organism: null,
       fields: [],
+      organismConfigOptions: [],
       newOrganism: {},
       organismSelected: '',
       dialogInsertUserInFunction:{
@@ -513,6 +526,7 @@ export default defineComponent({
       organismLinks: [],
       parentOrganism: [],
       childOrganism: [],
+      organismConfigName: '',
       organismSearch: '',
       dialogLinks: false
     };
@@ -523,12 +537,25 @@ export default defineComponent({
   beforeMount(){
     this.getOrganismDetailById();
     this.getOrganismsList()
+    this.getOrganismsConfigs()
     this.getParentOrganismsById()
     this.getChildOrganismsById()
   },
   methods: {
     filterInOrganismLinks(val){
       console.log(val)
+    },
+    getOrganismsConfigs() {
+      const opt = {
+        route: "/desktop/adm/getOrganismsConfigs",
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.organismConfigOptions = r.data
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     },
     checkRequiredFields() {
       let allRight = true;
@@ -804,6 +831,7 @@ export default defineComponent({
         if (!r.error) {
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
+          this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
