@@ -347,7 +347,6 @@ export default defineComponent({
     },
     addField() {
       const tabIndex = this.tabIndexToAddField;
-      console.log(tabIndex, 'OPKSPOASDOPKASPODPOSAKDPOSKAOPD')
       if (this.newField.label && this.newField.hint && this.newField.type) {
         this.userDataTabs[tabIndex].fields.push({ ...this.newField });
         this.newField.label = null;

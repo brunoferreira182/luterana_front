@@ -116,7 +116,6 @@ export default defineComponent({
       });
     },
     getStructures(structureTypeId) {
-      console.log(structureTypeId)
       const opt = {
         route: "/desktop/config/getStructures",
         body: {

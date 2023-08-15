@@ -13,7 +13,8 @@
             color="primary"
             rounded
             unelevated
-            label="Salvar"
+            @click="updateOrganism"
+            label="Salvar edição"
           />
         </div>
       </div>
@@ -361,10 +362,34 @@
                   </div>
                 </q-card-section>
                 <q-card-section>
-                  <div  class="text-subtitle2 q-mb-sm">
-                    Organismos vinculados:
+                  <div class="row">
+                    <div class="col-6">
+                      <q-separator/>
+                      <div class="text-subtitle2 q-ma-sm">
+                        Organismos filiados vinculados:
+                      </div>
+                      <div v-if="childOrganism.length">
+                        <q-chip removable @remove="removeChildRelation(chip)" v-for="chip in childOrganism" :key="chip._id">
+                          {{ chip.organismName }}
+                        </q-chip>
+                      </div>
+                      <div v-else-if="!organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
+                    </div>
+                    <q-separator vertical />
+                    <div class="col">
+                      <q-separator/>
+                      <div class="text-subtitle2 q-ma-sm">
+                        Organismos superiores vinculados:
+                      </div>
+                      <div v-if="parentOrganism.length">
+                        <q-chip removable @remove="removeParentRelation(chip)" v-for="chip in parentOrganism" :key="chip._id">
+                          {{ chip.organismName }}
+                        </q-chip>
+                      </div>
+                      <div v-else-if="!parentOrganism.length" class="text-center q-mt-md">Nenhum vínculo.</div>
+                    </div>
                   </div>
-                  <q-input 
+                  <!-- <q-input 
                     v-if="organismLinks.length" 
                     label="Buscar" 
                     outlined
@@ -376,19 +401,14 @@
                       <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
                       <q-icon name="search" />
                     </template>
-                  </q-input>
-                  <div v-if="parent.length">
-                    <q-chip removable @remove="removeParentRelation(chip,i)" v-for="(chip, i) in parent" :key="i">
-                      {{ chip.organismName }}
-                    </q-chip>
-                  </div>
-                  <div v-else-if="parent.lenth > 0" class="text-center q-mt-md">Nenhum vínculo.</div>
+                  </q-input> -->
+                  
                   <div v-if="organismLinks.length">
                     <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
                       {{ chip.nome }}
                     </q-chip>
                   </div>
-                  <div v-else-if="organismLinks.lenth > 0" class="text-center q-mt-md">Nenhum vínculo.</div>
+                  <div v-else-if="$router.query === '/admin/createOrganism' && !organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
                 </q-card-section>
                 <q-card-section>
                   <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
@@ -491,7 +511,8 @@ export default defineComponent({
       functions: [],
       organismList: [],
       organismLinks: [],
-      parent: [],
+      parentOrganism: [],
+      childOrganism: [],
       organismSearch: '',
       dialogLinks: false
     };
@@ -503,14 +524,66 @@ export default defineComponent({
     this.getOrganismDetailById();
     this.getOrganismsList()
     this.getParentOrganismsById()
+    this.getChildOrganismsById()
   },
   methods: {
-    removeParentRelation(){
-      const organismId = this.$route.query.organismId
+    filterInOrganismLinks(val){
+      console.log(val)
+    },
+    checkRequiredFields() {
+      let allRight = true;
+      this.organismData.fields.forEach((field) => {
+        if (field.required && (!field.value || field.value === "")) {
+          allRight = false;
+        }
+      });
+      return allRight;
+    },
+    updateOrganism(){
+      if (this.checkRequiredFields()) {
+        const userData = [];
+        for (const func of this.functions) {
+          if (func.users && func.users.length > 0) {
+            for (const user of func.users) {
+              userData.push({
+                organismFunctionConfigId: user.organismFunctionConfigId,
+                userId: user.userId,
+                dates: {
+                  initialDate: user.initialDate
+                }
+              });
+            }
+          }
+        }
+        const organismId = this.$route.query.organismId
+        const opt = {
+          route: '/desktop/adm/removeParentRelation',
+          body: {
+            organismData: this.organismData,
+            functions: userData,
+            organismId: organismId
+          }
+        }
+        this.$q.loading.show()
+        useFetch(opt).then(r => {
+          this.$q.loading.hide()
+          if(!r.error){
+            this.$q.notify('Organismo editado com sucesso!')
+            this.getOrganismDetailById()
+          } else {
+            this.$q.notify('Ocorreu um erro, tente novamente')
+          }
+        })
+      } else {
+        this.$q.notify("Há campos obrigatórios não preenchidos");
+      }
+    },
+    removeParentRelation(chip){
+      const organismParentId = chip._id
       const opt = {
-        route: '/desktop/adm/removeChildRelation',
+        route: '/desktop/adm/removeParentRelation',
         body: {
-          organismId: organismId
+          organismId: organismParentId
         }
       }
       this.$q.loading.show()
@@ -518,6 +591,26 @@ export default defineComponent({
         this.$q.loading.hide()
         if(!r.error){
           this.$q.notify('Vínculo removido com sucesso!')
+          this.getParentOrganismsById()
+        } else {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        }
+      })
+    },
+    removeChildRelation(chip){
+      const organismChildId = chip._id
+      const opt = {
+        route: '/desktop/adm/removeChildRelation',
+        body: {
+          organismId: organismChildId
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(r => {
+        this.$q.loading.hide()
+        if(!r.error){
+          this.$q.notify('Vínculo removido com sucesso!')
+          this.getChildOrganismsById()
         } else {
           this.$q.notify('Ocorreu um erro, tente novamente')
         }
@@ -525,9 +618,11 @@ export default defineComponent({
     },
     clkSaveVinculo(){
       const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+      const organismId = this.$route.query.organismId
       const opt = {
         route: '/desktop/adm/createRelation',
         body: {
+          organismId: organismId,
           organismLinks: organismLinksIds
         }
       }
@@ -537,13 +632,13 @@ export default defineComponent({
         if(!r.error){
           this.$q.notify('Vínculo salvo com sucesso!')
           this.dialogLinks = false
+          this.getParentOrganismsById()
         } else {
           this.$q.notify('Ocorreu um erro, tente novamente')
         }
       })
     },
     dialogInsertObservation(user) {
-      console.log(user, 'OPKAOPKSDOP USER USER')
       this.dialogOpenObservation.data = user;
       this.dialogOpenObservation.open = true;
       this.dialogOpenObservation.functionUserId = user.userIdMongo
@@ -605,15 +700,28 @@ export default defineComponent({
         this.organismList = r.data.list;
       });
     },
-    getParentOrganismsById() {
+    getChildOrganismsById() {
+      const childOrganismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getParentOrganismsById",
+        route: "/desktop/adm/getChildOrganismsById",
         body: {
-          organismId: this.$route.query.organismId
+          organismId: childOrganismId
         }
       };
       useFetch(opt).then((r) => {
-        this.parent = r.data;
+        this.childOrganism = r.data;
+      });
+    },
+    getParentOrganismsById() {
+      const parentOrganismId = this.$route.query.organismId
+      const opt = {
+        route: "/desktop/adm/getParentOrganismsById",
+        body: {
+          organismId: parentOrganismId
+        }
+      };
+      useFetch(opt).then((r) => {
+        this.parentOrganism = r.data;
       });
     },
     inactivateUserFromFunction() {
@@ -661,7 +769,6 @@ export default defineComponent({
     },
     assignUserToFunction() {
       const selectedFuncIndex = this.selectedFuncIndex;
-      console.log(selectedFuncIndex, 'OPKASPODKOSAP selectedFuncIndex');
       if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
@@ -681,8 +788,6 @@ export default defineComponent({
       this.clearDialogAndFunctions();
     },
     linkUserToFunction(func, funcIndex ) {
-      console.log(func, 'FUNC OASDKAPKDOPAS')
-      console.log(funcIndex, 'funcIndex OASDKAPKDOPAS')
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;

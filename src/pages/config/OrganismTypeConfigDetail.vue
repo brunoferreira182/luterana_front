@@ -59,7 +59,6 @@ export default defineComponent({
   },
   methods: {
     updateOrganismType(){
-      console.log('update não implementado')
     },
     getOrganismTypeById() {
       const organismTypeId = this.$route.query.organismTypeId

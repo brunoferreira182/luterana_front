@@ -821,13 +821,9 @@ export default defineComponent({
       this.editFunctionDialog.open = true
       this.editFunctionDialog.function = item
       this.editFunctionDialog.function.visions.forEach((dialogVision,i) => {
-        console.log('1q')
         this.visionsList.forEach(vision => {
-          console.log('2q')
           if (dialogVision.visionId === vision.visionId) {
-            console.log(dialogVision, 'DIALOGVISION kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
             this.editFunctionDialog.function.visions[i] = dialogVision 
-            console.log('entrou aquii')
           }
         })
       })

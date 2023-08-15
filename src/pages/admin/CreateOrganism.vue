@@ -545,8 +545,6 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
     },
     linkUserToFunction(func, funcIndex ) {
-      console.log(func, 'FUNC OASDKAPKDOPAS')
-      console.log(funcIndex, 'funcIndex OASDKAPKDOPAS')
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;
@@ -666,9 +664,7 @@ export default defineComponent({
       if (!field.value) {
         field.value = [];
       }
-      console.log(field.newMultipleValue);
       field.value.push(field.newMultipleValue);
-      console.log(field);
     },
     getOrganismsTypes() {
       const opt = {

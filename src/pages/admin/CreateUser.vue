@@ -317,7 +317,6 @@ export default defineComponent({
         this.$q.loading.show();
         useFetch(opt).then((r) => {
           this.$q.loading.hide();
-          console.log(r, "consola");
           this.street = r.data.logradouro;
           this.city = r.data.localidade;
           this.state = r.data.uf;
@@ -327,8 +326,6 @@ export default defineComponent({
     },
     clkOpenAddressDialog(fieldIndex, tabIndex){
       this.dialogConfirmAddress.open = true
-      console.log(fieldIndex, 'fieldIndex')
-      console.log(tabIndex, 'tabIndex')
       this.fieldIndex = fieldIndex
       this.tabsIndex = tabIndex
     },
@@ -368,8 +365,6 @@ export default defineComponent({
     addAddress() {
       const fieldIndex = this.fieldIndex
       const tabsIndex = this.tabsIndex
-      console.log(fieldIndex, 'fieldIndexdps')
-      console.log(tabsIndex, 'tabIndexdps')
       if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address) {
         this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address = [];
         this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({

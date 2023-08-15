@@ -27,7 +27,6 @@ export default defineComponent({
   },
   // methods: {
   //   async getLogoAndColors () {
-  //     console.log('merda do user cId caraia', this.$presentUserInfo())
   //     await this.$logoAndColors.getFromServer(this.$presentUserInfo().cId)
   //     this.logoAndColors = this.$logoAndColors.get()
   //   }

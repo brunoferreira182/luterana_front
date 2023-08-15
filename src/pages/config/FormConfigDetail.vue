@@ -256,16 +256,16 @@ export default defineComponent({
       checkedVisionsList: []
     };
   },
-  mounted() {
-    this.$q.loading.hide();
-  },
   created(){
     this.getVisions()
-    this.getFormDetailById()
   },
   beforeMount() {
     this.getFieldTypes()
     this.getOrganismsConfigs()
+  },
+  mounted(){
+    this.$q.loading.hide();
+    this.getFormDetailById()
   },
   methods: {
     getOrganismsConfigs() {
@@ -314,6 +314,7 @@ export default defineComponent({
             this.visionsList.forEach(vision => {
               if (check.visionId === vision.visionId) {
                 this.visions[i] = vision 
+                return
               }
             })
           })
