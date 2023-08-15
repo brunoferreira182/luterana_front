@@ -112,7 +112,7 @@ export default defineComponent({
     this.getFormConfigList();
   },
   methods: {
-    clkOpenFormConfigDetail(e, r, i) {
+    clkOpenFormConfigDetail(e, r,) {
       const formId = r._id;
       this.$router.push("/config/formConfigDetail?formId=" + formId);
     },

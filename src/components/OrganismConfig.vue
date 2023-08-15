@@ -488,7 +488,6 @@ export default defineComponent({
       requiresLink: false,
       valueSelected: "",
       tab: "createConfig",
-      
       newFunctionDialog: false,
       newFunction: {
         name: '',

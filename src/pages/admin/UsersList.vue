@@ -126,9 +126,8 @@ export default defineComponent({
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
     },
-    clkOpenUserDetail(e, r, i) {
+    clkOpenUserDetail(e, r) {
       const userId = r._id;
-      console.log(e, r, i);
       this.$router.push("/admin/userDetail?userId=" + userId);
     },
     getSelectedString() {

@@ -113,7 +113,7 @@ export default defineComponent({
     this.getTitleConfigs();
   },
   methods: {
-    clkOpenTitleDetail(e, r, i) {
+    clkOpenTitleDetail(e, r) {
       const _id = r._id;
       this.$router.push("/config/titleConfigDetail?titleId=" + _id);
     },

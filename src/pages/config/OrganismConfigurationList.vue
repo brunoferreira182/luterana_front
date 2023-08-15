@@ -113,7 +113,7 @@ export default defineComponent({
     this.getOrganismsConfigs();
   },
   methods: {
-    clkOpenOrganismDetail(e, r, i) {
+    clkOpenOrganismDetail(e, r) {
       const _id = r._id;
       this.$router.push("/config/organismConfigDetail?_id=" + _id);
     },

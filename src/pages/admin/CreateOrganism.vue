@@ -335,51 +335,12 @@
                   {{ chip.nome }}
                 </q-chip>
               </div>
-              <!-- <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
-                <q-item
-                  clickable
-                  @click="removeLink(organism,i)"
-                  v-for="(organism,i) in organismLinks"
-                  :key="i"
-                >
-                  <q-item-section>
-                    {{ organism.nome }}
-                  </q-item-section>
-                  <q-item-section class="text-primary" side>
-                    Remover
-                  </q-item-section>
-                </q-item>
-              </q-list> -->
               <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
             </q-card-section>
             <q-card-section>
               <div class="text-subtitle2 q-mb-sm">
                 Vincular novo organismo:
-                
               </div>
-              <!-- <q-select
-                v-model="organismSelected"
-                filled
-                use-input
-                hint="Faça uma busca para visualizar os organismos disponíveis"
-                option-label="nome"
-                clearable
-                input-debounce="0"
-                label="Buscar"
-                :options="organismList"
-                emit-value
-                map-options
-                :option-value="(item) => item.nome"
-                @filter="getOrganismsList"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select> -->
               <q-input 
                 label="Buscar"
                 outlined
@@ -388,10 +349,10 @@
                 hint="Faça uma busca para visualizar os organismos disponíveis"
                 @update:model-value="getOrganismsList"
               >
-              <template v-slot:append>
-                <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
-                <q-icon name="search" />
-              </template>
+                <template v-slot:append>
+                  <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                  <q-icon name="search" />
+                </template>
               </q-input>
               <q-list bordered class="q-mt-sm">
                 <q-item
@@ -424,6 +385,7 @@
                 no-caps
                 rounded
                 unelevated
+                @click="dialogLinks = false"
                 color="primary"
               />
             </q-card-actions>
@@ -497,8 +459,6 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
-import { ref } from 'vue'
-
 export default defineComponent({
   name: "CreateOrganism",
   data() {
@@ -653,7 +613,6 @@ export default defineComponent({
         }
       });
     },
-   
     clearDialogAndFunctions() {
       this.selectedFunc = {};
       this.userSelected = "";
@@ -759,7 +718,6 @@ export default defineComponent({
             organismData: this.organismData,
             functions: userData,
             organismLinks: organismLinksIds
-
           },
         };
         this.$q.loading.show()
@@ -774,7 +732,7 @@ export default defineComponent({
           }
         });
       } else {
-        console.log("Há campos obrigatórios não preenchidos");
+        this.$q.notify("Há campos obrigatórios não preenchidos");
       }
     },
     checkRequiredFields() {
@@ -796,10 +754,10 @@ export default defineComponent({
           return "text";
       }
     },
-    addNewLink (organism,i) {
+    addNewLink (organism) {
       this.organismLinks.push(organism)
     },
-    removeLink(organism,i) {
+    removeLink(i) {
       this.organismLinks.splice(i,1)
     }
 

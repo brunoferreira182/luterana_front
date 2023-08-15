@@ -384,22 +384,24 @@
                   <div  class="text-subtitle2 q-mb-sm">
                     Organismos vinculados:
                   </div>
-                  <q-input v-if="organismLinks.length" label="Buscar" outlined/>
-                  <q-list v-if="organismLinks.length" bordered class="q-mt-sm">
-                    <q-item
-                      clickable
-                      @click="removeLink(organism,i)"
-                      v-for="(organism,i) in organismLinks"
-                      :key="i"
-                    >
-                      <q-item-section>
-                        {{ organism.nome }}
-                      </q-item-section>
-                      <q-item-section class="text-primary" side>
-                        Remover
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
+                  <q-input 
+                    v-if="organismLinks.length" 
+                    label="Buscar" 
+                    outlined
+                    v-model="organismVinculated"
+                    @update:model-value="filterInOrganismLinks"
+                    type="search"
+                  >
+                    <template v-slot:append>
+                      <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                  <div v-if="organismLinks.length">
+                    <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
+                      {{ chip.nome }}
+                    </q-chip>
+                  </div>
                   <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
                 </q-card-section>
                 <q-card-section>
@@ -407,14 +409,21 @@
                   <q-input 
                     label="Buscar"
                     outlined
-                    v-model="organismSearch" 
-                    @update:model-value="getOrganismsList($event)"
-                  />
+                    type="search"
+                    v-model="organismSelected"
+                    hint="Faça uma busca para visualizar os organismos disponíveis"
+                    @update:model-value="getOrganismsList"
+                  >
+                    <template v-slot:append>
+                      <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
                   <q-list bordered class="q-mt-sm">
                     <q-item
                       clickable
                       :disable="organismLinks.includes(organism)"
-                      @click="console.log('fazer rota no back')"
+                      @click="addNewLink(organism,i)"
                       v-for="(organism,i) in organismList"
                       :key="i"
                     >
@@ -436,6 +445,14 @@
                     color="primary"
                     @click="dialogLinks = false"
                   />
+                  <q-btn
+                    label="Salvar vínculo"
+                    no-caps
+                    unelevated
+                    rounded
+                    color="primary"
+                    @click="clkSaveVinculo"
+                  />
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -456,12 +473,14 @@ export default defineComponent({
     return {
       tab: 'organismData',
       usersOptions: [],
+      organismVinculated: '',
       organismTypeId: null,
       organismName: '',
       userSelected: '',
       organism: null,
       fields: [],
       newOrganism: {},
+      organismSelected: '',
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
@@ -500,6 +519,25 @@ export default defineComponent({
     // this.getParentOrganismsById()
   },
   methods: {
+    clkSaveVinculo(){
+      const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+      const opt = {
+        route: '/desktop/adm/createRelation',
+        body: {
+          organismLinks: organismLinksIds
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(r => {
+        this.$q.loading.hidesssssssssssssssss()
+        if(!r.error){
+          this.$q.notify('Vínculo salvo com sucesso!')
+          this.dialogLinks = false
+        } else {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        }
+      })
+    },
     dialogInsertObservation(user) {
       console.log(user, 'OPKAOPKSDOP USER USER')
       this.dialogOpenObservation.data = user;
@@ -673,6 +711,12 @@ export default defineComponent({
           return "text";
       }
     },
+    addNewLink (organism) {
+      this.organismLinks.push(organism)
+    },
+    removeLink(i) {
+      this.organismLinks.splice(i,1)
+    }
   },
 });
 </script>

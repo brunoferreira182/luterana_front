@@ -112,7 +112,7 @@ export default defineComponent({
     this.getVisionsConfigs();
   },
   methods: {
-    clkOpenVisionDetail(e, r, i) {
+    clkOpenVisionDetail(e, r) {
       const visionId = r._id;
       this.$router.push("/config/visionDetail?visionId=" + visionId);
     },

@@ -112,7 +112,7 @@ export default defineComponent({
     this.getAttachmentsListByUserId();
   },
   methods: {
-    clkOpenStructureDetail(e, r, i) {
+    clkOpenStructureDetail(e, r) {
       const structureId = r._id;
       this.$router.push("/config/structureDetail?structureId=" + structureId);
     },

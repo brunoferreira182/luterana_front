@@ -113,7 +113,7 @@ export default defineComponent({
     this.getFunctions();
   },
   methods: {
-    clkOpenFunctionDetail(e, r, i) {
+    clkOpenFunctionDetail(e, r) {
       const functionId = r._id;
       this.$router.push("/config/functionDetail?functionId=" + functionId);
     },

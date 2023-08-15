@@ -275,7 +275,7 @@ import { defineComponent } from "vue";
 import DrawerLogo from "../components/DrawerLogo.vue";
 import utils from "../boot/utils";
 import { date, dom } from "quasar";
-const { height, width } = dom;
+const { height } = dom;
 export default defineComponent({
   name: "MainLayout",
   components: {
@@ -347,7 +347,7 @@ export default defineComponent({
     // }
   },
   watch: {
-    $route(to, from) {
+    $route() {
       let existe = false;
       this.options.forEach((element) => {
         if (this.$route.path === element.route) {

@@ -112,7 +112,7 @@ export default defineComponent({
     this.getattachments();
   },
   methods: {
-    clkOpenattachmentDetail(e, r, i) {
+    clkOpenattachmentDetail(e, r) {
       const attachmentId = r._id;
       console.log("abaxcs", attachmentId);
       this.$router.push(

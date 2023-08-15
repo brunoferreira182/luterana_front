@@ -69,7 +69,7 @@ export default defineComponent({
   //   this.getOrganismsTypes();
   // },
   methods: {
-    clkOpenUserConfigDetail(e, r, i) {
+    clkOpenUserConfigDetail(e, r) {
       const userConfigId = r._id;
       this.$router.push("/config/clkOpenUserConfigDetail?userConfigId=" + userConfigId);
     },
