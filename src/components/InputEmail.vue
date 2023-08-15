@@ -6,7 +6,7 @@
     type="text"
     :hint="fieldHint"
     :label="label"
-    v-on:keyup="onChange"
+    @keyup="onChange"
     :rules="[val => this.validated || 'Email inválido']"
     ref="value"
     @input="val => { value = val.toLowerCase() }"
@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'medInputEmail',
+  name: 'MedInputEmail',
   data () {
     return {
       value: '',

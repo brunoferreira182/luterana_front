@@ -19,7 +19,7 @@
         v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template v-slot:top-right>
+        <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
             <div class="col">
               <q-btn

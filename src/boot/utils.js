@@ -103,9 +103,9 @@ const useUtils = {
       }
     },
   },
-  isSystemComplete() {
-    return SYSTEM_COMPLETE;
-  },
+  // isSystemComplete() {
+  //   return SYSTEM_COMPLETE;
+  // },
   async registerUserDataAndKey({ data, key }) {
     LocalStorage.set("$k", key);
     const d = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();

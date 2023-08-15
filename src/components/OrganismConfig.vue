@@ -153,7 +153,7 @@
                     outlined
                   >
                     <template
-                      v-slot:append
+                      #append
                       v-if="
                         field.multiple &&
                         $route.path === '/config/organismConfigDetail'
@@ -393,22 +393,6 @@
                   </q-chip>
                 </div>
               </div>
-              <!-- <div class="visions-field q-mt-none row ">
-                <div v-for="(vision, visionIndex) in editFunctionDialog.function.visions" :key="visionIndex" class="col-6 q-my-md">
-                  <div class="text-subtitle1">{{ vision.name }}</div>
-                  <div class="text-caption text-grey-7">{{ vision.description }}</div>
-                  <q-chip
-                    v-for="permission in vision.permissions" :key="permission.name"
-                    :class="{ 'selected-chip': permission.selected }"
-                    clickable
-                    @click="handlePermissionOnEdit(vision, permission)"
-                  >
-                    <q-icon v-if="permission.selected" name="check" size="sm" color="green-8" />
-                    {{ permission.short }}
-                    <q-tooltip>{{ permission.label }}</q-tooltip>
-                  </q-chip>
-                </div>
-              </div> -->
               <q-checkbox
                 class="q-px-sm"
                 label="Preenchimento da função é obrigatório?"

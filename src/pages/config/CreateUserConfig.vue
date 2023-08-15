@@ -77,7 +77,7 @@
                     outlined
                   >
                     <template
-                      v-slot:append
+                      #append
                     >
                       <q-btn
                         disabled

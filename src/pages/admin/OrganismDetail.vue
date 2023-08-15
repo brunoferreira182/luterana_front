@@ -190,7 +190,7 @@
                     emit-value
                     map-options
                   >
-                    <template v-slot:no-option>
+                    <template #no-option>
                       <q-item>
                         <q-item-section class="text-grey">
                           Nenhum resultado
@@ -249,26 +249,6 @@
                     v-for="obs in dialogOpenObservation.data.obs"
                     :key="obs"
                   >
-                    
-                    <!-- <q-item-section avatar>
-                      <q-avatar rounded>
-                        <img src="https://cdn.quasar.dev/img/avatar.png" />
-                      </q-avatar>
-                    </q-item-section>
-                    <q-item-section class="text-capitalize text-bold text-wrap" lines="2">
-                      {{ obs.createdBy.name }}
-                      <div class="text-caption text-grey-7">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta unde quasi corporis quas voluptate voluptatem, minima similique veniam deleniti cumque, hic quisquam iure molestiae? Culpa fugiat nulla odio qui consequuntur.
-                      </div>
-                    </q-item-section>
-                    <q-item-section side>
-                      <div class="text-grey-8 q-gutter-xs text-right" >
-                        Publicado em
-                      </div>
-                      <div class="text-caption">
-                        {{ obs.createdAt.createdAtOnlyDate }}
-                      </div>
-                    </q-item-section> -->
                     <q-item-section class="text-wrap">
                       <div class="row justify-end">
                         
@@ -392,17 +372,23 @@
                     @update:model-value="filterInOrganismLinks"
                     type="search"
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
                       <q-icon name="search" />
                     </template>
                   </q-input>
+                  <div v-if="parent.length">
+                    <q-chip removable @remove="removeParentRelation(chip,i)" v-for="(chip, i) in parent" :key="i">
+                      {{ chip.organismName }}
+                    </q-chip>
+                  </div>
+                  <div v-else-if="parent.lenth > 0" class="text-center q-mt-md">Nenhum vínculo.</div>
                   <div v-if="organismLinks.length">
                     <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
                       {{ chip.nome }}
                     </q-chip>
                   </div>
-                  <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
+                  <div v-else-if="organismLinks.lenth > 0" class="text-center q-mt-md">Nenhum vínculo.</div>
                 </q-card-section>
                 <q-card-section>
                   <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
@@ -414,7 +400,7 @@
                     hint="Faça uma busca para visualizar os organismos disponíveis"
                     @update:model-value="getOrganismsList"
                   >
-                    <template v-slot:append>
+                    <template #append>
                       <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
                       <q-icon name="search" />
                     </template>
@@ -516,9 +502,27 @@ export default defineComponent({
   beforeMount(){
     this.getOrganismDetailById();
     this.getOrganismsList()
-    // this.getParentOrganismsById()
+    this.getParentOrganismsById()
   },
   methods: {
+    removeParentRelation(){
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: '/desktop/adm/removeChildRelation',
+        body: {
+          organismId: organismId
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(r => {
+        this.$q.loading.hide()
+        if(!r.error){
+          this.$q.notify('Vínculo removido com sucesso!')
+        } else {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        }
+      })
+    },
     clkSaveVinculo(){
       const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
       const opt = {
@@ -529,7 +533,7 @@ export default defineComponent({
       }
       this.$q.loading.show()
       useFetch(opt).then(r => {
-        this.$q.loading.hidesssssssssssssssss()
+        this.$q.loading.hide()
         if(!r.error){
           this.$q.notify('Vínculo salvo com sucesso!')
           this.dialogLinks = false

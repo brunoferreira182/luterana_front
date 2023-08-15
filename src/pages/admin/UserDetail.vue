@@ -40,7 +40,7 @@
       <q-tab-panels 
         animated 
         class="q-my-md bg-accent"
-        :modelValue="tab"
+        :model-value="tab"
       >
         <q-tab-panel 
           v-for="(tabs, tabsIndex) in userData.userDataTabs"
@@ -66,7 +66,7 @@
                     >
                       <template
                         v-if="field.multiple"
-                        v-slot:append
+                        #append
                       >
                         <q-btn
                           disabled

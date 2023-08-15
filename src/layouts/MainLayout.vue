@@ -25,7 +25,7 @@
               color="primary"
               @keyup.enter="makeSearch"
             >
-              <template v-slot:append>
+              <template #:append>
                 <q-icon
                   v-if="filterValue === ''"
                   name="search"

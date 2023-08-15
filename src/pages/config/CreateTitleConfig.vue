@@ -97,7 +97,7 @@
                     outlined
                   >
                     <template
-                      v-slot:append
+                      #append
                       v-if="
                         field.multiple &&
                         $route.path === '/config/organismConfigDetail'

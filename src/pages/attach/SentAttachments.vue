@@ -18,7 +18,7 @@
         :v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template v-slot:top-right>
+        <template #top-right>
           <div class="flex row text-right q-gutter-sm items-center">
             <div class="col">
               <q-select
@@ -39,7 +39,7 @@
                 v-model="filter"
                 placeholder="Procurar"
               >
-                <template v-slot:append>
+                <template #append>
                   <q-icon name="search" />
                 </template>
               </q-input>
@@ -58,7 +58,7 @@
             </div>
           </div>
         </template>
-        <template v-slot:body-cell-status="props">
+        <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
@@ -89,7 +89,7 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "attachmentsList",
+  name: "AttachmentsList",
   data() {
     return {
       columnsData: useTableColumns().sentAttachments,

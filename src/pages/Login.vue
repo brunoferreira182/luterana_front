@@ -29,10 +29,10 @@
             <div class="q-gutter-lg q-mt-none">
               <InputEmail
                 label="Login"
-                fieldHint="email@email.com"
-                idField="user"
+                field-hint="email@email.com"
+                id-field="user"
                 @onChange="inputChange"
-                :valueField="formData.user"
+                :value-field="formData.user"
                 @onEnter="clkNext"
               ></InputEmail>
               <q-btn
@@ -109,10 +109,10 @@
               </div>
               <InputEmail
                 label="Digite seu email"
-                fieldHint="email@email.com"
-                idField="forgotPasswordUser"
+                field-hint="email@email.com"
+                id-field="forgotPasswordUser"
                 @onChange="inputChange"
-                :valueField="formData.forgotPasswordUser"
+                :value-field="formData.forgotPasswordUser"
                 @keyup.enter="btnCheckEmail"
                 autofocus
               ></InputEmail>

@@ -67,7 +67,7 @@
             label="Clique aqui para adicionar arquivos"
             outlined
           >
-            <template v-slot:append>
+            <template #append>
               <q-icon name="attach_file" />
             </template>
           </q-file>
@@ -159,7 +159,7 @@
               style="width: 350px"
               hint="Pesquise ou selecione a opção desejada"
             >
-              <template v-slot:no-option>
+              <template #no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     No results
@@ -228,7 +228,7 @@ export default defineComponent({
     this.getOptionsListByType();
   },
   methods: {
-    filterFn(val, update, abort) {
+    filterFn(val, update) {
       update(() => {
         if (val === "") {
           this.getOptionsListByType();
@@ -293,7 +293,7 @@ export default defineComponent({
 
       opt.file = [{ name: this.files.name, file: this.files }];
       this.$q.loading.show();
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(() => {
         this.$q.notify("Enviado!");
       });
     },
@@ -309,7 +309,7 @@ export default defineComponent({
         },
       };
       this.$q.loading.show();
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(() => {
         this.$q.loading.hide();
         this.$q.notify("Atualizado!");
       });

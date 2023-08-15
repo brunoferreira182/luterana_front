@@ -57,7 +57,7 @@
                 :mask="field.type.mask"
                 :hint="field.hint"
               >
-                <template v-slot:append v-if="field.multiple">
+                <template #append v-if="field.multiple">
                   <q-btn
                     icon="add"
                     color="primary"
@@ -325,7 +325,7 @@
                 @update:model-value="filterInOrganismLinks"
                 type="search"
               >
-                <template v-slot:append>
+                <template #append>
                   <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
                   <q-icon name="search" />
                 </template>
@@ -349,7 +349,7 @@
                 hint="Faça uma busca para visualizar os organismos disponíveis"
                 @update:model-value="getOrganismsList"
               >
-                <template v-slot:append>
+                <template #append>
                   <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
                   <q-icon name="search" />
                 </template>
@@ -412,7 +412,7 @@
                 emit-value
                 map-options
               >
-                <template v-slot:no-option>
+                <template #no-option>
                   <q-item>
                     <q-item-section class="text-grey">
                       Nenhum resultado

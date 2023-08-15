@@ -113,7 +113,7 @@
                     outlined
                   >
                     <template
-                      v-slot:append
+                      #append
                       v-if="
                         field.multiple &&
                         $route.path === '/config/organismConfigDetail'
@@ -184,7 +184,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
-  name: "titleConfigDetail",
+  name: "TitleConfigDetail",
   data() {
     return {
       fieldTypesOptions: [],
