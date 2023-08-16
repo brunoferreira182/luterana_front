@@ -151,6 +151,16 @@ const routes = [
         path: "/attach/sentAttachments",
         component: () => import("pages/attach/SentAttachments.vue"),
       },
+      
+      //Organismos do usuário
+      { path: "/orgs", redirect: "/orgs/userOrganismsList" },
+
+      {
+        path: "/orgs/userOrganismsList",
+        component: () => import("pages/orgs/UserOrganismsList.vue"),
+      },
+    
+      
     ],
   },
 

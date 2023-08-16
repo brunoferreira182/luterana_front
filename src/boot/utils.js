@@ -235,6 +235,13 @@ const useUtils = {
           icon: "send",
         },
       ],
+      orgs: [
+        {
+          label: "Lista dos meus organismos",
+          route: "/orgs/usersList",
+          icon: "list",
+        },
+      ]
     };
     return obj[type];
   },

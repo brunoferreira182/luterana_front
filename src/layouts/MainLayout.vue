@@ -208,7 +208,6 @@
                   </q-item-section>
                 </q-item>
               </q-list>
-
               <q-list class="bg-grey-3">
                 <q-item
                   class="darkest-blue q-pa-none"
@@ -221,7 +220,6 @@
                 </q-item>
               </q-list>
             </div>
-
             <div class="col-9">
               <DrawerLogo />
               <q-list class="q-mx-xs q-gutter-y-xs">
@@ -281,7 +279,6 @@ export default defineComponent({
   components: {
     DrawerLogo,
   },
-
   data() {
     return {
       indexMenu1: 0,
@@ -324,12 +321,14 @@ export default defineComponent({
         this.$route.path === "/plans/home"
       ) {
         this.options = utils.getDrawerOptions("plans");
+        console.log('Quando entrou aqui?')
         this.active = this.options[0].label;
       } else {
         this.options = utils.getDrawerOptions(this.$route.path.split("/")[1]);
       }
       this.permissions.forEach((element) => {
         if (this.$route.path.split("/")[1] === element.role.toLowerCase()) {
+          
           this.activeRightDrawer = element.id;
           this.indexMenu1 = this.permissions.indexOf(element);
         }
@@ -360,6 +359,7 @@ export default defineComponent({
     },
   },
   methods: {
+    
     async getCompanyColors() {
       await this.$logoAndColors.getFromServer(this.userInfo.cId);
       return;
@@ -374,17 +374,13 @@ export default defineComponent({
     clkItem(item, i) {
       this.indexMenu1 = i;
       this.activeRightDrawer = item.id;
+      console.log(' aqui?', item.role)
       this.$router.push("/" + item.role.toLowerCase());
       this.options = utils.getDrawerOptions(item.role.toLowerCase());
     },
     clkMenu(menuItem, i) {
       this.activeMenu = i;
       this.$router.push(menuItem.route);
-    },
-    makeSearch() {
-      this.$router.push(
-        "/expenses/searchResults?filterValue=" + this.filterValue
-      );
     },
   },
 });
