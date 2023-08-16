@@ -194,16 +194,13 @@
                     v-model="userSelected"
                     filled
                     use-input
-                    option-label="userName"
-                    input-debounce="100"
                     label="Nome do usuário"
+                    option-label="userName"
                     :options="usersOptions"
-                    @keyup="getUsers"
+                    @filter="getUsers"
                     :option-value="(item) => item"
-                    emit-value
-                    map-options
                   >
-                    <template #no-option>
+                    <template v-slot:no-option>
                       <q-item>
                         <q-item-section class="text-grey">
                           Nenhum resultado
@@ -716,11 +713,13 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.functionUserId = user.userIdMongo;
       this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
     },
-    getOrganismsList() {
+    getOrganismsList(val) {
+      console.log(this.organismSearch, 'serach')
+      console.log(val, 'valval')
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          searchString: this.organismSearch
+          searchString: val
         }
       };
       useFetch(opt).then((r) => {
@@ -777,18 +776,21 @@ export default defineComponent({
         }
       });
     },
-    getUsers() {
+    getUsers(val, update) {
+      console.log(val, 'AUQI VAL')
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
-          searchString: this.userSelected,
+          searchString: val,
           isActive: 1,
         },
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        this.usersOptions = r.data;
+        update(() => {
+          this.usersOptions = r.data;
+        })
       });
     },
     formatDate(newDate) {

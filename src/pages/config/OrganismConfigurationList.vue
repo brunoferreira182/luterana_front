@@ -114,8 +114,8 @@ export default defineComponent({
   },
   methods: {
     clkOpenOrganismDetail(e, r) {
-      const _id = r._id;
-      this.$router.push("/config/organismConfigDetail?_id=" + _id);
+      const organismConfigId = r._id;
+      this.$router.push("/config/organismConfigDetail?organismConfigId=" + organismConfigId);
     },
     getSelectedString() {
       return this.selected.length === 0

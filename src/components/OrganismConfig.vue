@@ -229,7 +229,7 @@
               <div class="text-subtitle2">{{ item.name }}</div>
               <div>Descrição: {{ item.description }}</div>
               <div class="text-caption text-grey-7">
-                Título necessário: {{ item.requiredTitle ? item.requiredTitle.titleName : 'nenhum' }}
+                Título necessário: {{ item.requiredTitle ? item.requiredTitle : 'nenhum' }}
               </div>
               <div>
                 <q-icon name="visibility" color="primary" size="sm"/>
@@ -299,8 +299,9 @@
                 emit-value
                 map-options
                 label="Título (opcional)"
+                :option-value="(item) => item._id"
                 :options="titlesOptions"
-                v-model="newFunction.requiredTitle"
+                v-model="newFunction.requiredTitleId"
               />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row ">
@@ -374,7 +375,7 @@
                 label="Título (opcional)"
                 :option-value="(item) => item._id"
                 :options="titlesOptions"
-                v-model="editFunctionDialog.function.requiredTitle"
+                v-model="editFunctionDialog.function.requiredTitleId"
               />
               <div class="text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row">
@@ -410,13 +411,13 @@
               @click="editFunctionDialog.open = false"
             />
             <q-btn
-              v-if="$route.query === '/config/organismConfigDetail'"
+              v-if="$route.query.organismConfigId"
               unelevated
               rounded
               label="Confirmar"
               no-caps
               color="primary"
-              @click="updateFunction"
+              @click="updateOrganismFunctionConfig"
             />
             <q-btn
               v-else
@@ -461,7 +462,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../boot/useFetch";
 export default defineComponent({
-  name: "OrganismsConfig",
+  name: "OrganismsConfigDetail",
   data() {
     return {
       fieldTypesOptions: [],
@@ -477,7 +478,7 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
-        requiredTitle: null,
+        requiredTitleId: null,
         isRequired: true,
         visions: []
       },
@@ -486,7 +487,7 @@ export default defineComponent({
         function: {
           name: '',
           description: '',
-          requiredTitle: null,
+          requiredTitleId: null,
           isRequired: true,
           visions: []
         } 
@@ -496,7 +497,7 @@ export default defineComponent({
         function: {
           name: '',
           description: '',
-          requiredTitle: null,
+          requiredTitleId: null,
           isRequired: true
         } 
       },
@@ -724,7 +725,7 @@ export default defineComponent({
       });
     },
     updateOrganismConfig() {
-      const _id = this.$route.query._id;
+      const organismConfigId = this.$route.query.organismConfigId;
       this.functions.forEach((func) => {
         func.visions.forEach((vision) => {
           delete vision.permissions;
@@ -735,7 +736,7 @@ export default defineComponent({
         body: {
           organismConfigName: this.organismConfigName,
           functions: this.functions,
-          organismConfigId: _id,
+          organismConfigId: organismConfigId,
           organismFields: this.organismFields,
           requiresLink: this.requiresLink,
         },
@@ -750,11 +751,11 @@ export default defineComponent({
       });
     },
     getOrganismConfigById() {
-      const _id = this.$route.query._id;
+      const organismConfigId = this.$route.query.organismConfigId;
       const opt = {
         route: "/desktop/config/getOrganismConfigById",
         body: {
-          _id: _id,
+          _id: organismConfigId,
         },
       };
       useFetch(opt).then((r) => {
@@ -791,11 +792,11 @@ export default defineComponent({
       } else this.$q.notify('preencha os campos obrigatórios!')
     },
     createOrganismFunctionConfig() {
-      const _id = this.$route.query._id;
+      const organismConfigId = this.$route.query.organismConfigId;
       const opt = {
         route: "/desktop/config/createOrganismFunctionConfig",
         body: {
-          organismConfigId: _id,
+          organismConfigId: organismConfigId,
           functionData: this.newFunction
         },
       };
@@ -812,7 +813,7 @@ export default defineComponent({
       this.newFunction = {
         name: '',
         description: '',
-        requiredTitle: null,
+        requiredTitleId: null,
         isRequired: true,
         visions: []
       }
@@ -827,9 +828,10 @@ export default defineComponent({
             this.editFunctionDialog.function.visions[i] = dialogVision 
           }
         })
-      })
+      });
+      this.editFunctionDialog.function.requiredTitleId = item.requiredTitle;
     },
-    updateFunction () {
+    updateOrganismFunctionConfig () {
       const opt = {
         route: "/desktop/config/updateOrganismFunctionConfig",
         body: {

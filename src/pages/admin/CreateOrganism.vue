@@ -123,7 +123,9 @@
                 <q-item-section >
                   <div class="text-subtitle2 text-capitalize">{{ func.name }}</div>
                   <div>Descrição: {{ func.description }}</div>
-                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div> 
+                  <div class="text-caption text-grey-7">
+                    Título necessário: {{ func.requiredTitle ? func.requiredTitle : 'nenhum' }}
+                  </div> 
                   <div>
                     <q-icon name="visibility" color="primary" size="sm"/>
                     <q-chip
@@ -403,16 +405,13 @@
                 v-model="userSelected"
                 filled
                 use-input
-                option-label="userName"
-                input-debounce="100"
                 label="Nome do usuário"
+                option-label="userName"
                 :options="usersOptions"
-                @keyup="getUsers"
+                @filter="getUsers"
                 :option-value="(item) => item"
-                emit-value
-                map-options
               >
-                <template #no-option>
+                <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
                       Nenhum resultado
@@ -627,18 +626,20 @@ export default defineComponent({
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    getUsers() {
+    getUsers(val, update) {
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
-          searchString: this.userSelected,
+          searchString: val,
           isActive: 1,
         },
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        this.usersOptions = r.data;
+        update(() => {
+          this.usersOptions = r.data;
+        })
       });
     },
     getOrganismConfigById() {
