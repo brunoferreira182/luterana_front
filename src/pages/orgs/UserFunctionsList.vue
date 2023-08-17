@@ -13,7 +13,6 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenUserOrganismDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"

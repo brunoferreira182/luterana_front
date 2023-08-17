@@ -154,7 +154,7 @@
                 </q-item>
               </q-expansion-item> -->
               <q-item-section class="q-pa-xs">
-                <q-btn
+                <!-- <q-btn
                   label="Quero participar"
                   color="primary"
                   dense
@@ -163,9 +163,55 @@
                   flat
                   no-caps
                   @click="linkUserToFunction(func, funcIndex)"
+                /> -->
+                <q-btn
+                  label="Quero participar"
+                  color="primary"
+                  dense
+                  icon="add"
+                  rounded
+                  flat
+                  no-caps
+                  @click="dialogOpenSolicitation = true"
                 />
               </q-item-section>
             </q-card>
+            <q-dialog v-model="dialogOpenSolicitation" >
+              <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                <q-card-section align="center">
+                  <div class="text-h6">
+                    Para participar desta função, é necessário preencher um formulário
+                  </div>
+                </q-card-section>
+                <!-- <q-card-section align="center">
+                  <q-input
+                    filled
+                    label="Data início"
+                    type="date"
+                    hint="Informe a data início de ocupação da função"
+                    v-model="dialogInsertUserInFunction.initialDate"
+                  />
+                </q-card-section> -->
+                <q-card-actions align="center">
+                  <q-btn
+                    flat
+                    label="Depois"
+                    no-caps
+                    rounded
+                    color="primary"
+                    @click="dialogInsertUserInFunction.open = false"
+                  />
+                  <q-btn
+                    unelevated
+                    rounded
+                    label="Preencher agora"
+                    no-caps
+                    color="primary"
+                    @click="assignUserToFunction"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
             <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
               <q-card style="border-radius: 1rem; width: 400px">
                 <q-card-section>
@@ -478,6 +524,7 @@ export default defineComponent({
       organism: null,
       fields: [],
       organismConfigOptions: [],
+      dialogOpenSolicitation: false,
       newOrganism: {},
       organismSelected: '',
       dialogInsertUserInFunction:{
