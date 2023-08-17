@@ -4,9 +4,9 @@
       <q-table
         flat
         class="bg-accent"
-        title="Meus Organismos"
+        title="Minhas funções"
         :columns="columnsData"
-        :rows="userOrganismsList"
+        :rows="userFunctionsList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsList"
+                @update:model-value="getFunctionsByUserId"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsList"
+                @keyup="getFunctionsByUserId"
                 outlined
                 dense
                 debounce="300"
@@ -78,11 +78,11 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "UserOrganismList",
+  name: "UserFunctionsList",
   data() {
     return {
-      columnsData: useTableColumns().userOrganismsList,
-      userOrganismsList: [],
+      columnsData: useTableColumns().userFunctionsList,
+      userFunctionsList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -98,8 +98,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsList();
-    this.getAllOrganismsByString()
+    this.getFunctionsByUserId();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -118,28 +117,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsList();
+      // this.getFunctionsByUserId();
     },
-    getAllOrganismsByString() {
+    getFunctionsByUserId() {
       const opt = {
-        route: "/desktop/commonUsers/getAllOrganismsByString",
-        body: {
-          searchString: 'Organismo 12',
-          page: this.pagination.page,
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      useFetch(opt).then((r) => {
-        console.log(r)
-      });
-    },
-    getOrganismsList() {
-      const opt = {
-        route: "/desktop/commonUsers/getOrganismsByUserId",
+        route: "/desktop/commonUsers/getFunctionsByUserId",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,
@@ -151,7 +133,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.userOrganismsList = r.data.organisms;
+        this.userFunctionsList = r.data.functions;
       });
     },
   },

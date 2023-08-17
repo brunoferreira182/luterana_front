@@ -153,13 +153,31 @@ const routes = [
       },
       
       //Organismos do usuário
-      { path: "/orgs", redirect: "/orgs/userOrganismsList" },
-
+      { path: "/orgs", redirect: "/orgs/userDashboard" },
+      {
+        path: "/orgs/userDashboard",
+        component: () => import("pages/orgs/UserDashboard.vue"),
+      },
       {
         path: "/orgs/userOrganismsList",
         component: () => import("pages/orgs/UserOrganismsList.vue"),
       },
-    
+      {
+        path: "/orgs/userOrganismDetail",
+        component: () => import("pages/orgs/UserOrganismDetail.vue"),
+      },
+      {
+        path: "/orgs/userFunctionsList",
+        component: () => import("pages/orgs/UserFunctionsList.vue"),
+      },
+      {
+        path: "/orgs/searchAllOrganismsList",
+        component: () => import("pages/orgs/SearchAllOrganismsList.vue"),
+      },
+      {
+        path: "/orgs/userPersonalData",
+        component: () => import("pages/orgs/UserPersonalData.vue"),
+      },
       
     ],
   },

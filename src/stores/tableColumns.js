@@ -18,6 +18,22 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    searchAllOrganismsList: [
+      {
+        name: "nome",
+        align: "left",
+        label: "Nome do organismo",
+        field: "nome",
+        sortable: true,
+      },
+      {
+        name: "data_de_criacao",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.data_de_criacao.dateLocale,
+        sortable: true,
+      },
+    ],
     formConfigList: [
       {
         name: "formName",
@@ -100,6 +116,45 @@ export const useTableColumns = defineStore("tableColumns", {
         align: "left",
         label: "Data de criação",
         field: (row) => row.createdAt.createdAtOnlyDate,
+        sortable: true,
+      },
+    ],
+    userOrganismsList: [
+      {
+        name: "organismName",
+        align: "left",
+        label: "Nome do organismo",
+        field: "organismName",
+        sortable: true,
+      },
+      {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: "status",
+        sortable: true,
+      },
+    ],
+    userFunctionsList: [
+      {
+        name: "functionName",
+        align: "left",
+        label: "Nome da função",
+        field: "functionName",
+        sortable: true,
+      },
+      {
+        name: "organismName",
+        align: "left",
+        label: "Organismo",
+        field: "organismName",
+        sortable: true,
+      },
+      {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: "status",
         sortable: true,
       },
     ],

@@ -237,9 +237,29 @@ const useUtils = {
       ],
       orgs: [
         {
+          label: "Estatísticas",
+          route: "/orgs/userDashboard",
+          icon: "bar_chart",
+        },
+        {
+          label: "Pesquisar organismos",
+          route: "/orgs/searchAllOrganismsList",
+          icon: "search",
+        },
+        {
           label: "Lista dos meus organismos",
-          route: "/orgs/usersList",
+          route: "/orgs/userOrganismsList",
           icon: "list",
+        },
+        {
+          label: "Lista das minhas funções",
+          route: "/orgs/userFunctionsList",
+          icon: "list",
+        },
+        {
+          label: "Meus dados pessoais",
+          route: "/orgs/userPersonalData",
+          icon: "description",
         },
       ]
     };

@@ -40,7 +40,9 @@
             Informações 
           </div>
           <q-select
+            v-if="!noOrganism"
             outlined
+            :disable="false"
             label="Configuração de organismo"
             option-label="organismConfigName"
             :option-value="(item) => item._id"
@@ -49,6 +51,23 @@
             hint="Informe a qual configuração de organismo pertencerá esse formulário"
             v-model="organismConfigId"
             :options="organismConfigOptions"
+          />
+          <q-select
+            v-else-if="noOrganism"
+            outlined
+            :disable="true"
+            label="Configuração de organismo"
+            option-label="organismConfigName"
+            :option-value="(item) => item._id"
+            emit-value
+            map-options
+            hint="Informe a qual configuração de organismo pertencerá esse formulário"
+            :v-model="noOrganismConfig"
+            :options="organismConfigOptions"
+          />
+          <q-checkbox
+            v-model="noOrganism"
+            label="Este formulário não pertencerá a nenhum tipo de organismo"
           />
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
@@ -192,7 +211,7 @@
         <div class="col-4">
           <div class="text-grey-8 text-h6 q-px-xs">Visões:</div>
           <div class="text-caption text-grey-8 q-px-sm">
-            Selecione quais visões terão acesso a este formulário
+            Selecione quais visões terão acesso a este formulário, 
           </div>
           <div class="visions-field q-mt-none row">
             <div
@@ -201,8 +220,20 @@
               class="col-12 q-my-xs"
             >
               <q-checkbox 
+                v-if="!noOrganism"
                 :label="vision.name"
                 :val="vision"
+                v-model="visions"
+              >
+                <div class="text-caption text-grey-7">
+                  {{ vision.description }}
+                </div>
+              </q-checkbox>
+              <q-checkbox 
+                v-else-if="noOrganism"
+                :label="vision.name"
+                :val="''"
+                disable
                 v-model="visions"
               >
                 <div class="text-caption text-grey-7">
@@ -258,8 +289,10 @@ export default defineComponent({
         required: true,
         multiple: false,
       },
+      noOrganism: false,
       selectedType: "",
       visionsList: [],
+      noOrganismConfig: '',
       organismConfigOptions: [],
     };
   },
@@ -312,9 +345,12 @@ export default defineComponent({
           formName: this.formConfigName,
           formFields: this.formFields,
           visions: this.visions,
-          
         },
       };
+      if(this.noOrganism === true){
+        opt.body.organismConfigId = this.noOrganismConfig
+        opt.body.visions = []
+      }
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify("Configuração de formulário criada com sucesso!");
@@ -336,7 +372,7 @@ export default defineComponent({
       });
     },
     addField() {
-      if (   this.newField.label &&
+      if (  this.newField.label &&
           this.newField.hint &&  
           ( this.formConfigName ||  
           this.$route.path === "/config/formConfigDetail")

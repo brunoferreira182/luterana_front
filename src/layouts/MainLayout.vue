@@ -23,7 +23,6 @@
               input-class="text-left"
               class="q-mx-md text-primary"
               color="primary"
-              @keyup.enter="makeSearch"
             >
               <template #:append>
                 <q-icon
