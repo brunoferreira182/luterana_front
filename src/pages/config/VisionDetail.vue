@@ -16,12 +16,24 @@
             label="Atualizar visão"
           />
           <q-btn
+            v-if="isActive === 1"
             @click="dialogInativeVision = true"
             rounded
-            color="negative"
+            outline
+            color="primary"
             unelevated
             no-caps
             label="Desativar visão"
+          />
+          <q-btn
+            v-else
+            @click="dialogAtiveVision = true"
+            rounded
+            outline
+            color="primary"
+            unelevated
+            no-caps
+            label="Ativar visão"
           />
           <q-dialog v-model="dialogInativeVision" @hide="dialogInativeVision = false">
             <q-card style="border-radius: 1rem; ">
@@ -38,6 +50,31 @@
                   color="primary" 
                   v-close-popup 
                   @click="turnOffVision"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+          <q-dialog v-model="dialogAtiveVision" @hide="dialogAtiveVision = false">
+            <q-card style="border-radius: 1rem; ">
+              <q-card-section  class="text-h5 text-center">
+                Tem certeza que deseja ativar?
+              </q-card-section>
+              <q-card-actions align="center">
+                <q-btn 
+                  flat 
+                  no-caps 
+                  label="Cancelar" 
+                  color="primary" 
+                  v-close-popup 
+                />
+                <q-btn 
+                  no-caps
+                  rounded
+                  unelevated
+                  label="Ativar" 
+                  color="primary" 
+                  v-close-popup 
+                  @click="turnOnVision"
                 />
               </q-card-actions>
             </q-card>
@@ -78,7 +115,8 @@ export default defineComponent({
         name: '',
         description: '',
       },
-      dialogInativeVision: false
+      dialogInativeVision: false,
+      dialogAtiveVision: false
     }
   },
   mounted() {
@@ -125,6 +163,9 @@ export default defineComponent({
       });
     },
     turnOffVision(){
+
+    },
+    turnOnVision(){
 
     },
   },
