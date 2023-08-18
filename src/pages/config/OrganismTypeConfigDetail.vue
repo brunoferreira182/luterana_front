@@ -14,6 +14,34 @@
             no-caps
             label="Salvar edição"
           />
+          <q-btn
+            @click="dialogDeleteOrganism = true"
+            rounded
+            outline
+            color="primary"
+            unelevated
+            no-caps
+            label="Excluir organismo"
+          />
+          <q-dialog v-model="dialogDeleteOrganism" @hide="dialogDeleteOrganism = false">
+            <q-card style="border-radius: 1rem; ">
+              <q-card-section  class="text-h5 text-center">
+                Tem certeza que deseja excluir?
+              </q-card-section>
+              <q-card-actions align="center">
+                <q-btn flat outline no-caps label="Cancelar" color="primary" v-close-popup />
+                <q-btn 
+                  no-caps
+                  rounded
+                  unelevated
+                  color="primary" 
+                  v-close-popup 
+                  label="Excluir" 
+                  @click="deleteOrganism"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </div>
       </div>
       <q-separator class="q-mx-md" />
@@ -42,13 +70,14 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
-  name: "CreateOrganismType",
+  name: "OrganismTypeConfigDetail",
   data() {
     return {
       organismTypeData: {
         name: '',
         description: ''
-      }
+      },
+      dialogDeleteOrganism: false
     }
   },
   mounted() {
@@ -72,11 +101,13 @@ export default defineComponent({
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.organismTypeData = r.data
+          this.organismTypeData = r.data[0]
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
+    },
+    deleteOrganism() {
     },
   },
 });
