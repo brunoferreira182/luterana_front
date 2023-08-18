@@ -3,7 +3,7 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col-6 text-h5 text-capitalize">
-          Criar nova visão
+          Detalhe da visão {{ vision.name }}
         </div>
         <div class="col text-right">
           <q-btn
@@ -16,21 +16,29 @@
             label="Atualizar visão"
           />
           <q-btn
-            @click="confirm = true"
+            @click="dialogInativeVision = true"
             rounded
             color="negative"
             unelevated
             no-caps
             label="Desativar visão"
           />
-          <q-dialog v-model="confirm">
-            <q-card>
-              <q-card-section class="q-pt-none">
-                Desativar?
+          <q-dialog v-model="dialogInativeVision" @hide="dialogInativeVision = false">
+            <q-card style="border-radius: 1rem; ">
+              <q-card-section  class="text-h5 text-center">
+                Tem certeza que deseja desativar?
               </q-card-section>
-              <q-card-actions align="right">
-                <q-btn flat label="Cancelar" color="primary" v-close-popup />
-                <q-btn flat label="Desativar" color="primary" v-close-popup />
+              <q-card-actions align="center">
+                <q-btn flat no-caps label="Cancelar" color="primary" v-close-popup />
+                <q-btn 
+                  no-caps
+                  rounded
+                  unelevated
+                  label="Desativar" 
+                  color="primary" 
+                  v-close-popup 
+                  @click="turnOffVision"
+                />
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -68,8 +76,9 @@ export default defineComponent({
     return {
       vision: {
         name: '',
-        description: ''
-      }
+        description: '',
+      },
+      dialogInativeVision: false
     }
   },
   mounted() {
@@ -114,6 +123,9 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
+    },
+    turnOffVision(){
+
     },
   },
 });
