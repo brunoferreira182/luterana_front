@@ -31,9 +31,8 @@
             Informações 
           </div>
           <q-select
-            v-if="!noOrganism"
+            v-if="formType === null || formType === 'switchFunction'"
             outlined
-            :disable="false"
             label="Configuração de organismo"
             option-label="organismConfigName"
             :option-value="(item) => item._id"
@@ -44,7 +43,7 @@
             :options="organismConfigOptions"
           />
           <q-select
-            v-else-if="noOrganism"
+            v-else-if="formType === 'enterOrganism'"
             outlined
             :disable="true"
             label="Configuração de organismo"
@@ -55,10 +54,6 @@
             hint="Informe a qual configuração de organismo pertencerá esse formulário"
             :v-model="noOrganismConfig"
             :options="organismConfigOptions"
-          />
-          <q-checkbox
-            v-model="noOrganism"
-            label="Este formulário não pertencerá a nenhum tipo de organismo"
           />
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
@@ -211,7 +206,7 @@
               class="col-12 q-my-xs"
             >
               <q-checkbox 
-                v-if="!noOrganism"
+                v-if="formType === null || formType === 'switchFunction'"
                 :label="vision.name"
                 :val="vision"
                 v-model="visions"
@@ -221,7 +216,7 @@
                 </div>
               </q-checkbox>
               <q-checkbox 
-                v-else-if="noOrganism"
+                v-else-if="formType === 'enterOrganism'"
                 :label="vision.name"
                 :val="''"
                 disable
@@ -247,30 +242,7 @@ export default defineComponent({
     return {
       fieldTypesOptions: [],
       visions: [],
-      formFields: [
-        {
-          label: "Nome",
-          type: {
-            _id: "64ad55727cb57d0bd22b10d5",
-            type: "string",
-            label: "Texto",
-          },
-          hint: "Informe o nome",
-          required: true,
-          model: "nome",
-        },
-        {
-          label: "Data de criação",
-          type: {
-            _id: "64ad55ce7cb57d0bd22b10d9",
-            type: "date",
-            label: "Data",
-          },
-          hint: "Data de criação do formulário",
-          required: true,
-          model: "data_de_criacao",
-        },
-      ],
+      formFields: [],
       formConfigName: '',
       newField: {
         label: null,
@@ -279,13 +251,23 @@ export default defineComponent({
         required: true,
         multiple: false,
       },
-      noOrganism: false,
-      selectedType: "",
+      formConfigType: [
+        {
+          label: 'Entrada em organismo',
+          type: 'enterOrganism',
+          selected: false
+        }, 
+        {
+          label: 'Troca de função',
+          type: 'switchFunction',
+          selected: false
+        }
+      ],
+      formType: null,
       visionsList: [],
       organismConfigId: '',
       organismConfigName: '',
       organismConfigOptions: [],
-      noOrganismConfig: '',
       checkedVisionsList: []
     };
   },
@@ -301,6 +283,20 @@ export default defineComponent({
     this.getFormDetailById()
   },
   methods: {
+    chipClicked(form) {
+      if (form.selected) {
+        form.selected = false;
+        this.formType = null;
+      } else {
+        this.formConfigType.forEach(f => {
+          f.selected = false;
+        });
+
+        form.selected = true;
+        this.formType = form.type;
+        console.log(this.formType)
+      }
+    },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",
@@ -342,7 +338,7 @@ export default defineComponent({
           this.formConfigName = r.data.formName
           this.organismConfigId = r.data.organismConfigId
           this.formFields = r.data.formFields
-          this.noOrganism = r.data.noOrganism
+          this.formType = r.data.formType
           this.checkedVisionsList = r.data.visions
           this.checkedVisionsList.forEach((check,i) => {
             this.visionsList.forEach(vision => {
