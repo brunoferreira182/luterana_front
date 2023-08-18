@@ -15,6 +15,25 @@
             no-caps
             label="Atualizar visão"
           />
+          <q-btn
+            @click="confirm = true"
+            rounded
+            color="negative"
+            unelevated
+            no-caps
+            label="Desativar visão"
+          />
+          <q-dialog v-model="confirm">
+            <q-card>
+              <q-card-section class="q-pt-none">
+                Desativar?
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn flat label="Cancelar" color="primary" v-close-popup />
+                <q-btn flat label="Desativar" color="primary" v-close-popup />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
         </div>
       </div>
       <q-separator class="q-mx-md" />
@@ -60,25 +79,25 @@ export default defineComponent({
     this.getVisionDetailById()
   },
   methods: {
-    // updateVision() {
-    //   const opt = {
-    //     route: "/desktop/config/updateVision",
-    //     body: {
-    //       visionInfo : this.vision 
-    //     },
-    //   };
-    //   this.$q.loading.show();
-    //   useFetch(opt).then(r => {
-    //     this.$q.loading.hide();
-    //     if (!r.error) {
-    //       this.$q.notify("Função criada com sucesso!");
-    //       this.vision = {}
-    //       this.$router.push('/config/visionsList')
-    //     } else {
-    //       this.$q.notify("Ocorreu um erro, tente novamente por favor");
-    //     }
-    //   });
-    // },
+    updateVision() {
+      const opt = {
+        route: "/desktop/config/updateVision",
+        body: {
+          visionInfo : this.vision 
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.$q.notify("Função criada com sucesso!");
+          this.vision = {}
+          this.$router.push('/config/visionsList')
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
     getVisionDetailById() {
       const opt = {
         route: "/desktop/config/getVisionDetailById",
