@@ -183,7 +183,7 @@ const useUtils = {
         {
           label: "Lista de Organismos",
           route: "/admin/organismsList",
-          icon: "hub",
+          icon: "diversity_2",
         },
       ],
       config: [
