@@ -31,7 +31,6 @@
             Informações 
           </div>
           <q-select
-            v-if="formType === null || formType === 'switchFunction'"
             outlined
             label="Configuração de organismo"
             option-label="organismConfigName"
@@ -40,19 +39,6 @@
             map-options
             hint="Informe a qual configuração de organismo pertencerá esse formulário"
             v-model="organismConfigId"
-            :options="organismConfigOptions"
-          />
-          <q-select
-            v-else-if="formType === 'enterOrganism'"
-            outlined
-            :disable="true"
-            label="Configuração de organismo"
-            option-label="organismConfigName"
-            :option-value="(item) => item._id"
-            emit-value
-            map-options
-            hint="Informe a qual configuração de organismo pertencerá esse formulário"
-            :v-model="noOrganismConfig"
             :options="organismConfigOptions"
           />
           <q-input
@@ -206,20 +192,8 @@
               class="col-12 q-my-xs"
             >
               <q-checkbox 
-                v-if="formType === null || formType === 'switchFunction'"
                 :label="vision.name"
                 :val="vision"
-                v-model="visions"
-              >
-                <div class="text-caption text-grey-7">
-                  {{ vision.description }}
-                </div>
-              </q-checkbox>
-              <q-checkbox 
-                v-else-if="formType === 'enterOrganism'"
-                :label="vision.name"
-                :val="''"
-                disable
                 v-model="visions"
               >
                 <div class="text-caption text-grey-7">
