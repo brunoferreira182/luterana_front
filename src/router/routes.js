@@ -48,7 +48,7 @@ const routes = [
       },
       {
         path: "/config/organismTypeConfigDetail",
-        component: () => import("pages/config/organismTypeConfigDetail.vue"),
+        component: () => import("pages/config/OrganismTypeConfigDetail.vue"),
       },
       //configurations// config de formulários
       {
