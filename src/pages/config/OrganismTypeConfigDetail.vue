@@ -14,7 +14,7 @@
             no-caps
             label="Salvar edição"
           />
-          <q-btn
+          <!-- <q-btn
             @click="dialogDeleteOrganism = true"
             rounded
             outline
@@ -22,7 +22,7 @@
             unelevated
             no-caps
             label="Excluir organismo"
-          />
+          /> -->
           <q-dialog v-model="dialogDeleteOrganism" @hide="dialogDeleteOrganism = false">
             <q-card style="border-radius: 1rem; ">
               <q-card-section  class="text-h5 text-center">
@@ -88,6 +88,22 @@ export default defineComponent({
   },
   methods: {
     updateOrganismType(){
+      const opt = {
+        route: "/desktop/config/updateOrganismType",
+        body: {
+          organismTypeId: this.$route.query.organismTypeId,
+          organismTypeData: this.organismTypeData
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.$q.notify("Atualização concluída");
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     },
     getOrganismTypeById() {
       const organismTypeId = this.$route.query.organismTypeId
@@ -101,7 +117,7 @@ export default defineComponent({
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.organismTypeData = r.data[0]
+          this.organismTypeData = r.data.organismTypeData
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }

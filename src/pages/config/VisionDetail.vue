@@ -5,11 +5,11 @@
         <div class="col-6 text-h5 text-capitalize">
           Detalhe da visão {{ vision.name }}
         </div>
+        
         <div class="col text-right">
           <q-btn
             @click="updateVision"
             rounded
-            disable=""
             color="primary"
             unelevated
             no-caps
@@ -23,7 +23,7 @@
             color="primary"
             unelevated
             no-caps
-            label="Desativar visão"
+            label="Inativar visão"
           />
           <q-btn
             v-else
@@ -37,8 +37,8 @@
           />
           <q-dialog v-model="dialogInativeVision" @hide="dialogInativeVision = false">
             <q-card style="border-radius: 1rem; ">
-              <q-card-section  class="text-h5 text-center">
-                Tem certeza que deseja desativar?
+              <q-card-section class="text-h5 text-center">
+                Tem certeza que deseja inativar?
               </q-card-section>
               <q-card-actions align="center">
                 <q-btn flat no-caps label="Cancelar" color="primary" v-close-popup />
@@ -46,10 +46,10 @@
                   no-caps
                   rounded
                   unelevated
-                  label="Desativar" 
+                  label="Inativar" 
                   color="primary" 
                   v-close-popup 
-                  @click="turnOffVision"
+                  @click="inactivateVision"
                 />
               </q-card-actions>
             </q-card>
@@ -74,7 +74,7 @@
                   label="Ativar" 
                   color="primary" 
                   v-close-popup 
-                  @click="turnOnVision"
+                  @click="activateVision"
                 />
               </q-card-actions>
             </q-card>
@@ -84,6 +84,24 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-8 q-gutter-md" align="start">
+          <q-chip 
+          v-if="isActive === 1"
+          color="positive" 
+          text-color="white" 
+          icon="cloud"
+          align="right"
+          >
+            Status: Ativa
+          </q-chip>
+          <q-chip 
+          v-if="isActive === 0"
+          color="negative" 
+          text-color="white" 
+          icon="cloud"
+          align="right"
+          >
+            Status: Inativa
+          </q-chip>
           <div class="text-h5">Nome</div>
           <q-input
             label="Escreva o nome"
@@ -116,7 +134,8 @@ export default defineComponent({
         description: '',
       },
       dialogInativeVision: false,
-      dialogAtiveVision: false
+      dialogAtiveVision: false,
+      isActive: null
     }
   },
   mounted() {
@@ -130,14 +149,15 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/updateVision",
         body: {
-          visionInfo : this.vision 
+          visionInfo : this.vision,
+          visionId: this.$route.query.visionId
         },
       };
       this.$q.loading.show();
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.$q.notify("Função criada com sucesso!");
+          this.$q.notify("Função atualizada com sucesso!");
           this.vision = {}
           this.$router.push('/config/visionsList')
         } else {
@@ -155,18 +175,47 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then(r => {
         this.$q.loading.hide();
-        if (!r.error) {
-          this.vision = r.data.visionInfo
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
         }
+          this.isActive = r.data.isActive
+          this.vision = r.data.visionInfo
       });
     },
-    turnOffVision(){
-
+    activateVision(){
+      const opt = {
+        route: "/desktop/config/activateVision",
+        body: {
+          visionId: this.$route.query.visionId
+        }
+      }
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }
+        this.getVisionDetailById()
+        this.$q.notify("Visão ativada com sucesso")
+      });
     },
-    turnOnVision(){
-
+    inactivateVision(){
+      const opt = {
+        route: "/desktop/config/inactivateVision",
+        body: {
+          visionId: this.$route.query.visionId,
+        },
+      }
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }
+        this.getVisionDetailById()
+        this.$q.notify("Visão desativada com sucesso")
+      });
     },
   },
 });
