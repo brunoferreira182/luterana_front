@@ -10,8 +10,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-7 q-gutter-md" align="start">
-          <div class="text-h5">Tipo de configuração de organismo</div>
+        <div class="col-7 q-gutter-md q-mt-sm" align="start">
           <q-select
             outlined
             label="Nome da configuração"
@@ -92,78 +91,7 @@
                   </div>
                 </q-item-section>
               </q-item>
-              <!-- <q-expansion-item
-                color="primary"
-                class="q-pa-sm"
-                icon="group"
-                :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                caption="Clique para ver ou adicionar"
-              >
-                <q-item
-                  v-for="user in func.users"
-                  :key="user"
-                  style="border-radius: 0.5rem; margin-top: 8px;"
-                  class="bg-white"
-                >
-                  <q-item-section avatar>
-                    <q-avatar rounded>
-                      <img src="https://cdn.quasar.dev/img/avatar.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section class="text-capitalize text-wrap" lines="2">
-                    {{ user.userName }}
-                    <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
-                      Data Início:
-                      {{ formatDate(user.dates.initialDate) }}
-                    </div>
-                    <div
-                      v-if="user.dates && user.dates.finalDate"
-                      class="text-caption text-grey-7"
-                    >
-                      Data Fim: {{ formatDate(user.dates.finalDate) }}
-                    </div>
-                  </q-item-section>
-                  <q-item-section side>
-                    <div class="text-grey-8 q-gutter-xs">
-                      <q-btn
-                        @click="dialogInsertObservation(user)"
-                        class="gt-xs"
-                        size="12px"
-                        color="secondary"
-                        flat
-                        dense
-                        round
-                        icon="library_books"
-                      >
-                        <q-tooltip> Observações </q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        @click="dialogOpenDeleteUserFromFunction(user, funcIndex)"
-                        class="gt-xs"
-                        size="12px"
-                        color="red-8"
-                        flat
-                        dense
-                        round
-                        icon="delete"
-                      >
-                        <q-tooltip> Deletar usuário da função </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </q-item-section>
-                </q-item>
-              </q-expansion-item> -->
               <q-item-section class="q-pa-xs">
-                <!-- <q-btn
-                  label="Quero participar"
-                  color="primary"
-                  dense
-                  icon="add"
-                  rounded
-                  flat
-                  no-caps
-                  @click="linkUserToFunction(func, funcIndex)"
-                /> -->
                 <q-btn
                   label="Quero participar"
                   color="primary"
@@ -172,26 +100,25 @@
                   rounded
                   flat
                   no-caps
-                  @click="dialogOpenSolicitation = true"
+                  @click="cuzinhopelado(func, funcIndex)"
                 />
               </q-item-section>
             </q-card>
-            <q-dialog v-model="dialogOpenSolicitation" >
+            <q-dialog v-model="dialogOpenSolicitation.open" >
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
                 <q-card-section align="center">
                   <div class="text-h6">
-                    Para participar desta função, é necessário preencher um formulário
+                    Troca de função
                   </div>
                 </q-card-section>
-                <!-- <q-card-section align="center">
+                <q-card-section align="center">
                   <q-input
                     filled
-                    label="Data início"
-                    type="date"
-                    hint="Informe a data início de ocupação da função"
-                    v-model="dialogInsertUserInFunction.initialDate"
+                    label="Observação"
+                    hint="Escreva uma breve descrição explicando o motivo para troca de função"
+                    v-model="dialogOpenSolicitation.obs"
                   />
-                </q-card-section> -->
+                </q-card-section>
                 <q-card-actions align="center">
                   <q-btn
                     flat
@@ -199,12 +126,12 @@
                     no-caps
                     rounded
                     color="primary"
-                    @click="dialogInsertUserInFunction.open = false"
+                    @click="dialogOpenSolicitation.open = false"
                   />
                   <q-btn
                     unelevated
                     rounded
-                    label="Preencher agora"
+                    label="Salvar"
                     no-caps
                     color="primary"
                     @click="assignUserToFunction"
@@ -524,7 +451,10 @@ export default defineComponent({
       organism: null,
       fields: [],
       organismConfigOptions: [],
-      dialogOpenSolicitation: false,
+      dialogOpenSolicitation: {
+        obs: '',
+        open: false, 
+      },
       newOrganism: {},
       organismSelected: '',
       dialogInsertUserInFunction:{
@@ -569,6 +499,10 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
+    cuzinhopelado(func, funcIndex){
+      console.log(funcIndex, 'veja o funcindex')
+      this.dialogOpenSolicitation.open = true
+    },
     filterInOrganismLinks(val){
       console.log(val)
     },

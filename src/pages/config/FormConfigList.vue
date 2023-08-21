@@ -52,8 +52,7 @@
                 unelevated
                 no-caps
                 rounded
-                dense
-                label="Nova configuração"
+                label="Novo formulário"
               />
             </div>
           </div>

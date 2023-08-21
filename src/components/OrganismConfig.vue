@@ -325,6 +325,11 @@
                 label="Preenchimento da função é obrigatório?"
                 v-model="newFunction.isRequired"
               />
+              <q-checkbox
+                class="q-px-sm"
+                label="Esta função fará gestão de troca de função e organismo?"
+                v-model="newFunction.isManager"
+              />
             </div>
           </q-card-section>
           <q-card-actions align="center" class="q-mb-md">
@@ -399,6 +404,11 @@
                 class="q-px-sm"
                 label="Preenchimento da função é obrigatório?"
                 v-model="editFunctionDialog.function.isRequired"
+              />
+              <q-checkbox
+                class="q-px-sm"
+                label="Esta função fará gestão de troca de função e organismo?"
+                v-model="editFunctionDialog.function.isManager"
               />
             </div>
           </q-card-section>
@@ -479,6 +489,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitleId: null,
+        isManager: false,
         isRequired: true,
         visions: []
       },
@@ -488,6 +499,7 @@ export default defineComponent({
           name: '',
           description: '',
           requiredTitleId: null,
+          isManager: false,
           isRequired: true,
           visions: []
         } 
@@ -654,7 +666,6 @@ export default defineComponent({
         this.$q.loading.hide();
         if (!r.error) {
           this.titlesOptions = r.data
-        
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -814,6 +825,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitleId: null,
+        isManager: false,
         isRequired: true,
         visions: []
       }

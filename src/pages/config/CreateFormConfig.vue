@@ -12,7 +12,7 @@
           v-if="
             $route.path === '/config/CreateFormConfig'
           "
-          class="col-6 text-h5 text-capitalize">Criar configuração de formulário
+          class="col-6 text-h5 text-capitalize">Criar formulário
         </div>
         <div class="col text-right">
           <q-btn
@@ -34,25 +34,10 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-7 q-gutter-md" align="start">
-          <div class="row"
-          >
-            <div class="text-h5 col-3">
-              Informações 
-            </div>
-            <div class="col">
-              <q-chip
-                v-for="form in formConfigType"
-                :key="form"
-                clickable
-                @click="chipClicked(form)"
-              >
-                <q-icon v-if="form.selected" name="check" size="sm" color="green-8" />
-                  {{ form.label }}
-              </q-chip>
-            </div>
+          <div class="text-h5">
+            Informações 
           </div>
           <q-select
-            v-if="formType === null || formType === 'switchFunction'"
             outlined
             label="Configuração de organismo"
             option-label="organismConfigName"
@@ -63,25 +48,32 @@
             v-model="organismConfigId"
             :options="organismConfigOptions"
           />
-          <q-select
-            v-else-if="formType === 'enterOrganism'"
-            outlined
-            :disable="true"
-            label="Configuração de organismo"
-            option-label="organismConfigName"
-            :option-value="(item) => item._id"
-            emit-value
-            map-options
-            hint="Informe a qual configuração de organismo pertencerá esse formulário"
-            :v-model="noOrganismConfig"
-            :options="organismConfigOptions"
-          />
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
-            label="Nome da configuração"
+            label="Nome do formulário"
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
+          />
+          <q-checkbox
+            class="q-py-sm"
+            v-model="formValid.daily"
+            label="Preenchimento diário"
+          />
+          <q-checkbox
+            class="q-py-sm"
+            v-model="formValid.weekly"
+            label="Preenchimento semanal"
+          />
+          <q-checkbox
+            class="q-py-sm"
+            v-model="formValid.monthly"
+            label="Preenchimento mensal"
+          />
+          <q-checkbox
+            class="q-py-sm"
+            v-model="formValid.monthly"
+            label="Preenchimento mensal"
           />
           <div
             class="text-h5"
@@ -229,20 +221,8 @@
               class="col-12 q-my-xs"
             >
               <q-checkbox 
-                v-if="formType === null || formType === 'switchFunction'"
                 :label="vision.name"
                 :val="vision"
-                v-model="visions"
-              >
-                <div class="text-caption text-grey-7">
-                  {{ vision.description }}
-                </div>
-              </q-checkbox>
-              <q-checkbox 
-                v-else-if="formType === 'enterOrganism'"
-                :label="vision.name"
-                :val="''"
-                disable
                 v-model="visions"
               >
                 <div class="text-caption text-grey-7">
@@ -279,7 +259,33 @@ export default defineComponent({
           selected: false
         }
       ],
-      formType: null,
+      formValid:[
+        {
+          label: 'Preenchimento diário',
+          type: 'daily',
+          selected: false
+        }, 
+        {
+          label: 'Preenchimento semanal',
+          type: 'weekly',
+          selected: false
+        },
+        {
+          label: 'Preenchimento mensal',
+          type: 'monthly',
+          selected: false
+        }, 
+        {
+          label: 'Preenchimento semestral',
+          type: 'semester',
+          selected: false
+        },
+        {
+          label: 'Preenchimento anual',
+          type: 'yearly',
+          selected: false
+        }
+      ],
       formConfigName: '',
       newField: {
         label: null,
@@ -302,21 +308,21 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
-    chipClicked(form) {
+    // chipClicked(form) {
 
-      if (form.selected) {
-        form.selected = false;
-        this.formType = null;
-      } else {
-        this.formConfigType.forEach(f => {
-          f.selected = false;
-        });
+    //   if (form.selected) {
+    //     form.selected = false;
+    //     this.formType = null;
+    //   } else {
+    //     this.formConfigType.forEach(f => {
+    //       f.selected = false;
+    //     });
 
-        form.selected = true;
-        this.formType = form.type;
-        console.log(this.formType)
-      }
-    },
+    //     form.selected = true;
+    //     this.formType = form.type;
+    //     console.log(this.formType)
+    //   }
+    // },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",
@@ -359,13 +365,6 @@ export default defineComponent({
           visions: this.visions,
         },
       };
-      if(this.formType === 'enterOrganism'){
-        opt.body.organismConfigId = ''
-        opt.body.formType = 'enterOrganism'
-        opt.body.visions = []
-      } else if(this.formType === 'switchFunction'){
-        opt.body.formType = 'switchFunction'
-      }
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify("Configuração de formulário criada com sucesso!");
