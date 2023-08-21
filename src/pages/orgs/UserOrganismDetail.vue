@@ -56,7 +56,7 @@
               Funções
             </div>
           </div>
-          <div v-for="(func, funcIndex) in functions" :key="funcIndex">
+          <div v-for="func in functions" :key="func">
             <q-card
               style="border-radius: 1rem"
               class="bg-grey-3 q-ma-sm"
@@ -100,7 +100,7 @@
                   rounded
                   flat
                   no-caps
-                  @click="cuzinhopelado(func, funcIndex)"
+                  @click="clkOpenDialogSolicitation(func)"
                 />
               </q-item-section>
             </q-card>
@@ -108,14 +108,14 @@
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
                 <q-card-section align="center">
                   <div class="text-h6">
-                    Troca de função
+                    Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
                   </div>
                 </q-card-section>
                 <q-card-section align="center">
                   <q-input
                     filled
                     label="Observação"
-                    hint="Escreva uma breve descrição explicando o motivo para troca de função"
+                    hint="Escreva uma breve descrição explicando o motivo para participar desta função"
                     v-model="dialogOpenSolicitation.obs"
                   />
                 </q-card-section>
@@ -131,10 +131,10 @@
                   <q-btn
                     unelevated
                     rounded
-                    label="Salvar"
+                    label="Enviar"
                     no-caps
                     color="primary"
-                    @click="assignUserToFunction"
+                    @click="addFunctionSolicitation"
                   />
                 </q-card-actions>
               </q-card>
@@ -453,6 +453,7 @@ export default defineComponent({
       organismConfigOptions: [],
       dialogOpenSolicitation: {
         obs: '',
+        data: {},
         open: false, 
       },
       newOrganism: {},
@@ -499,12 +500,31 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
-    cuzinhopelado(func, funcIndex){
-      console.log(funcIndex, 'veja o funcindex')
+    clkOpenDialogSolicitation(func){
+      this.dialogOpenSolicitation.data = func
       this.dialogOpenSolicitation.open = true
     },
     filterInOrganismLinks(val){
       console.log(val)
+    },
+    addFunctionSolicitation() {
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: "/desktop/adm/addFunctionSolicitation",
+        body: {
+          organismId: organismId,
+          functionId: this.dialogOpenSolicitation.data.functionId,
+          obs: this.dialogOpenSolicitation.obs
+        }
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.$q.notify("Solicitação encaminhada para análise!");
+          this.dialogOpenSolicitation.open = false
+        }
+      });
     },
     getOrganismsConfigs() {
       const opt = {

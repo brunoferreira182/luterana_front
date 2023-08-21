@@ -55,26 +55,61 @@
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
           />
-          <q-checkbox
-            class="q-py-sm"
-            v-model="formValid.daily"
-            label="Preenchimento diário"
+          <div class="text-h5">
+            Selecione a vigência do formulário
+          </div>
+          <q-select
+            outlined
+            label="Vigência de formulário"
+            option-label="label"
+            emit-value
+            map-options
+            :option-value="(item) => item.type"
+            v-model="formDatesSelected.formType"
+            hint="Informe o tempo de preenchimento do formulário"
+            :options="formDates"
           />
-          <q-checkbox
-            class="q-py-sm"
-            v-model="formValid.weekly"
-            label="Preenchimento semanal"
+          <q-select
+            v-if="formDatesSelected.formType === 'weekly'"
+            outlined
+            v-model="formDatesSelected.dayOfWeek"
+            label="Dia da semana"
+            option-label="label"
+            hint="Escolha o dia da semana"
+            :option-value="(item) => item.label"
+            emit-value
+            map-options
+            :options="daysOfTheWeek"
+            type="date"
           />
-          <q-checkbox
-            class="q-py-sm"
-            v-model="formValid.monthly"
-            label="Preenchimento mensal"
+          <q-input
+            outlined
+            v-if="formDatesSelected.formType === 'yearly'"
+            label="Data fim"
+            mask="##/##"
+            v-model="formDatesSelected.finalDate1"
           />
-          <q-checkbox
-            class="q-py-sm"
-            v-model="formValid.monthly"
-            label="Preenchimento mensal"
-          />
+          <div 
+            v-else-if="formDatesSelected.formType === 'semester' || formDatesSelected.formType === 'monthly'"
+            class="row justify-between" 
+          >
+            <div class="col-5">
+              <q-input
+                outlined
+                label="Data fim"
+                mask="##/##"
+                v-model="formDatesSelected.finalDate1"
+              />
+            </div>
+            <div class="col-5">
+              <q-input
+                outlined
+                label="Data fim"
+                mask="##/##"
+                v-model="formDatesSelected.finalDate2"
+              />
+            </div>
+          </div>
           <div
             class="text-h5"
           >
@@ -247,41 +282,44 @@ export default defineComponent({
       organismConfigId: '',
       visions: [],
       formFields: [],
-      formConfigType: [
-        {
-          label: 'Entrada em organismo',
-          type: 'enterOrganism',
-          selected: false
-        }, 
-        {
-          label: 'Troca de função',
-          type: 'switchFunction',
-          selected: false
-        }
+      daysOfTheWeek: [
+        { label: 'Domingo' },
+        { label: 'Segunda-feira' },
+        { label: 'Terça-feira' },
+        { label: 'Quarta-feira' },
+        { label: 'Quinta-feira' },
+        { label: 'Sexta-feira' },
+        { label: 'Sábado' }
       ],
-      formValid:[
+      dayOfWeek: null,
+      formDatesSelected: {
+        formType: null,
+        finalDate1: '',
+        finalDate2: '',
+      },
+      formDates:[
         {
-          label: 'Preenchimento diário',
+          label: 'Diário',
           type: 'daily',
           selected: false
         }, 
         {
-          label: 'Preenchimento semanal',
+          label: 'Semanal',
           type: 'weekly',
           selected: false
         },
         {
-          label: 'Preenchimento mensal',
+          label: 'Mensal',
           type: 'monthly',
           selected: false
         }, 
         {
-          label: 'Preenchimento semestral',
+          label: 'Semestral',
           type: 'semester',
           selected: false
         },
         {
-          label: 'Preenchimento anual',
+          label: 'Anual',
           type: 'yearly',
           selected: false
         }
@@ -295,7 +333,6 @@ export default defineComponent({
         multiple: false,
       },
       visionsList: [],
-      noOrganismConfig: '',
       organismConfigOptions: [],
     };
   },
@@ -308,21 +345,6 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
-    // chipClicked(form) {
-
-    //   if (form.selected) {
-    //     form.selected = false;
-    //     this.formType = null;
-    //   } else {
-    //     this.formConfigType.forEach(f => {
-    //       f.selected = false;
-    //     });
-
-    //     form.selected = true;
-    //     this.formType = form.type;
-    //     console.log(this.formType)
-    //   }
-    // },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",
@@ -365,7 +387,23 @@ export default defineComponent({
           visions: this.visions,
         },
       };
+      switch(this.formDatesSelected.formType){
+        case 'weekly':
+          opt.body.dayOfWeek = this.dayOfWeek
+        break;
+        case 'monthly': 
+          opt.body.monthly = this.formDatesSelected.finalDate1
+        break;
+        case 'semester': 
+          opt.body.semester = this.formDatesSelected
+        break;
+        case 'yealy':
+          opt.body.monthly = this.formDatesSelected
+        break;
+      }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (!r.error) {
           this.$q.notify("Configuração de formulário criada com sucesso!");
         } else {
