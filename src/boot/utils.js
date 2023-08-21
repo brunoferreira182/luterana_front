@@ -178,34 +178,34 @@ const useUtils = {
         {
           label: "Lista de Usuários",
           route: "/admin/usersList",
-          icon: "list",
+          icon: "group",
         },
         {
           label: "Lista de Organismos",
           route: "/admin/organismsList",
-          icon: "list",
+          icon: "diversity_2",
         },
       ],
       config: [
         {
           label: "Configuração de tipos de organismos",
           route: "/config/organismTypeConfigList",
-          icon: "list",
+          icon: "edit_square",
         },
         {
           label: "Configuração de Organismos",
           route: "/config/organismConfigurationList",
-          icon: "list",
+          icon: "diversity_2",
         },
         {
           label: "Configuração de usuário",
           route: "/config/usersConfigList",
-          icon: "list",
+          icon: "attribution",
         },
         {
           label: "Títulos",
           route: "/config/titleConfigurationList",
-          icon: "list",
+          icon: "import_contacts",
         },
         {
           label: "Visões",
@@ -215,7 +215,7 @@ const useUtils = {
         {
           label: "Configuração de formulário",
           route: "/config/formConfigList",
-          icon: "list",
+          icon: "forum",
         },
       ],
       attach: [
@@ -249,12 +249,12 @@ const useUtils = {
         {
           label: "Lista dos meus organismos",
           route: "/orgs/userOrganismsList",
-          icon: "list",
+          icon: "speaker_notes",
         },
         {
           label: "Lista das minhas funções",
           route: "/orgs/userFunctionsList",
-          icon: "list",
+          icon: "comment_bank",
         },
         {
           label: "Meus dados pessoais",
