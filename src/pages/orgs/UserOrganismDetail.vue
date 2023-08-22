@@ -83,7 +83,7 @@
                     <q-item-section top>
                       <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
                       <div>Descrição: {{ func.functionDescription }}</div>
-                      <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
+                      <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ? func.functionRequiredTitleName : 'nenhum' }}</div>
                       <div>
                         <q-icon name="visibility" color="primary" size="sm"/>
                         <q-chip
@@ -199,19 +199,22 @@
               <div 
                 v-for="item in solicitationData.solicitations" 
                 :key="item"
-                class="col-4" 
+                class="col-5" 
               >
                 <q-item 
                   class="solicitation-cards"
                 >
                   <q-item-section>
-                    <q-item-label>{{ item.functionName }}</q-item-label>
+                    <q-item-label > 
+                      <div class="text-capitalize">
+                        {{ item.userName }}
+                      </div>
+                    </q-item-label>
                     <q-item-label caption lines="2">{{ item.solicitationData.obs }}</q-item-label>
                   </q-item-section>
-
                   <q-item-section side top>
-                    <q-item-label caption>5 min ago</q-item-label>
                     <q-icon name="star" color="yellow" />
+                    <q-item-label caption> Enviado em: {{ item.createdAt.createdAtOnlyDate }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </div>
@@ -305,7 +308,7 @@ export default defineComponent({
         route: "/desktop/adm/addFunctionSolicitation",
         body: {
           organismId: organismId,
-          functionId: this.dialogOpenSolicitation.data.functionId,
+          functionId: this.dialogOpenSolicitation.data.functionConfigId,
           obs: this.dialogOpenSolicitation.obs
         }
       };
