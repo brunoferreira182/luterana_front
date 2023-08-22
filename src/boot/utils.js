@@ -200,7 +200,7 @@ const useUtils = {
         {
           label: "Configuração de usuário",
           route: "/config/usersConfigList",
-          icon: "attribution",
+          icon: "group",
         },
         {
           label: "Títulos",

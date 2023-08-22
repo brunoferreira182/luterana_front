@@ -45,12 +45,13 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-btn
                 @click="$router.push('/admin/createOrganism')"
                 color="primary"
                 unelevated
                 no-caps
+                class="q-pa-sm"
                 rounded
                 icon="add"
               >

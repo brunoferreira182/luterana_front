@@ -12,7 +12,9 @@
             color="primary"
             unelevated
             no-caps
-            label="Salvar edição"
+            class="q-pa-sm"
+            icon="bookmark"
+            label="Salvar Edição"
           />
           <!-- <q-btn
             @click="dialogDeleteOrganism = true"

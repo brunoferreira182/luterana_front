@@ -14,7 +14,9 @@
             @click="clkSaveAttachment"
             color="primary"
             no-caps
+            class="q-pa-sm"
             rounded
+            icon="bookmark"
             unelevated
             :label="
               $route.path === '/attach/CreateAttachment' ? 'Enviar' : 'Salvar'

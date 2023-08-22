@@ -21,7 +21,7 @@
       >
         <template #top-right>
           <div class="flex row justify-end">
-            <div class="col q-px-md">
+            <div class="col q-px-sm">
               <q-select
                 outlined
                 dense
@@ -31,7 +31,7 @@
                 @update:model-value="getUsers"
               ></q-select>
             </div>
-            <div class="col q-px-md">
+            <div class="col">
               <q-input
                 @keyup="getUsers"
                 outlined
@@ -45,7 +45,7 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-btn
                 @click="$router.push('/admin/createUser')"
                 color="primary"
@@ -53,6 +53,7 @@
                 no-caps
                 rounded
                 icon="add"
+                class="q-pa-sm"
               >
                 Criar Usuário
               </q-btn>

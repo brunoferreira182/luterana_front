@@ -7,14 +7,16 @@
             detalhe do organismo {{ organismName }}
           </div>
         </div>
-        <div class="col-2 text-center">
+        <div class="col-2 text-right">
           <q-btn
             no-caps
             color="primary"
             rounded
+            icon="bookmark"
+            flat
             unelevated
             @click="updateOrganism"
-            label="Salvar edição"
+            label="Salvar Edição"
           />
         </div>
       </div>

@@ -53,9 +53,9 @@
                 rounded
                 no-caps
                 icon="add"
-              >
-                Organismo
-              </q-btn>
+                class="q-pa-sm"
+                label="Novo Organismo"
+                />
             </div>
           </div>
         </template>

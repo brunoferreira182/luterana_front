@@ -7,20 +7,14 @@
         </div>
         
         <div class="col text-right">
-          <q-btn
-            @click="updateVision"
-            rounded
-            color="primary"
-            unelevated
-            no-caps
-            label="Atualizar visão"
-          />
+          
           <q-btn
             v-if="isActive === 1"
             @click="dialogInativeVision = true"
             rounded
+            class="q-mx-sm q-pa-sm"
             outline
-            color="primary"
+            color="negative"
             unelevated
             no-caps
             label="Inativar visão"
@@ -30,10 +24,21 @@
             @click="dialogAtiveVision = true"
             rounded
             outline
-            color="primary"
+            class="q-pa-sm q-mx-sm"
+            color="positive"
             unelevated
             no-caps
             label="Ativar visão"
+          />
+          <q-btn
+            @click="updateVision"
+            rounded
+            color="primary"
+            class="q-pa-sm"
+            icon="bookmark"
+            unelevated
+            no-caps
+            label="Atualizar visão"
           />
           <q-dialog v-model="dialogInativeVision" @hide="dialogInativeVision = false">
             <q-card style="border-radius: 1rem; ">

@@ -10,8 +10,10 @@
             rounded
             no-caps
             unelevated
+            icon="bookmark"
+            flat
             color="primary"
-            label="Salvar edição"
+            label="Salvar Edição"
             @click="clkUpdateUser"
           />
         </div>

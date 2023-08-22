@@ -11,6 +11,8 @@
             rounded
             color="primary"
             unelevated
+            class="q-pa-sm"
+            icon="bookmark"
             no-caps
           >
             {{
@@ -18,7 +20,7 @@
                 ? "Salvar"
                 : "Criar"
             }}
-            configuração
+            Configuração
           </q-btn>
         </div>
       </div>
