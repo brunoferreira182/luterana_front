@@ -11,22 +11,24 @@
             @click="dialogInactiveTitle.open = true"
             rounded
             outline
-            color="primary"
+            color="negative"
             unelevated
             no-caps
+            class="q-pa-sm"
           >
-            Inativar
+            Inativar Visão
           </q-btn>
           <q-btn
             v-else
             @click="dialogInactiveTitle.open = true"
             rounded
             outline
-            color="primary"
+            color="positive"
             unelevated
+            class="q-pa-sm"
             no-caps
           >
-            Ativar
+            Ativar Visão
           </q-btn>
           <q-btn
             @click="clkSaveConfig"
@@ -34,9 +36,10 @@
             color="primary"
             unelevated
             no-caps
-          >
-            Salvar alterações
-          </q-btn>
+            class="q-pa-sm"
+            icon="bookmark"
+            label="Salvar Alterações"
+          />
         </div>
       </div>
       <q-separator class="q-mx-md" />

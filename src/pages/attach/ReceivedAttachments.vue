@@ -49,6 +49,7 @@
                 @click="$router.push('/config/createStructure')"
                 color="primary"
                 unelevated
+                class="q-pa-sm"
                 rounded
                 no-caps
                 icon="add"

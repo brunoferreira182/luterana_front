@@ -28,7 +28,7 @@
                 unelevated
                 no-caps
                 label="nova configuração"
-                class="text-capitalize"
+                class="text-capitalize q-pa-sm"
                 rounded
                 icon="add"
               />

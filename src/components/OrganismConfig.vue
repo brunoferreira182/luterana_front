@@ -19,7 +19,9 @@
             @click="clkSaveConfig"
             rounded
             color="primary"
+            class="q-pa-sm"
             unelevated
+            icon="bookmark"
             no-caps
           >
             {{
@@ -27,7 +29,7 @@
                 ? "Salvar"
                 : "Criar"
             }}
-            configuração
+            Configuração
           </q-btn>
         </div>
       </div>

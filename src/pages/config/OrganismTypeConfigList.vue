@@ -45,7 +45,7 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-btn
                 @click="$router.push('/config/createOrganismTypeConfig')"
                 color="primary"
@@ -53,7 +53,9 @@
                 no-caps
                 rounded
                 dense
-                label="Criar tipo de organismo"
+                class="q-pa-sm"
+                icon="add"
+                label="Criar Organismo"
               />
             </div>
           </div>

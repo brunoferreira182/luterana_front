@@ -8,8 +8,11 @@
             no-caps
             rounded
             unelevated
+            class="q-pa-sm"
             color="primary"
-            :label="isSaving ? '' : 'Salvar'"
+            icon="bookmark"
+            flat
+            :label="isSaving ? '' : 'Salvar Dados'"
             @click="salvar"
             :disable="isSaving"
           >

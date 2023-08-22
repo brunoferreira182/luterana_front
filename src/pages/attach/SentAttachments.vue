@@ -51,6 +51,7 @@
                 unelevated
                 rounded
                 no-caps
+                class="q-pa-sm"
                 icon="add"
               >
                 Estrutura

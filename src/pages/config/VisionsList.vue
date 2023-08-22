@@ -51,9 +51,10 @@
                 color="primary"
                 unelevated
                 rounded
+                class="q-pa-sm"
                 no-caps
                 icon="add"
-                label="Nova visão"
+                label="Nova Visão"
               />
             </div>
           </div>

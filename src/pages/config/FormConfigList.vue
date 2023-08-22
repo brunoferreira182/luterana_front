@@ -45,14 +45,16 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-btn
                 @click="$router.push('/config/CreateFormConfig')"
                 color="primary"
                 unelevated
                 no-caps
+                class="q-pa-sm"
                 rounded
-                label="Novo formulário"
+                icon="add"
+                label="Novo Formulário"
               />
             </div>
           </div>

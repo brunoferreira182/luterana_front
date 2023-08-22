@@ -52,10 +52,10 @@
                 unelevated
                 rounded
                 no-caps
+                class="q-pa-sm"
                 icon="add"
-              >
-                Título
-              </q-btn>
+                label="Novo Título"
+              />
             </div>
           </div>
         </template>
