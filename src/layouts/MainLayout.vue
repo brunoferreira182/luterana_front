@@ -65,25 +65,6 @@
                       style="min-width: 320px; padding: 0px"
                       @click="clkOpenExpenseDetail(notification)"
                     >
-                      <!-- <div class="row items-center justify-around">
-                      <div class="col-1 q-ml-xs">
-                        <q-icon
-                          :color="notification.status.color"
-                          :name="notification.status.icon"
-                          size="30px"
-                        />
-                      </div>
-                    <div class="col-9">
-                      <div
-                        v-bind:class="'text-' + notification.status.color"
-                        >
-                        {{ notification.status.label }}
-                      </div>
-                      <div class="text-caption text-grey">
-                        {{notification.apelidoDespesa}}
-                      </div>
-                    </div>
-                    </div> -->
                       <q-item-section class="q-pa-sm">
                         <q-item-label v-if="notification.apelidoDespesa !== ''">
                           {{ notification.apelidoDespesa }}
