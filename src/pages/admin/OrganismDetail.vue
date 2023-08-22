@@ -83,7 +83,7 @@
                 <q-item-section top>
                   <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
                   <div>Descrição: {{ func.functionDescription }}</div>
-                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
+                  <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ? func.functionRequiredTitleName : 'nenhum' }}</div>
                   <div>
                     <q-icon name="visibility" color="primary" size="sm"/>
                     <q-chip
@@ -233,7 +233,7 @@
                     label="Confirmar"
                     no-caps
                     color="primary"
-                    @click="assignUserToFunction"
+                    @click="addUserToFunction"
                   />
                 </q-card-actions>
               </q-card>
@@ -494,6 +494,8 @@ export default defineComponent({
       userSelected: '',
       organism: null,
       fields: [],
+      selectedFunc: "",
+      selectedFuncIndex: "",
       organismConfigOptions: [],
       newOrganism: {},
       organismSelected: '',
@@ -684,12 +686,12 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.getOrganismDetailById();
           this.$q.notify("Observação inserida com sucesso!");
           this.clearDialogAndFunctions();
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -724,6 +726,44 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         this.organismList = r.data.list;
+      });
+    },
+    addUserToFunction() {
+      const selectedFuncIndex = this.selectedFuncIndex;
+      if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+        this.$q.notify("Preencha usuário e a data início");
+        return;
+      }
+      this.functions[selectedFuncIndex].users.push({
+        organismFunctionConfigId: this.selectedFunc.functionConfigId,
+        userId: this.userSelected._id,
+        initialDate: this.dialogInsertUserInFunction.initialDate,
+      });
+      const organismId = this.$route.query.organismId;
+      let userData = {}
+      for (const user of this.functions[selectedFuncIndex].users) {
+        userData = {
+          organismFunctionConfigId: user.organismFunctionConfigId,
+          userId: user.userId,
+          dates: {
+            initialDate: user.initialDate
+          }
+        };
+      }
+      const opt = {
+        route: "/desktop/adm/addUserToFunction",
+        body: {
+          organismId: organismId,
+          functionData: userData
+        }
+      };
+      useFetch(opt).then((r) => {
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else{
+          this.getOrganismDetailById()
+          this.clearDialogAndFunctions();
+        }
       });
     },
     getChildOrganismsById() {
@@ -796,29 +836,11 @@ export default defineComponent({
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    assignUserToFunction() {
-      const selectedFuncIndex = this.selectedFuncIndex;
-      if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
-        this.$q.notify("Preencha usuário e a data início");
-        return;
-      }
-
-      if (!this.functions[selectedFuncIndex].users) {
-        this.functions[selectedFuncIndex].users = [];
-      }
-
-      this.functions[selectedFuncIndex].users.push({
-        organismFunctionConfigId: this.selectedFunc.organismFunctionId,
-        userName: this.userSelected.userName,
-        functionName: this.selectedFunc.name,
-        userId: this.userSelected._id,
-        initialDate: this.dialogInsertUserInFunction.initialDate,
-      });
-      this.clearDialogAndFunctions();
-    },
     linkUserToFunction(func, funcIndex ) {
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
+      console.log(this.selectedFunc, 'AQUI SELECTEDFUNC')
+      console.log(this.selectedFuncIndex, 'AQUI SELECTEDINDEX')
       this.dialogInsertUserInFunction.open = true;
     },
     getOrganismDetailById() {
