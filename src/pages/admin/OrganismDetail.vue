@@ -861,11 +861,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.sector-card {
-  height: 150x; 
-  width: 400px;
-  padding: 10px;
-  border-radius: 1rem;
-}
-</style>

@@ -9,428 +9,285 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="row justify-around q-pa-md">
-        <div class="col-7 q-gutter-md q-mt-sm" align="start">
-          <q-select
-            outlined
-            label="Nome da configuração"
-            option-label="organismConfigName"
-            :option-value="(item) => item._id"
-            emit-value
-            readonly
-            map-options
-            hint="O tipo de configuração que está aplicado"
-            v-model="organismConfigName"
-            :options="organismConfigOptions"
-          />
-          <div v-if="fields.length" class="text-h5">
-            Dados
-          </div>
-          <div v-for="(field, i) in organismData.fields" :key="i">
-            <q-input
-              v-if="field.type.type !== 'boolean'"
-              v-model="field.value"
-              outlined
-              readonly
-              :type="getInputType(field.type.type)"
-              :reverse-fill-mask="field.type.type === 'money'"
-              :prefix="field.type.type === 'money' ? 'R$' : null"
-              :label="field.label + (field.required ? '' : ' (Opcional)')"
-              :mask="field.type.mask"
-              :hint="field.hint"
-            />
-            <q-checkbox
-              v-else-if="field.type.type === 'boolean'"
-              :label="field.label"
-              readonly
-              v-model="newOrganism[field.model]"
-            ></q-checkbox>
-          </div>
-        </div>
-        <q-separator vertical class="q-ma-md" />
-        <div class="col-4">
-          <div class="row">
-            <div
-              class="text-h5"
-            >
-              Funções
-            </div>
-          </div>
-          <div v-for="func in functions" :key="func">
-            <q-card
-              style="border-radius: 1rem"
-              class="bg-grey-3 q-ma-sm"
-              flat
-            >
-              <q-item>
-                <q-item-section top>
-                  <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
-                  <div>Descrição: {{ func.functionDescription }}</div>
-                  <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
-                  <div>
-                    <q-icon name="visibility" color="primary" size="sm"/>
-                    <q-chip
-                      v-for="(vision,i) in func.visions"
-                      :key="i"
-                    >
-                    {{ vision.name }}
-                    </q-chip>
-                    <span 
-                      class="text-caption text-grey-7"
-                      v-if="!func.visions || !func.visions.length"
-                    >
-                      Nenhuma visão
-                    </span>
-                  </div>
-                </q-item-section>
-                <q-item-section top side>
-                  <div class="text-subtitle2">
-                    <q-badge color="orange-8" v-if="func.isRequired">
-                      Obrigatório
-                    </q-badge>
-                  </div>
-                </q-item-section>
-              </q-item>
-              <q-item-section class="q-pa-xs">
-                <q-btn
-                  label="Quero participar"
-                  color="primary"
-                  dense
-                  icon="add"
-                  rounded
-                  flat
-                  no-caps
-                  @click="clkOpenDialogSolicitation(func)"
+      <q-tabs
+        v-model="tab"
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab name="generalData" label="Dados gerais" />
+        <q-tab name="solicitation" label="Solicitações" />
+      </q-tabs>
+      <q-separator />
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="generalData">
+          <div class="row justify-around q-pa-md">
+            <div class="col-7 q-gutter-md q-mt-sm" align="start">
+              <q-select
+                outlined
+                label="Nome da configuração"
+                option-label="organismConfigName"
+                :option-value="(item) => item._id"
+                emit-value
+                readonly
+                map-options
+                hint="O tipo de configuração que está aplicado"
+                v-model="organismConfigName"
+                :options="organismConfigOptions"
+              />
+              <div v-if="fields.length" class="text-h5">
+                Dados
+              </div>
+              <div v-for="(field, i) in organismData.fields" :key="i">
+                <q-input
+                  v-if="field.type.type !== 'boolean'"
+                  v-model="field.value"
+                  outlined
+                  readonly
+                  :type="getInputType(field.type.type)"
+                  :reverse-fill-mask="field.type.type === 'money'"
+                  :prefix="field.type.type === 'money' ? 'R$' : null"
+                  :label="field.label + (field.required ? '' : ' (Opcional)')"
+                  :mask="field.type.mask"
+                  :hint="field.hint"
                 />
-              </q-item-section>
-            </q-card>
-            <q-dialog v-model="dialogOpenSolicitation.open" >
-              <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                <q-card-section align="center">
-                  <div class="text-h6">
-                    Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
-                  </div>
-                </q-card-section>
-                <q-card-section align="center">
-                  <q-input
-                    filled
-                    label="Observação"
-                    hint="Escreva uma breve descrição explicando o motivo para participar desta função"
-                    v-model="dialogOpenSolicitation.obs"
-                  />
-                </q-card-section>
-                <q-card-actions align="center">
-                  <q-btn
-                    flat
-                    label="Depois"
-                    no-caps
-                    rounded
-                    color="primary"
-                    @click="dialogOpenSolicitation.open = false"
-                  />
-                  <q-btn
-                    unelevated
-                    rounded
-                    label="Enviar"
-                    no-caps
-                    color="primary"
-                    @click="addFunctionSolicitation"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
-              <q-card style="border-radius: 1rem; width: 400px">
-                <q-card-section>
-                  <div class="text-h6 text-center">
-                    Informe o usuário que ocupará a função
-                  </div>
-                </q-card-section>
-                <q-card-section align="center">
-                  <q-select
-                    v-model="userSelected"
-                    filled
-                    use-input
-                    label="Nome do usuário"
-                    option-label="userName"
-                    :options="usersOptions"
-                    @filter="getUsers"
-                    :option-value="(item) => item"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          Nenhum resultado
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                  </q-select>
-                </q-card-section>
-                <q-card-section align="center">
-                  <q-input
-                    filled
-                    label="Data início"
-                    type="date"
-                    hint="Informe a data início de ocupação da função"
-                    v-model="dialogInsertUserInFunction.initialDate"
-                  />
-                </q-card-section>
-                <q-card-actions align="center">
-                  <q-btn
-                    flat
-                    label="Depois"
-                    no-caps
-                    rounded
-                    color="primary"
-                    @click="dialogInsertUserInFunction.open = false"
-                  />
-                  <q-btn
-                    unelevated
-                    rounded
-                    label="Confirmar"
-                    no-caps
-                    color="primary"
-                    @click="assignUserToFunction"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-dialog
-              v-model="dialogOpenObservation.open"
-              @hide="clearDialogAndFunctions"
-            >
-              <q-card style="border-radius: 1rem; width: 400px">
-                <q-card-section>
-                  <div 
-                    v-if="dialogOpenObservation.data.obs && dialogOpenObservation.data.obs.length"
-                    class="text-subtitle1 text-center"
-                  >
-                    Histórico de observações:
-                  </div>
-                  <q-item
-                    style="
-                      border-radius: 0.5rem;
-                      background-color: #e7e7e7;
-                      margin: 10px;
-                    "
-                    v-for="obs in dialogOpenObservation.data.obs"
-                    :key="obs"
-                  >
-                    <q-item-section class="text-wrap">
-                      <div class="row justify-end">
-                        
-                        <div class="col text-capitalize text-bold">
-                          <q-avatar size="lg" rounded >
-                            <img src="https://cdn.quasar.dev/img/avatar.png" />
-                          </q-avatar>
-                          {{ obs.createdBy.name }}
-                        </div>
-                        <div class="col text-right" >
-                          <div>
-                            Publicado em
-                          </div>
-                          <div class="text-caption">
-                            {{ obs.createdAt.createdAtOnlyDate }}
-                          </div>
-                        </div>
-                      </div>
+                <q-checkbox
+                  v-else-if="field.type.type === 'boolean'"
+                  :label="field.label"
+                  readonly
+                  v-model="newOrganism[field.model]"
+                ></q-checkbox>
+              </div>
+            </div>
+            <q-separator vertical class="q-ma-md" />
+            <div class="col-4">
+              <div class="row">
+                <div
+                  class="text-h5"
+                >
+                  Funções
+                </div>
+              </div>
+              <div v-for="func in functions" :key="func">
+                <q-card
+                  style="border-radius: 1rem"
+                  class="bg-grey-3 q-ma-sm"
+                  flat
+                >
+                  <q-item>
+                    <q-item-section top>
+                      <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
+                      <div>Descrição: {{ func.functionDescription }}</div>
+                      <div class="text-caption text-grey-7">Título necessário: {{ func.requiredTitle ? func.requiredTitle.titleName : 'nenhum' }}</div>
                       <div>
-                        {{ obs.obsText }}
+                        <q-icon name="visibility" color="primary" size="sm"/>
+                        <q-chip
+                          v-for="(vision,i) in func.visions"
+                          :key="i"
+                        >
+                        {{ vision.name }}
+                        </q-chip>
+                        <span 
+                          class="text-caption text-grey-7"
+                          v-if="!func.visions || !func.visions.length"
+                        >
+                          Nenhuma visão
+                        </span>
+                      </div>
+                    </q-item-section>
+                    <q-item-section top side>
+                      <div class="text-subtitle2">
+                        <q-badge color="orange-8" v-if="func.isRequired">
+                          Obrigatório
+                        </q-badge>
                       </div>
                     </q-item-section>
                   </q-item>
-                </q-card-section>
-                <q-card-section>
-                  <div class="text-h6 text-center">
-                    Insira uma observação à respeito de
-                    {{ dialogOpenObservation.data.userName }}
-                  </div>
-                </q-card-section>
-                <q-card-section align="center" class="q-gutter-sm">
-                  <q-input
-                    filled
-                    label="Observação"
-                    v-model="dialogOpenObservation.obsText"
-                    hint="Insira aqui sua observação"
-                  />
-                </q-card-section>
-                <q-card-actions align="center">
-                  <q-btn
-                    flat
-                    label="Depois"
-                    no-caps
-                    rounded
-                    color="primary"
-                    @click="dialogOpenObservation.open = false"
-                  />
-                  <q-btn
-                    unelevated
-                    rounded
-                    label="Confirmar"
-                    no-caps
-                    color="primary"
-                    @click="addObservationForFunctionUser"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-dialog
-              v-model="dialogDeleteUserFromFunction.open"
-              @hide="clearDialogAndFunctions"
-            >
-              <q-card style="border-radius: 1rem; width: 400px">
-                <q-card-section>
-                  <div class="text-h6 text-center">
-                    Tem certeza que deseja inativar
-                    {{ dialogDeleteUserFromFunction.data.userName }}?
-                  </div>
-                </q-card-section>
-                <q-card-section align="center" class="q-gutter-sm">
-                  <q-input
-                    filled
-                    label="Observação"
-                    v-model="dialogDeleteUserFromFunction.obsText"
-                    hint="Informe o motivo"
-                  />
-                  <q-input
-                    filled
-                    type="date"
-                    label="Data final"
-                    v-model="dialogDeleteUserFromFunction.finalDate"
-                    hint="Informe a data final de ocupação da função"
-                  />
-                </q-card-section>
-                <q-card-actions align="center">
-                  <q-btn
-                    flat
-                    label="Depois"
-                    no-caps
-                    rounded
-                    color="primary"
-                    @click="dialogDeleteUserFromFunction.open = false"
-                  />
-                  <q-btn
-                    unelevated
-                    rounded
-                    label="Confirmar"
-                    no-caps
-                    color="primary"
-                    @click="inactivateUserFromFunction"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-            <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
-              <q-card>
-                <q-card-section>
-                  <div class="text-h6 text-center">
-                    Vínculos
-                  </div>
-                </q-card-section>
-                <q-card-section>
-                  <div class="row">
-                    <div class="col-6">
-                      <q-separator/>
-                      <div class="text-subtitle2 q-ma-sm">
-                        Organismos filiados vinculados:
-                      </div>
-                      <div v-if="childOrganism.length">
-                        <q-chip removable @remove="removeChildRelation(chip)" v-for="chip in childOrganism" :key="chip._id">
-                          {{ chip.organismName }}
-                        </q-chip>
-                      </div>
-                      <div v-else-if="!organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                    </div>
-                    <q-separator vertical />
-                    <div class="col">
-                      <q-separator/>
-                      <div class="text-subtitle2 q-ma-sm">
-                        Organismos superiores vinculados:
-                      </div>
-                      <div v-if="parentOrganism.length">
-                        <q-chip removable @remove="removeParentRelation(chip)" v-for="chip in parentOrganism" :key="chip._id">
-                          {{ chip.organismName }}
-                        </q-chip>
-                      </div>
-                      <div v-else-if="!parentOrganism.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                    </div>
-                  </div>
-                  <!-- <q-input 
-                    v-if="organismLinks.length" 
-                    label="Buscar" 
-                    outlined
-                    v-model="organismVinculated"
-                    @update:model-value="filterInOrganismLinks"
-                    type="search"
+                  <q-expansion-item
+                    class="q-pa-sm"
+                    icon="group"
+                    :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
+                    caption="Clique para ver"
                   >
-                    <template #append>
-                      <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
-                      <q-icon name="search" />
-                    </template>
-                  </q-input> -->
-                  
-                  <div v-if="organismLinks.length">
-                    <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
-                      {{ chip.nome }}
-                    </q-chip>
-                  </div>
-                  <div v-else-if="$router.query === '/admin/createOrganism' && !organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                </q-card-section>
-                <q-card-section>
-                  <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
-                  <q-input 
-                    label="Buscar"
-                    outlined
-                    type="search"
-                    v-model="organismSelected"
-                    hint="Faça uma busca para visualizar os organismos disponíveis"
-                    @update:model-value="getOrganismsList"
-                  >
-                    <template #append>
-                      <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
-                      <q-icon name="search" />
-                    </template>
-                  </q-input>
-                  <q-list bordered class="q-mt-sm">
                     <q-item
-                      clickable
-                      :disable="organismLinks.includes(organism)"
-                      @click="addNewLink(organism,i)"
-                      v-for="(organism,i) in organismList"
-                      :key="i"
+                      v-for="(user, userIndex) in func.users"
+                      :key="userIndex"
+                      style="border-radius: 0.5rem; margin-top: 8px;"
+                      class="bg-white"
                     >
-                      <q-item-section>
-                        {{ organism.nome }}
+                      <q-item-section avatar>
+                        <q-avatar rounded>
+                          <img src="https://cdn.quasar.dev/img/avatar.png" />
+                        </q-avatar>
                       </q-item-section>
-                      <q-item-section class="text-primary" side>
-                        {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                      <q-item-section class="text-capitalize text-wrap" lines="2">
+                        {{ user.userName }}
+                        <div class="text-caption text-grey-7">
+                          Data Início:
+                          {{ formatDate(user.dates.initialDate) }}
+                        </div>
+                        <div
+                          v-if="user.dataFim"
+                          class="text-caption text-grey-7"
+                        >
+                          Data Fim: {{ formatDate(user.dates.finalDate) }}
+                        </div>
                       </q-item-section>
                     </q-item>
-                  </q-list>
-                </q-card-section>
-                <q-card-actions align="center">
-                  <q-btn
-                    flat
-                    label="Fechar"
-                    no-caps
-                    rounded
-                    color="primary"
-                    @click="dialogLinks = false"
-                  />
-                  <q-btn
-                    label="Salvar vínculo"
-                    no-caps
-                    unelevated
-                    rounded
-                    color="primary"
-                    @click="clkSaveVinculo"
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
+                  </q-expansion-item>
+                  <q-item-section class="q-pa-xs">
+                    <q-btn
+                      label="Quero participar"
+                      color="primary"
+                      dense
+                      icon="add"
+                      rounded
+                      flat
+                      no-caps
+                      @click="clkOpenDialogSolicitation(func)"
+                    />
+                  </q-item-section>
+                </q-card>
+                <q-dialog v-model="dialogOpenSolicitation.open" >
+                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                    <q-card-section align="center">
+                      <div class="text-h6">
+                        Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
+                      </div>
+                    </q-card-section>
+                    <q-card-section align="center">
+                      <q-input
+                        filled
+                        label="Observação"
+                        hint="Escreva uma breve descrição explicando o motivo para participar desta função"
+                        v-model="dialogOpenSolicitation.obs"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogOpenSolicitation.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Enviar"
+                        no-caps
+                        color="primary"
+                        @click="addFunctionSolicitation"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+                <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
+                  <q-card>
+                    <q-card-section>
+                      <div class="text-h6 text-center">
+                        Vínculos
+                      </div>
+                    </q-card-section>
+                    <q-card-section>
+                      <div class="row">
+                        <div class="col-6">
+                          <q-separator/>
+                          <div class="text-subtitle2 q-ma-sm">
+                            Organismos filiados vinculados:
+                          </div>
+                          <div v-if="childOrganism.length">
+                            <q-chip removable @remove="removeChildRelation(chip)" v-for="chip in childOrganism" :key="chip._id">
+                              {{ chip.organismName }}
+                            </q-chip>
+                          </div>
+                          <div v-else-if="!organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
+                        </div>
+                        <q-separator vertical />
+                        <div class="col">
+                          <q-separator/>
+                          <div class="text-subtitle2 q-ma-sm">
+                            Organismos superiores vinculados:
+                          </div>
+                          <div v-if="parentOrganism.length">
+                            <q-chip removable @remove="removeParentRelation(chip)" v-for="chip in parentOrganism" :key="chip._id">
+                              {{ chip.organismName }}
+                            </q-chip>
+                          </div>
+                          <div v-else-if="!parentOrganism.length" class="text-center q-mt-md">Nenhum vínculo.</div>
+                        </div>
+                      </div>
+                      <div v-if="organismLinks.length">
+                        <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
+                          {{ chip.nome }}
+                        </q-chip>
+                      </div>
+                      <div v-else-if="$router.query === '/admin/createOrganism' && !organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
+                    </q-card-section>
+                    <q-card-section>
+                      <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
+                      <q-input 
+                        label="Buscar"
+                        outlined
+                        type="search"
+                        v-model="organismSelected"
+                        hint="Faça uma busca para visualizar os organismos disponíveis"
+                        @update:model-value="getOrganismsList"
+                      >
+                        <template #append>
+                          <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                          <q-icon name="search" />
+                        </template>
+                      </q-input>
+                      <q-list bordered class="q-mt-sm">
+                        <q-item
+                          clickable
+                          :disable="organismLinks.includes(organism)"
+                          @click="addNewLink(organism,i)"
+                          v-for="(organism,i) in organismList"
+                          :key="i"
+                        >
+                          <q-item-section>
+                            {{ organism.nome }}
+                          </q-item-section>
+                          <q-item-section class="text-primary" side>
+                            {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Fechar"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogLinks = false"
+                      />
+                      <q-btn
+                        label="Salvar vínculo"
+                        no-caps
+                        unelevated
+                        rounded
+                        color="primary"
+                        @click="clkSaveVinculo"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </q-tab-panel>
+        <q-tab-panel name="solicitation">
+          <div class="text-h6">Alarms</div>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </q-tab-panel>
+      </q-tab-panels>
     </q-page>
   </q-page-container>
 </template>
@@ -446,6 +303,7 @@ export default defineComponent({
       usersOptions: [],
       organismVinculated: '',
       organismTypeId: null,
+      tab: 'generalData',
       organismName: '',
       userSelected: '',
       organism: null,
@@ -458,21 +316,11 @@ export default defineComponent({
       },
       newOrganism: {},
       organismSelected: '',
-      dialogInsertUserInFunction:{
-        initialDate: '',
-        open: false,
-      },
       dialogDeleteUserFromFunction: {
         obsText: "",
         finalDate: "",
         functionUserId: "",
         open: false,
-        data: {},
-      },
-      dialogOpenObservation: {
-        open: false,
-        functionUserId: "",
-        obsText: "",
         data: {},
       },
       organismData: {
@@ -522,6 +370,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.$q.notify("Solicitação encaminhada para análise!");
+          this.getOrganismDetailById()
           this.dialogOpenSolicitation.open = false
         }
       });
@@ -650,32 +499,6 @@ export default defineComponent({
       this.dialogOpenObservation.data = user;
       this.dialogOpenObservation.open = true;
       this.dialogOpenObservation.functionUserId = user.userIdMongo
-    },
-    addObservationForFunctionUser() {
-      if (
-        this.dialogOpenObservation.obsText === ''
-      ) {
-        this.$q.notify("Preencha o campo observação");
-        return;
-      }
-      const opt = {
-        route: "/desktop/adm/addObservationForFunctionUser",
-        body: {
-          obsText: this.dialogOpenObservation.obsText,
-          functionUserId: this.dialogOpenObservation.functionUserId
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.getOrganismDetailById();
-          this.$q.notify("Observação inserida com sucesso!");
-          this.clearDialogAndFunctions();
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
     },
     clearDialogAndFunctions() {
       this.selectedFunc = {};
@@ -814,13 +637,13 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.functions = r.data.functions
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
-          this.functions = r.data.functions
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -843,11 +666,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.sector-card {
-  height: 150x; 
-  width: 400px;
-  padding: 10px;
-  border-radius: 1rem;
-}
-</style>
