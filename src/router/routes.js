@@ -177,14 +177,15 @@ const routes = [
       {
         path: "/orgs/userPersonalData",
         component: () => import("pages/orgs/UserPersonalData.vue"),
-      },
-      
+      }, 
     ],
   },
 
   // Always leave this as last one,
   // but you can also remove it
   { path: "/login", component: () => import("pages/Login.vue") },
+  { path: "/userCreateLogin", component: () => import("pages/userCreateLogin.vue") },
+
   
   {
     path: "/:catchAll(.*)*",
