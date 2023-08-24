@@ -185,6 +185,16 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
+        {
+          label: "Títulos",
+          route: "/admin/titlesList",
+          icon: "import_contacts",
+        },
+        {
+          label: "Solicitações de Títulos",
+          route: "/admin/titlesSolicitationsList",
+          icon: "list",
+        },
       ],
       config: [
         {
@@ -256,12 +266,14 @@ const useUtils = {
           route: "/orgs/userFunctionsList",
           icon: "comment_bank",
         },
+      ],
+      user: [
         {
           label: "Meus dados pessoais",
-          route: "/orgs/userPersonalData",
+          route: "/user/userPersonalData",
           icon: "description",
         },
-      ]
+      ],
     };
     return obj[type];
   },

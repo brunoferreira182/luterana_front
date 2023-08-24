@@ -147,12 +147,17 @@
         >
           <div class="fit row justify-start" >
             <div class="col-3 gradient text-white text-center">
-              <q-list class="">
+              <q-list>
                 <q-item
                   :active="activeRightDrawer === item.id"
-                  active-class="bg-grey-3 text-primary"
-                  class="q-py-md text-center q-px-none transparent-background"
-                  :style=" i === indexMenu1 + 1 ? 'border-radius: 0 15px 0 0' : i === indexMenu1 - 1 ? 'border-radius: 0 0 15px 0' : ''
+                  active-class="bg-grey-3 text-primary "
+                  class="q-py-md text-center q-px-none"
+                  :style="
+                    i === indexMenu1 + 1
+                      ? 'border-radius: 0 15px 0 0'
+                      : i === indexMenu1 - 1
+                      ? 'border-radius: 0 0 15px 0'
+                      : ''
                   "
                   @click="clkItem(item, i)"
                   v-for="(item, i) in permissions"
@@ -181,6 +186,17 @@
                       item.nick
                     }}</q-item-label>
                   </q-item-section>
+                </q-item>
+              </q-list>
+              <q-list>
+                <q-item
+                  class=" q-pa-none"
+                  :style="
+                    indexMenu1 === permissions.length - 1
+                      ? 'border-radius: 0 15px 0 0'
+                      : ''
+                  "
+                >
                 </q-item>
               </q-list>
             </div>
@@ -305,9 +321,6 @@ export default defineComponent({
     });
     // this.getStatusNotifications()
     this.drawerData = this.drawer;
-    // if (!this.$logoAndColors.get().alreadySet) {
-    //   this.getCompanyColors()
-    // }
   },
   watch: {
     $route() {
@@ -323,7 +336,6 @@ export default defineComponent({
     },
   },
   methods: {
-    
     async getCompanyColors() {
       await this.$logoAndColors.getFromServer(this.userInfo.cId);
       return;
@@ -366,8 +378,5 @@ export default defineComponent({
 }
 .redondo {
   border-radius: 50px;
-}
-.transparent-background {
-  background: transparent;
 }
 </style>

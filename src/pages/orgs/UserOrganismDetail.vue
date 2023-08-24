@@ -73,7 +73,7 @@
                   Funções
                 </div>
               </div>
-              <div v-for="(func, funcIndex) in functions" :key="func">
+              <div v-for="func in functions" :key="func">
                 <q-card
                   style="border-radius: 1rem"
                   class="bg-grey-3 q-ma-sm"
@@ -149,7 +149,7 @@
                       rounded
                       flat
                       no-caps
-                      @click="clkOpenDialogSolicitation(func, funcIndex)"
+                      @click="clkOpenDialogSolicitation(func)"
                     />
                   </q-item-section>
                 </q-card>
@@ -197,7 +197,7 @@
           <q-list>
             <div class="row q-gutter-md" v-if="solicitationData !== 0">
               <div 
-                v-for="(solic, solicIndex) in solicitationData.solicitations" 
+                v-for="(solic, solicIndex) in solicitationData" 
                 :key="solicIndex"
                 class="col-5" 
               >
@@ -312,7 +312,7 @@ export default defineComponent({
       tab: 'generalData',
       organismName: '',
       userSelected: '',
-      userIdMongo: '',
+      myUserIdMongo: '',
       organism: null,
       fields: [],
       obsMaxLength: 55,
@@ -330,6 +330,7 @@ export default defineComponent({
       dialogOpenSolicitation: {
         obs: '',
         data: {},
+        functionConfigId: '',
         open: false, 
       },
       newOrganism: {},
@@ -355,7 +356,7 @@ export default defineComponent({
     this.getUserIdMongo()
     this.getOrganismDetailById();
     this.getOrganismsConfigs()
-    this.getSolicitationsByOrganismId()
+    this.getFunctionsSolicitationsByOrganismId()
   },
   methods: {
     getUserIdMongo(){
@@ -366,10 +367,11 @@ export default defineComponent({
         if(r.error){
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
           return
-        }else{ this.userIdMongo = r.data.userIdMongo}
+        }else{ this.myUserIdMongo = r.data.userIdMongo}
       })
     },
     sendReproveFeedback(){
+      this.$q.notify('IMPLEMENTAR ROTA')
       this.dialogReproveSolicitation.open = false
     },
     clkReproveSolicitation(solic, solicIndex){
@@ -380,17 +382,21 @@ export default defineComponent({
     toggleExpandText(solicIndex){
       this.showFullText[solicIndex] = !this.showFullText[solicIndex];
     },
-    clkOpenDialogSolicitation(func, funcIndex){
-      console.log(func, 'AQUI func')
-      console.log(funcIndex, 'AQUI funcIndex')
-      console.log(func.users, 'AQUI FUNC users')
-      // this.dialogOpenSolicitation.data = func
-      this.dialogOpenSolicitation.open = true
+    clkOpenDialogSolicitation(func) {
+      for (const user of func.users) {
+        if (user.userIdMongo === this.myUserIdMongo) {
+          this.$q.notify('Você já participa desta função')
+          return
+        }
+      }
+      this.dialogOpenSolicitation.data = func
+      this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+      this.dialogOpenSolicitation.open = true;
     },
-    getSolicitationsByOrganismId() {
+    getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getSolicitationsByOrganismId",
+        route: "/desktop/adm/getFunctionsSolicitationsByOrganismId",
         body: {
           organismId: organismId,
         }
@@ -413,7 +419,7 @@ export default defineComponent({
         route: "/desktop/adm/addFunctionSolicitation",
         body: {
           organismId: organismId,
-          functionId: this.dialogOpenSolicitation.data.functionConfigId,
+          functionId: this.dialogOpenSolicitation.functionConfigId,
           obs: this.dialogOpenSolicitation.obs
         }
       };
@@ -422,7 +428,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.$q.notify("Solicitação encaminhada para análise!");
-          this.getSolicitationsByOrganismId()
+          this.getFunctionsSolicitationsByOrganismId()
           this.dialogOpenSolicitation.open = false
         }
       });

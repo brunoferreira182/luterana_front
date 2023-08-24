@@ -174,9 +174,11 @@ const routes = [
         path: "/orgs/searchAllOrganismsList",
         component: () => import("pages/orgs/SearchAllOrganismsList.vue"),
       },
+      
+      { path: "/user", redirect: "/user/userPersonalData" },
       {
-        path: "/orgs/userPersonalData",
-        component: () => import("pages/orgs/UserPersonalData.vue"),
+        path: "/user/userPersonalData",
+        component: () => import("pages/user/UserPersonalData.vue"),
       }, 
     ],
   },
