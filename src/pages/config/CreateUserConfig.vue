@@ -112,12 +112,14 @@
                   </q-badge>
                 </div>
                 <div class="col-1">
-                  <q-btn
+                  <q-btn 
+                    v-if="i >= 2"
                     icon="delete"
                     size="large"
                     class="q-mb-md"
                     rounded
-                    @click="userDataTabs[i].fields[i].splice(i, 1)"
+                    @click="tabCard.fields.splice(i, 1), 
+                    notifyRemoved()"
                     flat
                     color="primary"
                   />
@@ -466,6 +468,9 @@ export default defineComponent({
         this.createOrganismsConfig();
       }
     },
+    notifyRemoved() {
+      this.$q.notify("Campo removido")
+    }
   },
 });
 </script>
