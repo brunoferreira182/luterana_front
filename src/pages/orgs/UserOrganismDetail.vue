@@ -73,7 +73,7 @@
                   Funções
                 </div>
               </div>
-              <div v-for="func in functions" :key="func">
+              <div v-for="(func, funcIndex) in functions" :key="func">
                 <q-card
                   style="border-radius: 1rem"
                   class="bg-grey-3 q-ma-sm"
@@ -115,8 +115,8 @@
                     caption="Clique para ver"
                   >
                     <q-item
-                      v-for="(user, userIndex) in func.users"
-                      :key="userIndex"
+                      v-for="user in func.users"
+                      :key="user"
                       style="border-radius: 0.5rem; margin-top: 8px;"
                       class="bg-white"
                     >
@@ -149,7 +149,7 @@
                       rounded
                       flat
                       no-caps
-                      @click="clkOpenDialogSolicitation(func)"
+                      @click="clkOpenDialogSolicitation(func, funcIndex)"
                     />
                   </q-item-section>
                 </q-card>
@@ -312,6 +312,7 @@ export default defineComponent({
       tab: 'generalData',
       organismName: '',
       userSelected: '',
+      userIdMongo: '',
       organism: null,
       fields: [],
       obsMaxLength: 55,
@@ -351,11 +352,23 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount(){
+    this.getUserIdMongo()
     this.getOrganismDetailById();
     this.getOrganismsConfigs()
     this.getSolicitationsByOrganismId()
   },
   methods: {
+    getUserIdMongo(){
+      const opt = {
+        route: '/desktop/adm/getUserIdMongo',
+      }
+      useFetch(opt).then(r => {
+        if(r.error){
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }else{ this.userIdMongo = r.data.userIdMongo}
+      })
+    },
     sendReproveFeedback(){
       this.dialogReproveSolicitation.open = false
     },
@@ -367,8 +380,11 @@ export default defineComponent({
     toggleExpandText(solicIndex){
       this.showFullText[solicIndex] = !this.showFullText[solicIndex];
     },
-    clkOpenDialogSolicitation(func){
-      this.dialogOpenSolicitation.data = func
+    clkOpenDialogSolicitation(func, funcIndex){
+      console.log(func, 'AQUI func')
+      console.log(funcIndex, 'AQUI funcIndex')
+      console.log(func.users, 'AQUI FUNC users')
+      // this.dialogOpenSolicitation.data = func
       this.dialogOpenSolicitation.open = true
     },
     getSolicitationsByOrganismId() {
