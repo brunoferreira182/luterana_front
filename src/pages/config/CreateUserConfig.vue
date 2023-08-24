@@ -112,17 +112,19 @@
                   </q-badge>
                 </div>
                 <div class="col-1">
-                  <q-btn 
-                    v-if="i >= 2"
-                    icon="delete"
-                    size="large"
-                    class="q-mb-md"
-                    rounded
-                    @click="tabCard.fields.splice(i, 1), 
-                    notifyRemoved()"
-                    flat
-                    color="primary"
-                  />
+                  <div>
+                    <q-btn 
+                      v-if="i >= 2"
+                      icon="delete"
+                      size="large"
+                      class="q-mb-md"
+                      rounded
+                      @click="tabCard.fields.splice(i, 1), 
+                      notifyRemoved()"
+                      flat
+                      color="primary"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -329,7 +331,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    // this.getUsersConfig();
+    this.getUsersConfig();
     this.getOrganismsTypes();
     // this.getTitlesByStatus();
     this.getFieldTypes();
@@ -423,7 +425,6 @@ export default defineComponent({
           // this.position = "";
           // this.multiple = "";
           // this.organismName = "";
-          this.$router.push('/config/usersConfigList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }

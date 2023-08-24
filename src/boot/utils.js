@@ -199,7 +199,7 @@ const useUtils = {
         },
         {
           label: "Configuração de usuário",
-          route: "/config/usersConfigList",
+          route: "/config/createUserConfig",
           icon: "group",
         },
         {

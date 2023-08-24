@@ -7,7 +7,7 @@
           fit="fill"
           class="q-ma-xl"
           align="center"
-          width="50%"
+          width="40%"
         />
       </div>
       <div class="">
@@ -25,112 +25,71 @@
         >
           <q-carousel-slide name="login" class="no-wrap flex-center">
             <div class="q-gutter-md q-mt-none">
+              <q-input
+                class="full-width q-mb-sm"
+                label="Nome"
+                hint="Insira seu nome"
+                outlined
+                v-model="newUserData.name"
+              ></q-input>
               <InputEmail
                 class="full-width q-mb-sm"
                 label="E-mail"
                 field-hint="email@email.com"
-                id-field="user"
-                @onChange="inputChange"
-                :value-field="newUserData.email"
-                @onEnter="clkNext"
+                v-model="newUserData.email"
               ></InputEmail>
               <q-btn
                 class="full-width"
                 color="primary"
                 label="Próximo"
+                unelevated
                 @click="clkNext"
-                :loading="btnNextLoading"
-                unelevated
+                no-caps
+              />
+              <q-btn 
+                class="full-width"
+                color="primary" 
+                label="Voltar" 
+                outline
+                @click="clkBack1" 
+                unelevated 
                 no-caps
               />
             </div>
           </q-carousel-slide>
-          <q-carousel-slide name="password" class="no-wrap flex-center">
+          <q-carousel-slide name="login2" class="no-wrap flex-center">
             <div class="q-gutter-lg q-mt-none">
               <q-input
+                class="full-width"
                 outlined
-                v-model="formData.password"
-                label="Senha"
-                placeholder="Sua senha"
-                hint="Com letras e números"
-                type="password"
-                @keyup.enter="clkEnter"
-                autofocus
-              />
-              <q-btn color="primary" label="Voltar" flat @click="clkBack" unelevated no-caps/>
-              <q-btn
-                color="primary"
-                label="Entrar"
-                @click="clkEnter"
-                :loading="btnEnterLoading"
-                unelevated
-                no-caps
-              />
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="newPassword" class="no-wrap flex-center">
-            <div class="padding q-gutter-lg q-mt-none">
-              <q-input
-                outlined
-                v-model="newPassword.pass1"
-                label="Senha"
-                placeholder="Digite sua nova senha"
-                hint="Com letras e números"
-                type="password"
-                autofocus
+                v-model="newUserData.user"
+                label="Apelido"
+                hint="Como você gostaria de ser chamado"
               />
               <q-input
+                class="full-width"
                 outlined
-                v-model="newPassword.pass2"
-                label="Confirme a senha"
-                placeholder="Deve ser igual à senha digitada anteriormente"
-                type="password"
-                @keyup.enter="clkEnter"
-                @keyup="checkEqualPassword"
-                :rules="[
-                  val => this.checkEqualPassword(val) || 'Senhas diferentes'
-                ]"
-              />
-              <q-btn color="primary" label="Voltar" flat @click="clkBack" />
-              <q-btn
-                color="primary"
-                label="Cadastrar"
-                @click="registerNewPassword"
-                :loading="btnEnterLoading"
-                unelevated
-                no-caps
-              />
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="forgotPassword" class="no-wrap flex-center">
-            <div class="q-gutter-lg q-mt-none">
-              <div class="text-subtitle1 text-secondary">
-                Para recuperar sua senha digite seu email abaixo
-              </div>
-              <InputEmail
-                label="Digite seu email"
-                field-hint="email@email.com"
-                id-field="forgotPasswordUser"
-                @onChange="inputChange"
-                :value-field="newUserData.email"
-                @keyup.enter="btnCheckEmail"
-                autofocus
-              ></InputEmail>
-              <q-btn
-                color="primary"
-                label="Voltar"
-                flat
-                @click="loginStep = 'login'"
-                :disable="btncheckEmailLoading"
-                unelevated
-                no-caps
+                mask="(##) ##### ####"
+                v-model="newUserData.phone"
+                label="Celular"
+                hint="Seu número de celular"
+                type="tel"
               />
               <q-btn
-                color="primary"
-                label="Próximo"
-                @click="btnCheckEmail"
-                :loading="btncheckEmailLoading"
-                unelevated
+              class="full-width"
+              color="primary"
+              label="Próximo"
+              @click="clkNext2"
+              unelevated
+              no-caps
+              />
+              <q-btn 
+                class="full-width"
+                color="primary" 
+                label="Voltar" 
+                outline
+                @click="clkBack2" 
+                unelevated 
                 no-caps
               />
             </div>
@@ -147,83 +106,81 @@
 
 <script>
 import InputEmail from "../components/InputEmail.vue";
-import  CryptoJS from "crypto-js"
 import useFetch from "../boot/useFetch";
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: "Login",
+  name: "userCreateLogin",
   data() {
     return {
       showPassword: false,
       newUserData: {
+        name: "",
         email: "",
-        password: "",
+        user: "",
+        phone: "",
       },
       loginStep: "login",
+      emailVerify: false
     };
   },
   components: {
     InputEmail
   },
   methods: {
-    registerPassword() { //Registrar a senha
-      if (this.newPassword.pass1 !== this.newPassword.pass2) {
-        this.$q.notify("As senhas não conferem. Verifique e tente novamente.");
-        return;
-      }
-      const opt = {
-        route: '/np',
-        body: {
-          user: this.formData.user,
-          token: CryptoJS.AES.encrypt(
-            this.newPassword.pass1,
-            this.key
-          ).toString(),
-          token2: CryptoJS.AES.encrypt(
-            this.newPassword.pass2,
-            this.key
-          ).toString()
+    clkNext() {
+        let regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
+        let userEmail = this.newUserData.email;
+        let isMatch = regexEmail.test(userEmail);
+        if(this.newUserData.name === "" || this.newUserData.email === "") {
+          this.$q.notify("Preencha todos os campos para prosseguir")
+          return
+        }  else if(isMatch === false) {
+          this.$q.notify("Insira um e-mail válido")
+          return
         }
-      }
-      useFetch(opt).then(r => {
-        if (r.error) {
-          this.$q.notify(this.errorMessages(r.errorType));
-          return;
+        this.loginStep = "login2"
+      },
+      clkNext2() {
+        if(this.newUserData.user === "" || this.newUserData.phone === "") {
+          this.$q.notify("Preencha todos os campos para prosseguir")
+          return
+        } else if (!(this.newUserData.phone.length === 15)) {
+          this.$q.notify("Insira um número válido")
+          return
         }
-        this.$q.notify(
-          "Senha cadastrada com sucesso. Faça o login para continuar."
-        );
-        this.loginStep = "login";
-      });
-    },
-    btnCheckEmail() {
-      if (this.formData.forgotPasswordUser === "") {
-        this.$q.notify("Favor preencher o email");
-        return;
-      } else if (!this.forgotPasswordValidated) {
-        this.$q.notify("Favor preencher um email válido");
-        return;
-      }
-      this.btncheckEmailLoading = true;
-      const opt = {
-        route: '/checkEmailExists',
-        body: {
-          email: this.newUserData.email
+        const name = this.newUserData.name
+        const email = this.newUserData.email
+        const user = this.newUserData.user
+        const phone = this.newUserData.phone
+        const opt = {
+          route: "/desktop/user/createUser",
+          body: {
+            userData: {
+              name: name,
+              email: email,
+              user: user,
+              phone: phone
+            }
+          }
         }
-      }
-      useFetch(opt).then(r => {
-        this.btnNextLoading = false;
-        if (r.error) {
-          this.$q.notify(this.errorMessages(r.errorType));
-          return;
-        }
-        this.loginStep = "password";
-        this.key = r.data.key;
-      });
-      this.btncheckEmailLoading = false;
-    },
-  }
+        useFetch(opt).then((r) => {
+          if(r.data.error) {
+            console.log("Ocorreu um erro, tenta novamente")
+            return
+          }
+          this.$router.push("/login")
+          this.$q.notify("Cadastro realizado com sucesso")
+          this.$q.notify("Prossiga com o login para definição de senha")
+        });
+      },
+      clkBack1() {
+        this.$router.push("/login")
+      },
+      clkBack2() {
+        this.loginStep = "login"
+      },
+  },
 })
 </script>
 <style>
