@@ -197,7 +197,7 @@
           <q-list>
             <div class="row q-gutter-md" v-if="solicitationData !== 0">
               <div 
-                v-for="(solic, solicIndex) in solicitationData.solicitations" 
+                v-for="(solic, solicIndex) in solicitationData" 
                 :key="solicIndex"
                 class="col-5" 
               >
@@ -329,6 +329,7 @@ export default defineComponent({
       organismConfigOptions: [],
       dialogOpenSolicitation: {
         obs: '',
+        data: {},
         functionConfigId: '',
         open: false, 
       },
@@ -355,7 +356,7 @@ export default defineComponent({
     this.getUserIdMongo()
     this.getOrganismDetailById();
     this.getOrganismsConfigs()
-    this.getSolicitationsByOrganismId()
+    this.getFunctionsSolicitationsByOrganismId()
   },
   methods: {
     getUserIdMongo(){
@@ -388,13 +389,14 @@ export default defineComponent({
           return
         }
       }
+      this.dialogOpenSolicitation.data = func
       this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
       this.dialogOpenSolicitation.open = true;
     },
-    getSolicitationsByOrganismId() {
+    getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getSolicitationsByOrganismId",
+        route: "/desktop/adm/getFunctionsSolicitationsByOrganismId",
         body: {
           organismId: organismId,
         }
@@ -417,7 +419,7 @@ export default defineComponent({
         route: "/desktop/adm/addFunctionSolicitation",
         body: {
           organismId: organismId,
-          functionId: this.dialogOpenSolicitation.data,
+          functionId: this.dialogOpenSolicitation.functionConfigId,
           obs: this.dialogOpenSolicitation.obs
         }
       };
@@ -426,7 +428,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.$q.notify("Solicitação encaminhada para análise!");
-          this.getSolicitationsByOrganismId()
+          this.getFunctionsSolicitationsByOrganismId()
           this.dialogOpenSolicitation.open = false
         }
       });

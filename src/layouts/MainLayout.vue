@@ -147,11 +147,11 @@
         >
           <div class="fit row justify-start" >
             <div class="col-3 gradient text-white text-center">
-              <q-list >
+              <q-list>
                 <q-item
                   :active="activeRightDrawer === item.id"
-                  active-class="bg-grey-3 text-primary borda-redonda"
-                  class="q-py-md text-center q-px-none transparent-background"
+                  active-class="bg-grey-3 text-primary "
+                  class="q-py-md text-center q-px-none"
                   :style="
                     i === indexMenu1 + 1
                       ? 'border-radius: 0 15px 0 0'
@@ -186,6 +186,17 @@
                       item.nick
                     }}</q-item-label>
                   </q-item-section>
+                </q-item>
+              </q-list>
+              <q-list>
+                <q-item
+                  class=" q-pa-none"
+                  :style="
+                    indexMenu1 === permissions.length - 1
+                      ? 'border-radius: 0 15px 0 0'
+                      : ''
+                  "
+                >
                 </q-item>
               </q-list>
             </div>
@@ -363,7 +374,7 @@ export default defineComponent({
   background-repeat: repeat;
 }
 .borda-redonda {
-  border-radius: 0 25px 25px 0;
+  border-radius: 0 15px 15px 0;
 }
 .redondo {
   border-radius: 50px;

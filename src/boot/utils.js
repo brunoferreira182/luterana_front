@@ -185,6 +185,16 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
+        {
+          label: "Títulos",
+          route: "/admin/titlesList",
+          icon: "import_contacts",
+        },
+        {
+          label: "Solicitações de Títulos",
+          route: "/admin/titlesSolicitationsList",
+          icon: "list",
+        },
       ],
       config: [
         {

@@ -5,15 +5,23 @@
         <div class="col-6 text-h5 text-capitalize">
           {{ userName }}
         </div>
-        <div class="col text-right">
+        <div class="col q-gutter-sm text-right">
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            color="purple-8"
+            label="Vincular título"
+            @click="openDialogVinculateUserToTitle = true"
+          />
+          
           <q-btn
             rounded
             no-caps
             unelevated
             icon="bookmark"
-            flat
             color="primary"
-            label="Salvar Edição"
+            label="Salvar edição"
             @click="clkUpdateUser"
           />
         </div>
@@ -151,6 +159,53 @@
         </div>
         </q-tab-panel>
       </q-tab-panels>
+      <q-dialog v-model="openDialogVinculateUserToTitle">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Informe o título que o usuário irá receber
+            </div>
+          </q-card-section>
+          <q-card-section align="center">
+            <q-select
+              v-model="titleSelected"
+              filled
+              use-input
+              label="Nome do título"
+              option-label="titleName"
+              :options="titleOptions"
+              @filter="getTitleNamesList"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="openDialogVinculateUserToTitle = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="createUserTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -164,6 +219,7 @@ export default defineComponent({
       tab: "",
       isSaving: false,
       newPhone: "",
+      userTitleName: '',
       newAddress: "",
       newEmail: "",
       allPermissions: [],
@@ -171,6 +227,9 @@ export default defineComponent({
       formattedPermissions: [],
       userId: null,
       userData: [],
+      titleSelected: '',
+      titleOptions: [],
+      openDialogVinculateUserToTitle: false,
       dialogInactiveUser: {
         open: false,
       },
@@ -207,6 +266,41 @@ export default defineComponent({
     clkUpdateUser(){
       this.$q.notify('Edição não implementada')
     },
+    getTitleNamesList(val, update) {
+      const opt = {
+        route: "/desktop/adm/getTitleNamesList",
+        body: {
+          searchString: val
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        update(() => {
+          this.titleOptions = r.data;
+        })
+      });
+    },
+    createUserTitle() {
+      const opt = {
+        route: "/desktop/adm/createUserTitle",
+        body: {
+          titleConfigId: this.titleSelected._id,
+          userId: this.$route.query.userId
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if (r.error) {
+          this.$q.notify(
+            "ERRO ao inserir título, tente novamente mais tarde."
+          );
+        } else {
+          this.$q.notify("Título inserido com sucesso!");
+        }
+      });
+    },
     getUserDetailById() {
       const userId = this.$route.query.userId;
       const opt = {
@@ -218,6 +312,7 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
+        // this.userTitleName = r.data.userTitleName
         this.tab = r.data.userDataTabs[0].tabValue
         this.userName =  r.data.userDataTabs[0].fields[0].value
         this.userData = r.data;
@@ -266,14 +361,14 @@ export default defineComponent({
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.$q.notify("Permissão atualizada!");
-        } else {
+        if (r.error) {
           this.$q.notify(
             "ERRO ao atualizar permissão! Tente novamente mais tarde."
           );
+        } else {
+          this.$q.notify("Permissão atualizada!");
+          this.getCompanyPermissions();
         }
-        this.getCompanyPermissions();
       });
     },
   },

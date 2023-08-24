@@ -16,7 +16,7 @@
             no-caps
             class="q-pa-sm"
           >
-            Inativar Visão
+            Inativar Título
           </q-btn>
           <q-btn
             v-else
@@ -28,7 +28,7 @@
             class="q-pa-sm"
             no-caps
           >
-            Ativar Visão
+            Ativar Título
           </q-btn>
           <q-btn
             @click="clkSaveConfig"
