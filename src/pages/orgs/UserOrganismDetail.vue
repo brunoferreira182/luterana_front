@@ -73,7 +73,7 @@
                   Funções
                 </div>
               </div>
-              <div v-for="(func, funcIndex) in functions" :key="func">
+              <div v-for="func in functions" :key="func">
                 <q-card
                   style="border-radius: 1rem"
                   class="bg-grey-3 q-ma-sm"
@@ -149,7 +149,7 @@
                       rounded
                       flat
                       no-caps
-                      @click="clkOpenDialogSolicitation(func, funcIndex)"
+                      @click="clkOpenDialogSolicitation(func)"
                     />
                   </q-item-section>
                 </q-card>
@@ -312,7 +312,7 @@ export default defineComponent({
       tab: 'generalData',
       organismName: '',
       userSelected: '',
-      userIdMongo: '',
+      myUserIdMongo: '',
       organism: null,
       fields: [],
       obsMaxLength: 55,
@@ -329,7 +329,7 @@ export default defineComponent({
       organismConfigOptions: [],
       dialogOpenSolicitation: {
         obs: '',
-        data: {},
+        functionConfigId: '',
         open: false, 
       },
       newOrganism: {},
@@ -366,10 +366,11 @@ export default defineComponent({
         if(r.error){
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
           return
-        }else{ this.userIdMongo = r.data.userIdMongo}
+        }else{ this.myUserIdMongo = r.data.userIdMongo}
       })
     },
     sendReproveFeedback(){
+      this.$q.notify('IMPLEMENTAR ROTA')
       this.dialogReproveSolicitation.open = false
     },
     clkReproveSolicitation(solic, solicIndex){
@@ -380,12 +381,15 @@ export default defineComponent({
     toggleExpandText(solicIndex){
       this.showFullText[solicIndex] = !this.showFullText[solicIndex];
     },
-    clkOpenDialogSolicitation(func, funcIndex){
-      console.log(func, 'AQUI func')
-      console.log(funcIndex, 'AQUI funcIndex')
-      console.log(func.users, 'AQUI FUNC users')
-      // this.dialogOpenSolicitation.data = func
-      this.dialogOpenSolicitation.open = true
+    clkOpenDialogSolicitation(func) {
+      for (const user of func.users) {
+        if (user.userIdMongo === this.myUserIdMongo) {
+          this.$q.notify('Você já participa desta função')
+          return
+        }
+      }
+      this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+      this.dialogOpenSolicitation.open = true;
     },
     getSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
@@ -413,7 +417,7 @@ export default defineComponent({
         route: "/desktop/adm/addFunctionSolicitation",
         body: {
           organismId: organismId,
-          functionId: this.dialogOpenSolicitation.data.functionConfigId,
+          functionId: this.dialogOpenSolicitation.data,
           obs: this.dialogOpenSolicitation.obs
         }
       };

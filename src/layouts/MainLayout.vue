@@ -147,12 +147,17 @@
         >
           <div class="fit row justify-start" >
             <div class="col-3 gradient text-white text-center">
-              <q-list class="">
+              <q-list >
                 <q-item
                   :active="activeRightDrawer === item.id"
-                  active-class="bg-grey-3 text-primary"
+                  active-class="bg-grey-3 text-primary borda-redonda"
                   class="q-py-md text-center q-px-none transparent-background"
-                  :style=" i === indexMenu1 + 1 ? 'border-radius: 0 15px 0 0' : i === indexMenu1 - 1 ? 'border-radius: 0 0 15px 0' : ''
+                  :style="
+                    i === indexMenu1 + 1
+                      ? 'border-radius: 0 15px 0 0'
+                      : i === indexMenu1 - 1
+                      ? 'border-radius: 0 0 15px 0'
+                      : ''
                   "
                   @click="clkItem(item, i)"
                   v-for="(item, i) in permissions"
@@ -305,9 +310,6 @@ export default defineComponent({
     });
     // this.getStatusNotifications()
     this.drawerData = this.drawer;
-    // if (!this.$logoAndColors.get().alreadySet) {
-    //   this.getCompanyColors()
-    // }
   },
   watch: {
     $route() {
@@ -323,7 +325,6 @@ export default defineComponent({
     },
   },
   methods: {
-    
     async getCompanyColors() {
       await this.$logoAndColors.getFromServer(this.userInfo.cId);
       return;
@@ -362,12 +363,9 @@ export default defineComponent({
   background-repeat: repeat;
 }
 .borda-redonda {
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 25px 25px 0;
 }
 .redondo {
   border-radius: 50px;
-}
-.transparent-background {
-  background: transparent;
 }
 </style>
