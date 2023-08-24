@@ -193,30 +193,98 @@
           </div>
         </q-tab-panel>
         <q-tab-panel name="solicitation">
-          <div class="text-h5">Solicitações: {{ solicitationsQty }}</div>
+          <div class="text-h5">Solicitações</div>
           <q-list>
             <div class="row q-gutter-md" v-if="solicitationData !== 0">
               <div 
-                v-for="item in solicitationData.solicitations" 
-                :key="item"
+                v-for="(solic, solicIndex) in solicitationData.solicitations" 
+                :key="solicIndex"
                 class="col-5" 
               >
                 <q-item 
                   class="solicitation-cards"
                 >
                   <q-item-section>
-                    <q-item-label > 
-                      <div class="text-capitalize">
-                        {{ item.userName }}
+                    <div class="row justify-between">
+                      <div class="col text-capitalize text-subtitle1">
+                        {{ solic.userName }}
                       </div>
+                      <div class="col-2 text-caption">
+                        {{ solic.createdAt.createdAtOnlyDate }}
+                      </div>
+                    </div>
+                    <q-item-label caption lines="10">
+                      {{ solic.solicitationData.obs.substring(0, obsMaxLength) }}
+                        <span v-if="solic.solicitationData.obs.length > obsMaxLength">
+                          {{ showFullText[solicIndex] ? solic.solicitationData.obs.substring(obsMaxLength) : '...' }}
+                          <q-btn
+                            rounded
+                            color="primary"
+                            dense
+                            no-caps
+                            flat
+                            :label="this.showFullText[solicIndex] ? 'Ver menos' : 'Ver mais'"
+                            @click="toggleExpandText(solicIndex)"
+                          />
+                        </span>
                     </q-item-label>
-                    <q-item-label caption lines="2">{{ item.solicitationData.obs }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side top>
-                    <q-icon name="star" color="yellow" />
-                    <q-item-label caption> Enviado em: {{ item.createdAt.createdAtOnlyDate }}</q-item-label>
+                    <q-item-label class="text-center q-gutter-md">
+                      <q-btn
+                        rounded
+                        color="primary"
+                        dense
+                        no-caps
+                        flat
+                        @click="clkReproveSolicitation(solic, solicIndex)"
+                        label="Reprovar"
+                      />
+                      <q-btn
+                        rounded
+                        color="primary"
+                        unelevated
+                        no-caps
+                        @click="dialogAproveSolicitation"
+                        label="Aprovar"
+                      />
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-dialog v-model="dialogReproveSolicitation.open" >
+                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                    <q-card-section align="center">
+                      <div class="text-h6">
+                        Informe o motivo para reprovar a solicitação
+                      </div>
+                    </q-card-section>
+                    <q-card-section align="center">
+                      <q-input
+                        filled
+                        label="Observação"
+                        autogrow
+                        hint="Escreva uma breve descrição explicando o motivo para reprovar esta solicitação"
+                        v-model="dialogReproveSolicitation.obs"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogReproveSolicitation.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Enviar"
+                        no-caps
+                        color="primary"
+                        @click="sendReproveFeedback"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </div>
             </div>
             <div class="text-subtitle1" v-else-if="solicitationData === 0">
@@ -240,12 +308,23 @@ export default defineComponent({
       usersOptions: [],
       organismVinculated: '',
       organismTypeId: null,
+      showFullDescription: false,
       tab: 'generalData',
       organismName: '',
       userSelected: '',
       organism: null,
       fields: [],
-      solicitationsQty: '',
+      obsMaxLength: 55,
+      showFullText: [],
+      dialogAproveSolicitation: {
+        open: false,
+        data: {},
+      },
+      dialogReproveSolicitation: {
+        open: false,
+        obs: '',
+        data: {},
+      },
       organismConfigOptions: [],
       dialogOpenSolicitation: {
         obs: '',
@@ -277,6 +356,17 @@ export default defineComponent({
     this.getSolicitationsByOrganismId()
   },
   methods: {
+    sendReproveFeedback(){
+      this.dialogReproveSolicitation.open = false
+    },
+    clkReproveSolicitation(solic, solicIndex){
+      console.log(solic, 'solic')
+      console.log(solicIndex, 'solicindex')
+      this.dialogReproveSolicitation.open = true
+    },
+    toggleExpandText(solicIndex){
+      this.showFullText[solicIndex] = !this.showFullText[solicIndex];
+    },
     clkOpenDialogSolicitation(func){
       this.dialogOpenSolicitation.data = func
       this.dialogOpenSolicitation.open = true
@@ -297,7 +387,6 @@ export default defineComponent({
             this.solicitationData = 0
           } else {
             this.solicitationData = r.data
-            this.solicitationsQty = r.data.solicitations.length
           }
         }
       });
@@ -381,6 +470,14 @@ export default defineComponent({
 <style scoped>
 .solicitation-cards{
   border-radius: 1rem;
+  height: auto;
+  width: auto;
   background-color: #e4e4e4;
+}
+.more-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #747474;
 }
 </style>
