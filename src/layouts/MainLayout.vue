@@ -362,9 +362,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.darkest-blue {
-  background-image: linear-gradient(to bottom, #2a53ab, #2a53ab, #2a53ab);
-}
 .gradient {
   transition: opacity 0.5s;
   background-image: linear-gradient(to bottom, #2c3393, #2675c3, #04acf3);
