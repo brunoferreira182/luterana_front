@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Organismos"
+        title="Solicitações de título"
         :columns="columnsData"
         :rows="titlesSolicitationsList"
         row-key="_id"
@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsList"
+                @update:model-value="getTitlesSolicitationsList"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsList"
+                @keyup="getTitlesSolicitationsList"
                 outlined
                 dense
                 debounce="300"
@@ -45,18 +45,17 @@
                 </template>
               </q-input>
             </div>
-            <div class="col text-right">
+            <!-- <div class="col text-right">
               <q-btn
                 color="primary"
                 unelevated
                 no-caps
                 class="q-pa-sm"
                 rounded
+                label="Criar solicitação"
                 icon="add"
-              >
-                Criar Organismo
-              </q-btn>
-            </div>
+              />
+            </div> -->
           </div>
         </template>
         <template #body-cell-status="props">
@@ -110,7 +109,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsList();
+    this.getTitlesSolicitationsList();
   },
   methods: {
     clkOpenOrganismDetail(e, r) {
@@ -129,11 +128,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsList();
+      // this.getTitlesSolicitationsList();
     },
-    getOrganismsList() {
+    getTitlesSolicitationsList() {
       const opt = {
-        route: "/desktop/adm/getOrganismsList",
+        route: "/desktop/adm/getTitlesSolicitationsList",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,

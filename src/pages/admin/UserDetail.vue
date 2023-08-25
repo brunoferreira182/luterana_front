@@ -10,11 +10,11 @@
             rounded
             no-caps
             unelevated
+            icon="school"
             color="purple-8"
             label="Vincular título"
             @click="openDialogVinculateUserToTitle = true"
           />
-          
           <q-btn
             rounded
             no-caps
@@ -26,7 +26,7 @@
           />
         </div>
       </div>
-      <q-separator class="q-mx-md"></q-separator>
+      <q-separator class="q-mx-md"/>
       <q-tabs
         v-model="tab"
         dense
@@ -201,7 +201,7 @@
               label="Confirmar"
               no-caps
               color="primary"
-              @click="createTitleSolicitation"
+              @click="createUserTitle"
             />
           </q-card-actions>
         </q-card>
@@ -268,9 +268,9 @@ export default defineComponent({
         })
       });
     },
-    createTitleSolicitation() {
+    createUserTitle() {
       const opt = {
-        route: "/desktop/adm/createTitleSolicitation",
+        route: "/desktop/adm/createUserTitle",
         body: {
           titleConfigId: this.titleSelected._id,
           userId: this.$route.query.userId
@@ -286,7 +286,7 @@ export default defineComponent({
         } else {
           this.$q.notify("Solicitação de título inserido com sucesso!");
           const titleId = this.titleSelected._id
-          this.$router.push('/admin/titleDetail?titleId=' + titleId)
+          this.$router.push('/admin/userTitleDetail?titleId=' + titleId)
         }
       });
     },

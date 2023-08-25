@@ -350,7 +350,6 @@ export default defineComponent({
     clkItem(item, i) {
       this.indexMenu1 = i;
       this.activeRightDrawer = item.id;
-      console.log(' aqui?', item.role)
       this.$router.push("/" + item.role.toLowerCase());
       this.options = utils.getDrawerOptions(item.role.toLowerCase());
     },
@@ -363,9 +362,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.darkest-blue {
-  background-image: linear-gradient(to bottom, #2a53ab, #2a53ab, #2a53ab);
-}
 .gradient {
   transition: opacity 0.5s;
   background-image: linear-gradient(to bottom, #2c3393, #2675c3, #04acf3);

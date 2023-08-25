@@ -18,6 +18,22 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    titlesSolicitationsList: [
+      {
+        name: "userName",
+        align: "left",
+        label: "Nome do usuário",
+        field: "userName",
+        sortable: true,
+      },
+      {
+        name: "titleName",
+        align: "left",
+        label: "Nome do título solicitado",
+        field: "titleName",
+        sortable: true,
+      },
+    ],
     searchAllOrganismsList: [
       {
         name: "nome",
