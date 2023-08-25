@@ -1,50 +1,115 @@
 <template>
   <q-page-container class="no-padding">
     <q-page >
-      <div class="q-pa-md q-ml-sm text-h5">
-        Dados do título
+      <div class="q-pa-md q-ml-sm row justify-between">
+        <div class="col-6 text-h5 text-capitalize">
+          Dados do título {{ titleName }}
+        </div>
+        <div class="col q-gutter-sm text-right">
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="bookmark"
+            color="primary"
+            label="Salvar"
+            @click="updateUserTitle"
+          />
+        </div>
       </div>
       <q-separator class="q-mx-md"></q-separator>
-      <div v-for="(field, i) in fields" :key="i" class="q-my-md">
-        <div class="row q-gutter-sm items-center">
-          <div class="col">
-            <q-input
+      <div class="row justify-center items-start">
+        <div class="col-8 q-pa-md q-gutter-md">
+          <div class="text-h5">Preencha os dados do título</div>
+          <div
+            v-for="(field, fieldIndex) in fields"
+            :key="fieldIndex"
+          >
+            <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+              <q-input
+                :label="field.label"
+                :hint="field.hint"
+                :type="field.type.type"
+                v-model="field.value"
+                outlined
+              >
+                <template
+                  v-if="field.multiple"
+                  #append
+                >
+                  <q-btn
+                    disabled
+                    icon="add"
+                    color="primary"
+                    flat
+                    round
+                    @click="addMultipleField"
+                  >
+                    <q-tooltip
+                      >Adicionar multiplo
+                      {{ field.type.label }}</q-tooltip
+                    >
+                  </q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div class="text-right" v-if="field.type.type === 'address'">
+              <q-btn
+                label="Adicionar um endereço"
+                no-caps
+                rounded
+                unelevated
+                outline
+                color="primary"
+                @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+              />
+            </div>
+          
+            <div
+              v-if="field.type.type === 'address' && !field.address"
+              class="text-subtilte1 text-start"
+            >
+              <div class="text-h6">Endereços</div>
+              Nenhum endereço vinculado
+            </div>
+            
+            <q-list
+              class="no-margin"
+              v-if="field.address"
+            >
+              <q-item
+                v-for="(item, i) in field.address"
+                :key="item + i"
+                style="border-radius: 1rem"
+                class="bg-grey-3 q-ma-sm q-pa-md"
+              >
+              <q-item-section>
+                <q-item-label lines="3" class="text-capitalize">
+                  {{ item.street }}, {{ item.number }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ item.district }} - {{ item.city }}
+                </q-item-label>
+                <q-item-label caption>
+                  CEP
+                  {{ item.cep }}
+                </q-item-label>
+                <q-item-label></q-item-label>
+              </q-item-section>
+              <q-item-section side top>
+                <q-item-label caption class="text-capitalize">{{
+                  item.type
+                }}</q-item-label>
+              </q-item-section>
+              </q-item>
+            </q-list>
+            <q-checkbox
+              v-if="field.type.type === 'boolean'"
+              class="q-pt-lg"
               readonly
               :label="field.label"
               :hint="field.hint"
-              outlined
-            >
-              <template
-                #append
-                v-if="
-                  field.multiple &&
-                  $route.path === '/config/organismConfigDetail'
-                "
-              >
-                <q-btn disabled icon="add" color="primary" flat round>
-                  <q-tooltip
-                    >Adicionar multiplo {{ field.type.label }}</q-tooltip
-                  >
-                </q-btn>
-              </template>
-            </q-input>
-          </div>
-          <div class="col-2 q-mb-md">
-            <q-badge class="q-pa-xs">{{ fields[i].type.label }}</q-badge
-            ><br />
-            <q-badge color="orange" class="q-pa-xs">
-              {{ field.required ? "obrigatório" : "opcional" }}
-            </q-badge>
-          </div>
-          <div class="col-1">
-            <q-btn
-              icon="delete"
-              size="large"
-              class="q-mb-md"
-              rounded
-              @click="fields.splice(i, 1)"
-              flat
-              color="primary"
+              v-model="field.value"
             />
           </div>
         </div>
@@ -60,27 +125,47 @@ export default defineComponent({
   data() {
     return {
       fields: [],
+      titleName: '',
     }
   },
   mounted() {
     this.$q.loading.hide()
   },
   beforeMount() {
-    this.getTitleConfig()
+    this.getTitleConfigsDetailById()
   },
   methods: {
-    getTitleConfig() {
+    updateUserTitle(){
       const titleId = this.$route.query.titleId
       const opt = {
-        route: "/desktop/adm/getTitleNamesList",
+        route: "/desktop/config/updateUserTitle",
         body: {
-          titleConfigId: titleId
+          userTitleId: titleId,
+          titleFields: this.fields
         }
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        this.fields = r.data;
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else{this.$q.notify('Título atualizado com sucesso!')}
+      });
+    },
+    getTitleConfigsDetailById() {
+      const titleId = this.$route.query.titleId
+      const opt = {
+        route: "/desktop/config/getTitleConfigsDetailById",
+        body: {
+          titleConfigsId: titleId
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        this.titleName = r.data.titleName
+        this.fields = r.data.titleFields;
       });
     },
   }

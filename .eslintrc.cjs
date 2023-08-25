@@ -59,6 +59,8 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "vue/no-deprecated-slot-attribute": "off",
     "vue/multi-word-component-names": "off",
+    "comma-dangle": ["error", "always"],
+    "comma-dangle": 0,
     "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
     // "vue/no-static-inline-styles":[
     //   "error", {
