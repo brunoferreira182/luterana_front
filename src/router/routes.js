@@ -39,6 +39,11 @@ const routes = [
         path: "/admin/titlesSolicitationsList",
         component: () => import("pages/admin/TitlesSolicitationsList.vue"),
       },
+      {
+        path: "/admin/userTitleDetail",
+        component: () => import("pages/admin/UserTitleDetail.vue"),
+      },
+      
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },

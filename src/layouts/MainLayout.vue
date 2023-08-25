@@ -350,7 +350,6 @@ export default defineComponent({
     clkItem(item, i) {
       this.indexMenu1 = i;
       this.activeRightDrawer = item.id;
-      console.log(' aqui?', item.role)
       this.$router.push("/" + item.role.toLowerCase());
       this.options = utils.getDrawerOptions(item.role.toLowerCase());
     },

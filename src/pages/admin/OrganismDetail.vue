@@ -379,11 +379,16 @@
                       <div class="text-subtitle2 q-ma-sm">
                         Organismos filiados vinculados:
                       </div>
-                      <div v-if="childOrganism.length">
-                        <q-chip removable @remove="removeChildRelation(chip)" v-for="chip in childOrganism" :key="chip._id">
+                      <div v-if="organismLinks.length">
+                        <q-chip 
+                          removable 
+                          @remove="removeChildRelation(chip)" 
+                          v-for="chip in childOrganism" 
+                          :key="chip._id"
+                        >
                           {{ chip.organismName }}
                         </q-chip>
-                      </div>
+                        </div>
                       <div v-else-if="!organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
                     </div>
                     <q-separator vertical />
