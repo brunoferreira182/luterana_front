@@ -114,7 +114,18 @@
                 <div class="col-1">
                   <div>
                     <q-btn 
-                      v-if="i >= 2"
+                      v-if="(tabIndex > 0 )"
+                      icon="delete"
+                      size="large"
+                      class="q-mb-md"
+                      rounded
+                      @click="tabCard.fields.splice(i, 1), 
+                      notifyRemoved()"
+                      flat
+                      color="primary"
+                    />
+                    <q-btn 
+                      v-if="(tabIndex === 0 && i >=2 )"
                       icon="delete"
                       size="large"
                       class="q-mb-md"
