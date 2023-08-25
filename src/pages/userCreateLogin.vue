@@ -24,24 +24,23 @@
           class="q-pa-md q-mx-md"
         >
           <q-carousel-slide name="login" class="no-wrap flex-center">
-            <div class="q-gutter-md q-mt-none">
-              <q-input
-                class="full-width q-mb-sm"
-                label="Nome"
-                hint="Insira seu nome"
+            <div 
+              class="q-gutter-md q-mt-none" 
+              v-for="(field, i) in newUserData[0].fields" 
+              :key="i"
+              >
+              <q-input v-if="field"
+                v-model="newUserData[0].fields[i].value"
+                class="q-mb-sm"
                 outlined
-                v-model="newUserData.name"
+                :label="field.label"
+                :hint="field.hint"
               ></q-input>
-              <InputEmail
-                class="full-width q-mb-sm"
-                label="E-mail"
-                field-hint="email@email.com"
-                v-model="newUserData.email"
-              ></InputEmail>
-              <q-btn
-                class="full-width"
+            </div>
+            <q-btn
+                class="full-width q-mb-md q-mt-sm"
                 color="primary"
-                label="Próximo"
+                label="Cadastrar"
                 unelevated
                 @click="clkNext"
                 no-caps
@@ -55,44 +54,6 @@
                 unelevated 
                 no-caps
               />
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="login2" class="no-wrap flex-center">
-            <div class="q-gutter-lg q-mt-none">
-              <q-input
-                class="full-width"
-                outlined
-                v-model="newUserData.user"
-                label="Apelido"
-                hint="Como você gostaria de ser chamado"
-              />
-              <q-input
-                class="full-width"
-                outlined
-                mask="(##) ##### ####"
-                v-model="newUserData.phone"
-                label="Celular"
-                hint="Seu número de celular"
-                type="tel"
-              />
-              <q-btn
-              class="full-width"
-              color="primary"
-              label="Próximo"
-              @click="clkNext2"
-              unelevated
-              no-caps
-              />
-              <q-btn 
-                class="full-width"
-                color="primary" 
-                label="Voltar" 
-                outline
-                @click="clkBack2" 
-                unelevated 
-                no-caps
-              />
-            </div>
           </q-carousel-slide>
         </q-carousel>
       </div>
@@ -105,7 +66,6 @@
 </template>
 
 <script>
-import InputEmail from "../components/InputEmail.vue";
 import useFetch from "../boot/useFetch";
 import { defineComponent } from 'vue'
 
@@ -114,54 +74,59 @@ export default defineComponent({
   data() {
     return {
       showPassword: false,
-      newUserData: {
-        name: "",
-        email: "",
-        user: "",
-        phone: "",
-      },
+      newUserData: [
+        {
+        tabLabel: "Dados obrigatórios",
+        fields: [
+          {
+            hint: 'Informe o nome completo',
+            label: 'Nome',
+            required: true,
+            type: {
+              _id: "64ad55727cb57d0bd22b10d5",
+              type: 'string',
+              label: 'Texto'
+            },
+            model: 'nome',
+            value: ''
+          },
+          {
+            hint: 'Preencha um e-mail válido',
+            label: 'Email',
+            required: true,
+            type: {
+              _id: "64ad55727cb57d0bd22b10d5",
+              type: 'string',
+              label: 'Texto'
+            },
+            model: 'email',
+            value: ''
+          },
+        ]
+      }
+      ],
+      tabValue: "dados_obrigatorios",
       loginStep: "login",
       emailVerify: false
     };
   },
-  components: {
-    InputEmail
-  },
   methods: {
     clkNext() {
         let regexEmail = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
-        let userEmail = this.newUserData.email;
+        let userEmail = this.newUserData[0].fields[1].value;
         let isMatch = regexEmail.test(userEmail);
-        if(this.newUserData.name === "" || this.newUserData.email === "") {
+        if(this.newUserData[0].fields[0].value === "" || this.newUserData[0].fields[1].value === "") {
           this.$q.notify("Preencha todos os campos para prosseguir")
           return
         }  else if(isMatch === false) {
           this.$q.notify("Insira um e-mail válido")
           return
         }
-        this.loginStep = "login2"
-      },
-      clkNext2() {
-        if(this.newUserData.user === "" || this.newUserData.phone === "") {
-          this.$q.notify("Preencha todos os campos para prosseguir")
-          return
-        } else if (!(this.newUserData.phone.length === 15)) {
-          this.$q.notify("Insira um número válido")
-          return
-        }
-        const name = this.newUserData.name
-        const email = this.newUserData.email
-        const user = this.newUserData.user
-        const phone = this.newUserData.phone
+        const userData = this.newUserData
         const opt = {
-          route: "/desktop/user/createUser",
+          route: "/auth/createUser",
           body: {
-            userData: {
-              name: name,
-              email: email,
-              user: user,
-              phone: phone
-            }
+            userDataTabs: userData
           }
         }
         useFetch(opt).then((r) => {
@@ -176,9 +141,6 @@ export default defineComponent({
       },
       clkBack1() {
         this.$router.push("/login")
-      },
-      clkBack2() {
-        this.loginStep = "login"
       },
   },
 })
