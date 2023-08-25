@@ -32,8 +32,12 @@ const routes = [
         component: () => import("pages/admin/OrganismDetail.vue"),
       },
       {
-        path: "/admin/OrganismStructureDetail",
-        component: () => import("pages/admin/OrganismStructureDetail.vue"),
+        path: "/admin/titlesList",
+        component: () => import("pages/admin/TitlesList.vue"),
+      },
+      {
+        path: "/admin/titlesSolicitationsList",
+        component: () => import("pages/admin/TitlesSolicitationsList.vue"),
       },
       
       //configurations// tipos de organismos

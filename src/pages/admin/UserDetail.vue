@@ -201,7 +201,7 @@
               label="Confirmar"
               no-caps
               color="primary"
-              @click="createUserTitle"
+              @click="createTitleSolicitation"
             />
           </q-card-actions>
         </q-card>
@@ -233,19 +233,6 @@ export default defineComponent({
       dialogInactiveUser: {
         open: false,
       },
-      phoneType: [
-        { type: "Residencial" },
-        { type: "Trabalho" },
-        { type: "Outro" },
-      ],
-      genderOptions: ["Masculino", "Feminino", "Outro"],
-      maritalOptions: [
-        "Solteiro(a)",
-        "Casado(a)",
-        "Separado(a)",
-        "Divorciado(a)",
-        "Viúvo(a)",
-      ],
       userName: '',
     };
   },
@@ -281,9 +268,9 @@ export default defineComponent({
         })
       });
     },
-    createUserTitle() {
+    createTitleSolicitation() {
       const opt = {
-        route: "/desktop/adm/createUserTitle",
+        route: "/desktop/adm/createTitleSolicitation",
         body: {
           titleConfigId: this.titleSelected._id,
           userId: this.$route.query.userId
@@ -295,9 +282,11 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify(
             "ERRO ao inserir título, tente novamente mais tarde."
-          );
+          );return
         } else {
-          this.$q.notify("Título inserido com sucesso!");
+          this.$q.notify("Solicitação de título inserido com sucesso!");
+          const titleId = this.titleSelected._id
+          this.$router.push('/admin/titleDetail?titleId=' + titleId)
         }
       });
     },
@@ -312,7 +301,6 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        // this.userTitleName = r.data.userTitleName
         this.tab = r.data.userDataTabs[0].tabValue
         this.userName =  r.data.userDataTabs[0].fields[0].value
         this.userData = r.data;
