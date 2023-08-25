@@ -61,13 +61,56 @@
           <div class="text-caption no-margin q-pl-md q-py-sm">
             Informe qual será o nome da configuração do organismo
           </div>
-          <q-checkbox
-            v-model="requiresLink"
-            label="Vínculo obrigatório?"
-          >
-
-            <div class="text-caption text-grey-7">Organismos desse tipo deverão estar vinculados a outro organismo para serem criados</div>
-          </q-checkbox>
+          <q-separator/>
+          <div>Este organismo será filiado a outro?</div>
+          <q-btn 
+          color="primary" 
+          label="Criar filiação"
+          @click="dialogCreateAffiliation = true"
+          />
+          <q-dialog 
+            v-model="dialogCreateAffiliation"
+            color="primary"
+          > 
+            <q-card style="border-radius: 1rem; width: 400px">
+              <q-card-section>
+                <div class="text-h6 text-center">Nova função</div>
+              </q-card-section>
+              <q-card-section>
+                <q-select
+                  outlined
+                  label="Nome da configuração"
+                  option-label="organismConfigName"
+                  :option-value="(item) => item._id"
+                  emit-value
+                  map-options
+                  hint="Informe qual será o organismo pai"
+                  v-model="childOfOrganism"
+                  :options="searchString"
+                />
+              </q-card-section>
+              <q-card-actions align="center" class="q-mb-md">
+                <q-btn
+                  flat
+                  label="Depois"
+                  no-caps
+                  color="primary"
+                  @click="dialogCreateAffiliation = false"
+                />
+                <q-btn
+                  unelevated
+                  rounded
+                  label="Confirmar"
+                  no-caps
+                  color="primary"
+                  @click="confirmChildOf"
+                />
+              </q-card-actions>
+            </q-card>
+            <div class="q-gutter-md bg-primary" style="max-width: 300px">
+              
+            </div>
+          </q-dialog>
           <q-separator
           />
           <div
@@ -477,6 +520,8 @@ export default defineComponent({
   name: "OrganismsConfigDetail",
   data() {
     return {
+      searchString: [],
+      childOfOrganism: [],
       fieldTypesOptions: [],
       selectedPermissions: [],
       organismConfigNamesOptions: [],
@@ -484,6 +529,7 @@ export default defineComponent({
       organismTypeId: '',
       typeSelected: null,
       requiresLink: false,
+      dialogCreateAffiliation: false,
       valueSelected: "",
       tab: "createConfig",
       newFunctionDialog: false,
@@ -564,7 +610,8 @@ export default defineComponent({
     }
     this.getTitleConfigsList();
     this.getFieldTypes();
-    this.getVisions()
+    this.getVisions();
+    this.getOrganismsConfigsList();
   },
   methods: {
     handlePermissionOnEdit(vision, permission) {
@@ -714,6 +761,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
+          requiresLinkOrganismConfigId: this.childOfOrganism,
           organismTypeId: this.organismTypeId,
           organismConfigName: this.organismConfigName,
           requiresLink: this.requiresLink,
@@ -786,6 +834,7 @@ export default defineComponent({
       });
     },
     clkSaveConfig() {
+      console.log(this.requiresLink)
       if (this.$route.path === "/config/organismConfigDetail") {
         this.updateOrganismConfig();
       } else {
@@ -901,6 +950,27 @@ export default defineComponent({
         });
       });
     },
+    getOrganismsConfigsList() {
+      const opt = {
+        route: "/desktop/config/getOrganismsConfigsList",
+        body: {
+          searchString: this.searchString
+        }
+      }
+      useFetch(opt).then((r) => {
+        if(r.error) {
+          console.log("Erro getOrganismConfigsList")
+          return
+        }
+        this.searchString = r.data
+      })
+    },
+    confirmChildOf() {
+      this.$q.notify("Organismo filiado com sucesso")
+      this.requiresLink = true;
+      this.dialogCreateAffiliation = false
+      console.log(this.requiresLink)
+    }
   },
 });
 </script>
