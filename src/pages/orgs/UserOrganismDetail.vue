@@ -209,14 +209,14 @@
                       <div class="col text-capitalize text-subtitle1">
                         {{ solic.userName }}
                       </div>
-                      <div class="col-2 text-caption">
-                        {{ solic.createdAt.createdAtOnlyDate }}
+                      <div class="col-4 text-caption">
+                        {{ solic.createdAt }}
                       </div>
                     </div>
                     <q-item-label caption lines="10">
-                      {{ solic.solicitationData.obs.substring(0, obsMaxLength) }}
-                        <span v-if="solic.solicitationData.obs.length > obsMaxLength">
-                          {{ showFullText[solicIndex] ? solic.solicitationData.obs.substring(obsMaxLength) : '...' }}
+                      {{ solic.solicitationObs.substring(0, obsMaxLength) }}
+                        <span v-if="solic.solicitationObs.length > obsMaxLength">
+                          {{ showFullText[solicIndex] ? solic.solicitationObs.substring(obsMaxLength) : '...' }}
                           <q-btn
                             rounded
                             color="primary"
@@ -228,6 +228,7 @@
                           />
                         </span>
                     </q-item-label>
+                    <q-separator class="q-ma-md"/>
                     <q-item-label class="text-center q-gutter-md">
                       <q-btn
                         rounded
@@ -491,7 +492,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .solicitation-cards{
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   height: auto;
   width: auto;
   background-color: #e4e4e4;
