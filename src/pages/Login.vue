@@ -56,8 +56,8 @@
                 label="Criar uma conta"
                 @click="clkCreateLogin"
                 :loading="btnNextLoading"
-                unelevated
                 no-caps
+                outline
               />
             </div>
           </q-carousel-slide>
