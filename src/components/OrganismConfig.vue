@@ -62,28 +62,31 @@
             Informe qual será o nome da configuração do organismo
           </div>
           <q-separator/>
-          <div>Este organismo será filiado a outro?
+          <div>Esta configuração de organismo será vinculada a outra?
             <q-chip 
-            v-if="requiresLink === true"
-            color="teal" 
-            text-color="white" 
-            icon="done"
+              v-if="requiresLink === true"
+              color="teal" 
+              text-color="white" 
+              icon="done"
             >
               Sim
             </q-chip>
             <q-chip 
-            v-else
-            color="negative" 
-            text-color="white" 
-            icon="close"
+              v-else
+              color="negative" 
+              text-color="white" 
+              icon="close"
             >
               Não
             </q-chip>
           </div>
           <q-btn 
-          color="primary" 
-          label="Criar filiação"
-          @click="dialogCreateAffiliation = true"
+            unelevated
+            no-caps
+            rounded
+            color="primary" 
+            :label="$route.query.organismConfigId && requiresLink === true ? 'Alterar filiação': 'Criar filiação'"
+            @click="dialogCreateAffiliation = true"
           />
           <q-dialog 
             v-model="dialogCreateAffiliation"
@@ -91,7 +94,7 @@
           > 
             <q-card style="border-radius: 1rem; width: 400px">
               <q-card-section>
-                <div class="text-h6 text-center">Nova função</div>
+                <div class="text-h6 text-center">Nova filiação</div>
               </q-card-section>
               <q-card-section>
                 <q-select

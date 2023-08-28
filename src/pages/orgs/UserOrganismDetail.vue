@@ -10,7 +10,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <q-tabs
-      v-model="tab"
+        v-model="tab"
         dense
         no-caps
         class="text-grey q-py-sm"

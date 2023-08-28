@@ -11,7 +11,7 @@
             rounded
             unelevated
             label="Criar organismo"
-            />
+          />
         </div>
       </div>
       <q-separator class="q-mx-md" />
@@ -511,6 +511,7 @@ export default defineComponent({
     filterInOrganismLinks(val){
       console.log(val)
     },
+   
     getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
@@ -652,12 +653,12 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.getOrganismsList()
           this.organismData.fields = r.data.organismFields;
           this.functions = r.data.functions
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },

@@ -50,11 +50,12 @@
                 @click="$router.push('/config/CreateOrganismsConfig')"
                 color="primary"
                 unelevated
+                dense
                 rounded
                 no-caps
                 icon="add"
                 class="q-pa-sm"
-                label="Novo Organismo"
+                label="Criar configuração"
                 />
             </div>
           </div>
