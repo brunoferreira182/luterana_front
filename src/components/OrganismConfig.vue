@@ -62,7 +62,24 @@
             Informe qual será o nome da configuração do organismo
           </div>
           <q-separator/>
-          <div>Este organismo será filiado a outro?</div>
+          <div>Este organismo será filiado a outro?
+            <q-chip 
+            v-if="requiresLink === true"
+            color="teal" 
+            text-color="white" 
+            icon="done"
+            >
+              Sim
+            </q-chip>
+            <q-chip 
+            v-else
+            color="negative" 
+            text-color="white" 
+            icon="close"
+            >
+              Não
+            </q-chip>
+          </div>
           <q-btn 
           color="primary" 
           label="Criar filiação"
@@ -92,10 +109,10 @@
               <q-card-actions align="center" class="q-mb-md">
                 <q-btn
                   flat
-                  label="Depois"
+                  label="Cancelar"
                   no-caps
                   color="primary"
-                  @click="dialogCreateAffiliation = false"
+                  @click="dialogCancelAffiliation"
                 />
                 <q-btn
                   unelevated
@@ -970,6 +987,11 @@ export default defineComponent({
       this.requiresLink = true;
       this.dialogCreateAffiliation = false
       console.log(this.requiresLink)
+    },
+    dialogCancelAffiliation() {
+      this.requiresLink = false;
+      this.$q.notify("Filiação cancelada");
+      this.dialogCreateAffiliation = false;
     }
   },
 });
