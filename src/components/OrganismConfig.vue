@@ -183,6 +183,9 @@
           <div
             class="row justify-center"
           >
+            <q-chip v-for="option in newField.options" :key="option">
+              {{ option }}
+            </q-chip>
             <q-btn
               label="Adicionar campo"
               no-caps
@@ -986,7 +989,6 @@ export default defineComponent({
       this.$q.notify("Organismo filiado com sucesso")
       this.requiresLink = true;
       this.dialogCreateAffiliation = false
-      console.log(this.requiresLink)
     },
     dialogCancelAffiliation() {
       this.requiresLink = false;

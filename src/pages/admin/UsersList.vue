@@ -158,7 +158,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.usersList = r.data;
+        this.usersList = r.data[0].list;
       });
     },
   },

@@ -137,7 +137,6 @@
                 label="Título"
               />
               <br />
-
               <q-radio
                 @update:model-value="radioChanged"
                 v-model="receiverType"

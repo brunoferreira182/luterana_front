@@ -37,28 +37,39 @@
         >
           <q-card class="userDataTabs-card bg-grey-1">
             <div class="row">
-                <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
+              <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
                 <q-btn
                   rounded
                   color="primary"
                   no-caps
+                  class
                   unelevated
                   outline
                   icon="add"
                   @click="clkAddTabData(tabIndex)"
                   label="Adicionar campo"
-                />                    
-              <q-btn
-                v-if="tabIndex > 0"
-                rounded
-                style="margin-left: auto;"
-                color="grey-7"
-                no-caps
-                flat
-                icon="close"
-                @click="dialogDeleteTab.open = true,
-                  dialogDeleteTab.tabIndex = tabIndex"
-              >
+                />
+                <q-btn
+                  rounded
+                  color="primary"
+                  no-caps
+                  unelevated
+                  flat
+                  class="q-ml-sm"
+                  icon="edit"
+                  @click="clkDialogClkEditName"
+                />           
+                <q-btn
+                  v-if="tabIndex > 0"
+                  rounded
+                  style="margin-left: auto;"
+                  color="grey-7"
+                  no-caps
+                  flat
+                  icon="close"
+                  @click="dialogDeleteTab.open = true,
+                    dialogDeleteTab.tabIndex = tabIndex"
+                >
                 <q-tooltip>Excluir aba</q-tooltip>
               </q-btn>
             </div>
@@ -80,7 +91,7 @@
                       #append
                     >
                       <q-btn
-                        disabled
+                        v-if="field.multiple === true"
                         icon="add"
                         color="primary"
                         flat
@@ -94,6 +105,17 @@
                       </q-btn>
                     </template>
                   </q-input>
+                  <div v-if="field.type.type === 'options'">
+                    <q-chip
+                      v-for="options in field.options"
+                      :key="options"
+                      size="sm"
+                      color="primary" 
+                      text-color="white" 
+                    >
+                    {{ options }}
+                    </q-chip>
+                  </div>
                   <q-checkbox
                     v-if="field.type.type === 'boolean'"
                     class="q-pt-lg"
@@ -108,7 +130,7 @@
                   }}</q-badge
                   ><br />
                   <q-badge color="orange" class="q-pa-xs">
-                    {{ field.required ? "obrigatório" : "opcional" }}
+                    {{ field.required ? "Obrigatório" : "opcional" }}
                   </q-badge>
                 </div>
                 <div class="col-1">
@@ -171,9 +193,35 @@
                   hint="O tipo do dado"
                   label="Tipo de dado"
                   option-label="label"
-                  :options="fieldTypesOptions"
+                  :options="fieldTypesOptions[0].list"
                   v-model="newField.type"
                 />
+                <div v-if="newField.type.type === 'options'">
+                  <q-input
+                    outlined
+                    label="Opção" 
+                    v-model="newOptionValue[0].newValue"
+                  >
+                    <q-btn icon="add" flat @click="addOptionValue"></q-btn>
+                  </q-input>
+                  <q-chip
+                    v-for=" option, i  in newField.options"
+                    :key="option"
+                    color="primary"
+                    text-color="white"
+                    >
+                    {{ option }}
+                    <q-btn
+                      size="sm"
+                      icon="close"
+                      padding="none"
+                      rounded
+                      class="q-ml-sm"
+                      @click="newField.options.splice(i, 1)"
+                      >
+                    </q-btn>
+                  </q-chip>
+                </div>
               </div>
               <div class="text-center q-gutter-x-md"> 
                 <q-checkbox
@@ -272,6 +320,43 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="dialogClkEditName">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Informe o novo nome:
+            </div>
+          </q-card-section>
+          <q-card-section align="center">
+            <input
+              class="q-px-xl"
+              v-model="tabName"
+              filled
+              use-input
+              label="Nome da aba"
+              option-label="Nome da aba"
+            >
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogClkEditName = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="createUserTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -283,8 +368,12 @@ export default defineComponent({
   data() {
     return {
       tabSelected: '',
+      newOptionValue: [
+        {newValue: ''}
+      ],
       organismTypesOptions: [],
       fieldTypesOptions: [],
+      dialogClkEditName: false,
       organismTypeName: '',
       titlesList: [],
       organismTypeId: null,
@@ -330,9 +419,12 @@ export default defineComponent({
       tabLabel: null,
       newField: {
         label: null,
-        type: null,
+        type: '',
         hint: null,
+        multiple: false,
         required: true,
+        options: [],
+        value: ''
       },
       tabIndexToAddField: '',
       selectedType: "",
@@ -351,6 +443,7 @@ export default defineComponent({
     clkAddTabData(tabIndex){
       this.dialogInsertFields.open = true
       this.tabIndexToAddField = tabIndex
+      this.newField.options = []
     },
     addTab() {
       this.userDataTabs.push({
@@ -366,9 +459,10 @@ export default defineComponent({
         this.userDataTabs[tabIndex].fields.push({ ...this.newField });
         this.newField.label = null;
         this.newField.hint = null;
-        this.newField.type = null;
+        this.newField.type = '';
+        this.newField.options = null;
         this.newField.required = true;
-        // this.newField.multiple = false;
+        this.newField.multiple = false;
         this.dialogInsertFields.open = false; // Feche o diálogo após adicionar o campo
       } else {
         this.$q.notify("Preencha todos os dados antes de adicionar um campo");
@@ -422,7 +516,6 @@ export default defineComponent({
         }
       });
     },
-
     createUsersConfig() {
       const opt = {
         route: "/desktop/config/createUsersConfig",
@@ -482,6 +575,13 @@ export default defineComponent({
     },
     notifyRemoved() {
       this.$q.notify("Campo removido")
+    },
+    addOptionValue() {
+      this.newField.options.push(this.newOptionValue[0].newValue.toUpperCase());
+      this.newOptionValue[0].newValue = ''
+    },
+    clkDialogClkEditName() {
+      this.dialogClkEditName = !this.dialogClkEditName
     }
   },
 });

@@ -57,7 +57,7 @@
             >
               <div class="row q-gutter-sm justify-center items-center">
                 <div class="col-8">
-                  <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                  <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options'">
                     <q-input
                       :label="field.label"
                       :hint="field.hint"
@@ -84,6 +84,20 @@
                         </q-btn>
                       </template>
                     </q-input>
+                  </div>
+                  <div class="text-right" v-if="field.type.type === 'options'">
+                    <q-select
+                      outlined
+                      :label="field.label"
+                      option-label="optionName"
+                      :option-value="field.options"
+                      emit-value
+                      map-options
+                      :hint="field.hint"
+                      v-model="field.value"
+                      :options="field.options"
+                    >
+                    </q-select>
                   </div>
                   <div class="text-right" v-if="field.type.type === 'address'">
                     <q-btn
