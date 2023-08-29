@@ -28,7 +28,6 @@
         inline-label
         align="justify"
         narrow-indicator
-        @update:model-value="addBar = false"
       >
         <q-tab 
           v-for="(tabs, i) in userData.userDataTabs"

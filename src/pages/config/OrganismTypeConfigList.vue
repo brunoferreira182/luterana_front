@@ -55,7 +55,7 @@
                 dense
                 class="q-pa-sm"
                 icon="add"
-                label="Criar Organismo"
+                label="Criar tipo"
               />
             </div>
           </div>
