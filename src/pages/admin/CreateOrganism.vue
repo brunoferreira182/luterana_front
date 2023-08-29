@@ -482,11 +482,6 @@ export default defineComponent({
       },
       newOrganism: {},
       newMultipleValue: "",
-      structureInfo: {
-        description: '',
-        organismFunctionConfigId: null,
-        functionId: null,
-      },
       newFunctionDialog: false,
       organismData: {
         organismConfigId: null,

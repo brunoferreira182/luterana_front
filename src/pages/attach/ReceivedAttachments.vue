@@ -44,19 +44,6 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
-              <q-btn
-                @click="$router.push('/config/createStructure')"
-                color="primary"
-                unelevated
-                class="q-pa-sm"
-                rounded
-                no-caps
-                icon="add"
-              >
-                Estrutura
-              </q-btn>
-            </div>
           </div>
         </template>
         <template #body-cell-status="props">
