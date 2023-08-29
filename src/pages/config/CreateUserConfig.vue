@@ -370,6 +370,7 @@ export default defineComponent({
         {newValue: ''}
       ],
       organismTypesOptions: [],
+      tabName: '',
       fieldTypesOptions: [],
       dialogClkEditName: false,
       organismTypeName: '',
@@ -580,6 +581,22 @@ export default defineComponent({
     },
     clkDialogClkEditName() {
       this.dialogClkEditName = !this.dialogClkEditName
+    },
+    createTitleTab() {
+      const opt = {
+        route:'',
+        body: {
+
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.$q.notify("Nome alterado com sucesso");
+          this.tabName = '';
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
     }
   },
 });

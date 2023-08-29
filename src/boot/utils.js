@@ -245,11 +245,18 @@ const useUtils = {
           icon: "send",
         },
       ],
-      orgs: [
+      orgs: [        
         {
-          label: "Estatísticas",
-          route: "/orgs/userDashboard",
-          icon: "bar_chart",
+          label: "Lista dos meus organismos",
+          route: "/orgs/userOrganismsList",
+          icon: "speaker_notes",
+        },
+      ],
+      user: [
+        {
+          label: "Meus dados pessoais",
+          route: "/user/userPersonalData",
+          icon: "folder_shared",
         },
         {
           label: "Pesquisar organismos",
@@ -257,21 +264,9 @@ const useUtils = {
           icon: "search",
         },
         {
-          label: "Lista dos meus organismos",
-          route: "/orgs/userOrganismsList",
-          icon: "speaker_notes",
-        },
-        {
           label: "Lista das minhas funções",
           route: "/orgs/userFunctionsList",
           icon: "comment_bank",
-        },
-      ],
-      user: [
-        {
-          label: "Meus dados pessoais",
-          route: "/user/userPersonalData",
-          icon: "description",
         },
       ],
     };

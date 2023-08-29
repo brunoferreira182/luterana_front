@@ -21,6 +21,27 @@
       >
         <template #top-right>
           <div class="flex row justify-end q-gutter-sm items-center">
+            <div>
+              <q-btn
+                v-if="columnsData[0].field === 'organismName'"
+                icon="person"
+                class="q-pa-sm"
+                color="primary"
+                outline
+                @click="showMyOrganisms"
+              >
+                Meus organismos
+              </q-btn>
+              <q-btn
+                v-else
+                icon="person"
+                class="q-pa-sm"
+                color="primary"
+                @click="showMyOrganisms"
+              >
+                Meus organismos
+              </q-btn>
+            </div>
             <div class="col">
               <q-select
                 outlined
@@ -31,6 +52,7 @@
                 @update:model-value="getAllOrganismsByString"
               ></q-select>
             </div>
+            
             <div class="col">
               <q-input
                 @keyup="getAllOrganismsByString"
@@ -99,6 +121,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getAllOrganismsByString();
+    this.getOrganismsList();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -136,6 +159,32 @@ export default defineComponent({
         this.searchAllOrganismsList = r.data.list;
       });
     },
+    getOrganismsList() {
+      const opt = {
+        route: "/desktop/commonUsers/getOrganismsByUserId",
+        body: {
+          filterValue: this.filter,
+          page: this.pagination.page,
+        },
+      };
+      if (this.selectFilter === "Ativos") {
+        opt.body.isActive = 1;
+      } else if (this.selectFilter === "Inativos") {
+        opt.body.isActive = 0;
+      }
+      useFetch(opt).then((r) => {
+        this.userOrganismsList = r.data.organisms;
+      });
+    },
+    showMyOrganisms() {
+      if(this.columnsData === useTableColumns().searchAllOrganismsList) {
+        this.columnsData = useTableColumns().userOrganismsList
+        this.$q.notify("Seus organismos")
+      } else if (this.columnsData === useTableColumns().userOrganismsList) {
+        this.columnsData = useTableColumns().searchAllOrganismsList
+        this.$q.notify("Todos os organismos")
+      }
+    }
   },
 });
 </script>
