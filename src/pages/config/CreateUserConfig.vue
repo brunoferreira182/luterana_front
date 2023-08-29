@@ -328,14 +328,12 @@
             </div>
           </q-card-section>
           <q-card-section align="center">
-            <input
+            <q-input
               class="q-px-xl"
               v-model="tabName"
-              filled
-              use-input
+              outlined
               label="Nome da aba"
-              option-label="Nome da aba"
-            >
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -352,7 +350,7 @@
               label="Confirmar"
               no-caps
               color="primary"
-              @click="createUserTitle"
+              @click="createTitleTab"
             />
           </q-card-actions>
         </q-card>
