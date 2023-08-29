@@ -451,9 +451,10 @@ export default defineComponent({
       //   this.userData.mobile === ''
       // ){ this.$q.notify('Preencha todos os campos'); return; }
       const opt = {
-        route: "/desktop/adm/createNewUser",
+        route: "/desktop/user/updateUserData",
         body: {
           userDataTabs: this.userData.userDataTabs,
+          userId: this.userData._id
         },
       };
       this.$q.loading.show();
