@@ -21,7 +21,7 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col q-gutter-md" align="start">
-          <div class="text-h5">Selecione o tipo de configuração de organismo</div>
+          <div class="text-h5">Tipo de configuração de organismo</div>
           <q-select
             outlined
             label="Nome da configuração"
@@ -32,7 +32,6 @@
             hint="Informe qual o tipo de configuração que está aplicando"
             v-model="organismData.organismConfigId"
             :options="organismConfigOptions"
-            @update:modelValue="getOrganismConfigById"
           />
           <q-separator class="q-ma-md" v-if="organismList.length"/>
           <div v-if="organismList.length">
@@ -474,11 +473,6 @@ export default defineComponent({
       },
       newOrganism: {},
       newMultipleValue: "",
-      structureInfo: {
-        description: '',
-        organismFunctionConfigId: null,
-        functionId: null,
-      },
       newFunctionDialog: false,
       organismData: {
         organismConfigId: null,
@@ -649,6 +643,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.getOrganismsList()
+          
           this.organismData.fields = r.data.organismFields;
           this.functions = r.data.functions
         }
