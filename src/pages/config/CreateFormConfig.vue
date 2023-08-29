@@ -417,7 +417,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.fieldTypesOptions = r.data;
+          this.fieldTypesOptions = r.data.list;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
