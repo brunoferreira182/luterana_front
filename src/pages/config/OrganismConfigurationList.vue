@@ -147,7 +147,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismConfigList = r.data;
+        this.organismConfigList = r.data.list;
       });
     },
   },

@@ -43,6 +43,10 @@ const routes = [
         path: "/admin/userTitleDetail",
         component: () => import("pages/admin/UserTitleDetail.vue"),
       },
+      {
+        path: "/admin/createAffiliatedOrganism",
+        component: () => import("pages/admin/CreateAffiliatedOrganism.vue"),
+      },
       
       
       //configurations// tipos de organismos

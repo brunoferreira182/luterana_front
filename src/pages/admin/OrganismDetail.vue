@@ -496,7 +496,7 @@
               <q-list>
                 <q-item
                   clickable
-                  v-for="link in linkedOrganismsData"
+                  v-for="link in linkedOrganismsData.childOrganismsConfigs"
                   :key="link"
                   style="border-radius: 1rem;"
                   @click="clkGoToAffiliateOrganismDetail(link)"
@@ -567,14 +567,17 @@ export default defineComponent({
       linkedOrganismsData: [],
       organismConfigName: '',
       organismSearch: '',
-      dialogLinks: false
+      dialogLinks: false,
+      organismConfigId: '',
     };
   },
   mounted() {
     this.$q.loading.hide()
   },
-  beforeMount(){
+  created(){
     this.getOrganismDetailById();
+  },
+  beforeMount(){
     this.getOrganismsList()
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
@@ -594,7 +597,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.organismData.organismConfigId = r.data.organismData.organismConfigId
+          this.organismConfigId = r.data.organismData.organismConfigId
           console.log(this.organismData.organismConfigId, 'MERDADECONFIGID')
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
@@ -604,21 +607,30 @@ export default defineComponent({
       });
     },
     clkGoToAffiliateOrganismDetail(link){
-      console.log(link)
-      // const organismId = link._id
-      // this.$router.push('/admin/createAffiliatedOrganism?organismId=' + organismId)
+      console.log(link.organismChildConfigId)
+      const organismChildConfigId = link.organismChildConfigId
+      this.$router.push('/admin/createAffiliatedOrganism?organismChildConfigId=' + organismChildConfigId + '&cEdit')
     },
-    getLinkedOrganismConfig() {
-      console.log(this.organismData.organismConfigId, 'OKAOPKDOPSAKDPOKAPODAOPSKDPOASKOPDKAPOSKDPOASKDOPSAKOPD')
+    async getLinkedOrganismConfig() {
+      if (!this.organismConfigId) {
+        await new Promise(resolve => {
+          const interval = setInterval(() => {
+            if (this.organismConfigId) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 100);
+        });
+      }
       const opt = {
         route: "/desktop/adm/getLinkedOrganismConfig",
         body: {
-          organismConfigId: this.organismData.organismConfigId
+          organismConfigId: this.organismConfigId
         }
       };
       useFetch(opt).then(r => {
-        this.linkedOrganismsData = r.data
-      })
+        this.linkedOrganismsData = r.data;
+      });
     },
     filterInOrganismLinks(val){
       console.log(val)
