@@ -180,12 +180,12 @@ const routes = [
         component: () => import("pages/orgs/UserOrganismDetail.vue"),
       },
       {
-        path: "/orgs/userFunctionsList",
-        component: () => import("pages/orgs/UserFunctionsList.vue"),
+        path: "/user/userFunctionsList",
+        component: () => import("src/pages/user/UserFunctionsList.vue"),
       },
       {
-        path: "/orgs/searchAllOrganismsList",
-        component: () => import("pages/orgs/SearchAllOrganismsList.vue"),
+        path: "/user/organismsList",
+        component: () => import("pages/user/OrganismsList.vue"),
       },
       
       { path: "/user", redirect: "/user/userPersonalData" },

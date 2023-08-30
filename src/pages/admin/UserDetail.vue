@@ -58,40 +58,40 @@
           :name="tabs.tabValue" 
         >
           <div class="row justify-center q-pa-md">
-          <div class="col-12 q-gutter-md" align="start">
-            <div
-              v-for="(field, fieldIndex) in tabs.fields"
-              :key="fieldIndex"
-              class="q-my-md"
-            >
-              <div class="row q-gutter-sm justify-center items-center">
-                <div class="col-8">
-                  <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
-                    <q-input
-                      :label="field.label"
-                      :hint="field.hint"
-                      :type="field.type.type"
-                      v-model="field.value"
-                      outlined
-                    >
-                      <template
-                        v-if="field.multiple"
-                        #append
+            <div class="col-12 q-gutter-md" align="start">
+              <div
+                v-for="(field, fieldIndex) in tabs.fields"
+                :key="fieldIndex"
+                class="q-my-md"
+              >
+                <div class="row q-gutter-sm justify-center items-center">
+                  <div class="col-8">
+                    <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                      <q-input
+                        :label="field.label"
+                        :hint="field.hint"
+                        :type="field.type.type"
+                        v-model="field.value"
+                        outlined
                       >
-                        <q-btn
-                          disabled
-                          icon="add"
-                          color="primary"
-                          flat
-                          round
-                          @click="addMultipleField"
+                        <template
+                          v-if="field.multiple"
+                          #append
                         >
-                          <q-tooltip
-                            >Adicionar multiplo
-                            {{ field.type.label }}</q-tooltip
+                          <q-btn
+                            disabled
+                            icon="add"
+                            color="primary"
+                            flat
+                            round
+                            @click="addMultipleField"
                           >
-                        </q-btn>
-                      </template>
+                            <q-tooltip
+                              >Adicionar multiplo
+                              {{ field.type.label }}</q-tooltip
+                            >
+                          </q-btn>
+                        </template>
                     </q-input>
                   </div>
                   <div class="text-right" v-if="field.type.type === 'address'">
