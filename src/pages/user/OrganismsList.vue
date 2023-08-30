@@ -6,7 +6,7 @@
         class="bg-accent"
         title="Pesquisar organismos"
         :columns="columnsData"
-        :rows="searchAllOrganismsList"
+        :rows="pageOrganismList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -23,23 +23,37 @@
           <div class="flex row justify-end q-gutter-sm items-center">
             <div>
               <q-btn
-                v-if="columnsData[0].field === 'organismName'"
+                v-if="verifyBtn === 1"
                 icon="person"
                 class="q-pa-sm"
                 color="primary"
-                outline
+                rounded
                 @click="showMyOrganisms"
               >
                 Meus organismos
+                <q-tooltip
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  Exibir todos os organismos
+                </q-tooltip>
               </q-btn>
               <q-btn
                 v-else
                 icon="person"
+                rounded
+                outline
                 class="q-pa-sm"
                 color="primary"
                 @click="showMyOrganisms"
               >
                 Meus organismos
+                <q-tooltip
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  Exibir os seus organismos
+                </q-tooltip>
               </q-btn>
             </div>
             <div class="col">
@@ -103,8 +117,10 @@ export default defineComponent({
   name: "SearchAllOrganismsList",
   data() {
     return {
-      columnsData: useTableColumns().searchAllOrganismsList,
+      columnsData: useTableColumns().pageOrganismList,
+      pageOrganismList:[],
       searchAllOrganismsList: [],
+      userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -114,6 +130,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      verifyBtn: 1
     };
   },
   mounted() {
@@ -121,7 +138,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getAllOrganismsByString();
-    this.getOrganismsList();
+    this.getMyOrganismsList();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -158,8 +175,10 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.searchAllOrganismsList = r.data.list;
       });
+      this.pageOrganismList = this.userOrganismList
+      this.$forceUpdate()
     },
-    getOrganismsList() {
+    getMyOrganismsList() {
       const opt = {
         route: "/desktop/commonUsers/getOrganismsByUserId",
         body: {
@@ -173,17 +192,21 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.userOrganismsList = r.data.organisms;
+        this.userOrganismList = r.data.organisms;
+        this.pageOrganismList = this.userOrganismList
       });
     },
     showMyOrganisms() {
-      if(this.columnsData === useTableColumns().searchAllOrganismsList) {
-        this.columnsData = useTableColumns().userOrganismsList
-        this.$q.notify("Seus organismos")
-      } else if (this.columnsData === useTableColumns().userOrganismsList) {
-        this.columnsData = useTableColumns().searchAllOrganismsList
-        this.$q.notify("Todos os organismos")
+      if(this.pageOrganismList === this.searchAllOrganismsList) {
+        this.pageOrganismList = this.userOrganismList
+        this.verifyBtn = 1
+      } else {
+        this.pageOrganismList = this.searchAllOrganismsList
+        this.verifyBtn = 2
       }
+    },
+    listOfOrganism() {
+      this.pageOrganismList = this.userOrganismList
     }
   },
 });

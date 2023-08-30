@@ -260,12 +260,12 @@ const useUtils = {
         },
         {
           label: "Pesquisar organismos",
-          route: "/orgs/searchAllOrganismsList",
+          route: "/user/organismsList",
           icon: "search",
         },
         {
           label: "Lista das minhas funções",
-          route: "/orgs/userFunctionsList",
+          route: "/user/userFunctionsList",
           icon: "comment_bank",
         },
       ],
