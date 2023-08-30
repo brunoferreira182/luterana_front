@@ -118,8 +118,25 @@
                         <div class="text-h6">Endereços</div>
                         Nenhum endereço vinculado
                       </div>
+                      <div
+                        v-else-if="field.type.type === 'address' && !field.address[0]"
+                        class="text-subtilte1 text-start"
+                      >
+                        <div class="text-h6">Endereços</div>
+                        Nenhum endereço vinculado
+                      </div>
                       <div class="text-right" v-if="field.type.type === 'address'">
-                        <q-btn
+                        <q-btn v-if="!(field.address)"
+                          label="Adicionar um endereço"
+                          no-caps
+                          rounded
+                          unelevated
+                          outline
+                          style="margin-top: -15%;"
+                          color="primary"
+                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                        />
+                        <q-btn v-else-if="!(field.address[0])"
                           label="Adicionar um endereço"
                           no-caps
                           rounded
@@ -140,24 +157,34 @@
                             style="border-radius: 1rem"
                             class="bg-grey-3 q-ma-sm q-pa-md"
                           >
-                          <q-item-section>
-                            <q-item-label lines="3" class="text-capitalize">
-                              {{ item.street }}, {{ item.number }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              {{ item.district }} - {{ item.city }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              CEP
-                              {{ item.cep }}
-                            </q-item-label>
-                            <q-item-label></q-item-label>
-                          </q-item-section>
-                          <q-item-section side top>
-                            <q-item-label caption class="text-capitalize">{{
-                              item.type
-                            }}</q-item-label>
-                          </q-item-section>
+                            <q-item-section>
+                              <q-item-label lines="3" class="text-capitalize">
+                                {{ item.street }}, {{ item.number }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                {{ item.district }} - {{ item.city }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                CEP
+                                {{ item.cep }}
+                              </q-item-label>
+                              <q-item-label></q-item-label>
+                            </q-item-section>
+                            <q-item-section side top>
+                              <q-item-label caption class="text-capitalize">{{
+                                item.type
+                              }}</q-item-label>
+                            </q-item-section>
+                            <q-item-section>
+                              <q-btn
+                                icon="delete"
+                                flat
+                                style="width: 15px;"
+                                class="absolute-right"
+                                @click="removeThisAddress(fieldIndex, tabsIndex, i)"
+                              >
+                              </q-btn>
+                            </q-item-section>
                           </q-item>
                         </q-list>
                       <q-checkbox
@@ -480,6 +507,9 @@ export default defineComponent({
         }
       });
     },
+    removeThisAddress(fieldIndex, tabsIndex, addressIndex) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.splice(addressIndex, 1);
+    }
   },
 });
 </script>
