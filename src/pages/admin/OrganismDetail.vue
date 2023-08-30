@@ -487,25 +487,50 @@
             </div>
           </div>
         </q-tab-panel>
-        <q-tab-panel name="afiliatesOrganismsList" >
+        <q-tab-panel name="afiliatesOrganismsList">
           <div class="row justify-start">
-            <div class="col-7 q-gutter-md">
-              <div class="text-h5"> Configuração de organismos filiados</div>
+            <div class="col-10 q-gutter-md">
+              <div class="text-h5"> Criação de organismos filiados</div>
               <div class="text-caption text-subtitle1">
                 Clique em uma das configurações abaixo para iniciar a criação de um novo organismo filiado
               </div>
               <q-list>
                 <q-item
                   clickable
-                  v-for="link in linkedOrganismsData.childOrganismsConfigs"
-                  :key="link"
+                  v-for="item in linkedOrganismsData.childOrganismsConfigs"
+                  :key="item"
                   style="border-radius: 1rem;"
-                  @click="clkGoToOrganismChildDetail(link)"
+                  @click="clkCreateNewChildOrganism(item)"
+                  class="bg-grey-3 q-ma-sm"
+                >
+                  <q-item-section>
+                    <q-item-label>
+                      {{ item.organismConfigName }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </div>
+          <q-separator class="q-ma-md"/>
+          <div class="row justify-start">
+            <div class="col-10 q-gutter-md">
+              <div class="text-h5"> Organismos filiados criados</div>
+              <div class="text-caption text-subtitle1">
+                Clique em um dos organismos abaixo para exibir detalhes
+              </div>
+              <q-list>
+                <q-item
+                  clickable
+                  v-for="child in childOrganismsData"
+                  :key="child"
+                  style="border-radius: 1rem;"
+                  @click="clkOpenChildOrganismDetail(child)"
                   class="bg-green-3 q-ma-sm"
                 >
                   <q-item-section>
                     <q-item-label>
-                      {{ link.organismConfigName }}
+                      {{ child.organismName }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -566,8 +591,8 @@ export default defineComponent({
       parentOrganism: [],
       childOrganism: [],
       linkedOrganismsData: [],
+      childOrganismsData: [],
       organismConfigName: '',
-      organismSearch: '',
       dialogLinks: false,
       organismConfigId: '',
     };
@@ -583,9 +608,25 @@ export default defineComponent({
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
     this.getLinkedOrganismConfig()
-    // this.getChildOrganismsById()
+    this.getChildOrganismsById()
   },
   methods: {
+    getChildOrganismsById() {
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: "/desktop/adm/getChildOrganismsById",
+        body: {
+          organismId: organismId,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.childOrganismsData = r.data
+        }
+      });
+    },
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {
@@ -606,8 +647,13 @@ export default defineComponent({
         }
       });
     },
-    clkGoToOrganismChildDetail(link){
-      const organismChildConfigId = link.organismChildConfigId
+    clkOpenChildOrganismDetail(child){
+      console.log(child)
+      const childOrganismId = child.childOrganismId
+      this.$router.push('/admin/organismDetail?organismId=' + childOrganismId)
+    },
+    clkCreateNewChildOrganism(item){
+      const organismChildConfigId = item.organismChildConfigId
       const organismParentId = this.$route.query.organismId
       this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismChildConfigId + '&organismParentId=' + organismParentId)
     },
@@ -853,18 +899,6 @@ export default defineComponent({
           this.getOrganismDetailById()
           this.clearDialogAndFunctions();
         }
-      });
-    },
-    getChildOrganismsById() {
-      const childOrganismId = this.$route.query.organismId
-      const opt = {
-        route: "/desktop/adm/getChildOrganismsById",
-        body: {
-          organismId: childOrganismId
-        }
-      };
-      useFetch(opt).then((r) => {
-        this.childOrganism = r.data;
       });
     },
     getParentOrganismsById() {

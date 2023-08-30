@@ -8,13 +8,12 @@
         :columns="columnsData"
         :rows="organismList"
         row-key="_id"
+        @row-click="clkOpenOrganismDetail"
         virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenOrganismDetail"
-        :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
@@ -116,6 +115,7 @@ export default defineComponent({
   methods: {
     clkOpenOrganismDetail(e, r) {
       const organismId = r.organismId;
+      
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
     getSelectedString() {
