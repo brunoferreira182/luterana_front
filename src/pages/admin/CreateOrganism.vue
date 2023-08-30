@@ -36,6 +36,7 @@
               label="Gerenciar Vínculos"
               color="primary"
               rounded
+              no-caps
               unelevated
               @click="dialogLinks = true"
             />
@@ -506,7 +507,6 @@ export default defineComponent({
     filterInOrganismLinks(val){
       console.log(val)
     },
-   
     getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
@@ -634,7 +634,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
@@ -681,10 +681,10 @@ export default defineComponent({
         route: "/desktop/adm/getOrganismsConfigs",
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismConfigOptions = r.data
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.organismConfigOptions = r.data.list
         }
       });
     },

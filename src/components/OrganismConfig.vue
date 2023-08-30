@@ -106,7 +106,7 @@
                   map-options
                   hint="Informe qual será o organismo pai"
                   v-model="childOfOrganism"
-                  :options="searchString"
+                  :options="organismConfigsList"
                 />
               </q-card-section>
               <q-card-actions align="center" class="q-mb-md">
@@ -543,7 +543,7 @@ export default defineComponent({
   name: "OrganismsConfigDetail",
   data() {
     return {
-      searchString: [],
+      organismConfigsList: [],
       childOfOrganism: [],
       fieldTypesOptions: [],
       selectedPermissions: [],
@@ -554,6 +554,7 @@ export default defineComponent({
       requiresLink: false,
       dialogCreateAffiliation: false,
       valueSelected: "",
+      searchString: '',
       tab: "createConfig",
       newFunctionDialog: false,
       newFunction: {
@@ -843,16 +844,16 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismConfigName = r.data.organismConfigName;
-          this.organismFields = r.data.organismFields;
-          r.data.functions[0].organismFunctionId ?
-          this.functions = r.data.functions :
-          this.functions = []
-          this.selectedType = r.data.organismConfigName;
-          this.requiresLink = r.data.requiresLink
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.organismConfigName = r.data.organismConfigDat.organismConfigName;
+          this.organismFields = r.data.organismConfigDat.organismFields;
+          r.data.organismConfigDat.functions[0].organismFunctionId ?
+          this.functions = r.data.organismConfigDat.functions :
+          this.functions = []
+          this.selectedType = r.data.organismConfigDat.organismConfigName;
+          this.requiresLink = r.data.organismConfigDatrequiresLink
         }
       });
     },
@@ -985,7 +986,7 @@ export default defineComponent({
           console.log("Erro getOrganismConfigsList")
           return
         }
-        this.searchString = r.data
+        this.organismConfigsList = r.data.list
       })
     },
     confirmChildOf() {

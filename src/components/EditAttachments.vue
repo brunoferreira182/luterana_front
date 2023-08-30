@@ -291,7 +291,6 @@ export default defineComponent({
           },
         },
       };
-
       opt.file = [{ name: this.files.name, file: this.files }];
       this.$q.loading.show();
       useFetch(opt).then(() => {

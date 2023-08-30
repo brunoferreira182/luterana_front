@@ -13,7 +13,6 @@
             color="primary"
             rounded
             icon="bookmark"
-            flat
             unelevated
             @click="updateOrganism"
             label="Salvar Edição"
@@ -52,6 +51,7 @@
                 v-model="organismConfigName"
                 :options="organismConfigOptions"
               />
+              <q-separator class="q-mx-md" />
               <div v-if="organismList.length">
                 <q-btn
                   label="Gerenciar Vínculos"
@@ -62,6 +62,7 @@
                   @click="dialogLinks = true"
                 />
               </div>
+              <q-separator class="q-mx-md" />
               <div v-if="organismData.fields.length" class="text-h5">
                 Dados
               </div>
@@ -449,7 +450,7 @@
                         <q-item
                           clickable
                           :disable="organismLinks.includes(organism)"
-                          @click="addNewLink(organism,i)"
+                          @click="clkSaveVinculo(organism)"
                           v-for="(organism,i) in organismList"
                           :key="i"
                         >
@@ -477,7 +478,7 @@
                         unelevated
                         rounded
                         color="primary"
-                        @click="clkSaveVinculo"
+                        
                       />
                     </q-card-actions>
                   </q-card>
@@ -499,7 +500,7 @@
                   v-for="link in linkedOrganismsData.childOrganismsConfigs"
                   :key="link"
                   style="border-radius: 1rem;"
-                  @click="clkGoToAffiliateOrganismDetail(link)"
+                  @click="clkGoToOrganismChildDetail(link)"
                   class="bg-green-3 q-ma-sm"
                 >
                   <q-item-section>
@@ -598,7 +599,6 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.organismConfigId = r.data.organismData.organismConfigId
-          console.log(this.organismData.organismConfigId, 'MERDADECONFIGID')
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
@@ -606,10 +606,10 @@ export default defineComponent({
         }
       });
     },
-    clkGoToAffiliateOrganismDetail(link){
-      console.log(link.organismChildConfigId)
+    clkGoToOrganismChildDetail(link){
       const organismChildConfigId = link.organismChildConfigId
-      this.$router.push('/admin/createAffiliatedOrganism?organismChildConfigId=' + organismChildConfigId + '&cEdit')
+      const organismParentId = this.$route.query.organismId
+      this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismChildConfigId + '&organismParentId=' + organismParentId)
     },
     async getLinkedOrganismConfig() {
       if (!this.organismConfigId) {
@@ -641,7 +641,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.organismConfigOptions = r.data
+          this.organismConfigOptions = r.data.list
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -733,25 +733,25 @@ export default defineComponent({
         }
       })
     },
-    clkSaveVinculo(){
-      const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+    clkSaveVinculo(organism){
+      const organismLinkId = organism.organismId
       const organismId = this.$route.query.organismId
       const opt = {
         route: '/desktop/adm/createRelation',
         body: {
           organismId: organismId,
-          organismLinks: organismLinksIds
+          organismLinkId: organismLinkId
         }
       }
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(r.error){
+          this.$q.notify(r.errorMessage)
+        } else {
           this.$q.notify('Vínculo salvo com sucesso!')
           this.dialogLinks = false
           this.getParentOrganismsById()
-        } else {
-          this.$q.notify('Ocorreu um erro, tente novamente')
         }
       })
     },
@@ -906,7 +906,6 @@ export default defineComponent({
       });
     },
     getUsers(val, update) {
-      console.log(val, 'AUQI VAL')
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
@@ -928,8 +927,6 @@ export default defineComponent({
     linkUserToFunction(func, funcIndex ) {
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
-      console.log(this.selectedFunc, 'AQUI SELECTEDFUNC')
-      console.log(this.selectedFuncIndex, 'AQUI SELECTEDINDEX')
       this.dialogInsertUserInFunction.open = true;
     },
     

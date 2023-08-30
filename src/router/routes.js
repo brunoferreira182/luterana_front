@@ -44,8 +44,8 @@ const routes = [
         component: () => import("pages/admin/UserTitleDetail.vue"),
       },
       {
-        path: "/admin/createAffiliatedOrganism",
-        component: () => import("pages/admin/CreateAffiliatedOrganism.vue"),
+        path: "/admin/createChildOrganism",
+        component: () => import("pages/admin/CreateChildOrganism.vue"),
       },
       
       

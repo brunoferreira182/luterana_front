@@ -2,7 +2,7 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">novo organismo</div>
+        <div class="col-6 text-h5 text-capitalize">novo organismo filiado</div>
         <div class="col-2 text-center">
           <q-btn
             @click="createOrganism"
@@ -14,7 +14,7 @@
           />
         </div>
       </div>
-      <q-breadcrumbs>
+      <q-breadcrumbs class="q-px-lg">
         <q-breadcrumbs-el label="Home" />
         <q-breadcrumbs-el label="Breadcrumbs" />
       </q-breadcrumbs>
@@ -24,26 +24,16 @@
           <div class="text-h5">Tipo de configuração de organismo</div>
           <q-select
             outlined
+            readonly
             label="Nome da configuração"
             option-label="organismConfigName"
             :option-value="(item) => item._id"
             emit-value
             map-options
-            hint="Informe qual o tipo de configuração que está aplicando"
-            v-model="organismData.organismConfigId"
-            :options="organismConfigOptions"
+            hint="O tipo de configuração que está aplicado"
+            v-model="organismConfigName"
           />
-          <q-separator class="q-ma-md" v-if="organismList.length"/>
-          <div v-if="organismList.length">
-            <q-btn
-              label="Gerenciar Vínculos"
-              color="primary"
-              rounded
-              unelevated
-              @click="dialogLinks = true"
-            />
-          </div>
-          <q-separator v-if="organismData.fields.length" />
+          <q-separator class="q-ma-md" />
           <div v-if="organismData.fields.length" class="text-h5">
             Preencha os dados necessários:
           </div>
@@ -299,91 +289,6 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions" animated>
-          <q-card>
-            <q-card-section>
-              <div class="text-h6 text-center">
-                Vínculos
-              </div>
-            </q-card-section>
-            <q-card-section>
-              <div  class="text-subtitle2 q-mb-sm">
-                Organismos vinculados:
-              </div>
-              <q-input 
-                v-if="organismLinks.length" 
-                label="Buscar" 
-                outlined
-                v-model="organismVinculated"
-                @update:model-value="filterInOrganismLinks"
-                type="search"
-              >
-                <template #append>
-                  <q-icon v-if="organismVinculated !== ''" name="close" @click="organismVinculated = ''" class="cursor-pointer" />
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-              <div v-if="organismLinks.length">
-                <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
-                  {{ chip.nome }}
-                </q-chip>
-              </div>
-              <div v-else class="text-center q-mt-md">Nenhum vínculo.</div>
-            </q-card-section>
-            <q-card-section>
-              <div class="text-subtitle2 q-mb-sm">
-                Vincular novo organismo:
-              </div>
-              <q-input 
-                label="Buscar"
-                outlined
-                type="search"
-                v-model="organismSelected"
-                hint="Faça uma busca para visualizar os organismos disponíveis"
-                @update:model-value="getOrganismsList"
-              >
-                <template #append>
-                  <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-              <q-list bordered class="q-mt-sm">
-                <q-item
-                  clickable
-                  :disable="organismLinks.includes(organism)"
-                  @click="addNewLink(organism,i)"
-                  v-for="(organism,i) in organismList"
-                  :key="i"
-                >
-                  <q-item-section>
-                    {{ organism.nome }}
-                  </q-item-section>
-                  <q-item-section class="text-primary" side>
-                    {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-card-section>
-            <q-card-actions align="center">
-              <q-btn
-                flat
-                label="Fechar"
-                no-caps
-                rounded
-                color="primary"
-                @click="dialogLinks = false"
-              />
-              <q-btn 
-                label="Salvar vínculo"
-                no-caps
-                rounded
-                unelevated
-                @click="dialogLinks = false"
-                color="primary"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
         <q-dialog v-model="dialogInsertUserInFunction.open">
           <q-card style="border-radius: 1rem; width: 400px">
             <q-card-section>
@@ -450,7 +355,7 @@ import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
 export default defineComponent({
-  name: "CreateOrganism",
+  name: "CreateChildOrganism",
   data() {
     return {
       userInput: '',
@@ -474,7 +379,9 @@ export default defineComponent({
       newOrganism: {},
       newMultipleValue: "",
       newFunctionDialog: false,
+      organismConfigName: '',
       organismData: {
+        organismParentId: null,
         organismConfigId: null,
         fields: [],
       },
@@ -484,6 +391,7 @@ export default defineComponent({
       organismLinkEvent: '',
       organismSelected: '',
       organismVinculated: '',
+      originalRouteParams: {}, 
       dialogLinks: false
     };
   },
@@ -494,9 +402,6 @@ export default defineComponent({
     this.getOrganismConfigById()
   },
   methods: {
-    filterInOrganismLinks(val){
-      console.log(val)
-    },
     getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
@@ -624,7 +529,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
@@ -643,9 +548,9 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.getOrganismsList()
-          
-          this.organismData.fields = r.data.organismFields;
-          this.functions = r.data.functions
+          this.organismConfigName = r.data.organismConfigDat.organismConfigName
+          this.organismData.fields = r.data.organismConfigDat.organismFields;
+          this.functions = r.data.organismConfigDat.functions
         }
       });
     },
@@ -661,7 +566,6 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          
           this.organismTypesOptions = r.data;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
@@ -685,8 +589,10 @@ export default defineComponent({
           }
         }
         const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+        this.organismData.organismConfigId = this.$route.query.organismChildConfigId
+        this.organismData.organismParentId = this.$route.query.organismParentId
         const opt = {
-          route: "/desktop/adm/createOrganism",
+          route: "/desktop/adm/createChildOrganism",
           body: {
             organismData: this.organismData,
             functions: userData,
@@ -696,12 +602,12 @@ export default defineComponent({
         this.$q.loading.show()
         useFetch(opt).then(r => {
           this.$q.loading.hide()
-          if (!r.error) {
-            this.$q.notify('Organismo criado com sucesso!');
-            const organismId = r.data
-            this.$router.push('/admin/organismDetail?organismId=' + organismId)
-          } else {
+          if (r.error) {
             this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          } else {
+            // const organismId = r.data
+            this.$q.notify('Organismo criado com sucesso!');
+            // this.$router.push('/admin/organismDetail?organismId=' + organismId)
           }
         });
       } else {
@@ -727,12 +633,6 @@ export default defineComponent({
           return "text";
       }
     },
-    addNewLink (organism) {
-      this.organismLinks.push(organism)
-    },
-    removeLink(i) {
-      this.organismLinks.splice(i,1)
-    }
 
   },
 });
