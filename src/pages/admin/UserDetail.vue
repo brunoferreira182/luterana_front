@@ -264,7 +264,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.titleOptions = r.data;
+          this.titleOptions = r.data.list;
         })
       });
     },

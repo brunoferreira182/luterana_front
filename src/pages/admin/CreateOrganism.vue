@@ -652,6 +652,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           if(r.data.organismConfigData){
+            
             this.organismConfigName = r.data.organismConfigData.organismConfigName
             this.organismData.fields = r.data.organismConfigData.organismFields;
             this.functions = r.data.organismConfigData.functions
