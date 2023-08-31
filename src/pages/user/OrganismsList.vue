@@ -45,6 +45,8 @@
                 icon="person"
                 rounded
                 outline
+                unelevated
+                no-caps
                 class="q-pa-sm"
                 color="primary"
                 @click="showMyOrganisms"
