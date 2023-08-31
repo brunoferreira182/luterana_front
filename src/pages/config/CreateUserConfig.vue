@@ -50,10 +50,12 @@
                   label="Adicionar campo"
                 />
                 <q-btn
+                  v-if="tabIndex > 0"
                   rounded
                   color="primary"
                   no-caps
                   unelevated
+                  v-model="this.field.tabLabel"
                   flat
                   class="q-ml-sm"
                   icon="edit"
@@ -583,9 +585,12 @@ export default defineComponent({
       this.dialogClkEditName = !this.dialogClkEditName
     },
     createTitleTab() {
+      console.log(this.tabCard)
       const opt = {
-        route:'',
+        route:'/desktop/user/updateUserData',
         body: {
+          userId: this.$route.query._id,
+          userDataTabs: this.userDataTabs
 
         }
       }
@@ -593,6 +598,7 @@ export default defineComponent({
         if (!r.error) {
           this.$q.notify("Nome alterado com sucesso");
           this.tabName = '';
+          this.dialogClkEditName = false;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
