@@ -22,11 +22,14 @@
       <q-separator/>
       <q-splitter
         v-model="splitterModel"
+        style="height: 100vh;"
       >
         <template v-slot:before>
           <q-tabs
             v-model="tab"
             vertical
+            align="left"
+            class="text-left flex-center"
             no-caps
             active-color="primary"
             indicator-color="primary"
@@ -36,6 +39,7 @@
             <q-tab 
               v-for="(tabs, i) in userData.userDataTabs"
               :key="i"
+              class="flex-left flex"
               :name="tabs.tabValue" 
               :label="tabs.tabLabel" 
             />
@@ -505,10 +509,8 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.edit-tab{
-  text-align: left;
-  float: left;
-  width: 100%;
+.flex-center{
+  justify-content: flex-start;
 }
 </style>
 
