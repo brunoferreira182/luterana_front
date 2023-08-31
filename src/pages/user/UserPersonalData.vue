@@ -20,9 +20,9 @@
           </q-btn>
         </div>
       </div>
-      <q-separator class="q-mx-md" />
-      <div class="row">
-        <div class="col-md-3 full-height">
+      <q-separator/>
+      <div class="row" style="height: 100vh;">
+        <div class="col-1">
           <q-tabs
             v-model="tab"
             vertical
@@ -30,28 +30,27 @@
             active-color="primary"
             indicator-color="primary"
             inline-label
-            align="justify"
             @update:model-value="addBar = false"
           >
             <q-tab 
               v-for="(tabs, i) in userData.userDataTabs"
               :key="i"
+              class="edit-tab"
               :name="tabs.tabValue" 
-              class="q-py-lg customFontSize"
               :label="tabs.tabLabel" 
             />
           </q-tabs>
         </div>
         <q-separator
-            vertical
-          />
-        <div class="col-md-8 full-height q-py-lg">
+          vertical
+        />
+        <div class="col-10 full-height">
           <q-tab-panels 
             animated 
             swipeable
             transition-prev="jump-up"
             transition-next="jump-up"
-            class="q-my-md bg-accent"
+            class="bg-accent"
             :model-value="tab"
           >
           
@@ -61,8 +60,8 @@
               :name="tabs.tabValue" 
               
             >
-            <div class="row justify-center q-pa-md q-my-lg">
-              <div class="col-12 q-gutter-md" align="start">
+            <div class="row justify-center ">
+              <div class="col q-gutter-md" >
                 <div
                   v-for="(field, fieldIndex) in tabs.fields"
                   :key="fieldIndex"
@@ -514,7 +513,10 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-  .customFontSize {
-    font-size: 18px;
-  }
+.edit-tab{
+  text-align: left;
+  float: left;
+  width: 100%;
+}
 </style>
+
