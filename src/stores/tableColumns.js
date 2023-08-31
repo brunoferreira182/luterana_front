@@ -2,6 +2,29 @@ import { defineStore } from "pinia";
 
 export const useTableColumns = defineStore("tableColumns", {
   state: () => ({
+    pageOrganismList: [
+      {
+        name: "nome",
+        align: "left",
+        label: "Nome do organismo",
+        field: "nome",
+        sortable: true,
+      },
+      {
+        name: "data_de_criacao",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.data_de_criacao.dateLocale,
+        sortable: true,
+      },
+      {
+        name: "organismParentName",
+        align: "left",
+        label: "Organismo filiado",
+        field: "organismParentName",
+        sortable: true,
+      },
+    ],
     organismList: [
       {
         name: "nome",
@@ -15,6 +38,13 @@ export const useTableColumns = defineStore("tableColumns", {
         align: "left",
         label: "Data de criação",
         field: (row) => row.data_de_criacao.dateLocale,
+        sortable: true,
+      },
+      {
+        name: "organismParentName",
+        align: "left",
+        label: "Organismo filiado",
+        field: "organismParentName",
         sortable: true,
       },
     ],

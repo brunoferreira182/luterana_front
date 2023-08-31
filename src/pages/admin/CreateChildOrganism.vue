@@ -15,8 +15,16 @@
         </div>
       </div>
       <q-breadcrumbs class="q-px-lg">
-        <q-breadcrumbs-el label="Home" />
-        <q-breadcrumbs-el label="Breadcrumbs" />
+        <q-breadcrumbs-el 
+          style="cursor: pointer;"
+          :label="parentOrganismName" 
+          @click="$router.push('/admin/organismDetail?organismId=' + this.$route.query.organismParentId)"
+        >
+          <q-tooltip>
+            Voltar para organismo
+          </q-tooltip>
+        </q-breadcrumbs-el>
+        <q-breadcrumbs-el label="Novo organismo" />
       </q-breadcrumbs>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
@@ -388,7 +396,7 @@ export default defineComponent({
       functions: [],
       organismList: [],
       organismLinks: [],
-      organismLinkEvent: '',
+      parentOrganismName: '',
       organismSelected: '',
       organismVinculated: '',
       originalRouteParams: {}, 
@@ -548,6 +556,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           if(r.data.organismConfigData){
+            this.parentOrganismName = r.data.parentOrganismConfigData.parentOrganismName
             this.organismConfigName = r.data.organismConfigData.organismConfigName
             this.organismData.fields = r.data.organismConfigData.organismFields;
             this.functions = r.data.organismConfigData.functions

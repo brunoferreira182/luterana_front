@@ -59,23 +59,23 @@
             </div>
           </div>
         </template>
-        <template #body-cell-status="props">
+        <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip
               outline
-              v-if="props.row.isActive === 1"
+              v-if="props.row.organismParentName"
               color="green"
               size="14px"
             >
-              Ativo
+              {{ props.row.organismParentName }}
             </q-chip>
             <q-chip
               outline
-              v-else-if="props.row.isActive === 0"
+              v-else-if="!props.row.organismParentName"
               color="red"
               size="14px"
             >
-              Inativo
+              Nenhum filiado
             </q-chip>
           </q-td>
         </template>

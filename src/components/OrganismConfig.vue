@@ -394,7 +394,7 @@
               <q-checkbox
                 class="q-px-sm"
                 label="Esta função fará gestão de troca de função e organismo?"
-                v-model="newFunction.functionProperties.canChangeFunctionAndOrg"
+                v-model="newFunction.functionProperties.canManageFuncAndOrgSolicitations"
               />
               <q-checkbox
                 class="q-px-sm"
@@ -479,7 +479,7 @@
               <q-checkbox
                 class="q-px-sm"
                 label="Esta função fará gestão de troca de função e organismo?"
-                v-model="editFunctionDialog.function.functionProperties.canChangeFunctionAndOrg"
+                v-model="editFunctionDialog.function.functionProperties.canManageFuncAndOrgSolicitations"
               />
               <q-checkbox
                 class="q-px-sm"
@@ -570,7 +570,7 @@ export default defineComponent({
         description: '',
         requiredTitleId: null,
         functionProperties: {
-          canChangeFunctionAndOrg: false,
+          canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
         },
         isRequired: true,
@@ -583,7 +583,7 @@ export default defineComponent({
           description: '',
           requiredTitleId: null,
           functionProperties: {
-            canChangeFunctionAndOrg: false,
+            canManageFuncAndOrgSolicitations: false,
             canCreateAndEditChildOrganism: false,
           },
           isRequired: true,
@@ -928,7 +928,7 @@ export default defineComponent({
         description: '',
         requiredTitleId: null,
         functionProperties: {
-          canChangeFunctionAndOrg: false,
+          canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
         },
         isRequired: true,
