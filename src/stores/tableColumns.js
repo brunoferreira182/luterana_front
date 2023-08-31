@@ -17,13 +17,6 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.data_de_criacao.dateLocale,
         sortable: true,
       },
-      {
-        name: "organismParentName",
-        align: "left",
-        label: "Organismo filiado",
-        field: "organismParentName",
-        sortable: true,
-      },
     ],
     organismList: [
       {
@@ -43,7 +36,7 @@ export const useTableColumns = defineStore("tableColumns", {
       {
         name: "organismParentName",
         align: "left",
-        label: "Organismo filiado",
+        label: "Organismo pai",
         field: "organismParentName",
         sortable: true,
       },
