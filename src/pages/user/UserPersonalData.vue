@@ -31,41 +31,46 @@
             align="left"
             class="text-left flex-center"
             no-caps
-            active-color="primary"
+            active-bg-color="blue-1"
             indicator-color="primary"
             inline-label
             @update:model-value="addBar = false"
           >
-            <q-tab 
-              v-for="(tabs, i) in userData.userDataTabs"
-              :key="i"
-              class="flex-left flex"
-              :name="tabs.tabValue" 
-              :label="tabs.tabLabel" 
-            />
+            <template v-for="(tabs, i) in userData.userDataTabs" :key="i">
+              <q-tab 
+                class="flex-left flex"
+                :name="tabs.tabValue" 
+                :label="tabs.tabLabel" 
+              />
+              <q-separator/>
+            </template>
           </q-tabs>
         </template>
         <template v-slot:after>
           <q-tab-panels 
-            animated 
-            swipeable
-            transition-prev="jump-up"
-            transition-next="jump-up"
-            class="bg-accent"
-            :model-value="tab"
+          animated 
+          swipeable
+          transition-prev="jump-up"
+          transition-next="jump-up"
+          class="bg-accent"
+          :model-value="tab"
           >
-            <q-tab-panel 
-              v-for="(tabs, tabsIndex) in userData.userDataTabs"
-              :key="tabsIndex"
-              :name="tabs.tabValue" 
-              
-            >
-              <div
-                v-for="(field, fieldIndex) in tabs.fields"
-                :key="fieldIndex"
-                class="q-my-md"
-              >
-                <div class="row q-gutter-sm justify-center items-center">
+          <q-tab-panel 
+          v-for="(tabs, tabsIndex) in userData.userDataTabs"
+          :key="tabsIndex"
+          :name="tabs.tabValue" 
+          >
+          <q-list class="text-left text-h6">
+            <q-item>
+              <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
+            </q-item>
+          </q-list>
+          <div
+          v-for="(field, fieldIndex) in tabs.fields"
+          :key="fieldIndex"
+          class="q-my-md"
+          >
+          <div class="row q-gutter-sm justify-left items-left">
                   <div class="col-8">
                     <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options' ">
                       <q-input
@@ -278,7 +283,6 @@
               v-model="addressType"
             />
             <q-input outlined label="Logradouro" v-model="street" />
-
             <q-input outlined label="Número" type="number" v-model="number" />
             <q-input outlined label="Bairro" v-model="district" />
             <div class="row">
@@ -345,7 +349,7 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
-      splitterModel: 20,
+      splitterModel: 13,
       userData: {},
     };
   },

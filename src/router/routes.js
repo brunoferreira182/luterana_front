@@ -179,8 +179,8 @@ const routes = [
         component: () => import("pages/orgs/UserOrganismsList.vue"),
       },
       {
-        path: "/orgs/userOrganismDetail",
-        component: () => import("pages/orgs/UserOrganismDetail.vue"),
+        path: "/user/userOrganismDetail",
+        component: () => import("src/pages/user/UserOrganismDetail.vue"),
       },
       {
         path: "/user/userFunctionsList",
