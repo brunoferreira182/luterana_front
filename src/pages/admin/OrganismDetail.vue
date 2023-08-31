@@ -31,10 +31,10 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="organismData" label="Dados do organismo" />
-        <q-tab name="afiliatesOrganismsList" label="Lista configuração de filiados" />
+        <q-tab name="organismData" label="Dados do organismo" v-if="!parentOrganismId"/>
+        <q-tab name="afiliatesOrganismsList" label="Lista configuração de filiados" v-if="!parentOrganismId"/>
       </q-tabs>
-      <q-separator />
+      <q-separator v-if="!parentOrganismId" />
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="organismData">
           <div class="row justify-around">
@@ -489,12 +489,12 @@
         </q-tab-panel>
         <q-tab-panel name="afiliatesOrganismsList">
           <div class="row justify-start">
-            <div class="col-10 q-gutter-md">
+            <div class="col-8 q-gutter-md">
               <div class="text-h5"> Criação de organismos filiados</div>
-              <div class="text-caption text-subtitle1">
+              <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
                 Clique em uma das configurações abaixo para iniciar a criação de um novo organismo filiado
               </div>
-              <q-list>
+              <q-list v-if="childOrganismsConfigData.length">
                 <q-item
                   clickable
                   v-for="item in childOrganismsConfigData"
@@ -504,23 +504,29 @@
                   class="bg-grey-3 q-ma-sm"
                 >
                   <q-item-section>
-                    <q-item-label>
-                      {{ item.organismConfigName }}
-                    </q-item-label>
+                    <q-item-label class="text-subtitle1"> {{ item.organismConfigName }}</q-item-label>
+                    <!-- <q-item-label caption lines="2">Criado em {{ item.createdAt }}</q-item-label> -->
+                  </q-item-section>
+
+                  <q-item-section side top>
+                    <q-icon name="star" color="yellow" />
                   </q-item-section>
                 </q-item>
               </q-list>
+              <div v-else class="text-subtitle1">
+                Nenhuma configuração de filiado <q-icon name="warning" color="warning" size="md"/>
+              </div>
             </div>
           </div>
           <q-separator class="q-ma-md"/>
           <div class="row justify-start">
-            <div class="col-10 q-gutter-md">
+            <div class="col-8 q-gutter-md">
               <div class="text-h5"> Organismos filiados criados</div>
-              <div class="text-caption text-subtitle1">
+              <div class="text-caption text-subtitle1" v-if="childOrganismsData.length">
                 Clique em um dos organismos abaixo para exibir detalhes
               </div>
-              <q-list>
-                <!-- <q-item
+              <q-list v-if="childOrganismsData.length">
+                <q-item
                   clickable
                   v-for="child in childOrganismsData"
                   :key="child"
@@ -529,12 +535,18 @@
                   class="bg-green-3 q-ma-sm"
                 >
                   <q-item-section>
-                    <q-item-label>
-                      {{ child.organismName }}
-                    </q-item-label>
+                    <q-item-label class="text-subtitle1"> {{ child.organismName }}</q-item-label>
+                    <q-item-label caption lines="2">Criado em {{ child.createdAt }}</q-item-label>
                   </q-item-section>
-                </q-item> -->
+
+                  <q-item-section side top>
+                    <q-icon name="star" color="yellow" />
+                  </q-item-section>
+                </q-item>
               </q-list>
+              <div v-else class="text-subtitle1">
+                Nenhuma organismo filiado criado <q-icon name="warning" color="warning" size="md"/>
+              </div>
             </div>
           </div>
         </q-tab-panel>
@@ -588,12 +600,14 @@ export default defineComponent({
       functions: [],
       organismList: [],
       organismLinks: [],
+      childOrganismsData: [],
       parentOrganism: [],
       childOrganism: [],
       linkedOrganismsData: [],
       childOrganismsConfigData: [],
       organismConfigName: '',
       dialogLinks: false,
+      parentOrganismId: '',
       organismConfigId: '',
     };
   },
@@ -608,7 +622,7 @@ export default defineComponent({
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
-    // this.getChildOrganismConfig()
+    this.getChildOrganismsById()
   },
   methods: {
     getChildOrganismConfig() {
@@ -623,6 +637,22 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.organismConfigOptions = r.data
+        }
+      });
+    },
+    getChildOrganismsById() {
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: "/desktop/adm/getChildOrganismsById",
+        body: {
+          organismId: organismId,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.childOrganismsData = r.data
         }
       });
     },
@@ -654,6 +684,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
+          this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
@@ -663,9 +694,11 @@ export default defineComponent({
       });
     },
     clkOpenChildOrganismDetail(child){
-      console.log(child)
       const childOrganismId = child.childOrganismId
       this.$router.push('/admin/organismDetail?organismId=' + childOrganismId)
+      setTimeout(() => {
+        location.reload()
+      }, 200)
     },
     clkCreateNewChildOrganism(item){
       const organismChildConfigId = item.organismChildConfigId
