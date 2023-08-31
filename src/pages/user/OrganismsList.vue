@@ -28,6 +28,8 @@
                 class="q-pa-sm"
                 color="primary"
                 rounded
+                unelevated
+                no-caps
                 @click="showMyOrganisms"
               >
                 Meus organismos
@@ -143,7 +145,7 @@ export default defineComponent({
   methods: {
     clkOpenUserOrganismDetail(e, r) {
       const organismId = r.organismId;
-      this.$router.push("/orgs/userOrganismDetail?organismId=" + organismId);
+      this.$router.push("/user/userOrganismDetail?organismId=" + organismId);
     },
     getSelectedString() {
       return this.selected.length === 0
