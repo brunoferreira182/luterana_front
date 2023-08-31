@@ -134,7 +134,7 @@ export default defineComponent({
     },
     getOrganismsConfigs() {
       const opt = {
-        route: "/desktop/config/getOrganismsConfigs",
+        route: "/desktop/config/getOrganismsConfigsList",
         body: {
           searchString: this.filter,
           page: this.pagination.page,

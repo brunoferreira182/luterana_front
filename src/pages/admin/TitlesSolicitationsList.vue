@@ -144,7 +144,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.titlesSolicitationsList = r.data;
+        this.titlesSolicitationsList = r.data.list;
       });
     },
   },

@@ -497,7 +497,7 @@
               <q-list>
                 <q-item
                   clickable
-                  v-for="item in linkedOrganismsData.childOrganismsConfigs"
+                  v-for="item in childOrganismsConfigData"
                   :key="item"
                   style="border-radius: 1rem;"
                   @click="clkCreateNewChildOrganism(item)"
@@ -520,7 +520,7 @@
                 Clique em um dos organismos abaixo para exibir detalhes
               </div>
               <q-list>
-                <q-item
+                <!-- <q-item
                   clickable
                   v-for="child in childOrganismsData"
                   :key="child"
@@ -533,7 +533,7 @@
                       {{ child.organismName }}
                     </q-item-label>
                   </q-item-section>
-                </q-item>
+                </q-item> -->
               </q-list>
             </div>
           </div>
@@ -591,7 +591,7 @@ export default defineComponent({
       parentOrganism: [],
       childOrganism: [],
       linkedOrganismsData: [],
-      childOrganismsData: [],
+      childOrganismsConfigData: [],
       organismConfigName: '',
       dialogLinks: false,
       organismConfigId: '',
@@ -607,23 +607,38 @@ export default defineComponent({
     this.getOrganismsList()
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
-    this.getLinkedOrganismConfig()
-    this.getChildOrganismsById()
+    this.getChildOrganismsConfigsByOrganismId()
+    // this.getChildOrganismConfig()
   },
   methods: {
-    getChildOrganismsById() {
+    getChildOrganismConfig() {
+      const opt = {
+        route: "/desktop/adm/getChildOrganismConfig",
+        body: {
+          parentOrganismConfigId: organismId
+        }
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.organismConfigOptions = r.data
+        }
+      });
+    },
+    getChildOrganismsConfigsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getChildOrganismsById",
+        route: "/desktop/adm/getChildOrganismsConfigsByOrganismId",
         body: {
-          organismId: organismId,
+          parentOrganismId: organismId,
         },
       };
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.childOrganismsData = r.data
+          this.childOrganismsConfigData = r.data.childOrganismsConfigs
         }
       });
     },

@@ -661,6 +661,7 @@ export default defineComponent({
             this.organismData.fields = r.data.organismFields;
             this.functions = r.data.functions
           }
+    
         }
       });
     },
@@ -683,6 +684,7 @@ export default defineComponent({
         }
       });
     },
+    
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/adm/getOrganismsConfigs",
@@ -691,7 +693,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.organismConfigOptions = r.data.list
+          this.organismConfigOptions = r.data
         }
       });
     },
