@@ -11,7 +11,6 @@
             class="q-pa-sm"
             color="primary"
             icon="bookmark"
-            flat
             :label="isSaving ? '' : 'Salvar Dados'"
             @click="salvar"
             :disable="isSaving"
@@ -21,8 +20,10 @@
         </div>
       </div>
       <q-separator/>
-      <div class="row" style="height: 100vh;">
-        <div class="col-1">
+      <q-splitter
+        v-model="splitterModel"
+      >
+        <template v-slot:before>
           <q-tabs
             v-model="tab"
             vertical
@@ -35,16 +36,12 @@
             <q-tab 
               v-for="(tabs, i) in userData.userDataTabs"
               :key="i"
-              class="edit-tab"
               :name="tabs.tabValue" 
               :label="tabs.tabLabel" 
             />
           </q-tabs>
-        </div>
-        <q-separator
-          vertical
-        />
-        <div class="col-10 full-height">
+        </template>
+        <template v-slot:after>
           <q-tab-panels 
             animated 
             swipeable
@@ -53,158 +50,152 @@
             class="bg-accent"
             :model-value="tab"
           >
-          
             <q-tab-panel 
               v-for="(tabs, tabsIndex) in userData.userDataTabs"
               :key="tabsIndex"
               :name="tabs.tabValue" 
               
             >
-            <div class="row justify-center ">
-              <div class="col q-gutter-md" >
-                <div
-                  v-for="(field, fieldIndex) in tabs.fields"
-                  :key="fieldIndex"
-                  class="q-my-md"
-                >
-                  <div class="row q-gutter-sm justify-center items-center">
-                    <div class="col-8">
-                      <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options' ">
-                        <q-input
-                          :label="field.label"
-                          :hint="field.hint"
-                          :type="field.type.type"
-                          v-model="field.value"
-                          outlined
-                        >
-                          <template
-                            v-if="field.multiple"
-                            #append
-                          >
-                            <q-btn
-                              disabled
-                              icon="add"
-                              color="primary"
-                              flat
-                              round
-                              @click="addMultipleField"
-                            >
-                              <q-tooltip
-                                >Adicionar multiplo
-                                {{ field.type.label }}</q-tooltip
-                              >
-                            </q-btn>
-                          </template>
-                        </q-input>
-                      </div>
-                      <div class="text-right" v-if="field.type.type === 'options'">
-                        <q-select
-                          outlined
-                          :label="field.label"
-                          option-label="optionName"
-                          emit-value
-                          map-options
-                          :hint="field.hint"
-                          v-model="field.value"
-                          :options="field.options"
-                        >
-                        </q-select>
-                      </div>
-                      <div
-                        v-if="field.type.type === 'address' && !field.address"
-                        class="text-subtilte1 text-start"
-                      >
-                        <div class="text-h6">Endereços</div>
-                        Nenhum endereço vinculado
-                      </div>
-                      <div
-                        v-else-if="field.type.type === 'address' && !field.address[0]"
-                        class="text-subtilte1 text-start"
-                      >
-                        <div class="text-h6">Endereços</div>
-                        Nenhum endereço vinculado
-                      </div>
-                      <div class="text-right" v-if="field.type.type === 'address'">
-                        <q-btn v-if="!(field.address)"
-                          label="Adicionar um endereço"
-                          no-caps
-                          rounded
-                          unelevated
-                          outline
-                          style="margin-top: -15%;"
-                          color="primary"
-                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                        />
-                        <q-btn v-else-if="!(field.address[0])"
-                          label="Adicionar um endereço"
-                          no-caps
-                          rounded
-                          unelevated
-                          outline
-                          style="margin-top: -15%;"
-                          color="primary"
-                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                        />
-                      </div>
-                        <q-list
-                          class="no-margin"
-                          v-if="field.address"
-                        >
-                          <q-item
-                            v-for="(item, i) in field.address"
-                            :key="item + i"
-                            style="border-radius: 1rem"
-                            class="bg-grey-3 q-ma-sm q-pa-md"
-                          >
-                            <q-item-section>
-                              <q-item-label lines="3" class="text-capitalize">
-                                {{ item.street }}, {{ item.number }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                {{ item.district }} - {{ item.city }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                CEP
-                                {{ item.cep }}
-                              </q-item-label>
-                              <q-item-label></q-item-label>
-                            </q-item-section>
-                            <q-item-section side top>
-                              <q-item-label caption class="text-capitalize">{{
-                                item.type
-                              }}</q-item-label>
-                            </q-item-section>
-                            <q-item-section>
-                              <q-btn
-                                icon="delete"
-                                flat
-                                style="width: 15px;"
-                                class="absolute-right"
-                                @click="removeThisAddress(fieldIndex, tabsIndex, i)"
-                              >
-                              </q-btn>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      <q-checkbox
-                        v-if="field.type.type === 'boolean'"
-                        class="q-pt-lg"
-                        readonly
+              <div
+                v-for="(field, fieldIndex) in tabs.fields"
+                :key="fieldIndex"
+                class="q-my-md"
+              >
+                <div class="row q-gutter-sm justify-center items-center">
+                  <div class="col-8">
+                    <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options' ">
+                      <q-input
                         :label="field.label"
                         :hint="field.hint"
+                        :type="field.type.type"
                         v-model="field.value"
+                        outlined
+                      >
+                        <template
+                          v-if="field.multiple"
+                          #append
+                        >
+                          <q-btn
+                            disabled
+                            icon="add"
+                            color="primary"
+                            flat
+                            round
+                            @click="addMultipleField"
+                          >
+                            <q-tooltip
+                              >Adicionar multiplo
+                              {{ field.type.label }}</q-tooltip
+                            >
+                          </q-btn>
+                        </template>
+                      </q-input>
+                    </div>
+                    <div class="text-right" v-if="field.type.type === 'options'">
+                      <q-select
+                        outlined
+                        :label="field.label"
+                        option-label="optionName"
+                        emit-value
+                        map-options
+                        :hint="field.hint"
+                        v-model="field.value"
+                        :options="field.options"
+                      >
+                      </q-select>
+                    </div>
+                    <div
+                      v-if="field.type.type === 'address' && !field.address"
+                      class="text-subtilte1 text-start"
+                    >
+                      <div class="text-h6">Endereços</div>
+                      Nenhum endereço vinculado
+                    </div>
+                    <div
+                      v-else-if="field.type.type === 'address' && !field.address[0]"
+                      class="text-subtilte1 text-start"
+                    >
+                      <div class="text-h6">Endereços</div>
+                      Nenhum endereço vinculado
+                    </div>
+                    <div class="text-right" v-if="field.type.type === 'address'">
+                      <q-btn v-if="!(field.address)"
+                        label="Adicionar um endereço"
+                        no-caps
+                        rounded
+                        unelevated
+                        outline
+                        style="margin-top: -15%;"
+                        color="primary"
+                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                      />
+                      <q-btn v-else-if="!(field.address[0])"
+                        label="Adicionar um endereço"
+                        no-caps
+                        rounded
+                        unelevated
+                        outline
+                        style="margin-top: -15%;"
+                        color="primary"
+                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
+                    <q-list
+                      class="no-margin"
+                      v-if="field.address"
+                    >
+                      <q-item
+                        v-for="(item, i) in field.address"
+                        :key="item + i"
+                        style="border-radius: 1rem"
+                        class="bg-grey-3 q-ma-sm q-pa-md"
+                      >
+                        <q-item-section>
+                          <q-item-label lines="3" class="text-capitalize">
+                            {{ item.street }}, {{ item.number }}
+                          </q-item-label>
+                          <q-item-label caption>
+                            {{ item.district }} - {{ item.city }}
+                          </q-item-label>
+                          <q-item-label caption>
+                            CEP
+                            {{ item.cep }}
+                          </q-item-label>
+                          <q-item-label></q-item-label>
+                        </q-item-section>
+                        <q-item-section side top>
+                          <q-item-label caption class="text-capitalize">{{
+                            item.type
+                          }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-btn
+                            icon="delete"
+                            flat
+                            style="width: 15px;"
+                            class="absolute-right"
+                            @click="removeThisAddress(fieldIndex, tabsIndex, i)"
+                          >
+                          </q-btn>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                    <q-checkbox
+                      v-if="field.type.type === 'boolean'"
+                      class="q-pt-lg"
+                      readonly
+                      :label="field.label"
+                      :hint="field.hint"
+                      v-model="field.value"
+                    />
                   </div>
                 </div>
               </div>
-            </div>
-          </q-tab-panel>
-        </q-tab-panels>
-      </div>
-      </div>
-      
-      
+            </q-tab-panel>
+          </q-tab-panels>
+          
+        </template>
+      </q-splitter>
       <q-dialog v-model="dialogConfirmEmail.open">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -350,6 +341,7 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
+      splitterModel: 20,
       userData: {},
     };
   },
