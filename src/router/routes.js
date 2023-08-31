@@ -47,7 +47,10 @@ const routes = [
         path: "/admin/createChildOrganism",
         component: () => import("pages/admin/CreateChildOrganism.vue"),
       },
-      
+      {
+        path: "/admin/childOrganismDetail",
+        component: () => import("pages/admin/ChildOrganismDetail.vue"),
+      },
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },

@@ -547,10 +547,16 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.getOrganismsList()
-          this.organismConfigName = r.data.organismConfigDat.organismConfigName
-          this.organismData.fields = r.data.organismConfigDat.organismFields;
-          this.functions = r.data.organismConfigDat.functions
+          if(r.data.organismConfigData){
+            this.organismConfigName = r.data.organismConfigData.organismConfigName
+            this.organismData.fields = r.data.organismConfigData.organismFields;
+            this.functions = r.data.organismConfigData.functions
+          } else{
+            this.getOrganismsList()
+            this.organismConfigName = r.data.organismConfigName
+            this.organismData.fields = r.data.organismFields;
+            this.functions = r.data.functions
+          }
         }
       });
     },

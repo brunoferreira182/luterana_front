@@ -64,20 +64,18 @@
           <q-separator/>
           <div>Esta configuração de organismo será vinculada a outra?
             <q-chip 
-              v-if="requiresLink === true"
+              :color="requiresLink ? 'teal' : 'negative'" 
+              text-color="white" 
+              :icon="requiresLink ? 'done' : 'close'"
+            >
+              {{ requiresLink ? 'Sim' : 'Não' }}
+            </q-chip>
+            <q-chip
+              v-if="parentOrganismConfigName" 
               color="teal" 
               text-color="white" 
-              icon="done"
             >
-              Sim
-            </q-chip>
-            <q-chip 
-              v-else
-              color="negative" 
-              text-color="white" 
-              icon="close"
-            >
-              Não
+              {{ parentOrganismConfigName }}
             </q-chip>
           </div>
           <q-btn 
@@ -396,7 +394,12 @@
               <q-checkbox
                 class="q-px-sm"
                 label="Esta função fará gestão de troca de função e organismo?"
-                v-model="newFunction.isManager"
+                v-model="newFunction.functionProperties.canChangeFunctionAndOrg"
+              />
+              <q-checkbox
+                class="q-px-sm"
+                label="Esta função poderá criar e editar organismos filiados?"
+                v-model="newFunction.functionProperties.canCreateAndEditChildOrganism"
               />
             </div>
           </q-card-section>
@@ -476,7 +479,12 @@
               <q-checkbox
                 class="q-px-sm"
                 label="Esta função fará gestão de troca de função e organismo?"
-                v-model="editFunctionDialog.function.isManager"
+                v-model="editFunctionDialog.function.functionProperties.canChangeFunctionAndOrg"
+              />
+              <q-checkbox
+                class="q-px-sm"
+                label="Esta função poderá criar e editar organismos filiados?"
+                v-model="editFunctionDialog.function.functionProperties.canCreateAndEditChildOrganism"
               />
             </div>
           </q-card-section>
@@ -549,19 +557,22 @@ export default defineComponent({
       selectedPermissions: [],
       organismConfigNamesOptions: [],
       organismConfigName: '',
+      parentOrganismConfigName: '',
       organismTypeId: '',
       typeSelected: null,
       requiresLink: false,
       dialogCreateAffiliation: false,
       valueSelected: "",
       searchString: '',
-      tab: "createConfig",
       newFunctionDialog: false,
       newFunction: {
         name: '',
         description: '',
         requiredTitleId: null,
-        isManager: false,
+        functionProperties: {
+          canChangeFunctionAndOrg: false,
+          canCreateAndEditChildOrganism: false,
+        },
         isRequired: true,
         visions: []
       },
@@ -571,7 +582,10 @@ export default defineComponent({
           name: '',
           description: '',
           requiredTitleId: null,
-          isManager: false,
+          functionProperties: {
+            canChangeFunctionAndOrg: false,
+            canCreateAndEditChildOrganism: false,
+          },
           isRequired: true,
           visions: []
         } 
@@ -796,16 +810,17 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.$q.notify("Configuração de organismo cadastrado com sucesso!");
           this.multiple = "";
           this.newFunction.visions = [];
+          this.childOfOrganism = ''
           this.organismConfigName = ''
           this.functions = []
+          this.requiresLink = false
           this.getOrganismsTypes()
-          // this.$router.push('/config/organismConfigurationList')
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -847,13 +862,25 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.organismConfigName = r.data.organismConfigDat.organismConfigName;
-          this.organismFields = r.data.organismConfigDat.organismFields;
-          r.data.organismConfigDat.functions[0].organismFunctionId ?
-          this.functions = r.data.organismConfigDat.functions :
-          this.functions = []
-          this.selectedType = r.data.organismConfigDat.organismConfigName;
-          this.requiresLink = r.data.organismConfigDatrequiresLink
+          if(r.data.organismConfigData){
+            this.parentOrganismConfigName = r.data.parentOrganismConfigData.parentOrganismConfigName
+            this.organismConfigName = r.data.organismConfigData.organismConfigName;
+            this.organismFields = r.data.organismConfigData.organismFields;
+            r.data.organismConfigData.functions[0].organismFunctionId ?
+            this.functions = r.data.organismConfigData.functions :
+            this.functions = []
+            this.selectedType = r.data.organismConfigData.organismConfigName;
+            this.requiresLink = r.data.organismConfigData.requiresLink
+            
+          } else{
+            this.organismConfigName = r.data.organismConfigName;
+            this.organismFields = r.data.organismFields;
+            r.data.functions[0].organismFunctionId ?
+            this.functions = r.data.functions :
+            this.functions = []
+            this.selectedType = r.data.organismConfigName;
+            this.requiresLink = r.data.requiresLink
+          }
         }
       });
     },
@@ -887,11 +914,11 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.newFunctionDialog = false
           this.getOrganismConfigById()
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -900,7 +927,10 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitleId: null,
-        isManager: false,
+        functionProperties: {
+          canChangeFunctionAndOrg: false,
+          canCreateAndEditChildOrganism: false,
+        },
         isRequired: true,
         visions: []
       }
