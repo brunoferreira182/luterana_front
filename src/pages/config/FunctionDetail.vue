@@ -225,7 +225,6 @@ export default defineComponent({
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.getStructureDetail()
           this.$q.notify("Estrutura atualizada com sucesso!");
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");

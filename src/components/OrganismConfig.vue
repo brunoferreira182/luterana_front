@@ -398,7 +398,7 @@
               />
               <q-checkbox
                 class="q-px-sm"
-                label="Esta função poderá criar e editar organismos filiados?"
+                label="Esta função poderá criar e editar grupos de organismos?"
                 v-model="newFunction.functionProperties.canCreateAndEditChildOrganism"
               />
             </div>

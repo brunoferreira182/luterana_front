@@ -140,7 +140,7 @@
                       </q-item-section>
                     </q-item>
                   </q-expansion-item>
-                  <q-item-section class="q-pa-xs">
+                  <!-- <q-item-section class="q-pa-xs">
                     <q-btn
                       label="Quero participar"
                       color="primary"
@@ -151,7 +151,7 @@
                       no-caps
                       @click="clkOpenDialogSolicitation(func)"
                     />
-                  </q-item-section>
+                  </q-item-section> -->
                 </q-card>
                 <q-dialog v-model="dialogOpenSolicitation.open" >
                   <q-card style="border-radius: 1rem; width: 456px; padding: 10px">

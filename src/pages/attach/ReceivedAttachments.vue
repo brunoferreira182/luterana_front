@@ -12,7 +12,6 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenStructureDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -100,10 +99,6 @@ export default defineComponent({
     this.getAttachmentsListByUserId();
   },
   methods: {
-    clkOpenStructureDetail(e, r) {
-      const structureId = r._id;
-      this.$router.push("/config/structureDetail?structureId=" + structureId);
-    },
     getSelectedString() {
       return this.selected.length === 0
         ? ""
