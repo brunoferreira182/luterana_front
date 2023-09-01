@@ -35,7 +35,7 @@
             label="Escreva o nome"
             outlined
             hint="Nome do grupo"
-            v-model="functionsGroupData.functionGroupName"
+            v-model="functionsGroupData.name"
           />
           <div class="text-h5">Escreva uma descrição de forma sugestiva</div>
           <q-input
@@ -43,7 +43,7 @@
             autogrow
             hint="Uma descrição completa sobre o grupo"
             label="Descrição"
-            v-model="functionsGroupData.functionGroupDescription"
+            v-model="functionsGroupData.description"
           />
         </div>
       </div>
@@ -58,8 +58,8 @@ export default defineComponent({
   data() {
     return {
       functionsGroupData: {
-        functionGroupName: '',
-        functionGroupDescription: '',
+        name: '',
+        description: '',
       },
     };
   },
@@ -84,6 +84,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.$q.notify("Grupo alterado com sucesso!");
+          this.$router.push('/config/functionsGroupList')
         }
       });
     },
@@ -118,7 +119,8 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.functionsGroupData = r.data
+          this.functionsGroupData.name = r.data.functionGroupName
+          this.functionsGroupData.description = r.data.functionGroupDescription
         }
       });
     },

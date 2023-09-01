@@ -24,7 +24,7 @@
             label="Escreva o nome"
             outlined
             hint="Nome do grupo"
-            v-model="functionsGroupData.functionGroupName"
+            v-model="functionsGroupData.name"
           />
           <div class="text-h5">Escreva uma descrição de forma sugestiva</div>
           <q-input
@@ -32,7 +32,7 @@
             autogrow
             hint="Uma descrição completa sobre o grupo"
             label="Descrição"
-            v-model="functionsGroupData.functionGroupDescription"
+            v-model="functionsGroupData.description"
           />
         </div>
       </div>
@@ -47,8 +47,8 @@ export default defineComponent({
   data() {
     return {
       functionsGroupData: {
-        functionGroupName: '',
-        functionGroupDescription: '',
+        name: '',
+        description: '',
       },
     };
   },

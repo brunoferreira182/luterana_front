@@ -297,6 +297,9 @@
               <div class="text-caption text-grey-7">
                 Título necessário: {{ item.requiredTitle ? item.requiredTitle : 'nenhum' }}
               </div>
+              <div class="text-caption text-grey-7">
+                Grupo: {{ item.functionGroupName ? item.functionGroupName : 'nenhum' }}
+              </div>
               <div>
                 <q-icon name="visibility" color="primary" size="sm"/>
                 <q-chip
@@ -368,6 +371,18 @@
                 :option-value="(item) => item._id"
                 :options="titlesOptions"
                 v-model="newFunction.requiredTitleId"
+              />
+              <q-select
+                outlined
+                clearable
+                option-label="functionGroupName"
+                emit-value
+                map-options
+                hint="Selecione o grupo que esta função pertence"
+                label="Grupo de função"
+                :option-value="(item) => item._id"
+                :options="functionsGroupList"
+                v-model="newFunction.functionGroupId"
               />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row ">
@@ -452,6 +467,17 @@
                 :option-value="(item) => item._id"
                 :options="titlesOptions"
                 v-model="editFunctionDialog.function.requiredTitleId"
+              />
+              <q-select
+                outlined
+                clearable
+                option-label="functionGroupName"
+                emit-value
+                map-options
+                label="Grupo"
+                :option-value="(item) => item._id"
+                :options="functionsGroupList"
+                v-model="editFunctionDialog.function.functionGroupId"
               />
               <div class="text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row">
@@ -569,6 +595,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitleId: null,
+        functionGroupId: null,
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
@@ -582,6 +609,7 @@ export default defineComponent({
           name: '',
           description: '',
           requiredTitleId: null,
+          functionGroupId: null,
           functionProperties: {
             canManageFuncAndOrgSolicitations: false,
             canCreateAndEditChildOrganism: false,
@@ -634,6 +662,7 @@ export default defineComponent({
       },
       selectedType: "",
       visionsList: [],
+      functionsGroupList: [],
       permissionName: '',
     };
   },
@@ -650,8 +679,20 @@ export default defineComponent({
     this.getFieldTypes();
     this.getVisions();
     this.getOrganismsConfigsList();
+    this.getFunctionsGroupList()
   },
   methods: {
+    getFunctionsGroupList() {
+      const opt = {
+        route: "/desktop/config/getFunctionsGroupList",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.functionsGroupList = r.data.list;
+      });
+    },
     handlePermissionOnEdit(vision, permission) {
       const visionId = vision.visionId;
       // Encontrar o objeto vision correspondente no array
@@ -927,6 +968,7 @@ export default defineComponent({
         name: '',
         description: '',
         requiredTitleId: null,
+        functionGroupId: null,
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
@@ -938,7 +980,6 @@ export default defineComponent({
     editFunction (item) {
       this.editFunctionDialog.function = item
       this.editFunctionDialog.open = true
-      this.editFunctionDialog.function = item
       this.editFunctionDialog.function.visions.forEach((dialogVision,i) => {
         this.visionsList.forEach(vision => {
           if (dialogVision.visionId === vision.visionId) {
@@ -946,7 +987,6 @@ export default defineComponent({
           }
         })
       });
-      this.editFunctionDialog.function.requiredTitleId = item.requiredTitle;
     },
     updateOrganismFunctionConfig () {
       const opt = {
@@ -957,11 +997,11 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.editFunctionDialog.open = false
           this.getOrganismConfigById()
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },

@@ -556,7 +556,7 @@
                 </q-item>
               </q-list>
               <div v-else class="text-subtitle1">
-                Nenhuma grupo de organismo criado <q-icon name="warning" color="warning" size="md"/>
+                Nenhum grupo de organismo criado <q-icon name="warning" color="warning" size="md"/>
               </div>
             </div>
           </div>
