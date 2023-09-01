@@ -58,9 +58,7 @@ export default defineComponent({
   name: "CreateFunction",
   data() {
     return {
-      structuresTypeOptions: [],
       organismTypesOptions: [],
-      structuresOptions: [],
       titlesOptions: [],
       functionInfo: {
         name: '',
@@ -77,7 +75,6 @@ export default defineComponent({
   },
   beforeMount(){
     this.getOrganismsTypes()
-    this.getStructuresTypes()
     this.getTitleConfigsList()
   },
   methods: {
@@ -93,41 +90,6 @@ export default defineComponent({
         this.$q.loading.hide();
         if (!r.error) {
           this.titlesOptions = r.data
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    getStructuresTypes() {
-      const opt = {
-        route: "/desktop/config/getStructuresTypes",
-        body: {
-          isActive: 1
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then(r => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.structuresTypeOptions = r.data
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    getStructures(structureTypeId) {
-      const opt = {
-        route: "/desktop/config/getStructures",
-        body: {
-          structureTypeId,
-          isActive: 1
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then(r => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.structuresOptions = r.data
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
