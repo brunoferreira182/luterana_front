@@ -189,19 +189,19 @@
                         </div>
                       </q-item-section>
                     </q-item>
-                    <q-item-section class="q-pa-xs">
-                      <q-btn
-                        label="Adicionar pessoa"
-                        color="primary"
-                        dense
-                        icon="add"
-                        rounded
-                        flat
-                        no-caps
-                        @click="linkUserToFunction(func, funcIndex)"
-                      />
-                    </q-item-section>
                   </q-expansion-item>
+                  <q-item-section class="q-pa-xs">
+                    <q-btn
+                      label="Adicionar pessoa"
+                      color="primary"
+                      dense
+                      icon="add"
+                      rounded
+                      flat
+                      no-caps
+                      @click="linkUserToFunction(func, funcIndex)"
+                    />
+                  </q-item-section>
                 </q-card>
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
@@ -492,7 +492,7 @@
             <div class="col-8 q-gutter-md">
               <div class="text-h5"> Criação de organismos filiados</div>
               <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
-                Clique em uma das configurações abaixo para iniciar a criação de um novo organismo filiado
+                Clique em uma das sugestões abaixo para iniciar a criação de um novo organismo 
               </div>
               <q-list v-if="childOrganismsConfigData.length">
                 <q-item
@@ -521,7 +521,18 @@
           <q-separator class="q-ma-md"/>
           <div class="row justify-start">
             <div class="col-8 q-gutter-md">
-              <div class="text-h5"> Organismos filiados criados</div>
+              <div class="row">
+                <div class="text-h5 col"> Organismos filiados criados</div>
+                <div class="col">
+                  <q-btn 
+                    no-caps
+                    outline
+                    icon="add"
+                    rounded
+                    label="Adicionar organismo"
+                  />
+                </div>
+              </div>
               <div class="text-caption text-subtitle1" v-if="childOrganismsData.length">
                 Clique em um dos organismos abaixo para exibir detalhes
               </div>

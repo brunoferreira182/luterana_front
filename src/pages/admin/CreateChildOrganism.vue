@@ -200,19 +200,19 @@
                     </div>
                   </q-item-section>
                 </q-item>
-                <q-item-section class="q-pa-xs">
-                  <q-btn
-                    label="Adicionar pessoa"
-                    color="primary"
-                    dense
-                    icon="add"
-                    rounded
-                    flat
-                    no-caps
-                    @click="linkUserToFunction(func, funcIndex)"
-                  />
-                </q-item-section>
               </q-expansion-item>
+              <q-item-section class="q-pa-xs">
+                <q-btn
+                  label="Adicionar pessoa"
+                  color="primary"
+                  dense
+                  icon="add"
+                  rounded
+                  flat
+                  no-caps
+                  @click="linkUserToFunction(func, funcIndex)"
+                />
+              </q-item-section>
             </q-card>
           </div>
         </div>
@@ -501,7 +501,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.getOrganismStructureDetailById();
           this.$q.notify("Usuário vinculado na função com sucesso!");
           this.clearDialogAndFunctions();
         } else {

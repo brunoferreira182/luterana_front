@@ -169,24 +169,6 @@ export default defineComponent({
         }
       });
     },
-    getStructureDetail() {
-      const structureId = this.$route.query.structureId
-      const opt = {
-        route: "/desktop/config/getStructureDetail",
-        body: {
-          structureId: structureId
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then(r => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.functionInfo = r.data.functionInfo
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
   },
 });
 </script>

@@ -172,19 +172,19 @@
                     </div>
                   </q-item-section>
                 </q-item>
-                <q-item-section class="q-pa-xs">
-                  <q-btn
-                    label="Adicionar pessoa"
-                    color="primary"
-                    dense
-                    icon="add"
-                    rounded
-                    flat
-                    no-caps
-                    @click="linkUserToFunction(func, funcIndex)"
-                  />
-                </q-item-section>
               </q-expansion-item>
+              <q-item-section class="q-pa-xs">
+                <q-btn
+                  label="Adicionar pessoa"
+                  color="primary"
+                  dense
+                  icon="add"
+                  rounded
+                  flat
+                  no-caps
+                  @click="linkUserToFunction(func, funcIndex)"
+                />
+              </q-item-section>
             </q-card>
             <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
               <q-card style="border-radius: 1rem; width: 400px">
