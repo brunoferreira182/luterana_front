@@ -557,16 +557,6 @@ export default defineComponent({
       this.tabIndexToEdit = tabIndex
       this.dialogClkEditName =  true
     },
-    createTitleTab() {
-      const tabIndex = this.tabIndexToEdit
-      if (tabIndex !== null && this.tabLabel) {
-        this.userDataTabs[tabIndex].tabLabel = this.tabLabel
-        this.dialogClkEditName = false
-        this.tabLabel = ''
-      } else {
-        this.$q.notify("Ocorreu um erro, tente novamente");
-      }
-    },
     updateTabLabel() {
       const tabIndex = this.tabIndexToEdit
       if (tabIndex !== null && this.tabLabel) {
