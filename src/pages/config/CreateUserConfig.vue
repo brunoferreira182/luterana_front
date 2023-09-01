@@ -341,7 +341,7 @@
               label="Confirmar"
               no-caps
               color="primary"
-              @click="createTitleTab"
+              @click="updateTabLabel"
             />
           </q-card-actions>
         </q-card>
@@ -350,12 +350,14 @@
   </q-page-container>
 </template>
 <script>
+import utils from "../../boot/utils";
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
   name: "CreateUserConfig",
   data() {
     return {
+      userInfo: {},
       tabIndexToEdit: null,
       tabSelected: '',
       newOptionValue: [
@@ -404,6 +406,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.userInfo = utils.presentUserInfo();
     this.getUsersConfig();
     this.getOrganismsTypes();
     // this.getTitlesByStatus();
@@ -562,6 +565,31 @@ export default defineComponent({
         this.tabLabel = ''
       } else {
         this.$q.notify("Ocorreu um erro, tente novamente");
+      }
+    },
+    updateTabLabel() {
+      const tabIndex = this.tabIndexToEdit
+      if (tabIndex !== null && this.tabLabel) {
+        this.userDataTabs[tabIndex].tabLabel = this.tabLabel
+        this.dialogClkEditName = false
+        this.tabLabel = ''
+        const opt = {
+          route: '/desktop/user/updateUserData',
+          body: {
+            userId: this.userInfo.userId,
+            userDataTabs: this.userDataTabs
+          }
+        }
+        useFetch(opt).then((r) => {
+          console.log("userDataTabs" + this.userDataTabs)
+          if (!r.error) {
+            this.$q.notify("Nome da aba atualizado com sucesso");
+          } else {
+            this.$q.notify("Ocorreu um erro ao atualizar o nome da aba. Tente novamente.");
+          }
+        });
+      } else {
+        this.$q.notify("Ocorreu um erro, tente novamente")
       }
     }
   },
