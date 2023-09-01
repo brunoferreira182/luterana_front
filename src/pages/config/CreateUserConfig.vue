@@ -39,6 +39,7 @@
             <div class="row">
               <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
                 <q-btn
+                  v-if="tabIndex > 0"
                   rounded
                   color="primary"
                   no-caps
@@ -55,11 +56,10 @@
                   color="primary"
                   no-caps
                   unelevated
-                  v-model="this.field.tabLabel"
                   flat
                   class="q-ml-sm"
                   icon="edit"
-                  @click="clkDialogClkEditName"
+                  @click="clkDialogClkEditName(tabCard, tabIndex)"
                 />           
                 <q-btn
                   v-if="tabIndex > 0"
@@ -148,17 +148,6 @@
                       flat
                       color="primary"
                     />
-                    <q-btn 
-                      v-if="(tabIndex === 0 && i >=2 )"
-                      icon="delete"
-                      size="large"
-                      class="q-mb-md"
-                      rounded
-                      @click="tabCard.fields.splice(i, 1), 
-                      notifyRemoved()"
-                      flat
-                      color="primary"
-                    />
                   </div>
                 </div>
               </div>
@@ -195,7 +184,7 @@
                   hint="O tipo do dado"
                   label="Tipo de dado"
                   option-label="label"
-                  :options="fieldTypesOptions[0].list"
+                  :options="fieldTypesOptions"
                   v-model="newField.type"
                 />
                 <div v-if="newField.type.type === 'options'">
@@ -332,7 +321,7 @@
           <q-card-section align="center">
             <q-input
               class="q-px-xl"
-              v-model="tabName"
+              v-model="tabLabel"
               outlined
               label="Nome da aba"
             />
@@ -367,6 +356,7 @@ export default defineComponent({
   name: "CreateUserConfig",
   data() {
     return {
+      tabIndexToEdit: null,
       tabSelected: '',
       newOptionValue: [
         {newValue: ''}
@@ -389,28 +379,7 @@ export default defineComponent({
       userDataTabs: [
         {
           tabLabel: "Dados obrigatórios",
-          fields:[
-            {
-              hint: 'Informe o nome completo',
-              label: 'Nome',
-              required: true,
-              type: {
-                _id: '64ad55727cb57d0bd22b10d5',
-                type: 'string',
-                label: 'Texto',
-              }
-            },
-            {
-              hint: 'Preencha um e-mail válido',
-              label: 'E-mail',
-              required: true,
-              type: {
-                _id: '64ad55727cb57d0bd22b10d5',
-                type: 'string',
-                label: 'Texto',
-              }
-            },
-          ]
+          fields:[]
         },
       ],
       dialogDeleteTab: {
@@ -581,28 +550,19 @@ export default defineComponent({
       this.newField.options.push(this.newOptionValue[0].newValue.toUpperCase());
       this.newOptionValue[0].newValue = ''
     },
-    clkDialogClkEditName() {
-      this.dialogClkEditName = !this.dialogClkEditName
+    clkDialogClkEditName(tabCard, tabIndex) {
+      this.tabIndexToEdit = tabIndex
+      this.dialogClkEditName =  true
     },
     createTitleTab() {
-      console.log(this.tabCard)
-      const opt = {
-        route:'/desktop/user/updateUserData',
-        body: {
-          userId: this.$route.query._id,
-          userDataTabs: this.userDataTabs
-
-        }
+      const tabIndex = this.tabIndexToEdit
+      if (tabIndex !== null && this.tabLabel) {
+        this.userDataTabs[tabIndex].tabLabel = this.tabLabel
+        this.dialogClkEditName = false
+        this.tabLabel = ''
+      } else {
+        this.$q.notify("Ocorreu um erro, tente novamente");
       }
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.$q.notify("Nome alterado com sucesso");
-          this.tabName = '';
-          this.dialogClkEditName = false;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
     }
   },
 });

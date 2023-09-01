@@ -141,15 +141,21 @@ export default defineComponent({
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
-      this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getUsers();
     },
     getUsers() {
+      const page = this.pagination.page
+      const rowsPerPage = this.pagination.rowsPerPage
+      const searchString = this.filter
+      const sortBy = this.pagination.sortBy
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
-          searchString: this.filter,
+          page: page,
+          rowsPerPage: rowsPerPage,
+          searchString: searchString,
+          sortBy: sortBy,
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -158,7 +164,9 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.usersList = r.data.list;
+        this.$q.loading.hide()
+        this.usersList = r.data.list
+        this.pagination.rowsNumber = r.data.count
       });
     },
   },
