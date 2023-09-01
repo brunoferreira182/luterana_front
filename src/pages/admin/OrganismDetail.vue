@@ -32,7 +32,7 @@
         narrow-indicator
       >
         <q-tab name="organismData" label="Dados do organismo" v-if="!parentOrganismId"/>
-        <q-tab name="afiliatesOrganismsList" label="Lista configuração de filiados" v-if="!parentOrganismId"/>
+        <q-tab name="afiliatesOrganismsList" label="Lista configuração de grupos" v-if="!parentOrganismId"/>
       </q-tabs>
       <q-separator v-if="!parentOrganismId" />
       <q-tab-panels v-model="tab" animated>
@@ -396,7 +396,7 @@
                         <div class="col-6">
                           <q-separator/>
                           <div class="text-subtitle2 q-ma-sm">
-                            Organismos filiados vinculados:
+                            Grupo de organismos vinculados:
                           </div>
                           <div v-if="organismLinks.length">
                             <q-chip 
@@ -490,7 +490,7 @@
         <q-tab-panel name="afiliatesOrganismsList">
           <div class="row justify-start">
             <div class="col-8 q-gutter-md">
-              <div class="text-h5"> Criação de organismos filiados</div>
+              <div class="text-h5"> Criação de grupos de organismos</div>
               <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
                 Clique em uma das sugestões abaixo para iniciar a criação de um novo organismo 
               </div>
@@ -514,7 +514,7 @@
                 </q-item>
               </q-list>
               <div v-else class="text-subtitle1">
-                Nenhuma configuração de filiado <q-icon name="warning" color="warning" size="md"/>
+                Nenhuma configuração de grupo de organismo <q-icon name="warning" color="warning" size="md"/>
               </div>
             </div>
           </div>
@@ -522,7 +522,7 @@
           <div class="row justify-start">
             <div class="col-8 q-gutter-md">
               <div class="row">
-                <div class="text-h5 col"> Organismos filiados criados</div>
+                <div class="text-h5 col"> Grupo de organismo criados</div>
                 <div class="col">
                   <q-btn 
                     no-caps
@@ -556,7 +556,7 @@
                 </q-item>
               </q-list>
               <div v-else class="text-subtitle1">
-                Nenhuma organismo filiado criado <q-icon name="warning" color="warning" size="md"/>
+                Nenhuma grupo de organismo criado <q-icon name="warning" color="warning" size="md"/>
               </div>
             </div>
           </div>

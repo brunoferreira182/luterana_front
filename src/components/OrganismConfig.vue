@@ -483,7 +483,7 @@
               />
               <q-checkbox
                 class="q-px-sm"
-                label="Esta função poderá criar e editar organismos filiados?"
+                label="Esta função poderá criar e editar grupos de organismos?"
                 v-model="editFunctionDialog.function.functionProperties.canCreateAndEditChildOrganism"
               />
             </div>
@@ -1020,7 +1020,7 @@ export default defineComponent({
       })
     },
     confirmChildOf() {
-      this.$q.notify("Organismo filiado com sucesso")
+      this.$q.notify("Organismo agrupado com sucesso")
       this.requiresLink = true;
       this.dialogCreateAffiliation = false
     },

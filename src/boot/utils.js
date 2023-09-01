@@ -227,6 +227,11 @@ const useUtils = {
           route: "/config/formConfigList",
           icon: "forum",
         },
+        {
+          label: "Grupo de funções",
+          route: "/config/functionsGroupList",
+          icon: "workspaces",
+        },
       ],
       attach: [
         {
