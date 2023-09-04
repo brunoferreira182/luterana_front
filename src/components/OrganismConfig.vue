@@ -167,7 +167,6 @@
               />
             </div>
           </div>
-
           <q-checkbox
             class="q-pt-lg"
             v-model="newField.required"
@@ -297,6 +296,9 @@
               <div class="text-caption text-grey-7">
                 Título necessário: {{ item.requiredTitle ? item.requiredTitle : 'nenhum' }}
               </div>
+              <div class="text-caption text-grey-7">
+                Grupo: {{ item.functionGroupName ? item.functionGroupName : 'nenhum' }}
+              </div>
               <div>
                 <q-icon name="visibility" color="primary" size="sm"/>
                 <q-chip
@@ -386,6 +388,18 @@
                 label="A ocupação deve ser obrigatória?"
                 />
               </div>
+              <q-select
+                outlined
+                clearable
+                option-label="functionGroupName"
+                emit-value
+                map-options
+                hint="Selecione o grupo que esta função pertence"
+                label="Grupo de função"
+                :option-value="(item) => item._id"
+                :options="functionsGroupList"
+                v-model="newFunction.functionGroupId"
+              />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row ">
                 <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
@@ -517,7 +531,7 @@
               />
               <q-checkbox
                 class="q-px-sm"
-                label="Esta função poderá criar e editar organismos filiados?"
+                label="Esta função poderá criar e editar grupos de organismos?"
                 v-model="editFunctionDialog.function.functionProperties.canCreateAndEditChildOrganism"
               />
             </div>
@@ -602,7 +616,7 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
-        users: [],
+        users: '0',
         requiredTitleId: null,
         numOfOccupants: '',
         functionProperties: {
@@ -674,6 +688,7 @@ export default defineComponent({
       },
       selectedType: "",
       visionsList: [],
+      functionsGroupList: [],
       permissionName: '',
     };
   },
@@ -693,6 +708,17 @@ export default defineComponent({
     this.getOccupantsOptions()
   },
   methods: {
+    getFunctionsGroupList() {
+      const opt = {
+        route: "/desktop/config/getFunctionsGroupList",
+        body: {
+          isActive: 1,
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.functionsGroupList = r.data.list;
+      });
+    },
     handlePermissionOnEdit(vision, permission) {
       const visionId = vision.visionId;
       // Encontrar o objeto vision correspondente no array
@@ -967,8 +993,9 @@ export default defineComponent({
       this.newFunction = {
         name: '',
         description: '',
-        users: [],
+        users: '0',
         requiredTitleId: null,
+        functionGroupId: null,
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
@@ -980,7 +1007,6 @@ export default defineComponent({
     editFunction (item) {
       this.editFunctionDialog.function = item
       this.editFunctionDialog.open = true
-      this.editFunctionDialog.function = item
       this.editFunctionDialog.function.visions.forEach((dialogVision,i) => {
         this.visionsList.forEach(vision => {
           if (dialogVision.visionId === vision.visionId) {
@@ -1000,11 +1026,11 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.editFunctionDialog.open = false
           this.getOrganismConfigById()
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -1063,7 +1089,7 @@ export default defineComponent({
       })
     },
     confirmChildOf() {
-      this.$q.notify("Organismo filiado com sucesso")
+      this.$q.notify("Organismo agrupado com sucesso")
       this.requiresLink = true;
       this.dialogCreateAffiliation = false
     },

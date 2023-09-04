@@ -226,20 +226,9 @@
                 Esta função permite {{ func.numOfOccupants }} participantes
               </div>
               <q-item-section class="q-pa-xs">
-                <div v-if=" userSelected && func.functionProperties.numRequired === true">
+                <div>
                   <q-btn
-                    label="Adicionar pessoa"
-                    color="primary"
-                    dense
-                    icon="add"
-                    rounded
-                    flat
-                    no-caps
-                    @click="linkUserToFunction(func, funcIndex)"
-                  />
-                </div>
-                <div v-else-if="func.functionProperties.numRequired === false ">
-                  <q-btn
+                    v-if="selectedUsers <= func.numOfOccupants"
                     label="Adicionar pessoa"
                     color="primary"
                     dense

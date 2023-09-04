@@ -32,7 +32,7 @@
         narrow-indicator
       >
         <q-tab name="organismData" label="Dados do organismo" v-if="!parentOrganismId"/>
-        <q-tab name="afiliatesOrganismsList" label="Lista configuração de filiados" v-if="!parentOrganismId"/>
+        <q-tab name="afiliatesOrganismsList" label="Lista configuração de grupos" v-if="!parentOrganismId"/>
       </q-tabs>
       <q-separator v-if="!parentOrganismId" />
       <q-tab-panels v-model="tab" animated>
@@ -396,7 +396,7 @@
                         <div class="col-6">
                           <q-separator/>
                           <div class="text-subtitle2 q-ma-sm">
-                            Organismos filiados vinculados:
+                            Grupo de organismos vinculados:
                           </div>
                           <div v-if="organismLinks.length">
                             <q-chip 
@@ -488,48 +488,88 @@
           </div>
         </q-tab-panel>
         <q-tab-panel name="afiliatesOrganismsList">
-          <div class="row justify-start">
-            <div class="col-8 q-gutter-md">
-              <div class="text-h5"> Criação de organismos filiados</div>
-              <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
-                Clique em uma das sugestões abaixo para iniciar a criação de um novo organismo 
-              </div>
-              <q-list v-if="childOrganismsConfigData.length">
-                <q-item
-                  clickable
-                  v-for="item in childOrganismsConfigData"
-                  :key="item"
-                  style="border-radius: 1rem;"
-                  @click="clkCreateNewChildOrganism(item)"
-                  class="bg-grey-3 q-ma-sm"
-                >
-                  <q-item-section>
-                    <q-item-label class="text-subtitle1"> {{ item.organismConfigName }}</q-item-label>
-                    <!-- <q-item-label caption lines="2">Criado em {{ item.createdAt }}</q-item-label> -->
-                  </q-item-section>
+          <q-dialog
+            @hide="organismGroupConfigId = ''"
+            v-model="dialogInsertNewOrganismGroup"
+          >
+            <q-card style="border-radius: 1rem; width: 580px">
+              <div class="q-gutter-md q-pa-md">
+                <div class="text-h5"> Criação de grupos de organismos</div>
+                <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
+                  Clique em uma das sugestões abaixo para iniciar a criação de um novo organismo 
+                </div>
+                <q-list v-if="childOrganismsConfigData.length">
+                  <q-item
+                    clickable
+                    v-for="item in childOrganismsConfigData"
+                    :key="item"
+                    style="border-radius: 1rem;"
+                    @click="clkCreateNewChildOrganism(item)"
+                    class="bg-grey-3 q-ma-sm"
+                  >
+                    <q-item-section>
+                      <q-item-label class="text-subtitle1"> {{ item.organismConfigName }}</q-item-label>
+                    </q-item-section>
 
-                  <q-item-section side top>
-                    <q-icon name="star" color="yellow" />
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <div v-else class="text-subtitle1">
-                Nenhuma configuração de filiado <q-icon name="warning" color="warning" size="md"/>
+                    <q-item-section side top>
+                      <q-icon name="star" color="yellow" />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div v-else class="text-subtitle1">
+                  Nenhuma configuração de grupo de organismo <q-icon name="warning" color="warning" size="md"/>
+                </div>
               </div>
-            </div>
-          </div>
-          <q-separator class="q-ma-md"/>
+              
+              <q-card-section class="q-gutter-sm">
+                <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
+                  Escolhar entre outras configurações de organismo
+                </div>
+                <q-select
+                  outlined
+                  clearable
+                  option-label="organismConfigName"
+                  emit-value
+                  map-options
+                  hint="Selecione uma configuração de sua preferência"
+                  label="Configuração"
+                  :option-value="(item) => item._id"
+                  :options="organismConfigsList"
+                  v-model="organismGroupConfigId"
+                />
+              </q-card-section>
+              <q-card-actions align="center">
+                <q-btn
+                  flat
+                  label="Depois"
+                  no-caps
+                  rounded
+                  color="primary"
+                  @click="dialogInsertNewOrganismGroup = false"
+                />
+                <q-btn
+                  unelevated
+                  rounded
+                  label="Confirmar"
+                  no-caps
+                  color="primary"
+                  @click="createNewChildOrganismUsingGroupConfig"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
           <div class="row justify-start">
             <div class="col-8 q-gutter-md">
               <div class="row">
-                <div class="text-h5 col"> Organismos filiados criados</div>
+                <div class="text-h5 col"> Grupo de organismo criados</div>
                 <div class="col">
                   <q-btn 
                     no-caps
                     outline
                     icon="add"
                     rounded
-                    label="Adicionar organismo"
+                    @click="dialogInsertNewOrganismGroup = true"
+                    label="Adicionar grupo"
                   />
                 </div>
               </div>
@@ -556,7 +596,7 @@
                 </q-item>
               </q-list>
               <div v-else class="text-subtitle1">
-                Nenhuma organismo filiado criado <q-icon name="warning" color="warning" size="md"/>
+                Nenhum grupo de organismo criado <q-icon name="warning" color="warning" size="md"/>
               </div>
             </div>
           </div>
@@ -591,6 +631,7 @@ export default defineComponent({
         initialDate: '',
         open: false,
       },
+      dialogInsertNewOrganismGroup: false,
       dialogDeleteUserFromFunction: {
         obsText: "",
         finalDate: "",
@@ -608,6 +649,7 @@ export default defineComponent({
         organismConfigId: '',
         fields: [],
       },
+      organismGroupConfigId: '',
       functions: [],
       organismList: [],
       organismLinks: [],
@@ -615,6 +657,7 @@ export default defineComponent({
       parentOrganism: [],
       childOrganism: [],
       linkedOrganismsData: [],
+      organismConfigsList: [],
       childOrganismsConfigData: [],
       organismConfigName: '',
       dialogLinks: false,
@@ -634,8 +677,12 @@ export default defineComponent({
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
+    this.getOrganismsConfigsList()
   },
   methods: {
+    // teste(){
+    //   console.log(this.organismGroupConfigId)
+    // },
     getChildOrganismConfig() {
       const opt = {
         route: "/desktop/adm/getChildOrganismConfig",
@@ -650,6 +697,21 @@ export default defineComponent({
           this.organismConfigOptions = r.data
         }
       });
+    },
+    getOrganismsConfigsList() {
+      const opt = {
+        route: "/desktop/config/getOrganismsConfigsList",
+        body: {
+          searchString: this.searchString
+        }
+      }
+      useFetch(opt).then((r) => {
+        if(r.error) {
+          console.log("Erro getOrganismConfigsList")
+          return
+        }
+        this.organismConfigsList = r.data.list
+      })
     },
     getChildOrganismsById() {
       const organismId = this.$route.query.organismId
@@ -710,6 +772,15 @@ export default defineComponent({
       setTimeout(() => {
         location.reload()
       }, 200)
+    },
+    createNewChildOrganismUsingGroupConfig(){
+      if(this.organismGroupConfigId === ''){
+        this.$q.notify('Selecione uma sugestão ou uma configuração de sua preferência')
+      }else{
+        const organismGroupConfigId = this.organismGroupConfigId
+        const organismParentId = this.$route.query.organismId
+        this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismGroupConfigId + '&organismParentId=' + organismParentId)
+      }
     },
     clkCreateNewChildOrganism(item){
       const organismChildConfigId = item.organismChildConfigId

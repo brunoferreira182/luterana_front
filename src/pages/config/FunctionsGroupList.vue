@@ -4,22 +4,23 @@
       <q-table
         flat
         class="bg-accent"
-        title="Organismos"
+        title="Grupos de funções"
         :columns="columnsData"
-        :rows="organismList"
+        :rows="functionsGroupList"
         row-key="_id"
-        @row-click="clkOpenOrganismDetail"
         virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkOpenTitleDetail"
+        :selected-rows-label="getSelectedString"
         :filter="filter"
-        :v-model:pagination="pagination"
+        v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row justify-end q-gutter-sm items-center">
+          <div class="flex row text-right q-gutter-sm items-center">
             <div class="col">
               <q-select
                 outlined
@@ -27,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsList"
+                @update:model-value="getFunctionsGroupList"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsList"
+                @keyup="getFunctionsGroupList"
                 outlined
                 dense
                 debounce="300"
@@ -44,38 +45,37 @@
                 </template>
               </q-input>
             </div>
-            <div class="col text-right">
+            <div class="col">
               <q-btn
-                @click="$router.push('/admin/createOrganism')"
+                @click="$router.push('/config/createFunctionsGroup')"
                 color="primary"
                 unelevated
+                rounded
                 no-caps
                 class="q-pa-sm"
-                rounded
                 icon="add"
-              >
-                Criar Organismo
-              </q-btn>
+                label="Novo grupo"
+              />
             </div>
           </div>
         </template>
-        <template #body-cell-organismParentName="props">
+        <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
-              v-if="props.row.organismParentName"
+              v-if="props.row.isActive === 1"
               color="green"
               size="14px"
             >
-              {{ props.row.organismParentName }}
+              Ativo
             </q-chip>
             <q-chip
               outline
-              v-else-if="!props.row.organismParentName"
+              v-else-if="props.row.isActive === 0"
               color="red"
               size="14px"
             >
-              Nenhum grupo
+              Inativo
             </q-chip>
           </q-td>
         </template>
@@ -90,14 +90,14 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "OrganismTypeList",
+  name: "FunctionsGroupList",
   data() {
     return {
-      columnsData: useTableColumns().organismList,
-      organismList: [],
+      columnsData: useTableColumns().functionsGroupList,
+      functionsGroupList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
-      selectFilter: "Selecionar",
+      selectFilter: "Ativos",
       pagination: {
         page: 0,
         rowsPerPage: 10,
@@ -110,13 +110,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsList();
+    this.getFunctionsGroupList();
   },
   methods: {
-    clkOpenOrganismDetail(e, r) {
-      const organismId = r.organismId;
-      
-      this.$router.push("/admin/organismDetail?organismId=" + organismId);
+    clkOpenTitleDetail(e, r) {
+      const functionGroupId = r._id;
+      this.$router.push("/config/functionsGroupDetail?functionGroupId=" + functionGroupId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -130,14 +129,16 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsList();
+      this.getFunctionsGroupList();
     },
-    getOrganismsList() {
+    getFunctionsGroupList() {
       const opt = {
-        route: "/desktop/adm/getOrganismsList",
+        route: "/desktop/config/getFunctionsGroupList",
         body: {
-          filterValue: this.filter,
           page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: this.filter,
+          sortBy: this.pagination.sortBy,
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -146,7 +147,8 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismList = r.data.list;
+        this.functionsGroupList = r.data.list;
+        this.pagination.rowsNumber = r.data.count
       });
     },
   },

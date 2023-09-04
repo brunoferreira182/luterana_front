@@ -133,6 +133,20 @@ const routes = [
         component: () => import("pages/config/FunctionDetail.vue"),
       },
 
+      //configurations//grupo de funções
+      {
+        path: "/config/functionsGroupList",
+        component: () => import("pages/config/FunctionsGroupList.vue"),
+      },
+      {
+        path: "/config/createFunctionsGroup",
+        component: () => import("pages/config/CreateFunctionsGroup.vue"),
+      },
+      {
+        path: "/config/functionsGroupDetail",
+        component: () => import("pages/config/FunctionsGroupDetail.vue"),
+      },
+      
       //configurations//visões
       {
         path: "/config/visionsList",

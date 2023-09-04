@@ -2,7 +2,7 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">novo organismo filiado</div>
+        <div class="col-6 text-h5 text-capitalize">novo organismo</div>
         <div class="col-2 text-center">
           <q-btn
             @click="createOrganism"

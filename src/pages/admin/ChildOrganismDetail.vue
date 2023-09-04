@@ -379,7 +379,7 @@
                     <div class="col-6">
                       <q-separator/>
                       <div class="text-subtitle2 q-ma-sm">
-                        Organismos filiados vinculados:
+                        Grupo de organismos vinculados:
                       </div>
                       <div v-if="organismLinks.length">
                         <q-chip 
