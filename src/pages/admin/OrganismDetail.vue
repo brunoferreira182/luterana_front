@@ -532,7 +532,7 @@
                   hint="Selecione uma configuração de sua preferência"
                   label="Configuração"
                   use-input
-                  :option-value="(item) => item"
+                  :option-value="(item) => item._id"
                   @filter="getOrganismsConfigsListBySearchString"
                   :options="organismConfigsList"
                   v-model="organismGroupConfigId"
@@ -807,7 +807,7 @@ export default defineComponent({
       if(this.organismGroupConfigId === ''){
         this.$q.notify('Selecione uma sugestão ou uma configuração de sua preferência')
       }else{
-        const organismGroupConfigId = this.organismGroupConfigId
+        const organismGroupConfigId = this.organismGroupConfigId._id
         const organismParentId = this.$route.query.organismId
         this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismGroupConfigId + '&organismParentId=' + organismParentId)
       }
