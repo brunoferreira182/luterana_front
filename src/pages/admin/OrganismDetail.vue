@@ -523,20 +523,28 @@
               
               <q-card-section class="q-gutter-sm">
                 <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
-                  Escolhar entre outras configurações de organismo
+                  Escolher entre outras opções de configuração de organismo
                 </div>
                 <q-select
                   outlined
                   clearable
                   option-label="organismConfigName"
-                  emit-value
-                  map-options
                   hint="Selecione uma configuração de sua preferência"
                   label="Configuração"
-                  :option-value="(item) => item._id"
+                  use-input
+                  :option-value="(item) => item"
+                  @filter="getOrganismsConfigsListBySearchString"
                   :options="organismConfigsList"
                   v-model="organismGroupConfigId"
-                />
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        Nenhum resultado
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
               </q-card-section>
               <q-card-actions align="center">
                 <q-btn
@@ -680,9 +688,6 @@ export default defineComponent({
     this.getOrganismsConfigsList()
   },
   methods: {
-    // teste(){
-    //   console.log(this.organismGroupConfigId)
-    // },
     getChildOrganismConfig() {
       const opt = {
         route: "/desktop/adm/getChildOrganismConfig",
@@ -698,19 +703,44 @@ export default defineComponent({
         }
       });
     },
+    getOrganismsConfigsListBySearchString(val, update) {
+      console.log()
+      const opt = {
+        route: "/desktop/config/getOrganismsConfigsList",
+        body: {
+          searchString: val
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        }else {
+          update(() => {
+            this.organismConfigsList = r.data.list
+          })
+        }
+      })
+    },
     getOrganismsConfigsList() {
+      console.log()
       const opt = {
         route: "/desktop/config/getOrganismsConfigsList",
         body: {
           searchString: this.searchString
         }
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if(r.error) {
-          console.log("Erro getOrganismConfigsList")
+          this.$q.notify('Ocorreu um erro, tente novamente')
           return
+        }else {
+          this.organismConfigsList = r.data.list
         }
-        this.organismConfigsList = r.data.list
       })
     },
     getChildOrganismsById() {
