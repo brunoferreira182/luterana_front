@@ -1055,7 +1055,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if(r.error){
-          this.$q.notify('Ocorreu um erro, tente novamente')
+          this.$q.notify(r.errorMessage)
         } else{
           this.getOrganismDetailById()
           this.clearDialogAndFunctions();

@@ -769,17 +769,15 @@ export default defineComponent({
         for (const func of this.functions) {
           if (func.numOfOccupants === "ilimitado") {
             // Se numOfOccupants for "ilimitado", ignore a validação
-            for (const func of this.functions) {
-              if (func.users && func.users.length > 0) {
-                for (const user of func.users) {
-                  userData.push({
-                    organismFunctionConfigId: user.organismFunctionConfigId,
-                    userId: user.userId,
-                    dates: {
-                      initialDate: user.initialDate
-                    }
-                  });
-                }
+            if (func.users && func.users.length > 0) {
+              for (const user of func.users) {
+                userData.push({
+                  organismFunctionConfigId: user.organismFunctionConfigId,
+                  userId: user.userId,
+                  dates: {
+                    initialDate: user.initialDate
+                  }
+                });
               }
             }
           } else if (
@@ -801,6 +799,22 @@ export default defineComponent({
               );
               return;
             }
+          } else {
+            this.$q.notify(
+              `O número de ocupantes para a função ${func.name} é inválido.`
+            );
+            return;
+          }
+          if (
+            func.functionProperties &&
+            func.functionProperties.isRequired === true
+          ) {
+            if (numOfOccupants !== func.users.length) {
+              this.$q.notify(
+                `A função ${func.name} requer que o número de ocupantes seja igual a ${numOfOccupants}.`
+              );
+              return;
+            }
           }
         }
         const organismLinksIds = this.organismLinks.map(
@@ -817,12 +831,12 @@ export default defineComponent({
         this.$q.loading.show();
         useFetch(opt).then((r) => {
           this.$q.loading.hide();
-          if (!r.error) {
+          if (r.error) {
+            this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          } else {
             this.$q.notify("Organismo criado com sucesso!");
             const organismId = r.data;
             this.$router.push("/admin/organismDetail?organismId=" + organismId);
-          } else {
-            this.$q.notify("Ocorreu um erro, tente novamente por favor");
           }
         });
       } else {
