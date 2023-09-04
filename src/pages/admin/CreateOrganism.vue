@@ -5,7 +5,7 @@
         <div class="col-6 text-h5 text-capitalize">novo organismo</div>
         <div class="col-2 text-center">
           <q-btn
-            @click="createOrganism"
+            @click="createOrganism()"
             no-caps
             color="primary"
             rounded
@@ -228,7 +228,6 @@
               <q-item-section class="q-pa-xs">
                 <div>
                   <q-btn
-                    v-if="selectedUsers <= func.numOfOccupants"
                     label="Adicionar pessoa"
                     color="primary"
                     dense
@@ -540,10 +539,8 @@ export default defineComponent({
     },
     deleteUserFromFunction(user, funcIndex){
       const functionData = this.functions[funcIndex];
-      
       const userId = user.functionUserId;
       const userIndex = functionData.users.findIndex(user => user._id === userId);
-
       if (userIndex !== -1) {
         functionData.users.splice(userIndex, 1);
       }
@@ -555,6 +552,13 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
     },
     linkUserToFunction(func, funcIndex ) {
+      if (!this.functions[funcIndex].users) {
+        this.functions[funcIndex].users = [];
+      }
+      if (func.numOfOccupants && func.numOfOccupants === func.users.length) {
+        this.$q.notify("A função completou o número de participantes máximo")
+        return
+      }
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;
@@ -562,10 +566,8 @@ export default defineComponent({
     inactivateUserFromFunction() {
       const funcIndex = this.dialogDeleteUserFromFunction.funcIndex;
       const functionData = this.functions[funcIndex];
-      
       const userId = this.dialogDeleteUserFromFunction.functionUserId;
       const userIndex = functionData.users.findIndex(user => user._id === userId);
-
       if (userIndex !== -1) {
         functionData.users.splice(userIndex, 1);
         this.dialogDeleteUserFromFunction.open = false;
@@ -666,7 +668,6 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           if(r.data.organismConfigData){
-            
             this.organismConfigName = r.data.organismConfigData.organismConfigName
             this.organismData.fields = r.data.organismConfigData.organismFields;
             this.functions = r.data.organismConfigData.functions
@@ -676,7 +677,6 @@ export default defineComponent({
             this.organismData.fields = r.data.organismFields;
             this.functions = r.data.functions
           }
-    
         }
       });
     },
@@ -699,7 +699,6 @@ export default defineComponent({
         }
       });
     },
-    
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/adm/getOrganismsConfigs",
@@ -728,6 +727,17 @@ export default defineComponent({
             }
           }
         }
+        this.functions.forEach(func => {
+          console.log(func.numOfOccupants, typeof(func.numOfOccupants))
+          if(func. typeof(func.numOfOccupants) !== 'string' && func.numOfOccupants === func.users.length || func.functionProperties.isRequired === true ) {
+            console.log("primeiro if")
+          }
+          else if(func.functionProperties.isRequired === true){
+            console.log("segundo")
+            this.$q.notify("Preencha o número requerido nas funções")
+            return
+          }
+        });
         const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
         const opt = {
           route: "/desktop/adm/createOrganism",
@@ -777,7 +787,6 @@ export default defineComponent({
     removeLink(i) {
       this.organismLinks.splice(i,1)
     }
-
   },
 });
 </script>

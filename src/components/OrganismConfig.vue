@@ -282,7 +282,6 @@
               no-caps
               icon-right="add"
             />
-            
           </div>
           <q-item
             style="border-radius: 1rem"
@@ -298,6 +297,9 @@
               </div>
               <div class="text-caption text-grey-7">
                 Grupo: {{ item.functionGroupName ? item.functionGroupName : 'nenhum' }}
+              </div>
+              <div class="text-caption text-grey-7">
+                Número de participantes: {{ item.numOfOccupants ? item.numOfOccupants : 'nenhum' }}
               </div>
               <div>
                 <q-icon name="visibility" color="primary" size="sm"/>
@@ -616,7 +618,6 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
-        users: '0',
         requiredTitleId: null,
         numOfOccupants: '',
         functionProperties: {
@@ -993,7 +994,6 @@ export default defineComponent({
       this.newFunction = {
         name: '',
         description: '',
-        users: '0',
         requiredTitleId: null,
         functionGroupId: null,
         functionProperties: {
