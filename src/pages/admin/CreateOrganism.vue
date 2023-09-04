@@ -811,7 +811,7 @@ export default defineComponent({
           ) {
             if (func.numOfOccupants !== func.users.length) {
               this.$q.notify(
-                `A função ${func.name} requer que o número de ocupantes seja igual a ${numOfOccupants}.`
+                `A função ${func.name} requer que o número de ocupantes seja igual a ${func.numOfOccupants}.`
               );
               return;
             }
