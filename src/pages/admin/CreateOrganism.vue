@@ -803,7 +803,6 @@ export default defineComponent({
             }
           }
         }
-
         const organismLinksIds = this.organismLinks.map(
           (organism) => organism.organismId
         );
