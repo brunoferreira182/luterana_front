@@ -809,7 +809,7 @@ export default defineComponent({
             func.functionProperties &&
             func.functionProperties.isRequired === true
           ) {
-            if (numOfOccupants !== func.users.length) {
+            if (func.numOfOccupants !== func.users.length) {
               this.$q.notify(
                 `A função ${func.name} requer que o número de ocupantes seja igual a ${numOfOccupants}.`
               );
