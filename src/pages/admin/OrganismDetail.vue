@@ -33,6 +33,10 @@
       >
         <q-tab name="organismData" label="Dados do organismo" v-if="!parentOrganismId"/>
         <q-tab name="afiliatesOrganismsList" label="Lista configuração de grupos" v-if="!parentOrganismId"/>
+        <!-- <q-tab 
+          name="solicitations" 
+          label="Solicitações" 
+        /> -->
       </q-tabs>
       <q-separator v-if="!parentOrganismId" />
       <q-tab-panels v-model="tab" animated>
@@ -609,6 +613,107 @@
             </div>
           </div>
         </q-tab-panel>
+        <!-- <q-tab-panel name="solicitations">
+          <div class="text-h5">Solicitações</div>
+          <q-list>
+            <div class="row q-gutter-md" v-if="solicitationData !== 0">
+              <div 
+                v-for="(solic, solicIndex) in solicitationData" 
+                :key="solicIndex"
+                class="col-5" 
+              >
+                <q-item 
+                  class="solicitation-cards"
+                >
+                  <q-item-section>
+                    <div class="row justify-between">
+                      <div class="col text-capitalize text-subtitle1">
+                        {{ solic.userName }}
+                      </div>
+                      <div class="col-4 text-caption">
+                        {{ solic.createdAt }}
+                      </div>
+                    </div>
+                    <q-item-label caption lines="10">
+                      {{ solic.solicitationObs.substring(0, obsMaxLength) }}
+                        <span v-if="solic.solicitationObs.length > obsMaxLength">
+                          {{ showFullText[solicIndex] ? solic.solicitationObs.substring(obsMaxLength) : '...' }}
+                          <q-btn
+                            rounded
+                            color="primary"
+                            dense
+                            no-caps
+                            flat
+                            :label="this.showFullText[solicIndex] ? 'Ver menos' : 'Ver mais'"
+                            @click="toggleExpandText(solicIndex)"
+                          />
+                        </span>
+                    </q-item-label>
+                    <q-separator class="q-ma-md"/>
+                    <q-item-label class="text-center q-gutter-md">
+                      <q-btn
+                        rounded
+                        color="primary"
+                        dense
+                        no-caps
+                        flat
+                        @click="clkReproveSolicitation(solic, solicIndex)"
+                        label="Reprovar"
+                      />
+                      <q-btn
+                        rounded
+                        color="primary"
+                        unelevated
+                        no-caps
+                        @click="dialogAproveSolicitation"
+                        label="Aprovar"
+                      />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-dialog v-model="dialogReproveSolicitation.open" >
+                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                    <q-card-section align="center">
+                      <div class="text-h6">
+                        Informe o motivo para reprovar a solicitação
+                      </div>
+                    </q-card-section>
+                    <q-card-section align="center">
+                      <q-input
+                        filled
+                        label="Observação"
+                        autogrow
+                        hint="Escreva uma breve descrição explicando o motivo para reprovar esta solicitação"
+                        v-model="dialogReproveSolicitation.obs"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogReproveSolicitation.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Enviar"
+                        no-caps
+                        color="primary"
+                        @click="sendReproveFeedback"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+              </div>
+            </div>
+            <div class="text-subtitle1" v-else-if="solicitationData === 0">
+              Nenhuma solicitação <q-icon name="warning" size="sm" color="warning"></q-icon>
+            </div>
+          </q-list>
+        </q-tab-panel> -->
       </q-tab-panels>
     </q-page>
   </q-page-container>
@@ -633,6 +738,7 @@ export default defineComponent({
       selectedFunc: "",
       selectedFuncIndex: "",
       organismConfigOptions: [],
+      solicitationData: [],
       newOrganism: {},
       organismSelected: '',
       dialogInsertUserInFunction:{
@@ -687,8 +793,29 @@ export default defineComponent({
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
     this.getOrganismsConfigsList()
+    // this.getFunctionsSolicitationsByOrganismId()
   },
   methods: {
+    getFunctionsSolicitationsByOrganismId() {
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: "/desktop/adm/getFunctionsSolicitationsByOrganismId",
+        body: {
+          organismId: organismId,
+        }
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          if(r.data){
+            this.solicitationData = r.data
+          } else {
+            this.solicitationData = 0
+          }
+        }
+      });
+    },
     getChildOrganismConfig() {
       const opt = {
         route: "/desktop/adm/getChildOrganismConfig",

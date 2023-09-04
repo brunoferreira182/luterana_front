@@ -706,6 +706,7 @@ export default defineComponent({
     this.getFieldTypes();
     this.getVisions();
     this.getOrganismsConfigsList();
+    this.getFunctionsGroupList()
     this.getOccupantsOptions()
   },
   methods: {
@@ -999,6 +1000,7 @@ export default defineComponent({
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
+          numRequired: false,
         },
         isRequired: true,
         visions: []

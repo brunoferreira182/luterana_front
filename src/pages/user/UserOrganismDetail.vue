@@ -9,294 +9,171 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <q-tabs
-        v-model="tab"
-        dense
-        no-caps
-        class="text-grey q-py-sm"
-        active-color="primary"
-        indicator-color="primary"
-        inline-label
-        align="justify"
-        narrow-indicator
-      >
-        <q-tab name="generalData" label="Dados gerais" />
-        <q-tab 
-          name="solicitation" 
-          label="Solicitações" 
-        />
-      </q-tabs>
-      <q-separator />
-      <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="generalData">
-          <div class="row justify-around q-pa-md">
-            <div class="col-7 q-gutter-md q-mt-sm" align="start">
-              <q-select
+        <div class="row justify-around q-pa-md">
+          <div class="col-7 q-gutter-md q-mt-sm" align="start">
+            <q-select
+              outlined
+              label="Nome da configuração"
+              option-label="organismConfigName"
+              :option-value="(item) => item._id"
+              emit-value
+              readonly
+              map-options
+              hint="O tipo de configuração que está aplicado"
+              v-model="organismConfigName"
+              :options="organismConfigOptions"
+            />
+            <div v-if="fields.length" class="text-h5">
+              Dados
+            </div>
+            <div v-for="(field, i) in organismData.fields" :key="i">
+              <q-input
+                v-if="field.type.type !== 'boolean'"
+                v-model="field.value"
                 outlined
-                label="Nome da configuração"
-                option-label="organismConfigName"
-                :option-value="(item) => item._id"
-                emit-value
                 readonly
-                map-options
-                hint="O tipo de configuração que está aplicado"
-                v-model="organismConfigName"
-                :options="organismConfigOptions"
+                :type="getInputType(field.type.type)"
+                :reverse-fill-mask="field.type.type === 'money'"
+                :prefix="field.type.type === 'money' ? 'R$' : null"
+                :label="field.label + (field.required ? '' : ' (Opcional)')"
+                :mask="field.type.mask"
+                :hint="field.hint"
               />
-              <div v-if="fields.length" class="text-h5">
-                Dados
-              </div>
-              <div v-for="(field, i) in organismData.fields" :key="i">
-                <q-input
-                  v-if="field.type.type !== 'boolean'"
-                  v-model="field.value"
-                  outlined
-                  readonly
-                  :type="getInputType(field.type.type)"
-                  :reverse-fill-mask="field.type.type === 'money'"
-                  :prefix="field.type.type === 'money' ? 'R$' : null"
-                  :label="field.label + (field.required ? '' : ' (Opcional)')"
-                  :mask="field.type.mask"
-                  :hint="field.hint"
-                />
-                <q-checkbox
-                  v-else-if="field.type.type === 'boolean'"
-                  :label="field.label"
-                  readonly
-                  v-model="newOrganism[field.model]"
-                ></q-checkbox>
+              <q-checkbox
+                v-else-if="field.type.type === 'boolean'"
+                :label="field.label"
+                readonly
+                v-model="newOrganism[field.model]"
+              ></q-checkbox>
+            </div>
+          </div>
+          <q-separator vertical class="q-ma-md" />
+          <div class="col-4">
+            <div class="row">
+              <div
+                class="text-h5"
+              >
+                Funções
               </div>
             </div>
-            <q-separator vertical class="q-ma-md" />
-            <div class="col-4">
-              <div class="row">
-                <div
-                  class="text-h5"
+            <div v-for="func in functions" :key="func">
+              <q-card
+                style="border-radius: 1rem"
+                class="bg-grey-3 q-ma-sm"
+                flat
+              >
+                <q-item>
+                  <q-item-section top>
+                    <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
+                    <div>Descrição: {{ func.functionDescription }}</div>
+                    <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ? func.functionRequiredTitleName : 'nenhum' }}</div>
+                    <div>
+                      <q-icon name="visibility" color="primary" size="sm"/>
+                      <q-chip
+                        v-for="(vision,i) in func.visions"
+                        :key="i"
+                      >
+                      {{ vision.name }}
+                      </q-chip>
+                      <span 
+                        class="text-caption text-grey-7"
+                        v-if="!func.visions || !func.visions.length"
+                      >
+                        Nenhuma visão
+                      </span>
+                    </div>
+                  </q-item-section>
+                  <q-item-section top side>
+                    <div class="text-subtitle2">
+                      <q-badge color="orange-8" v-if="func.isRequired">
+                        Obrigatório
+                      </q-badge>
+                    </div>
+                  </q-item-section>
+                </q-item>
+                <q-expansion-item
+                  class="q-pa-sm"
+                  icon="group"
+                  :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
+                  caption="Clique para ver"
                 >
-                  Funções
-                </div>
-              </div>
-              <div v-for="func in functions" :key="func">
-                <q-card
-                  style="border-radius: 1rem"
-                  class="bg-grey-3 q-ma-sm"
-                  flat
-                >
-                  <q-item>
-                    <q-item-section top>
-                      <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
-                      <div>Descrição: {{ func.functionDescription }}</div>
-                      <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ? func.functionRequiredTitleName : 'nenhum' }}</div>
-                      <div>
-                        <q-icon name="visibility" color="primary" size="sm"/>
-                        <q-chip
-                          v-for="(vision,i) in func.visions"
-                          :key="i"
-                        >
-                        {{ vision.name }}
-                        </q-chip>
-                        <span 
-                          class="text-caption text-grey-7"
-                          v-if="!func.visions || !func.visions.length"
-                        >
-                          Nenhuma visão
-                        </span>
-                      </div>
+                  <q-item
+                    v-for="user in func.users"
+                    :key="user"
+                    style="border-radius: 0.5rem; margin-top: 8px;"
+                    class="bg-white"
+                  >
+                    <q-item-section avatar>
+                      <q-avatar rounded>
+                        <img src="https://cdn.quasar.dev/img/avatar.png" />
+                      </q-avatar>
                     </q-item-section>
-                    <q-item-section top side>
-                      <div class="text-subtitle2">
-                        <q-badge color="orange-8" v-if="func.isRequired">
-                          Obrigatório
-                        </q-badge>
+                    <q-item-section class="text-capitalize text-wrap" lines="2">
+                      {{ user.userName }}
+                      <div class="text-caption text-grey-7">
+                        Data Início:
+                        {{ formatDate(user.dates.initialDate) }}
+                      </div>
+                      <div
+                        v-if="user.dataFim"
+                        class="text-caption text-grey-7"
+                      >
+                        Data Fim: {{ formatDate(user.dates.finalDate) }}
                       </div>
                     </q-item-section>
                   </q-item>
-                  <q-expansion-item
-                    class="q-pa-sm"
-                    icon="group"
-                    :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                    caption="Clique para ver"
-                  >
-                    <q-item
-                      v-for="user in func.users"
-                      :key="user"
-                      style="border-radius: 0.5rem; margin-top: 8px;"
-                      class="bg-white"
-                    >
-                      <q-item-section avatar>
-                        <q-avatar rounded>
-                          <img src="https://cdn.quasar.dev/img/avatar.png" />
-                        </q-avatar>
-                      </q-item-section>
-                      <q-item-section class="text-capitalize text-wrap" lines="2">
-                        {{ user.userName }}
-                        <div class="text-caption text-grey-7">
-                          Data Início:
-                          {{ formatDate(user.dates.initialDate) }}
-                        </div>
-                        <div
-                          v-if="user.dataFim"
-                          class="text-caption text-grey-7"
-                        >
-                          Data Fim: {{ formatDate(user.dates.finalDate) }}
-                        </div>
-                      </q-item-section>
-                    </q-item>
-                  </q-expansion-item>
-                  <!-- <q-item-section class="q-pa-xs">
-                    <q-btn
-                      label="Quero participar"
-                      color="primary"
-                      dense
-                      icon="add"
-                      rounded
-                      flat
-                      no-caps
-                      @click="clkOpenDialogSolicitation(func)"
+                </q-expansion-item>
+                <q-item-section class="q-pa-xs">
+                  <q-btn
+                    label="Quero participar"
+                    color="primary"
+                    dense
+                    icon="add"
+                    rounded
+                    flat
+                    no-caps
+                    @click="clkOpenDialogSolicitation(func)"
+                  />
+                </q-item-section>
+              </q-card>
+              <q-dialog v-model="dialogOpenSolicitation.open" >
+                <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                  <q-card-section align="center">
+                    <div class="text-h6">
+                      Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
+                    </div>
+                  </q-card-section>
+                  <q-card-section align="center">
+                    <q-input
+                      filled
+                      label="Observação"
+                      hint="Escreva uma breve descrição explicando o motivo para participar desta função"
+                      v-model="dialogOpenSolicitation.obs"
                     />
-                  </q-item-section> -->
+                  </q-card-section>
+                  <q-card-actions align="center">
+                    <q-btn
+                      flat
+                      label="Depois"
+                      no-caps
+                      rounded
+                      color="primary"
+                      @click="dialogOpenSolicitation.open = false"
+                    />
+                    <q-btn
+                      unelevated
+                      rounded
+                      label="Enviar"
+                      no-caps
+                      color="primary"
+                      @click="sendFunctionSolicitation"
+                    />
+                  </q-card-actions>
                 </q-card>
-                <q-dialog v-model="dialogOpenSolicitation.open" >
-                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                    <q-card-section align="center">
-                      <div class="text-h6">
-                        Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
-                      </div>
-                    </q-card-section>
-                    <q-card-section align="center">
-                      <q-input
-                        filled
-                        label="Observação"
-                        hint="Escreva uma breve descrição explicando o motivo para participar desta função"
-                        v-model="dialogOpenSolicitation.obs"
-                      />
-                    </q-card-section>
-                    <q-card-actions align="center">
-                      <q-btn
-                        flat
-                        label="Depois"
-                        no-caps
-                        rounded
-                        color="primary"
-                        @click="dialogOpenSolicitation.open = false"
-                      />
-                      <q-btn
-                        unelevated
-                        rounded
-                        label="Enviar"
-                        no-caps
-                        color="primary"
-                        @click="sendFunctionSolicitation"
-                      />
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-              </div>
+              </q-dialog>
             </div>
           </div>
-        </q-tab-panel>
-        <q-tab-panel name="solicitation">
-          <div class="text-h5">Solicitações</div>
-          <q-list>
-            <div class="row q-gutter-md" v-if="solicitationData !== 0">
-              <div 
-                v-for="(solic, solicIndex) in solicitationData" 
-                :key="solicIndex"
-                class="col-5" 
-              >
-                <q-item 
-                  class="solicitation-cards"
-                >
-                  <q-item-section>
-                    <div class="row justify-between">
-                      <div class="col text-capitalize text-subtitle1">
-                        {{ solic.userName }}
-                      </div>
-                      <div class="col-4 text-caption">
-                        {{ solic.createdAt }}
-                      </div>
-                    </div>
-                    <q-item-label caption lines="10">
-                      {{ solic.solicitationObs.substring(0, obsMaxLength) }}
-                        <span v-if="solic.solicitationObs.length > obsMaxLength">
-                          {{ showFullText[solicIndex] ? solic.solicitationObs.substring(obsMaxLength) : '...' }}
-                          <q-btn
-                            rounded
-                            color="primary"
-                            dense
-                            no-caps
-                            flat
-                            :label="this.showFullText[solicIndex] ? 'Ver menos' : 'Ver mais'"
-                            @click="toggleExpandText(solicIndex)"
-                          />
-                        </span>
-                    </q-item-label>
-                    <q-separator class="q-ma-md"/>
-                    <q-item-label class="text-center q-gutter-md">
-                      <q-btn
-                        rounded
-                        color="primary"
-                        dense
-                        no-caps
-                        flat
-                        @click="clkReproveSolicitation(solic, solicIndex)"
-                        label="Reprovar"
-                      />
-                      <q-btn
-                        rounded
-                        color="primary"
-                        unelevated
-                        no-caps
-                        @click="dialogAproveSolicitation"
-                        label="Aprovar"
-                      />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-dialog v-model="dialogReproveSolicitation.open" >
-                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                    <q-card-section align="center">
-                      <div class="text-h6">
-                        Informe o motivo para reprovar a solicitação
-                      </div>
-                    </q-card-section>
-                    <q-card-section align="center">
-                      <q-input
-                        filled
-                        label="Observação"
-                        autogrow
-                        hint="Escreva uma breve descrição explicando o motivo para reprovar esta solicitação"
-                        v-model="dialogReproveSolicitation.obs"
-                      />
-                    </q-card-section>
-                    <q-card-actions align="center">
-                      <q-btn
-                        flat
-                        label="Depois"
-                        no-caps
-                        rounded
-                        color="primary"
-                        @click="dialogReproveSolicitation.open = false"
-                      />
-                      <q-btn
-                        unelevated
-                        rounded
-                        label="Enviar"
-                        no-caps
-                        color="primary"
-                        @click="sendReproveFeedback"
-                      />
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-              </div>
-            </div>
-            <div class="text-subtitle1" v-else-if="solicitationData === 0">
-              Nenhuma solicitação <q-icon name="warning" size="sm" color="warning"></q-icon>
-            </div>
-          </q-list>
-        </q-tab-panel>
-      </q-tab-panels>
+        </div>
     </q-page>
   </q-page-container>
 </template>
@@ -409,10 +286,10 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          if(!r.data){
-            this.solicitationData = 0
-          } else {
+          if(r.data){
             this.solicitationData = r.data
+          } else {
+            this.solicitationData = 0
           }
         }
       });
