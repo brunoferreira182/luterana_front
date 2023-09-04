@@ -167,7 +167,6 @@
               />
             </div>
           </div>
-
           <q-checkbox
             class="q-pt-lg"
             v-model="newField.required"
@@ -375,6 +374,23 @@
               <q-select
                 outlined
                 clearable
+                option-label="label"
+                emit-value
+                map-options
+                label="Ocupantes por função"
+                :option-value="(item) => item.label"
+                :options="occupantsOptions"
+                v-model="newFunction.numOfOccupants"
+              />
+              <div>
+                <q-checkbox 
+                v-model="newFunction.functionProperties.numRequired"
+                label="A ocupação deve ser obrigatória?"
+                />
+              </div>
+              <q-select
+                outlined
+                clearable
                 option-label="functionGroupName"
                 emit-value
                 map-options
@@ -471,14 +487,20 @@
               <q-select
                 outlined
                 clearable
-                option-label="functionGroupName"
+                option-label="label"
                 emit-value
                 map-options
-                label="Grupo"
-                :option-value="(item) => item._id"
-                :options="functionsGroupList"
-                v-model="editFunctionDialog.function.functionGroupId"
+                label="Ocupantes por função"
+                :option-value="(item) => item.label"
+                :options="occupantsOptions"
+                v-model="editFunctionDialog.function.numOfOccupants"
               />
+              <div>
+                <q-checkbox 
+                  v-model="editFunctionDialog.function.functionProperties.numRequired"
+                  label="A ocupação deve ser obrigatória?"
+                />
+              </div>
               <div class="text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row">
                 <div v-for="(vision, visionIndex) in editFunctionDialog.function.visions" :key="visionIndex" class="col-6 q-my-md">
@@ -594,11 +616,13 @@ export default defineComponent({
       newFunction: {
         name: '',
         description: '',
+        users: '0',
         requiredTitleId: null,
-        functionGroupId: null,
+        numOfOccupants: '',
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
+          numRequired: false,
         },
         isRequired: true,
         visions: []
@@ -609,7 +633,8 @@ export default defineComponent({
           name: '',
           description: '',
           requiredTitleId: null,
-          functionGroupId: null,
+          numOfOccupants: null,
+          numRequired: false,
           functionProperties: {
             canManageFuncAndOrgSolicitations: false,
             canCreateAndEditChildOrganism: false,
@@ -629,6 +654,7 @@ export default defineComponent({
       },
       functions: [],
       titlesOptions: [],
+      occupantsOptions: [],
       organismFields: [
         {
           label: "Nome",
@@ -679,7 +705,7 @@ export default defineComponent({
     this.getFieldTypes();
     this.getVisions();
     this.getOrganismsConfigsList();
-    this.getFunctionsGroupList()
+    this.getOccupantsOptions()
   },
   methods: {
     getFunctionsGroupList() {
@@ -934,7 +960,7 @@ export default defineComponent({
       }
     },
     addFunction () {
-      if (this.newFunction.name && this.newFunction.description) {
+      if (this.newFunction.name && this.newFunction.description ) {
         if (this.$route.path === '/config/organismConfigDetail') {
           this.createOrganismFunctionConfig()
           this.getVisions()
@@ -967,6 +993,7 @@ export default defineComponent({
       this.newFunction = {
         name: '',
         description: '',
+        users: '0',
         requiredTitleId: null,
         functionGroupId: null,
         functionProperties: {
@@ -987,6 +1014,8 @@ export default defineComponent({
           }
         })
       });
+      this.editFunctionDialog.function.requiredTitleId = item.requiredTitle;
+      this.editFunctionDialog.function.numOfOccupants = item.numOfOccupants;
     },
     updateOrganismFunctionConfig () {
       const opt = {
@@ -1068,6 +1097,18 @@ export default defineComponent({
       this.requiresLink = false;
       this.$q.notify("Filiação cancelada");
       this.dialogCreateAffiliation = false;
+    },
+    getOccupantsOptions() {
+      const opt = {
+        route: "/desktop/config/getFuctionsSizeOptions"
+      }
+      useFetch(opt).then((r) => {
+        if(!r.error) {
+          this.occupantsOptions = r.data
+        } else {
+          console.log("erro em getOccupantsOptions")
+        }
+      })
     }
   },
 });

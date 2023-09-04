@@ -21,7 +21,10 @@
         narrow-indicator
       >
         <q-tab name="generalData" label="Dados gerais" />
-        <q-tab name="solicitation" label="Solicitações" />
+        <q-tab 
+          name="solicitation" 
+          label="Solicitações" 
+        />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="tab" animated>
