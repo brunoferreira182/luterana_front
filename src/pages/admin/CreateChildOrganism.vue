@@ -156,7 +156,7 @@
                 class="q-pa-sm"
                 icon="group"
                 :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                caption="Clique para ver ou adicionar"
+                caption="Clique para ver"
               >
                 <q-item
                   v-for="(user, userIndex) in func.users"
