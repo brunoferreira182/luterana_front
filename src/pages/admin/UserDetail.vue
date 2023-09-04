@@ -284,7 +284,6 @@ export default defineComponent({
             "ERRO ao inserir título, tente novamente mais tarde."
           );return
         } else {
-          this.$q.notify("Solicitação de título inserido com sucesso!");
           const titleId = this.titleSelected._id
           this.$router.push('/admin/userTitleDetail?titleId=' + titleId)
         }

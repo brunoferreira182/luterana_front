@@ -523,7 +523,7 @@
               
               <q-card-section class="q-gutter-sm">
                 <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
-                  Escolher entre outras opções de configuração de organismo
+                  Escolha entre outras opções de configuração de organismo
                 </div>
                 <q-select
                   outlined
@@ -671,6 +671,7 @@ export default defineComponent({
       dialogLinks: false,
       parentOrganismId: '',
       organismConfigId: '',
+      testeGif: 'https://giphy.com/embed/kDTDqGrb7vzUuY9T2P',
     };
   },
   mounted() {
@@ -1111,7 +1112,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },

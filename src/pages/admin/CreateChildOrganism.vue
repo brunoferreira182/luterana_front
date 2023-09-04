@@ -500,11 +500,11 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.$q.notify("Usuário vinculado na função com sucesso!");
           this.clearDialogAndFunctions();
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
@@ -579,10 +579,10 @@ export default defineComponent({
         route: "/desktop/adm/getOrganismsTypes",
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismTypesOptions = r.data;
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.organismTypesOptions = r.data;
         }
       });
     },
@@ -619,9 +619,9 @@ export default defineComponent({
           if (r.error) {
             this.$q.notify("Ocorreu um erro, tente novamente por favor");
           } else {
-            // const organismId = r.data
+            const organismId = r.data
             this.$q.notify('Organismo criado com sucesso!');
-            // this.$router.push('/admin/organismDetail?organismId=' + organismId)
+            this.$router.push('/admin/organismDetail?organismId=' + organismId)
           }
         });
       } else {

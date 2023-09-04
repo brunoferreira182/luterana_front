@@ -711,49 +711,117 @@ export default defineComponent({
         }
       });
     },
+    // this.functions.forEach(func => {
+    //       console.log(func.numOfOccupants, typeof(func.numOfOccupants))
+    //       if(func. typeof(func.numOfOccupants) !== 'string' && func.numOfOccupants === func.users.length || func.functionProperties.isRequired === true ) {
+    //         console.log("primeiro if")
+    //       }
+    //       else if(func.functionProperties.isRequired === true){
+    //         console.log("segundo")
+    //         this.$q.notify("Preencha o número requerido nas funções")
+    //         return
+    //       }
+    //     });
+    // createOrganism() {
+    //   if (this.checkRequiredFields()) {
+    //     const userData = [];
+    //     for (const func of this.functions) {
+    //       if (func.users && func.users.length > 0) {
+    //         for (const user of func.users) {
+    //           userData.push({
+    //             organismFunctionConfigId: user.organismFunctionConfigId,
+    //             userId: user.userId,
+    //             dates: {
+    //               initialDate: user.initialDate
+    //             }
+    //           });
+    //         }
+    //       }
+    //     }
+  
+    //     const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+    //     const opt = {
+    //       route: "/desktop/adm/createOrganism",
+    //       body: {
+    //         organismData: this.organismData,
+    //         functions: userData,
+    //         organismLinks: organismLinksIds
+    //       },
+    //     };
+    //     this.$q.loading.show()
+    //     useFetch(opt).then(r => {
+    //       this.$q.loading.hide()
+    //       if (!r.error) {
+    //         this.$q.notify('Organismo criado com sucesso!');
+    //         const organismId = r.data
+    //         this.$router.push('/admin/organismDetail?organismId=' + organismId)
+    //       } else {
+    //         this.$q.notify("Ocorreu um erro, tente novamente por favor");
+    //       }
+    //     });
+    //   } else {
+    //     this.$q.notify("Há campos obrigatórios não preenchidos");
+    //   }
+    // },
     createOrganism() {
       if (this.checkRequiredFields()) {
         const userData = [];
         for (const func of this.functions) {
-          if (func.users && func.users.length > 0) {
-            for (const user of func.users) {
-              userData.push({
-                organismFunctionConfigId: user.organismFunctionConfigId,
-                userId: user.userId,
-                dates: {
-                  initialDate: user.initialDate
+          if (func.numOfOccupants === "ilimitado") {
+            // Se numOfOccupants for "ilimitado", ignore a validação
+            for (const func of this.functions) {
+              if (func.users && func.users.length > 0) {
+                for (const user of func.users) {
+                  userData.push({
+                    organismFunctionConfigId: user.organismFunctionConfigId,
+                    userId: user.userId,
+                    dates: {
+                      initialDate: user.initialDate
+                    }
+                  });
                 }
-              });
+              }
+            }
+          } else if (
+            typeof func.numOfOccupants === "number"
+          ) {
+            if (func.numOfOccupants === func.users.length) {
+              for (const user of func.users) {
+                userData.push({
+                  organismFunctionConfigId: user.organismFunctionConfigId,
+                  userId: user.userId,
+                  dates: {
+                    initialDate: user.initialDate
+                  }
+                });
+              }
+            } else {
+              this.$q.notify(
+                `O número de ocupantes para a função ${func.name} está incorreto.`
+              );
+              return;
             }
           }
         }
-        this.functions.forEach(func => {
-          console.log(func.numOfOccupants, typeof(func.numOfOccupants))
-          if(func. typeof(func.numOfOccupants) !== 'string' && func.numOfOccupants === func.users.length || func.functionProperties.isRequired === true ) {
-            console.log("primeiro if")
-          }
-          else if(func.functionProperties.isRequired === true){
-            console.log("segundo")
-            this.$q.notify("Preencha o número requerido nas funções")
-            return
-          }
-        });
-        const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+
+        const organismLinksIds = this.organismLinks.map(
+          (organism) => organism.organismId
+        );
         const opt = {
           route: "/desktop/adm/createOrganism",
           body: {
             organismData: this.organismData,
             functions: userData,
             organismLinks: organismLinksIds
-          },
+          }
         };
-        this.$q.loading.show()
-        useFetch(opt).then(r => {
-          this.$q.loading.hide()
+        this.$q.loading.show();
+        useFetch(opt).then((r) => {
+          this.$q.loading.hide();
           if (!r.error) {
-            this.$q.notify('Organismo criado com sucesso!');
-            const organismId = r.data
-            this.$router.push('/admin/organismDetail?organismId=' + organismId)
+            this.$q.notify("Organismo criado com sucesso!");
+            const organismId = r.data;
+            this.$router.push("/admin/organismDetail?organismId=" + organismId);
           } else {
             this.$q.notify("Ocorreu um erro, tente novamente por favor");
           }

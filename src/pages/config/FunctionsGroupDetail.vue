@@ -2,10 +2,10 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">
+        <div class="col-8 text-h5 text-capitalize">
           Novo grupo de funções
         </div>
-        <div class="col text-right">
+        <div class="col-2 text-right">
           <q-btn
             @click="inactivateFunctionsGroup"
             rounded
@@ -13,12 +13,13 @@
             color="primary"
             unelevated
             no-caps
-            label="Inativar groupo"
-          />
-        </div>
-        <div class="col text-right">
-          <q-btn
+            label="Inativar grupo"
+            />
+          </div>
+          <div class="col-2 text-right">
+            <q-btn
             @click="updateFunctionsGroup"
+            icon="bookmark"
             rounded
             color="primary"
             unelevated
