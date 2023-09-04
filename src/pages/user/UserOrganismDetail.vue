@@ -125,7 +125,7 @@
                 </q-expansion-item>
                 <q-item-section class="q-pa-xs">
                   <q-btn
-                    label="Quero participar"
+                    label="Convidar pessoa"
                     color="primary"
                     dense
                     icon="add"
@@ -143,7 +143,28 @@
                       Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
                     </div>
                   </q-card-section>
-                  <q-card-section align="center">
+                  <q-card-section>
+                    <q-select
+                      v-model="userSelected"
+                      filled
+                      clearable
+                      use-input
+                      label="Nome do usuário"
+                      option-label="userName"
+                      :options="usersOptions"
+                      @filter="getUsers"
+                      :option-value="(item) => item._id"
+                    >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Nenhum resultado
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </q-card-section>
+                  <q-card-section>
                     <q-input
                       filled
                       label="Observação"
@@ -240,6 +261,22 @@ export default defineComponent({
     this.getFunctionsSolicitationsByOrganismId()
   },
   methods: {
+    getUsers(val, update) {
+      const opt = {
+        route: "/desktop/adm/getUsers",
+        body: {
+          searchString: val,
+          isActive: 1,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        update(() => {
+          this.usersOptions = r.data.list;
+        })
+      });
+    },
     getUserIdMongo(){
       const opt = {
         route: '/desktop/adm/getUserIdMongo',
@@ -251,15 +288,15 @@ export default defineComponent({
         }else{ this.myUserIdMongo = r.data.userIdMongo}
       })
     },
-    sendReproveFeedback(){
-      this.$q.notify('IMPLEMENTAR ROTA')
-      this.dialogReproveSolicitation.open = false
-    },
-    clkReproveSolicitation(solic, solicIndex){
-      console.log(solic, 'solic')
-      console.log(solicIndex, 'solicindex')
-      this.dialogReproveSolicitation.open = true
-    },
+    // sendReproveFeedback(){
+    //   this.$q.notify('IMPLEMENTAR ROTA')
+    //   this.dialogReproveSolicitation.open = false
+    // },
+    // clkReproveSolicitation(solic, solicIndex){
+    //   console.log(solic, 'solic')
+    //   console.log(solicIndex, 'solicindex')
+    //   this.dialogReproveSolicitation.open = true
+    // },
     toggleExpandText(solicIndex){
       this.showFullText[solicIndex] = !this.showFullText[solicIndex];
     },
@@ -301,6 +338,7 @@ export default defineComponent({
         body: {
           organismId: organismId,
           functionId: this.dialogOpenSolicitation.functionConfigId,
+          userId: this.userSelected._id,
           obs: this.dialogOpenSolicitation.obs
         }
       };

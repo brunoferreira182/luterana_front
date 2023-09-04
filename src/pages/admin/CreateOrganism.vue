@@ -145,7 +145,7 @@
                 </q-item-section>
                 <q-item-section top side>
                   <div class="text-subtitle2">
-                    <q-badge color="orange-8" v-if="func.numRequired">
+                    <q-badge color="orange-8" v-if="func.isRequired">
                       Obrigatório
                     </q-badge>
                   </div>
@@ -552,6 +552,13 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
     },
     linkUserToFunction(func, funcIndex ) {
+      if (!this.functions[funcIndex].users) {
+        this.functions[funcIndex].users = [];
+      }
+      if (func.numOfOccupants && func.numOfOccupants === func.users.length) {
+        this.$q.notify("A função completou o número de participantes máximo")
+        return
+      }
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;
@@ -707,34 +714,6 @@ export default defineComponent({
       if (this.checkRequiredFields()) {
         const userData = [];
         for (const func of this.functions) {
-<<<<<<< HEAD
-          if (func.numOfOccupants === "Ilimitado") {
-            if (func.users && func.users.length > 0) {
-              for (const user of func.users) {
-                userData.push({
-                  organismFunctionConfigId: user.organismFunctionConfigId,
-                  userId: user.userId,
-                  dates: {
-                    initialDate: user.initialDate
-                  }
-                });
-              }
-            }
-          } else if (
-            typeof func.numOfOccupants === "number"
-          ) {
-            if (func.numOfOccupants === func.numOfUsers) {
-              for (const user of func.users) {
-                userData.push({
-                  organismFunctionConfigId: user.organismFunctionConfigId,
-                  userId: user.userId,
-                  dates: {
-                    initialDate: user.initialDate
-                  }
-                });
-              }
-            } 
-=======
           if (func.users && func.users.length > 0) {
             for (const user of func.users) {
               userData.push({
@@ -745,7 +724,6 @@ export default defineComponent({
                 }
               });
             }
->>>>>>> 1241a8b4eaa458f6f15deff5c207cf4faf37c3a5
           }
         }
   
