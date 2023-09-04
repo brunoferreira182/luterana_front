@@ -166,7 +166,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.usersList = r.data.list
-        this.pagination.rowsNumber = r.data.count
+        this.pagination.rowsNumber = r.data.count[0].count
       });
     },
   },

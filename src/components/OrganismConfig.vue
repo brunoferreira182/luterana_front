@@ -387,7 +387,7 @@
               <div>
                 <q-checkbox 
                 v-model="newFunction.functionProperties.numRequired"
-                label="A ocupação deve ser obrigatória?"
+                label="Este número de ocupantes deve ser preenchido?"
                 />
               </div>
               <q-select

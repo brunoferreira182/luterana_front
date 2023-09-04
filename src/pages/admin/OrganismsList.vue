@@ -99,7 +99,7 @@ export default defineComponent({
       filter: "",
       selectFilter: "Selecionar",
       pagination: {
-        page: 0,
+        page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
         sortBy: "",
@@ -130,7 +130,7 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getOrganismsList();
+      this.getOrganismsList();
     },
     getOrganismsList() {
       const opt = {
@@ -138,6 +138,7 @@ export default defineComponent({
         body: {
           filterValue: this.filter,
           page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
         },
       };
       if (this.selectFilter === "Ativos") {
