@@ -35,7 +35,7 @@
             :options="organismConfigOptions"
           />
           <q-separator class="q-mx-md" />
-          <div v-if="organismList.length">
+          <div v-if="organismList.length && $route.path.includes('/admin')">
             <q-btn
               label="Gerenciar Vínculos"
               color="primary"
@@ -117,7 +117,7 @@
                 class="q-pa-sm"
                 icon="group"
                 :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                caption="Clique para ver ou adicionar"
+                caption="Clique para ver"
               >
                 <q-item
                   v-for="user in func.users"
