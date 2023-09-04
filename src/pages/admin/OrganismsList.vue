@@ -59,6 +59,13 @@
             </div>
           </div>
         </template>
+        <!-- <template #body-cell-organismConfigName="propsConfig">
+          <q-td :props="propsConfig">
+            <q-chip>
+              {{ propsConfig.row.organismConfigName }}
+            </q-chip>
+          </q-td>
+        </template> -->
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip
@@ -79,6 +86,7 @@
             </q-chip>
           </q-td>
         </template>
+        
       </q-table>
     </q-page>
   </q-page-container>

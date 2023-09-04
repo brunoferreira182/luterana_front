@@ -50,6 +50,13 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
       {
+        name: "organismConfigName",
+        align: "left",
+        label: "Tipo de organismo",
+        field: "organismConfigName",
+        sortable: true,
+      },
+      {
         name: "organismParentName",
         align: "left",
         label: "Organismo pai",

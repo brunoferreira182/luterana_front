@@ -215,7 +215,7 @@
               </q-expansion-item>
               <div 
                 class="text-caption text-grey-7 q-mx-md"
-                v-if="func.functionProperties.numRequired === true"
+                v-if="func.functionProperties && func.functionProperties.numRequired === true"
               >
                 Esta função requer {{ func.numOfOccupants }} participantes
               </div>
@@ -684,11 +684,10 @@ export default defineComponent({
         route: "/desktop/adm/getOrganismsTypes",
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          
-          this.organismTypesOptions = r.data;
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.organismTypesOptions = r.data;
         }
       });
     },
@@ -708,6 +707,7 @@ export default defineComponent({
       if (this.checkRequiredFields()) {
         const userData = [];
         for (const func of this.functions) {
+<<<<<<< HEAD
           if (func.numOfOccupants === "Ilimitado") {
             if (func.users && func.users.length > 0) {
               for (const user of func.users) {
@@ -734,28 +734,40 @@ export default defineComponent({
                 });
               }
             } 
+=======
+          if (func.users && func.users.length > 0) {
+            for (const user of func.users) {
+              userData.push({
+                organismFunctionConfigId: user.organismFunctionConfigId,
+                userId: user.userId,
+                dates: {
+                  initialDate: user.initialDate
+                }
+              });
+            }
+>>>>>>> 1241a8b4eaa458f6f15deff5c207cf4faf37c3a5
           }
         }
-        const organismLinksIds = this.organismLinks.map(
-          (organism) => organism.organismId
-        );
+  
+        const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
         const opt = {
           route: "/desktop/adm/createOrganism",
           body: {
             organismData: this.organismData,
             functions: userData,
             organismLinks: organismLinksIds
-          }
+          },
         };
-        this.$q.loading.show();
-        useFetch(opt).then((r) => {
-          this.$q.loading.hide();
+        this.$q.loading.show()
+        useFetch(opt).then(r => {
+          this.$q.loading.hide()
           if (r.error) {
-            this.$q.notify("Ocorreu um erro, tente novamente por favor");
+            this.$q.notify(r.errorMessage);
+            return
           } else {
-            this.$q.notify("Organismo criado com sucesso!");
-            const organismId = r.data;
-            this.$router.push("/admin/organismDetail?organismId=" + organismId);
+            this.$q.notify('Organismo criado com sucesso!');
+            const organismId = r.data
+            this.$router.push('/admin/organismDetail?organismId=' + organismId)
           }
         });
       } else {
