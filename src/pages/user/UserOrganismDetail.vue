@@ -11,6 +11,9 @@
       <q-separator class="q-mx-md" />
         <div class="row justify-around q-pa-md">
           <div class="col-7 q-gutter-md q-mt-sm" align="start">
+            <div class="text-h5 ">
+              Dados
+            </div>
             <q-select
               outlined
               label="Nome da configuração"
@@ -123,7 +126,7 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-                <q-item-section class="q-pa-xs">
+                <q-item-section class="q-pa-xs" v-if="hasPermission">
                   <q-btn
                     label="Convidar pessoa"
                     color="primary"
@@ -133,65 +136,73 @@
                     flat
                     no-caps
                     @click="clkOpenDialogSolicitation(func)"
-                  />
-                </q-item-section>
-              </q-card>
-              <q-dialog v-model="dialogOpenSolicitation.open" >
-                <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                  <q-card-section align="center">
-                    <div class="text-h6">
-                      Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
-                    </div>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-select
-                      v-model="userSelected"
-                      filled
-                      clearable
-                      use-input
-                      label="Nome do usuário"
-                      option-label="userName"
-                      :options="usersOptions"
-                      @filter="getUsers"
-                      :option-value="(item) => item._id"
-                    >
-                      <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-select>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-input
-                      filled
-                      label="Observação"
-                      hint="Escreva uma breve descrição explicando o motivo para participar desta função"
-                      v-model="dialogOpenSolicitation.obs"
                     />
-                  </q-card-section>
-                  <q-card-actions align="center">
-                    <q-btn
-                      flat
-                      label="Depois"
-                      no-caps
-                      rounded
-                      color="primary"
-                      @click="dialogOpenSolicitation.open = false"
-                    />
-                    <q-btn
-                      unelevated
-                      rounded
-                      label="Enviar"
-                      no-caps
-                      color="primary"
-                      @click="sendFunctionSolicitation"
-                    />
-                  </q-card-actions>
+                  </q-item-section>
                 </q-card>
-              </q-dialog>
+                <q-dialog v-model="dialogOpenSolicitation.open" >
+                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                    <q-card-section align="center">
+                      <div class="text-h6">
+                        Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
+                      </div>
+                      <q-checkbox
+                        class="q-pt-lg full-width"
+                        v-model="changeUserToFunction"
+                        label="Deseja ser substituido por outro usuário da função?"
+                      />
+                      <div class="text-caption">
+                        Ao marcar esta opção, está substituindo a sua posição nesta função
+                      </div>
+                    </q-card-section>
+                    <q-card-section>
+                      <q-select
+                        v-model="userSelected"
+                        filled
+                        clearable
+                        use-input
+                        label="Nome do usuário"
+                        option-label="userName"
+                        :options="usersOptions"
+                        @filter="getUsers"
+                        :option-value="(item) => item._id"
+                      >
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              Nenhum resultado
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
+                    </q-card-section>
+                    <q-card-section>
+                      <q-input
+                        filled
+                        label="Observação"
+                        hint="Escreva uma breve descrição explicando o motivo para participar desta função"
+                        v-model="dialogOpenSolicitation.obs"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogOpenSolicitation.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Enviar"
+                        no-caps
+                        color="primary"
+                        @click="sendFunctionSolicitation"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
             </div>
           </div>
         </div>
@@ -208,26 +219,13 @@ export default defineComponent({
   data() {
     return {
       usersOptions: [],
-      organismVinculated: '',
-      organismTypeId: null,
-      showFullDescription: false,
-      tab: 'generalData',
+      changeUserToFunction: false,
+      hasPermission: '',
       organismName: '',
       userSelected: '',
       myUserIdMongo: '',
       organism: null,
       fields: [],
-      obsMaxLength: 55,
-      showFullText: [],
-      dialogAproveSolicitation: {
-        open: false,
-        data: {},
-      },
-      dialogReproveSolicitation: {
-        open: false,
-        obs: '',
-        data: {},
-      },
       organismConfigOptions: [],
       dialogOpenSolicitation: {
         obs: '',
@@ -236,19 +234,13 @@ export default defineComponent({
         open: false, 
       },
       newOrganism: {},
-      organismSelected: '',
       organismData: {
         organismConfigId: null,
         fields: [],
       },
       functions: [],
       solicitationData: [],
-      organismLinks: [],
-      parentOrganism: [],
-      childOrganism: [],
       organismConfigName: '',
-      organismSearch: '',
-      dialogLinks: false
     };
   },
   mounted() {
@@ -267,6 +259,8 @@ export default defineComponent({
         body: {
           searchString: val,
           isActive: 1,
+          rowsPerPage: 50,
+          page: 1
         },
       };
       this.$q.loading.show();
@@ -288,25 +282,7 @@ export default defineComponent({
         }else{ this.myUserIdMongo = r.data.userIdMongo}
       })
     },
-    // sendReproveFeedback(){
-    //   this.$q.notify('IMPLEMENTAR ROTA')
-    //   this.dialogReproveSolicitation.open = false
-    // },
-    // clkReproveSolicitation(solic, solicIndex){
-    //   console.log(solic, 'solic')
-    //   console.log(solicIndex, 'solicindex')
-    //   this.dialogReproveSolicitation.open = true
-    // },
-    toggleExpandText(solicIndex){
-      this.showFullText[solicIndex] = !this.showFullText[solicIndex];
-    },
     clkOpenDialogSolicitation(func) {
-      for (const user of func.users) {
-        if (user.userIdMongo === this.myUserIdMongo) {
-          this.$q.notify('Você já participa desta função')
-          return
-        }
-      }
       this.dialogOpenSolicitation.data = func
       this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
       this.dialogOpenSolicitation.open = true;
@@ -332,6 +308,12 @@ export default defineComponent({
       });
     },
     sendFunctionSolicitation() {
+      for (const user of this.dialogOpenSolicitation.data.users) {
+        if (user.userIdMongo === this.myUserIdMongo) {
+          this.$q.notify('Você já participa desta função')
+          return
+        }
+      }
       const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/addFunctionSolicitation",
@@ -389,6 +371,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.functions = r.data.functions
+          this.hasPermission = r.data.hasPermission
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
