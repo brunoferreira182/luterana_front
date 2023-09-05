@@ -94,7 +94,6 @@
     </q-page>
   </q-page-container>
 </template>
-
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";

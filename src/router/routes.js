@@ -25,7 +25,7 @@ const routes = [
       },
       {
         path: "/admin/organismsList",
-        component: () => import("pages/admin/OrganismsList.vue"),
+        component: () => import("src/pages/admin/OrganismsList.vue"),
       },
       {
         path: "/admin/organismDetail",

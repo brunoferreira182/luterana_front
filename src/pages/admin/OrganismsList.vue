@@ -15,13 +15,21 @@
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         :filter="filter"
-        :v-model:pagination="pagination"
+        v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row justify-end q-gutter-sm items-center">
-            <div class="col">
-              <q-select
+          <div class="col">
+            Filtrar por tipo de organismo:
+            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Congregação" />
+            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Financeiro" />
+            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Jovens" />
+            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="ORG 4" />
+            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="ORG 5" />
+          </div>
+          <div class="flex row justify-end">
+            <div class="col q-px-sm">
+              <q-select 
                 outlined
                 dense
                 debounce="300"
@@ -50,23 +58,16 @@
                 color="primary"
                 unelevated
                 no-caps
-                class="q-pa-sm"
                 rounded
                 icon="add"
+                class="q-pa-sm"
               >
                 Criar Organismo
               </q-btn>
             </div>
           </div>
         </template>
-        <!-- <template #body-cell-organismConfigName="propsConfig">
-          <q-td :props="propsConfig">
-            <q-chip>
-              {{ propsConfig.row.organismConfigName }}
-            </q-chip>
-          </q-td>
-        </template> -->
-        <template #body-cell-organismParentName="props">
+        <template #body-cell-document="props">
           <q-td :props="props">
             <q-chip
               outline
@@ -86,12 +87,10 @@
             </q-chip>
           </q-td>
         </template>
-        
       </q-table>
     </q-page>
   </q-page-container>
 </template>
-
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
@@ -122,32 +121,27 @@ export default defineComponent({
   },
   methods: {
     clkOpenOrganismDetail(e, r) {
-      const organismId = r.organismId;
+      const organismId = r._id;
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
-    },
-    getSelectedString() {
-      return this.selected.length === 0
-        ? ""
-        : `${this.selected.length}
-      despesa${this.selected.length > 1 ? "s" : ""}
-      selecionadas de ${this.expensesData.length}`;
     },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
-      this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getOrganismsList();
     },
     getOrganismsList() {
+      const page = this.pagination.page
+      const rowsPerPage = this.pagination.rowsPerPage
+      const searchString = this.filter
+      const sortBy = this.pagination.sortBy
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          filterValue: this.filter,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-          searchString: this.filter,
-          sortBy: this.pagination.sortBy
+          page: page,
+          rowsPerPage: rowsPerPage,
+          searchString: searchString,
+          sortBy: sortBy,
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -156,9 +150,9 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.organismList = r.data.list;
+        this.$q.loading.hide()
+        this.organismList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
-
       });
     },
   },
