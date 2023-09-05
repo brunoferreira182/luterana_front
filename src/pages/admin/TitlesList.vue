@@ -93,7 +93,7 @@ export default defineComponent({
   name: "TitleConfigurationList",
   data() {
     return {
-      columnsData: useTableColumns().titlesList,
+      columnsData: useTableColumns().titleConfigList,
       titlesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",

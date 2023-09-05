@@ -209,9 +209,12 @@
                 </q-card>
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
-                    <q-card-section>
-                      <div class="text-h6 text-center">
+                    <q-card-section align="center">
+                      <div class="text-h6">
                         Informe o usuário que ocupará a função
+                      </div>
+                      <div v-if="func.functionIsRequired">
+                        Esta função requer o título {{ selectedFunc.functionRequiredTitleName }}
                       </div>
                     </q-card-section>
                     <q-card-section align="center">
@@ -777,7 +780,12 @@ export default defineComponent({
       dialogLinks: false,
       parentOrganismId: '',
       organismConfigId: '',
-      testeGif: 'https://giphy.com/embed/kDTDqGrb7vzUuY9T2P',
+      pagination: {
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0,
+        sortBy: "",
+      },
     };
   },
   mounted() {
@@ -857,7 +865,10 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/getOrganismsConfigsList",
         body: {
-          searchString: this.searchString
+          searchString: this.searchString,
+          page: this.pagination.page,
+          isActive: 1,
+          rowsPerPage: this.pagination.rowsPerPage
         }
       }
       this.$q.loading.show()
@@ -1252,6 +1263,7 @@ export default defineComponent({
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
     linkUserToFunction(func, funcIndex ) {
+      console.log(func)
       this.selectedFuncIndex = funcIndex;
       this.selectedFunc = func;
       this.dialogInsertUserInFunction.open = true;
