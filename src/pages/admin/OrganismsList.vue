@@ -123,7 +123,6 @@ export default defineComponent({
   methods: {
     clkOpenOrganismDetail(e, r) {
       const organismId = r.organismId;
-      
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
     getSelectedString() {

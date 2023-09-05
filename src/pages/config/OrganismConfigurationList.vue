@@ -100,7 +100,7 @@ export default defineComponent({
       filter: "",
       selectFilter: "Selecionar",
       pagination: {
-        page: 0,
+        page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
         sortBy: "",
@@ -138,6 +138,7 @@ export default defineComponent({
         body: {
           searchString: this.filter,
           page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
           isActive: 1,
         },
       };

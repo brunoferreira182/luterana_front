@@ -136,9 +136,9 @@ export default defineComponent({
         route: "/desktop/config/getTitleConfigsList",
         body: {
           searchString: this.filter,
-          page: this.pagination.page,
           isActive: 1,
-          page: 0
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage
         },
       };
       if (this.selectFilter === "Ativos") {
