@@ -273,6 +273,11 @@ const useUtils = {
           route: "/user/userFunctionsList",
           icon: "comment_bank",
         },
+        {
+          label: "Lista de solicitações",
+          route: "/user/userSolicitationsList",
+          icon: "format_list_bulleted",
+        },
       ],
     };
     return obj[type];

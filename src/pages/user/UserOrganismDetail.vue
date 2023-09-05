@@ -139,7 +139,7 @@
                     />
                   </q-item-section>
                 </q-card>
-                <q-dialog v-model="dialogOpenSolicitation.open" >
+                <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                   <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
                     <q-card-section align="center">
                       <div class="text-h6">
@@ -147,11 +147,11 @@
                       </div>
                       <q-checkbox
                         class="q-pt-lg full-width"
-                        v-model="changeUserToFunction"
+                        v-model="isReplacement"
                         label="Deseja ser substituido por outro usuário da função?"
                       />
                       <div class="text-caption">
-                        Ao marcar esta opção, está substituindo a sua posição nesta função
+                        Ao marcar esta opção, o usuário selecionado estará substituindo a sua posição nesta função
                       </div>
                     </q-card-section>
                     <q-card-section>
@@ -219,7 +219,7 @@ export default defineComponent({
   data() {
     return {
       usersOptions: [],
-      changeUserToFunction: false,
+      isReplacement: false,
       hasPermission: '',
       organismName: '',
       userSelected: '',
@@ -253,6 +253,11 @@ export default defineComponent({
     this.getFunctionsSolicitationsByOrganismId()
   },
   methods: {
+    clearDialogSolicitation(){
+      this.dialogOpenSolicitation.functionConfigId = ''
+      this.userSelected._id = ''
+      this.dialogOpenSolicitation.obs = ''
+    },
     getUsers(val, update) {
       const opt = {
         route: "/desktop/adm/getUsers",
@@ -308,11 +313,9 @@ export default defineComponent({
       });
     },
     sendFunctionSolicitation() {
-      for (const user of this.dialogOpenSolicitation.data.users) {
-        if (user.userIdMongo === this.myUserIdMongo) {
-          this.$q.notify('Você já participa desta função')
-          return
-        }
+      if (this.userSelected._id === this.myUserIdMongo) {
+        this.$q.notify('Você já participa desta função')
+        return
       }
       const organismId = this.$route.query.organismId
       const opt = {
