@@ -140,6 +140,7 @@ export default defineComponent({
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
           isActive: 1,
+          rowsPerPage: this.pagination.rowsPerPage
         },
       };
       if (this.selectFilter === "Ativos") {
