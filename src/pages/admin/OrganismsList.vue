@@ -19,14 +19,6 @@
         @request="nextPage"
       >
         <template #top-right>
-          <div class="col">
-            Filtrar por tipo de organismo:
-            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Congregação" />
-            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Financeiro" />
-            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="Jovens" />
-            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="ORG 4" />
-            <q-btn size="sm" class="q-mx-sm" outline color="primary" label="ORG 5" />
-          </div>
           <div class="flex row justify-end">
             <div class="col q-px-sm">
               <q-select 
@@ -40,12 +32,12 @@
             </div>
             <div class="col">
               <q-input
-                @keyup="getOrganismsList"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
+              @keyup="getOrganismsList"
+              outlined
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Procurar"
               >
                 <template #append>
                   <q-icon name="search" />
@@ -54,15 +46,15 @@
             </div>
             <div class="col text-right">
               <q-btn
-                @click="$router.push('/admin/createOrganism')"
-                color="primary"
-                unelevated
-                no-caps
-                rounded
-                icon="add"
-                class="q-pa-sm"
+              @click="$router.push('/admin/createOrganism')"
+              color="primary"
+              unelevated
+              no-caps
+              rounded
+              icon="add"
+              class="q-pa-sm"
               >
-                Criar Organismo
+              Criar Organismo
               </q-btn>
             </div>
           </div>
@@ -70,24 +62,35 @@
         <template #body-cell-document="props">
           <q-td :props="props">
             <q-chip
-              outline
-              v-if="props.row.organismParentName"
-              color="green"
-              size="14px"
+            outline
+            v-if="props.row.organismParentName"
+            color="green"
+            size="14px"
             >
-              {{ props.row.organismParentName }}
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="!props.row.organismParentName"
-              color="red"
-              size="14px"
-            >
-              Nenhum grupo
-            </q-chip>
-          </q-td>
-        </template>
-      </q-table>
+            {{ props.row.organismParentName }}
+          </q-chip>
+          <q-chip
+          outline
+          v-else-if="!props.row.organismParentName"
+          color="red"
+          size="14px"
+          >
+          Nenhum grupo
+        </q-chip>
+      </q-td>
+    </template>
+  </q-table>
+  <div class="text-center text-h5 q-my-sm">Filtre por tipo de organismo:</div>
+  <div class="text-left">
+    <q-btn 
+      v-for="name in organismsConfigsNamesList" 
+      :key="name"
+      size="md"
+      class="q-ma-sm"
+    >
+    {{ name.organismConfigName }}
+    </q-btn>
+  </div>
     </q-page>
   </q-page-container>
 </template>
@@ -95,6 +98,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { useColorsPalette } from "stores/colorPalette";
 
 export default defineComponent({
   name: "OrganismTypeList",
@@ -102,8 +106,10 @@ export default defineComponent({
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
+      organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
+      filterRow: [],
       selectFilter: "Selecionar",
       pagination: {
         page: 1,
@@ -111,6 +117,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      colorsData: useColorsPalette().colors
     };
   },
   mounted() {
@@ -118,6 +125,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getOrganismsList();
+    this.getOrganismsConfigsNamesList();
   },
   methods: {
     clkOpenOrganismDetail(e, r) {
@@ -155,6 +163,21 @@ export default defineComponent({
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },
+    getOrganismsConfigsNamesList() {
+      const opt = {
+        route: '/desktop/adm/getOrganismsConfigsNamesList',
+      }
+      useFetch(opt).then((r) => {
+        if(!r.error) {
+          this.organismsConfigsNamesList = r.data
+        } else {
+          console.log("Deu erro getOrganismConfigsNameList")
+        }
+      })
+    },
+    getColorForButton() {
+      return this.colorsData
+    }
   },
 });
 </script>
