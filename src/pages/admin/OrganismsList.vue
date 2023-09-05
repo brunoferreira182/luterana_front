@@ -147,6 +147,8 @@ export default defineComponent({
           filterValue: this.filter,
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
+          searchString: this.filter,
+          sortBy: this.pagination.sortBy
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -156,6 +158,8 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         this.organismList = r.data.list;
+        this.pagination.rowsNumber = r.data.count[0].count
+
       });
     },
   },

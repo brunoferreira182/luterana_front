@@ -110,7 +110,7 @@ export default defineComponent({
       filter: "",
       selectFilter: "Selecionar",
       pagination: {
-        page: 0,
+        page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
         sortBy: "",
