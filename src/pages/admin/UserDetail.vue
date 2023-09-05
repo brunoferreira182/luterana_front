@@ -233,6 +233,12 @@ export default defineComponent({
       dialogInactiveUser: {
         open: false,
       },
+      pagination: {
+        page: 1,
+        rowsPerPage: 10,
+        rowsNumber: 0,
+        sortBy: "",
+      },
       userName: '',
     };
   },
@@ -257,7 +263,9 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/getTitleNamesList",
         body: {
-          searchString: val
+          searchString: val,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage
         }
       };
       this.$q.loading.show();
