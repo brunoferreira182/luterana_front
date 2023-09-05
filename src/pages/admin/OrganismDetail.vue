@@ -1144,7 +1144,9 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          searchString: val
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
         }
       };
       useFetch(opt).then((r) => {
@@ -1162,7 +1164,6 @@ export default defineComponent({
         userId: this.userSelected._id,
         initialDate: this.dialogInsertUserInFunction.initialDate,
       });
-      const organismId = this.$route.query.organismId;
       let userData = {}
       for (const user of this.functions[selectedFuncIndex].users) {
         userData = {
@@ -1176,13 +1177,15 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismId: organismId,
+          organismId: this.$route.query.organismId,
           functionData: userData
         }
       };
       useFetch(opt).then((r) => {
         if(r.error){
           this.$q.notify(r.errorMessage)
+          this.functions[selectedFuncIndex].users = []
+          return
         } else{
           this.getOrganismDetailById()
           this.clearDialogAndFunctions();
@@ -1233,6 +1236,8 @@ export default defineComponent({
         body: {
           searchString: val,
           isActive: 1,
+          page: 1,
+          rowsPerPage: 50
         },
       };
       this.$q.loading.show();

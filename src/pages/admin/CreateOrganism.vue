@@ -726,7 +726,6 @@ export default defineComponent({
             }
           }
         }
-  
         const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
         const opt = {
           route: "/desktop/adm/createOrganism",

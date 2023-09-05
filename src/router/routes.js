@@ -182,7 +182,7 @@ const routes = [
         component: () => import("pages/attach/SentAttachments.vue"),
       },
       
-      //Organismos do usuário
+      //Organismos e usuário
       { path: "/orgs", redirect: "/orgs/userDashboard" },
       {
         path: "/orgs/userDashboard",

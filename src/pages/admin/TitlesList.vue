@@ -110,7 +110,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    // this.getTitleConfigs();
+    this.getTitleConfigs();
   },
   methods: {
     clkOpenTitleDetail(e, r) {
@@ -138,6 +138,7 @@ export default defineComponent({
           searchString: this.filter,
           page: this.pagination.page,
           isActive: 1,
+          page: 0
         },
       };
       if (this.selectFilter === "Ativos") {
