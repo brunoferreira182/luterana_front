@@ -4,9 +4,9 @@
       <q-table
         flat
         class="bg-accent"
-        title="Pesquisar organismos"
+        title="Organismos"
         :columns="columnsData"
-        :rows="pageOrganismList"
+        :rows="searchAllOrganismsList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -21,7 +21,7 @@
       >
         <template #top-right>
           <div class="flex row justify-end q-gutter-sm items-center">
-            <div>
+            <!-- <div>
               <q-btn
                 v-if="verifyBtn === 1"
                 icon="person"
@@ -59,7 +59,7 @@
                   Exibir os seus organismos
                 </q-tooltip>
               </q-btn>
-            </div>
+            </div> -->
             <div class="col">
               <q-select
                 outlined
@@ -142,7 +142,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getAllOrganismsByString();
-    this.getMyOrganismsList();
+    // this.getMyOrganismsList();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -179,8 +179,8 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.searchAllOrganismsList = r.data.list;
       });
-      this.pageOrganismList = this.userOrganismList
-      this.$forceUpdate()
+      // this.pageOrganismList = this.userOrganismList
+      // this.$forceUpdate()
     },
     getMyOrganismsList() {
       const opt = {
@@ -197,7 +197,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         this.userOrganismList = r.data.organisms;
-        this.pageOrganismList = this.userOrganismList
+        // this.pageOrganismList = this.userOrganismList
       });
     },
     showMyOrganisms() {

@@ -1144,7 +1144,9 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
-          searchString: val
+          searchString: val,
+          page: 0,
+          rowsPerPage: 50
         }
       };
       useFetch(opt).then((r) => {

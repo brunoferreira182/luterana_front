@@ -264,9 +264,9 @@ const useUtils = {
           icon: "folder_shared",
         },
         {
-          label: "Pesquisar organismos",
+          label: "Organismos",
           route: "/user/organismsList",
-          icon: "search",
+          icon: "diversity_2",
         },
         {
           label: "Lista das minhas funções",
