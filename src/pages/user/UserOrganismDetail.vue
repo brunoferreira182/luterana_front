@@ -186,15 +186,13 @@ export default defineComponent({
         body: {
           searchString: val,
           isActive: 1,
-          rowsPerPage: 50,
-          page: 1
         },
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data;
         })
       });
     },

@@ -28,17 +28,17 @@ export const useTableColumns = defineStore("tableColumns", {
     ],
     pageOrganismList: [
       {
-        name: "nome",
+        name: "organismName",
         align: "left",
         label: "Nome do organismo",
-        field: "nome",
+        field: "organismName",
         sortable: true,
       },
       {
         name: "data_de_criacao",
         align: "left",
         label: "Data de criação",
-        field: (row) => row.data_de_criacao.dateLocale,
+        field: "createdAt",
         sortable: true,
       },
     ],
