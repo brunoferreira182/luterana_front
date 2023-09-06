@@ -4,79 +4,63 @@ export const useColorsPalette = defineStore("colorsPalette", {
   state: () => ({ 
     colors: [
       {
-        color: "#ff0000",
+        color: "#f44336",
         name: "vermelho"
       },
       {
-        color: "#ff7f00",
+        color: "#ff9800",
         name: "laranja"
       },
       {
-        color: "#ffff00",
+        color: "#ffeb3b",
         name: "amarelo"
       },
       {
-        color: "#00ff00",
+        color: "#4caf50",
         name: "verde"
       },
       {
-        color: "#0000ff",
+        color: "#2196f3",
         name: "azul"
       },
       {
-        color: "#ff00ff",
+        color: "#3f51b5",
         name: "violeta"
       },
       {
-        color: "#ff007f",
+        color: "#e91e63",
         name: "rosa"
       },
       {
-        color: "#800080",
+        color: "#9c27b0",
         name: "roxo"
       },
       {
-        color: "#ffffff",
-        name: "branco"
-      },
-      {
-        color: "#c0c0c0",
+        color: "#9e9e9e",
         name: "cinza"
       },
       {
-        color: "#000000",
-        name: "preto"
-      },
-      {
-        color: "#00ffff",
+        color: "#03a9f4",
         name: "azul claro"
       },
       {
-        color: "#00ff7f",
+        color: "#8bc34a",
         name: "verde claro"
       },
       {
-        color: "#ffff7f",
+        color: "#ffc107",
         name: "amarelo claro"
       },
       {
-        color: "#ff7f7f",
-        name: "laranja claro"
+        color: "#ff5722",
+        name: "laranja escuro"
       },
       {
-        color: "#ff7f00",
-        name: "rosa claro"
+        color: "#607d8b",
+        name: "azul cinza"
       },
       {
-        color: "#f5f5f5",
-        name: "bege"
-      },
-      {
-        color: "#c0c0c0",
-        name: "cinza"
-      },
-      {
-        color: "#663300",
+        color: "#795548",
         name: "marrom"
       }
     ]

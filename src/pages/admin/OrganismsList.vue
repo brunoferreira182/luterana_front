@@ -80,13 +80,16 @@
       </q-td>
     </template>
   </q-table>
-  <div class="text-center text-h5 q-my-sm">Filtre por tipo de organismo:</div>
   <div class="text-left">
     <q-btn 
-      v-for="name in organismsConfigsNamesList" 
+      v-for="(name, nameIndex) in organismsConfigsNamesList" 
       :key="name"
       size="md"
       class="q-ma-sm"
+      color="primary"
+      outline
+      rounded
+      @click="filterOrganisms(nameIndex)"
     >
     {{ name.organismConfigName }}
     </q-btn>
@@ -98,7 +101,6 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
-import { useColorsPalette } from "stores/colorPalette";
 
 export default defineComponent({
   name: "OrganismTypeList",
@@ -110,14 +112,13 @@ export default defineComponent({
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       filterRow: [],
-      selectFilter: "Selecionar",
+      selectFilter: null,
       pagination: {
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
         sortBy: "",
       },
-      colorsData: useColorsPalette().colors
     };
   },
   mounted() {
@@ -143,6 +144,7 @@ export default defineComponent({
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
       const sortBy = this.pagination.sortBy
+      const selectFilter = this.selectFilter
       const opt = {
         route: "/desktop/adm/getOrganismsList",
         body: {
@@ -150,6 +152,7 @@ export default defineComponent({
           rowsPerPage: rowsPerPage,
           searchString: searchString,
           sortBy: sortBy,
+          selectFilter: selectFilter
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -175,8 +178,12 @@ export default defineComponent({
         }
       })
     },
-    getColorForButton() {
-      return this.colorsData
+    filterOrganisms(nameIndex) {
+      if(nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length) {
+        const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
+        this.selectFilter = selectedOrganism.organismConfigName 
+      }
+      this.getOrganismsList()
     }
   },
 });

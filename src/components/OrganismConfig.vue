@@ -86,6 +86,37 @@
             :label="$route.query.organismConfigId && requiresLink === true ? 'Alterar filiação': 'Criar filiação'"
             @click="dialogCreateAffiliation = true"
           />
+          <q-separator/>
+          <div>
+            <div class="q-mb-md">Gostaria de definir uma cor para identificar essa configuração?</div>
+            <q-btn 
+              unelevated
+              no-caps
+              rounded
+              color="primary" 
+              :label="'Definir cor'"
+              @click="dialogSelectColor = true"
+            />
+          </div>
+          <q-dialog
+            v-model="dialogSelectColor"
+            color="primary"
+          >
+            <q-card style="border-radius: 1rem;width: 400px;">
+              <q-card-section>
+                <div class="text-h6 text-center">Nova cor</div>
+                <div class="q-pa-md">
+                  <q-color
+                    no-footer
+                    no-header-tabs
+                    default-view="palette"
+                    :palette="colorPalette"
+                    class="my-picker"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-dialog>
           <q-dialog 
             v-model="dialogCreateAffiliation"
             color="primary"
@@ -597,6 +628,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../boot/useFetch";
+import { useColorsPalette } from "stores/colorPalette";
 export default defineComponent({
   name: "OrganismsConfigDetail",
   data() {
@@ -612,6 +644,7 @@ export default defineComponent({
       typeSelected: null,
       requiresLink: false,
       dialogCreateAffiliation: false,
+      dialogSelectColor: false,
       valueSelected: "",
       searchString: '',
       newFunctionDialog: false,
@@ -628,6 +661,7 @@ export default defineComponent({
         isRequired: true,
         visions: []
       },
+      colorPalette: useColorsPalette().colors,
       editFunctionDialog: {
         open: false,
         function: {
@@ -713,9 +747,6 @@ export default defineComponent({
     getFunctionsGroupList() {
       const opt = {
         route: "/desktop/config/getFunctionsGroupList",
-        body: {
-          isActive: 1,
-        },
       };
       useFetch(opt).then((r) => {
         this.functionsGroupList = r.data.list;
@@ -848,7 +879,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (!r.error) {
-          this.fieldTypesOptions = r.data.list;
+          this.fieldTypesOptions = r.data;
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -1087,7 +1118,7 @@ export default defineComponent({
           console.log("Erro getOrganismConfigsList")
           return
         }
-        this.organismConfigsList = r.data.list
+        this.organismConfigsList = r.data
       })
     },
     confirmChildOf() {
@@ -1111,7 +1142,7 @@ export default defineComponent({
           console.log("erro em getOccupantsOptions")
         }
       })
-    }
+    },
   },
 });
 </script>
