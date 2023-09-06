@@ -68,17 +68,28 @@
             size="14px"
             >
             {{ props.row.organismParentName }}
-          </q-chip>
-          <q-chip
-          outline
-          v-else-if="!props.row.organismParentName"
-          color="red"
-          size="14px"
-          >
-          Nenhum grupo
-        </q-chip>
-      </q-td>
-    </template>
+            </q-chip>
+            <q-chip
+              outline
+              v-else-if="!props.row.organismParentName"
+              color="red"
+              size="14px"
+            >
+              Nenhum grupo
+            </q-chip>
+          </q-td>
+        </template>
+        <template #body-cell-organismConfigName="props">
+          <q-td :props="props">
+            <q-chip
+              v-if="props.row.organismConfigName"
+              color="yellow"
+              size="14px"
+            >
+            {{ props.row.organismConfigName }}
+            </q-chip>
+          </q-td>
+        </template>
   </q-table>
   <div class="text-left">
     <q-btn 
@@ -86,7 +97,7 @@
       :key="name"
       size="md"
       class="q-ma-sm"
-      color="primary"
+      :style="{ color: name.organismStyle}"
       outline
       rounded
       @click="filterOrganisms(nameIndex)"

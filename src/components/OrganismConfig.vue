@@ -960,6 +960,7 @@ export default defineComponent({
           organismConfigId: organismConfigId,
           organismFields: this.organismFields,
           requiresLink: this.requiresLink,
+          organismStyle: this.selectedColor
         },
       };
       useFetch(opt).then((r) => {
@@ -1144,7 +1145,7 @@ export default defineComponent({
     },
     confirmChildOf() {
       this.$q.notify("Organismo agrupado com sucesso")
-      this.requiresLink = true;
+      this.requiresLink = true;confirmColor
       this.dialogCreateAffiliation = false
     },
     dialogCancelAffiliation() {
