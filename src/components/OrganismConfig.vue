@@ -112,8 +112,26 @@
                     default-view="palette"
                     :palette="colorPalette"
                     class="my-picker"
+                    v-model="newColor"
                   />
                 </div>
+              </q-card-section>
+              <q-card-section align="center" class="q-mb-md">
+                <q-btn
+                  flat
+                  label="Cancelar"
+                  no-caps
+                  color="primary"
+                  @click="dialogSelectColor = false"
+                />
+                <q-btn
+                  unelevated
+                  rounded
+                  label="Confirmar"
+                  no-caps
+                  color="primary"
+                  @click="confirmColor"
+                />
               </q-card-section>
             </q-card>
           </q-dialog>
@@ -635,6 +653,8 @@ export default defineComponent({
     return {
       organismConfigsList: [],
       childOfOrganism: [],
+      newColor: '',
+      selectedColor: '',
       fieldTypesOptions: [],
       selectedPermissions: [],
       organismConfigNamesOptions: [],
@@ -904,7 +924,8 @@ export default defineComponent({
           organismConfigName: this.organismConfigName,
           requiresLink: this.requiresLink,
           organismFields: this.organismFields,
-          functions: this.functions
+          functions: this.functions,
+          organismStyle: this.selectedColor
         },
       };
       this.$q.loading.show()
@@ -1143,6 +1164,16 @@ export default defineComponent({
         }
       })
     },
+    confirmColor() {
+      this.selectedColor = this.newColor;
+      if(this.selectedColor !== '') {
+        this.$q.notify("Cor selecionada com sucesso")
+      } else {
+        this.$q.notify("Selecione uma cor para confirmar")
+        return
+      }
+      this.dialogSelectColor = false
+    }
   },
 });
 </script>
