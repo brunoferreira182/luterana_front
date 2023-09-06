@@ -147,6 +147,7 @@ export default defineComponent({
       const page = this.pagination.page
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
+      console.log(searchString)
       const sortBy = this.pagination.sortBy
       const opt = {
         route: "/desktop/adm/getUsersList",
@@ -164,8 +165,9 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
+        this.usersOptions = r.data;
         this.usersList = r.data.list
-        this.pagination.rowsNumber = r.data.count[0].count
+        this.pagination.rowsNumber = r.data.count.count
       });
     },
   },

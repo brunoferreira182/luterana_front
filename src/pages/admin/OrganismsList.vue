@@ -1,110 +1,55 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-table
-        flat
-        class="bg-accent"
-        title="Organismos"
-        :columns="columnsData"
-        :rows="organismList"
-        row-key="_id"
-        @row-click="clkOpenOrganismDetail"
-        virtual-scroll
-        rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento"
-        no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]"
-        :filter="filter"
-        v-model:pagination="pagination"
-        @request="nextPage"
-      >
+      <q-table flat class="bg-accent" title="Organismos" :columns="columnsData" :rows="organismList" row-key="_id"
+        @row-click="clkOpenOrganismDetail" virtual-scroll rows-per-page-label="Registros por página"
+        no-data-label="Nenhum dado inserido até o momento" no-results-label="A pesquisa não retornou nenhum resultado"
+        :rows-per-page-options="[10, 20, 30, 50]" :filter="filter" v-model:pagination="pagination" @request="nextPage">
         <template #top-right>
           <div class="flex row justify-end">
             <div class="col q-px-sm">
-              <q-select 
-                outlined
-                dense
-                debounce="300"
-                v-model="selectFilter"
-                :options="selectStatus"
-                @update:model-value="getOrganismsList"
-              ></q-select>
+              <q-select outlined dense debounce="300" v-model="selectFilter" :options="selectStatus"
+                @update:model-value="getOrganismsList"></q-select>
             </div>
             <div class="col">
-              <q-input
-              @keyup="getOrganismsList"
-              outlined
-              dense
-              debounce="300"
-              v-model="filter"
-              placeholder="Procurar"
-              >
+              <q-input @keyup="getOrganismsList" outlined dense debounce="300" v-model="filter" placeholder="Procurar">
                 <template #append>
                   <q-icon name="search" />
                 </template>
               </q-input>
             </div>
             <div class="col text-right">
-              <q-btn
-              @click="$router.push('/admin/createOrganism')"
-              color="primary"
-              unelevated
-              no-caps
-              rounded
-              icon="add"
-              class="q-pa-sm"
-              >
-              Criar Organismo
+              <q-btn @click="$router.push('/admin/createOrganism')" color="primary" unelevated no-caps rounded icon="add"
+                class="q-pa-sm">
+                Criar Organismo
               </q-btn>
             </div>
           </div>
         </template>
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
-            <q-chip
-            outline
-            v-if="props.row.organismParentName"
-            color="green"
-            size="14px"
-            >
-            {{ props.row.organismParentName }}
+            <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
+              {{ props.row.organismParentName }}
             </q-chip>
-            <q-chip
-              outline
-              v-else-if="!props.row.organismParentName"
-              color="red"
-              size="14px"
-            >
+            <q-chip outline v-else-if="!props.row.organismParentName" color="red" size="14px">
               Nenhum grupo
             </q-chip>
           </q-td>
         </template>
         <template #body-cell-organismConfigName="props">
           <q-td :props="props">
-            <q-chip
-              v-if="props.row.organismConfigName"
-              color="yellow"
-              size="14px"
-            >
-            {{ props.row.organismConfigName }}
+            <q-chip v-if="props.row.organismConfigName" color="yellow" size="14px">
+              {{ props.row.organismConfigName }}
             </q-chip>
           </q-td>
         </template>
-  </q-table>
-  <div class="text-left">
-    <q-btn 
-      v-for="(name, nameIndex) in organismsConfigsNamesList" 
-      :key="name"
-      size="md"
-      class="q-ma-sm"
-      :style="{ color: name.organismStyle}"
-      outline
-      rounded
-      @click="filterOrganisms(nameIndex)"
-    >
-    {{ name.organismConfigName }}
-    </q-btn>
-  </div>
+      </q-table>
+      <div class="text-left">
+        <q-btn v-for="(name, nameIndex) in organismsConfigsNamesList" :key="name" size="md" class="q-ma-sm"
+          :style="{ color: name.organismStyle }" outline rounded @click="filterOrganisms(nameIndex)">
+          {{ name.organismConfigName }}
+        </q-btn>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -182,7 +127,7 @@ export default defineComponent({
         route: '/desktop/adm/getOrganismsConfigsNamesList',
       }
       useFetch(opt).then((r) => {
-        if(!r.error) {
+        if (!r.error) {
           this.organismsConfigsNamesList = r.data
         } else {
           console.log("Deu erro getOrganismConfigsNameList")
@@ -190,9 +135,9 @@ export default defineComponent({
       })
     },
     filterOrganisms(nameIndex) {
-      if(nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length) {
+      if (nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length) {
         const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
-        this.selectFilter = selectedOrganism.organismConfigName 
+        this.selectFilter = selectedOrganism.organismConfigName
       }
       this.getOrganismsList()
     }
