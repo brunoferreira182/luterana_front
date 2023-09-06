@@ -1,26 +1,57 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-table flat class="bg-accent" title="Organismos" :columns="columnsData" :rows="organismList" row-key="_id"
-        @row-click="clkOpenOrganismDetail" virtual-scroll rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento" no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]" :filter="filter" v-model:pagination="pagination" @request="nextPage">
+      <q-table 
+        flat class="bg-accent" 
+        title="Organismos" 
+        :columns="columnsData" 
+        :rows="organismList" 
+        row-key="_id"
+        @row-click="clkOpenOrganismDetail" 
+        virtual-scroll 
+        rows-per-page-label="Registros por página"
+        no-data-label="Nenhum dado inserido até o momento" 
+        no-results-label="A pesquisa não retornou nenhum resultado"
+        :rows-per-page-options="[10, 20, 30, 50]" 
+        :filter="filter" 
+        v-model:pagination="pagination" 
+        @request="nextPage">
         <template #top-right>
-          <div class="flex row justify-end">
-            <div class="col q-px-sm">
-              <q-select outlined dense debounce="300" v-model="selectFilter" :options="selectStatus"
-                @update:model-value="getOrganismsList"></q-select>
+          <div class="flex row q-gutter-sm items-center text-right">
+            <div class="col">
+              <q-select 
+                outlined 
+                dense 
+                debounce="300" 
+                v-model="selectFilter" 
+                :options="selectStatus"
+                @update:model-value="getOrganismsList"
+              />
             </div>
             <div class="col">
-              <q-input @keyup="getOrganismsList" outlined dense debounce="300" v-model="filter" placeholder="Procurar">
+              <q-input 
+                @keyup="getOrganismsList" 
+                outlined 
+                dense 
+                debounce="300" 
+                v-model="filter" 
+                placeholder="Procurar"
+              >
                 <template #append>
                   <q-icon name="search" />
                 </template>
               </q-input>
             </div>
-            <div class="col text-right">
-              <q-btn @click="$router.push('/admin/createOrganism')" color="primary" unelevated no-caps rounded icon="add"
-                class="q-pa-sm">
+            <div class="col">
+              <q-btn 
+                @click="$router.push('/admin/createOrganism')" 
+                color="primary" 
+                unelevated 
+                no-caps 
+                rounded 
+                dense
+                icon="add"
+              >
                 Criar Organismo
               </q-btn>
             </div>

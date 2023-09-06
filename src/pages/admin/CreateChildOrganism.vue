@@ -536,7 +536,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data;
         })
       });
     },

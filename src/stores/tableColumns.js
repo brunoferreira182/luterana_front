@@ -83,7 +83,7 @@ export const useTableColumns = defineStore("tableColumns", {
       {
         name: "organismParentName",
         align: "left",
-        label: "Organismo pai",
+        label: "Organismo superior",
         field: "organismParentName",
         sortable: true,
       },
