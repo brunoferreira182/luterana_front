@@ -11,7 +11,7 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-7 q-gutter-md q-mt-sm" align="start">
-          <div class="text-h5 ">
+          <div class="text-h5 no-margin q-px-md">
             Dados
           </div>
           <q-select outlined label="Nome da configuração" option-label="organismConfigName"
