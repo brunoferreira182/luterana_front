@@ -6,7 +6,7 @@
         class="bg-accent"
         title="Organismos"
         :columns="columnsData"
-        :rows="searchAllOrganismsList"
+        :rows="userOrganismList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -141,8 +141,8 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAllOrganismsByString();
-    // this.getMyOrganismsList();
+    // this.getAllOrganismsByString();
+    this.getOrganismsByUserId();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -183,7 +183,7 @@ export default defineComponent({
       // this.pageOrganismList = this.userOrganismList
       // this.$forceUpdate()
     },
-    getMyOrganismsList() {
+    getOrganismsByUserId() {
       const opt = {
         route: "/desktop/commonUsers/getOrganismsByUserId",
         body: {

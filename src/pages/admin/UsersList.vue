@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getUsers"
+                @update:model-value="getUsersList"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getUsers"
+                @keyup="getUsersList"
                 outlined
                 dense
                 debounce="300"
@@ -120,7 +120,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getUsers();
+    this.getUsersList();
   },
   methods: {
     getStatusColor(isActive) {
@@ -141,15 +141,15 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getUsers();
+      this.getUsersList();
     },
-    getUsers() {
+    getUsersList() {
       const page = this.pagination.page
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
       const sortBy = this.pagination.sortBy
       const opt = {
-        route: "/desktop/adm/getUsers",
+        route: "/desktop/adm/getUsersList",
         body: {
           page: page,
           rowsPerPage: rowsPerPage,

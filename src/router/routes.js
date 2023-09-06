@@ -210,6 +210,10 @@ const routes = [
         path: "/user/userPersonalData",
         component: () => import("pages/user/UserPersonalData.vue"),
       }, 
+      {
+        path: "/user/userSolicitationsList",
+        component: () => import("pages/user/UserSolicitationsList.vue"),
+      }, 
     ],
   },
 
