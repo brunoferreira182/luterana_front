@@ -67,13 +67,13 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getAllOrganismsByString"
+                @update:model-value="getOrganismsByUserId"
               ></q-select>
             </div>
             
             <div class="col">
               <q-input
-                @keyup="getAllOrganismsByString"
+                @keyup="getOrganismsByUserId"
                 outlined
                 dense
                 debounce="300"
@@ -163,11 +163,31 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       // this.getAllOrganismsByString();
     },
-    getAllOrganismsByString() {
+    // getAllOrganismsByString() {
+    //   const opt = {
+    //     route: "/desktop/commonUsers/getAllOrganismsByString",
+    //     body: {
+    //       searchString: this.filter,
+    //       page: this.pagination.page,
+    //       rowsPerPage: this.pagination.rowsPerPage
+    //     },
+    //   };
+    //   if (this.selectFilter === "Ativos") {
+    //     opt.body.isActive = 1;
+    //   } else if (this.selectFilter === "Inativos") {
+    //     opt.body.isActive = 0;
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     this.searchAllOrganismsList = r.data.list;
+    //   });
+    //   // this.pageOrganismList = this.userOrganismList
+    //   // this.$forceUpdate()
+    // },
+    getOrganismsByUserId() {
       const opt = {
-        route: "/desktop/commonUsers/getAllOrganismsByString",
+        route: "/desktop/commonUsers/getOrganismsByUserId",
         body: {
-          searchString: this.filter,
+          filterValue: this.filter,
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage
         },
@@ -178,27 +198,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.searchAllOrganismsList = r.data.list;
-      });
-      // this.pageOrganismList = this.userOrganismList
-      // this.$forceUpdate()
-    },
-    getOrganismsByUserId() {
-      const opt = {
-        route: "/desktop/commonUsers/getOrganismsByUserId",
-        body: {
-          filterValue: this.filter,
-          page: this.pagination.page,
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      useFetch(opt).then((r) => {
-        this.userOrganismList = r.data.organisms;
-        // this.pageOrganismList = this.userOrganismList
+        this.userOrganismList = r.data.list;
       });
     },
     showMyOrganisms() {

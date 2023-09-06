@@ -773,6 +773,7 @@ export default defineComponent({
       childOrganismsData: [],
       parentOrganism: [],
       childOrganism: [],
+      
       linkedOrganismsData: [],
       organismConfigsList: [],
       childOrganismsConfigData: [],
@@ -801,9 +802,24 @@ export default defineComponent({
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
     this.getOrganismsConfigsList()
-    // this.getFunctionsSolicitationsByOrganismId()
+    this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    getUserVisionPermissionByOrganismId() {
+      const opt = {
+        route: "/desktop/adm/getUserVisionPermissionByOrganismId",
+        body: {
+          organismId: this.$route.query.organismId
+        }
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          console.log()
+        }
+      });
+    },
     getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {

@@ -51,8 +51,8 @@
           <q-td :props="props">
             <q-chip
               outline
-              v-if="props.row.status.status === 'accepted'"
-              color="green"
+              v-if="props.row.status && props.row.status.status === 'accepted'"
+              color="green-8"
               size="14px"
             >
               Aceito
@@ -63,7 +63,15 @@
               color="yellow-8"
               size="14px"
             >
-              Novo
+              Aguardando
+            </q-chip>
+            <q-chip
+              outline
+              v-else-if="props.row.status && props.row.status.status === 'refused'"
+              color="red-8"
+              size="14px"
+            >
+              Recusado
             </q-chip>
           </q-td>
         </template>
@@ -83,7 +91,7 @@
             <q-card-actions align="center">
               <q-btn
                 flat
-                label="Depois"
+                label="Recusar"
                 no-caps
                 rounded
                 color="primary"
@@ -121,6 +129,7 @@ export default defineComponent({
       filter: "",
       selectFilter: "Selecionar",
       gif,
+      disableRow: false,
       dialogOpenSolicitation: {
         open: false,
         data: {},
@@ -172,6 +181,7 @@ export default defineComponent({
           return
         }else{ 
           this.$q.notify('Convite recusado!')
+          this.dialogOpenSolicitation.open = false
           this.getFunctionsSolicitationsByUserId()
         }
       })
@@ -201,18 +211,24 @@ export default defineComponent({
           setTimeout(() => {
             this.hideDiv = false;
             this.dialogOpenSolicitation.open = false
+            this.getFunctionsSolicitationsByUserId()
           }, 3800);
         }
       })
     },
     clkOpenSolicitation(e, r){
-      console.log(r, 'rrrrrrrrrrrrrrrrrrr')
-      this.dialogOpenSolicitation.data = r
-      this.dialogOpenSolicitation.open = true
-    },
-    clkOpenOrganismDetail(e, r) {
-      const organismConfigId = r._id;
-      this.$router.push("/config/organismConfigDetail?organismConfigId=" + organismConfigId);
+      switch(!r.status || r.status.status){
+        case 'accepted':
+          this.$q.notify('O convite já foi aceito')
+        break
+        case 'refused':
+          this.$q.notify('O convite já foi recusado')
+        break;
+        case !r.status:
+          this.dialogOpenSolicitation.data = r
+          this.dialogOpenSolicitation.open = true
+        break
+      }
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -257,5 +273,9 @@ export default defineComponent({
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active no <2.1.8 */ {
   opacity: 0;
+}
+.disabled-row{
+  pointer-events: none;
+  opacity: 0.5;
 }
 </style>
