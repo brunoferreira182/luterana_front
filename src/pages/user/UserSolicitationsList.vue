@@ -45,38 +45,25 @@
                 </template>
               </q-input>
             </div>
-            <!-- <div class="col">
-              <q-btn
-                @click="$router.push('/config/CreateOrganismsConfig')"
-                color="primary"
-                unelevated
-                dense
-                rounded
-                no-caps
-                icon="add"
-                class="q-pa-sm"
-                label="Criar configuração"
-                />
-            </div> -->
           </div>
         </template>
         <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
-              v-if="props.row.isActive === 1"
+              v-if="props.row.status.status === 'accepted'"
               color="green"
               size="14px"
             >
-              Ativo
+              Aceito
             </q-chip>
             <q-chip
               outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
+              v-else-if="!props.row.status"
+              color="yellow-8"
               size="14px"
             >
-              Inativo
+              Novo
             </q-chip>
           </q-td>
         </template>
@@ -100,7 +87,7 @@
                 no-caps
                 rounded
                 color="primary"
-                @click="dialogOpenSolicitation.open = false"
+                @click="refuseFunctionSolicitation"
               />
               <q-btn
                 unelevated
@@ -138,6 +125,7 @@ export default defineComponent({
         open: false,
         data: {},
       },
+      myUserIdMongo: '',
       hideDiv: false,
       pagination: {
         page: 1,
@@ -152,11 +140,41 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFunctionsSolicitationsByUserId();
+    this.getUserIdMongo()
   },
   methods: {
+    getUserIdMongo() {
+      const opt = {
+        route: '/desktop/adm/getUserIdMongo',
+      }
+      useFetch(opt).then(r => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro");
+          return
+        } else { this.myUserIdMongo = r.data.userIdMongo }
+      })
+    },
     clearDialogSolicitation(){
       this.dialogOpenSolicitation.open = false
       this.hideDiv = false
+    },
+    refuseFunctionSolicitation(){
+      const opt = {
+        route: "/desktop/commonUsers/refuseFunctionSolicitation",
+        body: {
+          functionSolicitationId: this.dialogOpenSolicitation.data._id,
+          organismId: this.dialogOpenSolicitation.data.organismId,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente por favor')
+          return
+        }else{ 
+          this.$q.notify('Convite recusado!')
+          this.getFunctionsSolicitationsByUserId()
+        }
+      })
     },
     acceptFunctionSolicitation(){
       this.hideDiv = true;
@@ -164,31 +182,31 @@ export default defineComponent({
         this.hideDiv = false;
         this.dialogOpenSolicitation.open = false
       }, 3500);
-      // const opt = {
-      //   route: "/desktop/commonUsers/acceptFunctionSolicitation",
-      //   body: {
-      //     functionSolicitationId: this.dialogOpenSolicitation.data._id,
-      //     functionData: {
-      //       organismFunctionConfigId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
-      //     },
-      //     organismId: this.dialogOpenSolicitation.data.organismId,
-      //   },
-      // };
-      // useFetch(opt).then((r) => {
-      //   if(r.error){
-      //     this.$q.notify('Ocorreu um erro, tente novamente por favor')
-      //     return
-      //   }else{ 
-      //     this.hideDiv = true;
-      //     setTimeout(() => {
-      //       this.hideDiv = false;
-      //       this.dialogOpenSolicitation.open = false
-      //     }, 3800);
-      //   }
-      // })
+      const opt = {
+        route: "/desktop/commonUsers/acceptFunctionSolicitation",
+        body: {
+          functionSolicitationId: this.dialogOpenSolicitation.data._id,
+          functionData: {
+            organismFunctionConfigId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
+          },
+          organismId: this.dialogOpenSolicitation.data.organismId,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente por favor')
+          return
+        }else{ 
+          this.hideDiv = true;
+          setTimeout(() => {
+            this.hideDiv = false;
+            this.dialogOpenSolicitation.open = false
+          }, 3800);
+        }
+      })
     },
     clkOpenSolicitation(e, r){
-      // console.log(r, 'rrrrrrrrrrrrrrrrrrr')
+      console.log(r, 'rrrrrrrrrrrrrrrrrrr')
       this.dialogOpenSolicitation.data = r
       this.dialogOpenSolicitation.open = true
     },
@@ -235,7 +253,7 @@ export default defineComponent({
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active no <2.1.8 */ {
   opacity: 0;

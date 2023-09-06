@@ -129,7 +129,9 @@ export default defineComponent({
   },
   methods: {
     clkOpenOrganismDetail(e, r) {
-      const organismId = r._id;
+      const organismId = r.organismId;
+      console.log(r, 'rrrrrrrrrrrrr')
+      return
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
     nextPage(e) {

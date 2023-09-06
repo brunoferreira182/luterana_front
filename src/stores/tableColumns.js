@@ -18,6 +18,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "functionName",
         sortable: true,
       },
+      {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: 'status',
+        sortable: true,
+      },
     ],
     pageOrganismList: [
       {
