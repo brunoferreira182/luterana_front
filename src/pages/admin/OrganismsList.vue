@@ -59,7 +59,7 @@
             </div>
           </div>
         </template>
-        <template #body-cell-document="props">
+        <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip
             outline
@@ -160,7 +160,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.organismList = r.data.list
-        this.pagination.rowsNumber = r.data.count[0].count
+        this.pagination.rowsNumber = r.data.count
       });
     },
     getOrganismsConfigsNamesList() {

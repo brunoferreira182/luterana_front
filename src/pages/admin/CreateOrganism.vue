@@ -650,7 +650,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data;
         })
       });
     },
@@ -672,7 +672,6 @@ export default defineComponent({
             this.organismData.fields = r.data.organismConfigData.organismFields;
             this.functions = r.data.organismConfigData.functions
           } else{
-            this.getOrganismsList()
             this.organismConfigName = r.data.organismConfigName
             this.organismData.fields = r.data.organismFields;
             this.functions = r.data.functions
