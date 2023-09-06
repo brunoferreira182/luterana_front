@@ -151,11 +151,6 @@ export default defineComponent({
     this.getFunctionsSolicitationsByUserId();
     this.getUserIdMongo()
   },
-  computed: {
-    isRowDisabled() {
-      return this.solicitationsList.map(row => !row.status).filter(Boolean);
-    }
-  },
   methods: {
     getUserIdMongo() {
       const opt = {
@@ -222,7 +217,6 @@ export default defineComponent({
       })
     },
     clkOpenSolicitation(e, r){
-      console.log(r, 'rrrrrrrrrrrrrrrrrrr')
       switch(!r.status || r.status.status){
         case 'accepted':
           this.$q.notify('O convite já foi aceito')
