@@ -351,7 +351,6 @@ export default defineComponent({
       district: "",
       splitterModel: 13,
       userData: {},
-      userDetail: []
     };
   },
   mounted() {
@@ -468,21 +467,6 @@ export default defineComponent({
     removeEmail(i) {
       this.userData.generalData.email.splice(i, 1);
     },
-    getUsersConfig() {
-      const opt = {
-        route: "/desktop/adm/getUsersConfig",
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.userData = r.data
-          this.tab = r.data.userDataTabs[0].tabValue
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente");
-        }
-      });
-    },
     clkCreateUser() {
       // if(
       //   this.userData.name === '' ||
@@ -517,11 +501,7 @@ export default defineComponent({
         if(r.error) {
           console.log("Ocorreu um erro, tente novamente kakak")
         } else {
-          this.userDetail = r.data
-          this.userData.userDataTabs[0].fields[0].value = this.userDetail.userDataTabs[0].fields[0].value
-          this.userData.userDataTabs[0].fields[1].value = this.userDetail.userDataTabs[0].fields[1].value
-          this.userData.userDataTabs[0].fields[2].value = this.userDetail.userDataTabs[0].fields[2].value
-          this.userData.userDataTabs[0].fields[3].value = this.userDetail.userDataTabs[0].fields[3].value
+          this.userData = r.data
         }
       })
     },

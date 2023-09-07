@@ -1,5 +1,5 @@
 <template>
-  <OrganismConfig />
+    <OrganismConfig />
 </template>
 <script>
 import OrganismConfig from "../../components/OrganismConfig.vue";
