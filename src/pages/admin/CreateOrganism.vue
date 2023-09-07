@@ -240,6 +240,67 @@
                 </div>
               </q-item-section>
             </q-card>
+            <q-dialog v-model="dialogInsertUserInFunction.open">
+              <q-card style="border-radius: 1rem; width: 400px">
+                <q-card-section align="center">
+                  <div class="text-h6">
+                    Informe o usuário que ocupará a função
+                  </div>
+                  <div v-if="func.functionIsRequired">
+                    <q-chip color="red-8" outline>
+                      Esta função requer o título {{ selectedFunc.functionRequiredTitleName }}
+                    </q-chip>
+                  </div>
+                </q-card-section>
+                <q-card-section align="center">
+                  <q-select
+                    v-model="userSelected"
+                    filled
+                    use-input
+                    label="Nome do usuário"
+                    option-label="userName"
+                    :options="usersOptions"
+                    @filter="getUsers"
+                    :option-value="(item) => item"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          Nenhum resultado
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </q-card-section>
+                <q-card-section align="center">
+                  <q-input
+                    filled
+                    label="Data início"
+                    type="date"
+                    hint="Informe a data início de ocupação da função"
+                    v-model="dialogInsertUserInFunction.initialDate"
+                  />
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn
+                    flat
+                    label="Depois"
+                    no-caps
+                    rounded
+                    color="primary"
+                    @click="dialogInsertUserInFunction.open = false"
+                  />
+                  <q-btn
+                    unelevated
+                    rounded
+                    label="Confirmar"
+                    no-caps
+                    color="primary"
+                    @click="assignUserToFunction"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
           </div>
         </div>
         <q-dialog v-model="newFunctionDialog">
@@ -408,62 +469,7 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <q-dialog v-model="dialogInsertUserInFunction.open">
-          <q-card style="border-radius: 1rem; width: 400px">
-            <q-card-section>
-              <div class="text-h6 text-center">
-                Informe o usuário que ocupará a função
-              </div>
-            </q-card-section>
-            <q-card-section align="center">
-              <q-select
-                v-model="userSelected"
-                filled
-                use-input
-                label="Nome do usuário"
-                option-label="userName"
-                :options="usersOptions"
-                @filter="getUsers"
-                :option-value="(item) => item"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-card-section>
-            <q-card-section align="center">
-              <q-input
-                filled
-                label="Data início"
-                type="date"
-                hint="Informe a data início de ocupação da função"
-                v-model="dialogInsertUserInFunction.initialDate"
-              />
-            </q-card-section>
-            <q-card-actions align="center">
-              <q-btn
-                flat
-                label="Depois"
-                no-caps
-                rounded
-                color="primary"
-                @click="dialogInsertUserInFunction.open = false"
-              />
-              <q-btn
-                unelevated
-                rounded
-                label="Confirmar"
-                no-caps
-                color="primary"
-                @click="assignUserToFunction"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+        
       </div>
     </q-page>
   </q-page-container>
@@ -739,6 +745,7 @@ export default defineComponent({
           this.$q.loading.hide()
           if (r.error) {
             this.$q.notify(r.errorMessage);
+            this.functions = []
             return
           } else {
             this.$q.notify('Organismo criado com sucesso!');

@@ -167,7 +167,7 @@ export default defineComponent({
         this.$q.loading.hide()
         this.usersOptions = r.data;
         this.usersList = r.data.list
-        this.pagination.rowsNumber = r.data.count.count
+        this.pagination.rowsNumber = r.data.count[0].count
       });
     },
   },
