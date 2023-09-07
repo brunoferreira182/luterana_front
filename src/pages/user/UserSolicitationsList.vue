@@ -187,11 +187,6 @@ export default defineComponent({
       })
     },
     acceptFunctionSolicitation(){
-      this.hideDiv = true;
-      setTimeout(() => {
-        this.hideDiv = false;
-        this.dialogOpenSolicitation.open = false
-      }, 3500);
       const opt = {
         route: "/desktop/commonUsers/acceptFunctionSolicitation",
         body: {
