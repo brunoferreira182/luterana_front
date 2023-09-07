@@ -11,7 +11,7 @@
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
         <div class="col-7 q-gutter-md q-mt-sm" align="start">
-          <div class="text-h5 ">
+          <div class="text-h5 no-margin q-px-md">
             Dados
           </div>
           <q-select outlined label="Nome da configuração" option-label="organismConfigName"
@@ -95,11 +95,7 @@
                   <div class="text-h6">
                     Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
                   </div>
-                  <q-checkbox class="q-pt-lg full-width" v-model="isReplacement"
-                    label="Deseja ser substituido por outro usuário da função?" />
-                  <div class="text-caption">
-                    Ao marcar esta opção, o usuário selecionado estará substituindo a sua posição nesta função
-                  </div>
+                  
                 </q-card-section>
                 <q-card-section>
                   <q-select v-model="userSelected" filled clearable use-input label="Nome do usuário"
@@ -113,10 +109,15 @@
                     </template>
                   </q-select>
                 </q-card-section>
-                <q-card-section>
+                <q-card-section align="center">
                   <q-input filled label="Observação"
                     hint="Escreva uma breve descrição explicando o motivo para participar desta função"
                     v-model="dialogOpenSolicitation.obs" />
+                    <q-checkbox class="q-pt-lg full-width" v-model="isReplacement"
+                    label="Deseja ser substituido por outro usuário da função?" />
+                    <div class="text-caption">
+                      Ao marcar esta opção, o usuário selecionado estará substituindo a sua posição nesta função
+                    </div>
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Depois" no-caps rounded color="primary"

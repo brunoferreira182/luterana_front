@@ -214,7 +214,9 @@
                         Informe o usuário que ocupará a função
                       </div>
                       <div v-if="func.functionIsRequired">
-                        Esta função requer o título {{ selectedFunc.functionRequiredTitleName }}
+                        <q-chip color="red-8" outline>
+                          Esta função requer o título {{ selectedFunc.functionRequiredTitleName }}
+                        </q-chip>
                       </div>
                     </q-card-section>
                     <q-card-section align="center">
@@ -527,9 +529,8 @@
                   Nenhuma configuração de grupo de organismo <q-icon name="warning" color="warning" size="md"/>
                 </div>
               </div>
-              
               <q-card-section class="q-gutter-sm">
-                <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
+                <div class="text-subtitle1 q-pa-sm">
                   Escolha entre outras opções de configuração de organismo
                 </div>
                 <q-select
@@ -858,9 +859,9 @@ export default defineComponent({
     getOrganismsConfigsListBySearchString(val, update) {
       console.log()
       const opt = {
-        route: "/desktop/config/getOrganismsConfigsList",
+        route: "/desktop/config/getOrganismsConfigs",
         body: {
-          searchString: val
+          searchString: val,
         }
       }
       this.$q.loading.show()
@@ -871,7 +872,7 @@ export default defineComponent({
           return
         }else {
           update(() => {
-            this.organismConfigsList = r.data.list
+            this.organismConfigsList = r.data
           })
         }
       })
@@ -1271,7 +1272,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data;
         })
       });
     },

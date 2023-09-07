@@ -46,7 +46,7 @@
             </div>
           </div>
         </template>
-        <template #body-cell-status="props">
+        <!-- <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
@@ -65,7 +65,7 @@
               Inativo
             </q-chip>
           </q-td>
-        </template>
+        </template> -->
       </q-table>
     </q-page>
   </q-page-container>
