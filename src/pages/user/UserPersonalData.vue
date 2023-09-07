@@ -359,7 +359,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getUsersConfig()
-    this.getUserDetailById()
+    
   },
   methods: {
     checkCEP(ev) {
@@ -478,6 +478,7 @@ export default defineComponent({
         if (!r.error) {
           this.userData = r.data
           this.tab = r.data.userDataTabs[0].tabValue
+          this.getUserDetailById()
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente");
         }
@@ -516,15 +517,32 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if(r.error) {
           console.log("Ocorreu um erro, tente novamente kakak")
-        } else {
-          this.userDetail = r.data
-          this.userData.userDataTabs[0].fields[0].value = this.userDetail.userDataTabs[0].fields[0].value
-          this.userData.userDataTabs[0].fields[1].value = this.userDetail.userDataTabs[0].fields[1].value
-          this.userData.userDataTabs[0].fields[2].value = this.userDetail.userDataTabs[0].fields[2].value
-          this.userData.userDataTabs[0].fields[3].value = this.userDetail.userDataTabs[0].fields[3].value
+          return
         }
+        this.userDetail = r.data
+        // else {
+        //   this.userDetail = r.data
+        //   this.userData.userDataTabs[0].fields[0].value = this.userDetail.userDataTabs[0].fields[0].value
+        //   this.userData.userDataTabs[0].fields[1].value = this.userDetail.userDataTabs[0].fields[1].value
+        //   this.userData.userDataTabs[0].fields[2].value = this.userDetail.userDataTabs[0].fields[2].value
+        //   this.userData.userDataTabs[0].fields[3].value = this.userDetail.userDataTabs[0].fields[3].value
+        // }
+        this.mountUserData()
       })
     },
+    mountUserData () {
+      this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
+        configTab.fields.forEach((configField, iConfigField) => {
+          this.userDetail.userDataTabs.forEach((userTab) => {
+            userTab.fields.forEach((userField) => {
+              if (configField.model === userField.model && userField.value) {
+                this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+              }
+            })
+          })
+        })
+      })
+    }
   },
 });
 </script>
