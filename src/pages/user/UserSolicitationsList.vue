@@ -191,9 +191,7 @@ export default defineComponent({
         route: "/desktop/commonUsers/acceptFunctionSolicitation",
         body: {
           functionSolicitationId: this.dialogOpenSolicitation.data._id,
-          functionData: {
-            organismFunctionConfigId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
-          },
+          functionConfigId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
           organismId: this.dialogOpenSolicitation.data.organismId,
         },
       };
@@ -217,7 +215,7 @@ export default defineComponent({
           this.$q.notify('O convite já foi aceito')
         break
         case 'refused':
-          this.$q.notify('O convite já foi recusado')
+          this.$q.notify('O convite foi recusado')
         break;
         case !r.status:
           this.dialogOpenSolicitation.data = r
