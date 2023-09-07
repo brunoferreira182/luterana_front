@@ -42,11 +42,12 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div>
               <q-btn 
                 @click="$router.push('/admin/createOrganism')" 
                 color="primary" 
                 unelevated 
+                class="q-pa-sm"
                 no-caps 
                 rounded 
                 dense
