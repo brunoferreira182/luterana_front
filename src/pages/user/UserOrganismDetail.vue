@@ -113,10 +113,14 @@
                   <q-input filled label="Observação"
                     hint="Escreva uma breve descrição explicando o motivo para participar desta função"
                     v-model="dialogOpenSolicitation.obs" />
-                    <q-checkbox class="q-pt-lg full-width" v-model="isReplacement"
-                    label="Deseja ser substituido por outro usuário da função?" />
+                    <q-checkbox 
+                      :disable="disableIsReplacement"
+                      class="q-pt-lg full-width" 
+                      v-model="isReplacement"
+                      label="Substituir por outro usuário nessa função?" 
+                    />
                     <div class="text-caption">
-                      Ao marcar esta opção, o usuário selecionado estará substituindo a sua posição nesta função
+                      Quando marcada, o usuário selecionado estará substituindo a sua posição nesta função
                     </div>
                 </q-card-section>
                 <q-card-actions align="center">
@@ -143,6 +147,7 @@ export default defineComponent({
     return {
       usersOptions: [],
       isReplacement: false,
+      disableIsReplacement: false,
       hasPermission: '',
       organismName: '',
       userSelected: '',
@@ -180,6 +185,8 @@ export default defineComponent({
       this.dialogOpenSolicitation.functionConfigId = ''
       this.userSelected = ''
       this.dialogOpenSolicitation.obs = ''
+      this.isReplacement = false
+      this.disableIsReplacement = false
     },
     getUsers(val, update) {
       const opt = {
@@ -209,9 +216,16 @@ export default defineComponent({
       })
     },
     clkOpenDialogSolicitation(func) {
-      this.dialogOpenSolicitation.data = func
-      this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
       this.dialogOpenSolicitation.open = true;
+      if(func.functionNumOfOccupants === func.numOfUser){
+        this.isReplacement = true
+        this.disableIsReplacement = true
+        this.dialogOpenSolicitation.data = func
+        this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+      }else if(func.functionNumOfOccupants < func.numOfUser){
+        this.dialogOpenSolicitation.data = func
+        this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+      }
     },
     getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
@@ -245,14 +259,17 @@ export default defineComponent({
           organismId: organismId,
           functionId: this.dialogOpenSolicitation.functionConfigId,
           userId: this.userSelected._id,
-          obs: this.dialogOpenSolicitation.obs
+          obs: this.dialogOpenSolicitation.obs,
+          isReplacement: this.isReplacement,
+          userIdMongo: this.myUserIdMongo
         }
       };
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.$q.notify("Solicitação encaminhada para análise!");
+          this.$q.notify("Dados alterados com sucesso!");
+          this.getOrganismDetailById()
           this.getFunctionsSolicitationsByOrganismId()
           this.dialogOpenSolicitation.open = false
         }

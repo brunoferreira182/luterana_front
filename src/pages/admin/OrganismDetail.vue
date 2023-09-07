@@ -154,7 +154,7 @@
                       <q-item-section class="text-capitalize text-wrap" lines="2">
                         {{ user.userName }}
                         <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
-                          Data Início:
+                          Data início:
                           {{ formatDate(user.dates.initialDate) }}
                         </div>
                         <div
