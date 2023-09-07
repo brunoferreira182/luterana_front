@@ -65,8 +65,11 @@
               </q-item>
               <q-expansion-item class="q-pa-sm" icon="group"
                 :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'" caption="Clique para ver">
-                <q-item v-for="user in func.users" :key="user" style="border-radius: 0.5rem; margin-top: 8px;"
-                  class="bg-white">
+                <q-item 
+                  v-for="user in func.users" 
+                  :key="user" 
+                  style="border-radius: 0.5rem; margin-top: 8px;"
+                  :class="user.dates && user.dates.finalDate ? 'bg-white opaco' : 'bg-white'">
                   <q-item-section avatar>
                     <q-avatar rounded>
                       <img src="https://cdn.quasar.dev/img/avatar.png" />
@@ -74,11 +77,14 @@
                   </q-item-section>
                   <q-item-section class="text-capitalize text-wrap" lines="2">
                     {{ user.userName }}
-                    <div class="text-caption text-grey-7">
-                      Data Início:
+                    <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
+                      Data início:
                       {{ formatDate(user.dates.initialDate) }}
                     </div>
-                    <div v-if="user.dataFim" class="text-caption text-grey-7">
+                    <div
+                      v-if="user.dates && user.dates.finalDate"
+                      class="text-caption text-grey-7"
+                    >
                       Data Fim: {{ formatDate(user.dates.finalDate) }}
                     </div>
                   </q-item-section>
@@ -345,5 +351,10 @@ export default defineComponent({
   border: none;
   cursor: pointer;
   color: #747474;
+}
+.opaco {
+  background-color: #ffffff;
+  opacity: 0.5;
+  
 }
 </style>
