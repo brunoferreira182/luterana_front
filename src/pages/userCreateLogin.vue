@@ -29,7 +29,7 @@
               color="primary"
               label="Cadastrar"
               unelevated
-              @click="clkNext"
+              @click="checkEmailValidity"
               no-caps
             />
             <q-btn 
@@ -103,6 +103,16 @@ export default defineComponent({
           this.userDataTabs = r.data.userDataTabs
         }
       })
+    },
+    checkEmailValidity(){
+      console.log(this.userDataTabs[0].fields[1].value)
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      const emailVerify = this.userDataTabs[0].fields[1].value
+      if (emailRegex.test(emailVerify) === false) {
+      this.$q.notify("Preencha um email válido")
+      return
+      }
+      this.clkNext()
     },
     // getMasks(field){
     //   console.log(field, 'AOPSIDA')
