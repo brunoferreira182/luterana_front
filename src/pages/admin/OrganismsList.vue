@@ -90,21 +90,31 @@
             </q-chip>
           </q-td>
         </template>
-  </q-table>
-  <div class="text-left">
-    <q-btn 
-      v-for="(name, nameIndex) in organismsConfigsNamesList" 
-      :key="name"
-      size="md"
-      class="q-ma-sm"
-      :style="{ color: name.organismStyle}"
-      outline
-      rounded
-      @click="filterOrganisms(nameIndex)"
-    >
-    {{ name.organismConfigName }}
-    </q-btn>
-  </div>
+      </q-table>
+      <div class="text-left">
+        <q-btn 
+          size="md"
+          class="q-ma-sm"
+          outline
+          rounded
+          color="primary"
+          @click="filterOrganisms()"
+        >
+          Todos
+        </q-btn>
+        <q-btn 
+          v-for="(name, nameIndex) in organismsConfigsNamesList" 
+          :key="name"
+          size="md"
+          class="q-ma-sm"
+          :style="{ color: name.organismStyle}"
+          outline
+          rounded
+          @click="filterOrganisms(nameIndex)"
+        >
+        {{ name.organismConfigName }}
+        </q-btn>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -193,6 +203,8 @@ export default defineComponent({
       if(nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length) {
         const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
         this.selectFilter = selectedOrganism.organismConfigName 
+      } else if(!(nameIndex)) {
+        this.selectFilter = null
       }
       this.getOrganismsList()
     }
