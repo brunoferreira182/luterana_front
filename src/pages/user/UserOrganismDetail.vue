@@ -178,7 +178,7 @@ export default defineComponent({
   methods: {
     clearDialogSolicitation() {
       this.dialogOpenSolicitation.functionConfigId = ''
-      this.userSelected._id = ''
+      this.userSelected = ''
       this.dialogOpenSolicitation.obs = ''
     },
     getUsers(val, update) {

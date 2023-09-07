@@ -19,30 +19,29 @@
               <q-input
                 :hint="field.hint"
                 :label="field.label"
-                :type="field.type.type"
                 v-model="userDataTabs[0].fields[i].value"
+                :mask="field.type.mask"
                 class="q-ma-sm"
-                >
-              </q-input>
+              />
             </div>
             <q-btn
-                class="full-width q-mb-md q-mt-sm"
-                color="primary"
-                label="Cadastrar"
-                unelevated
-                @click="clkNext"
-                no-caps
-              />
-              <q-btn 
-                class="full-width"
-                color="primary" 
-                label="Voltar" 
-                outline
-                @click="clkBack1" 
-                unelevated 
-                no-caps
-              />
-          </div>
+              class="full-width q-mb-md q-mt-sm"
+              color="primary"
+              label="Cadastrar"
+              unelevated
+              @click="clkNext"
+              no-caps
+            />
+            <q-btn 
+              class="full-width"
+              color="primary" 
+              label="Voltar" 
+              outline
+              @click="clkBack1" 
+              unelevated 
+              no-caps
+            />
+        </div>
       </div>
     </div>
     <q-footer flat class="bg-transparent text-primary q-pa-md">
@@ -63,6 +62,7 @@ export default defineComponent({
       userDataTabs: [],
       showPassword: false,
       newUserData: [],
+      cpfMask: '',
       tabValue: "dados_obrigatorios",
       loginStep: "login",
       emailVerify: false
@@ -104,9 +104,14 @@ export default defineComponent({
         }
       })
     },
+    // getMasks(field){
+    //   console.log(field, 'AOPSIDA')
+    //   switch(field){
+    //     case 'cpf':
+    //       this.cpfMask = '###.###.###-##'
+    //     break;
+    //   }
+    // },
   },
 })
 </script>
-<style>
-
-</style>

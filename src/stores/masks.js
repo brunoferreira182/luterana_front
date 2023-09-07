@@ -13,7 +13,7 @@ export const useMasks = defineStore("masks", {
       this.masks[cpfIndex].cpf = formatCPF(this.masks[cpfIndex].cpf);
     }
   },
-  function:{ 
+  format:{ 
     formatCPF(cpf) {
     cpf = cpf.replace(/\D/g, '');
     cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
