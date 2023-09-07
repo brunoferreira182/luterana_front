@@ -48,12 +48,12 @@
         </template>
         <template v-slot:after>
           <q-tab-panels 
-          animated 
-          swipeable
-          transition-prev="jump-up"
-          transition-next="jump-up"
-          class="bg-accent"
-          :model-value="tab"
+            animated 
+            swipeable
+            transition-prev="jump-up"
+            transition-next="jump-up"
+            class="bg-accent"
+            :model-value="tab"
           >
           <q-tab-panel 
           v-for="(tabs, tabsIndex) in userData.userDataTabs"
@@ -114,81 +114,61 @@
                       </q-select>
                     </div>
                     <div
-                      v-if="field.type.type === 'address' && !field.address"
+                      v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
                       class="text-subtilte1 text-start"
                     >
                       <div class="text-h6">Endereços</div>
                       Nenhum endereço vinculado
                     </div>
-                    <div
-                      v-else-if="field.type.type === 'address' && !field.address[0]"
-                      class="text-subtilte1 text-start"
-                    >
-                      <div class="text-h6">Endereços</div>
-                      Nenhum endereço vinculado
-                    </div>
-                    <div class="text-right" v-if="field.type.type === 'address'">
-                      <q-btn v-if="!(field.address)"
-                        label="Adicionar um endereço"
+                    <div v-if="field.type.type === 'address'">
+                      <q-list class="no-margin" v-if="field.value">
+                        <q-item
+                          v-for="(item, i) in field.value"
+                          :key="item + i"
+                          style="border-radius: 1rem"
+                          class="bg-grey-3 q-ma-sm q-pa-md"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-capitalize">
+                              {{ item.street }}, {{ item.number }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              {{ item.district }} - {{ item.city }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              CEP
+                              {{ item.cep }}
+                            </q-item-label>
+                            <q-item-label></q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-item-label caption class="text-capitalize">
+                              <q-badge>{{ item.type }}</q-badge>
+                            </q-item-label>
+                            <q-item-label>
+                            <q-btn
+                              icon="delete"
+                              flat
+                              color="red"
+                              @click="removeThisAddress(fieldIndex, tabsIndex, i)"
+                            >
+                            </q-btn>
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                      <q-btn
+                        label="Adicionar endereço"
                         no-caps
                         rounded
                         unelevated
                         outline
-                        style="margin-top: -15%;"
                         color="primary"
+                        icon="add"
                         @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                       />
-                      <q-btn v-else-if="!(field.address[0])"
-                        label="Adicionar um endereço"
-                        no-caps
-                        rounded
-                        unelevated
-                        outline
-                        style="margin-top: -15%;"
-                        color="primary"
-                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                      />
+
                     </div>
-                    <q-list
-                      class="no-margin"
-                      v-if="field.address"
-                    >
-                      <q-item
-                        v-for="(item, i) in field.address"
-                        :key="item + i"
-                        style="border-radius: 1rem"
-                        class="bg-grey-3 q-ma-sm q-pa-md"
-                      >
-                        <q-item-section>
-                          <q-item-label lines="3" class="text-capitalize">
-                            {{ item.street }}, {{ item.number }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            {{ item.district }} - {{ item.city }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            CEP
-                            {{ item.cep }}
-                          </q-item-label>
-                          <q-item-label></q-item-label>
-                        </q-item-section>
-                        <q-item-section side top>
-                          <q-item-label caption class="text-capitalize">{{
-                            item.type
-                          }}</q-item-label>
-                        </q-item-section>
-                        <q-item-section>
-                          <q-btn
-                            icon="delete"
-                            flat
-                            style="width: 15px;"
-                            class="absolute-right"
-                            @click="removeThisAddress(fieldIndex, tabsIndex, i)"
-                          >
-                          </q-btn>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
@@ -422,32 +402,47 @@ export default defineComponent({
     addAddress() {
       const fieldIndex = this.fieldIndex
       const tabsIndex = this.tabsIndex
-      if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address) {
-        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address = [];
-        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
-          type: this.addressType,
-          cep: this.cep,
-          street: this.street,
-          number: this.number,
-          city: this.city,
-          state: this.state,
-          district: this.district,
-        });
-        this.dialogConfirmAddress.open = false;
-        this.clearAddressInputs()
-      } else {
-        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
-          type: this.addressType,
-          cep: this.cep,
-          street: this.street,
-          number: this.number,
-          city: this.city,
-          state: this.state,
-          district: this.district,
-        });
-        this.clearAddressInputs()
-        this.dialogConfirmAddress.open = false;
-      }
+      if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value)
+        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push({
+        type: this.addressType,
+        cep: this.cep,
+        street: this.street,
+        number: this.number,
+        city: this.city,
+        state: this.state,
+        district: this.district,
+      });
+      this.dialogConfirmAddress.open = false;
+      this.clearAddressInputs()
+
+
+      // if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address) {
+      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address = [];
+      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
+      //     type: this.addressType,
+      //     cep: this.cep,
+      //     street: this.street,
+      //     number: this.number,
+      //     city: this.city,
+      //     state: this.state,
+      //     district: this.district,
+      //   });
+      //   this.dialogConfirmAddress.open = false;
+      //   this.clearAddressInputs()
+      // } else {
+      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
+      //     type: this.addressType,
+      //     cep: this.cep,
+      //     street: this.street,
+      //     number: this.number,
+      //     city: this.city,
+      //     state: this.state,
+      //     district: this.district,
+      //   });
+      //   this.clearAddressInputs()
+      //   this.dialogConfirmAddress.open = false;
+      // }
     },
     clearAddressInputs(){
       this.addressType = ''
@@ -508,7 +503,7 @@ export default defineComponent({
       });
     },
     removeThisAddress(fieldIndex, tabsIndex, addressIndex) {
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.splice(addressIndex, 1);
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(addressIndex, 1);
     },
     getUserDetailById(){
       const opt = {
