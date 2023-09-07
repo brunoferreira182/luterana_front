@@ -69,7 +69,7 @@
         </template>
         <template #body-cell-organismConfigName="props">
           <q-td :props="props">
-            <q-chip v-if="props.row.organismConfigName" color="yellow" size="14px">
+            <q-chip v-if="props.row.organismConfigName" :color="props.row.color" size="14px">
               {{ props.row.organismConfigName }}
             </q-chip>
           </q-td>
@@ -91,7 +91,7 @@
           :key="name"
           size="md"
           class="q-ma-sm"
-          :style="{ color: name.organismStyle}"
+          :color="name.organismStyle"
           outline
           rounded
           @click="filterOrganisms(nameIndex)"
@@ -176,10 +176,10 @@ export default defineComponent({
         route: '/desktop/adm/getOrganismsConfigsNamesList',
       }
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismsConfigsNamesList = r.data
-        } else {
+        if (r.error) {
           console.log("Deu erro getOrganismConfigsNameList")
+        } else {
+          this.organismsConfigsNamesList = r.data
         }
       })
     },
