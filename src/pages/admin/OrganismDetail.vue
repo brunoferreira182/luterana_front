@@ -154,7 +154,7 @@
                       <q-item-section class="text-capitalize text-wrap" lines="2">
                         {{ user.userName }}
                         <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
-                          Data Início:
+                          Data início:
                           {{ formatDate(user.dates.initialDate) }}
                         </div>
                         <div
@@ -194,6 +194,18 @@
                       </q-item-section>
                     </q-item>
                   </q-expansion-item>
+                  <div 
+                    class="text-caption text-grey-7 q-mx-md"
+                    v-if="func.functionProperties && func.functionProperties.numRequired === true"
+                  >
+                    Esta função requer {{ func.functionNumOfOccupants }} participantes
+                  </div>
+                  <div 
+                    class="text-caption text-grey-7 q-mx-md"
+                    v-else
+                  >
+                    Esta função permite {{ func.functionNumOfOccupants }} participantes
+                  </div>
                   <q-item-section class="q-pa-xs">
                     <q-btn
                       label="Adicionar pessoa"

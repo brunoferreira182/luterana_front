@@ -42,11 +42,12 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div>
               <q-btn 
                 @click="$router.push('/admin/createOrganism')" 
                 color="primary" 
                 unelevated 
+                class="q-pa-sm"
                 no-caps 
                 rounded 
                 dense
@@ -69,7 +70,12 @@
         </template>
         <template #body-cell-organismConfigName="props">
           <q-td :props="props">
-            <q-chip v-if="props.row.organismConfigName" :color="props.row.color" size="14px">
+            <q-chip 
+              v-if="props.row.organismConfigName" 
+              :style="{ color: props.row.organismStyle }" 
+              size="14px"
+              outline
+            >
               {{ props.row.organismConfigName }}
             </q-chip>
           </q-td>
@@ -91,7 +97,7 @@
           :key="name"
           size="md"
           class="q-ma-sm"
-          :color="name.organismStyle"
+          :style="{ color: name.organismStyle }"
           outline
           rounded
           @click="filterOrganisms(nameIndex)"
