@@ -552,20 +552,31 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          if(r.data.organismConfigData){
-            this.parentOrganismName = r.data.parentOrganismConfigData.parentOrganismName
-            this.organismConfigName = r.data.organismConfigData.organismConfigName
-            this.organismData.fields = r.data.organismConfigData.organismFields;
-            this.functions = r.data.organismConfigData.functions
-          } else{
-            this.getOrganismsList()
-            this.organismConfigName = r.data.organismConfigName
-            this.organismData.fields = r.data.organismFields;
-            this.functions = r.data.functions
-          }
+          this.$q.notify("Ocorreu um erro, tente novamente por favor")
+          return
         }
+        this.organismConfigName = r.data.organismConfigData.organismConfigName;
+        this.organismFields = r.data.organismConfigData.organismFields;
+        r.data.organismConfigData.functions[0].organismFunctionId
+          ? this.functions = r.data.organismConfigData.functions
+          : this.functions = []
+        this.selectedType = r.data.organismConfigData.organismConfigName;
+        this.requiresLink = r.data.organismConfigData.requiresLink
+        if (r.data.parentOrganismConfigName){
+          this.parentOrganismConfigName = r.data.parentOrganismConfigData.parentOrganismConfigName
+        }
+
+        // if (r.data.organismConfigData){
+        //   this.parentOrganismName = r.data.parentOrganismConfigData.parentOrganismName
+        //   this.organismConfigName = r.data.organismConfigData.organismConfigName
+        //   this.organismData.fields = r.data.organismConfigData.organismFields;
+        //   this.functions = r.data.organismConfigData.functions
+        // } else {
+        //   this.getOrganismsList()
+        //   this.organismConfigName = r.data.organismConfigName
+        //   this.organismData.fields = r.data.organismFields;
+        //   this.functions = r.data.functions
+        // }
       });
     },
     addMultipleField(field) {

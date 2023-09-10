@@ -2,8 +2,8 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">novo organismo</div>
-        <div class="col-2 text-center">
+        <div class="col text-h5 text-capitalize">novo organismo</div>
+        <div class="col text-right">
           <q-btn
             @click="createOrganism()"
             no-caps
@@ -105,8 +105,8 @@
             ></q-checkbox>
           </div>
         </div>
-        <q-separator vertical class="q-ma-md" />
-        <div class="col">
+        <!-- <q-separator vertical class="q-ma-md" /> -->
+        <!-- <div class="col">
           <div class="row">
             <div
               class="text-h5"
@@ -185,18 +185,6 @@
                   </q-item-section>
                   <q-item-section side>
                     <div class="text-grey-8 q-gutter-xs">
-                      <!-- <q-btn
-                        @click="dialogInsertObservation(user)"
-                        class="gt-xs"
-                        size="12px"
-                        color="secondary"
-                        flat
-                        dense
-                        round
-                        icon="library_books"
-                      >
-                        <q-tooltip> Observações </q-tooltip>
-                      </q-btn> -->
                       <q-btn
                         @click="deleteUserFromFunction(user, funcIndex)"
                         class="gt-xs"
@@ -302,8 +290,8 @@
               </q-card>
             </q-dialog>
           </div>
-        </div>
-        <q-dialog v-model="newFunctionDialog">
+        </div> -->
+        <!-- <q-dialog v-model="newFunctionDialog">
           <q-card style="border-radius: 1rem; width: 400px">
             <q-card-section>
               <div class="text-h6 text-center">Nova função</div>
@@ -337,8 +325,8 @@
               />
             </q-card-actions>
           </q-card>
-        </q-dialog>
-        <q-dialog
+        </q-dialog> -->
+        <!-- <q-dialog
           v-model="dialogDeleteUserFromFunction.open"
           @hide="clearDialogAndFunctions"
         >
@@ -383,7 +371,7 @@
               />
             </q-card-actions>
           </q-card>
-        </q-dialog>
+        </q-dialog> -->
         <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions" animated>
           <q-card>
             <q-card-section>
@@ -656,7 +644,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
@@ -671,18 +659,32 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          if(r.data.organismConfigData){
-            this.organismConfigName = r.data.organismConfigData.organismConfigName
-            this.organismData.fields = r.data.organismConfigData.organismFields;
-            this.functions = r.data.organismConfigData.functions
-          } else{
-            this.organismConfigName = r.data.organismConfigName
-            this.organismData.fields = r.data.organismFields;
-            this.functions = r.data.functions
-          }
+          this.$q.notify("Ocorreu um erro, tente novamente por favor")
+          return
         }
+        this.organismConfigName = r.data.organismConfigData.organismConfigName;
+        this.organismData.fields = r.data.organismConfigData.organismFields;
+        // r.data.organismConfigData.functions[0].organismFunctionId
+        //   ? this.functions = r.data.organismConfigData.functions
+        //   : this.functions = []
+        // this.selectedType = r.data.organismConfigData.organismConfigName;
+        // this.requiresLink = r.data.organismConfigData.requiresLink
+        // if (r.data.parentOrganismConfigName){
+        //   this.parentOrganismConfigName = r.data.parentOrganismConfigData.parentOrganismConfigName
+        // }
+        // if (r.error) {
+        //   this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        // } else {
+        //   if(r.data.organismConfigData){
+        //     this.organismConfigName = r.data.organismConfigData.organismConfigName
+        //     this.organismData.fields = r.data.organismConfigData.organismFields;
+        //     this.functions = r.data.organismConfigData.functions
+        //   } else {
+        //     this.organismConfigName = r.data.organismConfigName
+        //     this.organismData.fields = r.data.organismFields;
+        //     this.functions = r.data.functions
+        //   }
+        // }
       });
     },
     addMultipleField(field) {
@@ -716,46 +718,46 @@ export default defineComponent({
       });
     },
     createOrganism() {
-      if (this.checkRequiredFields()) {
-        const userData = [];
-        for (const func of this.functions) {
-          if (func.users && func.users.length > 0) {
-            for (const user of func.users) {
-              userData.push({
-                organismFunctionConfigId: user.organismFunctionConfigId,
-                userId: user.userId,
-                dates: {
-                  initialDate: user.initialDate
-                }
-              });
-            }
-          }
-        }
-        const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
-        const opt = {
-          route: "/desktop/adm/createOrganism",
-          body: {
-            organismData: this.organismData,
-            functions: userData,
-            organismLinks: organismLinksIds
-          },
-        };
-        this.$q.loading.show()
-        useFetch(opt).then(r => {
-          this.$q.loading.hide()
-          if (r.error) {
-            this.$q.notify(r.errorMessage);
-            this.functions = []
-            return
-          } else {
-            this.$q.notify('Organismo criado com sucesso!');
-            const organismId = r.data
-            this.$router.push('/admin/organismDetail?organismId=' + organismId)
-          }
-        });
-      } else {
-        this.$q.notify("Há campos obrigatórios não preenchidos");
+      if (!this.checkRequiredFields()) {
+        this.$q.notify("Há campos obrigatórios não preenchidos")
+        return
       }
+      // const functions = [];
+      // for (const func of this.functions) {
+      //   if (func.users && func.users.length > 0) {
+      //     for (const user of func.users) {
+      //       functions.push({
+      //         organismFunctionConfigId: user.organismFunctionConfigId,
+      //         userId: user.userId,
+      //         dates: {
+      //           initialDate: user.initialDate
+      //         }
+      //       });
+      //     }
+      //   }
+      // }
+      const organismLinksIds = this.organismLinks.map(organism => organism.organismId)
+      const opt = {
+        route: "/desktop/adm/createOrganism",
+        body: {
+          organismData: this.organismData,
+          // functions: this.functions,
+          organismLinks: organismLinksIds
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then(r => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+          this.functions = []
+          return
+        }
+        // this.$q.notify('Organismo criado com sucesso!');
+        // const organismId = r.data
+        // this.$router.push('/admin/organismDetail?organismId=' + organismId)
+      });
+
     },
     checkRequiredFields() {
       let allRight = true;

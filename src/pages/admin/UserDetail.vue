@@ -2,11 +2,31 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">
-          {{ userName }}
+        <div class="col text-h5 text-capitalize" v-if="userData.userDataTabs">
+          {{ userData.userDataTabs[0].fields[0].value }}
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="person"
+            color="secondary"
+            label="Dados pessoais"
+            @click="visionSelected = 'personalData'"
+            :outline="visionSelected === 'personalData' ? false : true"
+          />
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="school"
+            color="secondary"
+            label="Títulos"
+            @click="visionSelected = 'titles'"
+            :outline="visionSelected === 'titles' ? false : true"
+          />
+          <!-- <q-btn
             rounded
             no-caps
             unelevated
@@ -14,8 +34,8 @@
             color="purple-8"
             label="Vincular título"
             @click="openDialogVinculateUserToTitle = true"
-          />
-          <q-btn
+          /> -->
+          <!-- <q-btn
             rounded
             no-caps
             unelevated
@@ -23,142 +43,248 @@
             color="primary"
             label="Salvar edição"
             @click="clkUpdateUser"
-          />
+          /> -->
         </div>
       </div>
       <q-separator class="q-mx-md"/>
-      <q-tabs
-        v-model="tab"
-        dense
-        no-caps
-        class="text-grey q-py-sm"
-        active-color="primary"
-        indicator-color="primary"
-        inline-label
-        align="justify"
-        narrow-indicator
-        @update:model-value="addBar = false"
+      
+      <q-splitter
+        v-model="splitterModel"
+        style="height: 100vh;"
+        v-show="visionSelected === 'personalData'"
       >
-        <q-tab 
-          v-for="(tabs, i) in userData.userDataTabs"
-          :key="i"
-          :name="tabs.tabValue" 
-          :label="tabs.tabLabel" 
-        />
-      </q-tabs>
-      <q-separator />
-      <q-tab-panels 
-        animated 
-        class="q-my-md bg-accent"
-        :model-value="tab"
-      >
-        <q-tab-panel 
-          v-for="(tabs, tabsIndex) in userData.userDataTabs"
-          :key="tabsIndex"
-          :name="tabs.tabValue" 
-        >
-          <div class="row justify-center q-pa-md">
-            <div class="col-12 q-gutter-md" align="start">
+        <template v-slot:before>
+          <q-tabs
+            v-model="tab"
+            vertical
+            align="left"
+            class="text-left "
+            no-caps
+            active-bg-color="blue-1"
+            indicator-color="primary"
+            inline-label
+            @update:model-value="addBar = false"
+          >
+            <template v-for="(tabs, i) in userData.userDataTabs" :key="i">
+              <q-tab 
+                class="flex-left flex"
+                :name="tabs.tabValue" 
+                :label="tabs.tabLabel" 
+              />
+              <q-separator/>
+            </template>
+          </q-tabs>
+        </template>
+        <template v-slot:after>
+          <q-tab-panels 
+            animated 
+            swipeable
+            transition-prev="jump-up"
+            transition-next="jump-up"
+            class="bg-accent"
+            :model-value="tab"
+          >
+            <q-tab-panel 
+              v-for="(tabs, tabsIndex) in userData.userDataTabs"
+              :key="tabsIndex"
+              :name="tabs.tabValue" 
+            >
+              <q-list class="text-left text-h6">
+                <q-item>
+                  <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
+                </q-item>
+              </q-list>
               <div
                 v-for="(field, fieldIndex) in tabs.fields"
                 :key="fieldIndex"
                 class="q-my-md"
               >
-                <div class="row q-gutter-sm justify-center items-center">
-                  <div class="col-8">
-                    <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                <div class="row q-gutter-sm justify-left items-left">
+                  <div class="col q-mx-lg">
+                    <div v-if="
+                      field.type.type !== 'boolean'
+                      && field.type.type !== 'address'
+                      && field.type.type !== 'options'
+                      && field.type.type !== 'person'"
+                    >
                       <q-input
                         :label="field.label"
                         :hint="field.hint"
-                        :type="field.type.type"
+                        :mask="field.type.mask"
                         v-model="field.value"
                         outlined
                       >
-                        <template
-                          v-if="field.multiple"
-                          #append
-                        >
-                          <q-btn
-                            disabled
-                            icon="add"
-                            color="primary"
-                            flat
-                            round
-                            @click="addMultipleField"
-                          >
-                            <q-tooltip
-                              >Adicionar multiplo
-                              {{ field.type.label }}</q-tooltip
-                            >
-                          </q-btn>
-                        </template>
-                    </q-input>
-                  </div>
-                  <div class="text-right" v-if="field.type.type === 'address'">
-                    <q-btn
-                      label="Adicionar um endereço"
-                      no-caps
-                      rounded
-                      unelevated
-                      outline
-                      color="primary"
-                      @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                    />
-                  </div>
-                  <div
-                    v-if="field.type.type === 'address' && !field.address"
-                    class="text-subtilte1 text-start"
-                  >
-                    <div class="text-h6">Endereços</div>
-                    Nenhum endereço vinculado
-                  </div>
-                  
-                    <q-list
-                      class="no-margin"
-                      v-if="field.address"
-                    >
-                      <div class="text-h6 q-px-md">Endereços</div>
-                      <q-item
-                        v-for="(item, i) in field.address"
-                        :key="item + i"
-                        style="border-radius: 1rem"
-                        class="bg-grey-3 q-ma-sm q-pa-md"
+                      </q-input>
+                    </div>
+
+                    <div class="text-right" v-if="field.type.type === 'options'">
+                      <q-select
+                        outlined
+                        :label="field.label"
+                        option-label="optionName"
+                        emit-value
+                        map-options
+                        :hint="field.hint"
+                        v-model="field.value"
+                        :options="field.options"
                       >
-                      <q-item-section>
-                        <q-item-label lines="3" class="text-capitalize">
-                          {{ item.street }}, {{ item.number }}
-                        </q-item-label>
-                        <q-item-label caption>
-                          {{ item.district }} - {{ item.city }}
-                        </q-item-label>
-                        <q-item-label caption>
-                          CEP
-                          {{ item.cep }}
-                        </q-item-label>
-                        <q-item-label></q-item-label>
-                      </q-item-section>
-                      <q-item-section side top>
-                        <q-item-label caption class="text-capitalize">{{
-                          item.type
-                        }}</q-item-label>
-                      </q-item-section>
-                      </q-item>
-                    </q-list>
-                  <q-checkbox
-                    v-if="field.type.type === 'boolean'"
-                    class="q-pt-lg"
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
-                    v-model="field.value"
-                  />
+                      </q-select>
+                    </div>
+
+                    <div
+                      v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
+                      class="text-subtilte1 text-start"
+                    >
+                      <div class="text-h6">Endereços</div>
+                      Nenhum endereço vinculado
+                    </div>
+                    <div v-if="field.type.type === 'address'">
+                      <q-list class="no-margin" v-if="field.value">
+                        <q-item
+                          v-for="(item, i) in field.value"
+                          :key="item + i"
+                          style="border-radius: 1rem"
+                          class="bg-grey-3 q-ma-sm q-pa-md"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-capitalize">
+                              {{ item.street }}, {{ item.number }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              {{ item.district }} - {{ item.city }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              CEP
+                              {{ item.cep }}
+                            </q-item-label>
+                            <q-item-label></q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-item-label caption class="text-capitalize">
+                              <q-badge>{{ item.type }}</q-badge>
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+
+                    <q-checkbox
+                      v-if="field.type.type === 'boolean'"
+                      class="q-pt-lg"
+                      readonly
+                      :label="field.label"
+                      :hint="field.hint"
+                      v-model="field.value"
+                    />
+
+                    <div v-if="field.type.type === 'person'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <q-list class="no-margin">
+                          <q-item
+                            v-for="(item, i) in field.value"
+                            :key="item + i"
+                            style="border-radius: 1rem"
+                            class="bg-grey-3 q-ma-sm q-pa-md"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-capitalize">
+                                {{ item.userName }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                {{ item.email }}
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        </q-tab-panel>
-      </q-tab-panels>
+            </q-tab-panel>
+          </q-tab-panels>
+          
+        </template>
+      </q-splitter>
+
+      <div v-show="visionSelected === 'titles'">
+        
+        <q-splitter
+          v-model="splitterModel"
+          style="height: 100vh;"
+          v-if="userDetail"
+        >
+          <template v-slot:before>
+            <q-tabs
+              v-model="tabTitles"
+              vertical
+              align="left"
+              class="text-left "
+              no-caps
+              active-bg-color="blue-1"
+              indicator-color="primary"
+              inline-label
+              @update:model-value="addBar = false"
+            >
+              <template v-for="(tab) in userDetail.userTitleData" :key="tab._id">
+                <q-tab 
+                  class="flex-left flex"
+                  :name="tab._id" 
+                  :label="tab.titleName" 
+                />
+                <q-separator/>
+              </template>
+              <div class="text-center">
+                <q-btn
+                  color="secondary"
+                  rounded
+                  icon="add"
+                  class="q-ma-md"
+                  label="Adicionar"
+                  unelevated
+                  @click="openDialogVinculateUserToTitle = true"
+                  no-caps
+                />
+              </div>
+            </q-tabs>
+            
+          </template>
+          <template v-slot:after>
+            <q-tab-panels 
+              animated 
+              swipeable
+              transition-prev="jump-up"
+              transition-next="jump-up"
+              class="bg-accent"
+              :model-value="tabTitles"
+            >
+              <q-tab-panel 
+                v-for="(tab) in userDetail.userTitleData"
+                :key="tab._id"
+                :name="tab._id" 
+              >
+                <div class="row">
+                  <div class="col text-h6">{{ tab.titleName }}</div>
+                  <q-btn
+                    label="Excluir título"
+                    color="red"
+                    icon="delete"
+                    rounded
+                    flat
+                    outline
+                    @click="clkDeleteTitle(tab._id)"
+                    no-caps
+                  />
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+          </template>
+        </q-splitter>
+      </div>
+
+
       <q-dialog v-model="openDialogVinculateUserToTitle">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -206,6 +332,35 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog v-model="deleteTitle.openDialog">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Confirma deletar o título?
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Não"
+              no-caps
+              rounded
+              color="primary"
+              @click="deleteTitle.openDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="clkConfirmDeleteTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
     </q-page>
   </q-page-container>
 </template>
@@ -217,6 +372,7 @@ export default defineComponent({
   data() {
     return {
       tab: "",
+      tabTitles: "",
       isSaving: false,
       newPhone: "",
       userTitleName: '',
@@ -240,24 +396,90 @@ export default defineComponent({
         sortBy: "",
       },
       userName: '',
+      splitterModel: 25,
+      visionSelected: 'personalData',
+      userDetail: null,
+      deleteTitle: {
+        openDialog: false,
+        titleId: null
+      }
     };
   },
   mounted() {
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.getUsersConfig()
     this.getUserDetailById();
   },
   methods: {
-    salvar() {
-      this.isSaving = true; 
-      this.clkUpdateUser();
-      setTimeout(() => {
-        this.isSaving = false; 
-      }, 1000); 
+    clkConfirmDeleteTitle () {
+      const opt = {
+        route: "/desktop/adm/inactivateUserTitle",
+        body: {
+          titleId: this.deleteTitle.titleId
+        }
+      }
+      useFetch(opt).then(r => {
+        if (r.error) {
+          this.$q.notify(r.errorMessage)
+          return
+        }
+        this.deleteTitle.openDialog = false
+        this.deleteTitle.titleId = null
+        this.getUserDetailById()
+      })
     },
-    clkUpdateUser(){
-      this.$q.notify('Edição não implementada')
+    clkDeleteTitle (titleId) {
+      this.deleteTitle.titleId = titleId
+      this.deleteTitle.openDialog = true
+    },
+    getUsersConfig() {
+      const opt = {
+        route: "/desktop/adm/getUsersConfig",
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.userData = r.data
+          this.tab = r.data.userDataTabs[0].tabValue
+          this.getUserDetailById()
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente");
+        }
+      });
+    },
+    getUserDetailById() {
+      const userId = this.$route.query.userId;
+      const opt = {
+        route: "/desktop/adm/getUserDetailById",
+        body: {
+          _id: userId,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        if(r.error) {
+          console.log("Ocorreu um erro, tente novamente kakak")
+          return
+        }
+        this.userDetail = r.data
+        this.mountUserData()
+      });
+    },
+    mountUserData () {
+      this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
+        configTab.fields.forEach((configField, iConfigField) => {
+          this.userDetail.userDataTabs.forEach((userTab) => {
+            userTab.fields.forEach((userField) => {
+              if (configField.model === userField.model && userField.value) {
+                this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+              }
+            })
+          })
+        })
+      })
     },
     getTitleNamesList(val, update) {
       const opt = {
@@ -277,6 +499,10 @@ export default defineComponent({
       });
     },
     createUserTitle() {
+      if (this.userAlreadyHasTitle()) {
+        this.$q.notify('Usuário já tem este título')
+        return
+      }
       const opt = {
         route: "/desktop/adm/createUserTitle",
         body: {
@@ -284,36 +510,25 @@ export default defineComponent({
           userId: this.$route.query.userId
         }
       };
+      this.openDialogVinculateUserToTitle = false
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if (r.error) {
-          this.$q.notify(
-            "ERRO ao inserir título, tente novamente mais tarde."
-          );return
-        } else {
-          const titleId = this.titleSelected._id
-          this.$router.push('/admin/userTitleDetail?titleId=' + titleId)
+          this.$q.notify("Erro ao inserir título, tente novamente mais tarde.")
+          return
         }
+        this.$q.notify('Título inserido com sucesso')
+        this.getUserDetailById()
       });
     },
-    getUserDetailById() {
-      const userId = this.$route.query.userId;
-      const opt = {
-        route: "/desktop/adm/getUserDetailById",
-        body: {
-          _id: userId,
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        this.tab = r.data.userDataTabs[0].tabValue
-        this.userName =  r.data.userDataTabs[0].fields[0].value
-        this.userData = r.data;
-        this.userId = r.data.userId;
-        this.getCompanyPermissions();
-      });
+    userAlreadyHasTitle () {
+      if (!this.userDetail.userTitleData || this.userDetail.userTitleData.length === 0) return false
+      let ret = false
+      this.userDetail.userTitleData.forEach(ut => {
+        if (ut.titleConfigId === this.titleSelected._id) ret = true
+      })
+      return ret
     },
     getCompanyPermissions() {
       const opt = {

@@ -2,12 +2,11 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-capitalize"> 
-          <div class="text-h5">
-            detalhe do organismo {{ organismName }}
-          </div>
+        <div class="col text-capitalize"> 
+          <div class="text-h5">{{ organismName }}</div>
+          <div class="text-caption">Detalhe do organismo</div>
         </div>
-        <div class="col-2 text-right">
+        <div class="col text-right">
           <q-btn
             no-caps
             color="primary"
@@ -44,7 +43,12 @@
           <div class="row justify-around">
             <div class="col-7 q-gutter-md" align="start">
               <div class="text-h5">Tipo de configuração de organismo</div>
-              <q-select
+              <q-input
+                v-model="organismConfigName"
+                outlined
+                readonly
+              />
+              <!-- <q-select
                 outlined
                 label="Nome da configuração"
                 option-label="organismConfigName"
@@ -54,9 +58,9 @@
                 hint="O tipo de configuração que está aplicado"
                 v-model="organismConfigName"
                 :options="organismConfigOptions"
-              />
+              /> -->
               <q-separator class="q-mx-md" />
-              <div v-if="organismList.length && $route.path.includes('/admin')">
+              <div v-if="$route.path.includes('/admin')">
                 <q-btn
                   label="Gerenciar Vínculos"
                   color="primary"
@@ -92,148 +96,31 @@
             <q-separator vertical class="q-ma-md" />
             <div class="col-4">
               <div class="row">
-                <div
-                  class="text-h5"
-                >
-                  Funções
-                </div>
+                <div class="text-h5">Funções</div>
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
-                <q-card
-                  style="border-radius: 1rem"
-                  class="bg-grey-3 q-ma-sm"
-                  flat
-                >
-                  <q-item>
-                    <q-item-section top>
-                      <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
-                      <div>Descrição: {{ func.functionDescription }}</div>
-                      <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ? func.functionRequiredTitleName : 'nenhum' }}</div>
-                      <div>
-                        <q-icon name="visibility" color="primary" size="sm"/>
-                        <q-chip
-                          v-for="(vision,i) in func.visions"
-                          :key="i"
-                        >
-                        {{ vision.name }}
-                        </q-chip>
-                        <span 
-                          class="text-caption text-grey-7"
-                          v-if="!func.visions || !func.visions.length"
-                        >
-                          Nenhuma visão
-                        </span>
-                      </div>
-                    </q-item-section>
-                    <q-item-section top side>
-                      <div class="text-subtitle2">
-                        <q-badge color="orange-8" v-if="func.isRequired">
-                          Obrigatório
-                        </q-badge>
-                      </div>
-                    </q-item-section>
-                  </q-item>
-                  <q-expansion-item
-                    color="primary"
-                    class="q-pa-sm"
-                    icon="group"
-                    :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                    caption="Clique para ver"
-                  >
-                    <q-item
-                      v-for="user in func.users"
-                      :key="user"
-                      style="border-radius: 0.5rem; margin-top: 8px;"
-                      class="bg-white"
-                    >
-                      <q-item-section avatar>
-                        <q-avatar rounded>
-                          <img src="https://cdn.quasar.dev/img/avatar.png" />
-                        </q-avatar>
-                      </q-item-section>
-                      <q-item-section class="text-capitalize text-wrap" lines="2">
-                        {{ user.userName }}
-                        <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
-                          Data início:
-                          {{ formatDate(user.dates.initialDate) }}
-                        </div>
-                        <div
-                          v-if="user.dates && user.dates.finalDate"
-                          class="text-caption text-grey-7"
-                        >
-                          Data Fim: {{ formatDate(user.dates.finalDate) }}
-                        </div>
-                      </q-item-section>
-                      <q-item-section side>
-                        <div class="text-grey-8 q-gutter-xs">
-                          <q-btn
-                            @click="dialogInsertObservation(user)"
-                            class="gt-xs"
-                            size="12px"
-                            color="secondary"
-                            flat
-                            dense
-                            round
-                            icon="library_books"
-                          >
-                            <q-tooltip> Observações </q-tooltip>
-                          </q-btn>
-                          <q-btn
-                            @click="dialogOpenDeleteUserFromFunction(user, funcIndex)"
-                            class="gt-xs"
-                            size="12px"
-                            color="red-8"
-                            flat
-                            dense
-                            round
-                            icon="delete"
-                          >
-                            <q-tooltip> Deletar usuário da função </q-tooltip>
-                          </q-btn>
-                        </div>
-                      </q-item-section>
-                    </q-item>
-                  </q-expansion-item>
-                  <div 
-                    class="text-caption text-grey-7 q-mx-md"
-                    v-if="func.functionProperties && func.functionProperties.numRequired === true"
-                  >
-                    Esta função requer {{ func.functionNumOfOccupants }} participantes
-                  </div>
-                  <div 
-                    class="text-caption text-grey-7 q-mx-md"
-                    v-else
-                  >
-                    Esta função permite {{ func.functionNumOfOccupants }} participantes
-                  </div>
-                  <q-item-section class="q-pa-xs">
-                    <q-btn
-                      label="Adicionar pessoa"
-                      color="primary"
-                      dense
-                      icon="add"
-                      rounded
-                      flat
-                      no-caps
-                      @click="linkUserToFunction(func, funcIndex)"
-                    />
-                  </q-item-section>
-                </q-card>
+                <CardFunction
+                  :func="func"
+                  :funcIndex="funcIndex"
+                  @insertObservation="dialogInsertObservation"
+                  @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                  @linkUserToFunction="linkUserToFunction"
+                />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
                     <q-card-section align="center">
                       <div class="text-h6">
                         Informe o usuário que ocupará a função
                       </div>
-                      <div v-if="func.functionIsRequired">
+                      <div v-if="dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
                         <q-chip color="red-8" outline>
-                          Esta função requer o título {{ selectedFunc.functionRequiredTitleName }}
+                          Esta função requer o título {{ dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName }}
                         </q-chip>
                       </div>
                     </q-card-section>
                     <q-card-section align="center">
                       <q-select
-                        v-model="userSelected"
+                        v-model="dialogInsertUserInFunction.userSelected"
                         filled
                         use-input
                         label="Nome do usuário"
@@ -367,7 +254,7 @@
                     <q-card-section>
                       <div class="text-h6 text-center">
                         Tem certeza que deseja inativar
-                        {{ dialogDeleteUserFromFunction.data.userName }}?
+                        {{ dialogDeleteUserFromFunction.userData.userName }}?
                       </div>
                     </q-card-section>
                     <q-card-section align="center" class="q-gutter-sm">
@@ -629,107 +516,6 @@
             </div>
           </div>
         </q-tab-panel>
-        <!-- <q-tab-panel name="solicitations">
-          <div class="text-h5">Solicitações</div>
-          <q-list>
-            <div class="row q-gutter-md" v-if="solicitationData !== 0">
-              <div 
-                v-for="(solic, solicIndex) in solicitationData" 
-                :key="solicIndex"
-                class="col-5" 
-              >
-                <q-item 
-                  class="solicitation-cards"
-                >
-                  <q-item-section>
-                    <div class="row justify-between">
-                      <div class="col text-capitalize text-subtitle1">
-                        {{ solic.userName }}
-                      </div>
-                      <div class="col-4 text-caption">
-                        {{ solic.createdAt }}
-                      </div>
-                    </div>
-                    <q-item-label caption lines="10">
-                      {{ solic.solicitationObs.substring(0, obsMaxLength) }}
-                        <span v-if="solic.solicitationObs.length > obsMaxLength">
-                          {{ showFullText[solicIndex] ? solic.solicitationObs.substring(obsMaxLength) : '...' }}
-                          <q-btn
-                            rounded
-                            color="primary"
-                            dense
-                            no-caps
-                            flat
-                            :label="this.showFullText[solicIndex] ? 'Ver menos' : 'Ver mais'"
-                            @click="toggleExpandText(solicIndex)"
-                          />
-                        </span>
-                    </q-item-label>
-                    <q-separator class="q-ma-md"/>
-                    <q-item-label class="text-center q-gutter-md">
-                      <q-btn
-                        rounded
-                        color="primary"
-                        dense
-                        no-caps
-                        flat
-                        @click="clkReproveSolicitation(solic, solicIndex)"
-                        label="Reprovar"
-                      />
-                      <q-btn
-                        rounded
-                        color="primary"
-                        unelevated
-                        no-caps
-                        @click="dialogAproveSolicitation"
-                        label="Aprovar"
-                      />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-dialog v-model="dialogReproveSolicitation.open" >
-                  <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                    <q-card-section align="center">
-                      <div class="text-h6">
-                        Informe o motivo para reprovar a solicitação
-                      </div>
-                    </q-card-section>
-                    <q-card-section align="center">
-                      <q-input
-                        filled
-                        label="Observação"
-                        autogrow
-                        hint="Escreva uma breve descrição explicando o motivo para reprovar esta solicitação"
-                        v-model="dialogReproveSolicitation.obs"
-                      />
-                    </q-card-section>
-                    <q-card-actions align="center">
-                      <q-btn
-                        flat
-                        label="Depois"
-                        no-caps
-                        rounded
-                        color="primary"
-                        @click="dialogReproveSolicitation.open = false"
-                      />
-                      <q-btn
-                        unelevated
-                        rounded
-                        label="Enviar"
-                        no-caps
-                        color="primary"
-                        @click="sendReproveFeedback"
-                      />
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
-              </div>
-            </div>
-            <div class="text-subtitle1" v-else-if="solicitationData === 0">
-              Nenhuma solicitação <q-icon name="warning" size="sm" color="warning"></q-icon>
-            </div>
-          </q-list>
-        </q-tab-panel> -->
       </q-tab-panels>
     </q-page>
   </q-page-container>
@@ -737,10 +523,14 @@
 
 <script>
 import { defineComponent } from "vue";
+import CardFunction from '../../components/CardFunction.vue'
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
 export default defineComponent({
   name: "OrganismDetail",
+  components: {
+    CardFunction
+  },
   data() {
     return {
       tab: 'organismData',
@@ -760,6 +550,7 @@ export default defineComponent({
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
+        selectedFunc: null
       },
       dialogInsertNewOrganismGroup: false,
       dialogDeleteUserFromFunction: {
@@ -767,7 +558,7 @@ export default defineComponent({
         finalDate: "",
         functionUserId: "",
         open: false,
-        data: {},
+        userData: {},
       },
       dialogOpenObservation: {
         open: false,
@@ -809,12 +600,12 @@ export default defineComponent({
     this.getOrganismDetailById();
   },
   beforeMount(){
-    this.getOrganismsList()
+    // this.getOrganismsList()
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
-    this.getOrganismsConfigsList()
+    // this.getOrganismsConfigsList()
     this.getUserVisionPermissionByOrganismId()
   },
   methods: {
@@ -1174,11 +965,9 @@ export default defineComponent({
       this.dialogOpenObservation.open = false;
       this.dialogInsertUserInFunction.open = false;
     },
-    dialogOpenDeleteUserFromFunction(user, funcIndex) {
+    dialogOpenDeleteUserFromFunction(user) {
       this.dialogDeleteUserFromFunction.open = true;
-      this.dialogDeleteUserFromFunction.data = user;
-      this.dialogDeleteUserFromFunction.functionUserId = user.userIdMongo;
-      this.dialogDeleteUserFromFunction.funcIndex = funcIndex;
+      this.dialogDeleteUserFromFunction.userData = user;
     },
     getOrganismsList(val) {
       const opt = {
@@ -1194,34 +983,28 @@ export default defineComponent({
       });
     },
     addUserToFunction() {
-      const selectedFuncIndex = this.selectedFuncIndex;
-      if (this.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFuncIndex;
+      if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
       }
-      this.functions[selectedFuncIndex].users.push({
-        organismFunctionConfigId: this.selectedFunc.functionConfigId,
-        userId: this.userSelected._id,
-        initialDate: this.dialogInsertUserInFunction.initialDate,
-      });
-      let userData = {}
-      for (const user of this.functions[selectedFuncIndex].users) {
-        userData = {
-          organismFunctionConfigId: user.organismFunctionConfigId,
-          userId: user.userId,
-          dates: {
-            initialDate: user.initialDate
-          }
-        };
+      if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
+        this.$q.notify('Usuário já incluído nesta função')
+        return
       }
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismId: this.$route.query.organismId,
-          functionData: userData
+          organismFunctionId: this.dialogInsertUserInFunction.selectedFunc._id,
+          userId:  this.dialogInsertUserInFunction.userSelected.userId,
+          dates: {
+            initialDate: this.dialogInsertUserInFunction.initialDate
+          }
         }
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if(r.error){
           this.$q.notify(r.errorMessage)
           this.functions[selectedFuncIndex].users = []
@@ -1231,6 +1014,13 @@ export default defineComponent({
           this.clearDialogAndFunctions();
         }
       });
+    },
+    verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
+      let ret = false
+      this.functions[functionIndex].users.forEach(u => {
+        if (u.userId === userIdToVerify) ret = true
+      })
+      return ret
     },
     getParentOrganismsById() {
       const parentOrganismId = this.$route.query.organismId
@@ -1255,19 +1045,19 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/inactivateUserFromFunction",
         body: {
-          functionUserId: this.dialogDeleteUserFromFunction.functionUserId,
+          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
           finalDate: this.dialogDeleteUserFromFunction.finalDate,
           obsText: this.dialogDeleteUserFromFunction.obsText,
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.getOrganismDetailById();
-          this.$q.notify("Usuário deletado com sucesso!");
-          this.clearDialogAndFunctions();
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
         }
+        this.getOrganismDetailById();
+        this.$q.notify("Usuário deletado com sucesso!");
+        this.clearDialogAndFunctions();
       });
     },
     getUsers(val, update) {
@@ -1278,23 +1068,26 @@ export default defineComponent({
           isActive: 1,
           page: 1,
           rowsPerPage: 50
-        },
-      };
+        }
+      }
+      if (this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
+        opt.body.filterByTitleId = this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId
+      }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    linkUserToFunction(func, funcIndex ) {
-      console.log(func)
-      this.selectedFuncIndex = funcIndex;
-      this.selectedFunc = func;
+    linkUserToFunction(func, funcIndex) {
+      console.log(func, funcIndex, 'ocaraiaiaii')
+      this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
+      this.dialogInsertUserInFunction.selectedFunc = func
       this.dialogInsertUserInFunction.open = true;
     },
     

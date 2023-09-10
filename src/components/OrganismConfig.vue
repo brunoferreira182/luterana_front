@@ -29,7 +29,6 @@
                 ? "Salvar"
                 : "Criar"
             }}
-            Configuração
           </q-btn>
         </div>
       </div>
@@ -62,13 +61,13 @@
             Informe qual será o nome da configuração do organismo
           </div>
           <q-separator/>
-          <div>Esta configuração de organismo será vinculada a outra?
+          <div>Esta configuração de organismo será grupo de outra?
             <q-chip 
               :color="requiresLink ? 'teal' : 'negative'" 
               text-color="white" 
               :icon="requiresLink ? 'done' : 'close'"
             >
-              {{ requiresLink ? 'Sim' : 'Não' }}
+              {{ requiresLink ? childOfOrganism.organismConfigName : 'Não' }}
             </q-chip>
             <q-chip
               v-if="parentOrganismConfigName" 
@@ -83,7 +82,7 @@
             no-caps
             rounded
             color="primary" 
-            :label="$route.query.organismConfigId && requiresLink === true ? 'Alterar filiação': 'Criar filiação'"
+            label="Editar agrupamento"
             @click="dialogCreateAffiliation = true"
           />
           <q-separator/>
@@ -93,7 +92,7 @@
               unelevated
               no-caps
               rounded
-              color="primary" 
+              :style="this.selectedColor !== '' ? `background-color: ${this.selectedColor}; color: white` : 'background-color: black; color: white'"
               :label="'Definir cor'"
               @click="dialogSelectColor = true"
             />
@@ -141,14 +140,14 @@
           > 
             <q-card style="border-radius: 1rem; width: 400px">
               <q-card-section>
-                <div class="text-h6 text-center">Nova filiação</div>
+                <div class="text-h6 text-center">Grupo de</div>
               </q-card-section>
               <q-card-section>
                 <q-select
                   outlined
                   label="Nome da configuração"
                   option-label="organismConfigName"
-                  :option-value="(item) => item._id"
+                  :option-value="(item) => item"
                   emit-value
                   map-options
                   hint="Informe qual será o organismo pai"
@@ -919,7 +918,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createOrganismsConfig",
         body: {
-          requiresLinkOrganismConfigId: this.childOfOrganism,
+          requiresLinkOrganismConfigId: this.childOfOrganism._id,
           organismTypeId: this.organismTypeId,
           organismConfigName: this.organismConfigName,
           requiresLink: this.requiresLink,
@@ -982,26 +981,20 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          if(r.data.organismConfigData){
-            this.parentOrganismConfigName = r.data.parentOrganismConfigData.parentOrganismConfigName
-            this.organismConfigName = r.data.organismConfigData.organismConfigName;
-            this.organismFields = r.data.organismConfigData.organismFields;
-            r.data.organismConfigData.functions[0].organismFunctionId ?
-            this.functions = r.data.organismConfigData.functions :
-            this.functions = []
-            this.selectedType = r.data.organismConfigData.organismConfigName;
-            this.requiresLink = r.data.organismConfigData.requiresLink
-            
-          } else{
-            this.organismConfigName = r.data.organismConfigName;
-            this.organismFields = r.data.organismFields;
-            r.data.functions[0].organismFunctionId ?
-            this.functions = r.data.functions :
-            this.functions = []
-            this.selectedType = r.data.organismConfigName;
-            this.requiresLink = r.data.requiresLink
+          this.$q.notify("Ocorreu um erro, tente novamente por favor")
+          return
+        }
+        this.organismConfigName = r.data.organismConfigData.organismConfigName;
+        this.organismFields = r.data.organismConfigData.organismFields;
+        r.data.organismConfigData.functions[0].organismFunctionId
+          ? this.functions = r.data.organismConfigData.functions
+          : this.functions = []
+        this.selectedType = r.data.organismConfigData.organismConfigName;
+        this.requiresLink = r.data.organismConfigData.requiresLink
+        if (r.data.parentOrganismConfigData) {
+          this.childOfOrganism = {
+            organismConfigName: r.data.parentOrganismConfigData.parentOrganismConfigName,
+            _id: r.data.organismConfigData.parentOrganismConfigId
           }
         }
       });
@@ -1132,7 +1125,9 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/getOrganismsConfigsList",
         body: {
-          searchString: this.searchString
+          searchString: this.searchString,
+          rowsPerPage: 30,
+          page: 1
         }
       }
       useFetch(opt).then((r) => {
@@ -1140,12 +1135,11 @@ export default defineComponent({
           console.log("Erro getOrganismConfigsList")
           return
         }
-        this.organismConfigsList = r.data
+        this.organismConfigsList = r.data.list
       })
     },
     confirmChildOf() {
-      this.$q.notify("Organismo agrupado com sucesso")
-      this.requiresLink = true;confirmColor
+      this.requiresLink = true;
       this.dialogCreateAffiliation = false
     },
     dialogCancelAffiliation() {
@@ -1167,9 +1161,7 @@ export default defineComponent({
     },
     confirmColor() {
       this.selectedColor = this.newColor;
-      if(this.selectedColor !== '') {
-        this.$q.notify("Cor selecionada com sucesso")
-      } else {
+      if (this.selectedColor === '') {
         this.$q.notify("Selecione uma cor para confirmar")
         return
       }

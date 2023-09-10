@@ -20,7 +20,7 @@
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row q-gutter-sm items-center text-right">
+          <div class="flex row q-gutter-sm">
             <div class="col">
               <q-select
                 outlined
@@ -31,7 +31,7 @@
                 @update:model-value="getOrganismsConfigs"
               ></q-select>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-input
                 @keyup="getOrganismsConfigs"
                 outlined
@@ -45,17 +45,15 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="col text-right">
               <q-btn
                 @click="$router.push('/config/CreateOrganismsConfig')"
                 color="primary"
                 unelevated
-                dense
                 rounded
                 no-caps
                 icon="add"
-                class="q-pa-sm"
-                label="Criar configuração"
+                label="Criar"
                 />
             </div>
           </div>

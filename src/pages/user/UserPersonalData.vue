@@ -2,9 +2,34 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">Preencher dados pessoais</div>
-        <div class="col text-right">
+        <div class="col text-h5 text-capitalize">
+          Preencher dados pessoais
+          <span class="q-gutter-sm">
+            
+          </span>
+        </div>
+        <div class="col text-right q-gutter-sm">
           <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="person"
+            color="secondary"
+            label="Dados pessoais"
+            @click="visionSelected = 'personalData'"
+            :outline="visionSelected === 'personalData' ? false : true"
+          />
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="school"
+            color="secondary"
+            label="Títulos"
+            @click="visionSelected = 'titles'"
+            :outline="visionSelected === 'titles' ? false : true"
+          />
+          <!-- <q-btn
             no-caps
             rounded
             unelevated
@@ -16,13 +41,14 @@
             :disable="isSaving"
           >
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
-          </q-btn>
+          </q-btn> -->
         </div>
       </div>
       <q-separator/>
       <q-splitter
         v-model="splitterModel"
         style="height: 100vh;"
+        v-show="visionSelected === 'personalData'"
       >
         <template v-slot:before>
           <q-tabs
@@ -44,6 +70,21 @@
               />
               <q-separator/>
             </template>
+            <div class="text-center q-my-md">
+              <q-btn
+                no-caps
+                rounded
+                unelevated
+                class="q-pa-sm"
+                color="primary"
+                icon="bookmark"
+                :label="isSaving ? '' : 'Salvar Dados'"
+                @click="salvar"
+                :disable="isSaving"
+              >
+                <q-spinner-dots v-if="isSaving" color="white" size="1em" />
+              </q-btn>
+            </div>
           </q-tabs>
         </template>
         <template v-slot:after>
@@ -55,24 +96,29 @@
             class="bg-accent"
             :model-value="tab"
           >
-          <q-tab-panel 
-          v-for="(tabs, tabsIndex) in userData.userDataTabs"
-          :key="tabsIndex"
-          :name="tabs.tabValue" 
-          >
-          <q-list class="text-left text-h6">
-            <q-item>
-              <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
-            </q-item>
-          </q-list>
-          <div
-          v-for="(field, fieldIndex) in tabs.fields"
-          :key="fieldIndex"
-          class="q-my-md"
-          >
-          <div class="row q-gutter-sm justify-left items-left">
-                  <div class="col-8">
-                    <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options' ">
+            <q-tab-panel 
+              v-for="(tabs, tabsIndex) in userData.userDataTabs"
+              :key="tabsIndex"
+              :name="tabs.tabValue" 
+            >
+              <q-list class="text-left text-h6">
+                <q-item>
+                  <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
+                </q-item>
+              </q-list>
+              <div
+                v-for="(field, fieldIndex) in tabs.fields"
+                :key="fieldIndex"
+                class="q-my-md"
+              >
+                <div class="row q-gutter-sm justify-left items-left">
+                  <div class="col q-mx-lg">
+                    <div v-if="
+                      field.type.type !== 'boolean'
+                      && field.type.type !== 'address'
+                      && field.type.type !== 'options'
+                      && field.type.type !== 'person'"
+                    >
                       <q-input
                         :label="field.label"
                         :hint="field.hint"
@@ -100,6 +146,7 @@
                         </template>
                       </q-input>
                     </div>
+
                     <div class="text-right" v-if="field.type.type === 'options'">
                       <q-select
                         outlined
@@ -113,6 +160,7 @@
                       >
                       </q-select>
                     </div>
+
                     <div
                       v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
                       class="text-subtilte1 text-start"
@@ -167,8 +215,8 @@
                         icon="add"
                         @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                       />
-
                     </div>
+
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
@@ -177,6 +225,56 @@
                       :hint="field.hint"
                       v-model="field.value"
                     />
+
+                    <div v-if="field.type.type === 'person'">
+                      <!-- <div class="text-body">{{ field.label }}</div> -->
+                      <!-- <div
+                        v-if="(!field.value || field.value.length === 0)"
+                        class="text-subtilte1 text-start"
+                      >Nenhuma pessoa vinculada</div> -->
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <q-list class="no-margin">
+                          <q-item
+                            v-for="(item, i) in field.value"
+                            :key="item + i"
+                            style="border-radius: 1rem"
+                            class="bg-grey-3 q-ma-sm q-pa-md"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-capitalize">
+                                {{ item.userName }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                {{ item.email }}
+                              </q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                              <q-item-label>
+                                <q-btn
+                                  icon="delete"
+                                  flat
+                                  color="red"
+                                  @click="removeThisPerson(fieldIndex, tabsIndex, i)"
+                                />
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </div>
+                      <q-btn
+                        :label="`Adicionar ${field.label}`"
+                        no-caps
+                        rounded
+                        unelevated
+                        outline
+                        color="primary"
+                        icon="add"
+                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                        @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
+                      />
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -293,17 +391,65 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog v-model="addPerson.dialogOpen" @hide="clearPersonInputs">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Selecione a pessoa</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="addPerson.userSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="addPerson.usersOptions"
+              @filter="getUserByString"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              @click="addPerson.dialogOpen = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="confirmAddPerson"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
     </q-page>
   </q-page-container>
 </template>
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+// import utils from '../../boot/utils'
 export default defineComponent({
   name: "UserPersonalData",
   data() {
     return {
       tab: "",
+      visionSelected: 'personalData',
       isSaving: false,
       newPhone: "",
       addressType: "",
@@ -329,9 +475,19 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
-      splitterModel: 13,
+      splitterModel: 25,
       userData: {},
-      userDetail: []
+      userDetail: [],
+      addPerson: {
+        dialogOpen: false,
+        fieldIndex: null,
+        tabIndex: null,
+        usersOptions: null,
+        userSelected: null,
+        data: {
+          name: '',
+        }
+      }
     };
   },
   mounted() {
@@ -342,6 +498,48 @@ export default defineComponent({
     
   },
   methods: {
+    removeThisPerson(fieldIndex, tabsIndex, personIndex) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
+      this.clearPersonInputs()
+    },
+    clearPersonInputs () {
+      this.addPerson.userSelected = null
+    },
+    getUserByString (val, update) {
+      if (val < 2) return
+      const opt = {
+        route: '/desktop/users/getUsersList',
+        body: {
+          searchString: val
+        }
+      }
+      useFetch(opt).then(r => {
+        if (r.error) return this.$q.notify('Ocorreu um erro. Tente novamente.')
+        update(() => {
+          this.addPerson.usersOptions = r.data.list
+        })
+      })
+    },
+    confirmAddPerson () {
+      if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
+        this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
+      else {
+        if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value
+          || this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value === ''
+          ) {
+            this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
+        } else {
+          this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value.push(this.addPerson.userSelected)
+        }
+      }
+      this.clearPersonInputs()
+      this.addPerson.dialogOpen = false
+    },
+    clkOpenAddPersonDialog (fieldIndex, tabIndex) {
+      this.addPerson.fieldIndex = fieldIndex
+      this.addPerson.tabIndex = tabIndex
+      this.addPerson.dialogOpen = true
+    },
     checkCEP(ev) {
       this.cep = ev.target.value;
       if (this.cep.length === 8) {

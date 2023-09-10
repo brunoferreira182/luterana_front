@@ -37,64 +37,14 @@
               Funções
             </div>
           </div>
-          <div v-for="func in functions" :key="func">
-            <q-card style="border-radius: 1rem" class="bg-grey-3 q-ma-sm" flat>
-              <q-item>
-                <q-item-section top>
-                  <div class="text-subtitle2 text-capitalize">{{ func.functionName }}</div>
-                  <div>Descrição: {{ func.functionDescription }}</div>
-                  <div class="text-caption text-grey-7">Título necessário: {{ func.functionIsRequired ?
-                    func.functionRequiredTitleName : 'nenhum' }}</div>
-                  <div>
-                    <q-icon name="visibility" color="primary" size="sm" />
-                    <q-chip v-for="(vision, i) in func.visions" :key="i">
-                      {{ vision.name }}
-                    </q-chip>
-                    <span class="text-caption text-grey-7" v-if="!func.visions || !func.visions.length">
-                      Nenhuma visão
-                    </span>
-                  </div>
-                </q-item-section>
-                <q-item-section top side>
-                  <div class="text-subtitle2">
-                    <q-badge color="orange-8" v-if="func.isRequired">
-                      Obrigatório
-                    </q-badge>
-                  </div>
-                </q-item-section>
-              </q-item>
-              <q-expansion-item class="q-pa-sm" icon="group"
-                :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'" caption="Clique para ver">
-                <q-item 
-                  v-for="user in func.users" 
-                  :key="user" 
-                  style="border-radius: 0.5rem; margin-top: 8px;"
-                  :class="user.dates && user.dates.finalDate ? 'bg-white opaco' : 'bg-white'">
-                  <q-item-section avatar>
-                    <q-avatar rounded>
-                      <img src="https://cdn.quasar.dev/img/avatar.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section class="text-capitalize text-wrap" lines="2">
-                    {{ user.userName }}
-                    <div class="text-caption text-grey-7" v-if="user.dates && user.dates.initialDate">
-                      Data início:
-                      {{ formatDate(user.dates.initialDate) }}
-                    </div>
-                    <div
-                      v-if="user.dates && user.dates.finalDate"
-                      class="text-caption text-grey-7"
-                    >
-                      Data Fim: {{ formatDate(user.dates.finalDate) }}
-                    </div>
-                  </q-item-section>
-                </q-item>
-              </q-expansion-item>
-              <q-item-section class="q-pa-xs" v-if="hasPermission">
-                <q-btn label="Convidar pessoa" color="primary" dense icon="add" rounded flat no-caps
-                  @click="clkOpenDialogSolicitation(func)" />
-              </q-item-section>
-            </q-card>
+          <div v-for="(func, funcIndex) in functions" :key="func">
+            <CardFunction
+              :func="func"
+              :funcIndex="funcIndex"
+              @insertObservation="dialogInsertObservation"
+              @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+              @linkUserToFunction="linkUserToFunction"
+            />
             <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
                 <q-card-section align="center">
@@ -104,12 +54,29 @@
                   
                 </q-card-section>
                 <q-card-section>
-                  <q-select v-model="userSelected" filled clearable use-input label="Nome do usuário"
-                    option-label="userName" :options="usersOptions" @filter="getUsers" :option-value="(item) => item._id">
+                  <q-select
+                    v-model="userSelected"
+                    filled
+                    clearable
+                    use-input
+                    label="Nome do usuário"
+                    option-label="userName"
+                    :options="usersOptions"
+                    @filter="getUsers"
+                    :option-value="(item) => item._id"
+                  >
                     <template v-slot:no-option>
                       <q-item>
                         <q-item-section class="text-grey">
                           Nenhum resultado
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps">
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                          <q-item-label caption>{{ scope.opt.email }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </template>
@@ -145,10 +112,14 @@
 
 <script>
 import { defineComponent } from "vue";
+import CardFunction from '../../components/CardFunction.vue'
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
 export default defineComponent({
   name: "UserOrganismDetail",
+  components: {
+    CardFunction
+  },
   data() {
     return {
       usersOptions: [],
@@ -206,7 +177,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
@@ -222,6 +193,7 @@ export default defineComponent({
       })
     },
     clkOpenDialogSolicitation(func) {
+      console.log(func)
       this.dialogOpenSolicitation.open = true;
       if(func.functionNumOfOccupants === func.numOfUser){
         this.isReplacement = true
