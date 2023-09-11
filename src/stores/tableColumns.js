@@ -36,6 +36,20 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
       {
+        name: "createdBy",
+        align: "left",
+        label: "Quem solicitou",
+        field: "createdBy",
+        sortable: true,
+      },
+      {
+        name: "createdAt",
+        align: "left",
+        label: "Quando",
+        field: "createdAt",
+        sortable: true,
+      },
+      {
         name: "status",
         align: "left",
         label: "Status",
