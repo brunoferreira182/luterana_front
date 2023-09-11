@@ -1019,6 +1019,7 @@ export default defineComponent({
           this.functions[selectedFuncIndex].users = []
           return
         } else{
+          this.$q.notify('Usuário inserido na função!')
           this.getOrganismDetailById()
           this.clearDialogAndFunctions();
         }

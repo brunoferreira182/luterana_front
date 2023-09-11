@@ -191,7 +191,7 @@ export default defineComponent({
         route: "/desktop/commonUsers/acceptFunctionSolicitation",
         body: {
           functionSolicitationId: this.dialogOpenSolicitation.data._id,
-          functionConfigId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
+          functionId: this.dialogOpenSolicitation.data.organismFunctionConfigId,
           organismId: this.dialogOpenSolicitation.data.organismId,
         },
       };
