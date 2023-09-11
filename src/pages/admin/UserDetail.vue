@@ -266,7 +266,10 @@
                 :name="tab._id" 
               >
                 <div class="row">
-                  <div class="col text-h6">{{ tab.titleName }}</div>
+                  <div 
+                    class="col text-h6"
+                  >
+                  {{ tab.titleName }}</div>
                   <q-btn
                     label="Excluir título"
                     color="red"
@@ -285,7 +288,6 @@
                       v-for="(field, fieldIndex) in tab.titleFields"
                       :key="fieldIndex"
                     >
-                      
                       <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
                         <q-input
                           :label="field.label"
@@ -325,7 +327,6 @@
                           @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                         />
                       </div>
-                    
                       <div
                         v-if="field.type.type === 'address' && !field.address"
                         class="text-subtilte1 text-start"
@@ -333,7 +334,6 @@
                         <div class="text-h6">Endereços</div>
                         Nenhum endereço vinculado
                       </div>
-                      
                       <q-list
                         class="no-margin"
                         v-if="field.address"
@@ -373,7 +373,9 @@
                         v-model="field.value"
                       />
                     </div>
-                    <div class="col-6 q-gutter-sm text-center">
+                    <div 
+                      class="col-6 q-gutter-sm text-center"
+                    >
                       <q-btn
                         rounded
                         no-caps
@@ -381,7 +383,7 @@
                         class="full-width"
                         color="primary"
                         label="Salvar"
-                        @click="updateUserTitle"
+                        @click="updateUserTitle(tab)"
                       />
                     </div>
                   </div>
@@ -391,8 +393,6 @@
           </template>
         </q-splitter>
       </div>
-
-
       <q-dialog v-model="openDialogVinculateUserToTitle">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -479,6 +479,7 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      selectIndex: null,
       tab: "",
       tabTitles: "",
       isSaving: false,
@@ -522,13 +523,13 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
-    updateUserTitle(){
-      const titleId = this.$route.query.titleId
+    updateUserTitle(i){
+      console.log(i)
       const opt = {
-        route: "/desktop/config/updateUserTitle",
+        route: "/desktop/adm/updateUserTitle",
         body: {
-          userTitleId: titleId,
-          titleFields: this.fields
+          userTitleId: i._id,
+          titleFields: i.titleFields
         }
       };
       this.$q.loading.show();
@@ -537,8 +538,15 @@ export default defineComponent({
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente')
           return
-        } else{this.$q.notify('Título atualizado com sucesso!')}
+        } else{
+          this.$q.notify('Título atualizado com sucesso!'); 
+          this.getUserDetailById()
+        }
       });
+    },
+    indetifyIndex(i) {
+      console.log(i)
+      this.selectIndex = i
     },
     clkConfirmDeleteTitle () {
       const opt = {

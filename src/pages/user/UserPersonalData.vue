@@ -328,6 +328,31 @@
               <div class="row">
                 <div class="col text-h6">{{ tab.titleName }}</div>
               </div>
+              <div class="row justify-center items-start">
+                  <div class="col-8 q-pa-md q-gutter-md">
+                    <div class="text-h5 text-center">Dados do título</div>
+                    <div
+                      v-for="(field, fieldIndex) in tab.titleFields"
+                      :key="fieldIndex"
+                    >
+                      <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                        <q-input
+                          disable
+                          :label="field.label"
+                          :type="field.type.type"
+                          v-model="field.value"
+                          outlined
+                        >
+                          <template
+                            v-if="field.multiple"
+                            #append
+                          >
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </q-tab-panel>
           </q-tab-panels>
         </template>
