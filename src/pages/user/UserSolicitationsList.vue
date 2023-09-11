@@ -148,8 +148,8 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getFunctionsSolicitationsByUserId();
     this.getUserIdMongo()
+    this.getFunctionsSolicitationsByUserId();
   },
   methods: {
     getUserIdMongo() {
@@ -244,7 +244,7 @@ export default defineComponent({
           searchString: this.filter,
           page: this.pagination.page,
           isActive: 1,
-          rowsPerPage: this.pagination.rowsPerPage
+          rowsPerPage: this.pagination.rowsPerPage,
         },
       };
       if (this.selectFilter === "Ativos") {

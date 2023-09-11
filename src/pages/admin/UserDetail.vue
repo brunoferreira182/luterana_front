@@ -577,12 +577,12 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente");
+        } else {
           this.userData = r.data
           this.tab = r.data.userDataTabs[0].tabValue
           this.getUserDetailById()
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente");
         }
       });
     },
