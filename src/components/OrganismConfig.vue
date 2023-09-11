@@ -963,11 +963,11 @@ export default defineComponent({
         },
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.$q.notify("Os campos foram atualizados com sucesso!");
           this.$router.push('/config/organismConfigurationList')
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },

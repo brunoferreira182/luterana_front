@@ -6,7 +6,7 @@
   >
     <q-item>
       <q-item-section top>
-        <div class="text-subtitle2 text-capitalize">{{ props.functionName }}</div>
+        <div class="text-subtitle2 text-capitalize">{{ props.func.functionName }}</div>
         <div>Descrição: {{ props.func.functionDescription }}</div>
         <div class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
       </q-item-section>
@@ -106,6 +106,18 @@
     </div>
     <q-item-section class="q-pa-xs">
       <q-btn
+        v-if="$route.path.includes('/user') "
+        label="Convidar pessoa"
+        color="primary"
+        dense
+        icon="add"
+        rounded
+        flat
+        no-caps
+        @click="clkOpenDialogSolicitation"
+      />
+      <q-btn
+        v-else
         label="Adicionar pessoa"
         color="primary"
         dense
@@ -124,7 +136,7 @@
 
 const props = defineProps(['func', 'funcIndex'])
 
-const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction'])
+const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'ClkOpenDialogSolicitation'])
 
 function insertObservation(user) {
   emits('insertObservation', user)
@@ -132,6 +144,9 @@ function insertObservation(user) {
 
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
+}
+function clkOpenDialogSolicitation () {
+  emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
 }
 
 function linkUserToFunction () {

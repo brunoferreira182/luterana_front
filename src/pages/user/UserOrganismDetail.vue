@@ -41,6 +41,7 @@
             <CardFunction
               :func="func"
               :funcIndex="funcIndex"
+              @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
             />
             <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -48,7 +49,6 @@
                   <div class="text-h6">
                     Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
                   </div>
-                  
                 </q-card-section>
                 <q-card-section>
                   <q-select
@@ -173,6 +173,10 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
+        if(r.error){
+          this.$q.notify(r.errorMessage)
+          return
+        }
         update(() => {
           this.usersOptions = r.data.list;
         })
