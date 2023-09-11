@@ -564,7 +564,7 @@ export default defineComponent({
         }
       }
       useFetch(opt).then(r => {
-        if (r.error) return this.$q.notify('Ocorreu um erro. Tente novamente.')
+        if (r.error) return this.$q.notify(r.errorMessage)
         update(() => {
           this.addPerson.usersOptions = r.data.list
         })

@@ -278,6 +278,114 @@
                     no-caps
                   />
                 </div>
+                <div class="row justify-center items-start">
+                  <div class="col-8 q-pa-md q-gutter-md">
+                    <div class="text-h5 text-center">Preencha os dados do título</div>
+                    <div
+                      v-for="(field, fieldIndex) in tab.titleFields"
+                      :key="fieldIndex"
+                    >
+                      
+                      <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                        <q-input
+                          :label="field.label"
+                          :hint="field.hint"
+                          :type="field.type.type"
+                          v-model="field.value"
+                          outlined
+                        >
+                          <template
+                            v-if="field.multiple"
+                            #append
+                          >
+                            <q-btn
+                              disabled
+                              icon="add"
+                              color="primary"
+                              flat
+                              round
+                              @click="addMultipleField"
+                            >
+                              <q-tooltip
+                                >Adicionar multiplo
+                                {{ field.type.label }}</q-tooltip
+                              >
+                            </q-btn>
+                          </template>
+                        </q-input>
+                      </div>
+                      <div class="text-right" v-if="field.type.type === 'address'">
+                        <q-btn
+                          label="Adicionar um endereço"
+                          no-caps
+                          rounded
+                          unelevated
+                          outline
+                          color="primary"
+                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                        />
+                      </div>
+                    
+                      <div
+                        v-if="field.type.type === 'address' && !field.address"
+                        class="text-subtilte1 text-start"
+                      >
+                        <div class="text-h6">Endereços</div>
+                        Nenhum endereço vinculado
+                      </div>
+                      
+                      <q-list
+                        class="no-margin"
+                        v-if="field.address"
+                      >
+                        <q-item
+                          v-for="(item, i) in field.address"
+                          :key="item + i"
+                          style="border-radius: 1rem"
+                          class="bg-grey-3 q-ma-sm q-pa-md"
+                        >
+                        <q-item-section>
+                          <q-item-label lines="3" class="text-capitalize">
+                            {{ item.street }}, {{ item.number }}
+                          </q-item-label>
+                          <q-item-label caption>
+                            {{ item.district }} - {{ item.city }}
+                          </q-item-label>
+                          <q-item-label caption>
+                            CEP
+                            {{ item.cep }}
+                          </q-item-label>
+                          <q-item-label></q-item-label>
+                        </q-item-section>
+                        <q-item-section side top>
+                          <q-item-label caption class="text-capitalize">{{
+                            item.type
+                          }}</q-item-label>
+                        </q-item-section>
+                        </q-item>
+                      </q-list>
+                      <q-checkbox
+                        v-if="field.type.type === 'boolean'"
+                        class="q-pt-lg"
+                        readonly
+                        :label="field.label"
+                        :hint="field.hint"
+                        v-model="field.value"
+                      />
+                    </div>
+                    <div class="col-6 q-gutter-sm text-center">
+                      <q-btn
+                        rounded
+                        no-caps
+                        unelevated
+                        class="full-width"
+                        color="primary"
+                        label="Salvar"
+                        @click="updateUserTitle"
+                      />
+                    </div>
+                  </div>
+                </div>
               </q-tab-panel>
             </q-tab-panels>
           </template>
@@ -397,6 +505,7 @@ export default defineComponent({
       },
       userName: '',
       splitterModel: 25,
+      titleFields: [],
       visionSelected: 'personalData',
       userDetail: null,
       deleteTitle: {
@@ -413,6 +522,24 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    updateUserTitle(){
+      const titleId = this.$route.query.titleId
+      const opt = {
+        route: "/desktop/config/updateUserTitle",
+        body: {
+          userTitleId: titleId,
+          titleFields: this.fields
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else{this.$q.notify('Título atualizado com sucesso!')}
+      });
+    },
     clkConfirmDeleteTitle () {
       const opt = {
         route: "/desktop/adm/inactivateUserTitle",
@@ -431,6 +558,7 @@ export default defineComponent({
       })
     },
     clkDeleteTitle (titleId) {
+      console.log(titleId)
       this.deleteTitle.titleId = titleId
       this.deleteTitle.openDialog = true
     },
@@ -498,6 +626,20 @@ export default defineComponent({
         })
       });
     },
+    getTitleConfigsDetailById() {
+      const opt = {
+        route: "/desktop/config/getTitleConfigsDetailById",
+        body: {
+          titleConfigsId: this.titleSelected._id
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        // this.titleName = r.data.titleName
+        this.titleFields = r.data.titleFields;
+      });
+    },
     createUserTitle() {
       if (this.userAlreadyHasTitle()) {
         this.$q.notify('Usuário já tem este título')
@@ -518,8 +660,10 @@ export default defineComponent({
           this.$q.notify("Erro ao inserir título, tente novamente mais tarde.")
           return
         }
-        this.$q.notify('Título inserido com sucesso')
         this.getUserDetailById()
+        this.getTitleConfigsDetailById()
+        this.tabTitles = 
+        this.$q.notify('Preencha os dados do título')
       });
     },
     userAlreadyHasTitle () {
