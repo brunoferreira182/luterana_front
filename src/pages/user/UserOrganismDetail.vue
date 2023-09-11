@@ -132,7 +132,7 @@ export default defineComponent({
       dialogOpenSolicitation: {
         obs: '',
         data: {},
-        functionConfigId: '',
+        functionId: '',
         open: false,
       },
       newOrganism: {},
@@ -156,7 +156,7 @@ export default defineComponent({
   },
   methods: {
     clearDialogSolicitation() {
-      this.dialogOpenSolicitation.functionConfigId = ''
+      this.dialogOpenSolicitation.functionId = ''
       this.userSelected = ''
       this.dialogOpenSolicitation.obs = ''
       this.isReplacement = false
@@ -200,10 +200,10 @@ export default defineComponent({
         this.isReplacement = true
         this.disableIsReplacement = true
         this.dialogOpenSolicitation.data = func
-        this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+        this.dialogOpenSolicitation.functionId = func.functionId
       }else if(func.functionNumOfOccupants < func.numOfUser){
         this.dialogOpenSolicitation.data = func
-        this.dialogOpenSolicitation.functionConfigId = func.functionConfigId
+        this.dialogOpenSolicitation.functionId = func.functionId
       }
     },
     getFunctionsSolicitationsByOrganismId() {
@@ -236,7 +236,7 @@ export default defineComponent({
         route: "/desktop/adm/addFunctionSolicitation",
         body: {
           organismId: organismId,
-          functionId: this.dialogOpenSolicitation.functionConfigId,
+          functionId: this.dialogOpenSolicitation.functionId,
           userId: this.userSelected._id,
           obs: this.dialogOpenSolicitation.obs,
           isReplacement: this.isReplacement,
