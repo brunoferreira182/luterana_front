@@ -301,47 +301,12 @@
                     </q-card-section>
                     <q-card-section>
                       <div class="row">
-                        <div class="col-6">
+                        <div class="col-5">
                           <q-separator/>
                           <div class="text-subtitle2 q-ma-sm">
-                            Grupo de organismos vinculados:
+                            Vincular novo organismo
                           </div>
-                          <div v-if="organismLinks.length">
-                            <q-chip 
-                              removable 
-                              @remove="removeChildRelation(chip)" 
-                              v-for="chip in childOrganism" 
-                              :key="chip._id"
-                            >
-                              {{ chip.organismName }}
-                            </q-chip>
-                            </div>
-                          <div v-else-if="!organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                        </div>
-                        <q-separator vertical />
-                        <div class="col">
-                          <q-separator/>
-                          <div class="text-subtitle2 q-ma-sm">
-                            Organismos superiores vinculados:
-                          </div>
-                          <div v-if="parentOrganism.length">
-                            <q-chip removable @remove="removeParentRelation(chip)" v-for="chip in parentOrganism" :key="chip._id">
-                              {{ chip.organismName }}
-                            </q-chip>
-                          </div>
-                          <div v-else-if="!parentOrganism.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                        </div>
-                      </div>
-                      <div v-if="organismLinks.length">
-                        <q-chip removable @remove="removeLink(chip,i)" v-for="(chip, i) in organismLinks" :key="i">
-                          {{ chip.nome }}
-                        </q-chip>
-                      </div>
-                      <div v-else-if="$router.query === '/admin/createOrganism' && !organismLinks.length" class="text-center q-mt-md">Nenhum vínculo.</div>
-                    </q-card-section>
-                    <q-card-section>
-                      <div class="text-subtitle2 q-mb-sm">Vincular novo organismo:</div>
-                      <q-input 
+                          <q-input 
                         label="Buscar"
                         outlined
                         type="search"
@@ -370,8 +335,30 @@
                           </q-item-section>
                         </q-item>
                       </q-list>
+                        </div>
+                        <q-separator vertical />
+                        <div class="col">
+                          <q-separator/>
+                          <div class="text-subtitle2 q-ma-sm">
+                            Organismos vinculados:
+                          </div>
+                          <q-chip
+                            v-for="(parent, i) in relations"
+                            :key="parent"
+                          >
+                          {{ parent.organismRelationName }}
+                          <q-btn
+                            icon="close"
+                            flat
+                            style="width: 10px;"
+                            @click="removeRelation(i)"
+                            >
+                          </q-btn>
+                        </q-chip>
+                        </div>
+                      </div>
                     </q-card-section>
-                    <q-card-actions align="center">
+                    <q-card-actions align="center" class="absolute-bottom">
                       <q-btn
                         flat
                         label="Fechar"
@@ -386,7 +373,6 @@
                         unelevated
                         rounded
                         color="primary"
-                        
                       />
                     </q-card-actions>
                   </q-card>
@@ -591,6 +577,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      relations: []
     };
   },
   mounted() {
@@ -752,8 +739,24 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
+          this.relations = r.data.relations
         }
       });
+    },
+    removeRelation(i) {
+      const opt = {
+        route:"/desktop/adm/inactivateRelationById",
+        body: {
+          relationId: this.relations[i].relationId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if(r.error) {
+          console.log("Ocorreu um erro")
+          return
+        }
+        this.getOrganismDetailById()
+      })
     },
     clkOpenChildOrganismDetail(child){
       const childOrganismId = child.childOrganismId
