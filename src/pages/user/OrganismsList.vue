@@ -21,45 +21,6 @@
       >
         <template #top-right>
           <div class="flex row justify-end q-gutter-sm items-center">
-            <!-- <div>
-              <q-btn
-                v-if="verifyBtn === 1"
-                icon="person"
-                class="q-pa-sm"
-                color="primary"
-                rounded
-                unelevated
-                no-caps
-                @click="showMyOrganisms"
-              >
-                Meus organismos
-                <q-tooltip
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  Exibir todos os organismos
-                </q-tooltip>
-              </q-btn>
-              <q-btn
-                v-else
-                icon="person"
-                rounded
-                outline
-                unelevated
-                no-caps
-                class="q-pa-sm"
-                color="primary"
-                @click="showMyOrganisms"
-              >
-                Meus organismos
-                <q-tooltip
-                  transition-show="scale"
-                  transition-hide="scale"
-                >
-                  Exibir os seus organismos
-                </q-tooltip>
-              </q-btn>
-            </div> -->
             <div class="col">
               <q-select
                 outlined
@@ -67,13 +28,13 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getOrganismsByUserId"
+                @update:model-value="getAllOrganismsByString"
               ></q-select>
             </div>
             
             <div class="col">
               <q-input
-                @keyup="getOrganismsByUserId"
+                @keyup="getAllOrganismsByString"
                 outlined
                 dense
                 debounce="300"
@@ -87,27 +48,53 @@
             </div>
           </div>
         </template>
-        <template #body-cell-status="props">
+        <template #body-cell-organismParentName="props">
           <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
+            <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
+              {{ props.row.organismParentName }}
             </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
+            <q-chip outline v-else-if="!props.row.organismParentName" color="red" size="14px">
+              Nenhum grupo
+            </q-chip>
+          </q-td>
+        </template>
+        <template #body-cell-organismConfigName="props">
+          <q-td :props="props">
+            <q-chip 
+              v-if="props.row.organismConfigName" 
+              :style="{ color: props.row.organismStyle }" 
               size="14px"
+              outline
             >
-              Inativo
+              {{ props.row.organismConfigName }}
             </q-chip>
           </q-td>
         </template>
       </q-table>
+      <div class="text-left">
+        <q-btn 
+          size="md"
+          class="q-ma-sm"
+          outline
+          rounded
+          color="primary"
+          @click="filterOrganisms()"
+        >
+          Todos
+        </q-btn>
+        <q-btn 
+          v-for="(organism, nameIndex) in userOrganismList" 
+          :key="organism"
+          size="md"
+          class="q-ma-sm"
+          :style="{ color: organism.organismStyle }"
+          outline
+          rounded
+          @click="filterOrganisms(nameIndex)"
+        >
+        {{ organism.organismConfigName }}
+        </q-btn>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -121,13 +108,13 @@ export default defineComponent({
   name: "SearchAllOrganismsList",
   data() {
     return {
-      columnsData: useTableColumns().pageOrganismList,
+      columnsData: useTableColumns().userOrganismList,
       pageOrganismList:[],
       searchAllOrganismsList: [],
       userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
-      selectFilter: "Selecionar",
+      selectFilter: "",
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -141,8 +128,8 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    // this.getAllOrganismsByString();
-    this.getOrganismsByUserId();
+    this.getAllOrganismsByString();
+    // this.getOrganismsByUserId();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -161,13 +148,44 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getAllOrganismsByString();
+      this.getAllOrganismsByString();
     },
-    // getAllOrganismsByString() {
+    getAllOrganismsByString() {
+      const opt = {
+        route: "/desktop/commonUsers/getAllOrganismsByString",
+        body: {
+          searchString: this.filter,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          selectFilter: this.selectFilter
+        },
+      };
+      if (this.selectFilter === "Ativos") {
+        opt.body.isActive = 1;
+      } else if (this.selectFilter === "Inativos") {
+        opt.body.isActive = 0;
+      }
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        this.userOrganismList = r.data.list
+        this.pagination.rowsNumber = r.data.count[0].count
+      });
+    },
+    filterOrganisms(nameIndex) {
+      if (nameIndex >= 0) {
+        const selectedOrganism = this.userOrganismList[nameIndex]
+        this.selectFilter = selectedOrganism.organismConfigName 
+        console.log(this.selectFilter)
+      } else if(!(nameIndex)) {
+        this.selectFilter = null
+      }
+      this.getAllOrganismsByString()
+    }
+    // getOrganismsByUserId() {
     //   const opt = {
-    //     route: "/desktop/commonUsers/getAllOrganismsByString",
+    //     route: "/desktop/commonUsers/getOrganismsByUserId",
     //     body: {
-    //       searchString: this.filter,
+    //       filterValue: this.filter,
     //       page: this.pagination.page,
     //       rowsPerPage: this.pagination.rowsPerPage
     //     },
@@ -178,41 +196,11 @@ export default defineComponent({
     //     opt.body.isActive = 0;
     //   }
     //   useFetch(opt).then((r) => {
-    //     this.searchAllOrganismsList = r.data.list;
+    //     this.$q.loading.hide()
+    //     this.userOrganismList = r.data.list
+    //     this.pagination.rowsNumber = r.data.count[0].count
     //   });
-    //   // this.pageOrganismList = this.userOrganismList
-    //   // this.$forceUpdate()
     // },
-    getOrganismsByUserId() {
-      const opt = {
-        route: "/desktop/commonUsers/getOrganismsByUserId",
-        body: {
-          filterValue: this.filter,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      useFetch(opt).then((r) => {
-        this.userOrganismList = r.data.list;
-      });
-    },
-    showMyOrganisms() {
-      if(this.pageOrganismList === this.searchAllOrganismsList) {
-        this.pageOrganismList = this.userOrganismList
-        this.verifyBtn = 1
-      } else {
-        this.pageOrganismList = this.searchAllOrganismsList
-        this.verifyBtn = 2
-      }
-    },
-    listOfOrganism() {
-      this.pageOrganismList = this.userOrganismList
-    }
   },
 });
 </script>

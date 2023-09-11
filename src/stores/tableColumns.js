@@ -205,9 +205,39 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    userOrganismList: [
+      {
+        name: "nome",
+        align: "left",
+        label: "Nome do organismo",
+        field: "nome",
+        sortable: true,
+      },
+      {
+        name: "data_de_criacao",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.data_de_criacao.dateLocale,
+        sortable: true,
+      },
+      {
+        name: "organismConfigName",
+        align: "left",
+        label: "Tipo de organismo",
+        field: "organismConfigName",
+        sortable: true,
+      },
+      {
+        name: "organismParentName",
+        align: "left",
+        label: "Organismo superior",
+        field: "organismParentName",
+        sortable: true,
+      },
+    ],
     userOrganismsList: [
       {
-        name: "organismName",
+        name: "nome",
         align: "left",
         label: "Nome do organismo",
         field: "organismName",
