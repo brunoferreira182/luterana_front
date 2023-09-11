@@ -87,8 +87,7 @@ export default defineComponent({
           return
         }
         this.$router.push("/login")
-        this.$q.notify("Cadastro realizado com sucesso")
-        this.$q.notify("Prossiga com o login para definição de senha")
+        this.$q.notify("Cadastro realizado com sucesso, prossiga com o login para definição de senha")
       });
     },
     clkBack1() {
