@@ -1076,6 +1076,7 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
         update(() => {
           this.usersOptions = r.data.list;
         })
