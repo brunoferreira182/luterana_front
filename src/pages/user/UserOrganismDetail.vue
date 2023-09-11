@@ -41,9 +41,6 @@
             <CardFunction
               :func="func"
               :funcIndex="funcIndex"
-              @insertObservation="dialogInsertObservation"
-              @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
-              @linkUserToFunction="linkUserToFunction"
             />
             <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">

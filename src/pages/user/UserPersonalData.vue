@@ -283,6 +283,55 @@
           
         </template>
       </q-splitter>
+      <q-splitter
+        v-model="splitterModel"
+        style="height: 100vh;"
+        v-show="visionSelected === 'titles'"
+      >
+        <template v-slot:before>
+          <q-tabs
+            v-model="tabTitles"
+            vertical
+            align="left"
+            class="text-left "
+            no-caps
+            active-bg-color="blue-1"
+            indicator-color="primary"
+            inline-label
+            @update:model-value="addBar = false"
+          >
+            <template v-for="(tab) in userDetail.userTitleData" :key="tab._id">
+              <q-tab 
+                class="flex-left flex"
+                :name="tab._id" 
+                :label="tab.titleName" 
+              />
+              <q-separator/>
+            </template>
+          </q-tabs>
+          
+        </template>
+        <template v-slot:after>
+          <q-tab-panels 
+            animated 
+            swipeable
+            transition-prev="jump-up"
+            transition-next="jump-up"
+            class="bg-accent"
+            :model-value="tabTitles"
+          >
+            <q-tab-panel 
+              v-for="(tab) in userDetail.userTitleData"
+              :key="tab._id"
+              :name="tab._id" 
+            >
+              <div class="row">
+                <div class="col text-h6">{{ tab.titleName }}</div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </template>
+      </q-splitter>
       <q-dialog v-model="dialogConfirmEmail.open">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -449,6 +498,7 @@ export default defineComponent({
   data() {
     return {
       tab: "",
+      tabTitles: "",
       visionSelected: 'personalData',
       isSaving: false,
       newPhone: "",
