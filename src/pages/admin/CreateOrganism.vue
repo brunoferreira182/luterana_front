@@ -753,9 +753,9 @@ export default defineComponent({
           this.functions = []
           return
         }
-        // this.$q.notify('Organismo criado com sucesso!');
-        // const organismId = r.data
-        // this.$router.push('/admin/organismDetail?organismId=' + organismId)
+        this.$q.notify('Organismo criado com sucesso!');
+        const organismId = r.data
+        this.$router.push('/admin/organismDetail?organismId=' + organismId)
       });
 
     },

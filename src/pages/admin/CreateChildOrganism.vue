@@ -196,17 +196,26 @@
               <q-select
                 v-model="userSelected"
                 filled
+                clearable
                 use-input
                 label="Nome do usuário"
                 option-label="userName"
                 :options="usersOptions"
                 @filter="getUsers"
-                :option-value="(item) => item"
+                :option-value="(item) => item._id"
               >
                 <template v-slot:no-option>
                   <q-item>
                     <q-item-section class="text-grey">
                       Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                      <q-item-label caption>{{ scope.opt.email }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </template>
@@ -411,6 +420,28 @@ export default defineComponent({
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
+    },
+    getUsers(val, update) {
+      const opt = {
+        route: "/desktop/adm/getUsers",
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      if (this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
+        opt.body.filterByTitleId = this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+        update(() => {
+          this.usersOptions = r.data.list;
+        })
+      });
     },
     getUsers(val, update) {
       const opt = {
