@@ -122,17 +122,26 @@
                       <q-select
                         v-model="dialogInsertUserInFunction.userSelected"
                         filled
+                        clearable
                         use-input
                         label="Nome do usuário"
                         option-label="userName"
                         :options="usersOptions"
                         @filter="getUsers"
-                        :option-value="(item) => item"
+                        :option-value="(item) => item._id"
                       >
                         <template v-slot:no-option>
                           <q-item>
                             <q-item-section class="text-grey">
                               Nenhum resultado
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                              <q-item-label caption>{{ scope.opt.email }}</q-item-label>
                             </q-item-section>
                           </q-item>
                         </template>
