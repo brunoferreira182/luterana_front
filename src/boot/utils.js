@@ -195,6 +195,11 @@ const useUtils = {
           route: "/admin/titlesSolicitationsList",
           icon: "list",
         },
+        {
+          label: "Solicitações de Funções",
+          route: "/admin/functionsSolicitations",
+          icon: "list",
+        },
       ],
       config: [
         {
