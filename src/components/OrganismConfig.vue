@@ -941,6 +941,7 @@ export default defineComponent({
           this.functions = []
           this.requiresLink = false
           this.getOrganismsTypes()
+          this.$router.push("/config/organismConfigurationList")
         }
       });
     },

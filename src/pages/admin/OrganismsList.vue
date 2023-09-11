@@ -63,9 +63,6 @@
             <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
               {{ props.row.organismParentName }}
             </q-chip>
-            <q-chip outline v-else-if="!props.row.organismParentName" color="red" size="14px">
-              Nenhum grupo
-            </q-chip>
           </q-td>
         </template>
         <template #body-cell-organismConfigName="props">

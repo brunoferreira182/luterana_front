@@ -24,7 +24,6 @@
             Voltar para organismo
           </q-tooltip>
         </q-breadcrumbs-el>
-        <q-breadcrumbs-el label="Novo organismo" />
       </q-breadcrumbs>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
@@ -103,117 +102,6 @@
               :label="field.label"
               v-model="organismData.fields[i].value"
             ></q-checkbox>
-          </div>
-        </div>
-        <q-separator vertical class="q-ma-md" />
-        <div class="col">
-          <div class="row">
-            <div
-              class="text-h5"
-            >
-              Funções
-            </div>
-          </div>
-          <div v-for="(func, funcIndex) in functions" :key="funcIndex">
-            <q-card
-              style="border-radius: 1rem"
-              class="bg-grey-3 q-ma-sm"
-              flat
-            >
-              <q-item>
-                <q-item-section >
-                  <div class="text-subtitle2 text-capitalize">{{ func.name }}</div>
-                  <div>Descrição: {{ func.description }}</div>
-                  <div class="text-caption text-grey-7">
-                    Título necessário: {{ func.requiredTitle ? func.requiredTitle : 'nenhum' }}
-                  </div> 
-                  <div>
-                    <q-icon name="visibility" color="primary" size="sm"/>
-                    <q-chip
-                      v-for="(vision,i) in func.visions"
-                      :key="i"
-                    >
-                    {{ vision.name }}
-                    </q-chip>
-                    <span 
-                      class="text-caption text-grey-7"
-                      v-if="!func.visions.length"
-                    >
-                      Nenhuma visão
-                    </span>
-                  </div>
-                </q-item-section>
-                <q-item-section top side>
-                  <div class="text-subtitle2">
-                    <q-badge color="orange-8" v-if="func.isRequired">
-                      Obrigatório
-                    </q-badge>
-                  </div>
-                </q-item-section>
-              </q-item>
-              <q-expansion-item
-                color="primary"
-                class="q-pa-sm"
-                icon="group"
-                :label="func.users ? `${func.users.length} Participantes` : '0 Participantes'"
-                caption="Clique para ver"
-              >
-                <q-item
-                  v-for="(user, userIndex) in func.users"
-                  :key="userIndex"
-                  style="border-radius: 0.5rem; margin-top: 8px;"
-                  class="bg-white"
-                  transition="user-bounce"
-                >
-                  <q-item-section avatar>
-                    <q-avatar rounded>
-                      <img src="https://cdn.quasar.dev/img/avatar.png" />
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section class="text-capitalize text-wrap" lines="2">
-                    {{ user.userName }}
-                    <div class="text-caption text-grey-7">
-                      Data Início:
-                      {{ formatDate(user.initialDate) }}
-                    </div>
-                    <div
-                      v-if="user.dataFim"
-                      class="text-caption text-grey-7"
-                    >
-                      Data Fim: {{ formatDate(user.finalDate) }}
-                    </div>
-                  </q-item-section>
-                  <q-item-section side>
-                    <div class="text-grey-8 q-gutter-xs">
-                      <q-btn
-                        @click="deleteUserFromFunction(user, funcIndex)"
-                        class="gt-xs"
-                        size="12px"
-                        color="red-8"
-                        flat
-                        dense
-                        round
-                        icon="delete"
-                      >
-                        <q-tooltip> Deletar usuário da função </q-tooltip>
-                      </q-btn>
-                    </div>
-                  </q-item-section>
-                </q-item>
-              </q-expansion-item>
-              <q-item-section class="q-pa-xs">
-                <q-btn
-                  label="Adicionar pessoa"
-                  color="primary"
-                  dense
-                  icon="add"
-                  rounded
-                  flat
-                  no-caps
-                  @click="linkUserToFunction(func, funcIndex)"
-                />
-              </q-item-section>
-            </q-card>
           </div>
         </div>
         <q-dialog v-model="newFunctionDialog">
@@ -556,6 +444,7 @@ export default defineComponent({
           return
         }
         this.organismConfigName = r.data.organismConfigData.organismConfigName;
+        this.organismData.fields = r.data.organismConfigData.organismFields;
         this.organismFields = r.data.organismConfigData.organismFields;
         r.data.organismConfigData.functions[0].organismFunctionId
           ? this.functions = r.data.organismConfigData.functions
