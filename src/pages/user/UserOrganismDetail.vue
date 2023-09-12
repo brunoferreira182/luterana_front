@@ -256,15 +256,17 @@ export default defineComponent({
     clkOpenDialogSolicitation(func) {
       console.log(func)
       this.dialogOpenSolicitation.open = true;
-      if(func.functionNumOfOccupants === func.numOfUser){
-        this.isReplacement = true
-        this.disableIsReplacement = true
-        this.dialogOpenSolicitation.data = func
-        this.dialogOpenSolicitation.functionId = func.functionId
-      }else if(func.functionNumOfOccupants < func.numOfUser){
-        this.dialogOpenSolicitation.data = func
-        this.dialogOpenSolicitation.functionId = func.functionId
-      }
+      // if(func.functionNumOfOccupants === func.numOfUser){
+      //   this.isReplacement = true
+      //   this.disableIsReplacement = true
+      //   this.dialogOpenSolicitation.data = func
+      //   this.dialogOpenSolicitation.functionId = func.functionId
+      // }else if(func.functionNumOfOccupants < func.numOfUser){
+      //   this.dialogOpenSolicitation.data = func
+      //   this.dialogOpenSolicitation.functionId = func.functionId
+      // }
+      this.dialogOpenSolicitation.data = func
+      this.dialogOpenSolicitation.functionId = func.functionId
     },
     getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
