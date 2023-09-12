@@ -421,7 +421,12 @@ export default defineComponent({
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    getUsers(val, update) {
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
@@ -440,22 +445,6 @@ export default defineComponent({
         if(r.error){ this.$q.notify(r.errorMessage) }
         update(() => {
           this.usersOptions = r.data.list;
-        })
-      });
-    },
-    getUsers(val, update) {
-      const opt = {
-        route: "/desktop/adm/getUsers",
-        body: {
-          searchString: val,
-          isActive: 1,
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        update(() => {
-          this.usersOptions = r.data;
         })
       });
     },

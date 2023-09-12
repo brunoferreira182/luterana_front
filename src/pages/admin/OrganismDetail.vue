@@ -122,12 +122,12 @@
                       <q-select
                         v-model="dialogInsertUserInFunction.userSelected"
                         filled
-                        clearable
                         use-input
                         label="Nome do usuário"
                         option-label="userName"
                         :options="usersOptions"
                         @filter="getUsers"
+                        :loading="false"
                         :option-value="(item) => item._id"
                       >
                         <template v-slot:no-option>
@@ -586,7 +586,8 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
-      relations: []
+      relations: [],
+      loadingState: false,
     };
   },
   mounted() {
@@ -1074,7 +1075,15 @@ export default defineComponent({
         this.clearDialogAndFunctions();
       });
     },
-    getUsers(val, update) {
+    abortFilterFn () {
+      console.log('delayed filter aborted')
+    },
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {

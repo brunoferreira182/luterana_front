@@ -146,7 +146,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.formConfigList = r.data;
+        this.formConfigList = r.data.list;
       });
     },
   },
