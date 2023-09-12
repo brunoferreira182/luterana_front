@@ -359,6 +359,7 @@
                           <q-btn
                             icon="close"
                             flat
+                            rounded
                             style="width: 10px;"
                             @click="removeRelation(i)"
                             >
