@@ -632,7 +632,12 @@ export default defineComponent({
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    getUsers(val, update) {
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
       const opt = {
         route: "/desktop/adm/getUsers",
         body: {
