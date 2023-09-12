@@ -199,14 +199,13 @@ export default defineComponent({
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente por favor')
           return
-        }else{ 
-          this.hideDiv = true;
-          setTimeout(() => {
-            this.hideDiv = false;
-            this.dialogOpenSolicitation.open = false
-            this.getFunctionsSolicitationsByUserId()
-          }, 3800);
         }
+        this.hideDiv = true;
+        setTimeout(() => {
+          this.hideDiv = false;
+          // this.dialogOpenSolicitation.open = false
+          // this.getFunctionsSolicitationsByUserId()
+        }, 3800);
       })
     },
     clkOpenSolicitation(e, r){

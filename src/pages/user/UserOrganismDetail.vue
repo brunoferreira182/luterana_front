@@ -56,6 +56,55 @@
                     filled
                     clearable
                     use-input
+                    label="Quem convidar"
+                    option-label="userName"
+                    :options="usersOptions"
+                    @filter="getUsers"
+                    :option-value="(item) => item._id"
+                    hint="Digite o nome de quem você vai convidar"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          Nenhum resultado
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps">
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                          <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                  <q-list class="q-mt-md">
+                    <q-item-label header>Irá substituir algúem que já está na função?</q-item-label>
+                    <q-item
+                      tag="label"
+                      v-ripple
+                      v-for="item in dialogOpenSolicitation.data.users"
+                      :key="item._id"
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="dialogOpenSolicitation.userToReplace"
+                          :val="item"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ item.userName }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-card-section>
+                <!-- <q-card-section>
+                  <q-select
+                    v-model="userSelected"
+                    filled
+                    clearable
+                    use-input
                     label="Nome do usuário"
                     option-label="userName"
                     :options="usersOptions"
@@ -78,8 +127,8 @@
                       </q-item>
                     </template>
                   </q-select>
-                </q-card-section>
-                <q-card-section align="center">
+                </q-card-section> -->
+                <!-- <q-card-section align="center">
                   <q-input filled label="Observação"
                     hint="Escreva uma breve descrição explicando o motivo para participar desta função"
                     v-model="dialogOpenSolicitation.obs" />
@@ -92,11 +141,17 @@
                     <div class="text-caption">
                       Quando marcada, o usuário selecionado estará substituindo a sua posição nesta função
                     </div>
-                </q-card-section>
+                </q-card-section> -->
                 <q-card-actions align="center">
                   <q-btn flat label="Depois" no-caps rounded color="primary"
                     @click="dialogOpenSolicitation.open = false" />
-                  <q-btn unelevated rounded label="Enviar" no-caps color="primary" @click="sendFunctionSolicitation" />
+                  <q-btn
+                    unelevated
+                    rounded
+                    label="Enviar"
+                    no-caps
+                    color="primary"
+                    @click="sendFunctionSolicitation" />
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -231,18 +286,20 @@ export default defineComponent({
         this.$q.notify('Você já participa desta função')
         return
       }
-      const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/addFunctionSolicitation",
+        route: "/desktop/commonUsers/addFunctionSolicitation",
         body: {
-          organismId: organismId,
-          functionId: this.dialogOpenSolicitation.functionId,
+          organismId: this.$route.query.organismId,
+          organismFunctionId: this.dialogOpenSolicitation.functionId,
           userId: this.userSelected._id,
           obs: this.dialogOpenSolicitation.obs,
-          isReplacement: this.isReplacement,
-          userIdMongo: this.myUserIdMongo
+          // isReplacement: this.isReplacement,
+          // userIdMongo: this.myUserIdMongo
         }
       };
+      if (this.dialogOpenSolicitation.userToReplace) {
+        opt.body.userFunctionIdToInactivate = this.dialogOpenSolicitation.userToReplace._id
+      }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
