@@ -20,7 +20,7 @@ export const useTableColumns = defineStore("tableColumns", {
       },
     
     ],
-    solicitationsList: [
+    recivedSolicitations: [
       {
         name: "userName",
         align: "left",

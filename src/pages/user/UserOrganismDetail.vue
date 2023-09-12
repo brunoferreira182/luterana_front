@@ -311,7 +311,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.$q.notify("Dados alterados com sucesso!");
+          this.$q.notify("Convite enviado com sucesso!");
           this.getOrganismDetailById()
           this.getFunctionsSolicitationsByOrganismId()
           this.dialogOpenSolicitation.open = false

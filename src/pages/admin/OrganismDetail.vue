@@ -766,6 +766,7 @@ export default defineComponent({
           return
         }
         this.getOrganismDetailById()
+        this.$q.notify("Vínculo cancelado")
       })
     },
     clkOpenChildOrganismDetail(child){
@@ -928,7 +929,7 @@ export default defineComponent({
           this.$q.notify(r.errorMessage)
         } else {
           this.$q.notify('Vínculo salvo com sucesso!')
-          this.dialogLinks = false
+          this.getOrganismDetailById()
           this.getParentOrganismsById()
         }
       })

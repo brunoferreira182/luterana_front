@@ -62,7 +62,7 @@
             Data Fim: {{ formatDate(user.dates.finalDate) }}
           </div>
         </q-item-section>
-        <q-item-section side>
+        <q-item-section side v-if="$route.path.includes('/admin')">
           <div class="text-grey-8 q-gutter-xs">
             <q-btn
               @click="insertObservation(user)"
