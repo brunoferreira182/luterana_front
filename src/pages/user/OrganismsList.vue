@@ -75,6 +75,7 @@
         <q-btn 
           size="md"
           class="q-ma-sm"
+          style="text-transform: capitalize;"
           outline
           rounded
           color="primary"
@@ -87,7 +88,7 @@
           :key="organism"
           size="md"
           class="q-ma-sm"
-          :style="{ color: organism.organismStyle }"
+          :style="{ textTransform: 'capitalize', color: organism.organismStyle }"
           outline
           rounded
           @click="filterOrganisms(nameIndex)"

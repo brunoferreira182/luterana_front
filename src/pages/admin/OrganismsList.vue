@@ -85,6 +85,7 @@
         <q-btn 
           size="md"
           class="q-ma-sm"
+          style="text-transform: capitalize;"
           outline
           rounded
           color="primary"
@@ -93,11 +94,11 @@
           Todos
         </q-btn>
         <q-btn 
-          v-for="(name, nameIndex) in organismsConfigsNamesList" 
+          v-for="(name, nameIndex) in organismList" 
           :key="name"
           size="md"
           class="q-ma-sm"
-          :style="{ color: name.organismStyle }"
+          :style="{ textTransform: 'capitalize', color: name.organismStyle }"
           outline
           rounded
           @click="filterOrganisms(nameIndex)"

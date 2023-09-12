@@ -1,81 +1,215 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-table
-        flat
-        class="bg-accent"
-        title="Solicitações"
-        :columns="columnsData"
-        :rows="solicitationsList"
-        virtual-scroll
-        row-key="_id"
-        rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento"
-        no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenSolicitation"
-        :selected-rows-label="getSelectedString"
-        :filter="filter"
-        :v-model:pagination="pagination"
-        @request="nextPage"
+
+      <q-splitter
+        v-model="splitterModel"
+        style="height: 100vh;"
+        v-show="visionSelected === 'recived'"
       >
-        <template #top-right>
-          <div class="flex row q-gutter-sm items-center text-right">
-            <div class="col">
-              <q-select
-                outlined
-                dense
-                debounce="300"
-                v-model="selectFilter"
-                :options="selectStatus"
-                @update:model-value="getFunctionsSolicitationsByUserId"
-              ></q-select>
-            </div>
-            <div class="col">
-              <q-input
-                @keyup="getFunctionsSolicitationsByUserId"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
+      <template v-slot:before>
+          <q-tabs
+            align="left"
+            class="text-left"
+            no-caps
+            active-bg-color="blue-1"
+            indicator-color="primary"
+            inline-label
+            @update:model-value="addBar = false"
+          >
+              <q-tab 
+                class="flex-left flex"
+                 
               >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
+              Recebidas
+              </q-tab>
+              <q-tab 
+                class="flex-left flex"
+              >
+              Enviadas
+              </q-tab>
+              <q-separator/>
+          </q-tabs>
+        </template>
+        <q-table
+          flat
+          class="bg-accent"
+          title="Recebidas"
+          :columns="columnsData"
+          :rows="recivedSolicitations"
+          virtual-scroll
+          row-key="_id"
+          rows-per-page-label="Registros por página"
+          no-data-label="Nenhum dado inserido até o momento"
+          no-results-label="A pesquisa não retornou nenhum resultado"
+          :rows-per-page-options="[10, 20, 30, 50]"
+          @row-click="clkOpenSolicitation"
+          :selected-rows-label="getSelectedString"
+          :filter="filter"
+          :v-model:pagination="pagination"
+          @request="nextPage"
+        >
+          <template #top-right>
+            <div class="flex row q-gutter-sm items-center text-right">
+              <div class="col">
+                <q-select
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="selectFilter"
+                  :options="selectStatus"
+                  @update:model-value="getFunctionsSolicitationsByUserId"
+                ></q-select>
+              </div>
+              <div class="col">
+                <q-input
+                  @keyup="getFunctionsSolicitationsByUserId"
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Procurar"
+                >
+                  <template #append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
             </div>
-          </div>
+          </template>
+          <template #body-cell-status="props">
+            <q-td :props="props">
+              <q-chip
+                outline
+                v-if="props.row.status && props.row.status.status === 'accepted'"
+                color="green-8"
+                size="14px"
+              >
+                Aceito
+              </q-chip>
+              <q-chip
+                outline
+                v-else-if="!props.row.status"
+                color="yellow-8"
+                size="14px"
+              >
+                Aguardando
+              </q-chip>
+              <q-chip
+                outline
+                v-else-if="props.row.status && props.row.status.status === 'refused'"
+                color="red-8"
+                size="14px"
+              >
+                Recusado
+              </q-chip>
+            </q-td>
+          </template>
+        </q-table>
+      </q-splitter>
+      <q-splitter
+        v-model="splitterModel"
+        style="height: 100vh;"
+        v-show="visionSelected === 'sended'"
+      >
+      <template v-slot:before>
+          <q-tabs
+            vertical
+            align="left"
+            class="text-left "
+            no-caps
+            active-bg-color="blue-1"
+            indicator-color="primary"
+            inline-label
+            @update:model-value="addBar = false"
+          >
+            <template>
+              <q-tab 
+                class="flex-left flex"
+                name="Recebidas" 
+                label="Recebidas" 
+              />
+              <q-separator/>
+            </template>
+          </q-tabs>
+          
         </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.status && props.row.status.status === 'accepted'"
-              color="green-8"
-              size="14px"
-            >
-              Aceito
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="!props.row.status"
-              color="yellow-8"
-              size="14px"
-            >
-              Aguardando
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.status && props.row.status.status === 'refused'"
-              color="red-8"
-              size="14px"
-            >
-              Recusado
-            </q-chip>
-          </q-td>
-        </template>
-      </q-table>
+      <q-table
+          flat
+          class="bg-accent"
+          title="Enviadas"
+          :columns="columnsData"
+          :rows="sendedSolicitations"
+          virtual-scroll
+          row-key="_id"
+          rows-per-page-label="Registros por página"
+          no-data-label="Nenhum dado inserido até o momento"
+          no-results-label="A pesquisa não retornou nenhum resultado"
+          :rows-per-page-options="[10, 20, 30, 50]"
+          @row-click="clkOpenSolicitation"
+          :selected-rows-label="getSelectedString"
+          :filter="filter"
+          :v-model:pagination="pagination"
+          @request="nextPage"
+        >
+          <template #top-right>
+            <div class="flex row q-gutter-sm items-center text-right">
+              <div class="col">
+                <q-select
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="selectFilter"
+                  :options="selectStatus"
+                  @update:model-value="getFunctionsSolicitationsByUserId"
+                ></q-select>
+              </div>
+              <div class="col">
+                <q-input
+                  @keyup="getFunctionsSolicitationsByUserId"
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Procurar"
+                >
+                  <template #append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
+            </div>
+          </template>
+          <template #body-cell-status="props">
+            <q-td :props="props">
+              <q-chip
+                outline
+                v-if="props.row.status && props.row.status.status === 'accepted'"
+                color="green-8"
+                size="14px"
+              >
+                Aceito
+              </q-chip>
+              <q-chip
+                outline
+                v-else-if="!props.row.status"
+                color="yellow-8"
+                size="14px"
+              >
+                Aguardando
+              </q-chip>
+              <q-chip
+                outline
+                v-else-if="props.row.status && props.row.status.status === 'refused'"
+                color="red-8"
+                size="14px"
+              >
+                Recusado
+              </q-chip>
+            </q-td>
+          </template>
+        </q-table>
+      </q-splitter>
       <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
         <q-card style="border-radius: 1rem; width: 400px; padding: 10px">
           <div class="text-center" v-if="hideDiv">
@@ -123,8 +257,9 @@ export default defineComponent({
   name: "UserSolicitationsList",
   data() {
     return {
-      columnsData: useTableColumns().solicitationsList,
-      solicitationsList: [],
+      columnsData: useTableColumns().recivedSolicitations,
+      recivedSolicitations: [],
+      sendedSolicitations:[],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -142,6 +277,8 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      splitterModel: 25,
+      visionSelected: 'recived',
     };
   },
   mounted() {
@@ -253,7 +390,8 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.solicitationsList = r.data.list;
+        this.recivedSolicitations = r.data.recivedSolicitations.list
+        this.sendedSolicitations = r.data.sendedSolicitations.list
       });
     },
   },
