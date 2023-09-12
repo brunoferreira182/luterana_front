@@ -416,10 +416,10 @@ export default defineComponent({
         route: "/desktop/config/getDataTypesList",
       };
       useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.fieldTypesOptions = r.data.list;
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.fieldTypesOptions = r.data;
         }
       });
     },
