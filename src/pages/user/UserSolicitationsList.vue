@@ -1,13 +1,12 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-
       <q-splitter
         v-model="splitterModel"
         style="height: 100vh;"
         v-show="visionSelected === 'recived'"
       >
-      <template v-slot:before>
+        <template v-slot:before>
           <q-tabs
             align="left"
             class="text-left"
@@ -19,14 +18,13 @@
           >
               <q-tab 
                 class="flex-left flex"
-                 
               >
-              Recebidas
+                Recebidas
               </q-tab>
               <q-tab 
                 class="flex-left flex"
               >
-              Enviadas
+                Enviadas
               </q-tab>
               <q-separator/>
           </q-tabs>
@@ -112,7 +110,7 @@
         style="height: 100vh;"
         v-show="visionSelected === 'sended'"
       >
-      <template v-slot:before>
+        <template v-slot:before>
           <q-tabs
             vertical
             align="left"
@@ -134,7 +132,7 @@
           </q-tabs>
           
         </template>
-      <q-table
+        <q-table
           flat
           class="bg-accent"
           title="Enviadas"
@@ -340,8 +338,8 @@ export default defineComponent({
         this.hideDiv = true;
         setTimeout(() => {
           this.hideDiv = false;
-          // this.dialogOpenSolicitation.open = false
-          // this.getFunctionsSolicitationsByUserId()
+          this.dialogOpenSolicitation.open = false
+          this.getFunctionsSolicitationsByUserId()
         }, 3800);
       })
     },
