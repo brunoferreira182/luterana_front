@@ -550,7 +550,7 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
-      splitterModel: 15,
+      splitterModel: 25,
       userData: {},
       userDetail: [],
       addPerson: {

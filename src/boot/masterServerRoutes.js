@@ -6,7 +6,7 @@ function masterServerRoute () {
   else if (MODE_MASTER_SERVER === 'homol') ret = 'https://homolr.b3dev.net/api/'
   else if (MODE_MASTER_SERVER === 'darta') ret = 'http://192.168.1.6:8000/'
   else if (MODE_MASTER_SERVER === 'tiago') ret = 'http://192.168.1.4:8000/'
-  else if (MODE_MASTER_SERVER === 'dev') ret = 'http://100.64.92.6:8443/'
+  else if (MODE_MASTER_SERVER === 'dev') ret = 'https://api6.b3dev.dev:8000/'
   return ret
 }
 
