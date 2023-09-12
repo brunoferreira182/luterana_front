@@ -92,6 +92,62 @@
         </q-item-section>
       </q-item>
     </q-expansion-item>
+    <q-expansion-item
+      color="primary"
+      icon="forward_to_inbox"
+      :label="props.func.functionsSolicitations ? `${props.func.functionsSolicitations.length} Convites` : '0 Convites'"
+    >
+      <q-item
+        v-for="user in props.func.functionsSolicitations"
+        :key="user"
+        style="border-radius: 0.5rem;"
+        class="bg-white q-ma-xs"
+      >
+        <q-item-section avatar>
+          <q-avatar rounded>
+            <q-icon name="markunread" size="lg" color="cyan-8"> </q-icon>
+          </q-avatar>
+        </q-item-section>
+        <q-item-section class="text-wrap" lines="2">
+          Enviado por {{ user.sendBy }}
+          <div>
+            para {{ user.sendTo }}
+          </div>
+          <div class="text-caption text-grey-7" v-if="user.createdAt">
+            Data de envio:
+            {{ user.createdAt }}
+          </div>
+        </q-item-section>
+        <q-item-section side v-if="$route.path.includes('/admin')">
+          <div class="text-grey-8 q-gutter-xs">
+            <q-btn
+              @click="insertObservation(user)"
+              class="gt-xs"
+              size="12px"
+              color="secondary"
+              flat
+              dense
+              round
+              icon="library_books"
+            >
+              <q-tooltip> Observações </q-tooltip>
+            </q-btn>
+            <q-btn
+              @click="deleteUserFromFunction(user)"
+              class="gt-xs"
+              size="12px"
+              color="red-8"
+              flat
+              dense
+              round
+              icon="delete"
+            >
+              <q-tooltip> Deletar usuário da função </q-tooltip>
+            </q-btn>
+          </div>
+        </q-item-section>
+      </q-item>
+    </q-expansion-item>
     <div 
       class="text-caption text-grey-7 q-mx-md"
       v-if="props.func.functionProperties && props.func.functionProperties.numRequired === true"
