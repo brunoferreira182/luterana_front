@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Organismos"
+        title="Minha rede"
         :columns="columnsData"
         :rows="userOrganismList"
         row-key="_id"

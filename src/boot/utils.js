@@ -269,7 +269,7 @@ const useUtils = {
           icon: "folder_shared",
         },
         {
-          label: "Organismos",
+          label: "Minha rede",
           route: "/user/organismsList",
           icon: "diversity_2",
         },
