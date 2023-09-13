@@ -228,25 +228,32 @@
                         @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
-                    <div 
-                      v-if="field.type.type === 'attach'  && (!field.value || field.value.length === 0)"
-                      class="text-subtilte1 text-start"
-                    >
-                      {{ field.label }}:
-                      {{ field.hint }}
-                      <q-file
-                        v-model="field.value"
-                        label="Escolha um ou mais arquivos"
-                        outlined
-                        use-chips
-                        multiple
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="attach_file" />
-                        </template>
-                      </q-file>
+                    <div v-if="field.type.type === 'attach'">
+                      <q-item class="bg-grey-3" style="border-radius: 1rem">
+                        <q-item-section>
+                          <q-item-label class="text-h5">
+                            {{ field.label }}
+                          </q-item-label>
+                          <q-item-label class="text-subtitle1">
+                            {{ field.hint }}
+                          </q-item-label>
+                          <q-item-label>
+                            <q-file
+                              class="bg-white"
+                              v-model="field.value"
+                              label="Escolha um ou mais arquivos"
+                              outlined
+                              use-chips
+                              multiple
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="attach_file" />
+                              </template>
+                            </q-file>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </div>
-                    
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
