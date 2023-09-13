@@ -234,12 +234,17 @@
                     >
                       {{ field.label }}:
                       {{ field.hint }}
-                      <q-input 
-                        type="file" 
-                        multiple 
-                        filled
-                        @update:model-value="val => { files = val }"
-                      ></q-input>
+                      <q-file
+                        v-model="field.value"
+                        label="Escolha um ou mais arquivos"
+                        outlined
+                        use-chips
+                        multiple
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="attach_file" />
+                        </template>
+                      </q-file>
                     </div>
                     
                     <q-checkbox
@@ -588,8 +593,8 @@ export default defineComponent({
         data: {
           name: '',
         },
-        files: []
-      }
+      },
+      files: null
     };
   },
   mounted() {
