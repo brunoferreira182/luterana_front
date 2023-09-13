@@ -45,7 +45,7 @@
                 </template>
               </q-input>
             </div>
-            <!-- <div class="col">
+            <div class="col">
               <q-btn
                 @click="$router.push('/config/createTitleConfig')"
                 color="primary"
@@ -56,7 +56,7 @@
                 icon="add"
                 label="Novo Título"
               />
-            </div> -->
+            </div>
           </div>
         </template>
         <template #body-cell-status="props">
