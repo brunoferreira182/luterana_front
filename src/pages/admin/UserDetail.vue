@@ -157,6 +157,10 @@
                               CEP
                               {{ item.cep }}
                             </q-item-label>
+                            <q-item-label caption>
+                              Complemento:
+                              {{ item.complement }}
+                            </q-item-label>
                             <q-item-label></q-item-label>
                           </q-item-section>
                           <q-item-section side>
