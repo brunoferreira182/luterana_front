@@ -201,7 +201,7 @@
                     :key="option"
                     color="primary"
                     text-color="white"
-                    >
+                  >
                     {{ option }}
                     <q-btn
                       size="sm"
@@ -213,6 +213,53 @@
                       >
                     </q-btn>
                   </q-chip>
+                </div>
+                <div
+                  v-if="newField.type.type === 'multiple_select'"
+                >
+                  <q-btn 
+                    @click="addNewSelectField"
+                    color="primary"
+                    outline
+                    icon="add"
+                    rounded
+                    class="q-mb-md"
+                  >
+                    Adicionar novo campo de seleção
+                  </q-btn>
+                  <div 
+                    v-for="(option, optionIndex) in multipleOptionsValue"
+                    :key="option"
+                  >
+                    <q-input
+                      outlined
+                      class="q-pa-sm"
+                      label="De um nome para o campo de seleção abaixo:"
+                      v-model="multipleOptionsValue[optionIndex].label"
+                      style="width: 40%;"
+                      >
+                    </q-input>
+                    <q-input
+                      v-model="multipleOptionsValue[optionIndex].newValue"
+                      outlined
+                      label="Opção" 
+                      class="q-pa-sm"
+                      style="width: 40%;"
+                    >
+                      <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
+                    </q-input>
+                      <div 
+                        v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
+                        :key="select"
+                      >
+                        <q-chip
+                        >
+                          {{ select.value }}
+                          <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="delete" flat></q-btn>
+                        </q-chip>
+                    </div>
+                    <q-separator/>
+                  </div>
                 </div>
               </div>
               <div class="text-center q-gutter-x-md"> 
@@ -358,6 +405,10 @@ export default defineComponent({
   name: "CreateUserConfig",
   data() {
     return {
+      multipleOptionsValue: [
+        {newValue:'', select: [], label: ''},
+        {newValue:'', select: [], label: ''}
+      ],
       userInfo: {},
       tabIndexToEdit: null,
       tabSelected: '',
@@ -397,6 +448,10 @@ export default defineComponent({
         multiple: false,
         required: true,
         options: [],
+        multipleOptions: [
+          {select: []},
+          {select: []}
+        ],
         value: null
       },
       tabIndexToAddField: '',
@@ -414,6 +469,16 @@ export default defineComponent({
     this.getFieldTypes();
   },
   methods: {
+    insertMultipleField(option, optionIndex) {
+    const newValue = this.multipleOptionsValue[optionIndex].newValue;
+    this.multipleOptionsValue[optionIndex].select.push({ value: newValue });
+    this.multipleOptionsValue[optionIndex].newValue = '';
+    this.newField.multipleOptions[optionIndex].select = this.multipleOptionsValue[optionIndex];
+  },
+    addNewSelectField() {
+      this.newField.multipleOptions.push({select: [], label: ''})
+      this.multipleOptionsValue.push({newValue: '', select: [], label: ''})
+    },
     clkAddTabData(tabIndex){
       this.dialogInsertFields.open = true
       this.tabIndexToAddField = tabIndex

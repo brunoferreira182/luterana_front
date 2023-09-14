@@ -118,7 +118,9 @@
                       && field.type.type !== 'address'
                       && field.type.type !== 'options'
                       && field.type.type !== 'person'
-                      && field.type.type !== 'attach'"
+                      && field.type.type !== 'attach'
+                      && field.type.type !== 'organism'
+                      && field.type.type !== 'multiple_select'"
                     >
                       <q-input
                         :label="field.label"
@@ -310,13 +312,80 @@
                         @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
-
+                    <div v-if="field.type.type === 'organism'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <q-list class="no-margin">
+                          <q-item
+                            v-for="(item, i) in field.value"
+                            :key="item + i"
+                            style="border-radius: 1rem"
+                            class="bg-grey-3 q-ma-sm q-pa-md"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-capitalize">
+                                {{ item.organismName }}
+                              </q-item-label>
+                            </q-item-section>
+                            <q-item-section side>
+                              <q-item-label>
+                                <q-btn
+                                  icon="delete"
+                                  flat
+                                  color="red"
+                                  @click="removeThisOrganism(fieldIndex, tabsIndex, i)"
+                                />
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </div>
+                      <q-btn
+                        :label="`Adicionar ${field.label}`"
+                        no-caps
+                        rounded
+                        unelevated
+                        outline
+                        color="primary"
+                        icon="add"
+                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                        @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                      />
+                    </div>
+                    <div v-if="field.type.type === 'multiple_select'">
+                      <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
+                        <div class="q-pl-md q-py-sm">
+                          {{ field.label }}:
+                        </div>
+                        <div
+                          v-for="(selects) in field.multipleOptions"
+                          :key="selects"
+                        >
+                          <div v-for="select in selects" :key="select">
+                          <div>
+                            {{  }}
+                          </div>
+                          <q-select 
+                            class="q-pa-sm"
+                            outlined
+                            :label="select.label"
+                            option-label="value"
+                            emit-value
+                            map-options
+                            :hint="select.hint"
+                            v-model="select.value"
+                            :options="select.select"
+                          >
+                          </q-select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                </div>
                 </div>
               </div>
             </q-tab-panel>
           </q-tab-panels>
-          
         </template>
       </q-splitter>
       <q-splitter
@@ -547,6 +616,50 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="addOrganism.dialogOpen" @hide="clearOrganismInputs">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Selecione o organismo</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="addOrganism.organismSelected"
+              filled
+              use-input
+              label="Nome do organismo"
+              option-label="organismName"
+              :options="addOrganism.organismsOptions"
+              @filter="getOrganismByString"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              @click="addOrganism.dialogOpen = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="confirmAddOrganism"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
     </q-page>
   </q-page-container>
@@ -601,6 +714,16 @@ export default defineComponent({
           name: '',
         },
       },
+      addOrganism: {
+        dialogOpen: false,
+        fieldIndex: null,
+        tabIndex: null,
+        organismsOptions: null,
+        organismSelected: null,
+        data: {
+          name: ''
+        },
+      },
       files: null
     };
   },
@@ -609,12 +732,18 @@ export default defineComponent({
   },
   beforeMount() {
     this.getUsersConfig()
-    
   },
   methods: {
     removeThisPerson(fieldIndex, tabsIndex, personIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
       this.clearPersonInputs()
+    },
+    removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(organismIndex, 1);
+      this.clearOrganismInputs()
+    },
+    clearOrganismInputs() {
+      this.addOrganism.organismSelected = null
     },
     clearPersonInputs () {
       this.addPerson.userSelected = null
@@ -634,6 +763,21 @@ export default defineComponent({
         })
       })
     },
+    getOrganismByString(val, update) {
+      if (val < 2) return
+      const opt = {
+        route: '/desktop/adm/getOrganismsNames',
+        body: {
+          searchString: val
+        }
+      }
+      useFetch(opt).then(r => {
+        if (r.error) return this.$q.notify(r.errorMessage)
+        update(() => {
+          this.addOrganism.organismsOptions = r.data
+        })
+      })
+    },
     confirmAddPerson () {
       if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
         this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
@@ -649,10 +793,30 @@ export default defineComponent({
       this.clearPersonInputs()
       this.addPerson.dialogOpen = false
     },
+    confirmAddOrganism() {
+      if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].multiple)
+        this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ this.addOrganism.organismSelected ]
+      else {
+        if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.Organism.fieldIndex].value
+          || this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value === ''
+          ) {
+            this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ this.addOrganism.organismSelected ]
+        } else {
+          this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value.push(this.addOrganism.organismSelected)
+        }
+      }
+      this.clearOrganismInputs()
+      this.addOrganism.dialogOpen = false
+    },
     clkOpenAddPersonDialog (fieldIndex, tabIndex) {
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
+    },
+    clkOpenAddOrganismDialog(fieldIndex, tabIndex) {
+      this.addOrganism.fieldIndex = fieldIndex
+      this.addOrganism.tabIndex = tabIndex
+      this.addOrganism.dialogOpen = true
     },
     checkCEP(ev) {
       this.cep = ev.target.value;
