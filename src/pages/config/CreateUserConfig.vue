@@ -397,7 +397,7 @@ export default defineComponent({
         multiple: false,
         required: true,
         options: [],
-        value: ''
+        value: null
       },
       tabIndexToAddField: '',
       selectedType: "",

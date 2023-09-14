@@ -105,7 +105,8 @@
                       field.type.type !== 'boolean'
                       && field.type.type !== 'address'
                       && field.type.type !== 'options'
-                      && field.type.type !== 'person'"
+                      && field.type.type !== 'person'
+                      && field.type.type !== 'attach'"
                     >
                       <q-input
                         :label="field.label"
@@ -170,6 +171,21 @@
                           </q-item-section>
                         </q-item>
                       </q-list>
+                    </div>
+                    <div v-if="field.type.type === 'attach'">
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label class="text-h5">
+                            {{ field.label }}
+                          </q-item-label>
+                          <q-item-label class="text-subtitle1">
+                            {{ field.hint }}
+                          </q-item-label>
+                          <q-item-label v-for="docs in field.value" :key="docs">
+                              {{ docs.__key }}
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </div>
 
                     <q-checkbox
