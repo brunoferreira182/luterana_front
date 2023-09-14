@@ -227,6 +227,20 @@ export default defineComponent({
         required: true,
         multiple: false,
       },
+      filterDestinataries: [
+        {
+          label: 'Tipo de organismo',
+          type: 'byOrganismType'
+        },
+        {
+          label: 'Organismo',
+          type: 'byOrganism'
+        },
+        {
+          label: 'Função',
+          type: 'byFunction'
+        },
+      ],
       formConfigType: [
         {
           label: 'Entrada em organismo',
@@ -350,12 +364,12 @@ export default defineComponent({
         opt.body.visions = []
       }
       useFetch(opt).then((r) => {
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
           this.$q.notify("Configuração de formulário atualizado com sucesso!");
           this.multiple = "";
           this.$router.push('/config/formConfigList')
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },

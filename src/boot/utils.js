@@ -274,6 +274,11 @@ const useUtils = {
           icon: "diversity_2",
         },
         {
+          label: "Minhas pendências",
+          route: "/user/pendingList",
+          icon: "pending_actions",
+        },
+        {
           label: "Lista das minhas funções",
           route: "/user/userFunctionsList",
           icon: "comment_bank",

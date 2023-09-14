@@ -32,145 +32,203 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="row justify-around q-pa-md">
+      <div class="row justify-around q-pa-md" >
         <div class="col-7 q-gutter-md" align="start">
-          <div class="text-h5">
+          <div class="text-h5 q-px-md">
             Informações 
           </div>
           <q-select
+            class="q-pl-md"
             outlined
-            label="Configuração de organismo"
-            option-label="organismConfigName"
-            :option-value="(item) => item._id"
-            emit-value
-            map-options
-            hint="Informe a qual configuração de organismo pertencerá esse formulário"
-            v-model="organismConfigId"
-            :options="organismConfigOptions"
-          />
-          <q-input
-            :readonly="$route.path === '/config/organismConfigDetail'"
-            outlined
-            label="Nome do formulário"
-            v-model="formConfigName"
-            hint="Informe qual será o nome da configuração deste formulário"
-          />
-          <div class="text-h5">
-            Selecione a vigência do formulário
-          </div>
-          <q-select
-            outlined
-            label="Vigência de formulário"
+            label="Filtro de formulário"
             option-label="label"
-            emit-value
-            map-options
             :option-value="(item) => item.type"
-            v-model="formDatesSelected.formType"
-            hint="Informe o tempo de preenchimento do formulário"
-            :options="formDates"
-          />
-          <q-select
-            v-if="formDatesSelected.formType === 'weekly'"
-            outlined
-            v-model="formDatesSelected.dayOfWeek"
-            label="Dia da semana"
-            option-label="label"
-            hint="Escolha o dia da semana"
-            :option-value="(item) => item.label"
             emit-value
             map-options
-            :options="daysOfTheWeek"
-            type="date"
+            hint="Selecione o filtro de destinatários para prosseguir"
+            v-model="filterType"
+            :options="filterDestinataries"
           />
-          <q-input
-            outlined
-            v-if="formDatesSelected.formType === 'yearly'"
-            label="Data fim"
-            mask="##/##"
-            v-model="formDatesSelected.finalDate1"
-          />
-          <div 
-            v-else-if="formDatesSelected.formType === 'semester' || formDatesSelected.formType === 'monthly'"
-            class="row justify-between" 
-          >
-            <div class="col-5">
-              <q-input
-                outlined
-                label="Data fim"
-                mask="##/##"
-                v-model="formDatesSelected.finalDate1"
-              />
-            </div>
-            <div class="col-5">
-              <q-input
-                outlined
-                label="Data fim"
-                mask="##/##"
-                v-model="formDatesSelected.finalDate2"
-              />
-            </div>
-          </div>
-          <div
-            class="text-h5"
-          >
-            Adicione os campos de preenchimento
-          </div>
-          <div
-            class="row q-gutter-x-sm q-mx-none"
-          >
-            <div class="col">
-              <q-input
-                outlined
-                class="q-ml-sm"
-                hint="Nome do dado que será solicitado na hora do cadastro do organismo"
-                label="Novo dado"
-                v-model="newField.label"
-              />
-            </div>
-            <div class="col">
-              <q-input
-                outlined
-                hint="Descrição abaixo do campo para facilitar entendimento"
-                label="Dica"
-                v-model="newField.hint"
-              />
-            </div>
-            <div class="col">
-              <q-select
-                outlined
-                hint="O tipo do dado"
-                label="Tipo de dado"
-                option-label="label"
-                :options="fieldTypesOptions"
-                v-model="newField.type"
-              />
-            </div>
-          </div>
-
-          <q-checkbox
-            class="q-pt-lg"
-            v-model="newField.required"
-            label="Preenchimento Obrigatório"
-          />
-          <q-checkbox
-            :disable="
-              newField.type ? newField.type.type === 'boolean' : false
-            "
-            class="q-pt-lg"
-            v-model="newField.multiple"
-            label="Campo múltiplo"
-          />
-          <div
-            class="row justify-center"
-          >
-            <q-btn
-              label="Adicionar campo"
-              no-caps
-              rounded
-              unelevated
-              @click="addField"
-              color="primary"
+          <div v-if="filterType" class="q-gutter-md">
+            <q-select
+              v-if="filterType === 'byOrganismType'"
+              outlined
+              label="Configuração de organismo"
+              option-label="organismConfigName"
+              :option-value="(item) => item._id"
+              emit-value
+              map-options
+              use-chips
+              multiple
+              @update:model-value="getOrganismsNames"
+              hint="Informe a qual configuração de organismo pertencerá esse formulário"
+              v-model="organismConfigId"
+              :options="organismConfigOptions"
             />
+            <q-select
+              v-if="filterType === 'byOrganism' || filterType === 'byFunction'"
+              v-model="organismSelected"
+              outlined
+              label="Nome do organismo"
+              option-label="organismName"
+              hint="Selecione uma configuração para exibir relacionados"
+              :options="organismsNames"
+              emit-value
+              map-options
+              use-chips
+              multiple
+              use-input
+              @filter="getOrganismsNamesBySearchString"
+              @update:model-value="getFunctionsNames"
+              :option-value="(item) => item._id"
+            />
+            <q-select
+              v-if="filterType === 'byFunction'"
+              v-model="functionsSelected"
+              outlined
+              label="Funções"
+              option-label="functionName"
+              hint="Selecione o filtro de funções"
+              :options="functionsNames"
+              use-chips
+              multiple
+              :option-value="(item) => item"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.functionName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.organismName }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              :readonly="$route.path === '/config/organismConfigDetail'"
+              outlined
+              label="Nome do formulário"
+              v-model="formConfigName"
+              hint="Informe qual será o nome da configuração deste formulário"
+            />
+            <div class="text-h5">
+              Selecione a vigência do formulário
+            </div>
+            <q-select
+              outlined
+              label="Vigência de formulário"
+              option-label="label"
+              emit-value
+              map-options
+              :option-value="(item) => item.type"
+              v-model="formDatesSelected.formType"
+              hint="Informe o tempo de preenchimento do formulário"
+              :options="formDates"
+            />
+            <q-select
+              v-if="formDatesSelected.formType === 'weekly'"
+              outlined
+              v-model="formDatesSelected.dayOfWeek"
+              label="Dia da semana"
+              option-label="label"
+              hint="Escolha o dia da semana"
+              :option-value="(item) => item.label"
+              emit-value
+              map-options
+              :options="daysOfTheWeek"
+              type="date"
+            />
+            <q-input
+              outlined
+              v-if="formDatesSelected.formType === 'yearly'"
+              label="Data fim"
+              mask="##/##"
+              v-model="formDatesSelected.finalDate1"
+            />
+            <div 
+              v-else-if="formDatesSelected.formType === 'semester' || formDatesSelected.formType === 'monthly'"
+              class="row justify-between" 
+            >
+              <div class="col-5">
+                <q-input
+                  outlined
+                  label="Data fim"
+                  mask="##/##"
+                  v-model="formDatesSelected.finalDate1"
+                />
+              </div>
+              <div class="col-5">
+                <q-input
+                  outlined
+                  label="Data fim"
+                  mask="##/##"
+                  v-model="formDatesSelected.finalDate2"
+                />
+              </div>
+            </div>
+            <div
+              class="text-h5"
+            >
+              Adicione os campos de preenchimento
+            </div>
+            <div
+              class="row q-gutter-x-sm q-mx-none"
+            >
+              <div class="col">
+                <q-input
+                  outlined
+                  class="q-ml-sm"
+                  hint="Nome do dado que será solicitado na hora do cadastro do organismo"
+                  label="Novo dado"
+                  v-model="newField.label"
+                />
+              </div>
+              <div class="col">
+                <q-input
+                  outlined
+                  hint="Descrição abaixo do campo para facilitar entendimento"
+                  label="Dica"
+                  v-model="newField.hint"
+                />
+              </div>
+              <div class="col">
+                <q-select
+                  outlined
+                  hint="O tipo do dado"
+                  label="Tipo de dado"
+                  option-label="label"
+                  :options="fieldTypesOptions"
+                  v-model="newField.type"
+                />
+              </div>
+            </div>
+            <div>
+              
+              <q-checkbox
+                class="q-pt-lg"
+                v-model="newField.required"
+                label="Preenchimento Obrigatório"
+              />
+              <q-checkbox
+                :disable="
+                  newField.type ? newField.type.type === 'boolean' : false
+                "
+                class="q-pt-lg"
+                v-model="newField.multiple"
+                label="Campo múltiplo"
+              />
+              <div
+                class="row justify-center"
+              >
+                <q-btn
+                  label="Adicionar campo"
+                  no-caps
+                  rounded
+                  unelevated
+                  @click="addField"
+                  color="primary"
+                />
+              </div>
+            </div>
           </div>
           <q-separator 
             v-if="formFields.length"
@@ -182,6 +240,7 @@
             Visualização
           </div>
           <div
+            v-if="filterType"
           >
             <div
               v-for="(field, i) in formFields"
@@ -191,6 +250,7 @@
               <div class="row q-gutter-sm items-center">
                 <div class="col">
                   <q-input
+                    v-if="field.type.type !== 'wisiwig'"
                     readonly
                     :label="field.label"
                     :hint="field.hint"
@@ -218,6 +278,11 @@
                       </q-btn>
                     </template>
                   </q-input>
+                  <q-editor 
+                    v-if="field.type.type === 'wisiwig'"
+                    v-model="field.value" 
+                    min-height="5rem" 
+                  />
                 </div>
                 <div class="col-2 q-mb-md">
                   <q-badge class="q-pa-xs">{{
@@ -243,8 +308,8 @@
             </div>
           </div>
         </div>
-        <q-separator vertical />
-        <div class="col-4">
+        <q-separator vertical v-if="filterType"/>
+        <div class="col-4" v-if="filterType">
           <div class="text-grey-8 text-h6 q-px-xs">Visões:</div>
           <div class="text-caption text-grey-8 q-px-sm">
             Selecione quais visões terão acesso a este formulário, 
@@ -279,9 +344,30 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
-      organismConfigId: '',
+      organismConfigId: [],
       visions: [],
       formFields: [],
+      organismSelected: [],
+      functionsSelected: [],
+      filterType: '',
+      filterDestinataries: [
+        {
+          label: 'Nenhum filtro',
+          type: 'noFilter'
+        },
+        {
+          label: 'Tipo de organismo',
+          type: 'byOrganismType'
+        },
+        {
+          label: 'Organismo',
+          type: 'byOrganism'
+        },
+        {
+          label: 'Função',
+          type: 'byFunction'
+        },
+      ],
       daysOfTheWeek: [
         { label: 'Domingo' },
         { label: 'Segunda-feira' },
@@ -298,6 +384,11 @@ export default defineComponent({
         finalDate2: '',
       },
       formDates:[
+        {
+          label: 'Sem vigência',
+          type: 'none',
+          selected: false
+        }, 
         {
           label: 'Diário',
           type: 'daily',
@@ -334,6 +425,8 @@ export default defineComponent({
       },
       visionsList: [],
       organismConfigOptions: [],
+      organismsNames: [],
+      functionsNames: [],
     };
   },
   mounted() {
@@ -345,6 +438,43 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    getOrganismsNamesBySearchString(val, update) {
+      const opt = {
+        route: "/desktop/adm/getOrganismsNames",
+        body: {
+          organismsTypes: this.organismConfigId,
+          searchString: val,
+        },
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.organismsNames = r.data;
+        })
+      });
+    },
+    getOrganismsNames() {
+      const opt = {
+        route: "/desktop/adm/getOrganismsNames",
+        body: {
+          searchString: this.searchString,
+          organismsTypes: this.organismConfigId
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.organismsNames = r.data;
+      });
+    },
+    getFunctionsNames() {
+      const opt = {
+        route: "/desktop/adm/getFunctionsNames",
+        body: {
+          organismsConfigIds: this.organismSelected
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.functionsNames = r.data;
+      });
+    },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",
@@ -374,7 +504,7 @@ export default defineComponent({
       });
     },
     createFormConfig() {
-      // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
+      // if(this.organismTypeId === '' || this.organismConfigId === '' ){
       //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
       //   return
       // }
@@ -404,10 +534,10 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (!r.error) {
-          this.$q.notify("Configuração de formulário criada com sucesso!");
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.$q.notify("Configuração de formulário criada com sucesso!");
         }
       });
     },
