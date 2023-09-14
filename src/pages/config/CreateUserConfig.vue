@@ -38,18 +38,7 @@
           <q-card class="userDataTabs-card bg-grey-1">
             <div class="row">
               <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
-                <q-btn
-                  v-if="tabIndex > 0"
-                  rounded
-                  color="primary"
-                  no-caps
-                  class
-                  unelevated
-                  outline
-                  icon="add"
-                  @click="clkAddTabData(tabIndex)"
-                  label="Adicionar campo"
-                />
+                
                 <q-btn
                   v-if="tabIndex > 0"
                   rounded
@@ -152,6 +141,18 @@
                 </div>
               </div>
             </div>
+            <q-btn
+              v-if="tabIndex > 0"
+              rounded
+              color="primary"
+              no-caps
+              class
+              unelevated
+              outline
+              icon="add"
+              @click="clkAddTabData(tabIndex)"
+              label="Adicionar campo"
+            />
             <q-card-section class="q-gutter-sm">
             </q-card-section>
           </q-card>
@@ -396,7 +397,7 @@ export default defineComponent({
         multiple: false,
         required: true,
         options: [],
-        value: ''
+        value: null
       },
       tabIndexToAddField: '',
       selectedType: "",

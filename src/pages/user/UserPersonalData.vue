@@ -117,7 +117,8 @@
                       field.type.type !== 'boolean'
                       && field.type.type !== 'address'
                       && field.type.type !== 'options'
-                      && field.type.type !== 'person'"
+                      && field.type.type !== 'person'
+                      && field.type.type !== 'attach'"
                     >
                       <q-input
                         :label="field.label"
@@ -187,6 +188,10 @@
                               CEP
                               {{ item.cep }}
                             </q-item-label>
+                            <q-item-label caption>
+                              Complemento:
+                              {{ item.complement }}
+                            </q-item-label>
                             <q-item-label></q-item-label>
                           </q-item-section>
                           <q-item-section side>
@@ -194,6 +199,13 @@
                               <q-badge>{{ item.type }}</q-badge>
                             </q-item-label>
                             <q-item-label>
+                            <q-btn
+                              icon="edit"
+                              flat
+                              color="primary"
+                              @click="editThisAddress(fieldIndex, tabsIndex, i)"
+                            >
+                            </q-btn>
                             <q-btn
                               icon="delete"
                               flat
@@ -216,7 +228,32 @@
                         @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
-
+                    <div v-if="field.type.type === 'attach'">
+                      <q-item class="bg-grey-3" style="border-radius: 1rem">
+                        <q-item-section>
+                          <q-item-label class="text-h5">
+                            {{ field.label }}
+                          </q-item-label>
+                          <q-item-label class="text-subtitle1">
+                            {{ field.hint }}
+                          </q-item-label>
+                          <q-item-label>
+                            <q-file
+                              class="bg-white"
+                              v-model="field.value"
+                              label="Escolha um ou mais arquivos"
+                              outlined
+                              use-chips
+                              multiple
+                            >
+                              <template v-slot:prepend>
+                                <q-icon name="attach_file" />
+                              </template>
+                            </q-file>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </div>
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
@@ -225,7 +262,6 @@
                       :hint="field.hint"
                       v-model="field.value"
                     />
-
                     <div v-if="field.type.type === 'person'">
                       <!-- <div class="text-body">{{ field.label }}</div> -->
                       <!-- <div
@@ -430,13 +466,14 @@
             <q-input mask="########" outlined label="CEP" v-model="cep" @keyup="checkCEP" />
             <q-input
               outlined
-              label="Informe o tipo de endereço"
+              label="Informe o tipo de endereço (obrigatório)"
               hint="Exemplo: Casa, trabalho, etc..."
               v-model="addressType"
             />
             <q-input outlined label="Logradouro" v-model="street" />
             <q-input outlined label="Número" type="number" v-model="number" />
             <q-input outlined label="Bairro" v-model="district" />
+            <q-input outlined label="Complemento" v-model="complement" />
             <div class="row">
               <div class="col">
                 <q-input outlined label="Cidade" v-model="city" />
@@ -550,6 +587,7 @@ export default defineComponent({
       city: "",
       state: "",
       district: "",
+      complement: "",
       splitterModel: 25,
       userData: {},
       userDetail: [],
@@ -561,8 +599,9 @@ export default defineComponent({
         userSelected: null,
         data: {
           name: '',
-        }
-      }
+        },
+      },
+      files: null
     };
   },
   mounted() {
@@ -673,6 +712,10 @@ export default defineComponent({
       this.$q.notify('Diálogo de multiplos dados não implementado')
     },
     addAddress() {
+      if(this.addressType === "") {
+        this.$q.notify("Preencha o tipo de endereço")
+        return
+      }
       const fieldIndex = this.fieldIndex
       const tabsIndex = this.tabsIndex
       if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value)
@@ -685,6 +728,7 @@ export default defineComponent({
         city: this.city,
         state: this.state,
         district: this.district,
+        complement: this.complement
       });
       this.dialogConfirmAddress.open = false;
       this.clearAddressInputs()
@@ -726,6 +770,7 @@ export default defineComponent({
       this.city = "";
       this.state = "";
       this.district = "";
+      this.complement = "";
     },
     removePhone(i) {
       this.userData.generalData.phones.splice(i, 1);
@@ -776,6 +821,19 @@ export default defineComponent({
       });
     },
     removeThisAddress(fieldIndex, tabsIndex, addressIndex) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(addressIndex, 1);
+    },
+    editThisAddress(fieldIndex, tabsIndex, addressIndex){
+      this.dialogConfirmAddress.open = true
+      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0])
+      this.cep = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].cep
+      this.addressType = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].type
+      this.street = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].street
+      this.number = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].number
+      this.district = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].district
+      this.complement = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].complement
+      this.city = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].city
+      this.state = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].state
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(addressIndex, 1);
     },
     getUserDetailById(){
