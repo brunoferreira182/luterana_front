@@ -39,6 +39,18 @@
           </div>
           <q-select
             outlined
+            label="Filtro de formulário"
+            option-label="label"
+            :option-value="(item) => item.type"
+            emit-value
+            map-options
+            hint="Selecione o filtro de destinatários"
+            v-model="filterType"
+            :options="filterDestinataries"
+          />
+          <q-select
+            v-if="filterType === 'byOrganismType'"
+            outlined
             label="Configuração de organismo"
             option-label="organismConfigName"
             :option-value="(item) => item._id"
@@ -52,35 +64,29 @@
             :options="organismConfigOptions"
           />
           <q-select
+            v-if="filterType === 'byOrganism' || filterType === 'byFunction'"
             v-model="organismSelected"
             outlined
-            use-input
             label="Nome do organismo"
             option-label="organismName"
-            hint="Pesquise pelo nome de um organismo"
+            hint="Selecione uma configuração para exibir relacionados"
             :options="organismsNames"
-            :loading="false"
             emit-value
             map-options
             use-chips
             multiple
+            use-input
             @filter="getOrganismsNamesBySearchString"
-            :option-value="(item) => item"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  Nenhum resultado
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+            @update:model-value="getFunctionsNames"
+            :option-value="(item) => item._id"
+          />
           <q-select
+            v-if="filterType === 'byFunction'"
             v-model="functionsSelected"
             outlined
             label="Funções"
             option-label="functionName"
-            hint="Selecione a funções"
+            hint="Selecione o filtro de funções"
             :options="functionsNames"
             use-chips
             multiple
@@ -238,6 +244,7 @@
               <div class="row q-gutter-sm items-center">
                 <div class="col">
                   <q-input
+                    v-if="field.type.type !== 'wisiwig'"
                     readonly
                     :label="field.label"
                     :hint="field.hint"
@@ -266,7 +273,7 @@
                     </template>
                   </q-input>
                   <q-editor 
-                    v-if="field.type.type === 'textarea'"
+                    v-if="field.type.type === 'wisiwig'"
                     v-model="field.value" 
                     min-height="5rem" 
                   />
@@ -336,6 +343,21 @@ export default defineComponent({
       formFields: [],
       organismSelected: [],
       functionsSelected: [],
+      filterType: '',
+      filterDestinataries: [
+        {
+          label: 'Tipo de organismo',
+          type: 'byOrganismType'
+        },
+        {
+          label: 'Organismo',
+          type: 'byOrganism'
+        },
+        {
+          label: 'Função',
+          type: 'byFunction'
+        },
+      ],
       daysOfTheWeek: [
         { label: 'Domingo' },
         { label: 'Segunda-feira' },
@@ -352,6 +374,11 @@ export default defineComponent({
         finalDate2: '',
       },
       formDates:[
+        {
+          label: 'Sem vigência',
+          type: 'none',
+          selected: false
+        }, 
         {
           label: 'Diário',
           type: 'daily',
@@ -402,15 +429,17 @@ export default defineComponent({
     this.getFunctionsNames()
   },
   methods: {
-    getOrganismsNamesBySearchString(val, update, abort) {
-      if(val.length < 3){
-        this.$q.notify('Digite no mínimo 3 caracteres para filtrar')
-        abort()
-        return
-      }
+    getOrganismsNamesBySearchString(val, update) {
+      console.log('console log dentro do getOrganismsNamesBySearchString')
+      // if(val.length < 3){
+      //   this.$q.notify('Digite no mínimo 3 caracteres para filtrar')
+      //   abort()
+      //   return
+      // }
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
         body: {
+          organismsTypes: this.organismConfigId,
           searchString: val,
         },
       };
@@ -421,6 +450,7 @@ export default defineComponent({
       });
     },
     getOrganismsNames() {
+      console.log('console log dentro do getOrganismsNames')
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
         body: {
@@ -435,6 +465,9 @@ export default defineComponent({
     getFunctionsNames() {
       const opt = {
         route: "/desktop/adm/getFunctionsNames",
+        body: {
+          organismsIds: this.organismSelected
+        },
       };
       useFetch(opt).then((r) => {
         this.functionsNames = r.data;
@@ -469,10 +502,10 @@ export default defineComponent({
       });
     },
     createFormConfig() {
-      // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
-      //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
-      //   return
-      // }
+      if(this.organismTypeId === '' || this.organismConfigId === '' ){
+        this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
+        return
+      }
       const opt = {
         route: "/desktop/config/createForm",
         body: {
@@ -499,10 +532,10 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (!r.error) {
-          this.$q.notify("Configuração de formulário criada com sucesso!");
-        } else {
+        if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.$q.notify("Configuração de formulário criada com sucesso!");
         }
       });
     },
