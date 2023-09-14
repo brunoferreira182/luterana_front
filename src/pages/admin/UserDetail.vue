@@ -106,6 +106,7 @@
                       && field.type.type !== 'address'
                       && field.type.type !== 'options'
                       && field.type.type !== 'person'
+                      && field.type.type !== 'organism'
                       && field.type.type !== 'attach'"
                     >
                       <q-input
@@ -219,7 +220,25 @@
                         </q-list>
                       </div>
                     </div>
-
+                    <div v-if="field.type.type === 'organism'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <q-list class="no-margin">
+                          <q-item
+                            v-for="(item, i) in field.value"
+                            :key="item + i"
+                            style="border-radius: 1rem"
+                            class="bg-grey-3 q-ma-sm q-pa-md"
+                          >
+                            <q-item-section>
+                              <q-item-label class="text-capitalize">
+                                {{ item.organismName }}
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
