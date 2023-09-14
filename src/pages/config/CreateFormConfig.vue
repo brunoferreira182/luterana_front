@@ -511,10 +511,11 @@ export default defineComponent({
       const opt = {
         route: "/desktop/config/createForm",
         body: {
-          organismConfigId: this.organismConfigId,
           formName: this.formConfigName,
           formFields: this.formFields,
-          visions: this.visions,
+          formFilters: {
+            visions: this.visions,
+          }
         },
       };
       switch(this.formDatesSelected.formType){
@@ -527,8 +528,16 @@ export default defineComponent({
         case 'semester': 
           opt.body.semester = this.formDatesSelected
         break;
-        case 'yealy':
+        case 'yearly':
           opt.body.monthly = this.formDatesSelected
+        break;
+      }
+      switch(this.filterType){
+        case 'byOrganismType':
+          opt.body.formFilters.organismTypeFilter = this.organismConfigId
+        break;
+        case 'byOrganism':
+          opt.body.formFilters.organismsNameFilter = this.organismSelected
         break;
       }
       this.$q.loading.show()
