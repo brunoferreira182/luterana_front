@@ -436,16 +436,9 @@ export default defineComponent({
     this.getFieldTypes()
     this.getOrganismsConfigs()
     this.getVisions()
-    this.getFunctionsNames()
   },
   methods: {
     getOrganismsNamesBySearchString(val, update) {
-      console.log('console log dentro do getOrganismsNamesBySearchString')
-      // if(val.length < 3){
-      //   this.$q.notify('Digite no mínimo 3 caracteres para filtrar')
-      //   abort()
-      //   return
-      // }
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
         body: {
@@ -460,7 +453,6 @@ export default defineComponent({
       });
     },
     getOrganismsNames() {
-      console.log('console log dentro do getOrganismsNames')
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
         body: {
