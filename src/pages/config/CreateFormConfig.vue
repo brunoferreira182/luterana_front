@@ -44,10 +44,57 @@
             :option-value="(item) => item._id"
             emit-value
             map-options
+            use-chips
+            multiple
+            @update:model-value="getOrganismsNames"
             hint="Informe a qual configuração de organismo pertencerá esse formulário"
             v-model="organismConfigId"
             :options="organismConfigOptions"
           />
+          <q-select
+            v-model="organismSelected"
+            outlined
+            use-input
+            label="Nome do organismo"
+            option-label="organismName"
+            hint="Pesquise pelo nome de um organismo"
+            :options="organismsNames"
+            :loading="false"
+            emit-value
+            map-options
+            use-chips
+            multiple
+            @filter="getOrganismsNamesBySearchString"
+            :option-value="(item) => item"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Nenhum resultado
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-select
+            v-model="functionsSelected"
+            outlined
+            label="Funções"
+            option-label="functionName"
+            hint="Selecione a funções"
+            :options="functionsNames"
+            use-chips
+            multiple
+            :option-value="(item) => item"
+          >
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.functionName }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.organismName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
@@ -218,6 +265,11 @@
                       </q-btn>
                     </template>
                   </q-input>
+                  <q-editor 
+                    v-if="field.type.type === 'textarea'"
+                    v-model="field.value" 
+                    min-height="5rem" 
+                  />
                 </div>
                 <div class="col-2 q-mb-md">
                   <q-badge class="q-pa-xs">{{
@@ -279,9 +331,11 @@ export default defineComponent({
   data() {
     return {
       fieldTypesOptions: [],
-      organismConfigId: '',
+      organismConfigId: [],
       visions: [],
       formFields: [],
+      organismSelected: [],
+      functionsSelected: [],
       daysOfTheWeek: [
         { label: 'Domingo' },
         { label: 'Segunda-feira' },
@@ -334,6 +388,8 @@ export default defineComponent({
       },
       visionsList: [],
       organismConfigOptions: [],
+      organismsNames: [],
+      functionsNames: [],
     };
   },
   mounted() {
@@ -343,8 +399,47 @@ export default defineComponent({
     this.getFieldTypes()
     this.getOrganismsConfigs()
     this.getVisions()
+    this.getFunctionsNames()
   },
   methods: {
+    getOrganismsNamesBySearchString(val, update, abort) {
+      if(val.length < 3){
+        this.$q.notify('Digite no mínimo 3 caracteres para filtrar')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getOrganismsNames",
+        body: {
+          searchString: val,
+        },
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.organismsNames = r.data;
+        })
+      });
+    },
+    getOrganismsNames() {
+      const opt = {
+        route: "/desktop/adm/getOrganismsNames",
+        body: {
+          searchString: this.searchString,
+          organismsTypes: this.organismConfigId
+        },
+      };
+      useFetch(opt).then((r) => {
+        this.organismsNames = r.data;
+      });
+    },
+    getFunctionsNames() {
+      const opt = {
+        route: "/desktop/adm/getFunctionsNames",
+      };
+      useFetch(opt).then((r) => {
+        this.functionsNames = r.data;
+      });
+    },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",

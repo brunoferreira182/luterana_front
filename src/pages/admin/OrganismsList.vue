@@ -103,7 +103,7 @@
           rounded
           @click="filterOrganisms(nameIndex)"
         >
-        {{ name.organismConfigName }}
+          {{ name.organismConfigName }}
         </q-btn>
       </div>
     </q-page>
