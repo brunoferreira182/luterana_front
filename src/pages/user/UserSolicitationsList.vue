@@ -196,11 +196,8 @@
               </div>
               <div class="subtitle2 text-left q-px-md">
                 Organismo: {{ dialogOpenSolicitation.data.organismName }}
-              </div>
-              <div class="subtitle2 text-left q-px-md">
                 Função: {{ dialogOpenSolicitation.data.functionName }}
               </div>
-              
             </q-card-section>
             <q-card-actions align="center">
               <q-btn
