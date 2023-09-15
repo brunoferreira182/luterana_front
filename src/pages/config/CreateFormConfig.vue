@@ -51,7 +51,7 @@
           />
           <div v-if="filterType" class="q-gutter-md">
             <q-select
-              v-if="filterType === 'byOrganismType'"
+              v-if="filterType === 'byOrganismType' || filterType === 'byFunction'"
               outlined
               label="Configuração de organismo"
               option-label="organismConfigName"
@@ -60,13 +60,14 @@
               map-options
               use-chips
               multiple
-              @update:model-value="getOrganismsNames"
+              @filter="getOrganismsNamesBySearchString"
+              @update:model-value="getFunctionsNames"
               hint="Informe a qual configuração de organismo pertencerá esse formulário"
               v-model="organismConfigId"
               :options="organismConfigOptions"
             />
             <q-select
-              v-if="filterType === 'byOrganism' || filterType === 'byFunction'"
+              v-if="filterType === 'byOrganism' "
               v-model="organismSelected"
               outlined
               label="Nome do organismo"
@@ -79,7 +80,6 @@
               multiple
               use-input
               @filter="getOrganismsNamesBySearchString"
-              @update:model-value="getFunctionsNames"
               :option-value="(item) => item._id"
             />
             <q-select
@@ -513,6 +513,7 @@ export default defineComponent({
         body: {
           formName: this.formConfigName,
           formFields: this.formFields,
+          formConfigs: {},
           formFilters: {
             visions: this.visions,
           }
@@ -520,16 +521,16 @@ export default defineComponent({
       };
       switch(this.formDatesSelected.formType){
         case 'weekly':
-          opt.body.dayOfWeek = this.dayOfWeek
+          opt.body.formConfigs.dayOfWeek = this.dayOfWeek
         break;
         case 'monthly': 
-          opt.body.monthly = this.formDatesSelected.finalDate1
+          opt.body.formConfigs.monthly = this.formDatesSelected.finalDate1
         break;
         case 'semester': 
-          opt.body.semester = this.formDatesSelected
+          opt.body.formConfigs.semester = this.formDatesSelected
         break;
         case 'yearly':
-          opt.body.monthly = this.formDatesSelected
+          opt.body.formConfigs.monthly = this.formDatesSelected
         break;
       }
       switch(this.filterType){
@@ -538,6 +539,10 @@ export default defineComponent({
         break;
         case 'byOrganism':
           opt.body.formFilters.organismsNameFilter = this.organismSelected
+        break;
+        case 'byFunction':
+          opt.body.formFilters.organismFunctionFilter = this.functionsSelected,
+          opt.body.formFilters.organismTypeFilter = this.organismConfigId
         break;
       }
       this.$q.loading.show()

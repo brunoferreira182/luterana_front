@@ -30,154 +30,27 @@
           <div
             class="text-h5"
           >
-            Informações 
-          </div>
-          <q-select
-            outlined
-            label="Configuração de organismo"
-            option-label="organismConfigName"
-            :option-value="(item) => item._id"
-            emit-value
-            map-options
-            hint="Informe a qual configuração de organismo pertencerá esse formulário"
-            v-model="organismConfigId"
-            :options="organismConfigOptions"
-          />
-          <q-input
-            :readonly="$route.path === '/config/organismConfigDetail'"
-            outlined
-            label="Nome da configuração"
-            v-model="formConfigName"
-            hint="Informe qual será o nome da configuração deste formulário"
-          />
-          <div
-            class="text-h5"
-          >
-            Adicione os campos de preenchimento
+            Dados
           </div>
           <div
-            class="row q-gutter-x-sm q-mx-none"
           >
-            <div class="col">
+            <div v-for="(field, i) in organismData.fields" :key="i">
               <q-input
+                v-if="field.type.type !== 'boolean'"
+                v-model="field.value"
                 outlined
-                class="q-ml-sm"
-                hint="Nome do dado que será solicitado na hora do cadastro do organismo"
-                label="Novo dado"
-                v-model="newField.label"
+                :type="getInputType(field.type.type)"
+                :reverse-fill-mask="field.type.type === 'money'"
+                :prefix="field.type.type === 'money' ? 'R$' : null"
+                :label="field.label + (field.required ? '' : ' (Opcional)')"
+                :mask="field.type.mask"
+                :hint="field.hint"
               />
-            </div>
-            <div class="col">
-              <q-input
-                outlined
-                hint="Descrição abaixo do campo para facilitar entendimento"
-                label="Dica"
-                v-model="newField.hint"
-              />
-            </div>
-            <div class="col">
-              <q-select
-                outlined
-                hint="O tipo do dado"
-                label="Tipo de dado"
-                option-label="label"
-                :options="fieldTypesOptions"
-                v-model="newField.type"
-              />
-            </div>
-          </div>
-
-          <q-checkbox
-            class="q-pt-lg"
-            v-model="newField.required"
-            label="Preenchimento Obrigatório"
-          />
-          <q-checkbox
-            :disable="
-              newField.type ? newField.type.type === 'boolean' : false
-            "
-            class="q-pt-lg"
-            v-model="newField.multiple"
-            label="Campo múltiplo"
-          />
-          <div
-            class="row justify-center"
-          >
-            <q-btn
-              label="Adicionar campo"
-              no-caps
-              rounded
-              unelevated
-              @click="addField"
-              color="primary"
-            />
-          </div>
-          <q-separator
-          />
-          <div
-            class="text-h5"
-          >
-            Visualização
-          </div>
-          <div
-          >
-            <div
-              v-for="(field, i) in formFields"
-              :key="i"
-              class="q-my-md"
-            >
-              <div class="row q-gutter-sm items-center">
-                <div class="col">
-                  <q-input
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
-                    outlined
-                  >
-                    <template
-                      #append
-                      v-if="
-                        field.multiple &&
-                        $route.path === '/config/organismConfigDetail'
-                      "
-                    >
-                      <q-btn
-                        disabled
-                        icon="add"
-                        color="primary"
-                        flat
-                        round
-                        @click="addMultipleField"
-                      >
-                        <q-tooltip
-                          >Adicionar multiplo
-                          {{ field.type.label }}</q-tooltip
-                        >
-                      </q-btn>
-                    </template>
-                  </q-input>
-                </div>
-                <div class="col-2 q-mb-md">
-                  <q-badge class="q-pa-xs">{{
-                    formFields[i].type.label
-                  }}</q-badge
-                  ><br />
-                  <q-badge color="orange" class="q-pa-xs">
-                    {{ field.required ? "obrigatório" : "opcional" }}
-                  </q-badge>
-                </div>
-                <div class="col-1">
-                  <q-btn
-                    icon="delete"
-                    size="large"
-                    class="q-mb-md"
-                    rounded
-                    @click="formFields.splice(i, 1)"
-                    flat
-                    color="primary"
-                  />
-                </div>
-              </div>
+              <q-checkbox
+                v-else-if="field.type.type === 'boolean'"
+                :label="field.label"
+                v-model="newOrganism[field.model]"
+              ></q-checkbox>
             </div>
           </div>
         </div>
@@ -185,7 +58,7 @@
         <div class="col-4">
           <div class="text-grey-8 text-h6 q-px-xs">Visões:</div>
           <div class="text-caption text-grey-8 q-px-sm">
-            Selecione quais visões terão acesso a este formulário
+            Visões deste formulário
           </div>
           <div class="visions-field q-mt-none row">
             <div
@@ -213,7 +86,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
-  name: "FormConfigDetail",
+  name: "UserFormDetail",
   data() {
     return {
       fieldTypesOptions: [],
