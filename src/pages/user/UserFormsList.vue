@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Configurações de formulários"
+        title="Meus formulários"
         :columns="columnsData"
         :rows="formConfigList"
         row-key="_id"
@@ -45,39 +45,7 @@
                 </template>
               </q-input>
             </div>
-            <div class="col text-right">
-              <q-btn
-                @click="$router.push('/config/CreateFormConfig')"
-                color="primary"
-                unelevated
-                no-caps
-                class="q-pa-sm"
-                rounded
-                icon="add"
-                label="Novo Formulário"
-              />
-            </div>
           </div>
-        </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
         </template>
       </q-table>
     </q-page>
@@ -115,7 +83,7 @@ export default defineComponent({
   methods: {
     clkOpenFormConfigDetail(e, r,) {
       const formId = r._id;
-      this.$router.push("/config/formConfigDetail?formId=" + formId);
+      this.$router.push("/user/userFormDetail?formId=" + formId);
     },
     getSelectedString() {
       return this.selected.length === 0

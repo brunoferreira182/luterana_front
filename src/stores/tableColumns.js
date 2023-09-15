@@ -166,13 +166,6 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.createdAt.createdAtOnlyDate,
         sortable: true,
       },
-      {
-        name: "status",
-        align: "left",
-        label: "Status",
-        field: "status",
-        sortable: true,
-      },
     ],
     organismTypeList: [
       {

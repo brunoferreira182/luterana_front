@@ -222,6 +222,10 @@ const routes = [
         path: "/user/userFormsList",
         component: () => import("pages/user/UserFormsList.vue"),
       }, 
+      {
+        path: "/user/userFormDetail",
+        component: () => import("pages/user/UserFormDetail.vue"),
+      }, 
     ],
   },
 
