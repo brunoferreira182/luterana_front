@@ -542,7 +542,7 @@ export default defineComponent({
         break;
         case 'byFunction':
           opt.body.formFilters.organismFunctionFilter = this.functionsSelected,
-          opt.body.formFilters.organismTypeFilter = this.organismConfigId
+          opt.body.formFilters.organismConfigFilter = this.organismConfigId
         break;
       }
       this.$q.loading.show()
