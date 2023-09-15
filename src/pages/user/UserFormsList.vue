@@ -6,7 +6,7 @@
         class="bg-accent"
         title="Meus formulários"
         :columns="columnsData"
-        :rows="formConfigList"
+        :rows="formList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -61,8 +61,8 @@ export default defineComponent({
   name: "UserFormsList",
   data() {
     return {
-      columnsData: useTableColumns().formConfigList,
-      formConfigList: [],
+      columnsData: useTableColumns().formList,
+      formList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -114,7 +114,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.formConfigList = r.data.list;
+        this.formList = r.data.list;
       });
     },
   },
