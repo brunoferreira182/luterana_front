@@ -535,7 +535,7 @@ export default defineComponent({
       }
       switch(this.filterType){
         case 'byOrganismType':
-          opt.body.formFilters.organismTypeFilter = this.organismConfigId
+          opt.body.formFilters.organismConfigFilter = this.organismConfigId
         break;
         case 'byOrganism':
           opt.body.formFilters.organismsNameFilter = this.organismSelected
