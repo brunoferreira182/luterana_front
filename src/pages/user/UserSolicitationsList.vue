@@ -69,16 +69,6 @@
                 <template #top-right>
                   <div class="flex row q-gutter-sm items-center text-right">
                     <div class="col">
-                      <q-select
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="selectFilter"
-                        :options="selectStatus"
-                        @update:model-value="getFunctionsSolicitationsByUserId"
-                      ></q-select>
-                    </div>
-                    <div class="col">
                       <q-input
                         @keyup="getFunctionsSolicitationsByUserId"
                         outlined
@@ -145,16 +135,6 @@
               >
                 <template #top-right>
                   <div class="flex row q-gutter-sm items-center text-right">
-                    <div class="col">
-                      <q-select
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="selectFilter"
-                        :options="selectStatus"
-                        @update:model-value="getFunctionsSolicitationsByUserId"
-                      ></q-select>
-                    </div>
                     <div class="col">
                       <q-input
                         @keyup="getFunctionsSolicitationsByUserId"
