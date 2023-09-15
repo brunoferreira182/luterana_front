@@ -112,15 +112,9 @@
               color="primary"
             />
           </div>
-          <q-separator
-          />
-          <div
-            class="text-h5"
-          >
-            Visualização
-          </div>
-          <div
-          >
+          <div v-if="formFields.length">
+            <q-separator/>
+            <div class="text-h5">Visualização</div>
             <div
               v-for="(field, i) in formFields"
               :key="i"

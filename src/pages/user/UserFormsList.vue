@@ -13,7 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenFormConfigDetail"
+        @row-click="clkOpenFormDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -81,7 +81,7 @@ export default defineComponent({
     this.getFormsByUserId();
   },
   methods: {
-    clkOpenFormConfigDetail(e, r,) {
+    clkOpenFormDetail(e, r,) {
       const formId = r._id;
       this.$router.push("/user/userFormDetail?formId=" + formId);
     },
