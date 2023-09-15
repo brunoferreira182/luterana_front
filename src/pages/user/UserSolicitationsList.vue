@@ -69,16 +69,6 @@
                 <template #top-right>
                   <div class="flex row q-gutter-sm items-center text-right">
                     <div class="col">
-                      <q-select
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="selectFilter"
-                        :options="selectStatus"
-                        @update:model-value="getFunctionsSolicitationsByUserId"
-                      ></q-select>
-                    </div>
-                    <div class="col">
                       <q-input
                         @keyup="getFunctionsSolicitationsByUserId"
                         outlined
@@ -146,16 +136,6 @@
                 <template #top-right>
                   <div class="flex row q-gutter-sm items-center text-right">
                     <div class="col">
-                      <q-select
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="selectFilter"
-                        :options="selectStatus"
-                        @update:model-value="getFunctionsSolicitationsByUserId"
-                      ></q-select>
-                    </div>
-                    <div class="col">
                       <q-input
                         @keyup="getFunctionsSolicitationsByUserId"
                         outlined
@@ -214,13 +194,10 @@
               <div class="text-h6">
                 Deseja confirmar sua participação? 
               </div>
-              <div class="subtitle2 text-left">
+              <div class="subtitle2 text-left q-px-md">
                 Organismo: {{ dialogOpenSolicitation.data.organismName }}
-              </div>
-              <div class="subtitle2 text-left">
                 Função: {{ dialogOpenSolicitation.data.functionName }}
               </div>
-              
             </q-card-section>
             <q-card-actions align="center">
               <q-btn

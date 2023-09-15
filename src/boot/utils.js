@@ -288,6 +288,11 @@ const useUtils = {
           route: "/user/userSolicitationsList",
           icon: "format_list_bulleted",
         },
+        {
+          label: "Formulários",
+          route: "/user/userFormsList",
+          icon: "list_alt",
+        },
       ],
     };
     return obj[type];

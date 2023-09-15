@@ -4,22 +4,23 @@
       <q-table
         flat
         class="bg-accent"
-        title="Minhas funções"
+        title="Meus formulários"
         :columns="columnsData"
-        :rows="userFunctionsList"
+        :rows="formList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkOpenFormDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row justify-end q-gutter-sm items-center">
+          <div class="flex row justify-between q-gutter-sm items-center">
             <div class="col">
               <q-select
                 outlined
@@ -27,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getFunctionsByUserId"
+                @update:model-value="getFormsByUserId"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getFunctionsByUserId"
+                @keyup="getFormsByUserId"
                 outlined
                 dense
                 debounce="300"
@@ -57,11 +58,11 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "UserFunctionsList",
+  name: "UserFormsList",
   data() {
     return {
-      columnsData: useTableColumns().userFunctionsList,
-      userFunctionsList: [],
+      columnsData: useTableColumns().formList,
+      formList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -77,12 +78,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getFunctionsByUserId();
+    this.getFormsByUserId();
   },
   methods: {
-    clkOpenUserOrganismDetail(e, r) {
-      const organismId = r.organismId;
-      this.$router.push("/orgs/userOrganismDetail?organismId=" + organismId);
+    clkOpenFormDetail(e, r,) {
+      const formId = r._id;
+      this.$router.push("/user/userFormDetail?formId=" + formId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -96,11 +97,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getFunctionsByUserId();
+      // this.getFormsByUserId();
     },
-    getFunctionsByUserId() {
+    getFormsByUserId() {
       const opt = {
-        route: "/desktop/commonUsers/getFunctionsByUserId",
+        route: "/desktop/commonUsers/getFormsByUserId",
         body: {
           filterValue: this.filter,
           page: this.pagination.page,
@@ -113,7 +114,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.userFunctionsList = r.data.functions;
+        this.formList = r.data.list;
       });
     },
   },
