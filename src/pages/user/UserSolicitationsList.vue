@@ -194,10 +194,10 @@
               <div class="text-h6">
                 Deseja confirmar sua participação? 
               </div>
-              <div class="subtitle2 text-left">
+              <div class="subtitle2 text-left q-px-md">
                 Organismo: {{ dialogOpenSolicitation.data.organismName }}
               </div>
-              <div class="subtitle2 text-left">
+              <div class="subtitle2 text-left q-px-md">
                 Função: {{ dialogOpenSolicitation.data.functionName }}
               </div>
               
