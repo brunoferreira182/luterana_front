@@ -163,7 +163,6 @@
                       >
                       </q-select>
                     </div>
-
                     <div
                       v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
                       class="text-subtilte1 text-start"
@@ -357,31 +356,75 @@
                         <div class="q-pl-md q-py-sm">
                           {{ field.label }}:
                         </div>
-                        <div
-                          v-for="(selects) in field.multipleOptions"
-                          :key="selects"
-                        >
-                          <div v-for="select in selects" :key="select">
-                          <div>
-                            {{  }}
-                          </div>
-                          <q-select 
+                        <div 
                             class="q-pa-sm"
-                            outlined
-                            :label="select.label"
-                            option-label="value"
-                            emit-value
-                            map-options
-                            :hint="select.hint"
-                            v-model="select.value"
-                            :options="select.select"
                           >
-                          </q-select>
+                            <q-btn
+                              v-if="!field.value"
+                              icon="add"
+                              color="primary"
+                              outline
+                              rounded
+                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                              no-caps
+                            >
+                              Adicionar nova seleção dupla
+                            </q-btn>
+                            <q-btn
+                              v-else-if="!field.multiple && (field.value[0] === undefined ) "
+                              icon="add"
+                              color="primary"
+                              outline
+                              rounded
+                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                              no-caps
+                            >
+                              Adicionar nova seleção dupla
+                            </q-btn>
+                            <q-btn
+                              v-else-if="field.multiple === true"
+                              icon="add"
+                              color="primary"
+                              outline
+                              rounded
+                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                              no-caps
+                            >
+                              Adicionar nova seleção dupla
+                            </q-btn>
+                          </div>
+                        <div>
+                          <div v-if="field.value">
+                            <div
+                              v-for="(value, valueIndex) in field.value"
+                              :key="valueIndex"
+                              class="row wrap justify-left q-pa-sm items-left content-center"
+                            >
+                              <q-select 
+                                v-for="(select, selectIndex) in field.selects"
+                                :key="'internalSelect' + selectIndex"
+                                :label="select.label"
+                                option-label="options"
+                                emit-value
+                                map-options
+                                v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
+                                :options="select.options"
+                                class="col-5"
+                              />
+                              <q-btn
+                                icon="delete"
+                                class="q-ml-lg"
+                                rounded
+                                flat
+                                color="red"
+                                @click="userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(valueIndex, 1)" 
+                                />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </div>
               </div>
             </q-tab-panel>
@@ -734,6 +777,12 @@ export default defineComponent({
     this.getUsersConfig()
   },
   methods: {
+    addDoubleSelection(tabsIndex, fieldIndex){
+      if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value) {
+        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []
+      }
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
+    },
     removeThisPerson(fieldIndex, tabsIndex, personIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
       this.clearPersonInputs()

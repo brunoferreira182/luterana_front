@@ -107,7 +107,8 @@
                       && field.type.type !== 'options'
                       && field.type.type !== 'person'
                       && field.type.type !== 'organism'
-                      && field.type.type !== 'attach'"
+                      && field.type.type !== 'attach'
+                      && field.type.type !== 'multiple_select'"
                     >
                       <q-input
                         :label="field.label"
@@ -118,7 +119,6 @@
                       >
                       </q-input>
                     </div>
-
                     <div class="text-right" v-if="field.type.type === 'options'">
                       <q-select
                         outlined
@@ -129,10 +129,19 @@
                         :hint="field.hint"
                         v-model="field.value"
                         :options="field.options"
-                      >
-                      </q-select>
+                      />
                     </div>
-
+                    <div class="text-right" v-if="field.type.type === 'multiple_select'">
+                      <q-select
+                        outlined
+                        :label="field.selects.label"
+                        option-label="options"
+                        emit-value
+                        map-options
+                        v-model="field.value"
+                        :options="field.selects.options"
+                      />
+                    </div>
                     <div
                       v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
                       class="text-subtilte1 text-start"

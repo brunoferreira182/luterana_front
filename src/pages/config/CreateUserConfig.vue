@@ -231,12 +231,13 @@
                     v-for="(option, optionIndex) in multipleOptionsValue"
                     :key="option"
                   >
+                  <div style="display: flex;">
                     <q-input
                       outlined
                       class="q-pa-sm"
                       label="De um nome para o campo de seleção abaixo:"
                       v-model="multipleOptionsValue[optionIndex].label"
-                      style="width: 40%;"
+                      style="width: 50%;"
                       >
                     </q-input>
                     <q-input
@@ -244,21 +245,24 @@
                       outlined
                       label="Opção" 
                       class="q-pa-sm"
-                      style="width: 40%;"
+                      style="width: 50%;"
                     >
                       <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
                     </q-input>
+                  </div>
                       <div 
                         v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
                         :key="select"
                       >
                         <q-chip
+                          size="md"
+                          class="q-pa-sm"
                         >
-                          {{ select.value }}
-                          <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="delete" flat></q-btn>
+                          {{ select }}
+                          <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="close" round flat></q-btn>
                         </q-chip>
-                    </div>
-                    <q-separator/>
+                      </div>
+                      <q-separator/>
                   </div>
                 </div>
               </div>
@@ -406,8 +410,8 @@ export default defineComponent({
   data() {
     return {
       multipleOptionsValue: [
-        {newValue:'', select: [], label: ''},
-        {newValue:'', select: [], label: ''}
+        {select: [], label: ''},
+        {select: [], label: ''}
       ],
       userInfo: {},
       tabIndexToEdit: null,
@@ -448,11 +452,11 @@ export default defineComponent({
         multiple: false,
         required: true,
         options: [],
-        multipleOptions: [
-          {select: []},
-          {select: []}
+        selects: [
+          {label: [], options: []},
+          {label: [], options: []}
         ],
-        value: null
+        options: null
       },
       tabIndexToAddField: '',
       selectedType: "",
@@ -470,13 +474,16 @@ export default defineComponent({
   },
   methods: {
     insertMultipleField(option, optionIndex) {
-    const newValue = this.multipleOptionsValue[optionIndex].newValue;
-    this.multipleOptionsValue[optionIndex].select.push({ value: newValue });
-    this.multipleOptionsValue[optionIndex].newValue = '';
-    this.newField.multipleOptions[optionIndex].select = this.multipleOptionsValue[optionIndex];
+      console.log(this.multipleOptionsValue[optionIndex].newValue, "AA")
+      console.log(this.multipleOptionsValue[optionIndex].select, "BB")
+      const newValue = this.multipleOptionsValue[optionIndex].newValue;
+      this.multipleOptionsValue[optionIndex].select.push(newValue);
+      this.multipleOptionsValue[optionIndex].newValue = '';
+      this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
+      this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
   },
     addNewSelectField() {
-      this.newField.multipleOptions.push({select: [], label: ''})
+      this.newField.selects.push({newValue: '', select: [], label: ''})
       this.multipleOptionsValue.push({newValue: '', select: [], label: ''})
     },
     clkAddTabData(tabIndex){
