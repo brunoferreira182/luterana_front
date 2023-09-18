@@ -25,6 +25,7 @@
               <q-select
                 outlined
                 dense
+                label="Filtro"
                 debounce="300"
                 v-model="selectFilter"
                 :option-value="(item) => item.value"
@@ -62,11 +63,11 @@
           <q-td :props="props">
             <q-chip outline v-if="props.row.status === 'draft'" color="yellow-8" size="14px">
               Rascunho
-              <q-icon name="alarm_on" size="xs" />
+              <q-icon name="alarm_on" size="xs" class="q-pa-xs"/>
             </q-chip>
             <q-chip outline v-if="props.row.status === 'sent'" color="green-8" size="14px">
               Enviado
-              <q-icon name="mark_email_read" size="xs" />
+              <q-icon name="mark_email_read" size="xs" class="q-pa-sm"/>
             </q-chip>
           </q-td>
         </template>
