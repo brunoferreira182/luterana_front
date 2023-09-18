@@ -293,6 +293,11 @@ const useUtils = {
           route: "/user/userFormsList",
           icon: "list_alt",
         },
+        {
+          label: "Formulários enviados",
+          route: "/user/userMyFormsList",
+          icon: "collections_bookmark",
+        },
       ],
     };
     return obj[type];
