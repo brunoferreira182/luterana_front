@@ -46,7 +46,7 @@
             Preencha os dados necessários:
           </div>
           <div v-for="(field, i) in organismData.fields" :key="i">
-            <div v-if="field.multiple">
+            <div v-if="field.multiple && field.type.type !== 'multiple_select'">
               <q-input
                 v-model="organismData.fields[i].newMultipleValue"
                 @blur="delete organismData.fields[i].newMultipleValue"
@@ -88,7 +88,7 @@
               </div>
             </div>
             <q-input
-              v-else-if="field.type.type !== 'boolean'"
+              v-else-if="field.type.type !== 'boolean' && field.type.type !== 'multiple_select'"
               v-model="organismData.fields[i].value"
               outlined
               :type="getInputType(field.type.type)"
@@ -98,6 +98,57 @@
               :mask="field.type.mask"
               :hint="field.hint"
             />
+            <div v-else-if="field.type.type === 'multiple_select'">
+              <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
+                <div class="q-pl-md q-py-sm">
+                  {{ field.label }}:
+                </div>
+                <div 
+                  class="q-pa-sm"
+                >
+                  <q-btn
+                    v-if="field.multiple ? true : (field.value[0] === undefined)"
+                    icon="add"
+                    color="primary"
+                    outline
+                    rounded
+                    @click="addDoubleSelection(i)"
+                    no-caps
+                  >
+                    Adicionar nova seleção dupla
+                  </q-btn>
+                </div>
+                <div>
+                  <div v-if="field.value">
+                    <div
+                      v-for="(value, valueIndex) in field.value"
+                      :key="valueIndex"
+                      class="row wrap justify-left q-pa-sm items-left content-center"
+                    >
+                    <q-select 
+                      v-for="(select, selectIndex) in field.selects"
+                      :key="'internalSelect' + selectIndex"
+                      :label="select.label"
+                      option-label="options"
+                      emit-value
+                      map-options
+                      v-model="organismData.fields[i].value[valueIndex][selectIndex]"
+                      :options="select.options"
+                      class="col-5"
+                    />
+                      <q-btn
+                        icon="delete"
+                        class="q-ml-lg"
+                        rounded
+                        flat
+                        color="red"
+                        @click="organismData.fields[i].value.splice(valueIndex, 1)" 
+                        />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <q-checkbox
               v-else
               :label="field.label"
@@ -512,6 +563,12 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    addDoubleSelection(i){
+      if (!this.organismData.fields[i].value) {
+        this.organismData.fields[i].value = []
+      }
+      this.organismData.fields[i].value.push([])
+    },
     filterInOrganismLinks(val){
       console.log(val)
     },
@@ -669,6 +726,7 @@ export default defineComponent({
         }
         this.organismConfigName = r.data.organismConfigData.organismConfigName;
         this.organismData.fields = r.data.organismConfigData.organismFields;
+        this.mountUserData();
         // r.data.organismConfigData.functions[0].organismFunctionId
         //   ? this.functions = r.data.organismConfigData.functions
         //   : this.functions = []
@@ -788,8 +846,15 @@ export default defineComponent({
     },
     removeLink(i) {
       this.organismLinks.splice(i,1)
+    },
+    mountUserData () {
+      this.organismData.fields.forEach((field) => {
+        if(!field.value) {
+          field.value = []
+        }
+      })
     }
-  },
+  } 
 });
 </script>
 

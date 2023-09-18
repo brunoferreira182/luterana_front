@@ -357,42 +357,20 @@
                           {{ field.label }}:
                         </div>
                         <div 
-                            class="q-pa-sm"
+                          class="q-pa-sm"
+                        >
+                          <q-btn
+                            v-if="field.multiple || (!field.value || field.value.length === 0)"
+                            icon="add"
+                            color="primary"
+                            outline
+                            rounded
+                            @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                            no-caps
                           >
-                            <q-btn
-                              v-if="!field.value"
-                              icon="add"
-                              color="primary"
-                              outline
-                              rounded
-                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
-                              no-caps
-                            >
-                              Adicionar nova seleção dupla
-                            </q-btn>
-                            <q-btn
-                              v-else-if="!field.multiple && (field.value[0] === undefined ) "
-                              icon="add"
-                              color="primary"
-                              outline
-                              rounded
-                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
-                              no-caps
-                            >
-                              Adicionar nova seleção dupla
-                            </q-btn>
-                            <q-btn
-                              v-else-if="field.multiple === true"
-                              icon="add"
-                              color="primary"
-                              outline
-                              rounded
-                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
-                              no-caps
-                            >
-                              Adicionar nova seleção dupla
-                            </q-btn>
-                          </div>
+                            Adicionar nova seleção dupla
+                          </q-btn>
+                        </div>
                         <div>
                           <div v-if="field.value">
                             <div

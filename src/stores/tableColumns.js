@@ -153,10 +153,10 @@ export const useTableColumns = defineStore("tableColumns", {
     ],
     formConfigList: [
       {
-        name: "formName",
+        name: "name",
         align: "left",
         label: "Nome do formulário",
-        field: "formName",
+        field: "name",
         sortable: true,
       },
       {
