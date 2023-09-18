@@ -455,11 +455,11 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        if (!r.error) {
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+        } else {
           this.$q.notify("Usuário cadastrado com sucesso!");
           this.$router.push("/admin/usersList");
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente");
         }
       });
     },
