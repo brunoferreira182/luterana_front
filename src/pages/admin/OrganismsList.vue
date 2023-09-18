@@ -184,7 +184,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) {
-          console.log("Deu erro getOrganismConfigsNameList")
+          this.$q.notify('Ocorreu um erro, tente novamente.')
         } else {
           this.organismsConfigsNamesList = r.data
         }
