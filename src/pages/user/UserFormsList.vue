@@ -43,20 +43,26 @@
               no-caps
               rounded
               dense
+              icon="draw"
               unelevated
-              color="primary"
+              color="cyan-8"
             >
-              Enviar formulário
+              <q-tooltip class="text-body2">
+                Clique para preencher este formulário
+              </q-tooltip>
             </q-btn>
             <q-btn
               @click="clkMakeFormFilterByRow(props.row)"
               no-caps
               rounded
               dense
-              color="primary"
+              icon="search"
+              color="orange-8"
               unelevated
             >
-              Ver enviados
+              <q-tooltip class="text-body2">
+                Clique para exibir os formulários enviados deste tipo
+              </q-tooltip>
             </q-btn>
           </q-td>
         </template>
