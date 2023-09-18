@@ -13,7 +13,6 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenFormDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -38,22 +37,28 @@
           </div>
         </template>
         <template #body-cell-actionButtons="props">
-          <q-tr :props="props" >
-            <q-td key="name" :props="props">
-              <q-btn
-                @click="teste(props.row)"
-                no-caps
-              >
-                teste
-              </q-btn>
-              <q-btn
-                @click="teste(props.row)"
-                no-caps
-              >
-                teste
-              </q-btn>
-            </q-td>
-          </q-tr>
+          <q-td :props="props" class="q-gutter-x-sm">
+            <q-btn
+              @click="clkOpenFormDetail(props.row)"
+              no-caps
+              rounded
+              dense
+              unelevated
+              color="primary"
+            >
+              Enviar formulário
+            </q-btn>
+            <q-btn
+              @click="clkMakeFormFilterByRow(props.row)"
+              no-caps
+              rounded
+              dense
+              color="primary"
+              unelevated
+            >
+              Ver enviados
+            </q-btn>
+          </q-td>
         </template>
         <template #body-cell-recurrencyLabel="props">
           <q-td :props="props">
@@ -100,11 +105,12 @@ export default defineComponent({
     this.getFormsByUserId();
   },
   methods: {
-    teste(row){
-      console.log(row.name)
+    clkMakeFormFilterByRow(row){
+      const formId = row._id;
+      this.$router.push("/user/userMyFormsList?formId=" + formId);
     },
-    clkOpenFormDetail(e, r,) {
-      const formId = r._id;
+    clkOpenFormDetail(row) {
+      const formId = row._id;
       this.$router.push("/user/userFormDetail?formId=" + formId);
     },
     getSelectedString() {

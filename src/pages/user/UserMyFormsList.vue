@@ -142,6 +142,7 @@ export default defineComponent({
         route: "/desktop/commonUsers/getSavedFormsByUserId",
         body: {
           filterValue: this.filter,
+          formId: this.$route.query.formId,
           page: this.pagination.page,
           formStatus: '',
           rowsPerPage: this.pagination.rowsPerPage
