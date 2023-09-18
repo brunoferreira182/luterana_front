@@ -309,7 +309,7 @@ export default defineComponent({
         } else {
           this.formConfigName = r.data.formName
           this.organismConfigId = r.data.organismConfigId
-          this.formFields = r.data.formFields
+          this.formFields = r.data.fields
           this.formType = r.data.formType
           this.checkedVisionsList = r.data.visions
           this.checkedVisionsList.forEach((check,i) => {

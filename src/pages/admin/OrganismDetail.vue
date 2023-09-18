@@ -76,7 +76,7 @@
               </div>
               <div v-for="(field, i) in organismData.fields" :key="i">
                 <q-input
-                  v-if="field.type.type !== 'boolean'"
+                  v-if="field.type.type !== 'boolean' && field.type.type !== 'multiple_select'"
                   v-model="field.value"
                   outlined
                   :type="getInputType(field.type.type)"
@@ -91,6 +91,25 @@
                   :label="field.label"
                   v-model="newOrganism[field.model]"
                 ></q-checkbox>
+                <div class="text-left" v-if="field.type.type === 'multiple_select'">
+                  <div 
+                    class="row q-pa-sm"
+                    v-for="(value, valueIndex) in field.value"
+                    :key="valueIndex"
+                  >
+                    <q-select
+                      v-for="(select, selectIndex) in field.selects"
+                      :key="select"
+                      outlined
+                      disable
+                      :label="select.label"
+                      emit-value
+                      map-options
+                      v-model="organismData.fields[i].value[valueIndex][selectIndex]"
+                      style="width: 50%;"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <q-separator vertical class="q-ma-md" />

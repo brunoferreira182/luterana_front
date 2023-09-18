@@ -131,16 +131,31 @@
                         :options="field.options"
                       />
                     </div>
-                    <div class="text-right" v-if="field.type.type === 'multiple_select'">
-                      <q-select
-                        outlined
-                        :label="field.selects.label"
-                        option-label="options"
-                        emit-value
-                        map-options
-                        v-model="field.value"
-                        :options="field.selects.options"
-                      />
+                    <div class="text-center" v-if="field.type.type === 'multiple_select'">
+                      <div
+                        v-for="(value, valueIndex) in field.value"
+                        :key="valueIndex"
+                        class="q-pa-sm"
+                      >
+                        <div class="col text-h5 q-pa-sm" style="border-radius: 1rem">
+                          <div class="q-pl-md q-py-sm">
+                            {{ field.label }}:
+                          </div>
+                          <div class="row text-center justify-center">
+                            <q-select
+                              v-for="(select, selectIndex) in field.selects"
+                              :key="select"
+                              outlined
+                              disable
+                              :label="select.label"
+                              emit-value
+                              map-options
+                              v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
+                              style="width: 50%;"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <div
                       v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
@@ -297,7 +312,6 @@
                 />
               </div>
             </q-tabs>
-            
           </template>
           <template v-slot:after>
             <q-tab-panels 
