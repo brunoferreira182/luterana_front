@@ -223,7 +223,6 @@
               v-for="(field) in formFields"
               :key="field"
             >
-            f
             </div>
             <div>
               <q-checkbox

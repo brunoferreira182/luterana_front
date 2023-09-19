@@ -50,6 +50,79 @@
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
           />
+          <div class="text-h5">
+              Selecione a vigência do formulário
+            </div>
+            <q-select
+              outlined
+              label="Vigência de formulário"
+              option-label="label"
+              emit-value
+              map-options
+              :option-value="(item) => item"
+              v-model="formDatesSelected.formType.type"
+              hint="Informe o tempo de preenchimento do formulário"
+              :options="formDates"
+            />
+            <q-select
+              v-if="formDatesSelected.formType.type === 'weekly'"
+              outlined
+              v-model="formDatesSelected.dayOfWeek"
+              label="Dia da semana"
+              option-label="label"
+              hint="Escolha o dia da semana"
+              :option-value="(item) => item"
+              emit-value
+              map-options
+              :options="daysOfTheWeek"
+              type="date"
+            />
+            <q-input
+              outlined
+              v-if="formDatesSelected.formType.type === 'yearly'"
+              label="Data fim"
+              mask="##/##"
+              hint="Digite uma data no formato DD/MM"
+              v-model="formDatesSelected.finalDate1"
+            />
+            <div 
+              v-else-if="formDatesSelected.formType.type === 'monthly'"
+              class="row justify-between" 
+            >
+              <div class="col">
+                <q-select
+                  outlined
+                  label="Dia do mês"
+                  v-model="formDatesSelected.finalDate1"
+                  :options="dayOfMonthOptions"
+                />
+              </div>
+            </div>
+            <div 
+              v-else-if="formDatesSelected.formType.type === 'semester'"
+              class="row justify-between" 
+            >
+              <div class="col-6">
+                <q-input
+                  outlined
+                  label="Data 1"
+                  mask="##/##"
+                  hint="Digite uma data no formato DD/MM"
+                  v-model="formDatesSelected.finalDate1"
+                  class="q-mr-xs"
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                  outlined
+                  label="Data 2"
+                  mask="##/##"
+                  hint="Digite uma data no formato DD/MM"
+                  v-model="formDatesSelected.finalDate2"
+                  class="q-ml-xs"
+                />
+              </div>
+            </div>
           <div
             class="text-h5"
           >
@@ -214,6 +287,7 @@ export default defineComponent({
       visions: [],
       formFields: [],
       formConfigName: '',
+      formConfigs: {},
       newField: {
         label: null,
         type: null,
@@ -264,7 +338,7 @@ export default defineComponent({
   },
   mounted(){
     this.$q.loading.hide();
-  
+    this.getFormDetailById()
   },
   methods: {
     getOrganismsConfigs() {
@@ -308,6 +382,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.formConfigName = r.data.formName
+          this.formConfig = r.data.configs
           this.organismConfigId = r.data.organismConfigId
           this.formFields = r.data.fields
           this.formType = r.data.formType
