@@ -51,7 +51,7 @@
             hint="Informe qual será o nome da configuração deste formulário"
           />
           <div class="text-h5">
-              Selecione a vigência do formulário
+              Vigência do formulário
             </div>
             <q-select
               outlined
@@ -286,6 +286,55 @@ export default defineComponent({
       fieldTypesOptions: [],
       visions: [],
       formFields: [],
+      daysOfTheWeek: [
+        { label: 'Domingo', value: 1 },
+        { label: 'Segunda-feira', value: 2 },
+        { label: 'Terça-feira', value: 3 },
+        { label: 'Quarta-feira', value: 4 },
+        { label: 'Quinta-feira', value: 5 },
+        { label: 'Sexta-feira', value: 6 },
+        { label: 'Sábado', value: 7 }
+      ],
+      dayOfWeek: null,
+      formDatesSelected: {
+        formType: {
+          type: null
+        },
+        finalDate1: '',
+        finalDate2: '',
+      },
+      formDates:[
+        {
+          label: 'Sem vigência',
+          type: 'none',
+          selected: false
+        }, 
+        {
+          label: 'Diário',
+          type: 'daily',
+          selected: false
+        }, 
+        {
+          label: 'Semanal',
+          type: 'weekly',
+          selected: false
+        },
+        {
+          label: 'Mensal',
+          type: 'monthly',
+          selected: false
+        }, 
+        {
+          label: 'Semestral',
+          type: 'semester',
+          selected: false
+        },
+        {
+          label: 'Anual',
+          type: 'yearly',
+          selected: false
+        }
+      ],
       formConfigName: '',
       formConfigs: {},
       newField: {
@@ -329,8 +378,9 @@ export default defineComponent({
       checkedVisionsList: []
     };
   },
-  created(){
-    this.getVisions()
+  async created() {
+    await this.getVisions();
+    this.getFormDetailById();
   },
   beforeMount() {
     this.getFieldTypes()
@@ -338,7 +388,6 @@ export default defineComponent({
   },
   mounted(){
     this.$q.loading.hide();
-    this.getFormDetailById()
   },
   methods: {
     getOrganismsConfigs() {
@@ -352,58 +401,66 @@ export default defineComponent({
         this.organismConfigOptions = r.data;
       });
     },
-    getVisions() {
+    async getVisions() {
       const opt = {
         route: "/desktop/config/getVisions",
         body: {
           isActive: 1,
         },
       };
-      useFetch(opt).then((r) => {
-        this.visionsList = r.data.map(vision => {
-          return {
-            name: vision.visionInfo.name,
-            visionId: vision._id, 
-            description: vision.visionInfo.description
-          }
-        });
-      });
+      try {
+        const response = await useFetch(opt);
+        if (response.error) {
+          this.$q.notify("Erro ao buscar visões:", response.error);
+        } else {
+          this.visionsList = response.data.map((vision) => {
+            return {
+              name: vision.visionInfo.name,
+              visionId: vision._id,
+              description: vision.visionInfo.description,
+            };
+          });
+        }
+      } catch (error) {
+        this.$q.notify("Erro ao buscar visões:", error);
+      }
+      return this.visionsList;
     },
-    getFormDetailById() {
-      const formId = this.$route.query.formId
+    async getFormDetailById() {
+      const formId = this.$route.query.formId;
+      const visionsList = await this.getVisions();
       const opt = {
         route: "/desktop/config/getFormDetailById",
         body: {
-          formId: formId
+          formId: formId,
         },
       };
-      useFetch(opt).then((r) => {
-        if (r.error) {
+      try {
+        const response = await useFetch(opt);
+        if (response.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.formConfigName = r.data.formName
-          this.formConfig = r.data.configs
-          this.organismConfigId = r.data.organismConfigId
-          this.formFields = r.data.fields
-          this.formType = r.data.formType
-          this.checkedVisionsList = r.data.filters.visions
-          this.checkedVisionsList.forEach((check,i) => {
-            this.visionsList.forEach(vision => {
+          this.formConfigName = response.data.formName;
+          this.formConfig = response.data.configs;
+          this.organismConfigId = response.data.organismConfigId;
+          this.formFields = response.data.fields;
+          this.formType = response.data.formType;
+          this.checkedVisionsList = response.data.filters.visions;
+          this.checkedVisionsList.forEach((check, i) => {
+            visionsList.forEach((vision) => {
               if (check === vision.visionId) {
-                this.visions[i] = vision 
-                return
+                this.visions[i] = vision;
+                return;
               }
-            })
-          })
+            });
+          });
         }
-      });
+      } catch (error) {
+        this.$q.notify("Erro ao buscar detalhes do formulário", error);
+      }
     },
     updateForm() {
       const formId = this.$route.query.formId
-      // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
-      //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
-      //   return
-      // }
       const opt = {
         route: "/desktop/config/updateForm",
         body: {
