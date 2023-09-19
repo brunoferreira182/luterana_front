@@ -266,6 +266,22 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    pendingApprovalList: [
+      {
+        name: "titleName",
+        align: "left",
+        label: "Nome",
+        field: "titleName",
+        sortable: true,
+      },
+      {
+        name: "createdAt",
+        align: "left",
+        label: "Data de criação",
+        field: "createdAt",
+        sortable: true,
+      },
+    ],
     titleConfigList: [
       {
         name: "titleName",

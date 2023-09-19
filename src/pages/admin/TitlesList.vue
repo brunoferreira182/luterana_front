@@ -45,7 +45,30 @@
                 </template>
               </q-input>
             </div>
-            <div class="col">
+            <div class="row q-px-sm">
+              <q-btn
+                v-if="changeBtn === 0"
+                @click="replaceTitleList"
+                color="primary"
+                unelevated
+                rounded
+                no-caps
+                class="q-pa-sm q-mr-sm"
+                icon="pending_actions"
+                label="Títulos pendentes"
+              />
+              <q-btn
+                v-if="changeBtn === 1"
+                @click="replaceTitleList"
+                color="primary"
+                unelevated
+                rounded
+                outline
+                icon="pending_actions"
+                no-caps
+                class="q-pa-sm q-mr-sm"
+                label="Títulos pendentes"
+              />
               <q-btn
                 @click="$router.push('/config/createTitleConfig')"
                 color="primary"
@@ -93,8 +116,10 @@ export default defineComponent({
   name: "TitleConfigurationList",
   data() {
     return {
+      changeBtn: 1,
       columnsData: useTableColumns().titleConfigList,
       titlesList: [],
+      pendingApprovalList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Ativos",
@@ -111,11 +136,45 @@ export default defineComponent({
   },
   beforeMount() {
     this.getTitleConfigs();
+    this.showTitleSolicitations();
   },
   methods: {
+    replaceTitleList(){
+      if(this.titlesList !== this.pendingApprovalList.list) {
+        this.changeBtn = 0
+        this.titlesList = this.pendingApprovalList.list
+      }  else if (this.titlesList === this.pendingApprovalList.list){
+        this.changeBtn = 1
+        this.getTitleConfigs()
+      }
+    },
+    showTitleSolicitations(){
+      const opt = {
+        route: '/desktop/adm/getTitlesWaitingApproval',
+        body: {
+          searchString: this.filter,
+          isActive: 1,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage
+        },
+      };
+      useFetch(opt).then((r)=> {
+        if(!r.error){
+          this.pendingApprovalList = r.data
+        }
+        else {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde")
+        }
+      })
+    },
     clkOpenTitleDetail(e, r) {
-      const _id = r._id;
-      this.$router.push("/config/titleConfigDetail?titleId=" + _id);
+      if(this.changeBtn === 1) {
+        const _id = r._id;
+        this.$router.push("/config/titleConfigDetail?titleId=" + _id);
+      } else if (this.changeBtn === 0) {
+        const userId = r.user_id
+        this.$router.push("/admin/userDetail?userId" + userId)
+      }
     },
     getSelectedString() {
       return this.selected.length === 0
