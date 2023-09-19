@@ -19,7 +19,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-center q-pa-md">
-        <div class="col-8 q-gutter-md" align="start">
+        <div class="col-12 q-gutter-md" align="start">
           <div class="text-subtitle1">
             A seguir adicione campos com informações que sejam relevantes para
             constar no cadastro de quem receber o título que está sendo criado.
