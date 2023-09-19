@@ -74,6 +74,12 @@
             v-model="newField.multiple"
             label="Campo múltiplo"
           />
+          <q-checkbox
+            :disable="newField.type ? newField.type.type === 'boolean' : false"
+            class="q-pt-lg"
+            v-model="newField.admEvaluate"
+            label="Este título deve ser avaliado pelo administrador?"
+          />
           <div class="row justify-center">
             <q-btn
               label="Adicionar campo"
@@ -166,6 +172,7 @@ export default defineComponent({
         hint: null,
         required: true,
         multiple: false,
+        admEvaluate: false
       },
     };
   },

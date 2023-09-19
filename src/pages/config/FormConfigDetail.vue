@@ -264,7 +264,7 @@ export default defineComponent({
   },
   mounted(){
     this.$q.loading.hide();
-    this.getFormDetailById()
+  
   },
   methods: {
     getOrganismsConfigs() {
