@@ -511,7 +511,7 @@
               :name="tab._id" 
             >
               <div class="row">
-                <div class="col text-h6">{{ tab.titleName }}</div>
+                <div class="col text-h6">{{ tab.titleName }}:</div>
                 <q-btn
                   v-if="tab.status.status === 'pendingApproval'"
                   icon="pending"
@@ -519,14 +519,6 @@
                   no-caps
                   flat
                   color="warning"
-                />
-                <q-btn
-                  v-else-if="tab.status.status === 'recused'"
-                  icon="cancel"
-                  label="Título negado"
-                  no-caps
-                  flat
-                  color="negative"
                 />
                 <q-btn
                   v-else
@@ -547,42 +539,43 @@
                     no-caps
                   />
               </div>
-              <div class="row justify-center items-start">
-                  <div class="col-8 q-pa-md q-gutter-md">
-                    <div
-                      v-for="(field, fieldIndex) in tab.titleFields"
-                      :key="fieldIndex"
-                    >
-                      <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
-                        <q-input
-                          :label="field.label"
-                          :type="field.type.type"
-                          v-model="field.value"
-                          outlined
+              <div class="row q-gutter-sm justify-left items-left">
+                <div class="col q-mx-lg">
+                  <div
+                    class="q-my-md"
+                    v-for="(field, fieldIndex) in tab.titleFields"
+                    :key="fieldIndex"
+                  >
+                    <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
+                      <q-input
+                        :label="field.label"
+                        :type="field.type.type"
+                        v-model="field.value"
+                        outlined
+                      >
+                        <template
+                          v-if="field.multiple"
+                          #append
                         >
-                          <template
-                            v-if="field.multiple"
-                            #append
-                          >
-                          </template>
-                        </q-input>
-                      </div>
-                    </div>
-                    <div 
-                      class="col-6 q-gutter-sm text-center"
-                    >
-                      <q-btn
-                        rounded
-                        no-caps
-                        unelevated
-                        class="full-width"
-                        color="primary"
-                        label="Salvar"
-                        @click="updateUserTitle(tab)"
-                      />
+                        </template>
+                      </q-input>
                     </div>
                   </div>
+                  <div 
+                    class="col-6 q-gutter-sm text-center"
+                  >
+                    <q-btn
+                      rounded
+                      no-caps
+                      unelevated
+                      class="full-width"
+                      color="primary"
+                      label="Salvar"
+                      @click="updateUserTitle(tab)"
+                    />
+                  </div>
                 </div>
+              </div>
             </q-tab-panel>
           </q-tab-panels>
         </template>

@@ -286,7 +286,30 @@ export const useTableColumns = defineStore("tableColumns", {
       {
         name: "titleName",
         align: "left",
-        label: "Nome",
+        label: "Título",
+        field: "titleName",
+        sortable: true,
+      },
+      {
+        name: "creationDate",
+        align: "left",
+        label: "Data de criação",
+        field: (row) => row.createdAt.createdAtOnlyDate,
+        sortable: true,
+      },
+    ],
+    approvalList: [
+      {
+        name: "userName",
+        align: "left",
+        label: "Nome do usuário",
+        field: "userName",
+        sortable: true,
+      },
+      {
+        name: "titleName",
+        align: "left",
+        label: "Título aguardando aprovação",
         field: "titleName",
         sortable: true,
       },
