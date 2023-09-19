@@ -61,7 +61,7 @@
               use-chips
               multiple
               @filter="getOrganismsNamesBySearchString"
-              @update:model-value="getFunctionsNames"
+              @update:model-value="getOrganismFunctionConfigNames"
               hint="Informe a qual configuração de organismo pertencerá esse formulário"
               v-model="organismConfigId"
               :options="organismConfigOptions"
@@ -223,7 +223,6 @@
               v-for="(field) in formFields"
               :key="field"
             >
-            f
             </div>
             <div>
               <q-checkbox
@@ -493,11 +492,11 @@ export default defineComponent({
         this.organismsNames = r.data;
       });
     },
-    getFunctionsNames() {
+    getOrganismFunctionConfigNames() {
       const opt = {
-        route: "/desktop/adm/getFunctionsNames",
+        route: "/desktop/config/getOrganismFunctionConfigNames",
         body: {
-          organismsConfigIds: this.organismSelected
+          organismsConfigsIds: this.organismSelected
         },
       };
       useFetch(opt).then((r) => {
