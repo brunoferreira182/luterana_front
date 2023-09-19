@@ -84,7 +84,19 @@
                         </q-btn>
                       </template>
                     </q-input>
-                    <q-uploader
+                    <q-file
+                      v-if="field.type.type === 'image'"
+                      v-model="files"
+                      @rejected="onRejected"
+                      :filter="checkFileType"
+                      label="Clique aqui para adicionar imagem de perfil"
+                      outlined
+                    >
+                      <template #append>
+                        <q-icon name="attach_file" />
+                      </template>
+                    </q-file>
+                    <!-- <q-uploader
                       v-if="field.type.type === 'image'"
                       url="http://localhost:4444/upload"
                       class="full-width"
@@ -118,7 +130,7 @@
                           </q-btn>
                         </div>
                       </template>
-                    </q-uploader>
+                    </q-uploader> -->
                   </div>
                   <div class="text-right" v-if="field.type.type === 'options'">
                     <q-select
@@ -320,6 +332,7 @@ export default defineComponent({
     return {
       tab: "",
       isSaving: false,
+      files: [],
       newPhone: "",
       addressType: "",
       newEmail: "",
@@ -357,11 +370,11 @@ export default defineComponent({
     onRejected() {
       this.$q.notify({
         type: 'negative',
-        message: `O arquivo precisa ser em formato PNG.`
+        message: `O arquivo precisa ser em formato PNG ou JPG.`
       })
     },
     checkFileType (files) {
-      return files.filter(file => file.type === 'image/png')
+      return files.filter(file => file.type === 'image/png' || file.type === 'image/jpeg')
     },
     checkCEP(ev) {
       this.cep = ev.target.value;

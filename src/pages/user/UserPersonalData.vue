@@ -120,7 +120,8 @@
                       && field.type.type !== 'person'
                       && field.type.type !== 'attach'
                       && field.type.type !== 'organism'
-                      && field.type.type !== 'multiple_select'"
+                      && field.type.type !== 'multiple_select'
+                      && field.type.type !== 'image'"
                     >
                       <q-input
                         :label="field.label"
@@ -149,6 +150,53 @@
                         </template>
                       </q-input>
                     </div>
+                    <q-file
+                      v-if="field.type.type === 'image'"
+                      v-model="files"
+                      @rejected="onRejected"
+                      :filter="checkFileType"
+                      label="Clique aqui para adicionar imagem de perfil"
+                      outlined
+                    >
+                      <template #append>
+                        <q-icon name="attach_file" />
+                      </template>
+                    </q-file>
+                    <!-- <q-uploader
+                      v-if="field.type.type === 'image'"
+                      url="http://localhost:4444/upload"
+                      class="full-width"
+                      flat
+                      :filter="checkFileType"
+                      @rejected="onRejected"
+                    >
+                      <template v-slot:header="scope">
+                        <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
+                          <q-btn v-if="scope.queuedFiles.length > 0" icon="delete" @click="scope.removeQueuedFiles" round dense flat >
+                            <q-tooltip>Apagar</q-tooltip>
+                          </q-btn>
+                          <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat >
+                            <q-tooltip>Remove Uploaded Files</q-tooltip>
+                          </q-btn>
+                          <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
+                          <div class="col">
+                            <div class="q-uploader__title">Enviar imagem de perfil</div>
+                            <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel }}</div>
+                          </div>
+                          <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense flat>
+                            <q-uploader-add-trigger />
+                            <q-tooltip>Clique para enviar</q-tooltip>
+                          </q-btn>
+                          <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat >
+                            <q-tooltip>Enviar imagem</q-tooltip>
+                          </q-btn>
+
+                          <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat >
+                            <q-tooltip>Cancelar envio</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </template>
+                    </q-uploader> -->
 
                     <div class="text-right" v-if="field.type.type === 'options'">
                       <q-select
@@ -879,7 +927,7 @@ export default defineComponent({
           name: ''
         },
       },
-      files: null
+      files: []
     };
   },
   mounted() {
@@ -890,6 +938,15 @@ export default defineComponent({
     this.getTitleNamesList()
   },
   methods: {
+    onRejected() {
+      this.$q.notify({
+        type: 'negative',
+        message: `O arquivo precisa ser em formato PNG ou JPG.`
+      })
+    },
+    checkFileType (files) {
+      return files.filter(file => file.type === 'image/png' || file.type === 'image/jpeg')
+    },
     clkConfirmDeleteTitle() {
       const opt = {
         route: '/desktop/commonUsers/inactivateUserTitle',
