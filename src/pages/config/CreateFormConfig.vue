@@ -120,7 +120,7 @@
               emit-value
               map-options
               :option-value="(item) => item"
-              v-model="formDatesSelected.formType"
+              v-model="formDatesSelected.formType.type"
               hint="Informe o tempo de preenchimento do formulário"
               :options="formDates"
             />

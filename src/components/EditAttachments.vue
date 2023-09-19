@@ -26,7 +26,7 @@
       </div>
       <q-separator class="q-mx-md"></q-separator>
       <div class="row justify-center">
-        <div class="col-10 q-pa-md q-gutter-sm">
+        <div class="col-12 q-pa-md q-gutter-sm">
           <q-chip
             v-if="$route.path === '/attach/attachmentDetail'"
             @click="openFile"

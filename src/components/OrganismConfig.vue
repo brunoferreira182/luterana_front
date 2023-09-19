@@ -7,6 +7,9 @@
             $route.path === '/config/organismConfigDetail'
           "
           class="col-6 text-h5 text-capitalize">{{ organismConfigName }}
+          <div class="text-caption">
+            Configuração de organismo
+          </div>
         </div>
         <div 
           v-if="
