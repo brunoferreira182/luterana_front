@@ -88,7 +88,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-8 q-gutter-md" align="start">
+        <div class="col-12 q-gutter-md" align="start">
           <q-chip 
           v-if="isActive === 1"
           color="positive" 

@@ -5,7 +5,28 @@
         <div 
           class="col-6 text-h5 text-capitalize">Formulário {{ formName }}
         </div>
-        <div class="col text-right q-gutter-sm">
+        <div 
+          class="col-2 text-h5 text-capitalize">
+          <q-chip 
+            v-if="formStatus === 'draft'"
+            color="positive" 
+            text-color="white" 
+            icon="cloud"
+            align="right"
+          >
+            Status: Ativa
+          </q-chip>
+          <q-chip 
+            v-if="formStatus === 'sent'"
+            color="negative" 
+            text-color="white" 
+            icon="cloud"
+            align="right"
+          >
+            Status: Inativa
+          </q-chip>
+        </div>
+        <div class="col text-right q-gutter-sm" v-if="formStatus === 'draft'">
           <q-btn
             v-if="$route.query.savedFormId"
             @click="updateDraftFormData"
@@ -48,7 +69,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-8 q-gutter-md" align="start">
+        <div class="col-12 q-gutter-md" align="start">
           <div
             class="text-h5"
           >
@@ -91,6 +112,7 @@ export default defineComponent({
     return {
       formFields: [],
       formName: '',
+      formStatus: '',
       formType: null,
     };
   },
@@ -205,6 +227,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.formName = r.data.name
+          r.data.status ? this.formStatus = r.data.status : this.formStatus = ''
           this.formFields = r.data.fields
         }
       });
@@ -221,6 +244,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.formName = r.data.name
+          r.data.status ? this.formStatus = r.data.status : this.formStatus = ''
           this.formFields = r.data.fields
         }
       });

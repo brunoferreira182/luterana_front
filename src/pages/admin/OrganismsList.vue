@@ -94,7 +94,7 @@
           Todos
         </q-btn>
         <q-btn 
-          v-for="(name, nameIndex) in organismList" 
+          v-for="(name, nameIndex) in organismsConfigsNamesList" 
           :key="name"
           size="md"
           class="q-ma-sm"
