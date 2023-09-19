@@ -32,6 +32,12 @@
             outlined
             v-model="titleName"
           />
+          <q-checkbox
+            :disable="newField.type ? newField.type.type === 'boolean' : false"
+            class="q-pt-sm"
+            v-model="admEvaluate"
+            label="Este título deve ser avaliado pelo administrador?"
+          />
           <div class="text-h5">Adicione os campos de preenchimento</div>
           <div class="row q-gutter-x-sm q-mx-none">
             <div class="col">
@@ -74,12 +80,7 @@
             v-model="newField.multiple"
             label="Campo múltiplo"
           />
-          <q-checkbox
-            :disable="newField.type ? newField.type.type === 'boolean' : false"
-            class="q-pt-lg"
-            v-model="newField.admEvaluate"
-            label="Este título deve ser avaliado pelo administrador?"
-          />
+          
           <div class="row justify-center">
             <q-btn
               label="Adicionar campo"
@@ -153,6 +154,7 @@ export default defineComponent({
       fieldTypesOptions: [],
       titlesList: [],
       titleName: "",
+      admEvaluate: false,
       fields: [
         {
           label: "Nome",
@@ -172,7 +174,6 @@ export default defineComponent({
         hint: null,
         required: true,
         multiple: false,
-        admEvaluate: false
       },
     };
   },
@@ -213,6 +214,7 @@ export default defineComponent({
         body: {
           titleName: this.titleName,
           titleFields: this.fields,
+          admEvaluate: this.admEvaluate
         },
       };
       useFetch(opt).then((r) => {

@@ -51,6 +51,12 @@
             outlined
             v-model="titleName"
           />
+          <q-checkbox
+            :disable="newField.type ? newField.type.type === 'boolean' : false"
+            class="q-pt-sm"
+            v-model="admEvaluate"
+            label="Este título deve ser avaliado pelo administrador?"
+          />
           <div class="text-h5">Adicione os campos de preenchimento</div>
           <div class="row q-gutter-x-sm q-mx-none">
             <div class="col">
@@ -190,6 +196,7 @@ export default defineComponent({
   name: "TitleConfigDetail",
   data() {
     return {
+      admEvaluate: null,
       fieldTypesOptions: [],
       titlesList: [],
       titleName: "",
@@ -263,6 +270,7 @@ export default defineComponent({
           this.titleName = r.data.titleName;
           this.fields = r.data.titleFields;
           this.isActive = r.data.isActive;
+          this.admEvaluate = r.data.admEvaluate
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -275,6 +283,7 @@ export default defineComponent({
           titleConfigsId: this.$route.query.titleId,
           titleName: this.titleName,
           titleFields: this.fields,
+          admEvaluate: this.admEvaluate
         },
       };
       useFetch(opt).then((r) => {

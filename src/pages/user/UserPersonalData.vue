@@ -434,8 +434,19 @@
               />
               <q-separator/>
             </template>
+            <div class="text-center">
+              <q-btn
+                color="secondary"
+                rounded
+                icon="add"
+                class="q-ma-md"
+                label="Adicionar"
+                unelevated
+                @click="openDialogVinculateUserToTitle = true"
+                no-caps
+              />
+            </div>
           </q-tabs>
-          
         </template>
         <template v-slot:after>
           <q-tab-panels 
@@ -453,17 +464,39 @@
             >
               <div class="row">
                 <div class="col text-h6">{{ tab.titleName }}</div>
+                <q-btn
+                  v-if="tab.status.status === 'pendingApproval'"
+                  icon="pending"
+                  label="Aguardando validação"
+                  no-caps
+                  flat
+                  color="warning"
+                />
+                <q-btn
+                  v-else-if="tab.status.status === 'recused'"
+                  icon="cancel"
+                  label="Título negado"
+                  no-caps
+                  flat
+                  color="negative"
+                />
+                <q-btn
+                  v-else
+                  icon="check_circle"
+                  label="Título confirmado"
+                  no-caps
+                  flat
+                  color="positive"
+                />
               </div>
               <div class="row justify-center items-start">
                   <div class="col-8 q-pa-md q-gutter-md">
-                    <div class="text-h5 text-center">Dados do título</div>
                     <div
                       v-for="(field, fieldIndex) in tab.titleFields"
                       :key="fieldIndex"
                     >
                       <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
                         <q-input
-                          disable
                           :label="field.label"
                           :type="field.type.type"
                           v-model="field.value"
@@ -477,12 +510,70 @@
                         </q-input>
                       </div>
                     </div>
+                    <div 
+                      class="col-6 q-gutter-sm text-center"
+                    >
+                      <q-btn
+                        rounded
+                        no-caps
+                        unelevated
+                        class="full-width"
+                        color="primary"
+                        label="Salvar"
+                        @click="updateUserTitle(tab)"
+                      />
+                    </div>
                   </div>
                 </div>
             </q-tab-panel>
           </q-tab-panels>
         </template>
       </q-splitter>
+      <q-dialog v-model="openDialogVinculateUserToTitle">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Informe o título que o usuário irá receber
+            </div>
+          </q-card-section>
+          <q-card-section align="center">
+            <q-select
+              v-model="titleSelected"
+              filled
+              label="Nome do título"
+              option-label="titleName"
+              :options="titleOptions"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="openDialogVinculateUserToTitle = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="createUserTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <q-dialog v-model="dialogConfirmEmail.open">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -681,7 +772,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-
     </q-page>
   </q-page-container>
 </template>
@@ -693,6 +783,9 @@ export default defineComponent({
   name: "UserPersonalData",
   data() {
     return {
+      titleOptions: [],
+      titleSelected: '',
+      openDialogVinculateUserToTitle: false,
       tab: "",
       tabTitles: "",
       visionSelected: 'personalData',
@@ -753,8 +846,56 @@ export default defineComponent({
   },
   beforeMount() {
     this.getUsersConfig()
+    this.getTitleNamesList()
   },
   methods: {
+    updateUserTitle(i) {
+      const opt = {
+        route:'/desktop/commonUsers/updateUserTitleFields',
+        body:  {
+          titleFields: i.titleFields,
+          userTitleId: i._id,
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else{
+          this.$q.notify('Título atualizado com sucesso!'); 
+          this.getUserDetailById()
+        }
+      });
+    },
+    createUserTitle(){
+      const opt = {
+        route:'/desktop/commonUsers/createUserTitle',
+        body: {
+          titleConfigId: this.titleSelected._id
+        }
+      };
+      this.titleSelected = ''
+      this.openDialogVinculateUserToTitle = false
+      useFetch(opt).then((r)=> {
+        this.$q.loading.hide()
+        if(r.error) {
+          this.$q.notify("Erro ao inserir título, tente novamente mais tarde")
+          return
+        }
+        this.getUserDetailById()
+
+      })
+    },
+    getTitleNamesList() {
+      const opt = {
+        route: '/desktop/commonUsers/getTitlesList',
+      };
+      useFetch(opt).then((r) => {
+        this.titleOptions = r.data;
+      });
+    },
     addDoubleSelection(tabsIndex, fieldIndex){
       if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value) {
         this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []
