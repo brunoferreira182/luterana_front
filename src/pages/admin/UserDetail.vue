@@ -58,7 +58,7 @@
             v-model="tab"
             vertical
             align="left"
-            class="text-left "
+            class="text-left flex-center"
             no-caps
             active-bg-color="blue-1"
             indicator-color="primary"
@@ -296,7 +296,16 @@
                   class="flex-left flex"
                   :name="tab._id" 
                   :label="tab.titleName" 
-                />
+                >
+                <q-icon
+                  v-if="tab.status.status === 'pendingApproval'"
+                  name="error"
+                  flat
+                  size="sm"
+                  color="orange"
+                >
+                </q-icon>
+                </q-tab>
                 <q-separator/>
               </template>
               <div class="text-center">
@@ -323,7 +332,7 @@
               :model-value="tabTitles"
             >
               <q-tab-panel 
-                v-for="(tab) in userDetail.userTitleData"
+                v-for="(tab, tabIndex) in userDetail.userTitleData"
                 :key="tab._id"
                 :name="tab._id" 
               >
@@ -331,22 +340,35 @@
                   <div 
                     class="col text-h6"
                   >
-                  {{ tab.titleName }}</div>
+                  {{ tab.titleName }}:</div>
+                  <div 
+                    v-if="tab.status.status === 'pendingApproval'"
+                    class="q-mr-lg"
+                  >
                   <q-btn
-                    label="Excluir título"
-                    color="red"
-                    icon="delete"
+                    label="Aprovar título"
+                    color="green"
+                    icon="done"
                     rounded
                     flat
-                    outline
-                    @click="clkDeleteTitle(tab._id)"
+                    @click="clkActiveTitle(tabIndex)"
                     no-caps
                   />
                 </div>
-                <div class="row justify-center items-start">
-                  <div class="col-8 q-pa-md q-gutter-md">
-                    <div class="text-h5 text-center">Preencha os dados do título</div>
+                <q-btn
+                  label="Excluir título"
+                  color="red"
+                  icon="close"
+                  rounded
+                  flat
+                  @click="clkInactiveTitle(tabIndex)"
+                  no-caps
+                />
+                </div>
+                <div class="row q-gutter-sm justify-left items-left q-mt-sm">
+                  <div class="col q-mx-lg">
                     <div
+                    class="q-my-md"
                       v-for="(field, fieldIndex) in tab.titleFields"
                       :key="fieldIndex"
                     >
@@ -436,13 +458,12 @@
                       />
                     </div>
                     <div 
-                      class="col-6 q-gutter-sm text-center"
+                      class="col-6 q-gutter-sm text-right"
                     >
                       <q-btn
                         rounded
                         no-caps
                         unelevated
-                        class="full-width"
                         color="primary"
                         label="Salvar"
                         @click="updateUserTitle(tab)"
@@ -579,12 +600,56 @@ export default defineComponent({
   },
   mounted() {
     this.$q.loading.hide();
+    this.chkVisionSelected()
   },
   beforeMount() {
     this.getUsersConfig()
     this.getUserDetailById();
   },
   methods: {
+    chkVisionSelected() {
+      if(this.$route.query.pending) {
+        this.visionSelected = 'titles'
+      }
+    },
+    clkInactiveTitle(i){
+      const opt = {
+        route:'/desktop/adm/updateUserTitle',
+        body: {
+          userTitleId: this.userDetail.userTitleData[i]._id,
+          titleFields: this.userDetail.userTitleData[i].titleFields,
+          newStatus: 'inactive'
+        }
+      };
+      useFetch(opt).then((r) => {
+        if(!r.error) {
+          this.$q.notify("Título recusado.")
+          this.getUserDetailById();
+        }
+        else {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
+        }
+      })
+    },
+    clkActiveTitle(i){
+      const opt = {
+        route:'/desktop/adm/updateUserTitle',
+        body: {
+          userTitleId: this.userDetail.userTitleData[i]._id,
+          titleFields: this.userDetail.userTitleData[i].titleFields,
+          newStatus: 'active'
+        }
+      };
+      useFetch(opt).then((r) => {
+        if(!r.error) {
+          this.$q.notify("Título aceito.")
+          this.getUserDetailById();
+        }
+        else {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
+        }
+      })
+    },
     updateUserTitle(i){
       console.log(i)
       const opt = {
@@ -626,11 +691,6 @@ export default defineComponent({
         this.deleteTitle.titleId = null
         this.getUserDetailById()
       })
-    },
-    clkDeleteTitle (titleId) {
-      console.log(titleId)
-      this.deleteTitle.titleId = titleId
-      this.deleteTitle.openDialog = true
     },
     getUsersConfig() {
       const opt = {
@@ -801,6 +861,9 @@ export default defineComponent({
 <style scoped>
 .bounce-enter-active {
   animation: bounce-in 0.5s;
+}
+.flex-center{
+  justify-content: flex-start;
 }
 .bounce-leave-active {
   animation: bounce-in 0.5s reverse;

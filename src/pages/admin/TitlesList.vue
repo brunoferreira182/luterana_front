@@ -140,11 +140,15 @@ export default defineComponent({
   },
   methods: {
     replaceTitleList(){
-      if(this.titlesList !== this.pendingApprovalList.list) {
+      if(this.titlesList !== this.pendingApprovalList.list && this.columnsData === useTableColumns().titleConfigList) {
         this.changeBtn = 0
+        this.columnsData = useTableColumns().approvalList
+        this.$q.loading.hide()
         this.titlesList = this.pendingApprovalList.list
-      }  else if (this.titlesList === this.pendingApprovalList.list){
+      }  else if (this.titlesList === this.pendingApprovalList.list && this.columnsData === useTableColumns().approvalList){
         this.changeBtn = 1
+        this.columnsData = useTableColumns().titleConfigList
+        this.$q.loading.hide()
         this.getTitleConfigs()
       }
     },
@@ -173,7 +177,7 @@ export default defineComponent({
         this.$router.push("/config/titleConfigDetail?titleId=" + _id);
       } else if (this.changeBtn === 0) {
         const userId = r.user_id
-        this.$router.push("/admin/userDetail?userId" + userId)
+        this.$router.push("/admin/userDetail?userId=" + userId + "&pending=" + 1 )
       }
     },
     getSelectedString() {
