@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Formulários"
+        title="Formulários enviados"
         :columns="columnsData"
         :rows="formList"
         row-key="_id"
@@ -13,6 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkOpenFormDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -21,8 +22,20 @@
         <template #top-right>
           <div class="flex row justify-between q-gutter-sm items-center">
             <div class="col">
+              <q-select
+                outlined
+                dense
+                label="Filtro"
+                debounce="300"
+                v-model="selectFilter"
+                :option-value="(item) => item.value"
+                :options="selectStatus"
+                @update:model-value="getSavedFormsByUserId"
+              ></q-select>
+            </div>
+            <div class="col">
               <q-input
-                @keyup="getFormsByUserId"
+                @keyup="getSavedFormsByUserId"
                 outlined
                 dense
                 debounce="300"
@@ -36,36 +49,6 @@
             </div>
           </div>
         </template>
-        <template #body-cell-actionButtons="props">
-          <q-td :props="props" class="q-gutter-x-sm">
-            <q-btn
-              @click="clkOpenFormDetail(props.row)"
-              no-caps
-              rounded
-              dense
-              icon="draw"
-              unelevated
-              color="cyan-8"
-            >
-              <q-tooltip class="text-body2">
-                Clique para preencher este formulário
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              @click="clkMakeFormFilterByRow(props.row)"
-              no-caps
-              rounded
-              dense
-              icon="search"
-              color="orange-8"
-              unelevated
-            >
-              <q-tooltip class="text-body2">
-                Clique para exibir os formulários enviados deste tipo
-              </q-tooltip>
-            </q-btn>
-          </q-td>
-        </template>
         <template #body-cell-recurrencyLabel="props">
           <q-td :props="props">
             <q-chip outline v-if="props.row.recurrencyLabel" color="green-8" size="14px">
@@ -73,6 +56,18 @@
             </q-chip>
             <q-chip outline v-if="!props.row.recurrencyLabel" color="red-8" size="14px">
               Sem vigência
+            </q-chip>
+          </q-td>
+        </template>
+        <template #body-cell-status="props">
+          <q-td :props="props">
+            <q-chip outline v-if="props.row.status === 'draft'" color="yellow-8" size="14px">
+              Rascunho
+              <q-icon name="alarm_on" size="xs" class="q-pa-xs"/>
+            </q-chip>
+            <q-chip outline v-if="props.row.status === 'sent'" color="green-8" size="14px">
+              Enviado
+              <q-icon name="mark_email_read" size="xs" class="q-pa-sm"/>
             </q-chip>
           </q-td>
         </template>
@@ -87,14 +82,27 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "UserFormsList",
+  name: "UserMyFormsList",
   data() {
     return {
-      columnsData: useTableColumns().formList,
+      columnsData: useTableColumns().myFormList,
       formList: [],
-      selectStatus: ["Ativos", "Inativos"],
+      selectStatus: [
+        {
+          label:  "Enviado", 
+          value: 'sent'
+        },
+        {
+          label:  "Rascunho",
+          value: 'draft'
+        },
+        {
+          label:  "Todos",
+          value: 'all'
+        }
+      ],
       filter: "",
-      selectFilter: "Selecionar",
+      selectFilter: "Todos",
       savedForms: false,
       pagination: {
         page: 1,
@@ -108,16 +116,12 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getFormsByUserId();
+    this.getSavedFormsByUserId();
   },
   methods: {
-    clkMakeFormFilterByRow(row){
-      const formId = row._id;
-      this.$router.push("/user/userMyFormsList?formId=" + formId);
-    },
-    clkOpenFormDetail(row) {
-      const formId = row._id;
-      this.$router.push("/user/userFormDetail?formId=" + formId);
+    clkOpenFormDetail(e, r,) {
+      const savedFormId = r._id;
+      this.$router.push("/user/userFormDetail?savedFormId=" + savedFormId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -131,7 +135,7 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getFormsByUserId();
+      // this.getSavedFormsByUserId();
     },
     getSavedFormsByUserId() {
       this.savedForms = true
@@ -139,37 +143,22 @@ export default defineComponent({
         route: "/desktop/commonUsers/getSavedFormsByUserId",
         body: {
           filterValue: this.filter,
+          formId: this.$route.query.formId,
           page: this.pagination.page,
+          formStatus: '',
           rowsPerPage: this.pagination.rowsPerPage
         },
       };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      useFetch(opt).then((r) => {
-        this.formList = r.data;
-      });
-    },
-    getFormsByUserId() {
-      this.savedForms = false
-      const opt = {
-        route: "/desktop/commonUsers/getFormsByUserId",
-        body: {
-          filterValue: this.filter,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
+      if (this.selectFilter.value === "draft") {
+        opt.body.formStatus = 'draft';
+      } else if (this.selectFilter.value === "sent") {
+        opt.body.formStatus = 'sent';
+      } else if (this.selectFilter.value === "all") {
+        opt.body.formStatus = '';
       }
       useFetch(opt).then((r) => {
         this.formList = r.data[0].list;
-        this.pagination.rowsNumber = r.data[0].count
+        this.pagination.rowsNumber = r.data[0].count;
       });
     },
   },

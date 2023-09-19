@@ -219,8 +219,13 @@
                 />
               </div>
             </div>
+            <div
+              v-for="(field) in formFields"
+              :key="field"
+            >
+            f
+            </div>
             <div>
-              
               <q-checkbox
                 class="q-pt-lg"
                 v-model="newField.required"

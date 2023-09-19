@@ -187,7 +187,7 @@
           <div
             class="row q-gutter-x-sm q-mx-none"
           >
-            <div class="col">
+            <div class="col"> 
               <q-input
                 outlined
                 class="q-ml-sm"
@@ -213,6 +213,58 @@
                 :options="fieldTypesOptions"
                 v-model="newField.type"
               />
+            </div>
+          </div>
+          <div
+            class="q-mt-xl"
+            v-if="newField.type ? newField.type.type === 'multiple_select' : false"
+          >
+            <q-btn 
+              @click="addNewSelectField"
+              color="primary"
+              outline
+              icon="add"
+              rounded
+              class="q-mb-md"
+            >
+              Adicionar novo campo de seleção
+            </q-btn>
+            <div 
+              v-for="(option, optionIndex) in multipleOptionsValue"
+              :key="option"
+            >
+            <div style="display: flex;">
+              <q-input
+                outlined
+                class="q-pa-sm"
+                label="De um nome para o campo de seleção abaixo:"
+                v-model="multipleOptionsValue[optionIndex].label"
+                style="width: 50%;"
+                >
+              </q-input>
+              <q-input
+                v-model="multipleOptionsValue[optionIndex].newValue"
+                outlined
+                label="Opção" 
+                class="q-pa-sm"
+                style="width: 50%;"
+              >
+                <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
+              </q-input>
+            </div>
+              <div 
+                v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
+                :key="select"
+              >
+                <q-chip
+                  size="md"
+                  class="q-pa-sm"
+                >
+                  {{ select }}
+                  <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="close" round flat></q-btn>
+                </q-chip>
+              </div>
+              <q-separator/>
             </div>
           </div>
           <q-checkbox
@@ -650,6 +702,10 @@ export default defineComponent({
   name: "OrganismsConfigDetail",
   data() {
     return {
+      multipleOptionsValue: [
+        {select: [], label: ''},
+        {select: [], label: ''}
+      ],
       organismConfigsList: [],
       childOfOrganism: [],
       newColor: '',
@@ -739,6 +795,10 @@ export default defineComponent({
         hint: null,
         required: true,
         multiple: false,
+        selects: [
+          {label: [], options: []},
+          {label: [], options: []}
+        ],
       },
       selectedType: "",
       visionsList: [],
@@ -763,6 +823,18 @@ export default defineComponent({
     this.getOccupantsOptions()
   },
   methods: {
+    insertMultipleField(option, optionIndex) {
+      const newValue = this.multipleOptionsValue[optionIndex].newValue;
+      this.multipleOptionsValue[optionIndex].select.push(newValue);
+      this.multipleOptionsValue[optionIndex].newValue = '';
+      this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
+      this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
+    },
+    addNewSelectField() {
+      this.newField.selects.push(
+        {label: [], options: []})
+      this.multipleOptionsValue.push({select: [], label: ''})
+    },
     getFunctionsGroupList() {
       const opt = {
         route: "/desktop/config/getFunctionsGroupList",
@@ -851,6 +923,14 @@ export default defineComponent({
         this.newField.type = null;
         this.newField.required = true;
         this.newField.multiple = false;
+        this.newField.selects = [
+          {label: [], options: []},
+          {label: [], options: []}
+        ]
+        this.multipleOptionsValue =  [
+          {select: [], label: ''},
+          {select: [], label: ''}
+      ]
         return;
       }
       this.$q.notify("preencha todos os dados antes de adicionar um campo");

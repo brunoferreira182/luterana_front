@@ -3,38 +3,62 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          class="col-6 text-h5 text-capitalize">Formulário {{ formConfigName }}
+          class="col-6 text-h5 text-capitalize">Formulário {{ formName }}
         </div>
-        <div class="col text-right">
+        <div class="col text-right q-gutter-sm">
           <q-btn
-            @click="updateForm"
+            v-if="$route.query.savedFormId"
+            @click="updateDraftFormData"
             rounded
             color="primary"
             unelevated
-            class="q-pa-sm"
-            icon="bookmark"
+            outline
+            label="Salvar como rascunho"
             no-caps
-          >
-            {{
-              $route.path === "/config/formConfigDetail"
-                ? "Salvar"
-                : "Criar"
-            }}
-            Configuração
-          </q-btn>
+          />
+          <q-btn
+            v-if="$route.query.savedFormId"
+            @click="updateSentFormData"
+            rounded
+            color="primary"
+            unelevated
+            label="Salvar"
+            no-caps
+          />
+          <q-btn
+            v-if="$route.query.formId"
+            @click="saveFormSketchData"
+            rounded
+            color="primary"
+            unelevated
+            outline
+            label="Salvar como rascunho"
+            no-caps
+          />
+          <q-btn
+            v-if="$route.query.formId"
+            @click="saveFormData"
+            rounded
+            color="primary"
+            unelevated
+            label="Salvar"
+            no-caps
+          />
         </div>
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-7 q-gutter-md" align="start">
+        <div class="col-8 q-gutter-md" align="start">
           <div
             class="text-h5"
           >
             Dados
           </div>
           <div
+            class="q-gutter-sm"
+            v-if="formFields.length"
           >
-            <div v-for="(field, i) in organismData.fields" :key="i">
+            <div v-for="(field, i) in formFields" :key="i">
               <q-input
                 v-if="field.type.type !== 'boolean'"
                 v-model="field.value"
@@ -54,30 +78,6 @@
             </div>
           </div>
         </div>
-        <q-separator vertical />
-        <div class="col-4">
-          <div class="text-grey-8 text-h6 q-px-xs">Visões:</div>
-          <div class="text-caption text-grey-8 q-px-sm">
-            Visões deste formulário
-          </div>
-          <div class="visions-field q-mt-none row">
-            <div
-              v-for="(vision, i) in visionsList"
-              :key="i"
-              class="col-12 q-my-xs"
-            >
-              <q-checkbox 
-                :label="vision.name"
-                :val="vision"
-                v-model="visions"
-              >
-                <div class="text-caption text-grey-7">
-                  {{ vision.description }}
-                </div>
-              </q-checkbox>
-            </div>
-          </div>
-        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -89,129 +89,147 @@ export default defineComponent({
   name: "UserFormDetail",
   data() {
     return {
-      fieldTypesOptions: [],
-      visions: [],
       formFields: [],
-      formConfigName: '',
-      newField: {
-        label: null,
-        type: null,
-        hint: null,
-        required: true,
-        multiple: false,
-      },
-      filterDestinataries: [
-        {
-          label: 'Tipo de organismo',
-          type: 'byOrganismType'
-        },
-        {
-          label: 'Organismo',
-          type: 'byOrganism'
-        },
-        {
-          label: 'Função',
-          type: 'byFunction'
-        },
-      ],
-      formConfigType: [
-        {
-          label: 'Entrada em organismo',
-          type: 'enterOrganism',
-          selected: false
-        }, 
-        {
-          label: 'Troca de função',
-          type: 'switchFunction',
-          selected: false
-        }
-      ],
+      formName: '',
       formType: null,
-      visionsList: [],
-      organismConfigId: '',
-      organismConfigName: '',
-      organismConfigOptions: [],
-      checkedVisionsList: []
     };
   },
-  created(){
-    this.getVisions()
-  },
   beforeMount() {
-    this.getFieldTypes()
-    this.getOrganismsConfigs()
+    if (this.$route.query.savedFormId !== undefined) {
+      this.getSavedFormById()
+    } else {
+      this.getFormDetailById();
+    }
   },
   mounted(){
     this.$q.loading.hide();
-    this.getFormDetailById()
   },
   methods: {
-    getOrganismsConfigs() {
+    getInputType(type) {
+      switch (type) {
+        case "date":
+          return "date";
+        case "int":
+          return "number";
+        default:
+          return "text";
+      }
+    },
+    updateDraftFormData() {
       const opt = {
-        route: "/desktop/config/getOrganismsConfigs",
+        route: "/desktop/commonUsers/updateFormData",
         body: {
-          isActive: 1,
+          fields: this.formFields,
+          formStatus: 'draft',
+          savedFormId: this.$route.query.savedFormId
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.organismConfigOptions = r.data;
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+        } else {
+          this.$q.notify("Formulário preenchido com sucesso!");
+        }
       });
     },
-    getVisions() {
+    updateSentFormData() {
       const opt = {
-        route: "/desktop/config/getVisions",
+        route: "/desktop/commonUsers/updateFormData",
         body: {
-          isActive: 1,
+          fields: this.formFields,
+          formStatus: 'sent',
+          savedFormId: this.$route.query.savedFormId
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.visionsList = r.data.map(vision => {
-          return {
-            name: vision.visionInfo.name,
-            visionId: vision._id, 
-            description: vision.visionInfo.description
-          }
-        });
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+        } else {
+          this.$q.notify("Formulário preenchido com sucesso!");
+        }
       });
     },
-    getFormDetailById() {
-      const formId = this.$route.query.formId
+    saveFormSketchData() {
       const opt = {
-        route: "/desktop/config/getFormDetailById",
+        route: "/desktop/commonUsers/saveFormData",
         body: {
-          formId: formId
+          fields: this.formFields,
+          formStatus: 'draft',
+          formId: this.$route.query.formId
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.$q.notify("Rascunho de formulário preenchido com sucesso!");
+          this.$router.push('/user/userFormDetail?savedFormId=' + r.data.savedFormId) 
+        }
+      });
+    },
+    saveFormData() {
+      const opt = {
+        route: "/desktop/commonUsers/saveFormData",
+        body: {
+          fields: this.formFields,
+          formStatus: 'sent',
+          formId: this.$route.query.formId
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.$q.notify("Formulário preenchido com sucesso!");
+          this.$router.push('/user/userFormDetail?SavedFormId=' + r.data.savedFormId) 
+        }
+      });
+    },
+    getSavedFormById() {
+      const opt = {
+        route: "/desktop/commonUsers/getSavedFormById",
+        body: {
+          savedFormId: this.$route.query.savedFormId
         },
       };
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.formConfigName = r.data.formName
-          this.organismConfigId = r.data.organismConfigId
-          this.formFields = r.data.formFields
-          this.formType = r.data.formType
-          this.checkedVisionsList = r.data.visions
-          this.checkedVisionsList.forEach((check,i) => {
-            this.visionsList.forEach(vision => {
-              if (check.visionId === vision.visionId) {
-                this.visions[i] = vision 
-                return
-              }
-            })
-          })
+          this.formName = r.data.name
+          this.formFields = r.data.fields
+        }
+      });
+    },
+    getFormDetailById() {
+      const opt = {
+        route: "/desktop/commonUsers/getFormDetailById",
+        body: {
+          formId: this.$route.query.formId
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.formName = r.data.name
+          this.formFields = r.data.fields
         }
       });
     },
     updateForm() {
-      const formId = this.$route.query.formId
-      // if(this.organismTypeId === '' || this.organismConfigName === '' || this.functions.length === 0){
-      //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
-      //   return
-      // }
       const opt = {
         route: "/desktop/config/updateForm",
         body: {
-          formId: formId,
+          formId: this.$route.query.formId,
           organismConfigId: this.organismConfigId,
           formName: this.formConfigName,
           formFields: this.formFields,
@@ -232,44 +250,6 @@ export default defineComponent({
         }
       });
     },
-    getFieldTypes() {
-      const opt = {
-        route: "/desktop/config/getDataTypesList",
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.fieldTypesOptions = r.data.list;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    addField() {
-      if (   this.newField.label &&
-          this.newField.hint &&  
-          ( this.formConfigName ||  
-          this.$route.path === "/config/formConfigDetail")
-      ) {
-        this.formFields.push({ ...this.newField });
-        this.newField.label = null;
-        this.newField.hint = null;
-        this.newField.type = null;
-        this.noOrganism = false;
-        this.newField.required = true;
-        this.newField.multiple = false;
-        return;
-      }
-      this.$q.notify("preencha todos os dados antes de adicionar um campo");
-    },
   },
 });
 </script>
-<style scoped>
-.visions-field {
-  border: 1px solid #c2c2c2;
-  padding: 7px;
-  border-radius: 0.2rem;
-  max-height: 300px;
-  overflow-y: auto;
-}
-</style>

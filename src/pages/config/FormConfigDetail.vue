@@ -309,12 +309,12 @@ export default defineComponent({
         } else {
           this.formConfigName = r.data.formName
           this.organismConfigId = r.data.organismConfigId
-          this.formFields = r.data.formFields
+          this.formFields = r.data.fields
           this.formType = r.data.formType
-          this.checkedVisionsList = r.data.visions
+          this.checkedVisionsList = r.data.filters.visions
           this.checkedVisionsList.forEach((check,i) => {
             this.visionsList.forEach(vision => {
-              if (check.visionId === vision.visionId) {
+              if (check === vision.visionId) {
                 this.visions[i] = vision 
                 return
               }

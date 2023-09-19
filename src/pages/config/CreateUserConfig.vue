@@ -474,8 +474,6 @@ export default defineComponent({
   },
   methods: {
     insertMultipleField(option, optionIndex) {
-      console.log(this.multipleOptionsValue[optionIndex].newValue, "AA")
-      console.log(this.multipleOptionsValue[optionIndex].select, "BB")
       const newValue = this.multipleOptionsValue[optionIndex].newValue;
       this.multipleOptionsValue[optionIndex].select.push(newValue);
       this.multipleOptionsValue[optionIndex].newValue = '';
@@ -483,13 +481,17 @@ export default defineComponent({
       this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
   },
     addNewSelectField() {
-      this.newField.selects.push({newValue: '', select: [], label: ''})
-      this.multipleOptionsValue.push({newValue: '', select: [], label: ''})
+      this.newField.selects.push(
+        {label: [], options: []},
+        {label: [], options: []})
+      this.multipleOptionsValue.push({select: [], label: ''})
     },
     clkAddTabData(tabIndex){
       this.dialogInsertFields.open = true
       this.tabIndexToAddField = tabIndex
       this.newField.options = []
+      this.newField.selects = [{label: [], options: []},
+          {label: [], options: []}]
     },
     addTab() {
       this.userDataTabs.push({
@@ -510,6 +512,10 @@ export default defineComponent({
         this.newField.required = true;
         this.newField.multiple = false;
         this.dialogInsertFields.open = false; // Feche o diálogo após adicionar o campo
+        this.multipleOptionsValue = [
+        {select: [], label: ''},
+        {select: [], label: ''}
+      ]
       } else {
         this.$q.notify("Preencha todos os dados antes de adicionar um campo");
       }
