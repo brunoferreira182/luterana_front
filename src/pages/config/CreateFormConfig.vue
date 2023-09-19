@@ -27,7 +27,7 @@
                 ? "Salvar"
                 : "Criar"
             }}
-            configuração
+            formulário
           </q-btn>
         </div>
       </div>
@@ -42,7 +42,7 @@
             outlined
             label="Filtro de formulário"
             option-label="label"
-            :option-value="(item) => item.type"
+            :option-value="(item) => item"
             emit-value
             map-options
             hint="Selecione o filtro de destinatários para prosseguir"
@@ -51,7 +51,7 @@
           />
           <div v-if="filterType" class="q-gutter-md">
             <q-select
-              v-if="filterType === 'byOrganismType' || filterType === 'byFunction'"
+              v-if="filterType.type === 'byOrganismType' || filterType.type === 'byFunctionConfig'"
               outlined
               label="Configuração de organismo"
               option-label="organismConfigName"
@@ -67,7 +67,7 @@
               :options="organismConfigOptions"
             />
             <q-select
-              v-if="filterType === 'byOrganism' "
+              v-if="filterType.type === 'byOrganism' "
               v-model="organismSelected"
               outlined
               label="Nome do organismo"
@@ -83,7 +83,7 @@
               :option-value="(item) => item._id"
             />
             <q-select
-              v-if="filterType === 'byFunction'"
+              v-if="filterType.type === 'byFunctionConfig'"
               v-model="functionsSelected"
               outlined
               label="Funções"
@@ -119,19 +119,19 @@
               option-label="label"
               emit-value
               map-options
-              :option-value="(item) => item.type"
+              :option-value="(item) => item"
               v-model="formDatesSelected.formType"
               hint="Informe o tempo de preenchimento do formulário"
               :options="formDates"
             />
             <q-select
-              v-if="formDatesSelected.formType === 'weekly'"
+              v-if="formDatesSelected.formType.type === 'weekly'"
               outlined
               v-model="formDatesSelected.dayOfWeek"
               label="Dia da semana"
               option-label="label"
               hint="Escolha o dia da semana"
-              :option-value="(item) => item.label"
+              :option-value="(item) => item"
               emit-value
               map-options
               :options="daysOfTheWeek"
@@ -139,29 +139,47 @@
             />
             <q-input
               outlined
-              v-if="formDatesSelected.formType === 'yearly'"
+              v-if="formDatesSelected.formType.type === 'yearly'"
               label="Data fim"
               mask="##/##"
+              hint="Digite uma data no formato DD/MM"
               v-model="formDatesSelected.finalDate1"
             />
             <div 
-              v-else-if="formDatesSelected.formType === 'semester' || formDatesSelected.formType === 'monthly'"
+              v-else-if="formDatesSelected.formType.type === 'monthly'"
               class="row justify-between" 
             >
-              <div class="col-5">
-                <q-input
+              <div class="col">
+                <q-select
                   outlined
-                  label="Data fim"
-                  mask="##/##"
+                  label="Dia do mês"
                   v-model="formDatesSelected.finalDate1"
+                  :options="dayOfMonthOptions"
                 />
               </div>
-              <div class="col-5">
+            </div>
+            <div 
+              v-else-if="formDatesSelected.formType.type === 'semester'"
+              class="row justify-between" 
+            >
+              <div class="col-6">
                 <q-input
                   outlined
-                  label="Data fim"
+                  label="Data 1"
                   mask="##/##"
+                  hint="Digite uma data no formato DD/MM"
+                  v-model="formDatesSelected.finalDate1"
+                  class="q-mr-xs"
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                  outlined
+                  label="Data 2"
+                  mask="##/##"
+                  hint="Digite uma data no formato DD/MM"
                   v-model="formDatesSelected.finalDate2"
+                  class="q-ml-xs"
                 />
               </div>
             </div>
@@ -354,7 +372,7 @@ export default defineComponent({
       formFields: [],
       organismSelected: [],
       functionsSelected: [],
-      filterType: '',
+      filterType: null,
       filterDestinataries: [
         {
           label: 'Nenhum filtro',
@@ -370,21 +388,23 @@ export default defineComponent({
         },
         {
           label: 'Função',
-          type: 'byFunction'
+          type: 'byFunctionConfig'
         },
       ],
       daysOfTheWeek: [
-        { label: 'Domingo' },
-        { label: 'Segunda-feira' },
-        { label: 'Terça-feira' },
-        { label: 'Quarta-feira' },
-        { label: 'Quinta-feira' },
-        { label: 'Sexta-feira' },
-        { label: 'Sábado' }
+        { label: 'Domingo', value: 1 },
+        { label: 'Segunda-feira', value: 2 },
+        { label: 'Terça-feira', value: 3 },
+        { label: 'Quarta-feira', value: 4 },
+        { label: 'Quinta-feira', value: 5 },
+        { label: 'Sexta-feira', value: 6 },
+        { label: 'Sábado', value: 7 }
       ],
       dayOfWeek: null,
       formDatesSelected: {
-        formType: null,
+        formType: {
+          type: null
+        },
         finalDate1: '',
         finalDate2: '',
       },
@@ -432,10 +452,14 @@ export default defineComponent({
       organismConfigOptions: [],
       organismsNames: [],
       functionsNames: [],
+      dayOfMonthOptions: []
     };
   },
   mounted() {
     this.$q.loading.hide();
+    for (let i = 1; i <= 31; i++) {
+      this.dayOfMonthOptions.push(i)
+    }
   },
   beforeMount() {
     this.getFieldTypes()
@@ -509,45 +533,70 @@ export default defineComponent({
       });
     },
     createFormConfig() {
-      // if(this.organismTypeId === '' || this.organismConfigId === '' ){
-      //   this.$q.notify('Preencha o tipo de organismo, o nome da configuração e insira uma função para prosseguir')
-      //   return
-      // }
+      let visions = []
+      this.visions.forEach(v => {
+        visions.push(v.visionId)
+      })
       const opt = {
         route: "/desktop/config/createForm",
         body: {
           formName: this.formConfigName,
           formFields: this.formFields,
-          formConfigs: {},
+          formConfigs: {
+            recurrency: {}
+          },
           formFilters: {
-            visions: this.visions,
-          }
+            visions
+          },
+          filterType: this.filterType
         },
       };
-      switch(this.formDatesSelected.formType){
+
+      switch(this.formDatesSelected.formType.type) {
         case 'weekly':
-          opt.body.formConfigs.dayOfWeek = this.dayOfWeek
+          opt.body.formConfigs.recurrency.rule = {
+            value: this.formDatesSelected.dayOfWeek.value,
+            label: this.formDatesSelected.dayOfWeek.label
+          }
         break;
         case 'monthly': 
-          opt.body.formConfigs.monthly = this.formDatesSelected.finalDate1
+          opt.body.formConfigs.recurrency.rule = {
+            value: this.formDatesSelected.finalDate1,
+            label: this.formDatesSelected.finalDate1
+          }
         break;
         case 'semester': 
-          opt.body.formConfigs.semester = this.formDatesSelected
+          opt.body.formConfigs.recurrency.rule = {
+            finalDate1: {
+              value: this.formDatesSelected.finalDate1,
+              label: this.formDatesSelected.finalDate1,
+            },
+            finalDate2: {
+              value: this.formDatesSelected.finalDate2,
+              label: this.formDatesSelected.finalDate2,
+            }
+          }
         break;
         case 'yearly':
-          opt.body.formConfigs.monthly = this.formDatesSelected
+          opt.body.formConfigs.recurrency.rule = {
+            value: this.formDatesSelected.finalDate1,
+            label: this.formDatesSelected.finalDate1,
+          }
         break;
       }
-      switch(this.filterType){
+      opt.body.formConfigs.recurrency.type = this.formDatesSelected.formType.type
+      opt.body.formConfigs.recurrency.label = this.formDatesSelected.formType.label
+
+      switch(this.filterType.type) {
         case 'byOrganismType':
-          opt.body.formFilters.organismConfigFilter = this.organismConfigId
+          opt.body.formFilters.organismsConfigs = this.organismConfigId
         break;
         case 'byOrganism':
-          opt.body.formFilters.organismsNameFilter = this.organismSelected
+          opt.body.formFilters.organismsNames = this.organismSelected
         break;
-        case 'byFunction':
-          opt.body.formFilters.organismFunctionFilter = this.functionsSelected,
-          opt.body.formFilters.organismConfigFilter = this.organismConfigId
+        case 'byFunctionConfig':
+          opt.body.formFilters.organismsFunctionsConfig = this.functionsSelected,
+          opt.body.formFilters.organismsConfigs = this.organismConfigId
         break;
       }
       this.$q.loading.show()
@@ -555,9 +604,9 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          this.$q.notify("Configuração de formulário criada com sucesso!");
+          return
         }
+        this.$q.notify("Configuração de formulário criada com sucesso!");
       });
     },
     getFieldTypes() {
