@@ -181,7 +181,7 @@ const useUtils = {
           icon: "group",
         },
         {
-          label: "Lista de Organismos",
+          label: "Rede",
           route: "/admin/organismsList",
           icon: "diversity_2",
         },

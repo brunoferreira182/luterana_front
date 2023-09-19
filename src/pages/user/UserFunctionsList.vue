@@ -13,6 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkGoToFunctionInOrganismDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
@@ -45,6 +46,26 @@
               </q-input>
             </div>
           </div>
+        </template>
+        <template #body-cell-status="props">
+          <q-td :props="props">
+            <q-chip
+              outline
+              v-if="props.row.isActive === 1"
+              color="green"
+              size="14px"
+            >
+              Ativo
+            </q-chip>
+            <q-chip
+              outline
+              v-else-if="props.row.isActive === 0"
+              color="red"
+              size="14px"
+            >
+              Inativo
+            </q-chip>
+          </q-td>
         </template>
       </q-table>
     </q-page>
@@ -80,9 +101,9 @@ export default defineComponent({
     this.getFunctionsByUserId();
   },
   methods: {
-    clkOpenUserOrganismDetail(e, r) {
+    clkGoToFunctionInOrganismDetail(e, r) {
       const organismId = r.organismId;
-      this.$router.push("/orgs/userOrganismDetail?organismId=" + organismId);
+      this.$router.push("/user/userOrganismDetail?organismId=" + organismId);
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -113,7 +134,7 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.userFunctionsList = r.data.functions;
+        this.userFunctionsList = r.data;
       });
     },
   },

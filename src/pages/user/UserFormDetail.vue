@@ -3,27 +3,25 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          class="col-6 text-h5 text-capitalize">Formulário {{ formName }}
-        </div>
-        <div 
-          class="col-2 text-h5 text-capitalize">
+          class="col-6 text-h5 text-capitalize"> {{ formName }}
+          <div class="text-caption">Formulário</div>
           <q-chip 
             v-if="formStatus === 'draft'"
-            color="positive" 
+            color="yellow-8" 
             text-color="white" 
             icon="cloud"
             align="right"
           >
-            Status: Ativa
+            Status: Em rascunho
           </q-chip>
           <q-chip 
             v-if="formStatus === 'sent'"
-            color="negative" 
+            color="green-8" 
             text-color="white" 
             icon="cloud"
             align="right"
           >
-            Status: Inativa
+            Status: Enviado
           </q-chip>
         </div>
         <div class="col text-right q-gutter-sm" v-if="formStatus === 'draft'">
@@ -43,7 +41,7 @@
             rounded
             color="primary"
             unelevated
-            label="Salvar"
+            label="Enviar"
             no-caps
           />
           <q-btn
@@ -62,7 +60,7 @@
             rounded
             color="primary"
             unelevated
-            label="Salvar"
+            label="Enviar"
             no-caps
           />
         </div>
@@ -226,7 +224,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.formName = r.data.name
+          this.formName = r.data.formName
           r.data.status ? this.formStatus = r.data.status : this.formStatus = ''
           this.formFields = r.data.fields
         }
@@ -243,7 +241,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.formName = r.data.name
+          this.formName = r.data.formName
           r.data.status ? this.formStatus = r.data.status : this.formStatus = ''
           this.formFields = r.data.fields
         }

@@ -18,7 +18,7 @@
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">
-        <div class="col-6 q-gutter-md" align="start">
+        <div class="col-12 q-gutter-md" align="start">
           <div class="text-h5">Nome</div>
           <q-input
             label="Escreva o nome"
