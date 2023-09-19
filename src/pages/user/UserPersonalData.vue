@@ -488,6 +488,16 @@
                   flat
                   color="positive"
                 />
+                <q-btn
+                    label="Excluir título"
+                    color="red"
+                    icon="delete"
+                    rounded
+                    flat
+                    outline
+                    @click="clkDeleteTitle(tab._id)"
+                    no-caps
+                  />
               </div>
               <div class="row justify-center items-start">
                   <div class="col-8 q-pa-md q-gutter-md">
@@ -772,6 +782,33 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="deleteTitle.openDialog">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Confirma deletar o título?
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Não"
+              no-caps
+              rounded
+              color="primary"
+              @click="deleteTitle.openDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="clkConfirmDeleteTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -783,6 +820,10 @@ export default defineComponent({
   name: "UserPersonalData",
   data() {
     return {
+      deleteTitle: {
+        openDialog: false,
+        titleId: null
+      },
       titleOptions: [],
       titleSelected: '',
       openDialogVinculateUserToTitle: false,
@@ -849,6 +890,27 @@ export default defineComponent({
     this.getTitleNamesList()
   },
   methods: {
+    clkConfirmDeleteTitle() {
+      const opt = {
+        route: '/desktop/commonUsers/inactivateUserTitle',
+        body: {
+          userTitleId: this.deleteTitle.titleId
+        }
+      };
+      useFetch(opt).then(r => {
+        if (r.error) {
+          this.$q.notify(r.errorMessage)
+          return
+        }
+        this.deleteTitle.openDialog = false
+        this.deleteTitle.titleId = null
+        this.getUserDetailById()
+      })
+    },
+    clkDeleteTitle(titleId) {
+      this.deleteTitle.titleId = titleId
+      this.deleteTitle.openDialog = true
+    },
     updateUserTitle(i) {
       const opt = {
         route:'/desktop/commonUsers/updateUserTitleFields',
