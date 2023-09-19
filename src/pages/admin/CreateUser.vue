@@ -55,7 +55,7 @@
               class="q-my-md"
             >
               <div class="row q-gutter-sm justify-center items-center">
-                <div class="col-8">
+                <div class="col-12">
                   <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options'">
                     <q-input
                       :label="field.label"
