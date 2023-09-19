@@ -3,7 +3,10 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          class="col-6 text-h5 text-capitalize">Formulário {{ formConfigName }}
+          class="col-6 text-h5 text-capitalize">{{ formConfigName }}
+          <div class="text-caption">
+            Formulário
+          </div>
         </div>
         <div class="col text-right">
           <q-btn
@@ -33,6 +36,19 @@
             Informações 
           </div>
           <q-select
+            class="q-pl-md"
+            outlined
+            label="Filtro de formulário"
+            option-label="label"
+            :option-value="(item) => item"
+            emit-value
+            map-options
+            hint="Selecione o filtro de destinatários para prosseguir"
+            v-model="filterType"
+            :options="filterDestinataries"
+          />
+          
+          <q-select
             outlined
             label="Configuração de organismo"
             option-label="organismConfigName"
@@ -50,7 +66,7 @@
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
           />
-          <div class="text-h5">
+            <div class="text-h5">
               Vigência do formulário
             </div>
             <q-select
@@ -186,7 +202,6 @@
             />
           </div>
           <div v-if="formFields.length">
-            <q-separator/>
             <div class="text-h5">Visualização</div>
             <div
               v-for="(field, i) in formFields"
@@ -196,6 +211,7 @@
               <div class="row q-gutter-sm items-center">
                 <div class="col">
                   <q-input
+                    v-if="field.type.type !== 'wisiwig'"
                     readonly
                     :label="field.label"
                     :hint="field.hint"
@@ -223,6 +239,20 @@
                       </q-btn>
                     </template>
                   </q-input>
+                  <q-editor 
+                    v-if="field.type.type === 'wisiwig'"
+                    v-model="field.value" 
+                    min-height="5rem" 
+                  />
+                  <q-uploader
+                    v-if="field.type.type === 'image'"
+                    style="max-width: 300px"
+                    url="http://localhost:4444/upload"
+                    label="Filtered (png only)"
+                    multiple
+                    :filter="checkFileType"
+                    @rejected="onRejected"
+                  />
                 </div>
                 <div class="col-2 q-mb-md">
                   <q-badge class="q-pa-xs">{{
@@ -286,6 +316,8 @@ export default defineComponent({
       fieldTypesOptions: [],
       visions: [],
       formFields: [],
+      filterType: null,
+      
       daysOfTheWeek: [
         { label: 'Domingo', value: 1 },
         { label: 'Segunda-feira', value: 2 },
@@ -442,7 +474,8 @@ export default defineComponent({
         } else {
           this.formConfigName = response.data.formName;
           this.formConfig = response.data.configs;
-          this.organismConfigId = response.data.organismConfigId;
+          this.filterType = r.data.configs.recurrency.type
+          this.organismConfigId = response.data.filters.organismsConfigs;
           this.formFields = response.data.fields;
           this.formType = response.data.formType;
           this.checkedVisionsList = response.data.filters.visions;

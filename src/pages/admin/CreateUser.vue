@@ -58,6 +58,7 @@
                 <div class="col-12">
                   <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' && field.type.type !== 'options'">
                     <q-input
+                      v-if="field.type.type !== 'image'"
                       :label="field.label"
                       :hint="field.hint"
                       :type="field.type.type"
@@ -83,6 +84,41 @@
                         </q-btn>
                       </template>
                     </q-input>
+                    <q-uploader
+                      v-if="field.type.type === 'image'"
+                      url="http://localhost:4444/upload"
+                      class="full-width"
+                      flat
+                      :filter="checkFileType"
+                      @rejected="onRejected"
+                    >
+                      <template v-slot:header="scope">
+                        <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
+                          <q-btn v-if="scope.queuedFiles.length > 0" icon="delete" @click="scope.removeQueuedFiles" round dense flat >
+                            <q-tooltip>Apagar</q-tooltip>
+                          </q-btn>
+                          <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat >
+                            <q-tooltip>Remove Uploaded Files</q-tooltip>
+                          </q-btn>
+                          <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
+                          <div class="col">
+                            <div class="q-uploader__title">Enviar imagem de perfil</div>
+                            <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel }}</div>
+                          </div>
+                          <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense flat>
+                            <q-uploader-add-trigger />
+                            <q-tooltip>Clique para enviar</q-tooltip>
+                          </q-btn>
+                          <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat >
+                            <q-tooltip>Enviar imagem</q-tooltip>
+                          </q-btn>
+
+                          <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat >
+                            <q-tooltip>Cancelar envio</q-tooltip>
+                          </q-btn>
+                        </div>
+                      </template>
+                    </q-uploader>
                   </div>
                   <div class="text-right" v-if="field.type.type === 'options'">
                     <q-select
@@ -318,6 +354,15 @@ export default defineComponent({
     this.getUsersConfig()
   },
   methods: {
+    onRejected() {
+      this.$q.notify({
+        type: 'negative',
+        message: `O arquivo precisa ser em formato PNG.`
+      })
+    },
+    checkFileType (files) {
+      return files.filter(file => file.type === 'image/png')
+    },
     checkCEP(ev) {
       this.cep = ev.target.value;
       if (this.cep.length === 8) {

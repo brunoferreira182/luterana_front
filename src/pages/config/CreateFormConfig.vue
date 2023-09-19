@@ -56,12 +56,11 @@
               label="Configuração de organismo"
               option-label="organismConfigName"
               :option-value="(item) => item._id"
-              emit-value
               map-options
+              emit-value
               use-chips
               multiple
               @filter="getOrganismsNamesBySearchString"
-              @update:model-value="getOrganismFunctionConfigNames"
               hint="Informe a qual configuração de organismo pertencerá esse formulário"
               v-model="organismConfigId"
               :options="organismConfigOptions"
@@ -87,18 +86,19 @@
               v-model="functionsSelected"
               outlined
               label="Funções"
-              option-label="functionName"
+              option-label="organismFunctionConfigName"
               hint="Selecione o filtro de funções"
+              @focus="getOrganismFunctionConfigNames"
               :options="functionsNames"
               use-chips
               multiple
-              :option-value="(item) => item"
+              :option-value="(item) => item._id"
             >
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>
-                    <q-item-label>{{ scope.opt.functionName }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.organismName }}</q-item-label>
+                    <q-item-label>{{ scope.opt.organismFunctionConfigName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.organismConfigName }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </template>
@@ -305,6 +305,15 @@
                     v-model="field.value" 
                     min-height="5rem" 
                   />
+                  <q-uploader
+                    v-if="field.type.type === 'image'"
+                    style="max-width: 300px"
+                    url="http://localhost:4444/upload"
+                    label="Filtered (png only)"
+                    multiple
+                    :filter="checkFileType"
+                    @rejected="onRejected"
+                  />
                 </div>
                 <div class="col-2 q-mb-md">
                   <q-badge class="q-pa-xs">{{
@@ -359,14 +368,14 @@
   </q-page-container>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
   name: "CreateFormConfig",
   data() {
     return {
       fieldTypesOptions: [],
-      organismConfigId: [],
+      organismConfigId: ref([]),
       visions: [],
       formFields: [],
       organismSelected: [],
@@ -493,10 +502,11 @@ export default defineComponent({
       });
     },
     getOrganismFunctionConfigNames() {
+      console.log(this.organismConfigId)
       const opt = {
         route: "/desktop/config/getOrganismFunctionConfigNames",
         body: {
-          organismsConfigsIds: this.organismSelected
+          organismsConfigsIds: this.organismConfigId
         },
       };
       useFetch(opt).then((r) => {
