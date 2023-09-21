@@ -441,17 +441,13 @@ export default defineComponent({
       };
       try {
         const response = await useFetch(opt);
-        if (response.error) {
-          this.$q.notify("Erro ao buscar visões:", response.error);
-        } else {
-          this.visionsList = response.data.map((vision) => {
-            return {
-              name: vision.visionInfo.name,
-              visionId: vision._id,
-              description: vision.visionInfo.description,
-            };
-          });
-        }
+        this.visionsList = response.data.map((vision) => {
+          return {
+            name: vision.visionInfo.name,
+            visionId: vision._id,
+            description: vision.visionInfo.description,
+          };
+        });
       } catch (error) {
         this.$q.notify("Erro ao buscar visões:", error);
       }
@@ -467,26 +463,24 @@ export default defineComponent({
         },
       };
       try {
-        const response = await useFetch(opt);
-        if (response.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          this.formConfigName = response.data.formName;
-          this.formConfig = response.data.configs;
-          this.filterType = r.data.configs.recurrency.type
-          this.organismConfigId = response.data.filters.organismsConfigs;
-          this.formFields = response.data.fields;
-          this.formType = response.data.formType;
-          this.checkedVisionsList = response.data.filters.visions;
-          this.checkedVisionsList.forEach((check, i) => {
-            visionsList.forEach((vision) => {
-              if (check === vision.visionId) {
-                this.visions[i] = vision;
-                return;
-              }
-            });
+        const r = await useFetch(opt);
+        this.formConfigName = r.data.formName;
+        this.formConfig = r.data.configs;
+        this.formDatesSelected.formType.type = r.data.configs.recurrency.label
+        // this.filterType = r.data.configs.recurrency.type
+        this.organismConfigId = r.data.filters.organismsConfigs;
+        this.dayOfWeek = r.data.configs.recurrency.rule.label
+        this.formFields = r.data.fields;
+        this.formType = r.data.formType;
+        this.checkedVisionsList = r.data.filters.visions;
+        this.checkedVisionsList.forEach((check, i) => {
+          visionsList.forEach((vision) => {
+            if (check === vision.visionId) {
+              this.visions[i] = vision;
+              return;
+            }
           });
-        }
+        });
       } catch (error) {
         this.$q.notify("Erro ao buscar detalhes do formulário", error);
       }
