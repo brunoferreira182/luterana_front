@@ -251,7 +251,8 @@
                       >
                         <q-tooltip
                           >Adicionar multiplo
-                          {{ field.type.label }}</q-tooltip
+                          {{ field.type.label }}
+                          </q-tooltip
                         >
                       </q-btn>
                     </template>
@@ -334,7 +335,10 @@ export default defineComponent({
       visions: [],
       formFields: [],
       filterType: null,
-      
+      attachUserAndOrganism: [
+        { label: 'Usuário', type: 'user'},
+        { label: 'Organismo', type: 'organism' }
+      ],
       daysOfTheWeek: [
         { label: 'Domingo', value: 1 },
         { label: 'Segunda-feira', value: 2 },
