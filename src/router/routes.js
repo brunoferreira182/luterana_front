@@ -81,7 +81,7 @@ const routes = [
       },
       {
         path: "/config/formConfigList",
-        component: () => import("pages/config/FormConfigList.vue"),
+        component: () => import("src/pages/config/FormConfigList.vue"),
       },
       
       //configurations// organismos

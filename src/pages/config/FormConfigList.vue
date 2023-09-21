@@ -16,12 +16,12 @@
         @row-click="clkOpenFormConfigDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
-        :v-model:pagination="pagination"
+        v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row justify-between q-gutter-sm items-center">
-            <div class="col">
+          <div class="flex row justify-end">
+            <div class="col q-px-sm">
               <q-select
                 outlined
                 dense
@@ -51,11 +51,11 @@
                 color="primary"
                 unelevated
                 no-caps
-                class="q-pa-sm"
                 rounded
                 icon="add"
+                class="q-pa-sm"
                 label="Novo Formulário"
-              />
+                />
             </div>
           </div>
         </template>
@@ -83,7 +83,6 @@
     </q-page>
   </q-page-container>
 </template>
-
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
@@ -125,11 +124,12 @@ export default defineComponent({
       selecionadas de ${this.expensesData.length}`;
     },
     nextPage(e) {
+      console.log('chegou aqui')
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getFormConfigList();
+      this.getFormConfigList();
     },
     getFormConfigList() {
       const opt = {
@@ -147,6 +147,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         this.formConfigList = r.data.list;
+        this.pagination.rowsNumber = r.data.count[0].count
       });
     },
   },

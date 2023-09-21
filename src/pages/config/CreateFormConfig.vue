@@ -220,6 +220,35 @@
               </div>
             </div>
             <div
+              class="q-mt-xl"
+              v-if="newField.type ? newField.type.type === 'options' : false" 
+            >
+            <q-input
+              outlined
+              label="Opção" 
+              v-model="newOptionValue[0].newValue"
+            >
+              <q-btn icon="add" flat @click="addOptionValue"></q-btn>
+            </q-input>
+            <q-chip
+              v-for=" option, i  in newField.options"
+              :key="option"
+              color="primary"
+              text-color="white"
+            >
+              {{ option }}
+              <q-btn
+                size="sm"
+                icon="close"
+                padding="none"
+                rounded
+                class="q-ml-sm"
+                @click="newField.options.splice(i, 1)"
+                >
+              </q-btn>
+            </q-chip>
+            </div>
+            <div
               v-for="(field) in formFields"
               :key="field"
             >
@@ -272,11 +301,11 @@
               <div class="row q-gutter-sm items-center">
                 <div class="col">
                   <q-input
-                    v-if="field.type.type !== 'wisiwig'"
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
-                    outlined
+                  v-if="field.type.type !== 'wisiwig'"
+                  readonly
+                  :label="field.label"
+                  :hint="field.hint"
+                  outlined
                   >
                     <template
                       #append
@@ -285,17 +314,17 @@
                         $route.path === '/config/organismConfigDetail'
                       "
                     >
-                      <q-btn
-                        disabled
-                        icon="add"
-                        color="primary"
-                        flat
-                        round
-                        @click="addMultipleField"
-                      >
+                    <q-btn
+                    disabled
+                    icon="add"
+                    color="primary"
+                    flat
+                    round
+                    @click="addMultipleField"
+                    >
                         <q-tooltip
-                          >Adicionar multiplo
-                          {{ field.type.label }}</q-tooltip
+                        >Adicionar multiplo
+                        {{ field.type.label }}</q-tooltip
                         >
                       </q-btn>
                     </template>
@@ -313,10 +342,10 @@
                     multiple
                     :filter="checkFileType"
                     @rejected="onRejected"
-                  />
-                </div>
-                <div class="col-2 q-mb-md">
-                  <q-badge class="q-pa-xs">{{
+                    />
+                  </div>
+                  <div class="col-2 q-mb-md">
+                    <q-badge class="q-pa-xs">{{
                     formFields[i].type.label
                   }}</q-badge
                   ><br />
@@ -326,15 +355,25 @@
                 </div>
                 <div class="col-1">
                   <q-btn
-                    icon="delete"
-                    size="large"
-                    class="q-mb-md"
-                    rounded
-                    @click="formFields.splice(i, 1)"
-                    flat
-                    color="primary"
+                  icon="delete"
+                  size="large"
+                  class="q-mb-md"
+                  rounded
+                  @click="formFields.splice(i, 1)"
+                  flat
+                  color="primary"
                   />
                 </div>
+              </div>
+              <div
+                v-if="field.type.type === 'options'"
+              >
+                <q-chip
+                  v-for="option in field.options"
+                  :key="option"
+                >
+                  {{ option }}
+                </q-chip>
               </div>
             </div>
           </div>
@@ -374,6 +413,9 @@ export default defineComponent({
   name: "CreateFormConfig",
   data() {
     return {
+      newOptionValue: [
+        {newValue: ''}
+      ],
       fieldTypesOptions: [],
       organismConfigId: ref([]),
       visions: [],
@@ -475,6 +517,13 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    addOptionValue(){
+      if(!this.newField.options) {
+        this.newField.options = []
+      }
+      this.newField.options.push(this.newOptionValue[0].newValue.toUpperCase());
+      this.newOptionValue[0].newValue = ''
+    },
     getOrganismsNamesBySearchString(val, update) {
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
@@ -646,6 +695,9 @@ export default defineComponent({
         this.newField.type = null;
         this.newField.required = true;
         this.newField.multiple = false;
+        if(this.newField.options) {
+          this.newField.options = []
+        }
         return;
       }
       this.$q.notify("preencha todos os dados antes de adicionar um campo");
