@@ -36,7 +36,6 @@
             Informações 
           </div>
           <q-select
-            class="q-pl-md"
             outlined
             label="Filtro de formulário"
             option-label="label"
