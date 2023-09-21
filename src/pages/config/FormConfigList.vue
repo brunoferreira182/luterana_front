@@ -89,7 +89,7 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "FormConfigList2",
+  name: "FormConfigList",
   data() {
     return {
       columnsData: useTableColumns().formConfigList,
