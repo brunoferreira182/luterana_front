@@ -125,7 +125,7 @@
               :options="formDates"
             />
             <q-select
-              v-if="formDatesSelected.formType.type === 'weekly'"
+              v-if="formDatesSelected.formType.type.type === 'weekly'"
               outlined
               v-model="formDatesSelected.dayOfWeek"
               label="Dia da semana"
@@ -139,14 +139,14 @@
             />
             <q-input
               outlined
-              v-if="formDatesSelected.formType.type === 'yearly'"
+              v-if="formDatesSelected.formType.type.type === 'yearly'"
               label="Data fim"
               mask="##/##"
               hint="Digite uma data no formato DD/MM"
               v-model="formDatesSelected.finalDate1"
             />
             <div 
-              v-else-if="formDatesSelected.formType.type === 'monthly'"
+              v-else-if="formDatesSelected.formType.type.type === 'monthly'"
               class="row justify-between" 
             >
               <div class="col">
@@ -159,7 +159,7 @@
               </div>
             </div>
             <div 
-              v-else-if="formDatesSelected.formType.type === 'semester'"
+              v-else-if="formDatesSelected.formType.type.type === 'semester'"
               class="row justify-between" 
             >
               <div class="col-6">
@@ -591,6 +591,10 @@ export default defineComponent({
       });
     },
     createFormConfig() {
+      if(this.formConfigName === ''){
+        this.$q.notify('Preencha o nome do formulário')
+        return
+      }
       let visions = []
       this.visions.forEach(v => {
         visions.push(v.visionId)
@@ -609,7 +613,6 @@ export default defineComponent({
           filterType: this.filterType
         },
       };
-
       switch(this.formDatesSelected.formType.type) {
         case 'weekly':
           opt.body.formConfigs.recurrency.rule = {
@@ -665,6 +668,7 @@ export default defineComponent({
           return
         }
         this.$q.notify("Configuração de formulário criada com sucesso!");
+        this.$router.push('/config/formConfigList')
       });
     },
     getFieldTypes() {

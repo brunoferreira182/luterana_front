@@ -24,9 +24,9 @@
             Status: Enviado
           </q-chip>
         </div>
-        <div class="col text-right q-gutter-sm" v-if="formStatus === 'draft'">
+        <div class="col text-right q-gutter-sm">
           <q-btn
-            v-if="$route.query.savedFormId"
+            v-if="$route.query.savedFormId && formStatus === 'draft'"
             @click="updateDraftFormData"
             rounded
             color="primary"
@@ -36,7 +36,7 @@
             no-caps
           />
           <q-btn
-            v-if="$route.query.savedFormId"
+            v-if="$route.query.savedFormId && formStatus === 'draft'"
             @click="updateSentFormData"
             rounded
             color="primary"
@@ -241,7 +241,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          this.formName = r.data.formName
+          this.formName = r.data.name
           r.data.status ? this.formStatus = r.data.status : this.formStatus = ''
           this.formFields = r.data.fields
         }
