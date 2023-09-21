@@ -303,8 +303,7 @@
                   flat
                   size="sm"
                   color="orange"
-                >
-                </q-icon>
+                />
                 </q-tab>
                 <q-separator/>
               </template>
