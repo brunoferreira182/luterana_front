@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Formulários"
+        title="Usuários"
         :columns="columnsData"
         :rows="formList"
         row-key="_id"
@@ -15,10 +15,10 @@
         :rows-per-page-options="[10, 20, 30, 50]"
         :selected-rows-label="getSelectedString"
         :filter="filter"
-        :v-model:pagination="pagination"
+        v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
+      <template #top-right>
           <div class="flex row justify-between q-gutter-sm items-center">
             <div class="col">
               <q-input
@@ -80,7 +80,6 @@
     </q-page>
   </q-page-container>
 </template>
-
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
@@ -131,7 +130,7 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.getFormsByUserId();
+      this.getFormsByUserId();
     },
     getSavedFormsByUserId() {
       this.savedForms = true
@@ -169,7 +168,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         this.formList = r.data[0].list;
-        this.pagination.rowsNumber = r.data[0].count
+        this.pagination.rowsNumber = r.data[0].count[0].count
       });
     },
   },

@@ -35,7 +35,7 @@
       <div class="row justify-around q-pa-md" >
         <div class="col-7 q-gutter-md" align="start">
           <div class="text-h5 q-px-md">
-            Informações 
+            Informações e filtros
           </div>
           <q-select
             class="q-pl-md"
@@ -103,10 +103,13 @@
                 </q-item>
               </template>
             </q-select>
+            <div class="text-h5">
+              Nome do formulário
+            </div>
             <q-input
               :readonly="$route.path === '/config/organismConfigDetail'"
               outlined
-              label="Nome do formulário"
+              label="Nome"
               v-model="formConfigName"
               hint="Informe qual será o nome da configuração deste formulário"
             />
@@ -124,6 +127,7 @@
               hint="Informe o tempo de preenchimento do formulário"
               :options="formDates"
             />
+            
             <q-select
               v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'weekly'"
               outlined
@@ -183,6 +187,20 @@
                 />
               </div>
             </div>
+            <div class="text-h5">
+              Vincular formulário
+            </div>
+            <q-select
+              outlined
+              label="Vínculo"
+              option-label="label"
+              emit-value
+              map-options
+              :option-value="(item) => item.type"
+              v-model="formAttachSelected"
+              hint="Há uma conexão deste formulário com um usuário ou organismo?"
+              :options="attachUserAndOrganism"
+            />
             <div
               class="text-h5"
             >
@@ -479,6 +497,11 @@ export default defineComponent({
       organismSelected: [],
       functionsSelected: [],
       filterType: null,
+      formAttachSelected: '',
+      attachUserAndOrganism: [
+        { label: 'Usuário', type: 'user'},
+        { label: 'Organismo', type: 'organism' }
+      ],
       filterDestinataries: [
         {
           label: 'Nenhum filtro',
@@ -558,7 +581,7 @@ export default defineComponent({
       organismConfigOptions: [],
       organismsNames: [],
       functionsNames: [],
-      dayOfMonthOptions: []
+      dayOfMonthOptions: [],
     };
   },
   mounted() {
@@ -577,6 +600,11 @@ export default defineComponent({
       const newValue = this.multipleOptionsValue[optionIndex].newValue;
       this.multipleOptionsValue[optionIndex].select.push(newValue);
       this.multipleOptionsValue[optionIndex].newValue = '';
+      if(!this.newField.selects) {
+        this.newField.selects = [
+          {label: [], options: []},
+          {label: [], options: []}]
+      }
       this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
       this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
     },
@@ -688,6 +716,14 @@ export default defineComponent({
           filterType: this.filterType
         },
       };
+      switch(this.formAttachSelected){
+        case 'user':
+          opt.body.attachedTo = 'user'
+        break;
+        case 'organism':
+          opt.body.attachedTo = 'organism'
+        break;
+      }
       switch(this.formDatesSelected.formType.type) {
         case 'weekly':
           opt.body.formConfigs.recurrency.rule = {

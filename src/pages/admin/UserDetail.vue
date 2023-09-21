@@ -73,6 +73,15 @@
               />
               <q-separator/>
             </template>
+            <template v-if="userForms && userForms.length">
+              <q-tab 
+                class="flex-left flex"
+                name="forms" 
+                label="Formulário" 
+                icon="feed"
+              />
+              <q-separator />
+            </template>
           </q-tabs>
         </template>
         <template v-slot:after>
@@ -267,8 +276,69 @@
                 </div>
               </div>
             </q-tab-panel>
+            <q-tab-panel
+              name="forms"
+            >
+              <div
+                v-for="form in userForms"
+                :key="form"
+              >
+                <q-btn
+                  no-caps
+                  unelevated
+                  rounded
+                  color="primary"
+                  @click="openUserFormDialog(form)"
+                  :label="form.formName"
+                />
+              </div>
+              <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
+                <q-card style="border-radius: 1rem; min-width: 650px">
+                  <q-card-section>
+                    <div
+                      class="q-gutter-sm"
+                      v-if="userFormDialog.data.length"
+                    >
+                    <div class="text-h6 text-center">Dados do formulário</div>
+                      <div v-for="(field, i) in userFormDialog.data" :key="i">
+                        <q-input
+                          v-if="field.type.type !== 'boolean' && field.type.type !== 'wisiwig'"
+                          v-model="field.value"
+                          outlined
+                          :type="getInputType(field.type.type)"
+                          :reverse-fill-mask="field.type.type === 'money'"
+                          :prefix="field.type.type === 'money' ? 'R$' : null"
+                          :label="field.label + (field.required ? '' : ' (Opcional)')"
+                          :mask="field.type.mask"
+                          :hint="field.hint"
+                        />
+                        <q-editor 
+                          v-if="field.type.type === 'wisiwig'"
+                          v-model="field.value" 
+                          min-height="5rem" 
+                        />
+                        <q-checkbox
+                          v-else-if="field.type.type === 'boolean'"
+                          :label="field.label"
+                          v-model="newOrganism[field.model]"
+                        ></q-checkbox>
+                      </div>
+                    </div>
+                  </q-card-section>
+                  <q-card-actions align="center" class="q-mb-md">
+                    <q-btn
+                      no-caps
+                      unelevated
+                      rounded
+                      color="primary"
+                      @click="saveFormData"
+                      label="Enviar formulário"
+                    />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+            </q-tab-panel>
           </q-tab-panels>
-          
         </template>
       </q-splitter>
 
@@ -594,7 +664,13 @@ export default defineComponent({
       deleteTitle: {
         openDialog: false,
         titleId: null
-      }
+      },
+      userForms: {},
+      userFormDialog: {
+        formId: '',
+        data: {},
+        open: false,
+      },
     };
   },
   mounted() {
@@ -606,10 +682,46 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    openUserFormDialog(form){
+      this.userFormDialog.formId = form._id
+      this.userFormDialog.open = true
+    },
     chkVisionSelected() {
       if(this.$route.query.pending) {
         this.visionSelected = 'titles'
       }
+    },
+    getInputType(type) {
+      switch (type) {
+        case "date":
+          return "date";
+        case "int":
+          return "number";
+        default:
+          return "text";
+      }
+    },
+    saveFormData(){
+      const opt = {
+        route:'/desktop/adm/saveFormData',
+        body: {
+          formId: this.userFormDialog.formId,
+          fields: this.userFormDialog.data,
+          formStatus: 'sent'
+        }
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
+        }
+        else {
+          this.$q.notify("Formulário enviado!")
+          this.userFormDialog.open = false
+          this.getUserDetailById();
+        }
+      })
     },
     clkInactiveTitle(i){
       const opt = {
@@ -621,12 +733,12 @@ export default defineComponent({
         }
       };
       useFetch(opt).then((r) => {
-        if(!r.error) {
-          this.$q.notify("Título recusado.")
-          this.getUserDetailById();
+        if(r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
         }
         else {
-          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
+          this.$q.notify("Título recusado.")
+          this.getUserDetailById();
         }
       })
     },
@@ -707,6 +819,23 @@ export default defineComponent({
         }
       });
     },
+    getFormDetailById() {
+      const opt = {
+        route: "/desktop/adm/getFormDetailById",
+        body: {
+          formId: this.userFormDialog.formId
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente")
+          return
+        } this.userFormDialog.data = r.data.fields
+      });
+    },
+    
     getUserDetailById() {
       const userId = this.$route.query.userId;
       const opt = {
@@ -718,10 +847,11 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Ocorreu um erro, tente novamente kakak")
+          this.$q.notify("Ocorreu um erro, tente novamente")
           return
         }
         this.userDetail = r.data
+        this.userForms = r.data.forms
         this.mountUserData()
       });
     },

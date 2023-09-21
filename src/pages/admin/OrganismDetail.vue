@@ -335,34 +335,34 @@
                             Vincular novo organismo
                           </div>
                           <q-input 
-                        label="Buscar"
-                        outlined
-                        type="search"
-                        v-model="organismSelected"
-                        hint="Faça uma busca para visualizar os organismos disponíveis"
-                        @update:model-value="getOrganismsList"
-                      >
-                        <template #append>
-                          <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
-                          <q-icon name="search" />
-                        </template>
-                      </q-input>
-                      <q-list bordered class="q-mt-sm">
-                        <q-item
-                          clickable
-                          :disable="organismLinks.includes(organism)"
-                          @click="clkSaveVinculo(organism)"
-                          v-for="(organism,i) in organismList"
-                          :key="i"
-                        >
-                          <q-item-section>
-                            {{ organism.nome }}
-                          </q-item-section>
-                          <q-item-section class="text-primary" side>
-                            {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
+                            label="Buscar"
+                            outlined
+                            type="search"
+                            v-model="organismSelected"
+                            hint="Faça uma busca para visualizar os organismos disponíveis"
+                            @update:model-value="getOrganismsList"
+                            >
+                            <template #append>
+                              <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                              <q-icon name="search" />
+                            </template>
+                          </q-input>
+                          <q-list bordered class="q-mt-sm">
+                            <q-item
+                              clickable
+                              :disable="organismLinks.includes(organism)"
+                              @click="clkSaveVinculo(organism)"
+                              v-for="(organism,i) in organismList"
+                              :key="i"
+                            >
+                              <q-item-section>
+                                {{ organism.nome }}
+                              </q-item-section>
+                              <q-item-section class="text-primary" side>
+                                {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
                         </div>
                         <q-separator vertical />
                         <div class="col">
