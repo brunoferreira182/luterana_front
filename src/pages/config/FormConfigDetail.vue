@@ -33,7 +33,7 @@
           <div
             class="text-h5"
           >
-            Informações 
+            Informações e filtros
           </div>
           <q-select
             outlined
@@ -58,86 +58,103 @@
             v-model="organismConfigId"
             :options="organismConfigOptions"
           />
+          <div class="text-h5">
+            Nome do formulário
+          </div>
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
-            label="Nome da configuração"
+            label="Nome"
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
           />
-            <div class="text-h5">
-              Vigência do formulário
+          <div class="text-h5">
+            Vigência do formulário
+          </div>
+          <q-select
+            outlined
+            label="Vigência de formulário"
+            option-label="label"
+            emit-value
+            map-options
+            :option-value="(item) => item"
+            v-model="formDatesSelected.formType.type"
+            hint="Informe o tempo de preenchimento do formulário"
+            :options="formDates"
+          />
+          <q-select
+            v-if="formDatesSelected.formType.type === 'weekly'"
+            outlined
+            v-model="formDatesSelected.dayOfWeek"
+            label="Dia da semana"
+            option-label="label"
+            hint="Escolha o dia da semana"
+            :option-value="(item) => item"
+            emit-value
+            map-options
+            :options="daysOfTheWeek"
+            type="date"
+          />
+          <q-input
+            outlined
+            v-if="formDatesSelected.formType.type === 'yearly'"
+            label="Data fim"
+            mask="##/##"
+            hint="Digite uma data no formato DD/MM"
+            v-model="formDatesSelected.finalDate1"
+          />
+          <div 
+            v-else-if="formDatesSelected.formType.type === 'monthly'"
+            class="row justify-between" 
+          >
+            <div class="col">
+              <q-select
+                outlined
+                label="Dia do mês"
+                v-model="formDatesSelected.finalDate1"
+                :options="dayOfMonthOptions"
+              />
             </div>
-            <q-select
-              outlined
-              label="Vigência de formulário"
-              option-label="label"
-              emit-value
-              map-options
-              :option-value="(item) => item"
-              v-model="formDatesSelected.formType.type"
-              hint="Informe o tempo de preenchimento do formulário"
-              :options="formDates"
-            />
-            <q-select
-              v-if="formDatesSelected.formType.type === 'weekly'"
-              outlined
-              v-model="formDatesSelected.dayOfWeek"
-              label="Dia da semana"
-              option-label="label"
-              hint="Escolha o dia da semana"
-              :option-value="(item) => item"
-              emit-value
-              map-options
-              :options="daysOfTheWeek"
-              type="date"
-            />
-            <q-input
-              outlined
-              v-if="formDatesSelected.formType.type === 'yearly'"
-              label="Data fim"
-              mask="##/##"
-              hint="Digite uma data no formato DD/MM"
-              v-model="formDatesSelected.finalDate1"
-            />
-            <div 
-              v-else-if="formDatesSelected.formType.type === 'monthly'"
-              class="row justify-between" 
-            >
-              <div class="col">
-                <q-select
-                  outlined
-                  label="Dia do mês"
-                  v-model="formDatesSelected.finalDate1"
-                  :options="dayOfMonthOptions"
-                />
-              </div>
+          </div>
+          <div 
+            v-else-if="formDatesSelected.formType.type === 'semester'"
+            class="row justify-between" 
+          >
+            <div class="col-6">
+              <q-input
+                outlined
+                label="Data 1"
+                mask="##/##"
+                hint="Digite uma data no formato DD/MM"
+                v-model="formDatesSelected.finalDate1"
+                class="q-mr-xs"
+              />
             </div>
-            <div 
-              v-else-if="formDatesSelected.formType.type === 'semester'"
-              class="row justify-between" 
-            >
-              <div class="col-6">
-                <q-input
-                  outlined
-                  label="Data 1"
-                  mask="##/##"
-                  hint="Digite uma data no formato DD/MM"
-                  v-model="formDatesSelected.finalDate1"
-                  class="q-mr-xs"
-                />
-              </div>
-              <div class="col-6">
-                <q-input
-                  outlined
-                  label="Data 2"
-                  mask="##/##"
-                  hint="Digite uma data no formato DD/MM"
-                  v-model="formDatesSelected.finalDate2"
-                  class="q-ml-xs"
-                />
-              </div>
+            <div class="col-6">
+              <q-input
+                outlined
+                label="Data 2"
+                mask="##/##"
+                hint="Digite uma data no formato DD/MM"
+                v-model="formDatesSelected.finalDate2"
+                class="q-ml-xs"
+              />
             </div>
+          </div>
+          <div class="text-h5">
+            Vincular formulário
+          </div>
+          <q-select
+            outlined
+            label="Vínculo"
+            option-label="label"
+            emit-value
+            map-options
+            :option-value="(item) => item.type"
+            v-model="formAttachSelected"
+            hint="Há uma conexão deste formulário com um usuário ou organismo?"
+            :options="attachUserAndOrganism"
+          />
           <div
             class="text-h5"
           >
@@ -147,6 +164,7 @@
             class="row q-gutter-x-sm q-mx-none"
           >
             <div class="col">
+              
               <q-input
                 outlined
                 class="q-ml-sm"
@@ -466,7 +484,7 @@ export default defineComponent({
         const r = await useFetch(opt);
         this.formConfigName = r.data.formName;
         this.formConfig = r.data.configs;
-        this.formDatesSelected.formType.type = r.data.configs.recurrency.label
+        this.formDatesSelected.formType.type = r.data.configs.recurrency.label;
         // this.filterType = r.data.configs.recurrency.type
         this.organismConfigId = r.data.filters.organismsConfigs;
         this.dayOfWeek = r.data.configs.recurrency.rule.label
