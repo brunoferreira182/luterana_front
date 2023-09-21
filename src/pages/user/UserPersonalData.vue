@@ -157,6 +157,7 @@
                       :filter="checkFileType"
                       label="Clique aqui para adicionar imagem de perfil"
                       outlined
+                      @update="saveProfilePhoto"
                     >
                       <template #append>
                         <q-icon name="attach_file" />
@@ -931,6 +932,24 @@ export default defineComponent({
     this.getTitleNamesList()
   },
   methods: {
+    saveProfilePhoto() {
+      const opt = {
+        route:'/desktop/commonUsers/addProfilePhotoById',
+        body: {
+          image: this.files
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else{
+          this.$q.notify('Imagem inserida com sucesso!'); 
+        }
+      })
+    },
     onRejected() {
       this.$q.notify({
         type: 'negative',
@@ -947,6 +966,7 @@ export default defineComponent({
           userTitleId: this.deleteTitle.titleId
         }
       };
+      
       useFetch(opt).then(r => {
         if (r.error) {
           this.$q.notify(r.errorMessage)
