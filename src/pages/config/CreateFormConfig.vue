@@ -125,7 +125,7 @@
               :options="formDates"
             />
             <q-select
-              v-if="formDatesSelected.formType.type === 'weekly'"
+              v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'weekly'"
               outlined
               v-model="formDatesSelected.dayOfWeek"
               label="Dia da semana"
@@ -139,14 +139,14 @@
             />
             <q-input
               outlined
-              v-if="formDatesSelected.formType.type === 'yearly'"
+              v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'yearly'"
               label="Data fim"
               mask="##/##"
               hint="Digite uma data no formato DD/MM"
               v-model="formDatesSelected.finalDate1"
             />
             <div 
-              v-else-if="formDatesSelected.formType.type === 'monthly'"
+              v-else-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'monthly'"
               class="row justify-between" 
             >
               <div class="col">
@@ -159,7 +159,7 @@
               </div>
             </div>
             <div 
-              v-else-if="formDatesSelected.formType.type === 'semester'"
+              v-else-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'semester'"
               class="row justify-between" 
             >
               <div class="col-6">
@@ -220,6 +220,87 @@
               </div>
             </div>
             <div
+              class="q-mt-xl"
+              v-if="newField.type ? newField.type.type === 'options' : false" 
+            >
+              <q-input
+                outlined
+                label="Opção" 
+                v-model="newOptionValue[0].newValue"
+              >
+                <q-btn icon="add" flat @click="addOptionValue"></q-btn>
+              </q-input>
+              <q-chip
+                v-for=" option, i  in newField.options"
+                :key="option"
+                color="primary"
+                text-color="white"
+              >
+                {{ option }}
+                <q-btn
+                  size="sm"
+                  icon="close"
+                  padding="none"
+                  rounded
+                  class="q-ml-sm"
+                  @click="newField.options.splice(i, 1)"
+                  >
+                </q-btn>
+              </q-chip>
+            </div>
+            <div
+              class="q-mt-xl"
+              v-if="newField.type ? newField.type.type === 'multiple_select' : false" 
+            >
+              <q-btn 
+                @click="addNewSelectField"
+                color="primary"
+                outline
+                icon="add"
+                rounded
+                class="q-mb-md"
+              >
+                Adicionar novo campo de seleção
+              </q-btn>
+              <div 
+                v-for="(option, optionIndex) in multipleOptionsValue"
+                :key="option"
+              >
+              <div style="display: flex;">
+                <q-input
+                  outlined
+                  class="q-pa-sm"
+                  label="De um nome para o campo de seleção abaixo:"
+                  v-model="multipleOptionsValue[optionIndex].label"
+                  style="width: 50%;"
+                  >
+                </q-input>
+                <q-input
+                  v-model="multipleOptionsValue[optionIndex].newValue"
+                  outlined
+                  label="Opção" 
+                  class="q-pa-sm"
+                  style="width: 50%;"
+                >
+                  <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
+                </q-input>
+              </div>
+                  <div 
+                    v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
+                    :key="select"
+                  >
+                    <q-chip
+                      size="md"
+                      class="q-pa-sm"
+                    >
+                      {{ select }}
+                      <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="close" round flat></q-btn>
+                    </q-chip>
+                  </div>
+                  <q-separator/>
+              </div>
+            </div>
+            <div
               v-for="(field) in formFields"
               :key="field"
             >
@@ -272,11 +353,11 @@
               <div class="row q-gutter-sm items-center">
                 <div class="col">
                   <q-input
-                    v-if="field.type.type !== 'wisiwig'"
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
-                    outlined
+                  v-if="field.type.type !== 'wisiwig'"
+                  readonly
+                  :label="field.label"
+                  :hint="field.hint"
+                  outlined
                   >
                     <template
                       #append
@@ -285,17 +366,17 @@
                         $route.path === '/config/organismConfigDetail'
                       "
                     >
-                      <q-btn
-                        disabled
-                        icon="add"
-                        color="primary"
-                        flat
-                        round
-                        @click="addMultipleField"
-                      >
+                    <q-btn
+                    disabled
+                    icon="add"
+                    color="primary"
+                    flat
+                    round
+                    @click="addMultipleField"
+                    >
                         <q-tooltip
-                          >Adicionar multiplo
-                          {{ field.type.label }}</q-tooltip
+                        >Adicionar multiplo
+                        {{ field.type.label }}</q-tooltip
                         >
                       </q-btn>
                     </template>
@@ -313,10 +394,10 @@
                     multiple
                     :filter="checkFileType"
                     @rejected="onRejected"
-                  />
-                </div>
-                <div class="col-2 q-mb-md">
-                  <q-badge class="q-pa-xs">{{
+                    />
+                  </div>
+                  <div class="col-2 q-mb-md">
+                    <q-badge class="q-pa-xs">{{
                     formFields[i].type.label
                   }}</q-badge
                   ><br />
@@ -326,15 +407,25 @@
                 </div>
                 <div class="col-1">
                   <q-btn
-                    icon="delete"
-                    size="large"
-                    class="q-mb-md"
-                    rounded
-                    @click="formFields.splice(i, 1)"
-                    flat
-                    color="primary"
+                  icon="delete"
+                  size="large"
+                  class="q-mb-md"
+                  rounded
+                  @click="formFields.splice(i, 1)"
+                  flat
+                  color="primary"
                   />
                 </div>
+              </div>
+              <div
+                v-if="field.type.type === 'options'"
+              >
+                <q-chip
+                  v-for="option in field.options"
+                  :key="option"
+                >
+                  {{ option }}
+                </q-chip>
               </div>
             </div>
           </div>
@@ -374,6 +465,13 @@ export default defineComponent({
   name: "CreateFormConfig",
   data() {
     return {
+      multipleOptionsValue: [
+        {select: [], label: ''},
+        {select: [], label: ''}
+      ],
+      newOptionValue: [
+        {newValue: ''}
+      ],
       fieldTypesOptions: [],
       organismConfigId: ref([]),
       visions: [],
@@ -475,6 +573,32 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    insertMultipleField(option, optionIndex) {
+      const newValue = this.multipleOptionsValue[optionIndex].newValue;
+      this.multipleOptionsValue[optionIndex].select.push(newValue);
+      this.multipleOptionsValue[optionIndex].newValue = '';
+      this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
+      this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
+    },
+    addNewSelectField() {
+      if(!this.newField.selects){
+        this.newField.selects = [
+          {label: [], options: []},
+          {label: [], options: []}
+        ]
+      }
+      this.newField.selects.push(
+        {label: [], options: []},
+        {label: [], options: []})
+      this.multipleOptionsValue.push({select: [], label: ''})
+    },
+    addOptionValue(){
+      if(!this.newField.options) {
+        this.newField.options = []
+      }
+      this.newField.options.push(this.newOptionValue[0].newValue.toUpperCase());
+      this.newOptionValue[0].newValue = ''
+    },
     getOrganismsNamesBySearchString(val, update) {
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
@@ -542,6 +666,10 @@ export default defineComponent({
       });
     },
     createFormConfig() {
+      if(this.formConfigName === ''){
+        this.$q.notify('Preencha o nome do formulário')
+        return
+      }
       let visions = []
       this.visions.forEach(v => {
         visions.push(v.visionId)
@@ -560,7 +688,6 @@ export default defineComponent({
           filterType: this.filterType
         },
       };
-
       switch(this.formDatesSelected.formType.type) {
         case 'weekly':
           opt.body.formConfigs.recurrency.rule = {
@@ -616,6 +743,7 @@ export default defineComponent({
           return
         }
         this.$q.notify("Configuração de formulário criada com sucesso!");
+        this.$router.push('/config/formConfigList')
       });
     },
     getFieldTypes() {
@@ -642,6 +770,9 @@ export default defineComponent({
         this.newField.type = null;
         this.newField.required = true;
         this.newField.multiple = false;
+        if(this.newField.options) {
+          this.newField.options = []
+        }
         return;
       }
       this.$q.notify("preencha todos os dados antes de adicionar um campo");
