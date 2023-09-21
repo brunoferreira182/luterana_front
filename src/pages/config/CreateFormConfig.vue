@@ -124,6 +124,7 @@
               hint="Informe o tempo de preenchimento do formulário"
               :options="formDates"
             />
+            
             <q-select
               v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'weekly'"
               outlined
@@ -183,6 +184,20 @@
                 />
               </div>
             </div>
+            <div class="text-h5">
+              Vincular formulário
+            </div>
+            <q-select
+              outlined
+              label="Vínculo"
+              option-label="label"
+              emit-value
+              map-options
+              :option-value="(item) => item.type"
+              v-model="formAttachSelected"
+              hint="Há uma conexão deste formulário com um usuário ou organismo?"
+              :options="attachUserAndOrganism"
+            />
             <div
               class="text-h5"
             >
@@ -479,6 +494,11 @@ export default defineComponent({
       organismSelected: [],
       functionsSelected: [],
       filterType: null,
+      formAttachSelected: '',
+      attachUserAndOrganism: [
+        { label: 'Usuário', type: 'user'},
+        { label: 'Organismo', type: 'organism' }
+      ],
       filterDestinataries: [
         {
           label: 'Nenhum filtro',
@@ -558,7 +578,7 @@ export default defineComponent({
       organismConfigOptions: [],
       organismsNames: [],
       functionsNames: [],
-      dayOfMonthOptions: []
+      dayOfMonthOptions: [],
     };
   },
   mounted() {
@@ -688,6 +708,14 @@ export default defineComponent({
           filterType: this.filterType
         },
       };
+      switch(this.formAttachSelected){
+        case 'user':
+          opt.body.attachedTo = 'user'
+        break;
+        case 'organism':
+          opt.body.attachedTo = 'organism'
+        break;
+      }
       switch(this.formDatesSelected.formType.type) {
         case 'weekly':
           opt.body.formConfigs.recurrency.rule = {
