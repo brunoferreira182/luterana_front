@@ -143,8 +143,7 @@
                       :hint="field.hint"
                       v-model="field.value"
                       :options="field.options"
-                    >
-                    </q-select>
+                    />
                   </div>
                   <div class="text-right" v-if="field.type.type === 'address'">
                     <q-btn

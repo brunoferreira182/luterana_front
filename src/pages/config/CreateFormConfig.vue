@@ -577,6 +577,11 @@ export default defineComponent({
       const newValue = this.multipleOptionsValue[optionIndex].newValue;
       this.multipleOptionsValue[optionIndex].select.push(newValue);
       this.multipleOptionsValue[optionIndex].newValue = '';
+      if(!this.newField.selects) {
+        this.newField.selects = [
+          {label: [], options: []},
+          {label: [], options: []}]
+      }
       this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
       this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
     },

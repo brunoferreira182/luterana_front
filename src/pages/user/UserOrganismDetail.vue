@@ -58,7 +58,7 @@
                     use-input
                     label="Quem convidar"
                     option-label="userName"
-                    :options="usersOptions"
+                    :options="usersOptions.list"
                     @filter="getUsers"
                     :option-value="(item) => item._id"
                     hint="Digite o nome de quem você vai convidar"
@@ -224,7 +224,7 @@ export default defineComponent({
         return
       }
       const opt = {
-        route: "/desktop/adm/getUsers",
+        route: "/desktop/commonUsers/getUsers",
         body: {
           searchString: val,
           isActive: 1,
@@ -238,7 +238,7 @@ export default defineComponent({
           return
         }
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data;
         })
       });
     },
