@@ -110,9 +110,8 @@
                 />
               </div>
               <div v-if="field.type.type === 'wisiwig'">
+                <div class="text-subtitle1">Redação:</div>
                 <q-editor 
-                  :label="field.label"
-                  :hint="field.hint"
                   v-if="field.type.type === 'wisiwig'"
                   v-model="field.value" 
                   min-height="5rem" 
@@ -250,18 +249,42 @@
               </div>
               <div
                 v-if="field.type.type === 'options'"
+                class="q-pa-sm"
               > 
-                <q-select
-                  outlined
-                  :label="field.label"
-                  option-label="optionName"
-                  :option-value="field.options"
-                  emit-value
-                  map-options
-                  :hint="field.hint"
-                  v-model="field.value"
-                  :options="field.options"
-                />
+                <q-btn
+                  v-if="field.multiple || (!field.value || field.value.length === 0)"
+                  icon="add"
+                  color="primary"
+                  outline
+                  rounded
+                  @click="addOption(fieldIndex)"
+                  no-caps
+                >
+                  Adicionar novo campo de seleção
+                </q-btn>
+                <div
+                  v-for="(value, valueIndex) in field.value"
+                  :key="valueIndex"
+                  class="row wrap justify-left q-pa-sm items-left content-center"
+                >
+                  <q-select 
+                    :label="field.label"
+                    option-label="options"
+                    emit-value
+                    map-options
+                    v-model="formFields[fieldIndex].value[valueIndex]"
+                    :options="field.options"
+                    class="col-5"
+                  />
+                  <q-btn
+                    icon="delete"
+                    class="q-ml-lg"
+                    rounded
+                    flat
+                    color="red"
+                    @click="formFields[fieldIndex].value.splice(valueIndex, 1)" 
+                    />
+                </div>
               </div>
               <div v-if="field.type.type === 'person'">
                 <div v-if="field.value && field.value.length > 0">
@@ -548,6 +571,7 @@ export default defineComponent({
           name: '',
         },
       },
+      files : [],
       usersOptions: [],
       userSelected: '',
       formFields: [],
@@ -567,7 +591,40 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   methods: {
+    checkFileType (files) {
+      return files.filter(file => file.type === 'image/png' || file.type === 'image/jpeg')
+    },
+    onRejected() {
+      this.$q.notify({
+        type: 'negative',
+        message: `O arquivo precisa ser em formato PNG ou JPG.`
+      })
+    },
+    saveProfilePhoto() {
+      const opt = {
+        route:'/desktop/commonUsers/addProfilePhotoById',
+        body: {
+          image: this.files
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else{
+          this.$q.notify('Imagem inserida com sucesso!'); 
+        }
+      })
+    },
     addDoubleSelection( fieldIndex){
+      if (!this.formFields[fieldIndex].value) {
+        this.formFields[fieldIndex].value = []
+      }
+      this.formFields[fieldIndex].value.push([])
+    },
+    addOption(fieldIndex) {
       if (!this.formFields[fieldIndex].value) {
         this.formFields[fieldIndex].value = []
       }
