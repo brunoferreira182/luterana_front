@@ -223,30 +223,82 @@
               class="q-mt-xl"
               v-if="newField.type ? newField.type.type === 'options' : false" 
             >
-            <q-input
-              outlined
-              label="Opção" 
-              v-model="newOptionValue[0].newValue"
+              <q-input
+                outlined
+                label="Opção" 
+                v-model="newOptionValue[0].newValue"
+              >
+                <q-btn icon="add" flat @click="addOptionValue"></q-btn>
+              </q-input>
+              <q-chip
+                v-for=" option, i  in newField.options"
+                :key="option"
+                color="primary"
+                text-color="white"
+              >
+                {{ option }}
+                <q-btn
+                  size="sm"
+                  icon="close"
+                  padding="none"
+                  rounded
+                  class="q-ml-sm"
+                  @click="newField.options.splice(i, 1)"
+                  >
+                </q-btn>
+              </q-chip>
+            </div>
+            <div
+              class="q-mt-xl"
+              v-if="newField.type ? newField.type.type === 'multiple_select' : false" 
             >
-              <q-btn icon="add" flat @click="addOptionValue"></q-btn>
-            </q-input>
-            <q-chip
-              v-for=" option, i  in newField.options"
-              :key="option"
-              color="primary"
-              text-color="white"
-            >
-              {{ option }}
-              <q-btn
-                size="sm"
-                icon="close"
-                padding="none"
+              <q-btn 
+                @click="addNewSelectField"
+                color="primary"
+                outline
+                icon="add"
                 rounded
-                class="q-ml-sm"
-                @click="newField.options.splice(i, 1)"
-                >
+                class="q-mb-md"
+              >
+                Adicionar novo campo de seleção
               </q-btn>
-            </q-chip>
+              <div 
+                v-for="(option, optionIndex) in multipleOptionsValue"
+                :key="option"
+              >
+              <div style="display: flex;">
+                <q-input
+                  outlined
+                  class="q-pa-sm"
+                  label="De um nome para o campo de seleção abaixo:"
+                  v-model="multipleOptionsValue[optionIndex].label"
+                  style="width: 50%;"
+                  >
+                </q-input>
+                <q-input
+                  v-model="multipleOptionsValue[optionIndex].newValue"
+                  outlined
+                  label="Opção" 
+                  class="q-pa-sm"
+                  style="width: 50%;"
+                >
+                  <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
+                </q-input>
+              </div>
+                  <div 
+                    v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
+                    :key="select"
+                  >
+                    <q-chip
+                      size="md"
+                      class="q-pa-sm"
+                    >
+                      {{ select }}
+                      <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="close" round flat></q-btn>
+                    </q-chip>
+                  </div>
+                  <q-separator/>
+              </div>
             </div>
             <div
               v-for="(field) in formFields"
@@ -413,6 +465,10 @@ export default defineComponent({
   name: "CreateFormConfig",
   data() {
     return {
+      multipleOptionsValue: [
+        {select: [], label: ''},
+        {select: [], label: ''}
+      ],
       newOptionValue: [
         {newValue: ''}
       ],
@@ -517,6 +573,25 @@ export default defineComponent({
     this.getVisions()
   },
   methods: {
+    insertMultipleField(option, optionIndex) {
+      const newValue = this.multipleOptionsValue[optionIndex].newValue;
+      this.multipleOptionsValue[optionIndex].select.push(newValue);
+      this.multipleOptionsValue[optionIndex].newValue = '';
+      this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
+      this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
+    },
+    addNewSelectField() {
+      if(!this.newField.selects){
+        this.newField.selects = [
+          {label: [], options: []},
+          {label: [], options: []}
+        ]
+      }
+      this.newField.selects.push(
+        {label: [], options: []},
+        {label: [], options: []})
+      this.multipleOptionsValue.push({select: [], label: ''})
+    },
     addOptionValue(){
       if(!this.newField.options) {
         this.newField.options = []
