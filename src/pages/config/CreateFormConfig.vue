@@ -125,7 +125,7 @@
               :options="formDates"
             />
             <q-select
-              v-if="formDatesSelected.formType.type.type === 'weekly'"
+              v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'weekly'"
               outlined
               v-model="formDatesSelected.dayOfWeek"
               label="Dia da semana"
@@ -139,14 +139,14 @@
             />
             <q-input
               outlined
-              v-if="formDatesSelected.formType.type.type === 'yearly'"
+              v-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'yearly'"
               label="Data fim"
               mask="##/##"
               hint="Digite uma data no formato DD/MM"
               v-model="formDatesSelected.finalDate1"
             />
             <div 
-              v-else-if="formDatesSelected.formType.type.type === 'monthly'"
+              v-else-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'monthly'"
               class="row justify-between" 
             >
               <div class="col">
@@ -159,7 +159,7 @@
               </div>
             </div>
             <div 
-              v-else-if="formDatesSelected.formType.type.type === 'semester'"
+              v-else-if="formDatesSelected.formType.type && formDatesSelected.formType.type.type === 'semester'"
               class="row justify-between" 
             >
               <div class="col-6">
