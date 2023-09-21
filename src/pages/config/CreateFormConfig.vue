@@ -35,7 +35,7 @@
       <div class="row justify-around q-pa-md" >
         <div class="col-7 q-gutter-md" align="start">
           <div class="text-h5 q-px-md">
-            Informações 
+            Informações e filtros
           </div>
           <q-select
             class="q-pl-md"
@@ -103,10 +103,13 @@
                 </q-item>
               </template>
             </q-select>
+            <div class="text-h5">
+              Nome do formulário
+            </div>
             <q-input
               :readonly="$route.path === '/config/organismConfigDetail'"
               outlined
-              label="Nome do formulário"
+              label="Nome"
               v-model="formConfigName"
               hint="Informe qual será o nome da configuração deste formulário"
             />

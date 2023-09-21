@@ -33,7 +33,7 @@
           <div
             class="text-h5"
           >
-            Informações 
+            Informações e filtros
           </div>
           <q-select
             outlined
@@ -58,10 +58,13 @@
             v-model="organismConfigId"
             :options="organismConfigOptions"
           />
+          <div class="text-h5">
+            Nome do formulário
+          </div>
           <q-input
             :readonly="$route.path === '/config/organismConfigDetail'"
             outlined
-            label="Nome da configuração"
+            label="Nome"
             v-model="formConfigName"
             hint="Informe qual será o nome da configuração deste formulário"
           />
@@ -161,6 +164,7 @@
             class="row q-gutter-x-sm q-mx-none"
           >
             <div class="col">
+              
               <q-input
                 outlined
                 class="q-ml-sm"
