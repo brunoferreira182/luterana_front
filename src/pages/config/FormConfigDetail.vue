@@ -440,8 +440,8 @@ export default defineComponent({
         },
       };
       try {
-        const response = await useFetch(opt);
-        this.visionsList = response.data.map((vision) => {
+        const r = await useFetch(opt);
+        this.visionsList = r.data.map((vision) => {
           return {
             name: vision.visionInfo.name,
             visionId: vision._id,
