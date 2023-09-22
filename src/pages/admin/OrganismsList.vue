@@ -83,17 +83,6 @@
       </q-table>
       <div class="text-left">
         <q-btn 
-          size="md"
-          class="q-ma-sm"
-          style="text-transform: capitalize;"
-          outline
-          rounded
-          color="primary"
-          @click="filterOrganisms()"
-        >
-          Todos
-        </q-btn>
-        <q-btn 
           v-for="(name, nameIndex) in organismsConfigsNamesList" 
           :key="name"
           size="md"
@@ -191,10 +180,11 @@ export default defineComponent({
       })
     },
     filterOrganisms(nameIndex) {
-      if (nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length) {
-        const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
-        this.selectFilter = selectedOrganism.organismConfigName 
-      } else if(!(nameIndex)) {
+      const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
+      if (nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length &&
+        this.selectFilter !== selectedOrganism.organismConfigName) {
+          this.selectFilter = selectedOrganism.organismConfigName 
+      } else if(selectedOrganism.organismConfigName === this.organismsConfigsNamesList[nameIndex].organismConfigName) {
         this.selectFilter = null
       }
       this.getOrganismsList()
