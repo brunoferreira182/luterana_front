@@ -29,7 +29,7 @@
                 v-model="selectFilter"
                 :options="selectStatus"
                 @update:model-value="getAllOrganismsByString"
-              ></q-select>
+              />
             </div>
             
             <div class="col">
@@ -72,17 +72,6 @@
         </template>
       </q-table>
       <div class="text-left">
-        <q-btn 
-          size="md"
-          class="q-ma-sm"
-          style="text-transform: capitalize;"
-          outline
-          rounded
-          color="primary"
-          @click="filterOrganisms()"
-        >
-          Todos
-        </q-btn>
         <q-btn 
           v-for="(organism, nameIndex) in userOrganismList" 
           :key="organism"
@@ -173,15 +162,14 @@ export default defineComponent({
       });
     },
     filterOrganisms(nameIndex) {
-      if (nameIndex >= 0) {
-        const selectedOrganism = this.userOrganismList[nameIndex]
+      const selectedOrganism = this.userOrganismList[nameIndex]
+      if (nameIndex >= 0 && this.selectFilter !== selectedOrganism.organismConfigName) {
         this.selectFilter = selectedOrganism.organismConfigName 
-        console.log(this.selectFilter)
-      } else if(!(nameIndex)) {
+      } else if(selectedOrganism.organismConfigName === this.userOrganismList[nameIndex].organismConfigName) {
         this.selectFilter = null
       }
       this.getAllOrganismsByString()
-    }
+    },
     // getOrganismsByUserId() {
     //   const opt = {
     //     route: "/desktop/commonUsers/getOrganismsByUserId",
