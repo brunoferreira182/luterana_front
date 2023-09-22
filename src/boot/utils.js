@@ -188,7 +188,7 @@ const useUtils = {
         {
           label: "Títulos",
           route: "/admin/titlesList",
-          icon: "import_contacts",
+          icon: "school",
         },
         {
           label: "Solicitações de Títulos",
@@ -230,7 +230,7 @@ const useUtils = {
         {
           label: "Configuração de formulário",
           route: "/config/formConfigList",
-          icon: "forum",
+          icon: "feed",
         },
         {
           label: "Grupo de funções",

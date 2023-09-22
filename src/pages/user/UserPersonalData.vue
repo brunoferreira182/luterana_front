@@ -157,7 +157,7 @@
                       :filter="checkFileType"
                       label="Clique aqui para adicionar imagem de perfil"
                       outlined
-                      @update="saveProfilePhoto"
+                      @input="saveProfilePhoto()"
                     >
                       <template #append>
                         <q-icon name="attach_file" />
@@ -921,7 +921,7 @@ export default defineComponent({
           name: ''
         },
       },
-      files: []
+      files: ''
     };
   },
   mounted() {
@@ -933,11 +933,15 @@ export default defineComponent({
   },
   methods: {
     saveProfilePhoto() {
+      console.log(this.files)
       const opt = {
         route:'/desktop/commonUsers/addProfilePhotoById',
-        body: {
-          image: this.files
-        }
+        file: [
+          {
+            name: 'foto',
+            file: this.files
+          }
+        ]
       }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
