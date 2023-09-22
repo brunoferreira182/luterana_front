@@ -279,18 +279,24 @@
             <q-tab-panel
               name="forms"
             >
-              <div
-                v-for="form in userForms"
-                :key="form"
-              >
-                <q-btn
-                  no-caps
-                  unelevated
-                  rounded
-                  color="primary"
-                  @click="openUserFormDialog(form)"
-                  :label="form.formName"
-                />
+            <div class="text-body1 q-pa-sm" v-if="userForms && userForms.length">
+              Utilize os botões abaixo para preencher um formulário
+            </div>
+              <div class="row" v-if="userForms && userForms.length">
+                <div
+                  v-for="form in userForms"
+                  :key="form"
+                  class="col-2"
+                >
+                  <q-btn
+                    no-caps
+                    unelevated
+                    rounded
+                    color="primary"
+                    @click="openUserFormDialog(form)"
+                    :label="form.formName"
+                  />
+                </div>
               </div>
               <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
                 <q-card style="border-radius: 1rem; min-width: 650px">
@@ -314,13 +320,13 @@
                         />
                         <q-editor 
                           v-if="field.type.type === 'wisiwig'"
-                          v-model="field.value" 
+                          v-model="field.type.label" 
                           min-height="5rem" 
                         />
                         <q-checkbox
                           v-else-if="field.type.type === 'boolean'"
                           :label="field.label"
-                          v-model="newOrganism[field.model]"
+                          v-model="field.model"
                         ></q-checkbox>
                       </div>
                     </div>
@@ -683,6 +689,7 @@ export default defineComponent({
   },
   methods: {
     openUserFormDialog(form){
+      console.log(this.userFormDialog.open)
       this.userFormDialog.formId = form._id
       this.userFormDialog.open = true
     },
@@ -705,6 +712,7 @@ export default defineComponent({
       const opt = {
         route:'/desktop/adm/saveFormData',
         body: {
+          userId: this.$route.query.userId,
           formId: this.userFormDialog.formId,
           fields: this.userFormDialog.data,
           formStatus: 'sent'
