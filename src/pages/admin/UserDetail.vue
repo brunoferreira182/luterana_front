@@ -303,6 +303,9 @@
                 </div>
                 <div class="row full-width q-pa-md">
                   <div class="col-12">
+                    <div class="text-body1 q-pa-sm" v-if="savedForms && savedForms.length">
+                      Formulários enviados
+                    </div>
                     <q-list>
                       <q-item
                         class="form-list"
