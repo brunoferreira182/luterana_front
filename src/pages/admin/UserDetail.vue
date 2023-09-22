@@ -77,7 +77,7 @@
               <q-tab 
                 class="flex-left flex"
                 name="forms" 
-                label="Formulário" 
+                label="Formulários" 
                 icon="feed"
               />
               <q-separator />
@@ -279,23 +279,53 @@
             <q-tab-panel
               name="forms"
             >
-            <div class="text-body1 q-pa-sm" v-if="userForms && userForms.length">
-              Utilize os botões abaixo para preencher um formulário
-            </div>
+              <div class="text-body1 q-pa-sm" v-if="userForms && userForms.length">
+                Formulários direcionados ao usuário
+              </div>
+              <div class="text-caption q-pa-sm" v-if="userForms && userForms.length">
+                Utilize os botões abaixo para preencher um formulário
+              </div>
               <div class="row" v-if="userForms && userForms.length">
                 <div
-                  v-for="form in userForms"
-                  :key="form"
-                  class="col-2"
+                  class="col q-px-xs"
                 >
                   <q-btn
+                    v-for="form in userForms"
+                    :key="form"
                     no-caps
+                    class="q-ma-sm"
+                    outline
                     unelevated
-                    rounded
                     color="primary"
                     @click="openUserFormDialog(form)"
                     :label="form.formName"
                   />
+                </div>
+                <div class="row full-width q-pa-md">
+                  <div class="col-12">
+                    <q-list>
+                      <q-item
+                        class="form-list"
+                        v-for="item in savedForms"
+                        :key="item"
+                      >
+                        <q-item-section class="texr-wrap" lines="2">
+                          <q-item-label class="text-h6">{{ item.formName }}</q-item-label>
+                          <div v-for="field in item.fields" :key="field">
+                            <q-item-label class="text-subtitle2">
+                              {{ field.label }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              {{ field.type.label }}
+                            </q-item-label>
+                          </div>
+                        </q-item-section>
+                        <q-item-section side top>
+                          <q-item-label caption>{{ item.createdAt.createdAtLocale }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
                 </div>
               </div>
               <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
@@ -665,6 +695,7 @@ export default defineComponent({
       userName: '',
       splitterModel: 25,
       titleFields: [],
+      savedForms: [],
       visionSelected: 'personalData',
       userDetail: null,
       deleteTitle: {
@@ -770,7 +801,6 @@ export default defineComponent({
       })
     },
     updateUserTitle(i){
-      console.log(i)
       const opt = {
         route: "/desktop/adm/updateUserTitle",
         body: {
@@ -791,7 +821,6 @@ export default defineComponent({
       });
     },
     indetifyIndex(i) {
-      console.log(i)
       this.selectIndex = i
     },
     clkConfirmDeleteTitle () {
@@ -823,7 +852,6 @@ export default defineComponent({
         } else {
           this.userData = r.data
           this.tab = r.data.userDataTabs[0].tabValue
-          this.getUserDetailById()
         }
       });
     },
@@ -860,6 +888,7 @@ export default defineComponent({
         }
         this.userDetail = r.data
         this.userForms = r.data.forms
+        r.data.savedForms ? this.savedForms = r.data.savedForms : this.savedForms = []
         this.mountUserData()
       });
     },
@@ -996,6 +1025,10 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+.form-list{
+  border-radius: 0.5rem;
+  background-color: #ebebeb;
+}
 .bounce-enter-active {
   animation: bounce-in 0.5s;
 }
