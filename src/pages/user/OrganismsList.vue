@@ -29,7 +29,7 @@
                 v-model="selectFilter"
                 :options="selectStatus"
                 @update:model-value="getAllOrganismsByString"
-              ></q-select>
+              />
             </div>
             
             <div class="col">
