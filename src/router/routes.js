@@ -108,6 +108,10 @@ const routes = [
         path: "/config/createUserConfig",
         component: () => import("pages/config/CreateUserConfig.vue"),
       },
+      {
+        path: "/config/createPastoralConfig",
+        component: () => import("pages/config/CreatePastoralConfig.vue"),
+      },
       
       //configurations//titulos
       {
@@ -229,7 +233,8 @@ const routes = [
       {
         path: "/user/userFormDetail",
         component: () => import("pages/user/UserFormDetail.vue"),
-      }, 
+      },
+      
     ],
   },
 

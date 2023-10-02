@@ -273,7 +273,7 @@
           <q-checkbox
             class="q-pt-lg"
             v-model="newField.required"
-            label="Preenchimento Obrigatório"
+            label="Obrigatório"
           />
           <q-checkbox
             :disable="
@@ -282,6 +282,11 @@
             class="q-pt-lg"
             v-model="newField.multiple"
             label="Campo múltiplo"
+          />
+          <q-checkbox
+            class="q-pt-lg"
+            v-model="newField.onlyAdm"
+            label="Somente ADM"
           />
           <div
             class="row justify-center"
@@ -798,6 +803,7 @@ export default defineComponent({
         hint: null,
         required: true,
         multiple: false,
+        onlyAdm: false,
         selects: [
           {label: [], options: []},
           {label: [], options: []}

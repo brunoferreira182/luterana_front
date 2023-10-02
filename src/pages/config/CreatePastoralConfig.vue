@@ -3,7 +3,7 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          class="col-6 text-h5 text-capitalize">Criar configuração de usuário
+          class="col-6 text-h5 text-capitalize">Criar configuração de Pastor
         </div>
         <div class="col text-right">
           <q-btn
@@ -48,7 +48,7 @@
                   flat
                   class="q-ml-sm"
                   icon="edit"
-                  @click="0(tabCard, tabIndex)"
+                  @click="clkDialogClkEditName(tabCard, tabIndex)"
                 />           
                 <q-btn
                   v-if="tabIndex > 0"
@@ -78,7 +78,7 @@
                     :hint="field.hint"
                     outlined
                   >
-                    <!-- <template
+                    <template
                       #append
                     >
                       <q-btn
@@ -94,7 +94,7 @@
                           {{ field.type.label }}</q-tooltip
                         >
                       </q-btn>
-                    </template> -->
+                    </template>
                   </q-input>
                   <div v-if="field.type.type === 'options'">
                     <q-chip
@@ -127,7 +127,7 @@
                 <div class="col-1">
                   <div>
                     <q-btn 
-                      v-if="i > 1 || tabIndex > 0"
+                      v-if="(tabIndex > 0 )"
                       icon="delete"
                       size="large"
                       class="q-mb-md"
@@ -142,6 +142,7 @@
               </div>
             </div>
             <q-btn
+              v-if="tabIndex > 0"
               rounded
               color="primary"
               no-caps
@@ -418,7 +419,6 @@ export default defineComponent({
       newOptionValue: [
         {newValue: ''}
       ],
-      organismTypesOptions: [],
       tabName: '',
       fieldTypesOptions: [],
       dialogClkEditName: false,
@@ -467,8 +467,7 @@ export default defineComponent({
   beforeMount() {
     this.userInfo = utils.presentUserInfo();
     this.getUsersConfig();
-    this.getOrganismsTypes();
-    // this.getTitlesByStatus();
+    // this.getOrganismsTypes();
     this.getFieldTypes();
   },
   methods: {
@@ -525,36 +524,21 @@ export default defineComponent({
       this.newPhone = "";
       this.typeSelected = null;
     },
-    getTitlesByStatus() {
-      const opt = {
-        route: "/desktop/adm/getTitlesByStatus",
-        body: {
-          isActive: 1,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.titlesList = r.data.list;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    getOrganismsTypes() {
-      const opt = {
-        route: "/desktop/config/getOrganismsTypes",
-        body: {
-          isActive: 1,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismTypesOptions = r.data;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
+    // getOrganismsTypes() {
+    //   const opt = {
+    //     route: "/desktop/config/getOrganismsTypes",
+    //     body: {
+    //       isActive: 1,
+    //     },
+    //   };
+    //   useFetch(opt).then((r) => {
+    //     if (!r.error) {
+    //       this.organismTypesOptions = r.data;
+    //     } else {
+    //       this.$q.notify("Ocorreu um erro, tente novamente por favor");
+    //     }
+    //   });
+    // },
     getFieldTypes() {
       const opt = {
         route: "/desktop/config/getDataTypesList",
@@ -569,35 +553,17 @@ export default defineComponent({
     },
     createUsersConfig() {
       const opt = {
-        route: "/desktop/config/createUsersConfig",
+        route: "/desktop/config/createPastoralConfig",
         body: {
           userDataTabs: this.userDataTabs,
         },
       };
       useFetch(opt).then(r => {
         if (!r.error) {
-          this.$q.notify("Configuração de usuário criada com sucesso!");
+          this.$q.notify("Configuração de pastor criada com sucesso!");
           // this.position = "";
           // this.multiple = "";
           // this.organismName = "";
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    updateOrganismConfig() {
-      const _id = this.$route.query._id;
-      const opt = {
-        route: "/desktop/config/updateOrganismConfig",
-        body: {
-          organismConfigId: _id,
-          userDataTabs: this.userDataTabs,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.$q.notify("Os campos foram atualizados com sucesso!");
-          this.$router.push('/config/organismConfigurationList')
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
@@ -616,13 +582,6 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
-    },
-    clkSaveConfig() {
-      if (this.$route.path === "/config/organismConfigDetail") {
-        this.updateOrganismConfig();
-      } else {
-        this.createOrganismsConfig();
-      }
     },
     notifyRemoved() {
       this.$q.notify("Campo removido")

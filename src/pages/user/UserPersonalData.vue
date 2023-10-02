@@ -121,7 +121,13 @@
                       && field.type.type !== 'attach'
                       && field.type.type !== 'organism'
                       && field.type.type !== 'multiple_select'
-                      && field.type.type !== 'image'"
+                      && field.type.type !== 'image'
+                      && field.type.type !== 'bank_data'
+                      && field.type.type !== 'email'
+                      && field.type.type !== 'phone'
+                      && field.type.type !== 'mobile'
+                      "
+                      
                     >
                       <q-input
                         :label="field.label"
@@ -130,7 +136,7 @@
                         v-model="field.value"
                         outlined
                       >
-                        <template
+                        <!-- <template
                           v-if="field.multiple"
                           #append
                         >
@@ -147,7 +153,7 @@
                               {{ field.type.label }}</q-tooltip
                             >
                           </q-btn>
-                        </template>
+                        </template> -->
                       </q-input>
                     </div>
                     <q-file
@@ -163,41 +169,6 @@
                         <q-icon name="attach_file" />
                       </template>
                     </q-file>
-                    <!-- <q-uploader
-                      v-if="field.type.type === 'image'"
-                      url="http://localhost:4444/upload"
-                      class="full-width"
-                      flat
-                      :filter="checkFileType"
-                      @rejected="onRejected"
-                    >
-                      <template v-slot:header="scope">
-                        <div class="row no-wrap items-center q-pa-sm q-gutter-xs">
-                          <q-btn v-if="scope.queuedFiles.length > 0" icon="delete" @click="scope.removeQueuedFiles" round dense flat >
-                            <q-tooltip>Apagar</q-tooltip>
-                          </q-btn>
-                          <q-btn v-if="scope.uploadedFiles.length > 0" icon="done_all" @click="scope.removeUploadedFiles" round dense flat >
-                            <q-tooltip>Remove Uploaded Files</q-tooltip>
-                          </q-btn>
-                          <q-spinner v-if="scope.isUploading" class="q-uploader__spinner" />
-                          <div class="col">
-                            <div class="q-uploader__title">Enviar imagem de perfil</div>
-                            <div class="q-uploader__subtitle">{{ scope.uploadSizeLabel }} / {{ scope.uploadProgressLabel }}</div>
-                          </div>
-                          <q-btn v-if="scope.canAddFiles" type="a" icon="add_box" @click="scope.pickFiles" round dense flat>
-                            <q-uploader-add-trigger />
-                            <q-tooltip>Clique para enviar</q-tooltip>
-                          </q-btn>
-                          <q-btn v-if="scope.canUpload" icon="cloud_upload" @click="scope.upload" round dense flat >
-                            <q-tooltip>Enviar imagem</q-tooltip>
-                          </q-btn>
-
-                          <q-btn v-if="scope.isUploading" icon="clear" @click="scope.abort" round dense flat >
-                            <q-tooltip>Cancelar envio</q-tooltip>
-                          </q-btn>
-                        </div>
-                      </template>
-                    </q-uploader> -->
 
                     <div class="text-right" v-if="field.type.type === 'options'">
                       <q-select
@@ -212,20 +183,28 @@
                       >
                       </q-select>
                     </div>
-                    <div
-                      v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
-                      class="text-subtilte1 text-start"
-                    >
-                      <div class="text-h6">Endereços</div>
-                      Nenhum endereço vinculado
-                    </div>
+
+
                     <div v-if="field.type.type === 'address'">
-                      <q-list class="no-margin" v-if="field.value">
+                      <q-btn
+                        label="Endereço"
+                        no-caps
+                        rounded
+                        unelevated
+                        flat
+                        color="primary"
+                        icon="add"
+                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                        class="q-mt-xs"
+                      />
+                      <q-list
+                        class="bg-grey-3 q-pa-md"
+                        style="border-radius: 1rem"
+                        v-if="field.value"
+                      >
                         <q-item
                           v-for="(item, i) in field.value"
                           :key="item + i"
-                          style="border-radius: 1rem"
-                          class="bg-grey-3 q-ma-sm q-pa-md"
                         >
                           <q-item-section>
                             <q-item-label class="text-capitalize">
@@ -242,16 +221,16 @@
                               Complemento:
                               {{ item.complement }}
                             </q-item-label>
-                            <q-item-label></q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
                             <q-item-label caption class="text-capitalize">
                               <q-badge>{{ item.type }}</q-badge>
                             </q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
                             <q-item-label>
                             <q-btn
                               icon="edit"
                               flat
+                              round
                               color="primary"
                               @click="editThisAddress(fieldIndex, tabsIndex, i)"
                             >
@@ -259,6 +238,7 @@
                             <q-btn
                               icon="delete"
                               flat
+                              round
                               color="red"
                               @click="removeThisAddress(fieldIndex, tabsIndex, i)"
                             >
@@ -267,17 +247,8 @@
                           </q-item-section>
                         </q-item>
                       </q-list>
-                      <q-btn
-                        label="Adicionar endereço"
-                        no-caps
-                        rounded
-                        unelevated
-                        outline
-                        color="primary"
-                        icon="add"
-                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                      />
                     </div>
+
                     <div v-if="field.type.type === 'attach'">
                       <q-item class="bg-grey-3" style="border-radius: 1rem">
                         <q-item-section>
@@ -304,6 +275,7 @@
                         </q-item-section>
                       </q-item>
                     </div>
+
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
@@ -312,12 +284,8 @@
                       :hint="field.hint"
                       v-model="field.value"
                     />
+
                     <div v-if="field.type.type === 'person'">
-                      <!-- <div class="text-body">{{ field.label }}</div> -->
-                      <!-- <div
-                        v-if="(!field.value || field.value.length === 0)"
-                        class="text-subtilte1 text-start"
-                      >Nenhuma pessoa vinculada</div> -->
                       <div v-if="field.value && field.value.length > 0">
                         <div class="text-body">{{ field.label }}</div>
                         <q-list class="no-margin">
@@ -360,6 +328,7 @@
                         @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
+
                     <div v-if="field.type.type === 'organism'">
                       <div v-if="field.value && field.value.length > 0">
                         <div class="text-body">{{ field.label }}</div>
@@ -400,6 +369,7 @@
                         @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
                       />
                     </div>
+
                     <div v-if="field.type.type === 'multiple_select'">
                       <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
                         <div class="q-pl-md q-py-sm">
@@ -451,6 +421,99 @@
                         </div>
                       </div>
                     </div>
+
+                    <div v-if="field.type.type === 'bank_data'">
+                      <q-btn
+                        label="Adicionar dados bancários"
+                        no-caps
+                        rounded
+                        flat
+                        color="primary"
+                        @click="clkAddBankData(fieldIndex, tabsIndex)"
+                        icon="add"
+                      />
+                      <q-list class="no-margin" v-if="field.value">
+                        <q-item
+                          v-for="(item, i) in field.value"
+                          :key="item + i"
+                          style="border-radius: 1rem"
+                          class="bg-grey-3 q-pa-md"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-capitalize">
+                              {{ item.bank }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              Agência {{ item.agency }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              Agência {{ item.account }}
+                            </q-item-label>
+                            <q-item-label caption v-if="item.pix !== ''">
+                              Pix {{ item.pix }}
+                            </q-item-label>
+                            <q-item-label></q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+
+                    <div v-if="
+                      field.type.type === 'email'
+                      || field.type.type === 'phone'
+                      || field.type.type === 'mobile'
+                      "
+                    >
+                      <q-btn
+                        :label="`${field.type.label}`"
+                        no-caps
+                        flat
+                        v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                        icon="add"
+                        color="primary"
+                        rounded
+                        @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
+                        class="q-mt-xs"
+                      />
+                      <q-list
+                        class="bg-grey-3 q-pa-md"
+                        v-if="field.value"
+                        style="border-radius: 1rem"
+                      >
+                        <q-item
+                          v-for="(value, iValue) in field.value"
+                          :key="'multField' + iValue"
+                        >
+                          <q-item-section>
+                            <q-item-label>
+                              {{ value.value }}
+                            </q-item-label>
+                            <q-item-label caption >
+                              <q-badge>{{ value.type }}</q-badge>
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-item-label>
+                            <q-btn
+                              icon="edit"
+                              flat
+                              round
+                              color="primary"
+                              @click="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
+                            ><q-tooltip>Editar este {{ field.type.label }}</q-tooltip></q-btn>
+                            <q-btn
+                              icon="delete"
+                              flat
+                              round
+                              color="red"
+                              @click="removePhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
+                            ><q-tooltip>Excluir este {{ field.type.label }}</q-tooltip></q-btn>
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -780,6 +843,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
       <q-dialog v-model="addOrganism.dialogOpen" @hide="clearOrganismInputs">
         <q-card style="border-radius: 1rem; height: 150x; width: 400px">
           <q-card-section>
@@ -824,6 +888,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
       <q-dialog v-model="deleteTitle.openDialog">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -851,6 +916,117 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog v-model="dialogAddBankData.open" @hide="clearBankDataInputs">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Informe os bancários</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Seu documento"
+              v-model="dialogAddBankData.userHasDoc.doc"
+              :disable="dialogAddBankData.userHasDoc?.hasDoc"
+              mask="###.###.###-##"
+            />
+            <q-input
+              outlined
+              label="Banco"
+              v-model="dialogAddBankData.data.bank"
+              hint="Ex: Banco do Brasil, Bradesco, etc" />
+            <q-input
+              outlined
+              label="Agência"
+              v-model="dialogAddBankData.data.agency"
+              hint="Número da agência" />
+            <q-input
+              outlined
+              label="Conta"
+              v-model="dialogAddBankData.data.account"
+              hint="Número da conta" />
+            <q-input
+              outlined
+              label="Chave PIX"
+              v-model="dialogAddBankData.data.pix"
+              hint="Chave PIX" />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="dialogAddBankData.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="confirmAddBankData"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="dialogAddPhoneMobileEmail.open" @hide="clearDialogAddPhoneMobileEmail">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">Informe os dados</div>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              label="Celular"
+              hint="Informe seu celular"
+              mask="(##) #####-####"
+              v-model="dialogAddPhoneMobileEmail.data.value"
+              outlined
+              v-if="dialogAddPhoneMobileEmail.type.type === 'mobile'"
+            />
+            <q-input
+              label="Telefone fixo"
+              hint="Informe seu telefone fixo"
+              mask="(##) ####-####"
+              v-model="dialogAddPhoneMobileEmail.data.value"
+              outlined
+              v-else-if="dialogAddPhoneMobileEmail.type.type === 'phone'"
+            />
+            <q-input
+              label="Email"
+              hint="Informe seu email"
+              v-model="dialogAddPhoneMobileEmail.data.value"
+              outlined
+              v-else-if="dialogAddPhoneMobileEmail.type.type === 'email'"
+            />
+            <q-select
+              :options="dialogAddPhoneMobileEmail.options"
+              v-model="dialogAddPhoneMobileEmail.data.type"
+              outlined
+              label="Tipo"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              color="primary"
+              @click="dialogAddPhoneMobileEmail.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="confirmAddPhoneMobileEmail"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
     </q-page>
   </q-page-container>
 </template>
@@ -921,7 +1097,35 @@ export default defineComponent({
           name: ''
         },
       },
-      files: ''
+      files: '',
+      dialogAddBankData: {
+        open: false,
+        fieldIndex: null,
+        tabsIndex: null,
+        userHasDoc: {
+          hasDoc: false,
+          doc: ''
+        },
+        data: {
+          bank: '',
+          agency: '',
+          account: '',
+          pix: ''
+        }
+      },
+      dialogAddPhoneMobileEmail: {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        options: ['Pessoal', 'Profissional', 'Outro'],
+        action: null,
+        iValue: null
+      }
     };
   },
   mounted() {
@@ -932,6 +1136,89 @@ export default defineComponent({
     this.getTitleNamesList()
   },
   methods: {
+    clearDialogAddPhoneMobileEmail () {
+      this.dialogAddPhoneMobileEmail = {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        options: ['Pessoal', 'Profissional', 'Outro'],
+        action: null,
+        iValue: null
+      }
+    },
+    verifyIfUserHasDocument () {
+      let hasDoc = false
+      let doc = ''
+      let tabWithDoc
+      let fieldWithDoc
+      this.userDetail.userDataTabs.forEach((userTab, iTab) => {
+        // console.log(userTab, iTab, 'userTab aqui')
+        userTab.fields.forEach((userField, iField) => {
+          // console.log(userField, iTab, 'userField aqui')
+          if (userField.model === 'cpf' || userField.model === 'cnpj' || userField.model === 'documento') {
+            tabWithDoc = iTab
+            fieldWithDoc = iField
+          }
+          if ((userField.model === 'cpf' && userField.value && userField.value !== '')
+          || (userField.model === 'cnpj' && userField.value && userField.value !== '')
+          || (userField.model === 'documento' && userField.value && userField.value !== '')) {
+            hasDoc = true
+            doc = userField.value
+
+          }
+        })
+      })
+      return { hasDoc, tabWithDoc, doc, fieldWithDoc }
+    },
+    clearBankDataInputs () {
+      this.dialogAddBankData.data = {
+        bank: '',
+        agency: '',
+        account: '',
+        pix: ''
+      }
+      this.dialogAddBankData.userHasDoc = {
+        hasDoc: false,
+        doc: ''
+      }
+    },
+    confirmAddBankData () {
+      const data = this.dialogAddBankData.data
+      let errorMessage = ''
+      if (this.dialogAddBankData.userHasDoc.doc === '') errorMessage = 'Preencha o documento'
+      else if (data.bank === '') errorMessage = 'Preencha o banco'
+      else if (data.bank !== '' && data.agency === '') errorMessage = 'Preencha a agência'
+      else if (data.bank !== '' && data.agency !== '' && data.account === '') errorMessage = 'Preencha a conta'
+      if (errorMessage !== '') {
+        this.$q.notify(errorMessage)
+        return
+      }
+      if (!this.userData.userDataTabs[this.dialogAddBankData.tabsIndex].fields[this.dialogAddBankData.fieldIndex].value)
+        this.userData.userDataTabs[this.dialogAddBankData.tabsIndex].fields[this.dialogAddBankData.fieldIndex].value = []
+      this.userData.userDataTabs[this.dialogAddBankData.tabsIndex].fields[this.dialogAddBankData.fieldIndex].value.push({
+        bank: this.dialogAddBankData.data.bank,
+        agency: this.dialogAddBankData.data.agency,
+        account: this.dialogAddBankData.data.account,
+        pix: this.dialogAddBankData.data.pix,
+      });
+      this.userData
+        .userDataTabs[this.dialogAddBankData.userHasDoc.tabWithDoc]
+        .fields[this.dialogAddBankData.userHasDoc.fieldWithDoc]
+        .value = this.dialogAddBankData.userHasDoc.doc
+      this.dialogAddBankData.open = false
+    },
+    clkAddBankData(fieldIndex, tabsIndex) {
+      const userHasDoc = this.verifyIfUserHasDocument()
+      this.dialogAddBankData.userHasDoc = userHasDoc
+      this.dialogAddBankData.open = true
+      this.dialogAddBankData.fieldIndex = fieldIndex
+      this.dialogAddBankData.tabsIndex = tabsIndex
+    },
     saveProfilePhoto() {
       console.log(this.files)
       const opt = {
@@ -1176,8 +1463,49 @@ export default defineComponent({
         this.dialogConfirmAddress.open = false;
       }
     },
-    addMultipleField(){
-      this.$q.notify('Diálogo de multiplos dados não implementado')
+    addPhoneMobileEmail(fieldIndex, tabsIndex, field) {
+      this.dialogAddPhoneMobileEmail.action = 'add'
+      this.dialogAddPhoneMobileEmail.open = true
+      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
+    },
+    confirmAddPhoneMobileEmail () {
+      if (this.dialogAddPhoneMobileEmail.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value)
+          this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
+        this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
+          value: this.dialogAddPhoneMobileEmail.data.value,
+          type: this.dialogAddPhoneMobileEmail.data.type
+        })
+      } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
+          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+          .value[this.dialogAddPhoneMobileEmail.iValue] = {
+            value: this.dialogAddPhoneMobileEmail.data.value,
+            type: this.dialogAddPhoneMobileEmail.data.type
+          }
+      }
+      this.dialogAddPhoneMobileEmail.open = false
+    },
+    editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddPhoneMobileEmail.open = true
+      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
+      this.dialogAddPhoneMobileEmail.data = {...value}
+      this.dialogAddPhoneMobileEmail.action = 'edit'
+      this.dialogAddPhoneMobileEmail.iValue = iValue
+    },
+    removePhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
     },
     addAddress() {
       if(this.addressType === "") {
@@ -1200,34 +1528,6 @@ export default defineComponent({
       });
       this.dialogConfirmAddress.open = false;
       this.clearAddressInputs()
-
-
-      // if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address) {
-      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address = [];
-      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
-      //     type: this.addressType,
-      //     cep: this.cep,
-      //     street: this.street,
-      //     number: this.number,
-      //     city: this.city,
-      //     state: this.state,
-      //     district: this.district,
-      //   });
-      //   this.dialogConfirmAddress.open = false;
-      //   this.clearAddressInputs()
-      // } else {
-      //   this.userData.userDataTabs[tabsIndex].fields[fieldIndex].address.push({
-      //     type: this.addressType,
-      //     cep: this.cep,
-      //     street: this.street,
-      //     number: this.number,
-      //     city: this.city,
-      //     state: this.state,
-      //     district: this.district,
-      //   });
-      //   this.clearAddressInputs()
-      //   this.dialogConfirmAddress.open = false;
-      // }
     },
     clearAddressInputs(){
       this.addressType = ''
@@ -1266,12 +1566,6 @@ export default defineComponent({
       });
     },
     clkCreateUser() {
-      // if(
-      //   this.userData.name === '' ||
-      //   this.userData.email === '' ||
-      //   this.userData.user === '' ||
-      //   this.userData.mobile === ''
-      // ){ this.$q.notify('Preencha todos os campos'); return; }
       const opt = {
         route: "/desktop/user/updateUserData",
         body: {
@@ -1314,13 +1608,6 @@ export default defineComponent({
           return
         }
         this.userDetail = r.data
-        // else {
-        //   this.userDetail = r.data
-        //   this.userData.userDataTabs[0].fields[0].value = this.userDetail.userDataTabs[0].fields[0].value
-        //   this.userData.userDataTabs[0].fields[1].value = this.userDetail.userDataTabs[0].fields[1].value
-        //   this.userData.userDataTabs[0].fields[2].value = this.userDetail.userDataTabs[0].fields[2].value
-        //   this.userData.userDataTabs[0].fields[3].value = this.userDetail.userDataTabs[0].fields[3].value
-        // }
         this.mountUserData()
       })
     },

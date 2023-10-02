@@ -117,7 +117,12 @@
                       && field.type.type !== 'person'
                       && field.type.type !== 'organism'
                       && field.type.type !== 'attach'
-                      && field.type.type !== 'multiple_select'"
+                      && field.type.type !== 'multiple_select'
+                      && field.type.type !== 'bank_data'
+                      && field.type.type !== 'email'
+                      && field.type.type !== 'phone'
+                      && field.type.type !== 'mobile'
+                    "
                     >
                       <q-input
                         :label="field.label"
@@ -166,20 +171,17 @@
                         </div>
                       </div>
                     </div>
-                    <div
-                      v-if="field.type.type === 'address' && (!field.value || field.value.length === 0)"
-                      class="text-subtilte1 text-start"
-                    >
-                      <div class="text-h6">Endereços</div>
-                      Nenhum endereço vinculado
-                    </div>
+
                     <div v-if="field.type.type === 'address'">
-                      <q-list class="no-margin" v-if="field.value">
+                      <div class="text-body2">Endereços</div>
+                      <q-list
+                        class="bg-grey-3 q-pa-md"
+                        style="border-radius: 1rem"
+                        v-if="field.value"
+                      >
                         <q-item
                           v-for="(item, i) in field.value"
                           :key="item + i"
-                          style="border-radius: 1rem"
-                          class="bg-grey-3 q-ma-sm q-pa-md"
                         >
                           <q-item-section>
                             <q-item-label class="text-capitalize">
@@ -196,9 +198,6 @@
                               Complemento:
                               {{ item.complement }}
                             </q-item-label>
-                            <q-item-label></q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
                             <q-item-label caption class="text-capitalize">
                               <q-badge>{{ item.type }}</q-badge>
                             </q-item-label>
@@ -206,6 +205,7 @@
                         </q-item>
                       </q-list>
                     </div>
+
                     <div v-if="field.type.type === 'attach'">
                       <q-item>
                         <q-item-section>
@@ -272,6 +272,63 @@
                         </q-list>
                       </div>
                     </div>
+
+                    <div v-if="field.type.type === 'bank_data'">
+                      <div class="text-body2">Dados bancários</div>
+                      <q-list class="no-margin" v-if="field.value">
+                        <q-item
+                          v-for="(item, i) in field.value"
+                          :key="item + i"
+                          style="border-radius: 1rem"
+                          class="bg-grey-3 q-ma-sm q-pa-md"
+                        >
+                          <q-item-section>
+                            <q-item-label class="text-capitalize">
+                              {{ item.bank }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              Agência {{ item.agency }}
+                            </q-item-label>
+                            <q-item-label caption>
+                              Agência {{ item.account }}
+                            </q-item-label>
+                            <q-item-label caption v-if="item.pix !== ''">
+                              Pix {{ item.pix }}
+                            </q-item-label>
+                            <q-item-label></q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+
+                    <div v-if="
+                      field.type.type === 'email'
+                      || field.type.type === 'phone'
+                      || field.type.type === 'mobile'
+                      "
+                    >
+                      <div class="text-body2">{{ field.type.label }}</div>
+                      <q-list
+                        class="bg-grey-3 q-pa-md"
+                        v-if="field.value"
+                        style="border-radius: 1rem"
+                      >
+                        <q-item
+                          v-for="(value, iValue) in field.value"
+                          :key="'multField' + iValue"
+                        >
+                          <q-item-section>
+                            <q-item-label>
+                              {{ value.value }}
+                            </q-item-label>
+                            <q-item-label caption >
+                              <q-badge>{{ value.type }}</q-badge>
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+
                   </div>
                 </div>
               </div>

@@ -218,7 +218,12 @@ const useUtils = {
           icon: "group",
         },
         {
-          label: "Títulos",
+          label: "Configuração de pastor",
+          route: "/config/createPastoralConfig",
+          icon: "group",
+        },
+        {
+          label: "Formação",
           route: "/config/titleConfigurationList",
           icon: "import_contacts",
         },
@@ -273,11 +278,11 @@ const useUtils = {
           route: "/user/organismsList",
           icon: "diversity_2",
         },
-        {
-          label: "Minhas pendências",
-          route: "/user/pendingList",
-          icon: "pending_actions",
-        },
+        // {
+        //   label: "Minhas pendências",
+        //   route: "/user/pendingList",
+        //   icon: "pending_actions",
+        // },
         {
           label: "Lista das minhas funções",
           route: "/user/userFunctionsList",

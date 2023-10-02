@@ -11,21 +11,34 @@
         />
       </div>
       <div class="" v-if="userDataTabs.length > 0">
-          <div class="no-wrap flex-center">
-            <div                 
+          <div class="flex-center q-gutter-md">
+            <div
               v-for="(field, i) in userDataTabs[0].fields"
               :key="field"
             >
               <q-input
+                v-if="field.type.type !== 'options'"
                 :hint="field.hint"
                 :label="field.label"
                 v-model="userDataTabs[0].fields[i].value"
                 :mask="field.type.mask"
-                class="q-ma-sm"
+                outlined
               />
+              <q-select
+                v-if="field.type.type === 'options'"
+                outlined
+                :label="field.label"
+                option-label="optionName"
+                emit-value
+                map-options
+                :hint="field.hint"
+                v-model="field.value"
+                :options="field.options"
+              >
+              </q-select>
             </div>
             <q-btn
-              class="full-width q-mb-md q-mt-sm"
+              class="full-width"
               color="primary"
               label="Cadastrar"
               unelevated
@@ -44,10 +57,6 @@
         </div>
       </div>
     </div>
-    <q-footer flat class="bg-transparent text-primary q-pa-md">
-      <div>Versão 1.0</div>
-      <div>Build 1.2</div>
-    </q-footer>
   </q-layout>
 </template>
 
