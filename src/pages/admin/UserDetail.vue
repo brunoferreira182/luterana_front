@@ -175,9 +175,10 @@
                     <div v-if="field.type.type === 'address'">
                       <div class="text-body2">Endereços</div>
                       <q-list
-                        class="bg-grey-3 q-pa-md"
+                        class="bg-grey-3"
                         style="border-radius: 1rem"
                         v-if="field.value"
+                        separator
                       >
                         <q-item
                           v-for="(item, i) in field.value"
@@ -275,12 +276,15 @@
 
                     <div v-if="field.type.type === 'bank_data'">
                       <div class="text-body2">Dados bancários</div>
-                      <q-list class="no-margin" v-if="field.value">
+                      <q-list
+                        v-if="field.value"
+                        separator
+                        style="border-radius: 1rem"
+                        class="bg-grey-3"
+                      >
                         <q-item
                           v-for="(item, i) in field.value"
                           :key="item + i"
-                          style="border-radius: 1rem"
-                          class="bg-grey-3 q-ma-sm q-pa-md"
                         >
                           <q-item-section>
                             <q-item-label class="text-capitalize">
@@ -309,9 +313,10 @@
                     >
                       <div class="text-body2">{{ field.type.label }}</div>
                       <q-list
-                        class="bg-grey-3 q-pa-md"
+                        class="bg-grey-3"
                         v-if="field.value"
                         style="border-radius: 1rem"
+                        separator
                       >
                         <q-item
                           v-for="(value, iValue) in field.value"
