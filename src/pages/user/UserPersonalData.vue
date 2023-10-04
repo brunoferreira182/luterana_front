@@ -29,19 +29,6 @@
             @click="visionSelected = 'titles'"
             :outline="visionSelected === 'titles' ? false : true"
           />
-          <!-- <q-btn
-            no-caps
-            rounded
-            unelevated
-            class="q-pa-sm"
-            color="primary"
-            icon="bookmark"
-            :label="isSaving ? '' : 'Salvar Dados'"
-            @click="salvar"
-            :disable="isSaving"
-          >
-            <q-spinner-dots v-if="isSaving" color="white" size="1em" />
-          </q-btn> -->
         </div>
       </div>
       <q-separator/>
@@ -702,53 +689,6 @@
         :addressDataProp="dialogConfirmAddress.data"
         @confirmAddress="addAddress"
       />
-      <!-- <q-dialog v-model="dialogConfirmAddress.open" @hide="clearAddressInputs">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">Informe os dados de endereço</div>
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-input mask="########" outlined label="CEP" v-model="cep" @keyup="checkCEP" />
-            <q-input
-              outlined
-              label="Informe o tipo de endereço (obrigatório)"
-              hint="Exemplo: Casa, trabalho, etc..."
-              v-model="addressType"
-            />
-            <q-input outlined label="Logradouro" v-model="street" />
-            <q-input outlined label="Número" type="number" v-model="number" />
-            <q-input outlined label="Bairro" v-model="district" />
-            <q-input outlined label="Complemento" v-model="complement" />
-            <div class="row">
-              <div class="col">
-                <q-input outlined label="Cidade" v-model="city" />
-              </div>
-              <div class="col q-pl-md">
-                <q-input outlined mask="AA" label="Estado" v-model="state" />
-              </div>
-            </div>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              color="primary"
-              @click="dialogConfirmAddress.open = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="addAddress"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
-
-      
 
       <DialogAddPerson
         :open="addPerson.dialogOpen"
@@ -1360,25 +1300,6 @@ export default defineComponent({
       this.addOrganism.tabIndex = tabIndex
       this.addOrganism.dialogOpen = true
     },
-    // checkCEP(ev) {
-    //   this.cep = ev.target.value;
-    //   if (this.cep.length === 8) {
-    //     const opt = {
-    //       route: "/utils/consultZipCode",
-    //       body: {
-    //         zipCode: this.cep,
-    //       },
-    //     };
-    //     this.$q.loading.show();
-    //     useFetch(opt).then((r) => {
-    //       this.$q.loading.hide();
-    //       this.street = r.data.logradouro;
-    //       this.city = r.data.localidade;
-    //       this.state = r.data.uf;
-    //       this.district = r.data.bairro;
-    //     });
-    //   }
-    // },
     clkOpenAddressDialog(fieldIndex, tabIndex) {
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
