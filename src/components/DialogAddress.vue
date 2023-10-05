@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="open">
+  <q-dialog :model-value="open" @hide="closeDialog">
     <q-card style="border-radius: 1rem; height: 150x; width: 400px">
       <q-card-section>
         <div class="text-h6 text-center">Informe os dados de endereço</div>
@@ -61,10 +61,11 @@ import { Loading } from 'quasar'
 const props = defineProps(['open', 'addressDataProp'])
 const emits = defineEmits(['closeDialog', 'confirmAddress'])
 
-watch(props.addressDataProp, (nV) => {
+watch(() => props.addressDataProp, (nV) => {
   addressData.value = nV
-})
+}, { deep: true })
 
+console.log('destruiu?')
 
 const addressData = ref({
   cep: '',

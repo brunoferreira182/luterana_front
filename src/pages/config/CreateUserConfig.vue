@@ -3,167 +3,141 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div 
-          class="col-6 text-h5 text-capitalize">Criar configuração de usuário
+          class="col-6 text-h5 text-capitalize">Criar configuração de {{ userType === 'pastor' ? 'Pastor' : 'Usuário' }}
         </div>
         <div class="col text-right">
+          <q-btn 
+            outline 
+            rounded 
+            no-caps 
+            color="primary" 
+            icon="add" 
+            label="Adicionar nova aba"
+            @click="dialogNewTab.open = true"
+            class="q-mr-sm"
+          />
           <q-btn
             @click="createUsersConfig"
             rounded
             color="primary"
             unelevated
             no-caps
-          >
-            Salvar
-          </q-btn>
+            label="Salvar"
+          />
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <div class="text-right q-px-md q-pt-md" >
-        <q-btn 
-          outline 
-          rounded 
-          no-caps 
-          color="primary" 
-          icon="add" 
-          label="Adicionar nova aba"
-          @click="dialogNewTab.open = true"
-        />
-      </div>
-      <div class="row q-ma-md q-col-gutter-md" >
+      <!-- <div class="text-right q-px-md q-pt-md" >
+        
+      </div> -->
+      <div class="row q-ma-sm q-col-gutter-sm" >
         <div
           v-for="(tabCard, tabIndex) in userDataTabs"
           :key="tabIndex"
-          class="col-6"
+          class="col-12"
         >
-          <q-card class="userDataTabs-card bg-grey-1">
+          <q-expansion-item
+            expand-separator
+            :label="tabCard.tabLabel"
+            header-style="font-weight: 700"
+          >
+          <q-card class="userDataTabs-card bg-grey-3">
             <div class="row">
-              <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div>
-                
-                <q-btn
-                  v-if="tabIndex > 0"
-                  rounded
-                  color="primary"
-                  no-caps
-                  unelevated
-                  flat
-                  class="q-ml-sm"
-                  icon="edit"
-                  @click="0(tabCard, tabIndex)"
-                />           
-                <q-btn
-                  v-if="tabIndex > 0"
-                  rounded
-                  style="margin-left: auto;"
-                  color="grey-7"
-                  no-caps
-                  flat
-                  icon="close"
-                  @click="dialogDeleteTab.open = true,
-                    dialogDeleteTab.tabIndex = tabIndex"
-                >
+              <!-- <div class="text-h6 q-mx-sm">{{ tabCard.tabLabel }}</div> -->
+              <!-- <q-btn
+                v-if="tabIndex > 0"
+                round
+                color="orange"
+                no-caps
+                unelevated
+                flat
+                icon="edit"
+                @click="0(tabCard, tabIndex)"
+              >
+                <q-tooltip>Editar nome da aba</q-tooltip>
+              </q-btn> -->
+              <q-btn
+                v-if="tabIndex > 0"
+                round
+                no-caps
+                flat
+                icon="close"
+                color="negative"
+                @click="dialogDeleteTab.open = true,
+                  dialogDeleteTab.tabIndex = tabIndex"
+              >
                 <q-tooltip>Excluir aba</q-tooltip>
               </q-btn>
             </div>
-            <div
-              v-for="(field, i) in tabCard.fields"
-              :key="i"
-              class="q-my-md"
-            >
-              <div class="row q-gutter-sm items-center">
-                <div class="col-8">
-                  <q-input
-                    v-if="field.type.type !== 'boolean'"
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
-                    outlined
-                  >
-                    <!-- <template
-                      #append
-                    >
-                      <q-btn
-                        v-if="field.multiple === true"
-                        icon="add"
-                        color="primary"
-                        flat
-                        round
-                        @click="addMultipleField"
-                      >
-                        <q-tooltip
-                          >Adicionar multiplo
-                          {{ field.type.label }}</q-tooltip
-                        >
-                      </q-btn>
-                    </template> -->
-                  </q-input>
-                  <div v-if="field.type.type === 'options'">
-                    <q-chip
+            <q-list separator>
+              <q-item
+                v-for="(field, fieldIndex) in tabCard.fields"
+                :key="fieldIndex"
+              >
+                <q-item-section>
+                  <q-item-label>{{ field.label }}</q-item-label>
+                  <q-item-label caption>{{ field.hint }}</q-item-label>
+                  <q-item-label caption>
+                    Tipo: 
+                    <q-badge :label="field.type.label" color="green"/>
+                    <q-icon size="sm" v-if="field.required" name="error_outline" color="red"><q-tooltip>Campo obrigatório</q-tooltip> </q-icon>
+                  </q-item-label>
+                  <q-item-label caption v-if="field.type.type === 'options'">
+                    Opções: 
+                    <q-badge
                       v-for="options in field.options"
                       :key="options"
                       size="sm"
                       color="primary" 
-                      text-color="white" 
+                      text-color="white"
+                      class="q-mr-xs"
+                      outline
                     >
-                    {{ options }}
-                    </q-chip>
-                  </div>
-                  <q-checkbox
-                    v-if="field.type.type === 'boolean'"
-                    class="q-pt-lg"
-                    readonly
-                    :label="field.label"
-                    :hint="field.hint"
+                      {{ options }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>
+                  <q-btn 
+                    v-if="fieldIndex > 1 || tabIndex > 0"
+                    icon="edit"
+                    round
+                    @click="editField(tabIndex, fieldIndex, field)"
+                    flat
+                    color="warning"
                   />
-                </div>
-                <div class="col-2 q-mb-md">
-                  <q-badge class="q-pa-xs">{{
-                    field.type.label
-                  }}</q-badge
-                  ><br />
-                  <q-badge color="orange" class="q-pa-xs">
-                    {{ field.required ? "Obrigatório" : "opcional" }}
-                  </q-badge>
-                </div>
-                <div class="col-1">
-                  <div>
-                    <q-btn 
-                      v-if="i > 1 || tabIndex > 0"
-                      icon="delete"
-                      size="large"
-                      class="q-mb-md"
-                      rounded
-                      @click="tabCard.fields.splice(i, 1), 
-                      notifyRemoved()"
-                      flat
-                      color="primary"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+                  <q-btn 
+                    v-if="fieldIndex > 1 || tabIndex > 0"
+                    icon="delete"
+                    round
+                    @click="tabCard.fields.splice(i, 1)"
+                    flat
+                    color="negative"
+                  />
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
             <q-btn
               rounded
               color="primary"
               no-caps
               class
-              unelevated
-              outline
+              flat
               icon="add"
               @click="clkAddTabData(tabIndex)"
               label="Adicionar campo"
             />
-            <q-card-section class="q-gutter-sm">
-            </q-card-section>
           </q-card>
+          </q-expansion-item>
         </div>
       </div>
       <q-dialog v-model="dialogInsertFields.open">
         <div class="row">
           <div class="col-10">
             <q-card class="card-insert-fields">
-              <div
-                class="text-h5 q-pa-md text-center"
-              >
+              <div class="text-h5 q-pa-md text-center">
                 Adicione os campos de preenchimento
               </div>
               <div class="q-gutter-y-md">
@@ -230,38 +204,39 @@
                     v-for="(option, optionIndex) in multipleOptionsValue"
                     :key="option"
                   >
-                  <div style="display: flex;">
-                    <q-input
-                      outlined
-                      class="q-pa-sm"
-                      label="De um nome para o campo de seleção abaixo:"
-                      v-model="multipleOptionsValue[optionIndex].label"
-                      style="width: 50%;"
+                    <div style="display: flex;">
+                      <q-input
+                        outlined
+                        class="q-pa-sm"
+                        label="De um nome para o campo de seleção abaixo:"
+                        v-model="multipleOptionsValue[optionIndex].label"
+                        style="width: 50%;"
+                        >
+                      </q-input>
+                      <q-input
+                        v-model="multipleOptionsValue[optionIndex].newValue"
+                        outlined
+                        label="Opção" 
+                        class="q-pa-sm"
+                        style="width: 50%;"
                       >
-                    </q-input>
-                    <q-input
-                      v-model="multipleOptionsValue[optionIndex].newValue"
-                      outlined
-                      label="Opção" 
-                      class="q-pa-sm"
-                      style="width: 50%;"
-                    >
-                      <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
-                    </q-input>
-                  </div>
-                      <div 
+                        <q-btn icon="add" @click="insertMultipleField(option, optionIndex)" flat></q-btn>
+                      </q-input>
+                    </div>
+                    <div>
+                      <q-chip
                         v-for="(select, selectIndex) in multipleOptionsValue[optionIndex].select"
                         :key="select"
+                        class="q-pa-sm"
                       >
-                        <q-chip
-                          size="md"
-                          class="q-pa-sm"
-                        >
-                          {{ select }}
-                          <q-btn @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)" icon="close" round flat></q-btn>
-                        </q-chip>
-                      </div>
-                      <q-separator/>
+                        {{ select }}
+                        <q-btn
+                          @click="multipleOptionsValue[optionIndex].select.splice(selectIndex, 1)"
+                          icon="close"
+                          round
+                          flat/>
+                      </q-chip>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -284,7 +259,7 @@
                 class="row justify-center q-pa-sm"
               >
                 <q-btn
-                  label="Adicionar campo"
+                  label="Confirmar"
                   no-caps
                   rounded
                   unelevated
@@ -408,6 +383,7 @@ export default defineComponent({
   name: "CreateUserConfig",
   data() {
     return {
+      userType: null,
       multipleOptionsValue: [
         {select: [], label: ''},
         {select: [], label: ''}
@@ -418,7 +394,6 @@ export default defineComponent({
       newOptionValue: [
         {newValue: ''}
       ],
-      organismTypesOptions: [],
       tabName: '',
       fieldTypesOptions: [],
       dialogClkEditName: false,
@@ -455,30 +430,54 @@ export default defineComponent({
           {label: [], options: []},
           {label: [], options: []}
         ],
-        options: null
       },
       tabIndexToAddField: '',
       selectedType: "",
+      fieldIndexToEdit: null,
+      action: null
     };
   },
   mounted() {
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.userType = this.$route.query.userType
     this.userInfo = utils.presentUserInfo();
     this.getUsersConfig();
-    this.getOrganismsTypes();
-    // this.getTitlesByStatus();
     this.getFieldTypes();
   },
+  watch: {
+    $route () {
+      this.userType = this.$route.query.userType
+      this.getUsersConfig()
+    }
+  },
   methods: {
+    editField (tabIndex, fieldIndex, field) {
+      console.log(field, 'field aqui')
+      this.newField = {
+        label: field.label,
+        type: field.type,
+        hint: field.hint,
+        multiple: field.multiple,
+        required: field.required,
+        options: [...field.options],
+      }
+      if (field.selects) {
+        this.multipleOptionsValue =  [...field.selects]
+      }
+      this.dialogInsertFields.open = true
+      this.tabIndexToAddField = tabIndex
+      this.fieldIndexToEdit = fieldIndex
+      this.action = 'edit'
+    },
     insertMultipleField(option, optionIndex) {
       const newValue = this.multipleOptionsValue[optionIndex].newValue;
       this.multipleOptionsValue[optionIndex].select.push(newValue);
       this.multipleOptionsValue[optionIndex].newValue = '';
       this.newField.selects[optionIndex].options = this.multipleOptionsValue[optionIndex].select;
       this.newField.selects[optionIndex].label = this.multipleOptionsValue[optionIndex].label
-  },
+    },
     addNewSelectField() {
       this.newField.selects.push(
         {label: [], options: []},
@@ -491,6 +490,7 @@ export default defineComponent({
       this.newField.options = []
       this.newField.selects = [{label: [], options: []},
           {label: [], options: []}]
+      this.action = 'add'
     },
     addTab() {
       this.userDataTabs.push({
@@ -501,59 +501,36 @@ export default defineComponent({
       this.tabLabel = ''
     },
     addField() {
+      if (this.newField.label === '' || this.newField.hint === '' || this.newField.type === '') {
+        this.$q.notify("Preencha todos os dados antes de adicionar um campo");
+        return
+      }
       const tabIndex = this.tabIndexToAddField;
-      if (this.newField.label && this.newField.hint && this.newField.type) {
+      if (this.action === 'add') {
         this.userDataTabs[tabIndex].fields.push({ ...this.newField });
-        this.newField.label = null;
-        this.newField.hint = null;
-        this.newField.type = '';
-        this.newField.options = null;
-        this.newField.required = true;
-        this.newField.multiple = false;
-        this.dialogInsertFields.open = false; // Feche o diálogo após adicionar o campo
-        this.multipleOptionsValue = [
+      } else if (this.action === 'edit') {
+        this.userDataTabs[tabIndex].fields[this.fieldIndexToEdit] = {...this.newField}
+      }
+      this.clearAddFieldInputs()
+    },
+    clearAddFieldInputs () {
+      this.newField.label = null;
+      this.newField.hint = null;
+      this.newField.type = '';
+      this.newField.options = null;
+      this.newField.required = true;
+      this.newField.multiple = false;
+      this.multipleOptionsValue = [
         {select: [], label: ''},
         {select: [], label: ''}
       ]
-      } else {
-        this.$q.notify("Preencha todos os dados antes de adicionar um campo");
-      }
+      this.dialogInsertFields.open = false;
     },
     addMultipleField() {
       this.dialogConfirmMultipleFields.open = false;
       this.userData.generalData.phones.push(this.valueSelected);
       this.newPhone = "";
       this.typeSelected = null;
-    },
-    getTitlesByStatus() {
-      const opt = {
-        route: "/desktop/adm/getTitlesByStatus",
-        body: {
-          isActive: 1,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.titlesList = r.data.list;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
-    getOrganismsTypes() {
-      const opt = {
-        route: "/desktop/config/getOrganismsTypes",
-        body: {
-          isActive: 1,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismTypesOptions = r.data;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
     },
     getFieldTypes() {
       const opt = {
@@ -572,6 +549,7 @@ export default defineComponent({
         route: "/desktop/config/createUsersConfig",
         body: {
           userDataTabs: this.userDataTabs,
+          userType: this.userType
         },
       };
       useFetch(opt).then(r => {
@@ -585,44 +563,46 @@ export default defineComponent({
         }
       });
     },
-    updateOrganismConfig() {
-      const _id = this.$route.query._id;
-      const opt = {
-        route: "/desktop/config/updateOrganismConfig",
-        body: {
-          organismConfigId: _id,
-          userDataTabs: this.userDataTabs,
-        },
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.$q.notify("Os campos foram atualizados com sucesso!");
-          this.$router.push('/config/organismConfigurationList')
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
+    // updateOrganismConfig() {
+    //   const _id = this.$route.query._id;
+    //   const opt = {
+    //     route: "/desktop/config/updateOrganismConfig",
+    //     body: {
+    //       organismConfigId: _id,
+    //       userDataTabs: this.userDataTabs,
+    //     },
+    //   };
+    //   useFetch(opt).then((r) => {
+    //     if (!r.error) {
+    //       this.$q.notify("Os campos foram atualizados com sucesso!");
+    //       this.$router.push('/config/organismConfigurationList')
+    //     } else {
+    //       this.$q.notify("Ocorreu um erro, tente novamente por favor");
+    //     }
+    //   });
+    // },
     getUsersConfig() {
       const opt = {
         route: "/desktop/config/getUsersConfig",
-      };
-      useFetch(opt).then((r) => {
-        if (!r.error) {
-          this.organismTypeName = r.data.organismTypeName;
-          this.userDataTabs = r.data.userDataTabs;
-          this.selectedType = r.data.organismTypeName;
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        body: {
+          userType: this.userType
         }
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor")
+          return
+        }
+        else if (!r.data) {
+          this.$q.notify("Ainda não há configuração salva. Inicie uma.")
+          return
+        }
+        this.organismTypeName = r.data.organismTypeName;
+        this.userDataTabs = r.data.userDataTabs;
+        this.selectedType = r.data.organismTypeName;
       });
-    },
-    clkSaveConfig() {
-      if (this.$route.path === "/config/organismConfigDetail") {
-        this.updateOrganismConfig();
-      } else {
-        this.createOrganismsConfig();
-      }
     },
     notifyRemoved() {
       this.$q.notify("Campo removido")

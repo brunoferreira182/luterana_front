@@ -2,17 +2,17 @@
   <q-dialog :model-value="props.open" @hide="closeDialog">
     <q-card style="border-radius: 1rem; height: 150x; width: 400px">
       <q-card-section>
-        <div class="text-h6 text-center">Selecione a pessoa</div>
+        <div class="text-h6 text-center">Selecione o organismo</div>
       </q-card-section>
       <q-card-section class="q-gutter-md">
         <q-select
-          v-model="userSelected"
+          v-model="organismSelected"
           filled
           use-input
-          label="Nome do usuário"
-          option-label="userName"
-          :options="usersOptions"
-          @filter="getUserByString"
+          label="Nome do organismo"
+          option-label="organismName"
+          :options="options"
+          @filter="getOrganismByString"
           :option-value="(item) => item"
         >
           <template v-slot:no-option>
@@ -30,7 +30,6 @@
           label="Voltar"
           no-caps
           color="primary"
-          rounded
           @click="closeDialog"
         />
         <q-btn
@@ -39,7 +38,7 @@
           label="Confirmar"
           no-caps
           color="primary"
-          @click="confirmAddPerson"
+          @click="confirmAddOrganism"
         />
       </q-card-actions>
     </q-card>
@@ -52,20 +51,20 @@ import useFetch from "../boot/useFetch";
 import { ref } from 'vue'
 
 const props = defineProps(['open'])
-const emits = defineEmits(['closeDialog', 'addPerson'])
+const emits = defineEmits(['closeDialog', 'addOrganism'])
 
-const usersOptions = ref(null)
-const userSelected = ref(null)
+const options = ref(null)
+const organismSelected = ref(null)
 
-function confirmAddPerson () {
-  console.log(userSelected.value)
-  emits('addPerson', userSelected.value)
+function confirmAddOrganism () {
+  console.log(organismSelected.value)
+  emits('addOrganism', organismSelected.value)
 }
 
-function getUserByString (val, update) {
+function getOrganismByString(val, update) {
   if (val < 2) return
   const opt = {
-    route: '/desktop/users/getUsersList',
+    route: '/desktop/adm/getOrganismsNames',
     body: {
       searchString: val
     }
@@ -73,7 +72,7 @@ function getUserByString (val, update) {
   useFetch(opt).then(r => {
     if (r.error) return this.$q.notify(r.errorMessage)
     update(() => {
-      usersOptions.value = r.data.list
+      options.value = r.data
     })
   })
 }

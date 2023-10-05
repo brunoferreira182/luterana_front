@@ -127,6 +127,13 @@ const routes = [
         component: () => import("pages/config/TitleConfigList.vue"),
       },
 
+      // configurações // formações
+
+      {
+        path: "/config/formationConfiguration",
+        component: () => import("pages/config/FormationConfiguration.vue"),
+      },
+
       //configurations//funções
       {
         path: "/config/createFunction",

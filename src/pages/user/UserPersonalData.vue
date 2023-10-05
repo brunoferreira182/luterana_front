@@ -88,11 +88,6 @@
               :key="tabsIndex"
               :name="tabs.tabValue" 
             >
-              <q-list class="text-left text-h6">
-                <q-item>
-                  <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
-                </q-item>
-              </q-list>
               <div
                 v-for="(field, fieldIndex) in tabs.fields"
                 :key="fieldIndex"
@@ -101,20 +96,14 @@
                 <div class="row q-gutter-sm justify-left items-left">
                   <div class="col q-mx-lg">
                     <div v-if="
-                      field.type.type !== 'boolean'
-                      && field.type.type !== 'address'
-                      && field.type.type !== 'options'
-                      && field.type.type !== 'person'
-                      && field.type.type !== 'attach'
-                      && field.type.type !== 'organism'
-                      && field.type.type !== 'multiple_select'
-                      && field.type.type !== 'image'
-                      && field.type.type !== 'bank_data'
-                      && field.type.type !== 'email'
-                      && field.type.type !== 'phone'
-                      && field.type.type !== 'mobile'
+                      field.type.type === 'string'
+                      || field.type.type === 'int'
+                      || field.type.type === 'date'
+                      || field.type.type === 'cpf'
+                      || field.type.type === 'cnpj'
+                      || field.type.type === 'money'
+                      || field.type.type === 'textarea'
                       "
-                      
                     >
                       <q-input
                         :label="field.label"
@@ -153,72 +142,6 @@
                       </q-select>
                     </div>
 
-
-                    <div v-if="field.type.type === 'address'">
-                      <q-btn
-                        label="Endereço"
-                        no-caps
-                        rounded
-                        unelevated
-                        flat
-                        color="primary"
-                        icon="add"
-                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                        class="q-mt-xs"
-                      />
-                      <q-list
-                        class="bg-grey-3"
-                        style="border-radius: 1rem"
-                        v-if="field.value"
-                        separator
-                      >
-                        <q-item
-                          v-for="(item, i) in field.value"
-                          :key="item + i"
-                        >
-                          <q-item-section>
-                            <q-item-label class="text-capitalize">
-                              {{ item.street }}, {{ item.number }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              {{ item.district }} - {{ item.city }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              CEP
-                              {{ item.cep }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Complemento:
-                              {{ item.complement }}
-                            </q-item-label>
-                            <q-item-label caption class="text-capitalize">
-                              <q-badge>{{ item.type }}</q-badge>
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-item-label>
-                            <q-btn
-                              icon="edit"
-                              flat
-                              round
-                              color="primary"
-                              @click="editThisAddress(fieldIndex, tabsIndex, i)"
-                            >
-                            </q-btn>
-                            <q-btn
-                              icon="delete"
-                              flat
-                              round
-                              color="red"
-                              @click="removeThisAddress(fieldIndex, tabsIndex, i)"
-                            >
-                            </q-btn>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </div>
-
                     <div v-if="field.type.type === 'attach'">
                       <q-item class="bg-grey-3" style="border-radius: 1rem">
                         <q-item-section>
@@ -255,100 +178,10 @@
                       v-model="field.value"
                     />
 
-                    <div v-if="field.type.type === 'person'">
-                      <div v-if="field.value && field.value.length > 0">
-                        <div class="text-body">{{ field.label }}</div>
-                        <q-list
-                          style="border-radius: 1rem"
-                          class="bg-grey-3"
-                          separator
-                        >
-                          <q-item
-                            v-for="(item, i) in field.value"
-                            :key="item + i"
-                          >
-                            <q-item-section>
-                              <q-item-label class="text-capitalize">
-                                {{ item.userName }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                {{ item.email }}
-                              </q-item-label>
-                            </q-item-section>
-                            <q-item-section side>
-                              <q-item-label>
-                                <q-btn
-                                  icon="delete"
-                                  flat
-                                  color="red"
-                                  @click="removeThisPerson(fieldIndex, tabsIndex, i)"
-                                />
-                              </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      </div>
-                      <q-btn
-                        :label="`Adicionar ${field.label}`"
-                        no-caps
-                        rounded
-                        flat
-                        color="primary"
-                        icon="add"
-                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                        @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
-                      />
-                    </div>
-
-                    <div v-if="field.type.type === 'organism'">
-                      <div v-if="field.value && field.value.length > 0">
-                        <div class="text-body">{{ field.label }}</div>
-                        <q-list class="no-margin">
-                          <q-item
-                            v-for="(item, i) in field.value"
-                            :key="item + i"
-                            style="border-radius: 1rem"
-                            class="bg-grey-3 q-ma-sm q-pa-md"
-                          >
-                            <q-item-section>
-                              <q-item-label class="text-capitalize">
-                                {{ item.organismName }}
-                              </q-item-label>
-                            </q-item-section>
-                            <q-item-section side>
-                              <q-item-label>
-                                <q-btn
-                                  icon="delete"
-                                  flat
-                                  color="red"
-                                  @click="removeThisOrganism(fieldIndex, tabsIndex, i)"
-                                />
-                              </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      </div>
-                      <q-btn
-                        :label="`Adicionar ${field.label}`"
-                        no-caps
-                        rounded
-                        unelevated
-                        outline
-                        color="primary"
-                        icon="add"
-                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                        @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
-                      />
-                    </div>
-
                     <div v-if="field.type.type === 'multiple_select'">
                       <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
-                        <div class="q-pl-md q-py-sm">
-                          {{ field.label }}:
-                        </div>
-                        <div 
-                          class="q-pa-sm"
-                        >
+                        <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
+                        <div class="q-pa-sm">
                           <q-btn
                             v-if="field.multiple || (!field.value || field.value.length === 0)"
                             icon="add"
@@ -393,6 +226,93 @@
                       </div>
                     </div>
 
+                    <div v-if="field.type.type === 'organism'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <!-- <div class="text-body">{{ field.label }}</div> -->
+                        <q-btn
+                          :label="`Adicionar ${field.label}`"
+                          no-caps
+                          rounded
+                          flat
+                          color="primary"
+                          icon="add"
+                          v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                          @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                        />
+                        <CardOrganism
+                          :data="field"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                          @remove="removeThisOrganism"
+                        />
+                      </div>
+                    </div>
+
+                    <div v-if="field.type.type === 'address'">
+                      <q-btn
+                        label="Endereço"
+                        no-caps
+                        rounded
+                        unelevated
+                        flat
+                        color="primary"
+                        icon="add"
+                        @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                        class="q-mt-xs"
+                      />
+                      <CardAddress
+                        :data="field.value"
+                        :fieldIndex="fieldIndex"
+                        :tabsIndex="tabsIndex"
+                        @edit="editThisAddress"
+                        @remove="removeThisAddress"
+                      />
+                    </div>
+
+                    <div v-if="field.type.type === 'person'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <CardPerson
+                          :data="field"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                          @remove="removeThisPerson"
+                        />
+                      </div>
+                      <q-btn
+                        :label="`Adicionar ${field.label}`"
+                        no-caps
+                        rounded
+                        flat
+                        color="primary"
+                        icon="add"
+                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                        @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
+                      />
+                    </div>
+
+                    <div v-if="field.type.type === 'maritalStatus'">
+                      <div v-if="field.value && field.value.length > 0">
+                        <div class="text-body">{{ field.label }}</div>
+                        <CardMaritalStatus
+                          :data="field"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                          @remove="removeThisPerson"
+                        />
+                      </div>
+                      <q-btn
+                        :label="`Modificar ${field.label}`"
+                        no-caps
+                        rounded
+                        flat
+                        color="primary"
+                        icon="add"
+                        v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                        @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
+                      />
+                    </div>
+
                     <div v-if="field.type.type === 'bank_data'">
                       <q-btn
                         label="Adicionar dados bancários"
@@ -403,51 +323,13 @@
                         @click="clkAddBankData(fieldIndex, tabsIndex)"
                         icon="add"
                       />
-                      <q-list
-                        v-if="field.value"
-                        style="border-radius: 1rem"
-                        class="bg-grey-3"
-                        separator
-                      >
-                        <q-item
-                          v-for="(value, iValue) in field.value"
-                          :key="value + iValue"
-                        >
-                          <q-item-section>
-                            <q-item-label class="text-capitalize">
-                              {{ value.bank }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Agência {{ value.agency }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Agência {{ value.account }}
-                            </q-item-label>
-                            <q-item-label caption v-if="value.pix !== ''">
-                              Pix {{ value.pix }}
-                            </q-item-label>
-                            <q-item-label></q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-item-label>
-                              <q-btn
-                                icon="edit"
-                                flat
-                                round
-                                color="primary"
-                                @click="editBankData(fieldIndex, tabsIndex, field, value, iValue)"
-                              ><q-tooltip>Editar {{ field.type.label }}</q-tooltip></q-btn>
-                              <q-btn
-                                icon="delete"
-                                flat
-                                round
-                                color="red"
-                                @click="removeBankData(fieldIndex, tabsIndex, field, value, iValue)"
-                              ><q-tooltip>Excluir {{ field.type.label }}</q-tooltip></q-btn>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
+                      <CardBankData
+                        :data="field"
+                        :fieldIndex="fieldIndex"
+                        :tabsIndex="tabsIndex"
+                        @edit="editBankData"
+                        @remove="removeBankData"
+                      />
                     </div>
 
                     <div v-if="
@@ -467,44 +349,35 @@
                         @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
                         class="q-mt-xs"
                       />
-                      <q-list
-                        class="bg-grey-3"
-                        v-if="field.value"
-                        style="border-radius: 1rem"
-                        separator
-                      >
-                        <q-item
-                          v-for="(value, iValue) in field.value"
-                          :key="'multField' + iValue"
-                        >
-                          <q-item-section>
-                            <q-item-label>
-                              {{ value.value }}
-                            </q-item-label>
-                            <q-item-label caption >
-                              <q-badge>{{ value.type }}</q-badge>
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-item-label>
-                            <q-btn
-                              icon="edit"
-                              flat
-                              round
-                              color="primary"
-                              @click="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
-                            ><q-tooltip>Editar este {{ field.type.label }}</q-tooltip></q-btn>
-                            <q-btn
-                              icon="delete"
-                              flat
-                              round
-                              color="red"
-                              @click="removePhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
-                            ><q-tooltip>Excluir este {{ field.type.label }}</q-tooltip></q-btn>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
+                      <CardPhoneMobileEmail
+                        :data="field"
+                        :fieldIndex="fieldIndex"
+                        :tabsIndex="tabsIndex"
+                        @edit="editPhoneMobileEmail"
+                        @remove="removePhoneMobileEmail"
+                      />
+                    </div>
+
+                    <div v-if="field.type.type === 'formation'">
+                      <q-btn
+                        label="Formação"
+                        no-caps
+                        rounded
+                        unelevated
+                        flat
+                        color="primary"
+                        icon="add"
+                        @click="clkAddFormation(fieldIndex, tabsIndex)"
+                        class="q-mt-xs"
+                      />
+                      <CardFormation
+                        :data="field"
+                        :fieldIndex="fieldIndex"
+                        :tabsIndex="tabsIndex"
+                        @edit="editFormation"
+                        @remove="removeFormation"
+                      />
+                      
                     </div>
 
                   </div>
@@ -514,7 +387,7 @@
           </q-tab-panels>
         </template>
       </q-splitter>
-      <q-splitter
+      <!-- <q-splitter
         v-model="splitterModel"
         style="height: 100vh;"
         v-show="visionSelected === 'titles'"
@@ -636,58 +509,24 @@
             </q-tab-panel>
           </q-tab-panels>
         </template>
-      </q-splitter>
-      <q-dialog v-model="openDialogVinculateUserToTitle">
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Informe o título que o usuário irá receber
-            </div>
-          </q-card-section>
-          <q-card-section align="center">
-            <q-select
-              v-model="titleSelected"
-              filled
-              label="Nome do título"
-              option-label="titleName"
-              :options="titleOptions"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              rounded
-              color="primary"
-              @click="openDialogVinculateUserToTitle = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="createUserTitle"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      </q-splitter> -->
+
+      <DialogMaritalStatus
+        :open="maritalStatus.open"
+        :dataProp="maritalStatus.data"
+        @closeDialog="clearMaritalStatus"
+      />
       
-      
+      <DialogUserTitle
+        :open="openDialogVinculateUserToTitle"
+        @closeDialog="openDialogVinculateUserToTitle = false"
+        @confirm="createUserTitle"
+      />
       <DialogAddress
         :open="dialogConfirmAddress.open"
         :addressDataProp="dialogConfirmAddress.data"
-        @confirmAddress="addAddress"
+        @confirmAddress="confirmAddress"
+        @closeDialog="clearAddressInputs"
       />
 
       <DialogAddPerson
@@ -696,51 +535,11 @@
         @addPerson="confirmAddPerson"
       />
       
-
-      <q-dialog v-model="addOrganism.dialogOpen" @hide="clearOrganismInputs">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">Selecione o organismo</div>
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="addOrganism.organismSelected"
-              filled
-              use-input
-              label="Nome do organismo"
-              option-label="organismName"
-              :options="addOrganism.organismsOptions"
-              @filter="getOrganismByString"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Voltar"
-              no-caps
-              color="primary"
-              @click="addOrganism.dialogOpen = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="confirmAddOrganism"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      <DialogAddOrganism
+        :open="addOrganism.dialogOpen"
+        @closeDialog="clearOrganismInputs"
+        @addOrganism="confirmAddOrganism"
+      />
 
       <q-dialog v-model="deleteTitle.openDialog">
         <q-card style="border-radius: 1rem; width: 400px">
@@ -770,116 +569,32 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="dialogAddBankData.open" @hide="clearBankDataInputs">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">Informe os bancários</div>
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-input
-              outlined
-              label="Seu documento"
-              v-model="dialogAddBankData.userHasDoc.doc"
-              :disable="dialogAddBankData.userHasDoc?.hasDoc"
-              mask="###.###.###-##"
-            />
-            <q-input
-              outlined
-              label="Banco"
-              v-model="dialogAddBankData.data.bank"
-              hint="Ex: Banco do Brasil, Bradesco, etc" />
-            <q-input
-              outlined
-              label="Agência"
-              v-model="dialogAddBankData.data.agency"
-              hint="Número da agência" />
-            <q-input
-              outlined
-              label="Conta"
-              v-model="dialogAddBankData.data.account"
-              hint="Número da conta" />
-            <q-input
-              outlined
-              label="Chave PIX"
-              v-model="dialogAddBankData.data.pix"
-              hint="Chave PIX" />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              color="primary"
-              @click="dialogAddBankData.open = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="confirmAddBankData"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      <DialogBankData
+        :open="dialogAddBankData.open"
+        :dataProp="dialogAddBankData.data"
+        :docProp="dialogAddBankData.userHasDoc.doc"
+        :hasDoc="dialogAddBankData.userHasDoc.hasDoc"
+        @confirm="confirmAddBankData"
+        @closeDialog="clearBankDataInputs"
+      />
 
-      <q-dialog v-model="dialogAddPhoneMobileEmail.open" @hide="clearDialogAddPhoneMobileEmail">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">Informe os dados</div>
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-input
-              label="Celular"
-              hint="Informe seu celular"
-              mask="(##) #####-####"
-              v-model="dialogAddPhoneMobileEmail.data.value"
-              outlined
-              v-if="dialogAddPhoneMobileEmail.type.type === 'mobile'"
-            />
-            <q-input
-              label="Telefone fixo"
-              hint="Informe seu telefone fixo"
-              mask="(##) ####-####"
-              v-model="dialogAddPhoneMobileEmail.data.value"
-              outlined
-              v-else-if="dialogAddPhoneMobileEmail.type.type === 'phone'"
-            />
-            <q-input
-              label="Email"
-              hint="Informe seu email"
-              v-model="dialogAddPhoneMobileEmail.data.value"
-              outlined
-              v-else-if="dialogAddPhoneMobileEmail.type.type === 'email'"
-            />
-            <q-select
-              :options="dialogAddPhoneMobileEmail.options"
-              v-model="dialogAddPhoneMobileEmail.data.type"
-              outlined
-              label="Tipo"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              color="primary"
-              @click="dialogAddPhoneMobileEmail.open = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="confirmAddPhoneMobileEmail"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      <DialogPhoneMobileEmail
+        :open="dialogAddPhoneMobileEmail.open"
+        :dataProp="dialogAddPhoneMobileEmail.data"
+        :type="dialogAddPhoneMobileEmail.type"
+        @confirm="confirmAddPhoneMobileEmail"
+        @closeDialog="clearDialogAddPhoneMobileEmail"
+      />
 
+      <DialogFormation
+        :open="dialogFormation.open"
+        :dataProp="dialogFormation.data"
+        :fieldIndex="dialogFormation.fieldIndex"
+        :tabsIndex="dialogFormation.tabsIndex"
+        @confirm="confirmFormation"
+        @closeDialog="clearFormationInputs"
+      />
+      
     </q-page>
   </q-page-container>
 </template>
@@ -889,6 +604,20 @@ import useFetch from "../../boot/useFetch";
 // import utils from '../../boot/utils'
 import DialogAddPerson from '../../components/DialogAddPerson.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
+import DialogAddOrganism from '../../components/DialogAddOrganism.vue'
+import DialogBankData from '../../components/DialogBankData.vue'
+import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
+import DialogUserTitle from '../../components/DialogUserTitle.vue'
+import DialogFormation from '../../components/DialogFormation.vue'
+import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
+import CardAddress from '../../components/CardAddress.vue'
+import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
+import CardBankData from '../../components/CardBankData.vue'
+import CardPerson from '../../components/CardPerson.vue'
+import CardOrganism from '../../components/CardOrganism.vue'
+import CardFormation from '../../components/CardFormation.vue'
+import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+
 </script>
 
 <script>
@@ -902,24 +631,16 @@ export default defineComponent({
         openDialog: false,
         titleId: null
       },
-      titleOptions: [],
-      titleSelected: '',
       openDialogVinculateUserToTitle: false,
       tab: "",
       tabTitles: "",
       visionSelected: 'personalData',
       isSaving: false,
-      newPhone: "",
-      addressType: "",
-      newEmail: "",
-      value: '',
-      typeSelectedAddress: null,
-      fieldIndex: null,
-      tabsIndex: null,
       dialogConfirmAddress: {
         open: false,
         fieldIndex: null,
         tabsIndex: null,
+        valueIndex: null,
         data: {
           cep: "",
           street: "",
@@ -933,7 +654,7 @@ export default defineComponent({
       },
       splitterModel: 25,
       userData: {},
-      userDetail: [],
+      // userDetail: [],
       addPerson: {
         dialogOpen: false,
         fieldIndex: null,
@@ -980,7 +701,28 @@ export default defineComponent({
           value: '',
           type: ''
         },
-        options: ['Pessoal', 'Profissional', 'Outro'],
+        action: null,
+        iValue: null
+      },
+      dialogFormation: {
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      },
+      maritalStatus: {
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          status: '',
+          spouses: []
+        },
         action: null,
         iValue: null
       }
@@ -991,9 +733,97 @@ export default defineComponent({
   },
   beforeMount() {
     this.getUsersConfig()
-    this.getTitleNamesList()
   },
   methods: {
+    clearMaritalStatus () {
+      this.maritalStatus = {
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: null,
+        action: null,
+      }
+    },
+    clkAddMaritalStatus (fieldIndex, tabsIndex) {
+      this.maritalStatus = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {
+          status: '',
+          spouses: []
+        },
+        action: 'add',
+      }
+    },
+    removeFormation (fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
+    editFormation (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(value, 'value dentro do user')
+      this.dialogFormation = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    clkAddFormation (fieldIndex, tabsIndex) {
+      this.dialogFormation = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: 'add',
+        iValue: null
+      }
+    },
+    confirmFormation (data) {
+      if (this.dialogFormation.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogFormation.tabsIndex].fields[this.dialogFormation.fieldIndex].value)
+          this
+            .userData
+            .userDataTabs[this.dialogFormation.tabsIndex]
+            .fields[this.dialogFormation.fieldIndex]
+            .value = []
+        this
+          .userData
+          .userDataTabs[this.dialogFormation.tabsIndex]
+          .fields[this.dialogFormation.fieldIndex]
+          .value.push(data)
+      } else if (this.dialogFormation.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogFormation.tabsIndex]
+          .fields[this.dialogFormation.fieldIndex]
+          .value[this.dialogFormation.iValue] = data
+      }
+      this.clearFormationInputs()
+    },
+    clearFormationInputs () {
+      this.dialogFormation = {
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      }
+    },
     editBankData (fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddBankData.userHasDoc = this.verifyIfUserHasDocument()
       this.dialogAddBankData.open = true
@@ -1025,6 +855,7 @@ export default defineComponent({
         action: null,
         iValue: null
       }
+      this.dialogAddPhoneMobileEmail.open = false
     },
     verifyIfUserHasDocument () {
       let hasDoc = false
@@ -1061,19 +892,9 @@ export default defineComponent({
         hasDoc: false,
         doc: ''
       }
+      this.dialogAddBankData.open = false
     },
-    confirmAddBankData () {
-      const data = this.dialogAddBankData.data
-      let errorMessage = ''
-      if (this.dialogAddBankData.userHasDoc.doc === '') errorMessage = 'Preencha o documento'
-      else if (data.bank === '') errorMessage = 'Preencha o banco'
-      else if (data.bank !== '' && data.agency === '') errorMessage = 'Preencha a agência'
-      else if (data.bank !== '' && data.agency !== '' && data.account === '') errorMessage = 'Preencha a conta'
-      if (errorMessage !== '') {
-        this.$q.notify(errorMessage)
-        return
-      }
-
+    confirmAddBankData (data, doc) {
       if (this.dialogAddBankData.action === 'add') {
         if (!this.userData.userDataTabs[this.dialogAddBankData.tabsIndex].fields[this.dialogAddBankData.fieldIndex].value)
           this.userData.userDataTabs[this.dialogAddBankData.tabsIndex].fields[this.dialogAddBankData.fieldIndex].value = []
@@ -1082,21 +903,21 @@ export default defineComponent({
           .userDataTabs[this.dialogAddBankData.tabsIndex]
           .fields[this.dialogAddBankData.fieldIndex]
           .value.push({
-            bank: this.dialogAddBankData.data.bank,
-            agency: this.dialogAddBankData.data.agency,
-            account: this.dialogAddBankData.data.account,
-            pix: this.dialogAddBankData.data.pix,
+            bank: data.bank,
+            agency: data.agency,
+            account: data.account,
+            pix: data.pix,
           });
         this.userData
           .userDataTabs[this.dialogAddBankData.userHasDoc.tabWithDoc]
           .fields[this.dialogAddBankData.userHasDoc.fieldWithDoc]
-          .value = this.dialogAddBankData.userHasDoc.doc
+          .value = doc
       } else if (this.dialogAddBankData.action === 'edit') {
         this
           .userData
           .userDataTabs[this.dialogAddBankData.tabsIndex]
           .fields[this.dialogAddBankData.fieldIndex]
-          .value[this.dialogAddBankData.iValue] = { ...this.dialogAddBankData.data }
+          .value[this.dialogAddBankData.iValue] = { ...data }
       }
       this.dialogAddBankData.open = false
     },
@@ -1181,14 +1002,13 @@ export default defineComponent({
         }
       });
     },
-    createUserTitle(){
+    createUserTitle(titleSelected){
       const opt = {
         route:'/desktop/commonUsers/createUserTitle',
         body: {
-          titleConfigId: this.titleSelected._id
+          titleConfigId: titleSelected._id
         }
       };
-      this.titleSelected = ''
       this.openDialogVinculateUserToTitle = false
       useFetch(opt).then((r)=> {
         this.$q.loading.hide()
@@ -1197,16 +1017,7 @@ export default defineComponent({
           return
         }
         this.getUserDetailById()
-
       })
-    },
-    getTitleNamesList() {
-      const opt = {
-        route: '/desktop/commonUsers/getTitlesList',
-      };
-      useFetch(opt).then((r) => {
-        this.titleOptions = r.data;
-      });
     },
     addDoubleSelection(tabsIndex, fieldIndex){
       if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value) {
@@ -1223,6 +1034,7 @@ export default defineComponent({
       this.clearOrganismInputs()
     },
     clearOrganismInputs() {
+      this.addOrganism.dialogOpen = false
       this.addOrganism.organismSelected = null
     },
     closeAddPersonDialog () {
@@ -1244,21 +1056,7 @@ export default defineComponent({
         })
       })
     },
-    getOrganismByString(val, update) {
-      if (val < 2) return
-      const opt = {
-        route: '/desktop/adm/getOrganismsNames',
-        body: {
-          searchString: val
-        }
-      }
-      useFetch(opt).then(r => {
-        if (r.error) return this.$q.notify(r.errorMessage)
-        update(() => {
-          this.addOrganism.organismsOptions = r.data
-        })
-      })
-    },
+    
     confirmAddPerson (userSelected) {
       this.addPerson.userSelected = userSelected
       if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
@@ -1275,20 +1073,19 @@ export default defineComponent({
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
-    confirmAddOrganism() {
+    confirmAddOrganism(organismSelected) {
       if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].multiple)
-        this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ this.addOrganism.organismSelected ]
+        this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ organismSelected ]
       else {
-        if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.Organism.fieldIndex].value
+        if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value
           || this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value === ''
           ) {
-            this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ this.addOrganism.organismSelected ]
+            this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ organismSelected ]
         } else {
-          this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value.push(this.addOrganism.organismSelected)
+          this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value.push(organismSelected)
         }
       }
       this.clearOrganismInputs()
-      this.addOrganism.dialogOpen = false
     },
     clkOpenAddPersonDialog (fieldIndex, tabIndex) {
       this.addPerson.fieldIndex = fieldIndex
@@ -1356,26 +1153,35 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
-    addAddress(data) {
-      if(data.addressType === "") {
-        this.$q.notify("Preencha o tipo de endereço")
-        return
-      }
+    confirmAddress(data) {
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const tabsIndex = this.dialogConfirmAddress.tabsIndex
-      if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value)
-        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push({
-        type: data.addressType,
-        cep: data.cep,
-        street: data.street,
-        number: data.number,
-        city: data.city,
-        state: data.state,
-        district: data.district,
-        complement: data.complement
-      });
-      this.dialogConfirmAddress.open = false;
+      const valueIndex = this.dialogConfirmAddress.valueIndex
+      if (this.dialogConfirmAddress.action === 'add') {
+        if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value)
+          this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []
+        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push({
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        });
+      } else if (this.dialogConfirmAddress.action === 'edit') {
+        this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex] = {
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        }
+      }
       this.clearAddressInputs()
     },
     clearAddressInputs(){
@@ -1390,6 +1196,7 @@ export default defineComponent({
         district: "",
         complement: ""
       }
+      this.dialogConfirmAddress.open = false;
     },
     removePhone(i) {
       this.userData.generalData.phones.splice(i, 1);
@@ -1402,7 +1209,7 @@ export default defineComponent({
     },
     getUsersConfig() {
       const opt = {
-        route: "/desktop/adm/getUsersConfig",
+        route: "/desktop/users/getUserConfig",
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
@@ -1433,21 +1240,27 @@ export default defineComponent({
         }
       });
     },
-    removeThisAddress(fieldIndex, tabsIndex, addressIndex) {
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(addressIndex, 1);
+    removeThisAddress(fieldIndex, tabsIndex, valueIndex) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(valueIndex, 1);
     },
-    editThisAddress(fieldIndex, tabsIndex, addressIndex){
-      this.dialogConfirmAddress.open = true
-      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0])
-      this.cep = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].cep
-      this.addressType = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].type
-      this.street = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].street
-      this.number = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].number
-      this.district = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].district
-      this.complement = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].complement
-      this.city = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].city
-      this.state = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[0].state
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(addressIndex, 1);
+    editThisAddress(fieldIndex, tabsIndex, valueIndex){
+      this.dialogConfirmAddress = {
+        open: true,
+        fieldIndex,
+        tabsIndex,
+        valueIndex,
+        action: 'edit',
+        data: {
+          cep: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].cep,
+          addressType: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].type,
+          street: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].street,
+          number: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].number,
+          district: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].district,
+          complement: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].complement,
+          city: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].city,
+          state: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex].state,
+        }
+      }
     },
     getUserDetailById(){
       const opt = {
@@ -1458,14 +1271,14 @@ export default defineComponent({
           console.log("Ocorreu um erro, tente novamente kakak")
           return
         }
-        this.userDetail = r.data
-        this.mountUserData()
+        // this.userDetail = r.data
+        this.mountUserData(r.data)
       })
     },
-    mountUserData () {
+    mountUserData (userDetail) {
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
-          this.userDetail.userDataTabs.forEach((userTab) => {
+          userDetail.userDataTabs.forEach((userTab) => {
             userTab.fields.forEach((userField) => {
               if (configField.model === userField.model && userField.value) {
                 this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
@@ -1474,7 +1287,7 @@ export default defineComponent({
           })
         })
       })
-    }
+    },
   },
 });
 </script>

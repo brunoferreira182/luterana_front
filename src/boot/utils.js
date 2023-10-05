@@ -185,16 +185,16 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
-        {
-          label: "Títulos",
-          route: "/admin/titlesList",
-          icon: "school",
-        },
-        {
-          label: "Solicitações de Títulos",
-          route: "/admin/titlesSolicitationsList",
-          icon: "list",
-        },
+        // {
+        //   label: "Títulos",
+        //   route: "/admin/titlesList",
+        //   icon: "school",
+        // },
+        // {
+        //   label: "Solicitações de Títulos",
+        //   route: "/admin/titlesSolicitationsList",
+        //   icon: "list",
+        // },
         {
           label: "Solicitações de Funções",
           route: "/admin/functionsSolicitations",
@@ -203,37 +203,42 @@ const useUtils = {
       ],
       config: [
         {
-          label: "Configuração de tipos de organismos",
+          label: "Tipos de organismos",
           route: "/config/organismTypeConfigList",
           icon: "edit_square",
         },
         {
-          label: "Configuração de Organismos",
+          label: "Organismos",
           route: "/config/organismConfigurationList",
           icon: "diversity_2",
         },
         {
-          label: "Configuração de usuário",
-          route: "/config/createUserConfig",
+          label: "Usuário",
+          route: "/config/createUserConfig?userType=user",
           icon: "group",
         },
         {
-          label: "Configuração de pastor",
-          route: "/config/createPastoralConfig",
+          label: "Pastor",
+          route: "/config/createUserConfig?userType=pastor",
           icon: "group",
         },
-        {
-          label: "Formação",
-          route: "/config/titleConfigurationList",
-          icon: "import_contacts",
-        },
+        // {
+        //   label: "Títulos",
+        //   route: "/config/titleConfigurationList",
+        //   icon: "import_contacts",
+        // },
+        // {
+        //   label: "Formação",
+        //   route: "/config/formationConfiguration",
+        //   icon: "import_contacts",
+        // },
         {
           label: "Visões",
           route: "/config/visionsList",
           icon: "visibility",
         },
         {
-          label: "Configuração de formulário",
+          label: "Formulários",
           route: "/config/formConfigList",
           icon: "feed",
         },
