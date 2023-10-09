@@ -862,7 +862,7 @@ export default defineComponent({
       let doc = ''
       let tabWithDoc
       let fieldWithDoc
-      this.userDetail.userDataTabs.forEach((userTab, iTab) => {
+      this.userData.userDataTabs.forEach((userTab, iTab) => {
         // console.log(userTab, iTab, 'userTab aqui')
         userTab.fields.forEach((userField, iField) => {
           // console.log(userField, iTab, 'userField aqui')
