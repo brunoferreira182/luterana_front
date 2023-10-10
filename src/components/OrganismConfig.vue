@@ -530,7 +530,7 @@
               <q-checkbox
                 class="q-px-sm"
                 label="Esta função deverá ser ocupada por um pastor?"
-                v-model="newFunction.isShepherdRequired"
+                v-model="newFunction.onlyPastor"
               />
               <q-checkbox
                 class="q-px-sm"
@@ -747,7 +747,7 @@ export default defineComponent({
           numRequired: false,
         },
         isRequired: true,
-        isShepherdRequired: false,
+        onlyPastor: false,
         visions: []
       },
       colorPalette: useColorsPalette().colors,
