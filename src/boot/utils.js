@@ -218,6 +218,11 @@ const useUtils = {
           icon: "group",
         },
         {
+          label: "Novo Usuário",
+          route: "/config/createUserConfig?userType=newUser",
+          icon: "group",
+        },
+        {
           label: "Pastor",
           route: "/config/createUserConfig?userType=pastor",
           icon: "group",

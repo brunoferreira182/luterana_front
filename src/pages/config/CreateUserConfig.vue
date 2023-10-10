@@ -397,9 +397,6 @@ export default defineComponent({
       tabName: '',
       fieldTypesOptions: [],
       dialogClkEditName: false,
-      organismTypeName: '',
-      titlesList: [],
-      organismTypeId: null,
       typeSelected: null,
       valueSelected: "",
       dialogNewTab: {
@@ -432,7 +429,6 @@ export default defineComponent({
         ],
       },
       tabIndexToAddField: '',
-      selectedType: "",
       fieldIndexToEdit: null,
       action: null
     };
@@ -599,9 +595,7 @@ export default defineComponent({
           this.$q.notify("Ainda não há configuração salva. Inicie uma.")
           return
         }
-        this.organismTypeName = r.data.organismTypeName;
         this.userDataTabs = r.data.userDataTabs;
-        this.selectedType = r.data.organismTypeName;
       });
     },
     notifyRemoved() {
