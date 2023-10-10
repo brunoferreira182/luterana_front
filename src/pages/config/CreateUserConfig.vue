@@ -27,9 +27,6 @@
         </div>
       </div>
       <q-separator class="q-mx-md" />
-      <!-- <div class="text-right q-px-md q-pt-md" >
-        
-      </div> -->
       <div class="row q-ma-sm q-col-gutter-sm" >
         <div
           v-for="(tabCard, tabIndex) in userDataTabs"
@@ -68,6 +65,7 @@
               >
                 <q-tooltip>Excluir aba</q-tooltip>
               </q-btn>
+              <q-badge outline color="primary" v-if="tabCard.onlyAdm">Somente ADM preenche</q-badge>
             </div>
             <q-list separator>
               <q-item
@@ -283,11 +281,12 @@
           <q-card-section>
             <q-input
               outlined
-              class="q-ml-sm"
+              class="q-ml-sm q-mb-md"
               hint="Nome da aba que será exibida na tela de criar usuário e envolverá todos os dados criados a seguir"
               label="Nome"
               v-model="tabLabel"
             />
+            <q-checkbox label="Somente ADM preenche" v-model="dialogNewTab.onlyAdm"/>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -401,6 +400,7 @@ export default defineComponent({
       valueSelected: "",
       dialogNewTab: {
         open: false,
+        onlyAdm: false
       },
       dialogInsertFields: {
         open: false,
@@ -491,9 +491,11 @@ export default defineComponent({
     addTab() {
       this.userDataTabs.push({
         tabLabel: this.tabLabel,
+        onlyAdm: this.dialogNewTab.onlyAdm,
         fields: []
       });
       this.dialogNewTab.open = false
+      this.dialogNewTab.onlyAdm = false
       this.tabLabel = ''
     },
     addField() {

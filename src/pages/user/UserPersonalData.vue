@@ -8,7 +8,7 @@
             
           </span>
         </div>
-        <div class="col text-right q-gutter-sm">
+        <!-- <div class="col text-right q-gutter-sm">
           <q-btn
             rounded
             no-caps
@@ -29,7 +29,7 @@
             @click="visionSelected = 'titles'"
             :outline="visionSelected === 'titles' ? false : true"
           />
-        </div>
+        </div> -->
       </div>
       <q-separator/>
       <q-splitter
@@ -111,6 +111,7 @@
                         :mask="field.type.mask"
                         v-model="field.value"
                         outlined
+                        :readonly="tabs.onlyAdm"
                       >
                       </q-input>
                     </div>
@@ -122,6 +123,7 @@
                       label="Clique aqui para adicionar imagem de perfil"
                       outlined
                       @input="saveProfilePhoto()"
+                      :readonly="tabs.onlyAdm"
                     >
                       <template #append>
                         <q-icon name="attach_file" />
@@ -138,6 +140,7 @@
                         :hint="field.hint"
                         v-model="field.value"
                         :options="field.options"
+                        :readonly="tabs.onlyAdm"
                       >
                       </q-select>
                     </div>
@@ -159,6 +162,7 @@
                               outlined
                               use-chips
                               multiple
+                              :readonly="tabs.onlyAdm"
                             >
                               <template v-slot:prepend>
                                 <q-icon name="attach_file" />
@@ -172,10 +176,10 @@
                     <q-checkbox
                       v-if="field.type.type === 'boolean'"
                       class="q-pt-lg"
-                      readonly
                       :label="field.label"
                       :hint="field.hint"
                       v-model="field.value"
+                      :readonly="tabs.onlyAdm"
                     />
 
                     <div v-if="field.type.type === 'multiple_select'">
@@ -190,6 +194,7 @@
                             rounded
                             @click="addDoubleSelection(tabsIndex, fieldIndex)"
                             no-caps
+                            :disable="tabs.onlyAdm"
                           >
                             Adicionar nova seleção dupla
                           </q-btn>
@@ -238,6 +243,7 @@
                           icon="add"
                           v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                           @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                          :disable="tabs.onlyAdm"
                         />
                         <CardOrganism
                           :data="field"
@@ -259,6 +265,7 @@
                         icon="add"
                         @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
                         class="q-mt-xs"
+                        :disable="tabs.onlyAdm"
                       />
                       <CardAddress
                         :data="field.value"
@@ -288,6 +295,7 @@
                         icon="add"
                         v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                         @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
+                        :disable="tabs.onlyAdm"
                       />
                     </div>
 
@@ -310,6 +318,7 @@
                         icon="add"
                         v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                         @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
+                        :disable="tabs.onlyAdm"
                       />
                     </div>
 
@@ -322,6 +331,7 @@
                         color="primary"
                         @click="clkAddBankData(fieldIndex, tabsIndex)"
                         icon="add"
+                        :disable="tabs.onlyAdm"
                       />
                       <CardBankData
                         :data="field"
@@ -348,6 +358,7 @@
                         rounded
                         @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
                         class="q-mt-xs"
+                        :disable="tabs.onlyAdm"
                       />
                       <CardPhoneMobileEmail
                         :data="field"
@@ -369,6 +380,7 @@
                         icon="add"
                         @click="clkAddFormation(fieldIndex, tabsIndex)"
                         class="q-mt-xs"
+                        :disable="tabs.onlyAdm"
                       />
                       <CardFormation
                         :data="field"

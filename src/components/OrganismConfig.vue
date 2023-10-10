@@ -849,7 +849,7 @@ export default defineComponent({
         route: "/desktop/config/getFunctionsGroupList",
       };
       useFetch(opt).then((r) => {
-        this.functionsGroupList = r.data.list;
+        this.functionsGroupList = r.data;
       });
     },
     handlePermissionOnEdit(vision, permission) {

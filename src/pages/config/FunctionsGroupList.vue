@@ -147,8 +147,8 @@ export default defineComponent({
         opt.body.isActive = 0;
       }
       useFetch(opt).then((r) => {
-        this.functionsGroupList = r.data.list;
-        this.pagination.rowsNumber = r.data.count
+        this.functionsGroupList = r.data;
+        // this.pagination.rowsNumber = r.data.count
       });
     },
   },
