@@ -106,7 +106,7 @@ export default defineComponent({
       const opt = {
         route:"/desktop/adm/getUsersConfig",
         body: {
-          userType: 'user'
+          userType: 'pastor'
         }
       }
       useFetch(opt).then((r) => {

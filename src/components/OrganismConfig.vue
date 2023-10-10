@@ -529,6 +529,11 @@
               </div>
               <q-checkbox
                 class="q-px-sm"
+                label="Esta função deverá ser ocupada por um pastor?"
+                v-model="newFunction.isShepherdRequired"
+              />
+              <q-checkbox
+                class="q-px-sm"
                 label="Preenchimento da função é obrigatório?"
                 v-model="newFunction.isRequired"
               />
@@ -742,6 +747,7 @@ export default defineComponent({
           numRequired: false,
         },
         isRequired: true,
+        isShepherdRequired: false,
         visions: []
       },
       colorPalette: useColorsPalette().colors,
