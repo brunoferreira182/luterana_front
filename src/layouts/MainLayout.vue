@@ -98,7 +98,12 @@
               </q-btn>
             </div>
             <div class="q-mr-md">
-              <q-btn icon="home" dense flat @click="$router.push('/')">
+              <q-btn icon="home" dense flat @click="$router.push('/')" v-if="!isMobile">
+                <q-tooltip anchor="bottom left" :offset="[10, 10]">
+                  Ir para tela home
+                </q-tooltip>
+              </q-btn>
+              <q-btn icon="home" dense flat @click="$router.push('/mobileMainPage')" v-if="isMobile">
                 <q-tooltip anchor="bottom left" :offset="[10, 10]">
                   Ir para tela home
                 </q-tooltip>
@@ -202,7 +207,6 @@
             </div>
           </div>
         </q-drawer>
-      
         <q-page-container class="bg-grey-3">
           <q-scroll-area
             class="bg-accent"
@@ -216,14 +220,7 @@
               "
               class="bg-accent q-pa-sm"
             />
-            <div v-if="isMobile">
-              <q-card
-                v-for="item in options"
-                :key="item.route"
-              >
-                {{  item.label }}
-              </q-card>
-            </div>
+            
           </q-scroll-area>
         </q-page-container>
       </div>
@@ -235,7 +232,8 @@
 import { defineComponent } from "vue";
 import DrawerLogo from "../components/DrawerLogo.vue";
 import utils from "../boot/utils";
-import { date, dom, useQuasar } from "quasar";
+import { date, dom } from "quasar";
+import { useScreenStore } from "stores/checkIsMobile";
 const { height } = dom;
 export default defineComponent({
   name: "MainLayout",
@@ -244,6 +242,7 @@ export default defineComponent({
   },
   data() {
     return {
+      isMobileState: useScreenStore().checkScreenSize(),
       indexMenu1: 0,
       statusNotificationsList: [],
       drawer: false,
@@ -251,10 +250,10 @@ export default defineComponent({
       drawerData: true,
       filterValue: "",
       userInfo: "",
+      isMobile: false,
       activeMenu: "",
       permissions: [],
       leftDrawerOpen: true,
-      isMobile: false,
       active: "",
       activeRightDrawer: 1,
       options: [],
@@ -271,17 +270,16 @@ export default defineComponent({
       height(document.getElementById("idMainToolbar"));
   },
   beforeMount() {
-    const $q = useQuasar()
-    $q.platform.is.mobile ? this.isMobile = true : this.isMobile
+    this.isMobile = useScreenStore().isMobile
     this.userInfo = utils.presentUserInfo();
     if (!this.userInfo || !this.userInfo.token) {
       this.$router.push("/login");
       return;
     }
-    // if(this.isMobile){
-    //   this.$router.push('/mobileMainPage')
-    //   return
-    // }
+    if(this.isMobile){
+      this.$router.push('/mobileMainPage')
+      return
+    }
     utils.getPermissions().then((r) => {
       this.permissions = r.data;
       this.activeRightDrawer = this.permissions[0].id;
