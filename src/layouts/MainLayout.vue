@@ -13,11 +13,19 @@
               aria-label="Menu"
               @click="clkDrawer"
             />
+            <q-btn 
+              v-if="isMobile"
+              flat
+              dense
+              rounded
+              icon="arrow_back_ios_new"
+              @click="$router.back()"
+            />
             <q-toolbar-title class="text-primary">
-              Luterana System
+              Tábula
             </q-toolbar-title>
             <div class="q-mr-md">
-              <q-btn auto-close icon="notifications" dense flat>
+              <q-btn auto-close icon="notifications" dense flat v-if="!isMobile">
                 <q-badge
                   v-if="statusNotificationsList.length > 0"
                   floating

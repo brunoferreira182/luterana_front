@@ -421,7 +421,7 @@
         </q-splitter>
       </div>
       <div v-if="isMobile">
-        <q-list padding bordered>
+        <q-list bordered>
           <q-expansion-item
             v-for="(tabs, i) in userData.userDataTabs" :key="i"
             group="somegroup"
@@ -1342,7 +1342,7 @@ export default defineComponent({
     },
     salvar() {
       this.isSaving = true;
-      this.clkCreateUser();
+      this.updateUserData();
       setTimeout(() => {
         this.isSaving = false;
       }, 1000);
@@ -1461,7 +1461,7 @@ export default defineComponent({
         }
       });
     },
-    clkCreateUser() {
+    updateUserData() {
       const opt = {
         route: "/desktop/user/updateUserData",
         body: {
@@ -1472,7 +1472,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.$q.notify("Usuário cadastrado com sucesso!");
+          this.$q.notify("Usuário atualizado com sucesso!");
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente");
         }
