@@ -2,6 +2,7 @@
   <q-page-container class="no-padding">
     <q-page>
       <q-table
+        v-if="!isMobile"
         flat
         class="bg-accent"
         title="Minha rede"
@@ -71,6 +72,14 @@
           </q-td>
         </template>
       </q-table>
+      <q-list>
+        <q-item
+          v-for="list in userOrganismList"
+          :key="list"
+        >
+          {{ list }}
+        </q-item>
+      </q-list>
       <div class="text-left">
         <q-btn 
           v-for="(organism, nameIndex) in userOrganismList" 
@@ -93,13 +102,14 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { useScreenStore } from "stores/checkIsMobile";
 
 export default defineComponent({
-  name: "SearchAllOrganismsList",
+  name: "OrganismsList",
   data() {
     return {
       columnsData: useTableColumns().userOrganismList,
-      pageOrganismList:[],
+      isMobile: false,
       searchAllOrganismsList: [],
       userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
@@ -118,6 +128,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.isMobile = useScreenStore().isMobile
     this.getAllOrganismsByString();
     // this.getOrganismsByUserId();
   },
@@ -158,7 +169,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data.list
-        this.pagination.rowsNumber = r.data.count[0].count
+        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
       });
     },
     filterOrganisms(nameIndex) {
@@ -170,26 +181,6 @@ export default defineComponent({
       }
       this.getAllOrganismsByString()
     },
-    // getOrganismsByUserId() {
-    //   const opt = {
-    //     route: "/desktop/commonUsers/getOrganismsByUserId",
-    //     body: {
-    //       filterValue: this.filter,
-    //       page: this.pagination.page,
-    //       rowsPerPage: this.pagination.rowsPerPage
-    //     },
-    //   };
-    //   if (this.selectFilter === "Ativos") {
-    //     opt.body.isActive = 1;
-    //   } else if (this.selectFilter === "Inativos") {
-    //     opt.body.isActive = 0;
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     this.$q.loading.hide()
-    //     this.userOrganismList = r.data.list
-    //     this.pagination.rowsNumber = r.data.count[0].count
-    //   });
-    // },
   },
 });
 </script>
