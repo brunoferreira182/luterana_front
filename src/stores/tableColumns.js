@@ -97,13 +97,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "nome",
         sortable: true,
       },
-      {
-        name: "data_de_criacao",
-        align: "left",
-        label: "Data de criação",
-        field: (row) => row.data_de_criacao.dateLocale,
-        sortable: true,
-      },
+      // {
+      //   name: "data_de_criacao",
+      //   align: "left",
+      //   label: "Data de criação",
+      //   field: (row) => row.data_de_criacao.dateLocale,
+      //   sortable: true,
+      // },
       {
         name: "organismConfigName",
         align: "left",
