@@ -202,30 +202,6 @@
             </div>
           </div>
         </q-drawer>
-      
-        <q-page-container class="bg-grey-3">
-          <q-scroll-area
-            class="bg-accent"
-            :style="'height: ' + heightRouterView + 'px; border-radius: 15px;'"
-          >
-            <router-view
-              :permissions="permissions"
-              :drawer="leftDrawerOpen"
-              :style="
-                'height: ' + heightRouterView + 'px; border-radius: 15px;'
-              "
-              class="bg-accent q-pa-sm"
-            />
-            <div v-if="isMobile">
-              <q-card
-                v-for="item in options"
-                :key="item.route"
-              >
-                {{  item.label }}
-              </q-card>
-            </div>
-          </q-scroll-area>
-        </q-page-container>
       </div>
     </div>
   </q-layout>
@@ -235,7 +211,6 @@
 import { defineComponent } from "vue";
 import DrawerLogo from "../components/DrawerLogo.vue";
 import utils from "../boot/utils";
-import { date, dom, useQuasar } from "quasar";
 const { height } = dom;
 export default defineComponent({
   name: "MainLayout",
@@ -264,105 +239,5 @@ export default defineComponent({
       heightRouterView: 0,
     };
   },
-  mounted() {
-    this.$q.loading.hide();
-    this.heightRouterView =
-      height(document.getElementById("idMainLayout")) -
-      height(document.getElementById("idMainToolbar"));
-  },
-  beforeMount() {
-    const $q = useQuasar()
-    $q.platform.is.mobile ? this.isMobile = true : this.isMobile
-    this.userInfo = utils.presentUserInfo();
-    if (!this.userInfo || !this.userInfo.token) {
-      this.$router.push("/login");
-      return;
-    }
-    // if(this.isMobile){
-    //   this.$router.push('/mobileMainPage')
-    //   return
-    // }
-    utils.getPermissions().then((r) => {
-      this.permissions = r.data;
-      this.activeRightDrawer = this.permissions[0].id;
-      if (
-        this.$route.path === "/" ||
-        this.$route.path === "/plans" ||
-        this.$route.path === "/plans/home"
-      ) {
-        this.options = utils.getDrawerOptions("plans");
-        console.log('Quando entrou aqui?')
-        this.active = this.options[0].label;
-      } else {
-        this.options = utils.getDrawerOptions(this.$route.path.split("/")[1]);
-      }
-      this.permissions.forEach((element) => {
-        if (this.$route.path.split("/")[1] === element.role.toLowerCase()) {
-          
-          this.activeRightDrawer = element.id;
-          this.indexMenu1 = this.permissions.indexOf(element);
-        }
-      });
-      this.options.forEach((element) => {
-        if (this.$route.fullPath === element.route) {
-          this.active = element.label;
-        }
-      });
-    });
-    // this.getStatusNotifications()
-    this.drawerData = this.drawer;
-  },
-  watch: {
-    $route() {
-      let existe = false;
-      this.options.forEach((element) => {
-        if (this.$route.path === element.route) {
-          existe = true;
-        }
-      });
-      if (!existe) {
-        this.active = false;
-      }
-    },
-  },
-  methods: {
-    async getCompanyColors() {
-      await this.$logoAndColors.getFromServer(this.userInfo.cId);
-      return;
-    },
-    clkOptionMenu(item) {
-      this.$router.push(item.route);
-      this.active = item.label;
-    },
-    clkDrawer() {
-      this.leftDrawerOpen = !this.leftDrawerOpen;
-    },
-    clkItem(item, i) {
-      this.indexMenu1 = i;
-      this.activeRightDrawer = item.id;
-      this.$router.push("/" + item.role.toLowerCase());
-      this.options = utils.getDrawerOptions(item.role.toLowerCase());
-    },
-    clkMenu(menuItem, i) {
-      this.activeMenu = i;
-      this.$router.push(menuItem.route);
-    },
-  },
-});
+})
 </script>
-
-<style scoped>
-.gradient {
-  transition: opacity 0.5s;
-  background-image: linear-gradient(to bottom, #2c3393, #2675c3, #04acf3);
-
-  background-size: 100%;
-  background-repeat: repeat;
-}
-.borda-redonda {
-  border-radius: 0 15px 15px 0;
-}
-.redondo {
-  border-radius: 50px;
-}
-</style>

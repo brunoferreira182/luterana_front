@@ -39,6 +39,7 @@
       >
         <template v-slot:before>
           <q-tabs
+            v-if="userData && userData.userDataTabs"
             v-model="tab"
             vertical
             align="left"
@@ -76,6 +77,7 @@
         </template>
         <template v-slot:after>
           <q-tab-panels 
+            v-if="userData && userData.userDataTabs"
             animated 
             swipeable
             transition-prev="jump-up"
@@ -1228,7 +1230,7 @@ export default defineComponent({
         this.$q.loading.hide();
         if (!r.error) {
           this.userData = r.data
-          this.tab = r.data.userDataTabs[0].tabValue
+          r.data.userDataTabs[0] ? this.tab = r.data.userDataTabs[0].tabValue : this.tab = ''
           this.getUserDetailById()
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente");
