@@ -2,11 +2,10 @@
   <q-page-container class="no-padding">
     <q-page>
       <q-table
-        v-if="!isMobile"
         flat
         class="bg-accent"
         title="Minha rede"
-        :columns="columnsData"
+        :columns="isMobile ? columnsDataMobile : columnsData"
         :rows="userOrganismList"
         row-key="_id"
         virtual-scroll
@@ -72,15 +71,7 @@
           </q-td>
         </template>
       </q-table>
-      <q-list>
-        <q-item
-          v-for="list in userOrganismList"
-          :key="list"
-        >
-          {{ list }}
-        </q-item>
-      </q-list>
-      <div class="text-left">
+      <!-- <div class="text-left">
         <q-btn 
           v-for="(organism, nameIndex) in userOrganismList" 
           :key="organism"
@@ -93,7 +84,7 @@
         >
         {{ organism.organismConfigName }}
         </q-btn>
-      </div>
+      </div> -->
     </q-page>
   </q-page-container>
 </template>
@@ -109,12 +100,30 @@ export default defineComponent({
   data() {
     return {
       columnsData: useTableColumns().userOrganismList,
+      columnsDataMobile: useTableColumns().userOrganismListMobile,
       isMobile: false,
       searchAllOrganismsList: [],
-      userOrganismList: [],
+      userOrganismList: [
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
+        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
+      ],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
-      selectFilter: "",
+      selectFilter: "Selecionar",
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -129,7 +138,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
-    this.getAllOrganismsByString();
+    // this.getAllOrganismsByString();
     // this.getOrganismsByUserId();
   },
   methods: {

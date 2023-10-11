@@ -22,7 +22,7 @@
               @click="$router.back()"
             />
             <q-toolbar-title class="text-primary">
-              Tábula
+              Tabula
             </q-toolbar-title>
             <div class="q-mr-md">
               <q-btn auto-close icon="notifications" dense flat v-if="!isMobile">

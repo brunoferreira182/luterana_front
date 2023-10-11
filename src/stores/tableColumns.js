@@ -1,9 +1,7 @@
 import { defineStore } from "pinia";
-
 export const useTableColumns = defineStore("tableColumns", {
   state: () => ({
     allFunctionsSolicitations: [
-      
       {
         name: "userName",
         align: "left",
@@ -21,13 +19,13 @@ export const useTableColumns = defineStore("tableColumns", {
     
     ],
     recivedSolicitations: [
-      {
-        name: "userName",
-        align: "left",
-        label: "Nome de usuário",
-        field: "userName",
-        sortable: true,
-      },
+      // {
+      //   name: "userName",
+      //   align: "left",
+      //   label: "Nome de usuário",
+      //   field: "userName",
+      //   sortable: true,
+      // },
       {
         name: "functionName",
         align: "left",
@@ -42,13 +40,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "createdBy",
         sortable: true,
       },
-      {
-        name: "createdAt",
-        align: "left",
-        label: "Quando",
-        field: "createdAt",
-        sortable: true,
-      },
+      // {
+      //   name: "createdAt",
+      //   align: "left",
+      //   label: "Quando",
+      //   field: "createdAt",
+      //   sortable: true,
+      // },
       {
         name: "status",
         align: "left",
@@ -351,19 +349,19 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
-    userOrganismsList: [
+    userOrganismListMobile: [
       {
         name: "nome",
         align: "left",
         label: "Nome do organismo",
-        field: "organismName",
+        field: "nome",
         sortable: true,
       },
       {
-        name: "status",
+        name: "organismConfigName",
         align: "left",
-        label: "Status",
-        field: "status",
+        label: "Tipo de organismo",
+        field: "organismConfigName",
         sortable: true,
       },
     ],
@@ -380,13 +378,6 @@ export const useTableColumns = defineStore("tableColumns", {
         align: "left",
         label: "Organismo",
         field: "organismName",
-        sortable: true,
-      },
-      {
-        name: "status",
-        align: "left",
-        label: "Status",
-        field: "status",
         sortable: true,
       },
     ],

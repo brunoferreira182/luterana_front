@@ -170,7 +170,6 @@ async function confirmNewPerson () {
 }
 
 function confirmAddPerson () {
-  console.log(userSelected.value)
   emits('addPerson', userSelected.value)
 }
 

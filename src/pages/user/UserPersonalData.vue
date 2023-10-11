@@ -423,7 +423,7 @@
       <div v-if="isMobile">
         <q-list bordered>
           <q-expansion-item
-            v-for="(tabs, i) in userData.userDataTabs" :key="i"
+            v-for="(tabs, tabsIndex) in userData.userDataTabs" :key="tabsIndex"
             group="somegroup"
             class="bg-grey-3"
             header-class="text-primary"
@@ -742,14 +742,12 @@
             </q-card>
           </q-expansion-item>
         </q-list>
-        <div class="text-center q-my-md q-px-sm">
-         
-        </div>
       </div>
 
       <DialogMaritalStatus
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
+        @addPerson="confirmAddPerson"
         @closeDialog="clearMaritalStatus"
       />
       
@@ -974,6 +972,7 @@ export default defineComponent({
   },
   methods: {
     clearMaritalStatus () {
+      console.log('fechou maritalstatus')
       this.maritalStatus = {
         open: false,
         tabsIndex: null,
@@ -983,6 +982,7 @@ export default defineComponent({
       }
     },
     clkAddMaritalStatus (fieldIndex, tabsIndex) {
+      console.log('adicionou maritalstatus????')
       this.maritalStatus = {
         open: true,
         tabsIndex,
@@ -1296,6 +1296,7 @@ export default defineComponent({
     },
     
     confirmAddPerson (userSelected) {
+      console.log(userSelected, 'AQUI USERSELECTED')
       this.addPerson.userSelected = userSelected
       if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
         this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
@@ -1336,6 +1337,7 @@ export default defineComponent({
       this.addOrganism.dialogOpen = true
     },
     clkOpenAddressDialog(fieldIndex, tabIndex) {
+      this.dialogConfirmAddress.action = 'add'
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
       this.dialogConfirmAddress.tabsIndex = tabIndex
@@ -1354,13 +1356,14 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
       this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
     },
-    confirmAddPhoneMobileEmail () {
+    confirmAddPhoneMobileEmail (data) {
       if (this.dialogAddPhoneMobileEmail.action === 'add') {
-        if (!this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value)
+        if (!this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
           this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
+        }
         this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
-          value: this.dialogAddPhoneMobileEmail.data.value,
-          type: this.dialogAddPhoneMobileEmail.data.type
+          value: data.value,
+          type: data.type
         })
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
         this
@@ -1368,8 +1371,8 @@ export default defineComponent({
           .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
           .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
           .value[this.dialogAddPhoneMobileEmail.iValue] = {
-            value: this.dialogAddPhoneMobileEmail.data.value,
-            type: this.dialogAddPhoneMobileEmail.data.type
+            value: data.value,
+            type: data.type
           }
       }
       this.dialogAddPhoneMobileEmail.open = false
@@ -1392,6 +1395,7 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     confirmAddress(data) {
+      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const tabsIndex = this.dialogConfirmAddress.tabsIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex

@@ -47,26 +47,6 @@
             </div>
           </div>
         </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
-        </template>
       </q-table>
     </q-page>
   </q-page-container>
