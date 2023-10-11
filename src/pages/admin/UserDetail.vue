@@ -48,7 +48,7 @@
       </div>
       <q-separator class="q-mx-md"/>
       
-      <q-splitter
+      <!-- <q-splitter
         v-model="splitterModel"
         style="height: 100vh;"
         v-show="visionSelected === 'personalData'"
@@ -393,55 +393,11 @@
                   </div>
                 </div>
               </div>
-              <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
-                <q-card style="border-radius: 1rem; min-width: 650px">
-                  <q-card-section>
-                    <div
-                      class="q-gutter-sm"
-                      v-if="userFormDialog.data.length"
-                    >
-                    <div class="text-h6 text-center">Dados do formulário</div>
-                      <div v-for="(field, i) in userFormDialog.data" :key="i">
-                        <q-input
-                          v-if="field.type.type !== 'boolean' && field.type.type !== 'wisiwig'"
-                          v-model="field.value"
-                          outlined
-                          :type="getInputType(field.type.type)"
-                          :reverse-fill-mask="field.type.type === 'money'"
-                          :prefix="field.type.type === 'money' ? 'R$' : null"
-                          :label="field.label + (field.required ? '' : ' (Opcional)')"
-                          :mask="field.type.mask"
-                          :hint="field.hint"
-                        />
-                        <q-editor 
-                          v-if="field.type.type === 'wisiwig'"
-                          v-model="field.type.label" 
-                          min-height="5rem" 
-                        />
-                        <q-checkbox
-                          v-else-if="field.type.type === 'boolean'"
-                          :label="field.label"
-                          v-model="field.model"
-                        ></q-checkbox>
-                      </div>
-                    </div>
-                  </q-card-section>
-                  <q-card-actions align="center" class="q-mb-md">
-                    <q-btn
-                      no-caps
-                      unelevated
-                      rounded
-                      color="primary"
-                      @click="saveFormData"
-                      label="Enviar formulário"
-                    />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
+              
             </q-tab-panel>
           </q-tab-panels>
         </template>
-      </q-splitter>
+      </q-splitter> -->
 
       <div v-show="visionSelected === 'titles'">
         
@@ -646,6 +602,53 @@
           </template>
         </q-splitter>
       </div>
+
+      <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
+        <q-card style="border-radius: 1rem; min-width: 650px">
+          <q-card-section>
+            <div
+              class="q-gutter-sm"
+              v-if="userFormDialog.data.length"
+            >
+            <div class="text-h6 text-center">Dados do formulário</div>
+              <div v-for="(field, i) in userFormDialog.data" :key="i">
+                <q-input
+                  v-if="field.type.type !== 'boolean' && field.type.type !== 'wisiwig'"
+                  v-model="field.value"
+                  outlined
+                  :type="getInputType(field.type.type)"
+                  :reverse-fill-mask="field.type.type === 'money'"
+                  :prefix="field.type.type === 'money' ? 'R$' : null"
+                  :label="field.label + (field.required ? '' : ' (Opcional)')"
+                  :mask="field.type.mask"
+                  :hint="field.hint"
+                />
+                <q-editor 
+                  v-if="field.type.type === 'wisiwig'"
+                  v-model="field.type.label" 
+                  min-height="5rem" 
+                />
+                <q-checkbox
+                  v-else-if="field.type.type === 'boolean'"
+                  :label="field.label"
+                  v-model="field.model"
+                ></q-checkbox>
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-actions align="center" class="q-mb-md">
+            <q-btn
+              no-caps
+              unelevated
+              rounded
+              color="primary"
+              @click="saveFormData"
+              label="Enviar formulário"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <q-dialog v-model="openDialogVinculateUserToTitle">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -780,7 +783,7 @@ export default defineComponent({
     this.chkVisionSelected()
   },
   beforeMount() {
-    this.getUsersConfig()
+    // this.getUsersConfig()
     this.getUserDetailById();
   },
   methods: {
@@ -905,20 +908,12 @@ export default defineComponent({
         this.getUserDetailById()
       })
     },
-    getUsersConfig() {
+    getUsersConfig(userType) {
       const opt = {
         route: "/desktop/adm/getUsersConfig",
       };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente");
-        } else {
-          this.userData = r.data
-          this.tab = r.data.userDataTabs[0].tabValue
-        }
-      });
+      if (userType) opt.body = { userType }
+      return useFetch(opt)
     },
     getFormDetailById() {
       const opt = {
@@ -946,21 +941,28 @@ export default defineComponent({
         },
       };
       this.$q.loading.show();
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(async (r) => {
         if(r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente")
           return
         }
-        this.userDetail = r.data
-        this.userForms = r.data.forms
-        r.data.savedForms ? this.savedForms = r.data.savedForms : this.savedForms = []
-        this.mountUserData()
+        // this.userDetail = r.data
+        this.$q.loading.show();
+        const userConfig = await this.getUsersConfig(r.data.userType)
+        this.$q.loading.hide();
+        if (userConfig.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente");
+          return
+        }
+        this.userData = userConfig.data
+        // this.tab = r.data.userDataTabs[0].tabValue
+        this.mountUserData(r.data)
       });
     },
-    mountUserData () {
+    mountUserData (userDetail) {
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
-          this.userDetail.userDataTabs.forEach((userTab) => {
+          userDetail.userDataTabs.forEach((userTab) => {
             userTab.fields.forEach((userField) => {
               if (configField.model === userField.model && userField.value) {
                 this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value

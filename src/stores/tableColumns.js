@@ -143,13 +143,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "nome",
         sortable: true,
       },
-      {
-        name: "data_de_criacao",
-        align: "left",
-        label: "Data de criação",
-        field: (row) => row.data_de_criacao.dateLocale,
-        sortable: true,
-      },
+      // {
+      //   name: "data_de_criacao",
+      //   align: "left",
+      //   label: "Data de criação",
+      //   field: (row) => row.data_de_criacao.dateLocale,
+      //   sortable: true,
+      // },
     ],
     formConfigList: [
       {
@@ -228,13 +228,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.organismTypeData.name,
         sortable: true,
       },
-      {
-        name: "data_de_criacao",
-        align: "left",
-        label: "Data de criação",
-        field: (row) => row.createdAt.createdAtOnlyDate,
-        sortable: true,
-      },
+      // {
+      //   name: "data_de_criacao",
+      //   align: "left",
+      //   label: "Data de criação",
+      //   field: (row) => row.createdAt.createdAtOnlyDate,
+      //   sortable: true,
+      // },
       {
         name: "status",
         align: "left",
@@ -329,13 +329,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "nome",
         sortable: true,
       },
-      {
-        name: "data_de_criacao",
-        align: "left",
-        label: "Data de criação",
-        field: (row) => row.data_de_criacao.dateLocale,
-        sortable: true,
-      },
+      // {
+      //   name: "data_de_criacao",
+      //   align: "left",
+      //   label: "Data de criação",
+      //   field: (row) => row.data_de_criacao.dateLocale,
+      //   sortable: true,
+      // },
       {
         name: "organismConfigName",
         align: "left",
