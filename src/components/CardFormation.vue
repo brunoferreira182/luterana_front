@@ -30,6 +30,7 @@
           round
           color="primary"
           @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
+          :disable="disableButtons"
         ><q-tooltip>Editar {{ props.data.type.label }}</q-tooltip></q-btn>
         <q-btn
           icon="delete"
@@ -37,6 +38,7 @@
           round
           color="red"
           @click="remove(fieldIndex, tabsIndex, props.data, value, iValue)"
+          :disable="disableButtons"
         ><q-tooltip>Excluir {{ props.data.type.label }}</q-tooltip></q-btn>
         </q-item-label>
       </q-item-section>
@@ -45,7 +47,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
 const emits = defineEmits(['edit', 'remove'])
 
 

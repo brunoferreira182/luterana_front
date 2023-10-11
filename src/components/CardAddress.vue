@@ -29,22 +29,24 @@
       </q-item-section>
       <q-item-section side>
         <q-item-label>
-        <q-btn
-          icon="edit"
-          flat
-          round
-          color="primary"
-          @click="edit(fieldIndex, tabsIndex, i)"
-        >
-        </q-btn>
-        <q-btn
-          icon="delete"
-          flat
-          round
-          color="red"
-          @click="remove(fieldIndex, tabsIndex, i)"
-        >
-        </q-btn>
+          <q-btn
+            icon="edit"
+            flat
+            round
+            color="primary"
+            @click="edit(fieldIndex, tabsIndex, i)"
+            :disable="disableButtons"
+          >
+          </q-btn>
+          <q-btn
+            icon="delete"
+            flat
+            round
+            color="red"
+            @click="remove(fieldIndex, tabsIndex, i)"
+            :disable="disableButtons"
+          >
+          </q-btn>
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -52,7 +54,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
 const emits = defineEmits(['edit', 'remove'])
 
 

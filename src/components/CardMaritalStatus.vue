@@ -23,6 +23,7 @@
             flat
             color="red"
             @click="remove(fieldIndex, tabsIndex, i)"
+            :disable="disableButtons"
           />
         </q-item-label>
       </q-item-section>
@@ -31,7 +32,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
 const emits = defineEmits(['remove'])
 
 function remove(fieldIndex, tabsIndex, i) {
