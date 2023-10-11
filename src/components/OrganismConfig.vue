@@ -470,7 +470,7 @@
                 label="Descrição"
                 v-model="newFunction.description"
               />
-              <q-select
+              <!-- <q-select
                 outlined
                 clearable
                 option-label="titleName"
@@ -480,7 +480,7 @@
                 :option-value="(item) => item._id"
                 :options="titlesOptions"
                 v-model="newFunction.requiredTitleId"
-              />
+              /> -->
               <q-select
                 outlined
                 clearable
