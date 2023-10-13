@@ -1296,7 +1296,6 @@ export default defineComponent({
     },
     
     confirmAddPerson (userSelected) {
-      console.log(userSelected, 'AQUI USERSELECTED')
       this.addPerson.userSelected = userSelected
       if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
         this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]

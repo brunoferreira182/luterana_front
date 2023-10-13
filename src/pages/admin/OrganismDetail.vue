@@ -1088,7 +1088,7 @@ export default defineComponent({
         }
       });
     },
-    editPhoneMobileEmail(fieldIndex, value, iValue, field) {
+    editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
