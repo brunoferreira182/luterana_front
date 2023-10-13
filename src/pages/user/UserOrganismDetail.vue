@@ -2,15 +2,18 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-capitalize">
+        <div class="col-12 text-capitalize">
           <div class="text-h5">
-            detalhe do organismo {{ organismName }}
+            {{ organismName }}
+          </div>
+          <div class="text-caption">
+            detalhe do organismo 
           </div>
         </div>
       </div>
-      <q-separator class="q-mx-md" />
-      <div class="row justify-around q-pa-md">
-        <div class="col-7 q-gutter-md q-mt-sm" align="start">
+      <q-separator class="q-mx-md" v-if="!isMobile"/>
+      <div class="row justify-around q-pa-md" v-if="!isMobile">
+        <div class="col-7 q-gutter-md q-mt-sm" align="start" >
           <div class="text-h5 no-margin q-px-md">
             Dados
           </div>
@@ -158,6 +161,161 @@
           </div>
         </div>
       </div>
+      <div v-if="isMobile" class="q-gutter-md">
+        <q-list bordered>
+          <q-expansion-item
+            group="somegroup"
+            class="bg-grey-3"
+            header-class="text-primary"
+            label="Dados"
+          >
+            <div class="bg-white q-pa-md">
+              <q-select class="q-py-md" outlined label="Nome da configuração" option-label="organismConfigName"
+                :option-value="(item) => item._id" emit-value readonly map-options
+                hint="O tipo de configuração que está aplicado" v-model="organismConfigName"
+                :options="organismConfigOptions" />
+              <div v-if="fields.length" class="text-h5">
+                Dados
+              </div>
+              <div v-for="(field, i) in organismData.fields" :key="i" class="q-py-md">
+                <q-input v-if="field.type.type !== 'boolean'" v-model="field.value" outlined readonly
+                  :type="getInputType(field.type.type)" :reverse-fill-mask="field.type.type === 'money'"
+                  :prefix="field.type.type === 'money' ? 'R$' : null"
+                  :label="field.label + (field.required ? '' : ' (Opcional)')" :mask="field.type.mask" :hint="field.hint" />
+                <q-checkbox v-else-if="field.type.type === 'boolean'" :label="field.label" readonly
+                  v-model="newOrganism[field.model]"></q-checkbox>
+              </div>
+            </div>
+          </q-expansion-item>
+          <q-expansion-item
+            group="somegroup"
+            class="bg-grey-3"
+            header-class="text-primary"
+            label="Funções"
+          >
+            <div v-for="(func, funcIndex) in functions" :key="func" class="bg-white q-pa-sm">
+              <CardFunction
+                :func="func"
+                :funcIndex="funcIndex"
+                @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+              />
+              <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
+                <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+                  <q-card-section align="center">
+                    <div class="text-h6">
+                      Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
+                    </div>
+                  </q-card-section>
+                  <q-card-section>
+                    <q-select
+                      v-model="userSelected"
+                      filled
+                      clearable
+                      use-input
+                      label="Quem convidar"
+                      option-label="userName"
+                      :options="usersOptions.list"
+                      @filter="getUsers"
+                      :option-value="(item) => item._id"
+                      hint="Digite o nome de quem você vai convidar"
+                    >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Nenhum resultado
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps">
+                          <q-item-section>
+                            <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                            <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                    <q-list class="q-mt-md">
+                      <q-item-label header>Irá substituir algúem que já está na função?</q-item-label>
+                      <q-item
+                        tag="label"
+                        v-ripple
+                        v-for="item in dialogOpenSolicitation.data.users"
+                        :key="item._id"
+                      >
+                        <q-item-section avatar>
+                          <q-radio
+                            v-model="dialogOpenSolicitation.userToReplace"
+                            :val="item"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ item.userName }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-card-section>
+                  <!-- <q-card-section>
+                    <q-select
+                      v-model="userSelected"
+                      filled
+                      clearable
+                      use-input
+                      label="Nome do usuário"
+                      option-label="userName"
+                      :options="usersOptions"
+                      @filter="getUsers"
+                      :option-value="(item) => item._id"
+                    >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Nenhum resultado
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps">
+                          <q-item-section>
+                            <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                            <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </q-card-section> -->
+                  <!-- <q-card-section align="center">
+                    <q-input filled label="Observação"
+                      hint="Escreva uma breve descrição explicando o motivo para participar desta função"
+                      v-model="dialogOpenSolicitation.obs" />
+                      <q-checkbox 
+                        :disable="disableIsReplacement"
+                        class="q-pt-lg full-width" 
+                        v-model="isReplacement"
+                        label="Substituir por outro usuário nessa função?" 
+                      />
+                      <div class="text-caption">
+                        Quando marcada, o usuário selecionado estará substituindo a sua posição nesta função
+                      </div>
+                  </q-card-section> -->
+                  <q-card-actions align="center">
+                    <q-btn flat label="Depois" no-caps rounded color="primary"
+                      @click="dialogOpenSolicitation.open = false" />
+                    <q-btn
+                      unelevated
+                      rounded
+                      label="Enviar"
+                      no-caps
+                      color="primary"
+                      @click="sendFunctionSolicitation" 
+                    />
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+            </div>
+          </q-expansion-item>
+        </q-list>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -166,6 +324,7 @@
 import { defineComponent } from "vue";
 import CardFunction from '../../components/CardFunction.vue'
 import useFetch from "../../boot/useFetch";
+import { useScreenStore } from "stores/checkIsMobile";
 import { date } from "quasar";
 export default defineComponent({
   name: "UserOrganismDetail",
@@ -176,6 +335,7 @@ export default defineComponent({
     return {
       usersOptions: [],
       isReplacement: false,
+      isMobile: false,
       disableIsReplacement: false,
       hasPermission: '',
       organismName: '',
@@ -204,6 +364,7 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount() {
+    this.isMobile = useScreenStore().isMobile
     this.getUserIdMongo()
     this.getOrganismDetailById();
     this.getOrganismsConfigs()

@@ -623,24 +623,26 @@ export default defineComponent({
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
     // this.getOrganismsConfigsList()
-    this.getUserVisionPermissionByOrganismId()
+    // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
-    getUserVisionPermissionByOrganismId() {
-      const opt = {
-        route: "/desktop/adm/getUserVisionPermissionByOrganismId",
-        body: {
-          organismId: this.$route.query.organismId
-        }
-      };
-      useFetch(opt).then((r) => {
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          console.log()
-        }
-      });
-    },
+    // getUserVisionPermissionByOrganismId() {
+    //   const opt = {
+    //     route: "/desktop/adm/getUserVisionPermissionByOrganismId",
+    //     body: {
+    //       organismId: this.$route.query.organismId
+    //     }
+    //   };
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     if (r.error) {
+    //       this.$q.notify("Ocorreu um erro, tente novamente por favor");
+    //     } else {
+    //       console.log()
+    //     }
+    //   });
+    // },
     getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
@@ -759,7 +761,9 @@ export default defineComponent({
           organismId: organismId,
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {

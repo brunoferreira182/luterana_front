@@ -60,7 +60,7 @@
           </q-td>
         </template>
       </q-table>
-      <!-- <div class="text-left">
+      <div class="text-left">
         <q-btn 
           v-for="(organism, nameIndex) in userOrganismList" 
           :key="organism"
@@ -73,7 +73,7 @@
         >
         {{ organism.organismConfigName }}
         </q-btn>
-      </div> -->
+      </div>
     </q-page>
   </q-page-container>
 </template>
