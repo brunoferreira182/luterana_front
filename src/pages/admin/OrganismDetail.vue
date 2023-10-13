@@ -1306,11 +1306,11 @@ export default defineComponent({
     },
     checkRequiredFields() {
       let allRight = true;
-      this.organismData.fields.forEach((field) => {
-        if (field.required && (!field.value || field.value === "")) {
-          allRight = false;
-        }
-      });
+      // this.organismData.fields.forEach((field) => {
+      //   if (field.required && (!field.value || field.value === "")) {
+      //     allRight = false;
+      //   }
+      // });
       return allRight;
     },
     updateOrganism(){
