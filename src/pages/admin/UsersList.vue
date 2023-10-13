@@ -163,6 +163,7 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.usersOptions = r.data;
