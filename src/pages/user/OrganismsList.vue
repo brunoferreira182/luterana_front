@@ -150,8 +150,9 @@ export default defineComponent({
     },
     filterOrganisms(nameIndex) {
       const selectedOrganism = this.userOrganismList[nameIndex]
-      if (nameIndex >= 0 && this.selectFilter !== selectedOrganism.organismConfigName) {
-        this.selectFilter = selectedOrganism.organismConfigName 
+      if (nameIndex >= 0 && nameIndex < this.userOrganismList.length &&
+        this.selectFilter !== selectedOrganism.organismConfigName) {
+          this.selectFilter = selectedOrganism.organismConfigName 
       } else if(selectedOrganism.organismConfigName === this.userOrganismList[nameIndex].organismConfigName) {
         this.selectFilter = null
       }

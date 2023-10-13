@@ -450,13 +450,284 @@
               <div v-if="fields.length" class="text-h5">
                 Dados
               </div>
-              <div v-for="(field, i) in organismData.fields" :key="i" class="q-py-md">
-                <q-input v-if="field.type.type !== 'boolean'" v-model="field.value" outlined readonly
-                  :type="getInputType(field.type.type)" :reverse-fill-mask="field.type.type === 'money'"
-                  :prefix="field.type.type === 'money' ? 'R$' : null"
-                  :label="field.label + (field.required ? '' : ' (Opcional)')" :mask="field.type.mask" :hint="field.hint" />
-                <q-checkbox v-else-if="field.type.type === 'boolean'" :label="field.label" readonly
-                  v-model="newOrganism[field.model]"></q-checkbox>
+              <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex" class="q-py-md">
+                <div v-if="
+                  field.type.type === 'string'
+                  || field.type.type === 'int'
+                  || field.type.type === 'date'
+                  || field.type.type === 'cpf'
+                  || field.type.type === 'cnpj'
+                  || field.type.type === 'money'
+                  || field.type.type === 'textarea'
+                  "
+                >
+                  <q-input
+                    :label="field.label"
+                    :hint="field.hint"
+                    :mask="field.type.mask"
+                    v-model="field.value"
+                    outlined
+                    :readonly="field.onlyAdm"
+                  >
+                  </q-input>
+                </div>
+                <q-file
+                  v-if="field.type.type === 'image'"
+                  v-model="files"
+                  @rejected="onRejected"
+                  :filter="checkFileType"
+                  label="Clique aqui para adicionar imagem de perfil"
+                  outlined
+                  @input="saveProfilePhoto()"
+                  :readonly="field.onlyAdm"
+                >
+                  <template #append>
+                    <q-icon name="attach_file" />
+                  </template>
+                </q-file>
+                <div class="text-right" v-if="field.type.type === 'options'">
+                  <q-select
+                    outlined
+                    :label="field.label"
+                    option-label="optionName"
+                    emit-value
+                    map-options
+                    :hint="field.hint"
+                    v-model="field.value"
+                    :options="field.options"
+                    :readonly="field.onlyAdm"
+                  >
+                  </q-select>
+                </div>
+                <div v-if="field.type.type === 'attach'">
+                  <q-item class="bg-grey-3" style="border-radius: 1rem">
+                    <q-item-section>
+                      <q-item-label class="text-h5">
+                        {{ field.label }}
+                      </q-item-label>
+                      <q-item-label class="text-subtitle1">
+                        {{ field.hint }}
+                      </q-item-label>
+                      <q-item-label>
+                        <q-file
+                          class="bg-white"
+                          v-model="field.value"
+                          label="Escolha um ou mais arquivos"
+                          outlined
+                          use-chips
+                          multiple
+                          :readonly="field.onlyAdm"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </div>
+                <q-checkbox
+                  v-if="field.type.type === 'boolean'"
+                  class="q-pt-lg"
+                  :label="field.label"
+                  :hint="field.hint"
+                  v-model="field.value"
+                  :readonly="field.onlyAdm"
+                />
+                <div v-if="field.type.type === 'multiple_select'">
+                  <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
+                    <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
+                    <div class="q-pa-sm">
+                      <q-btn
+                        v-if="field.multiple || (!field.value || field.value.length === 0)"
+                        icon="add"
+                        color="primary"
+                        outline
+                        rounded
+                        @click="addDoubleSelection(fieldIndex)"
+                        no-caps
+                        :disable="field.onlyAdm"
+                      >
+                        Adicionar nova seleção dupla
+                      </q-btn>
+                    </div>
+                    <div>
+                      <div v-if="field.value">
+                        <div
+                          v-for="(value, valueIndex) in field.value"
+                          :key="valueIndex"
+                          class="row wrap justify-left q-pa-sm items-left content-center"
+                        >
+                          <q-select 
+                            v-for="(select, selectIndex) in field.selects"
+                            :key="'internalSelect' + selectIndex"
+                            :label="select.label"
+                            option-label="options"
+                            emit-value
+                            map-options
+                            v-model="organismData.fields[fieldIndex].value[valueIndex][selectIndex]"
+                            :options="select.options"
+                            class="col-5"
+                          />
+                          <q-btn
+                            icon="delete"
+                            class="q-ml-lg"
+                            rounded
+                            flat
+                            color="red"
+                            @click="organismData.fields[fieldIndex].value.splice(valueIndex, 1)" 
+                            />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="field.type.type === 'organism'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <!-- <div class="text-body">{{ field.label }}</div> -->
+                    <q-btn
+                      :label="`Adicionar ${field.label}`"
+                      no-caps
+                      rounded
+                      flat
+                      color="primary"
+                      icon="add"
+                      v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                      @click="clkOpenAddOrganismDialog(fieldIndex)"
+                      :disable="field.onlyAdm"
+                    />
+                    <CardOrganism
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      @remove="removeThisOrganism"
+                    />
+                  </div>
+                </div>
+                <div v-if="field.type.type === 'address'">
+                  <q-btn
+                    label="Endereço"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkOpenAddressDialog(fieldIndex)"
+                    class="q-mt-xs"
+                    :disable="field.onlyAdm"
+                  />
+                  <CardAddress
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    @edit="editThisAddress"
+                    @remove="removeThisAddress"
+                  />
+                </div>
+                <div v-if="field.type.type === 'person'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <div class="text-body">{{ field.label }}</div>
+                    <CardPerson
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      @remove="removeThisPerson"
+                    />
+                  </div>
+                  <q-btn
+                    :label="`Adicionar ${field.label}`"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    icon="add"
+                    v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                    @click="clkOpenAddPersonDialog(fieldIndex)"
+                    :disable="field.onlyAdm"
+                  />
+                </div>
+                <div v-if="field.type.type === 'maritalStatus'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <div class="text-body">{{ field.label }}</div>
+                    <CardMaritalStatus
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      @remove="removeThisPerson"
+                    />
+                  </div>
+                  <q-btn
+                    :label="`Modificar ${field.label}`"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    icon="add"
+                    v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                    @click="clkAddMaritalStatus(fieldIndex)"
+                    :disable="field.onlyAdm"
+                  />
+                </div>
+                <div v-if="field.type.type === 'bank_data'">
+                  <q-btn
+                    label="Adicionar dados bancários"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    @click="clkAddBankData(fieldIndex)"
+                    icon="add"
+                    :disable="field.onlyAdm"
+                  />
+                  <CardBankData
+                    :data="field"
+                    :fieldIndex="fieldIndex"
+                    @edit="editBankData"
+                    @remove="removeBankData"
+                  />
+                </div>
+                <div v-if="
+                  field.type.type === 'email'
+                  || field.type.type === 'phone'
+                  || field.type.type === 'mobile'
+                  "
+                >
+                  <q-btn
+                    :label="`${field.type.label}`"
+                    no-caps
+                    flat
+                    v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                    icon="add"
+                    color="primary"
+                    rounded
+                    @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
+                    class="q-mt-xs"
+                    :disable="field.onlyAdm"
+                  />
+                  <CardPhoneMobileEmail
+                    :data="field"
+                    :fieldIndex="fieldIndex"
+                    @edit="editPhoneMobileEmail"
+                    @remove="removePhoneMobileEmail"
+                  />
+                </div>
+                <div v-if="field.type.type === 'formation'">
+                  <q-btn
+                    label="Formação"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkAddFormation(fieldIndex)"
+                    class="q-mt-xs"
+                    :disable="field.onlyAdm"
+                  />
+                  <CardFormation
+                    :data="field"
+                    :fieldIndex="fieldIndex"
+                    @edit="editFormation"
+                    @remove="removeFormation"
+                  />
+                </div>
               </div>
             </div>
           </q-expansion-item>
@@ -592,35 +863,11 @@
           </q-expansion-item>
         </q-list>
       </div>
-      <DialogMaritalStatus
-        :open="maritalStatus.open"
-        :dataProp="maritalStatus.data"
-        @addPerson="confirmAddPerson"
-        @closeDialog="clearMaritalStatus"
-      />
-      
-      <DialogUserTitle
-        :open="openDialogVinculateUserToTitle"
-        @closeDialog="openDialogVinculateUserToTitle = false"
-        @confirm="createUserTitle"
-      />
       <DialogAddress
         :open="dialogConfirmAddress.open"
         :addressDataProp="dialogConfirmAddress.data"
         @confirmAddress="confirmAddress"
         @closeDialog="clearAddressInputs"
-      />
-
-      <DialogAddPerson
-        :open="addPerson.dialogOpen"
-        @closeDialog="closeAddPersonDialog"
-        @addPerson="confirmAddPerson"
-      />
-      
-      <DialogAddOrganism
-        :open="addOrganism.dialogOpen"
-        @closeDialog="clearOrganismInputs"
-        @addOrganism="confirmAddOrganism"
       />
       <DialogPhoneMobileEmail
         :open="dialogAddPhoneMobileEmail.open"
@@ -628,22 +875,6 @@
         :type="dialogAddPhoneMobileEmail.type"
         @confirm="confirmAddPhoneMobileEmail"
         @closeDialog="clearDialogAddPhoneMobileEmail"
-      />
-      <DialogBankData
-        :open="dialogAddBankData.open"
-        :dataProp="dialogAddBankData.data"
-        :docProp="dialogAddBankData.userHasDoc.doc"
-        :hasDoc="dialogAddBankData.userHasDoc.hasDoc"
-        @confirm="confirmAddBankData"
-        @closeDialog="clearBankDataInputs"
-      />
-      <DialogFormation
-        :open="dialogFormation.open"
-        :dataProp="dialogFormation.data"
-        :fieldIndex="dialogFormation.fieldIndex"
-        :tabsIndex="dialogFormation.tabsIndex"
-        @confirm="confirmFormation"
-        @closeDialog="clearFormationInputs"
       />
     </q-page>
   </q-page-container>
@@ -654,15 +885,9 @@ import { defineComponent } from "vue";
 import CardFunction from '../../components/CardFunction.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
-import DialogAddPerson from '../../components/DialogAddPerson.vue'
-import DialogFormation from '../../components/DialogFormation.vue'
-import DialogUserTitle from '../../components/DialogUserTitle.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
 import CardBankData from '../../components/CardBankData.vue'
-import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
-import DialogBankData from '../../components/DialogBankData.vue'
 import CardFormation from '../../components/CardFormation.vue'
-import DialogAddOrganism from '../../components/DialogAddOrganism.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
@@ -673,14 +898,10 @@ import { date } from "quasar";
 export default defineComponent({
   name: "UserOrganismDetail",
   components: {
-    CardFunction, CardOrganism,
-    CardAddress, CardPerson,
-    CardMaritalStatus, CardBankData, 
-    CardPhoneMobileEmail, DialogPhoneMobileEmail,
-    CardFormation, DialogAddPerson,
-    DialogFormation, DialogUserTitle,
-    DialogAddress, DialogMaritalStatus,
-    DialogBankData, DialogAddOrganism
+    CardFunction, CardOrganism, DialogAddress,
+    CardAddress, CardPerson, CardMaritalStatus,
+    CardBankData, CardPhoneMobileEmail, CardFormation,
+    DialogPhoneMobileEmail
   },
   data() {
     return {
@@ -879,112 +1100,6 @@ export default defineComponent({
         } else { this.myUserIdMongo = r.data.userIdMongo }
       })
     },
-    confirmAddPerson (userSelected) {
-      this.addPerson.userSelected = userSelected
-      if (!organismData.fields[this.addPerson.fieldIndex].multiple)
-        organismData.fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-      else {
-        if (!organismData.fields[this.addPerson.fieldIndex].value
-          || organismData.fields[this.addPerson.fieldIndex].value === ''
-          ) {
-            organismData.fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-        } else {
-          organismData.fields[this.addPerson.fieldIndex].value.push(this.addPerson.userSelected)
-        }
-      }
-      this.closeAddPersonDialog()
-      this.addPerson.dialogOpen = false
-    },
-    closeAddPersonDialog () {
-      this.addPerson.userSelected = null
-      this.addPerson.dialogOpen = false
-    },
-    createUserTitle(titleSelected){
-      const opt = {
-        route:'/desktop/commonUsers/createUserTitle',
-        body: {
-          titleConfigId: titleSelected._id
-        }
-      };
-      this.openDialogVinculateUserToTitle = false
-      useFetch(opt).then((r)=> {
-        this.$q.loading.hide()
-        if(r.error) {
-          this.$q.notify("Erro ao inserir título, tente novamente mais tarde")
-          return
-        }
-        this.getUserDetailById()
-      })
-    },
-    clearFormationInputs () {
-      this.dialogFormation = {
-        open: false,
-        tabsIndex: null,
-        fieldIndex: null,
-        data: {
-          value: '',
-          type: ''
-        },
-        action: null,
-        iValue: null
-      }
-    },
-    confirmFormation (data) {
-      if (this.dialogFormation.action === 'add') {
-        if (!this.organismData.fields[this.dialogFormation.fieldIndex].value)
-          this
-            .organismData
-            .fields[this.dialogFormation.fieldIndex]
-            .value = []
-        this
-          .organismData
-          .fields[this.dialogFormation.fieldIndex]
-          .value.push(data)
-      } else if (this.dialogFormation.action === 'edit') {
-        this
-          .organismData
-          .fields[this.dialogFormation.fieldIndex]
-          .value[this.dialogFormation.iValue] = data
-      }
-      this.clearFormationInputs()
-    },
-    confirmAddBankData (data, doc) {
-      if (this.dialogAddBankData.action === 'add') {
-        if (!thisorganismData.fields[this.dialogAddBankData.fieldIndex].value)
-          thisorganismData.fields[this.dialogAddBankData.fieldIndex].value = []
-        this
-          .organismData
-          .fields[this.dialogAddBankData.fieldIndex]
-          .value.push({
-            bank: data.bank,
-            agency: data.agency,
-            account: data.account,
-            pix: data.pix,
-          });
-        this.organismData
-          .fields[this.dialogAddBankData.userHasDoc.fieldWithDoc]
-          .value = doc
-      } else if (this.dialogAddBankData.action === 'edit') {
-        this
-          .organismData
-          .fields[this.dialogAddBankData.fieldIndex]
-          .value[this.dialogAddBankData.iValue] = { ...data }
-      }
-      this.dialogAddBankData.open = false
-    },
-    clearBankDataInputs () {
-      this.dialogAddBankData.data = {
-        bank: '',
-        agency: '',
-        account: '',
-        pix: ''
-      }
-      this.dialogAddBankData.userHasDoc = {
-        hasDoc: false,
-        doc: ''
-      }
-      this.dialogAddBankData.open = false
-    },
     clearDialogAddPhoneMobileEmail () {
       this.dialogAddPhoneMobileEmail = {
         type: null,
@@ -1001,20 +1116,6 @@ export default defineComponent({
       }
       this.dialogAddPhoneMobileEmail.open = false
     },
-    confirmAddOrganism(organismSelected) {
-      if (!thisorganismData.fields[this.addOrganism.fieldIndex].multiple)
-        thisorganismData.fields[this.addOrganism.fieldIndex].value = [ organismSelected ]
-      else {
-        if (!thisorganismData.fields[this.addOrganism.fieldIndex].value
-          || thisorganismData.fields[this.addOrganism.fieldIndex].value === ''
-          ) {
-            thisorganismData.fields[this.addOrganism.fieldIndex].value = [ organismSelected ]
-        } else {
-          thisorganismData.fields[this.addOrganism.fieldIndex].value.push(organismSelected)
-        }
-      }
-      this.clearOrganismInputs()
-    },
     clearAddressInputs(){
       this.dialogConfirmAddress.data = {
         addressType: '',
@@ -1028,10 +1129,6 @@ export default defineComponent({
         complement: ""
       }
       this.dialogConfirmAddress.open = false;
-    },
-    clearOrganismInputs() {
-      this.addOrganism.dialogOpen = false
-      this.addOrganism.organismSelected = null
     },
     confirmAddress(data) {
       console.log(data,' aqui data')
@@ -1063,15 +1160,6 @@ export default defineComponent({
         }
       }
       this.clearAddressInputs()
-    },
-    clearMaritalStatus () {
-      this.maritalStatus = {
-        open: false,
-        tabsIndex: null,
-        fieldIndex: null,
-        data: null,
-        action: null,
-      }
     },
     editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {
@@ -1192,15 +1280,6 @@ export default defineComponent({
           this.organismConfigOptions = r.data
         }
       });
-    },
-    checkRequiredFields() {
-      let allRight = true;
-      this.organismData.fields.forEach((field) => {
-        if (field.required && (!field.value || field.value === "")) {
-          allRight = false;
-        }
-      });
-      return allRight;
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");

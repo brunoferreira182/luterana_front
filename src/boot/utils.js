@@ -303,16 +303,21 @@ const useUtils = {
           route: "/user/userSolicitationsList",
           icon: "format_list_bulleted",
         },
-        {
-          label: "Formulários",
-          route: "/user/userFormsList",
-          icon: "list_alt",
-        },
-        {
-          label: "Formulários enviados",
-          route: "/user/userMyFormsList",
-          icon: "collections_bookmark",
-        },
+        // {
+        //   label: "Falar com admin",
+        //   route: "/user/talkToAdmin",
+        //   icon: "admin_panel_settings",
+        // },
+        // {
+        //   label: "Formulários",
+        //   route: "/user/userFormsList",
+        //   icon: "list_alt",
+        // },
+        // {
+        //   label: "Formulários enviados",
+        //   route: "/user/userMyFormsList",
+        //   icon: "collections_bookmark",
+        // },
       ],
     };
     return obj[type];
