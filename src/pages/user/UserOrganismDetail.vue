@@ -450,7 +450,7 @@
               <div v-if="fields.length" class="text-h5">
                 Dados
               </div>
-              <div v-for="(field, i) in organismData.fields" :key="i" class="q-py-md">
+              <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex" class="q-py-md">
                 <div v-if="
                   field.type.type === 'string'
                   || field.type.type === 'int'
