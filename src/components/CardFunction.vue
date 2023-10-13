@@ -161,8 +161,8 @@
       Esta função permite {{ props.func.functionNumOfOccupants }} participantes
     </div>
     <q-item-section class="q-pa-xs">
-      <!-- <q-btn
-        v-if="$route.path.includes('/user') "
+      <q-btn
+        v-if="showInviteUserButton"
         label="Convidar pessoa"
         color="primary"
         dense
@@ -171,7 +171,7 @@
         flat
         no-caps
         @click="clkOpenDialogSolicitation"
-      /> -->
+      />
       <q-btn
         v-if="showAddUserButton"
         label="Adicionar pessoa"
@@ -190,9 +190,9 @@
 <script setup>
 // import { defineComponent } from "vue";
 
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton'])
 
-const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'ClkOpenDialogSolicitation'])
+const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 
 function insertObservation(user) {
   emits('insertObservation', user)
@@ -201,9 +201,9 @@ function insertObservation(user) {
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
 }
-// function clkOpenDialogSolicitation () {
-//   emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
-// }
+function clkOpenDialogSolicitation () {
+  emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
+}
 
 function linkUserToFunction () {
   emits('linkUserToFunction', props.func, props.funcIndex)
