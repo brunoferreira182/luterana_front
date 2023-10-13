@@ -1,8 +1,8 @@
 {
   "name": "luteranadesktop",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Luterana System",
+  "description": "IELB",
+  "productName": "Tabula",
   "author": "brunoferreira182 <brunoferreira1821995@gmail.com>",
   "private": true,
   "scripts": {

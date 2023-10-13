@@ -1,7 +1,7 @@
 //////////// VARIAVEIS DA APLICACAO //////
-const MODE_MASTER_SERVER = "tiago";
+const MODE_MASTER_SERVER = "prod";
 const COMPANY_ID = 10;
-const VERSION = 1.0
+const VERSION = "1.1 Beta"
 const BUILD = 12
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;

@@ -155,11 +155,15 @@
       </div>
     </div>
     <q-footer flat class="bg-transparent text-primary q-pa-md">
-      <div>Versão 1.0</div>
-      <div>Build 1.2</div>
+      <div>Versão {{ VERSION }}</div>
+      <div>Build {{ BUILD }}</div>
     </q-footer>
   </q-layout>
 </template>
+
+<script setup>
+import { VERSION, BUILD } from '../boot/variables'
+</script>
 
 <script>
 import InputEmail from "../components/InputEmail.vue";
