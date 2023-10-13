@@ -989,7 +989,7 @@ export default defineComponent({
     removeThisAddress(fieldIndex, valueIndex) {
       this.organismData.fields[fieldIndex].value.splice(valueIndex, 1);
     },
-    editThisAddress(fieldIndex, valueIndex){
+    editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {
         open: true,
         fieldIndex,
@@ -1087,7 +1087,8 @@ export default defineComponent({
         }
       });
     },
-    editPhoneMobileEmail (fieldIndex, field, value, iValue) {
+    editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(field, "aparece porcaria")
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
@@ -1223,6 +1224,7 @@ export default defineComponent({
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
           this.organismData.fields = r.data.organismData.fields;
+          this.organismData.organismConfigId = r.data.organismData.organismConfigId
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
           this.relations = r.data.relations
@@ -1327,12 +1329,11 @@ export default defineComponent({
             }
           }
         }
-        const organismId = this.$route.query.organismId
         const opt = {
           route: '/desktop/adm/updateOrganismData',
           body: {
             organismData: this.organismData,
-            organismId: organismId
+            organismId: this.$route.query.organismId
           }
         }
         this.$q.loading.show()
