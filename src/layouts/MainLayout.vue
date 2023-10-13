@@ -191,7 +191,7 @@
             </div>
             <div class="col-9">
               <DrawerLogo />
-              <div class="text-h3 q-py-md text-center text-primary app-font-calibri-italic">
+              <div class="text-h4 q-py-lg text-center text-primary app-font-calibri-italic">
                 Tabula
               </div>
               <q-list class="q-mx-xs q-gutter-y-xs">
