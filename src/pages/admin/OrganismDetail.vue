@@ -1329,10 +1329,9 @@ export default defineComponent({
         }
         const organismId = this.$route.query.organismId
         const opt = {
-          route: '/desktop/adm/removeParentRelation',
+          route: '/desktop/adm/updateOrganismData',
           body: {
             organismData: this.organismData,
-            functions: userData,
             organismId: organismId
           }
         }
