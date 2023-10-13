@@ -7,3 +7,11 @@
 .app-font {
   font-family: Roboto;
 }
+@font-face {
+  font-family: Calibri;
+  src: url(./fonts/Calibri-italic.ttf);
+}
+
+.app-font-calibri-italic {
+  font-family: Calibri;
+}

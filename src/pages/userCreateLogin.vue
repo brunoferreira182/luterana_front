@@ -1,6 +1,6 @@
 <template>
-  <q-layout class="app-font">
-    <div class="fixed-center font-montserrat" style="min-width: 500px" v-if="!isMobile">
+  <div class="app-font row justify-center">
+    <div class="col-6 font-montserrat q-pa-md" style="overflow:auto" v-if="!isMobile">
       <div class="text-center">
         <q-img
           src="../assets/logo.png"
@@ -9,9 +9,12 @@
           align="center"
           width="40%"
         />
+        <div class="text-h3 text-primary app-font-calibri-italic">
+          Tabula
+        </div>
       </div>
       <div class="" v-if="userDataTabs.length > 0">
-        <div class="flex-center q-gutter-md">
+        <div class="q-gutter-md">
           <div
             v-for="(field, i) in userDataTabs[0].fields"
             :key="field"
@@ -59,7 +62,7 @@
         </div>
       </div>
     </div>
-    <div class="font-montserrat q-pa-md" v-else-if="isMobile">
+    <div class="font-montserrat col-12 q-pa-md" style="overflow:auto" v-else-if="isMobile">
       <div class="text-center">
         <q-img
           src="../assets/logo.png"
@@ -68,6 +71,9 @@
           align="center"
           width="40%"
         />
+        <div class="text-h3 text-primary app-font-calibri-italic">
+          Tabula
+        </div>
       </div>
       <div class="" v-if="userDataTabs.length > 0">
         <div class="q-gutter-md">
@@ -118,7 +124,7 @@
         </div>
       </div>
     </div>
-  </q-layout>
+  </div>
 </template>
 
 <script>
