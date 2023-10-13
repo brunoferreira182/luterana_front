@@ -212,7 +212,7 @@
               :v-model:pagination="pagination"
               @request="nextPage"
             >
-              <template #top-right>
+              <!-- <template #top-right>
                 <div class="flex row q-gutter-sm items-center text-right">
                   <div class="col">
                     <q-input
@@ -229,7 +229,7 @@
                     </q-input>
                   </div>
                 </div>
-              </template>
+              </template> -->
               <template #body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
@@ -283,7 +283,7 @@
               :v-model:pagination="pagination"
               @request="nextPage"
             >
-              <template #top-right>
+              <!-- <template #top-right>
                 <div class="flex row q-gutter-sm items-center text-right">
                   <div class="col">
                     <q-input
@@ -300,7 +300,7 @@
                     </q-input>
                   </div>
                 </div>
-              </template>
+              </template> -->
               <template #body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
@@ -343,9 +343,9 @@
               <div class="text-h6">
                 Deseja confirmar sua participação? 
               </div>
-              <div class="subtitle2 text-left q-px-md">
-                Organismo: {{ dialogOpenSolicitation.data.organismName }}
-                Função: {{ dialogOpenSolicitation.data.functionName }}
+              <div class="subtitle2 q-px-md">
+                Organismo {{ dialogOpenSolicitation.data.organismName }}
+                Função {{ dialogOpenSolicitation.data.functionName }}
               </div>
             </q-card-section>
             <q-card-actions align="center">
