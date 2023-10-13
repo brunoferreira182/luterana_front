@@ -489,7 +489,7 @@ export default defineComponent({
         this.formConfigName = r.data.formName;
         this.formConfig = r.data.configs;
         this.formDatesSelected.formType.type = r.data.configs.recurrency.label;
-        // this.filterType = r.data.configs.recurrency.type
+        this.filterType = r.data.configs.recurrency.type
         this.organismConfigId = r.data.filters.organismsConfigs;
         this.dayOfWeek = r.data.configs.recurrency.rule.label
         this.formFields = r.data.fields;
