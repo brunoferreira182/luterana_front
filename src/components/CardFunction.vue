@@ -7,8 +7,8 @@
     <q-item>
       <q-item-section top>
         <div class="text-subtitle2 text-capitalize">{{ props.func.functionName }}</div>
-        <div>Descrição: {{ props.func.functionDescription }}</div>
-        <div class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
+        <div  v-if="!$route.path.includes('/user') ">Descrição: {{ props.func.functionDescription }}</div>
+        <div  v-if="!$route.path.includes('/user') " class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
       </q-item-section>
       <q-item-section top side>
         <div class="text-subtitle2">
@@ -19,6 +19,7 @@
       </q-item-section>
     </q-item>
     <q-expansion-item
+      v-if="!$route.path.includes('/user') "
       color="primary"
       icon="visibility"
       :label="props.func.visions ? `${props.func.visions.length} Visões` : '0 Visões'"
@@ -34,6 +35,7 @@
       >Nenhuma visão</span>
     </q-expansion-item>
     <q-expansion-item
+      default-opened
       color="primary"
       icon="group"
       :label="props.func.users ? `${props.func.users.length} Participantes` : '0 Participantes'"
@@ -161,7 +163,7 @@
       Esta função permite {{ props.func.functionNumOfOccupants }} participantes
     </div>
     <q-item-section class="q-pa-xs">
-      <q-btn
+      <!-- <q-btn
         v-if="$route.path.includes('/user') "
         label="Convidar pessoa"
         color="primary"
@@ -171,9 +173,9 @@
         flat
         no-caps
         @click="clkOpenDialogSolicitation"
-      />
+      /> -->
       <q-btn
-        v-else
+        v-if="!$route.path.includes('/user') "
         label="Adicionar pessoa"
         color="primary"
         dense
@@ -201,9 +203,9 @@ function insertObservation(user) {
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
 }
-function clkOpenDialogSolicitation () {
-  emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
-}
+// function clkOpenDialogSolicitation () {
+//   emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
+// }
 
 function linkUserToFunction () {
   emits('linkUserToFunction', props.func, props.funcIndex)

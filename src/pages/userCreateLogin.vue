@@ -1,6 +1,6 @@
 <template>
   <q-layout class="app-font">
-    <div class="fixed-center font-montserrat" style="min-width: 500px">
+    <div class="font-montserrat" style="min-width: 500px">
       <div class="text-center">
         <q-img
           src="../assets/logo.png"
@@ -11,7 +11,7 @@
         />
       </div>
       <div class="" v-if="userDataTabs.length > 0">
-          <div class="flex-center q-gutter-md">
+          <div class="">
             <div
               v-for="(field, i) in userDataTabs[0].fields"
               :key="field"
