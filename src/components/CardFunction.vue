@@ -175,7 +175,7 @@
         @click="clkOpenDialogSolicitation"
       /> -->
       <q-btn
-        v-if="!$route.path.includes('/user') "
+        v-if="showAddUserButton"
         label="Adicionar pessoa"
         color="primary"
         dense
@@ -192,7 +192,7 @@
 <script setup>
 // import { defineComponent } from "vue";
 
-const props = defineProps(['func', 'funcIndex'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'ClkOpenDialogSolicitation'])
 

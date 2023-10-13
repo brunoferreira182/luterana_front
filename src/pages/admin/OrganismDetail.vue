@@ -365,6 +365,7 @@
                   @insertObservation="dialogInsertObservation"
                   @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                   @linkUserToFunction="linkUserToFunction"
+                  :showAddUserButton="func.functionName === 'Pastor' ? false : true"
                 />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
@@ -776,12 +777,12 @@
     </q-page>
   </q-page-container>
   <DialogPhoneMobileEmail
-        :open="dialogAddPhoneMobileEmail.open"
-        :dataProp="dialogAddPhoneMobileEmail.data"
-        :type="dialogAddPhoneMobileEmail.type"
-        @confirm="confirmAddPhoneMobileEmail"
-        @closeDialog="clearDialogAddPhoneMobileEmail"
-      />
+    :open="dialogAddPhoneMobileEmail.open"
+    :dataProp="dialogAddPhoneMobileEmail.data"
+    :type="dialogAddPhoneMobileEmail.type"
+    @confirm="confirmAddPhoneMobileEmail"
+    @closeDialog="clearDialogAddPhoneMobileEmail"
+  />
   <DialogAddress
     :open="dialogConfirmAddress.open"
     :addressDataProp="dialogConfirmAddress.data"
