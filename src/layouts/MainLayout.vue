@@ -21,7 +21,8 @@
               icon="arrow_back_ios_new"
               @click="$router.back()"
             />
-            <q-toolbar-title class="text-primary">
+            <q-toolbar-title  v-if="!isMobile"/>
+            <q-toolbar-title class="text-primary text-h5 app-font-calibri-italic" v-if="isMobile">
               Tabula
             </q-toolbar-title>
             <div class="q-mr-md">
@@ -190,6 +191,9 @@
             </div>
             <div class="col-9">
               <DrawerLogo />
+              <div class="text-h4 q-py-lg text-center text-primary app-font-calibri-italic">
+                Tabula
+              </div>
               <q-list class="q-mx-xs q-gutter-y-xs">
                 <q-item
                   class="redondo"

@@ -365,6 +365,7 @@
                   @insertObservation="dialogInsertObservation"
                   @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                   @linkUserToFunction="linkUserToFunction"
+                  :showAddUserButton="func.functionName === 'Pastor' ? false : true"
                 />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
@@ -776,12 +777,12 @@
     </q-page>
   </q-page-container>
   <DialogPhoneMobileEmail
-        :open="dialogAddPhoneMobileEmail.open"
-        :dataProp="dialogAddPhoneMobileEmail.data"
-        :type="dialogAddPhoneMobileEmail.type"
-        @confirm="confirmAddPhoneMobileEmail"
-        @closeDialog="clearDialogAddPhoneMobileEmail"
-      />
+    :open="dialogAddPhoneMobileEmail.open"
+    :dataProp="dialogAddPhoneMobileEmail.data"
+    :type="dialogAddPhoneMobileEmail.type"
+    @confirm="confirmAddPhoneMobileEmail"
+    @closeDialog="clearDialogAddPhoneMobileEmail"
+  />
   <DialogAddress
     :open="dialogConfirmAddress.open"
     :addressDataProp="dialogConfirmAddress.data"
@@ -1087,8 +1088,12 @@ export default defineComponent({
         }
       });
     },
+<<<<<<< HEAD
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
       console.log(field, "aparece porcaria")
+=======
+    editPhoneMobileEmail(fieldIndex, value, iValue, field) {
+>>>>>>> bdfb4b68a99b8769762599b79a01a339a3f1d6ed
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex

@@ -45,8 +45,152 @@
           <div v-if="organismData.fields.length" class="text-h5">
             Preencha os dados necessários:
           </div>
+
+
+
+
+
+
+
+
+          <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex">
+            <div v-if="
+              field.type.type === 'string'
+              || field.type.type === 'int'
+              || field.type.type === 'date'
+              || field.type.type === 'cpf'
+              || field.type.type === 'cnpj'
+              || field.type.type === 'money'
+              || field.type.type === 'textarea'
+              "
+            >
+              <q-input
+                :label="field.label"
+                :hint="field.hint"
+                :mask="field.type.mask"
+                v-model="field.value"
+                outlined
+                :readonly="field.onlyAdm"
+              >
+              </q-input>
+            </div>
+            <q-file
+              v-if="field.type.type === 'image'"
+              v-model="files"
+              @rejected="onRejected"
+              :filter="checkFileType"
+              label="Clique aqui para adicionar imagem de perfil"
+              outlined
+              :readonly="field.onlyAdm"
+            >
+              <template #append>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <div class="text-right" v-if="field.type.type === 'options'">
+              <q-select
+                outlined
+                :label="field.label"
+                option-label="optionName"
+                emit-value
+                map-options
+                :hint="field.hint"
+                v-model="field.value"
+                :options="field.options"
+                :readonly="field.onlyAdm"
+              >
+              </q-select>
+            </div>
+            <div v-if="field.type.type === 'attach'">
+              <q-item class="bg-grey-3" style="border-radius: 1rem">
+                <q-item-section>
+                  <q-item-label class="text-h5">
+                    {{ field.label }}
+                  </q-item-label>
+                  <q-item-label class="text-subtitle1">
+                    {{ field.hint }}
+                  </q-item-label>
+                  <q-item-label>
+                    <q-file
+                      class="bg-white"
+                      v-model="field.value"
+                      label="Escolha um ou mais arquivos"
+                      outlined
+                      use-chips
+                      multiple
+                      :readonly="field.onlyAdm"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="attach_file" />
+                      </template>
+                    </q-file>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </div>
+            <q-checkbox
+              v-if="field.type.type === 'boolean'"
+              class="q-pt-lg"
+              :label="field.label"
+              :hint="field.hint"
+              v-model="field.value"
+              :readonly="field.onlyAdm"
+            />  
+ 
+            <div v-if="field.type.type === 'address'">
+              <q-btn
+                label="Endereço"
+                no-caps
+                rounded
+                unelevated
+                flat
+                color="primary"
+                icon="add"
+                @click="clkOpenAddressDialog(fieldIndex)"
+                class="q-mt-xs"
+                :disable="field.onlyAdm"
+              />
+              <CardAddress
+                :data="field.value"
+                :fieldIndex="fieldIndex"
+                @edit="editThisAddress"
+                @remove="removeThisAddress"
+              />
+            </div>
+
+            <div v-if="
+              field.type.type === 'email'
+              || field.type.type === 'phone'
+              || field.type.type === 'mobile'
+              "
+            >
+              <q-btn
+                :label="`${field.type.label}`"
+                no-caps
+                flat
+                v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                icon="add"
+                color="primary"
+                rounded
+                @click="addPhoneMobileEmail(fieldIndex, field)"
+                class="q-mt-xs"
+                :disable="field.onlyAdm"
+              />
+              <CardPhoneMobileEmail
+                :data="field"
+                :fieldIndex="fieldIndex"
+                @edit="editPhoneMobileEmail"
+                @remove="removePhoneMobileEmail"
+              />
+            </div> 
+  
+          </div>
+
           <div v-for="(field, i) in organismData.fields" :key="i">
-            <div v-if="field.multiple && field.type.type !== 'multiple_select'">
+            
+            
+            
+            <!-- <div v-if="field.multiple && field.type.type !== 'multiple_select'">
               <q-input
                 v-model="organismData.fields[i].newMultipleValue"
                 @blur="delete organismData.fields[i].newMultipleValue"
@@ -153,7 +297,9 @@
               v-else
               :label="field.label"
               v-model="organismData.fields[i].value"
-            ></q-checkbox>
+            ></q-checkbox> -->
+
+
           </div>
         </div>
         <!-- <q-separator vertical class="q-ma-md" /> -->
@@ -508,11 +654,32 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+
+        <DialogPhoneMobileEmail
+          :open="dialogAddPhoneMobileEmail.open"
+          :dataProp="dialogAddPhoneMobileEmail.data"
+          :type="dialogAddPhoneMobileEmail.type"
+          @confirm="confirmAddPhoneMobileEmail"
+          @closeDialog="clearDialogAddPhoneMobileEmail"
+        />
+        <DialogAddress
+          :open="dialogConfirmAddress.open"
+          :addressDataProp="dialogConfirmAddress.data"
+          @confirmAddress="confirmAddress"
+          @closeDialog="clearAddressInputs"
+        />
         
       </div>
     </q-page>
   </q-page-container>
 </template>
+
+<script setup>
+import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
+import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
+import CardAddress from '../../components/CardAddress.vue'
+import DialogAddress from '../../components/DialogAddress.vue'
+</script>
 
 <script>
 import { defineComponent } from "vue";
@@ -553,7 +720,33 @@ export default defineComponent({
       organismLinkEvent: '',
       organismSelected: '',
       organismVinculated: '',
-      dialogLinks: false
+      dialogLinks: false,
+      dialogConfirmAddress: {
+        open: false,
+        fieldIndex: null,
+        valueIndex: null,
+        data: {
+          cep: "",
+          street: "",
+          number: "",
+          city: "",
+          state: "",
+          district: "",
+          complement: "",
+          addressType: ''
+        }
+      },
+      dialogAddPhoneMobileEmail: {
+        type: null,
+        open: false,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      },
     };
   },
   mounted() {
@@ -563,6 +756,134 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    clearAddressInputs(){
+      this.dialogConfirmAddress.data = {
+        addressType: '',
+        type: "",
+        cep: "",
+        street: "",
+        number: "",
+        city: "",
+        state: "",
+        district: "",
+        complement: ""
+      }
+      this.dialogConfirmAddress.open = false;
+    },
+    clkOpenAddressDialog(fieldIndex) {
+      this.dialogConfirmAddress.action = 'add'
+      this.dialogConfirmAddress.open = true
+      this.dialogConfirmAddress.fieldIndex = fieldIndex
+    },
+    clearDialogAddPhoneMobileEmail () {
+      this.dialogAddPhoneMobileEmail = {
+        type: null,
+        open: false,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        options: ['Pessoal', 'Profissional', 'Outro'],
+        action: null,
+        iValue: null
+      }
+      this.dialogAddPhoneMobileEmail.open = false
+    },
+    removeThisAddress(fieldIndex, valueIndex) {
+      this.organismData.fields[fieldIndex].value.splice(valueIndex, 1);
+    },
+    editThisAddress(fieldIndex, valueIndex){
+      this.dialogConfirmAddress = {
+        open: true,
+        fieldIndex,
+        tabsIndex,
+        valueIndex,
+        action: 'edit',
+        data: {
+          cep: this.organismData.fields[fieldIndex].value[valueIndex].cep,
+          addressType: this.organismData.fields[fieldIndex].value[valueIndex].type,
+          street: this.organismData.fields[fieldIndex].value[valueIndex].street,
+          number: this.organismData.fields[fieldIndex].value[valueIndex].number,
+          district: this.organismData.fields[fieldIndex].value[valueIndex].district,
+          complement: this.organismData.fields[fieldIndex].value[valueIndex].complement,
+          city: this.organismData.fields[fieldIndex].value[valueIndex].city,
+          state: this.organismData.fields[fieldIndex].value[valueIndex].state,
+        }
+      }
+    },
+    confirmAddress(data) {
+      console.log(data,' aqui data')
+      const fieldIndex = this.dialogConfirmAddress.fieldIndex
+      const valueIndex = this.dialogConfirmAddress.valueIndex
+      if (this.dialogConfirmAddress.action === 'add') {
+        if (!this.organismData.fields[fieldIndex].value)
+          this.organismData.fields[fieldIndex].value = []
+        this.organismData.fields[fieldIndex].value.push({
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        });
+      } else if (this.dialogConfirmAddress.action === 'edit') {
+        this.organismData.fields[fieldIndex].value[valueIndex] = {
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        }
+      }
+      this.clearAddressInputs()
+    },
+    confirmAddPhoneMobileEmail (data) {
+      if (this.dialogAddPhoneMobileEmail.action === 'add') {
+        if (!this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
+          this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
+        }
+        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
+          value: data.value,
+          type: data.type
+        })
+      } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
+        this
+          .organismData
+          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+          .value[this.dialogAddPhoneMobileEmail.iValue] = {
+            value: data.value,
+            type: data.type
+          }
+      }
+      this.dialogAddPhoneMobileEmail.open = false
+    },
+    removePhoneMobileEmail (fieldIndex, iValue) {
+      this
+        .organismData
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
+    addPhoneMobileEmail(fieldIndex, field) {
+      this.dialogAddPhoneMobileEmail.action = 'add'
+      this.dialogAddPhoneMobileEmail.open = true
+      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+    },
+    editPhoneMobileEmail (fieldIndex, field, value, iValue) {
+      this.dialogAddPhoneMobileEmail.open = true
+      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.data = {...value}
+      this.dialogAddPhoneMobileEmail.action = 'edit'
+      this.dialogAddPhoneMobileEmail.iValue = iValue
+    },
     addDoubleSelection(i){
       if (!this.organismData.fields[i].value) {
         this.organismData.fields[i].value = []

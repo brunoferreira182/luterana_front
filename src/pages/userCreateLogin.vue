@@ -1,6 +1,6 @@
 <template>
-  <q-layout class="app-font">
-    <div class="font-montserrat" style="min-width: 500px">
+  <div class="app-font row justify-center">
+    <div class="col-6 font-montserrat q-pa-md" style="overflow:auto" v-if="!isMobile">
       <div class="text-center">
         <q-img
           src="../assets/logo.png"
@@ -9,34 +9,38 @@
           align="center"
           width="40%"
         />
+        <div class="text-h3 text-primary app-font-calibri-italic">
+          Tabula
+        </div>
       </div>
       <div class="" v-if="userDataTabs.length > 0">
-          <div class="">
-            <div
-              v-for="(field, i) in userDataTabs[0].fields"
-              :key="field"
+        <div class="q-gutter-md">
+          <div
+            v-for="(field, i) in userDataTabs[0].fields"
+            :key="field"
+          >
+            <q-input
+              v-if="field.type.type !== 'options'"
+              :hint="field.hint"
+              :label="field.label"
+              v-model="userDataTabs[0].fields[i].value"
+              :mask="field.type.mask"
+              outlined
+            />
+            <q-select
+              v-if="field.type.type === 'options'"
+              outlined
+              :label="field.label"
+              option-label="optionName"
+              emit-value
+              map-options
+              :hint="field.hint"
+              v-model="field.value"
+              :options="field.options"
             >
-              <q-input
-                v-if="field.type.type !== 'options'"
-                :hint="field.hint"
-                :label="field.label"
-                v-model="userDataTabs[0].fields[i].value"
-                :mask="field.type.mask"
-                outlined
-              />
-              <q-select
-                v-if="field.type.type === 'options'"
-                outlined
-                :label="field.label"
-                option-label="optionName"
-                emit-value
-                map-options
-                :hint="field.hint"
-                v-model="field.value"
-                :options="field.options"
-              >
-              </q-select>
-            </div>
+            </q-select>
+          </div>
+          <div class="q-gutter-md q-pb-lg">
             <q-btn
               class="full-width"
               color="primary"
@@ -54,22 +58,87 @@
               unelevated 
               no-caps
             />
+          </div>
         </div>
       </div>
     </div>
-  </q-layout>
+    <div class="font-montserrat col-12 q-pa-md" style="overflow:auto" v-else-if="isMobile">
+      <div class="text-center">
+        <q-img
+          src="../assets/logo.png"
+          fit="fill"
+          class="q-ma-xl"
+          align="center"
+          width="40%"
+        />
+        <div class="text-h3 text-primary app-font-calibri-italic">
+          Tabula
+        </div>
+      </div>
+      <div class="" v-if="userDataTabs.length > 0">
+        <div class="q-gutter-md">
+          <div
+            v-for="(field, i) in userDataTabs[0].fields"
+            :key="field"
+          >
+            <q-input
+              v-if="field.type.type !== 'options'"
+              :hint="field.hint"
+              :label="field.label"
+              v-model="userDataTabs[0].fields[i].value"
+              :mask="field.type.mask"
+              outlined
+            />
+            <q-select
+              v-if="field.type.type === 'options'"
+              outlined
+              :label="field.label"
+              option-label="optionName"
+              emit-value
+              map-options
+              :hint="field.hint"
+              v-model="field.value"
+              :options="field.options"
+            >
+            </q-select>
+          </div>
+          <div class="q-gutter-md">
+            <q-btn
+              class="full-width"
+              color="primary"
+              label="Cadastrar"
+              unelevated
+              @click="checkEmailValidity"
+              no-caps
+            />
+            <q-btn 
+              class="full-width"
+              color="primary" 
+              label="Voltar" 
+              outline
+              @click="clkBack1" 
+              unelevated 
+              no-caps
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import useFetch from "../boot/useFetch";
 import { defineComponent } from 'vue';
-
+import { useScreenStore } from "stores/checkIsMobile";
 export default defineComponent({
   name: "userCreateLogin",
   data() {
     return {
+      isMobileState: useScreenStore().checkScreenSize(),
       userDataTabs: [],
       showPassword: false,
+      isMobile: false,
       newUserData: [],
       cpfMask: '',
       tabValue: "dados_obrigatorios",
@@ -78,6 +147,7 @@ export default defineComponent({
     };
   },
   beforeMount() {
+    this.isMobile = useScreenStore().isMobile
     this.getUsersConfig()
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <q-card
     style="border-radius: 1rem"
-    class="bg-grey-3 q-ma-sm"
+    class="bg-grey-3 q-ma-sm q-pa-sm"
     flat
   >
     <q-item>
@@ -47,9 +47,7 @@
         class="bg-white q-ma-xs"
       >
         <q-item-section avatar>
-          <q-avatar rounded>
-            <img src="https://cdn.quasar.dev/img/avatar.png" />
-          </q-avatar>
+          <q-icon name="account_circle" size="38px" color="grey"/>
         </q-item-section>
         <q-item-section class="text-wrap" lines="2">
           {{ user.userName }}
@@ -175,7 +173,7 @@
         @click="clkOpenDialogSolicitation"
       /> -->
       <q-btn
-        v-if="!$route.path.includes('/user') "
+        v-if="showAddUserButton"
         label="Adicionar pessoa"
         color="primary"
         dense
@@ -192,7 +190,7 @@
 <script setup>
 // import { defineComponent } from "vue";
 
-const props = defineProps(['func', 'funcIndex'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'ClkOpenDialogSolicitation'])
 
