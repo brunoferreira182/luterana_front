@@ -1,6 +1,8 @@
 //////////// VARIAVEIS DA APLICACAO //////
-const MODE_MASTER_SERVER = "tiago";
+const MODE_MASTER_SERVER = "prod";
 const COMPANY_ID = 10;
+const VERSION = 1.0
+const BUILD = 12
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;
 const MODE_AUTH_SERVER = "local";
@@ -18,4 +20,6 @@ export {
   PROJECT_NAME,
   DEFAULT_SERVER_NAME,
   SYSTEM_COMPLETE,
+  VERSION,
+  BUILD
 };

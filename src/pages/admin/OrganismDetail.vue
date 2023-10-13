@@ -365,7 +365,8 @@
                   @insertObservation="dialogInsertObservation"
                   @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                   @linkUserToFunction="linkUserToFunction"
-                  :showAddUserButton="func.functionName === 'Pastor' ? false : true"
+                  :showAddUserButton="true"
+                  :showInviteUserButton="false"
                 />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">

@@ -316,7 +316,8 @@
               :func="func"
               :funcIndex="funcIndex"
               @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
-              :showAddUserButton="func.functionName === 'Pastor' ? false : true"
+              :showAddUserButton="false"
+              :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
             />
             <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
               <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -741,7 +742,8 @@
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
-                :showAddUserButton="func.functionName === 'Pastor' ? false : true"
+                :showAddUserButton="false"
+                :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
