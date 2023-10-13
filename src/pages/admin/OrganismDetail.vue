@@ -860,7 +860,6 @@ export default defineComponent({
       dialogAddPhoneMobileEmail: {
         type: null,
         open: false,
-        tabsIndex: null,
         fieldIndex: null,
         data: {
           value: '',
@@ -889,7 +888,6 @@ export default defineComponent({
       },
       maritalStatus: {
         open: false,
-        tabsIndex: null,
         fieldIndex: null,
         data: {
           status: '',
@@ -902,7 +900,6 @@ export default defineComponent({
       dialogAddBankData: {
         open: false,
         fieldIndex: null,
-        tabsIndex: null,
         iValue: null,
         userHasDoc: {
           hasDoc: false,
@@ -955,6 +952,120 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    clearAddressInputs(){
+      this.dialogConfirmAddress.data = {
+        addressType: '',
+        type: "",
+        cep: "",
+        street: "",
+        number: "",
+        city: "",
+        state: "",
+        district: "",
+        complement: ""
+      }
+      this.dialogConfirmAddress.open = false;
+    },
+    clkOpenAddressDialog(fieldIndex) {
+      this.dialogConfirmAddress.action = 'add'
+      this.dialogConfirmAddress.open = true
+      this.dialogConfirmAddress.fieldIndex = fieldIndex
+    },
+    clearDialogAddPhoneMobileEmail () {
+      this.dialogAddPhoneMobileEmail = {
+        type: null,
+        open: false,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        options: ['Pessoal', 'Profissional', 'Outro'],
+        action: null,
+        iValue: null
+      }
+      this.dialogAddPhoneMobileEmail.open = false
+    },
+    removeThisAddress(fieldIndex, valueIndex) {
+      this.organismData.fields[fieldIndex].value.splice(valueIndex, 1);
+    },
+    editThisAddress(fieldIndex, valueIndex){
+      this.dialogConfirmAddress = {
+        open: true,
+        fieldIndex,
+        tabsIndex,
+        valueIndex,
+        action: 'edit',
+        data: {
+          cep: this.organismData.fields[fieldIndex].value[valueIndex].cep,
+          addressType: this.organismData.fields[fieldIndex].value[valueIndex].type,
+          street: this.organismData.fields[fieldIndex].value[valueIndex].street,
+          number: this.organismData.fields[fieldIndex].value[valueIndex].number,
+          district: this.organismData.fields[fieldIndex].value[valueIndex].district,
+          complement: this.organismData.fields[fieldIndex].value[valueIndex].complement,
+          city: this.organismData.fields[fieldIndex].value[valueIndex].city,
+          state: this.organismData.fields[fieldIndex].value[valueIndex].state,
+        }
+      }
+    },
+    confirmAddress(data) {
+      console.log(data,' aqui data')
+      const fieldIndex = this.dialogConfirmAddress.fieldIndex
+      const valueIndex = this.dialogConfirmAddress.valueIndex
+      if (this.dialogConfirmAddress.action === 'add') {
+        if (!this.organismData.fields[fieldIndex].value)
+          this.organismData.fields[fieldIndex].value = []
+        this.organismData.fields[fieldIndex].value.push({
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        });
+      } else if (this.dialogConfirmAddress.action === 'edit') {
+        this.organismData.fields[fieldIndex].value[valueIndex] = {
+          type: data.addressType,
+          cep: data.cep,
+          street: data.street,
+          number: data.number,
+          city: data.city,
+          state: data.state,
+          district: data.district,
+          complement: data.complement
+        }
+      }
+      this.clearAddressInputs()
+    },
+    confirmAddPhoneMobileEmail (data) {
+      if (this.dialogAddPhoneMobileEmail.action === 'add') {
+        if (!this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
+          this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
+        }
+        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
+          value: data.value,
+          type: data.type
+        })
+      } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
+        this
+          .organismData
+          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+          .value[this.dialogAddPhoneMobileEmail.iValue] = {
+            value: data.value,
+            type: data.type
+          }
+      }
+      this.dialogAddPhoneMobileEmail.open = false
+    },
+    removePhoneMobileEmail (fieldIndex, iValue) {
+      this
+        .organismData
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
     addPhoneMobileEmail(fieldIndex, field) {
       this.dialogAddPhoneMobileEmail.action = 'add'
       this.dialogAddPhoneMobileEmail.open = true
@@ -975,6 +1086,14 @@ export default defineComponent({
           console.log()
         }
       });
+    },
+    editPhoneMobileEmail (fieldIndex, field, value, iValue) {
+      this.dialogAddPhoneMobileEmail.open = true
+      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.data = {...value}
+      this.dialogAddPhoneMobileEmail.action = 'edit'
+      this.dialogAddPhoneMobileEmail.iValue = iValue
     },
     getFunctionsSolicitationsByOrganismId() {
       const organismId = this.$route.query.organismId
