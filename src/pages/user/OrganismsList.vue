@@ -22,17 +22,6 @@
         <template #top-right>
           <div class="flex row justify-end q-gutter-sm items-center">
             <div class="col">
-              <q-select
-                outlined
-                dense
-                debounce="300"
-                v-model="selectFilter"
-                :options="selectStatus"
-                @update:model-value="getAllOrganismsByString"
-              />
-            </div>
-            
-            <div class="col">
               <q-input
                 @keyup="getAllOrganismsByString"
                 outlined
@@ -103,24 +92,7 @@ export default defineComponent({
       columnsDataMobile: useTableColumns().userOrganismListMobile,
       isMobile: false,
       searchAllOrganismsList: [],
-      userOrganismList: [
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Primeira congregação', organismConfigName: 'tipo congregação'},
-        {nome: 'Segunda congregação', organismConfigName: 'tipo congregação'},
-      ],
+      userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -138,8 +110,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
-    // this.getAllOrganismsByString();
-    // this.getOrganismsByUserId();
+    this.getAllOrganismsByString();
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -167,14 +138,10 @@ export default defineComponent({
           searchString: this.filter,
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
-          selectFilter: this.selectFilter
+          isActive: 1
         },
       };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data.list

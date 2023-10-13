@@ -293,11 +293,11 @@ const useUtils = {
         //   route: "/user/pendingList",
         //   icon: "pending_actions",
         // },
-        {
-          label: "Lista das minhas funções",
-          route: "/user/userFunctionsList",
-          icon: "comment_bank",
-        },
+        // {
+        //   label: "Lista das minhas funções",
+        //   route: "/user/userFunctionsList",
+        //   icon: "comment_bank",
+        // },
         {
           label: "Lista de solicitações",
           route: "/user/userSolicitationsList",
