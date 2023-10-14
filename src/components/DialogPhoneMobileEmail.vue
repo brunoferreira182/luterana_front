@@ -1,8 +1,9 @@
 <template>
   <q-dialog :model-value="open" @hide="closeDialog">
     <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-      <q-card-section>
+      <q-card-section class="text-center">
         <div class="text-h6 text-center">Informe os dados</div>
+        <q-badge color="orange" v-if="hint">{{ hint }}</q-badge>
       </q-card-section>
       <q-card-section class="q-gutter-md">
         <q-input
@@ -34,6 +35,7 @@
           outlined
           label="Tipo"
         />
+        <q-checkbox label="Permitir divulgação" v-model="data.allowPublication"/>
       </q-card-section>
       <q-card-actions align="center">
         <q-btn
@@ -60,7 +62,7 @@
 import { ref, watch } from 'vue'
 import { Notify } from 'quasar'
 
-const props = defineProps(['open', 'dataProp', 'type'])
+const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint'])
 const emits = defineEmits(['closeDialog', 'confirm'])
 
 watch(() => props.dataProp, (nV) => {
@@ -69,7 +71,8 @@ watch(() => props.dataProp, (nV) => {
 
 const data = ref({
   value: '',
-  type: ''
+  type: '',
+  allowPublication: false
 })
 
 const options = ref(['Pessoal', 'Profissional', 'Outro'])

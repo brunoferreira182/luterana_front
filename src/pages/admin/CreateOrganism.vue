@@ -848,18 +848,12 @@ export default defineComponent({
         if (!this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
           this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
         }
-        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
-          value: data.value,
-          type: data.type
-        })
+        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({...data})
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
         this
           .organismData
           .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
-          .value[this.dialogAddPhoneMobileEmail.iValue] = {
-            value: data.value,
-            type: data.type
-          }
+          .value[this.dialogAddPhoneMobileEmail.iValue] = {...data}
       }
       this.dialogAddPhoneMobileEmail.open = false
     },

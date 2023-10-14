@@ -19,7 +19,7 @@
         :v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
+        <!-- <template #top-right>
           <div class="flex row justify-end q-gutter-sm items-center">
             <div class="col">
               <q-input
@@ -36,7 +36,7 @@
               </q-input>
             </div>
           </div>
-        </template>
+        </template> -->
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
@@ -55,12 +55,12 @@
               size="14px"
               outline
             >
-              {{ props.row.organismConfigName }}
+              {{ props.row.organismConfigName.split(' ')[0] }}
             </q-chip>
           </q-td>
         </template>
       </q-table>
-      <div class="text-left">
+      <!-- <div class="text-left">
         <q-btn 
           v-for="(organism, nameIndex) in userOrganismList" 
           :key="organism"
@@ -73,7 +73,7 @@
         >
         {{ organism.organismConfigName }}
         </q-btn>
-      </div>
+      </div> -->
     </q-page>
   </q-page-container>
 </template>
@@ -142,6 +142,7 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
+      console.log('merda?')
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data.list

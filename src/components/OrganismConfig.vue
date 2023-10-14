@@ -188,7 +188,7 @@
             Adicione os campos de preenchimento
           </div>
           <div
-            class="row q-gutter-x-sm q-mx-none"
+            class="row q-gutter-x-sm q-mx-none q-mb-lg"
           >
             <div class="col"> 
               <q-input
@@ -218,9 +218,35 @@
               />
             </div>
           </div>
+          <div v-if="newField.type && newField.type.type === 'options'">
+            <q-input
+              outlined
+              label="Opção" 
+              v-model="newSelect.label"
+            >
+              <q-btn icon="add" flat @click="newField.options.push(newSelect.label); newField.label = ''"></q-btn>
+            </q-input>
+            <q-chip
+              v-for=" option, i  in newField.options"
+              :key="option"
+              color="primary"
+              text-color="white"
+            >
+              {{ option }}
+              <q-btn
+                size="sm"
+                icon="close"
+                padding="none"
+                rounded
+                class="q-ml-sm"
+                @click="newField.options.splice(i, 1)"
+                >
+              </q-btn>
+            </q-chip>
+          </div>
           <div
             class="q-mt-xl"
-            v-if="newField.type ? newField.type.type === 'multiple_select' : false"
+            v-if="newField.type && newField.type.type === 'multiple_select'"
           >
             <q-btn 
               @click="addNewSelectField"
@@ -814,6 +840,12 @@ export default defineComponent({
           {label: [], options: []},
           {label: [], options: []}
         ],
+        options: []
+      },
+      newSelect: {
+        options: [],
+        label: '',
+        hint: ''
       },
       selectedType: "",
       visionsList: [],
@@ -926,29 +958,38 @@ export default defineComponent({
       this.organismTypeId = org._id
     },
     addField() {
-      if (
-        this.newField.label &&
-        this.newField.hint &&
-        (this.organismConfigName ||
-          this.$route.path === "/config/organismConfigDetail")
-      ) {
-        this.organismFields.push({ ...this.newField });
-        this.newField.label = null;
-        this.newField.hint = null;
-        this.newField.type = null;
-        this.newField.required = true;
-        this.newField.multiple = false;
-        this.newField.selects = [
-          {label: [], options: []},
-          {label: [], options: []}
-        ]
-        this.multipleOptionsValue =  [
-          {select: [], label: ''},
-          {select: [], label: ''}
-      ]
-        return;
+      if (this.newField.type === 'options') {
+        if (this.newField.label === '' || this.newField.hint === '' || this.newSelect.options.length === 0) {
+          this.$q.notify("preencha todos os dados antes de adicionar um campo");
+          return
+        }
+        this.organismFields.push({...this.newField});
       }
-      this.$q.notify("preencha todos os dados antes de adicionar um campo");
+      else {
+        if (
+          this.newField.label &&
+          this.newField.hint &&
+          (this.organismConfigName ||
+            this.$route.path === "/config/organismConfigDetail")
+        ) {
+          this.organismFields.push({ ...this.newField });
+          this.newField.label = null;
+          this.newField.hint = null;
+          this.newField.type = null;
+          this.newField.required = true;
+          this.newField.multiple = false;
+          this.newField.selects = [
+            {label: [], options: []},
+            {label: [], options: []}
+          ]
+          this.multipleOptionsValue =  [
+            {select: [], label: ''},
+            {select: [], label: ''}
+        ]
+          return;
+        }
+        this.$q.notify("preencha todos os dados antes de adicionar um campo");
+      }
     },
     addMultipleField() {
       this.userData.generalData.phones.push(this.valueSelected);

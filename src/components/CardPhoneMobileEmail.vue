@@ -4,6 +4,9 @@
     style="border-radius: 1rem"
     separator
   >
+    <q-item-label header v-if="showHeader">
+      {{ showHeader }}
+    </q-item-label>
     <q-item
       v-for="(value, iValue) in props.data.value"
       :key="'multField' + iValue"
@@ -14,6 +17,7 @@
         </q-item-label>
         <q-item-label caption >
           <q-badge>{{ value.type }}</q-badge>
+          <q-badge class="q-ml-xs" color="green" v-if="value.allowPublication">Publicável</q-badge>
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -41,7 +45,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
 const emits = defineEmits(['edit', 'remove'])
 
 

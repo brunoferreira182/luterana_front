@@ -155,9 +155,7 @@ export default defineComponent({
       const opt = {
         route: "/auth/createUser",
         body: {
-          userDataTabs: [
-            this.userDataTabs[0]
-          ]
+          userDataTabs: this.userDataTabs
         }
       }
       useFetch(opt).then((r) => {
@@ -176,7 +174,7 @@ export default defineComponent({
       const opt = {
         route:"/desktop/adm/getUsersConfig",
         body: {
-          userType: 'pastor'
+          userType: 'user'
         }
       }
       useFetch(opt).then((r) => {

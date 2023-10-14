@@ -211,6 +211,10 @@ const routes = [
         component: () => import("src/pages/user/UserOrganismDetail.vue"),
       },
       {
+        path: "/user/userOrganismChildDetail",
+        component: () => import("src/pages/user/UserOrganismDetail.vue"),
+      },
+      {
         path: "/user/userFunctionsList",
         component: () => import("src/pages/user/UserFunctionsList.vue"),
       },

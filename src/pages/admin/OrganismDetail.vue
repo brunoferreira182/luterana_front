@@ -32,10 +32,6 @@
       >
         <q-tab name="organismData" label="Dados do organismo" v-if="!parentOrganismId"/>
         <q-tab name="afiliatesOrganismsList" label="Lista configuração de grupos" v-if="!parentOrganismId"/>
-        <!-- <q-tab 
-          name="solicitations" 
-          label="Solicitações" 
-        /> -->
       </q-tabs>
       <q-separator v-if="!parentOrganismId" />
       <q-tab-panels v-model="tab" animated>
@@ -1046,18 +1042,12 @@ export default defineComponent({
         if (!this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
           this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
         }
-        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({
-          value: data.value,
-          type: data.type
-        })
+        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({...data})
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
         this
           .organismData
           .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
-          .value[this.dialogAddPhoneMobileEmail.iValue] = {
-            value: data.value,
-            type: data.type
-          }
+          .value[this.dialogAddPhoneMobileEmail.iValue] = {...data}
       }
       this.dialogAddPhoneMobileEmail.open = false
     },
