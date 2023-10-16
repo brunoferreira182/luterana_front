@@ -116,6 +116,7 @@
                     class="q-pa-sm"
                     color="primary"
                     @click="clkAddPastoralData"
+                    v-if="tab === 'dados_pastorais'"
                   >
                     Solicitar alterações
                   </q-btn>
