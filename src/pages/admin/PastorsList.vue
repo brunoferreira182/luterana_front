@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Usuários"
+        title="Pastores"
         :columns="columnsData"
         :rows="pastorsList"
         row-key="_id"
@@ -44,19 +44,6 @@
                   <q-icon name="search" />
                 </template>
               </q-input>
-            </div>
-            <div class="col text-right">
-              <q-btn
-                @click="$router.push('/admin/createUser')"
-                color="primary"
-                unelevated
-                no-caps
-                rounded
-                icon="add"
-                class="q-pa-sm"
-              >
-                Criar Usuário
-              </q-btn>
             </div>
           </div>
         </template>
