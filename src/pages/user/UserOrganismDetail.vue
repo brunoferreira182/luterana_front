@@ -6,7 +6,7 @@
           <div class="text-h5">
             {{ organismName }}
           </div>
-          <div class="text-caption">
+          <div class="text-caption text-capitalize">
             detalhe do organismo 
           </div>
         </div>
@@ -1144,7 +1144,7 @@ export default defineComponent({
     getChildOrganismsById() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getChildOrganismsById",
+        route: "/desktop/commonUsers/getChildOrganismsById",
         body: {
           organismId: organismId,
         },
@@ -1419,7 +1419,7 @@ export default defineComponent({
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getOrganismDetailById",
+        route: "/desktop/commonUsers/getOrganismDetailById",
         body: {
           organismId: organismId,
         },
