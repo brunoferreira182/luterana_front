@@ -338,7 +338,7 @@
                   :disable="field.onlyAdm"
                 />
                 <CardPhoneMobileEmail
-                  :data="field"
+                  :data="field.value"
                   :fieldIndex="fieldIndex"
                   @edit="editPhoneMobileEmail"
                   @remove="removePhoneMobileEmail"
@@ -1218,7 +1218,7 @@ export default defineComponent({
     getChildOrganismsConfigsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getChildOrganismsConfigsByOrganismId",
+        route: "/desktop/commonUsers/getChildOrganismsConfigsByOrganismId",
         body: {
           parentOrganismId: organismId,
         },
@@ -1317,7 +1317,7 @@ export default defineComponent({
     },
     getUserIdMongo() {
       const opt = {
-        route: '/desktop/adm/getUserIdMongo',
+        route: '/desktop/commonUsers/getUserIdMongo',
       }
       useFetch(opt).then(r => {
         if (r.error) {
