@@ -109,6 +109,16 @@
                 :name="tabs.tabValue" 
               >
                 <div>
+                  <q-btn
+                    no-caps
+                    rounded
+                    unelevated
+                    class="q-pa-sm"
+                    color="primary"
+                    @click="clkAddPastoralData"
+                  >
+                    Solicitar alterações
+                  </q-btn>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
                     :key="fieldIndex"
@@ -382,7 +392,7 @@
                             :disable="tabs.onlyAdm"
                           />
                           <CardPhoneMobileEmail
-                            :data="field"
+                            :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
                             @edit="editPhoneMobileEmail"
