@@ -542,7 +542,7 @@
             <div class="text-caption text-h6" >
               Organismos vínculados:
             </div>
-            <q-list v-if="relations">
+            <q-list v-if="relations.length">
               <q-item
                 clickable
                 v-for="link in relations"
@@ -556,6 +556,9 @@
                 </q-item-section>
               </q-item>
             </q-list>
+            <div v-else class="text-subtitle1">
+              Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
+            </div>
           </div>
         </div>
       </div>
@@ -925,7 +928,7 @@
               <div class="text-caption text-h6" >
                 Organismos vínculados:
               </div>
-              <q-list v-if="relations">
+              <q-list v-if="relations.length">
                 <q-item
                   clickable
                   v-for="link in relations"
@@ -939,6 +942,9 @@
                   </q-item-section>
                 </q-item>
               </q-list>
+              <div v-else class="text-subtitle1">
+              Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
+            </div>
             </div>
           </div>
         </div>
