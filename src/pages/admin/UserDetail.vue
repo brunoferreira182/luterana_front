@@ -326,7 +326,7 @@
                           :disable="!tabs.onlyAdm"
                         />
                         <CardPhoneMobileEmail
-                          :data="field"
+                          :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
                           @edit="editPhoneMobileEmail"
