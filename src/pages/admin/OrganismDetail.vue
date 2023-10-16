@@ -64,7 +64,9 @@
                   no-caps
                   unelevated
                   @click="dialogLinks = true"
-                />
+                >
+                <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
+                </q-btn>
               </div>
               <q-separator class="q-mx-md" />
               <div v-if="organismData.fields.length" class="text-h5">
@@ -559,7 +561,96 @@
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
-                <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
+                <q-dialog v-model="dialogLinks" @hide="clearDialogAndFunctions">
+                  <q-card>
+                    <q-card-section>
+                      <div class="text-h6 text-center">
+                        Vínculos
+                      </div>
+                    </q-card-section>
+                    <q-card-section>
+                      <div>
+                        <div>
+                          <q-separator/>
+                          <div class="text-subtitle2 q-ma-sm">
+                            Vincular novo organismo
+                          </div>
+                          <q-input 
+                            label="Buscar"
+                            outlined
+                            type="search"
+                            v-model="organismSelected"
+                            hint="Faça uma busca para visualizar os organismos disponíveis"
+                            @update:model-value="getOrganismsList"
+                            >
+                            <template #append>
+                              <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
+                              <q-icon name="search" />
+                            </template>
+                          </q-input>
+                          <q-list bordered class="q-mt-sm" v-if="organismSelected !== ''">
+                            <div class="list-container">
+                              <q-item
+                                clickable
+                                :disable="organismLinks.includes(organism)"
+                                @click="clkSaveVinculo(organism)"
+                                v-for="(organism,i) in organismList"
+                                :key="i"
+                              >
+                                <q-item-section>
+                                  {{ organism.nome }}
+                                </q-item-section>
+                                <q-item-section class="text-primary" side>
+                                  {{ organismLinks.includes(organism) ? 'Adicionado' : 'Adicionar'}}
+                                </q-item-section>
+                              </q-item>
+                            </div>
+                          </q-list>
+                        </div>
+                        <q-separator vertical />
+                        <div>
+                          <div class="text-subtitle2 q-ma-sm">
+                            Organismos vinculados:
+                          </div>
+                          <q-chip
+                            v-for="(parent, i) in relations"
+                            :key="parent"
+                          >
+                          {{ parent.organismRelationName }}
+                          <q-btn
+                            icon="close"
+                            flat
+                            rounded
+                            style="width: 10px;"
+                            @click="removeRelation(i)"
+                            >
+                          </q-btn>
+                        </q-chip>
+                        </div>
+                      </div>
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Fechar"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogLinks = false"
+                      />
+                      <q-btn
+                        label="Salvar vínculo"
+                        no-caps
+                        unelevated
+                        rounded
+                        @click="clkSaveLink"
+                        color="primary"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <!-- <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
                   <q-card>
                     <q-card-section>
                       <div class="text-h6 text-center">
@@ -645,7 +736,7 @@
                       />
                     </q-card-actions>
                   </q-card>
-                </q-dialog>
+                </q-dialog> -->
               </div>
             </div>
           </div>
@@ -658,9 +749,6 @@
             <q-card style="border-radius: 1rem; width: 580px">
               <div class="q-gutter-md q-pa-md">
                 <div class="text-h5"> Criação de grupos de organismos</div>
-                <div class="text-caption text-subtitle1" v-if="childOrganismsConfigData.length">
-                  Clique em uma das sugestões abaixo para iniciar a criação de um novo organismo 
-                </div>
                 <q-list v-if="childOrganismsConfigData.length">
                   <q-item
                     clickable
@@ -683,31 +771,6 @@
                   Nenhuma configuração de grupo de organismo <q-icon name="warning" color="warning" size="md"/>
                 </div>
               </div>
-              <q-card-section class="q-gutter-sm">
-                <div class="text-subtitle1 q-pa-sm">
-                  Escolha entre outras opções de configuração de organismo
-                </div>
-                <q-select
-                  outlined
-                  clearable
-                  option-label="organismConfigName"
-                  hint="Selecione uma configuração de sua preferência"
-                  label="Configuração"
-                  use-input
-                  :option-value="(item) => item._id"
-                  @filter="getOrganismsConfigsListBySearchString"
-                  :options="organismConfigsList"
-                  v-model="organismGroupConfigId"
-                >
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        Nenhum resultado
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-select>
-              </q-card-section>
               <q-card-actions align="center">
                 <q-btn
                   flat
@@ -1606,3 +1669,9 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.list-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+</style>
