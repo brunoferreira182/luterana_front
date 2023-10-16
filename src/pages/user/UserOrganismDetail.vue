@@ -370,6 +370,7 @@
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                
                 :showAddUserButton="false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
               />
@@ -845,6 +846,7 @@
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
+                :isMobile="isMobile ? true : false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
