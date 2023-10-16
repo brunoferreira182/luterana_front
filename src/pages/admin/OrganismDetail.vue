@@ -347,7 +347,6 @@
                     @edit="editFormation"
                     @remove="removeFormation"
                   />
-                  
                 </div>     
               </div>
             </div>
@@ -649,7 +648,6 @@
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
-
                 <!-- <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
                   <q-card>
                     <q-card-section>
@@ -761,7 +759,6 @@
                     <q-item-section>
                       <q-item-label class="text-subtitle1"> {{ item.organismConfigName }}</q-item-label>
                     </q-item-section>
-
                     <q-item-section side top>
                       <q-icon name="star" color="yellow" />
                     </q-item-section>
@@ -822,7 +819,6 @@
                     <q-item-label class="text-subtitle1"> {{ child.organismName }}</q-item-label>
                     <q-item-label caption lines="2">Criado em {{ child.createdAt }}</q-item-label>
                   </q-item-section>
-
                   <q-item-section side top>
                     <q-icon name="star" color="yellow" />
                   </q-item-section>
