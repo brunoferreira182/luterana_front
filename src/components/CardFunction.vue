@@ -7,8 +7,8 @@
     <q-item>
       <q-item-section top>
         <div class="text-subtitle2 text-capitalize">{{ props.func.functionName }}</div>
-        <div  v-if="!$route.path.includes('/user') ">Descrição: {{ props.func.functionDescription }}</div>
-        <div  v-if="!$route.path.includes('/user') " class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
+        <div  v-if="!props.isMobile">Descrição: {{ props.func.functionDescription }}</div>
+        <div  v-if="!props.isMobile" class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
       </q-item-section>
       <q-item-section top side>
         <div class="text-subtitle2">
@@ -19,7 +19,7 @@
       </q-item-section>
     </q-item>
     <q-expansion-item
-      v-if="!$route.path.includes('/user') "
+      v-if="!props.isMobile"
       color="primary"
       icon="visibility"
       :label="props.func.visions ? `${props.func.visions.length} Visões` : '0 Visões'"
@@ -62,7 +62,7 @@
             Data Fim: {{ formatDate(user.dates.finalDate) }}
           </div>
         </q-item-section>
-        <q-item-section side v-if="$route.path.includes('/admin')">
+        <q-item-section side v-if="!props.isMobile">
           <div class="text-grey-8 q-gutter-xs">
             <q-btn
               @click="insertObservation(user)"
@@ -118,7 +118,7 @@
             {{ user.createdAt }}
           </div>
         </q-item-section>
-        <q-item-section side v-if="$route.path.includes('/admin')">
+        <q-item-section side v-if="!props.isMobile">
           <div class="text-grey-8 q-gutter-xs">
             <q-btn
               @click="insertObservation(user)"
@@ -189,8 +189,7 @@
 
 <script setup>
 // import { defineComponent } from "vue";
-
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 
