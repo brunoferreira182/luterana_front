@@ -181,6 +181,11 @@ const useUtils = {
           icon: "group",
         },
         {
+          label: "Lista de Pastores",
+          route: "/admin/pastorsList",
+          icon: "sort",
+        },
+        {
           label: "Rede",
           route: "/admin/organismsList",
           icon: "diversity_2",

@@ -6,7 +6,7 @@
         class="bg-accent"
         title="Usuários"
         :columns="columnsData"
-        :rows="usersList"
+        :rows="pastorsList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -28,12 +28,12 @@
                 debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
-                @update:model-value="getUsersList"
+                @update:model-value="getPastorList"
               ></q-select>
             </div>
             <div class="col">
               <q-input
-                @keyup="getUsersList"
+                @keyup="getPastorList"
                 outlined
                 dense
                 debounce="300"
@@ -100,11 +100,11 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "UsersList",
+  name: "pastorsList",
   data() {
     return {
       columnsData: useTableColumns().usersList,
-      usersList: [],
+      pastorsList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
@@ -120,7 +120,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getUsersList();
+    this.getPastorList();
   },
   methods: {
     getStatusColor(isActive) {
@@ -141,15 +141,15 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getUsersList();
+      this.getPastorList();
     },
-    getUsersList() {
+    getPastorList() {
       const page = this.pagination.page
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
       const sortBy = this.pagination.sortBy
       const opt = {
-        route: "/desktop/adm/getUsersList",
+        route: "/desktop/adm/getPastorList",
         body: {
           page: page,
           rowsPerPage: rowsPerPage,
@@ -166,7 +166,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.usersOptions = r.data;
-        this.usersList = r.data.list
+        this.pastorsList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },

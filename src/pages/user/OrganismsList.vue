@@ -142,7 +142,6 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      console.log('merda?')
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data.list

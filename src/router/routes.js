@@ -11,6 +11,10 @@ const routes = [
         component: () => import("pages/admin/UsersList.vue"),
       },
       {
+        path: "/admin/pastorsList",
+        component: () => import("pages/admin/PastorsList.vue"),
+      },
+      {
         path: "/admin/createUser",
         component: () => import("pages/admin/CreateUser.vue"),
       },

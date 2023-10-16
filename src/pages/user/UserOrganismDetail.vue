@@ -370,7 +370,6 @@
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
-                
                 :showAddUserButton="false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
               />
@@ -846,7 +845,7 @@
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
-                :isMobile="isMobile ? true : false"
+                :isMobile="isMobile"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
@@ -1191,7 +1190,7 @@ export default defineComponent({
     },
     async clkCreateNewChildOrganism(item){
       const opt = {
-          route: "/desktop/adm/createChildOrganism",
+          route: "/desktop/commonUsers/createChildOrganism",
           body: {
             organismData: {
               organismParentId: this.$route.query.organismId,

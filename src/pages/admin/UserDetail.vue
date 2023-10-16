@@ -5,8 +5,17 @@
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }}
         </div>
-        <!-- <div class="col q-gutter-sm text-right">
+        <div class="col q-gutter-sm text-right">
           <q-btn
+            color="primary"
+            rounded
+            flat
+            icon="school"
+            no-caps
+            label="Tornar pastor"
+            @click="dialogBecomePastor.open = true"
+          />
+          <!-- <q-btn
             rounded
             no-caps
             unelevated
@@ -25,8 +34,8 @@
             label="Títulos"
             @click="visionSelected = 'titles'"
             :outline="visionSelected === 'titles' ? false : true"
-          />
-        </div> -->
+          /> -->
+        </div>
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
@@ -1074,6 +1083,14 @@ export default defineComponent({
       titleOptions: [],
       openDialogVinculateUserToTitle: false,
       dialogInactiveUser: {
+        open: false,
+      },
+      dialogBecomePastor: {
+        selectPastor: [
+          {label: 'Pastor', type: 'pastor'},
+          {label: 'Pastor estagiário', type: 'pastor'},
+          {label: 'Ex-Pastor', type: 'ex-pastor'},
+        ],
         open: false,
       },
       pagination: {
