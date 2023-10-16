@@ -14,7 +14,7 @@
               @click="clkDrawer"
             />
             <q-btn 
-              v-if="isMobile"
+              v-if="isMobile && !$route.path.includes('/mobileMainPage')"
               flat
               dense
               rounded
