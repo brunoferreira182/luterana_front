@@ -9,9 +9,9 @@
           align="center"
           width="50%"
         />
-      <div class="text-h3 app-font-calibri-italic text-primary">
-        Tabula
-      </div>
+        <div class="text-h3 app-font-calibri-italic text-primary">
+          Tabula
+        </div>
       </div>
       <div class="">
         <q-carousel
