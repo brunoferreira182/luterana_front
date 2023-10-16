@@ -640,6 +640,7 @@
                         no-caps
                         unelevated
                         rounded
+                        @click="clkSaveLink"
                         color="primary"
                       />
                     </q-card-actions>
@@ -986,6 +987,10 @@ export default defineComponent({
     },
     removeThisAddress(fieldIndex, valueIndex) {
       this.organismData.fields[fieldIndex].value.splice(valueIndex, 1);
+    },
+    clkSaveLink() {
+      this.dialogLinks = false
+      this.$q.notify("Vínculos criados com sucesso.")
     },
     editThisAddress(fieldIndex, valueIndex){
       this.dialogConfirmAddress = {

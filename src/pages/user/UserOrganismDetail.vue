@@ -10,7 +10,7 @@
             detalhe do organismo 
           </div>
         </div>
-        <div class="col text-right q-gutter-sm" v-if="!$route.query.isChild">
+        <div class="col text-right q-gutter-sm" v-if="!$route.query.isChild && !isMobile">
           <q-btn
             rounded
             no-caps
@@ -30,6 +30,48 @@
             label="Grupos"
             @click="visionSelected = 'groups'"
             :outline="visionSelected === 'groups' ? false : true"
+          />
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="school"
+            color="secondary"
+            label="Vínculos"
+            @click="visionSelected = 'links'"
+            :outline="visionSelected === 'links' ? false : true"
+          />
+        </div>
+        <div class="row text-right q-gutter-sm q-mt-sm" v-if="!$route.query.isChild && isMobile">
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="person"
+            color="secondary"
+            label="Dados"
+            @click="visionSelected = 'data'"
+            :outline="visionSelected === 'data' ? false : true"
+          />
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="school"
+            color="secondary"
+            label="Grupos"
+            @click="visionSelected = 'groups'"
+            :outline="visionSelected === 'groups' ? false : true"
+          />
+          <q-btn
+            rounded
+            no-caps
+            unelevated
+            icon="school"
+            color="secondary"
+            label="Vínculos"
+            @click="visionSelected = 'links'"
+            :outline="visionSelected === 'links' ? false : true"
           />
         </div>
       </div>
@@ -493,6 +535,30 @@
           </div>
         </div>
       </div>
+      <div v-show="visionSelected === 'links'" v-if="!isMobile">
+        <div class="q-ma-lg row justify-start" v-if="childOrganismsData">
+          <div class="q-gutter-md">
+            <div class="text-h5 col"> Vínculos</div>
+            <div class="text-caption text-h6" >
+              Organismos vínculados:
+            </div>
+            <q-list v-if="relations">
+              <q-item
+                clickable
+                v-for="link in relations"
+                :key="link"
+                style="border-radius: 1rem;"
+                class="bg-blue-grey-2 q-my-sm"
+                @click="goToOrganismDetail(link.organismRelationId)"
+              >
+                <q-item-section>
+                  <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+      </div>
 
 
 
@@ -852,6 +918,30 @@
             </div>
           </q-expansion-item>
         </q-list>
+        <div v-show="visionSelected === 'links'">
+          <div class="q-ma-lg row justify-start" v-if="childOrganismsData">
+            <div class="q-gutter-md">
+              <div class="text-h5 col"> Vínculos</div>
+              <div class="text-caption text-h6" >
+                Organismos vínculados:
+              </div>
+              <q-list v-if="relations">
+                <q-item
+                  clickable
+                  v-for="link in relations"
+                  :key="link"
+                  style="border-radius: 1rem;"
+                  class="bg-blue-grey-2 q-my-sm"
+                  @click="goToOrganismDetail(link.organismRelationId)"
+                >
+                  <q-item-section>
+                    <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </div>
+        </div>
       </div>
       <DialogAddress
         :open="dialogConfirmAddress.open"
@@ -995,6 +1085,7 @@ export default defineComponent({
           name: ''
         },
       },
+      relations: null,
       addPerson: {
         dialogOpen: false,
         fieldIndex: null,
@@ -1121,6 +1212,9 @@ export default defineComponent({
         this.getChildOrganismsById()
 
     },
+    goToOrganismDetail(id) {
+      this.$router.push("/user/userOrganismDetail?organismId=" + id)
+    },
     getChildOrganismsConfigsByOrganismId() {
       const organismId = this.$route.query.organismId
       const opt = {
@@ -1144,7 +1238,7 @@ export default defineComponent({
     getChildOrganismsById() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getChildOrganismsById",
+        route: "/desktop/commonUsers/getChildOrganismsById",
         body: {
           organismId: organismId,
         },
@@ -1419,7 +1513,7 @@ export default defineComponent({
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getOrganismDetailById",
+        route: "/desktop/commonUsers/getOrganismDetailById",
         body: {
           organismId: organismId,
         },
@@ -1436,6 +1530,7 @@ export default defineComponent({
         this.organismName = r.data.organismData.organismName
         this.organismData.fields = r.data.organismData.fields;
         this.organismConfigName = r.data.organismData.organismConfigName
+        this.relations = r.data.relations
         this.visionSelected = 'data'
       });
     },
