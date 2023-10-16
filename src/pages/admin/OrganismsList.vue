@@ -22,6 +22,7 @@
               <q-select 
                 outlined 
                 dense 
+                label="Selecionar"
                 debounce="300" 
                 v-model="selectFilter" 
                 :options="selectStatus"
@@ -113,7 +114,7 @@ export default defineComponent({
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       filterRow: [],
-      selectFilter: null,
+      selectFilter: '',
       pagination: {
         page: 1,
         rowsPerPage: 10,
