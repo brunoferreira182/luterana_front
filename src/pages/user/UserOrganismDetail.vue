@@ -554,6 +554,7 @@
               >
                 <q-item-section>
                   <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                  <q-item-label class="text-subtitle1">{{ link.organismConfigName }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
