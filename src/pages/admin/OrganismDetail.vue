@@ -586,7 +586,7 @@
                               <q-icon name="search" />
                             </template>
                           </q-input>
-                          <q-list bordered class="q-mt-sm">
+                          <q-list bordered class="q-mt-sm" v-if="organismSelected !== ''">
                             <q-item
                               clickable
                               :disable="organismLinks.includes(organism)"

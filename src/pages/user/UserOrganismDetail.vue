@@ -536,7 +536,7 @@
         </div>
       </div>
       <div v-show="visionSelected === 'links'" v-if="!isMobile">
-        <div class="q-ma-lg row justify-start" v-if="childOrganismsData">
+        <div class="q-ma-lg justify-start" v-if="childOrganismsData">
           <div class="q-gutter-md">
             <div class="text-h5 col"> Vínculos</div>
             <div class="text-caption text-h6" >
@@ -548,7 +548,7 @@
                 v-for="link in relations"
                 :key="link"
                 style="border-radius: 1rem;"
-                class="bg-blue-grey-2 q-my-sm"
+                class="bg-blue-grey-2 q-my-sm q-col-gutteter-md"
                 @click="goToOrganismDetail(link.organismRelationId)"
               >
                 <q-item-section>
@@ -922,26 +922,28 @@
           </q-expansion-item>
         </q-list>
         <div v-show="visionSelected === 'links'">
-          <div class="q-ma-lg row justify-start" v-if="childOrganismsData">
+          <div class="q-ma-lg justify-start" v-if="childOrganismsData">
             <div class="q-gutter-md">
               <div class="text-h5 col"> Vínculos</div>
               <div class="text-caption text-h6" >
                 Organismos vínculados:
               </div>
-              <q-list v-if="relations.length">
-                <q-item
-                  clickable
-                  v-for="link in relations"
-                  :key="link"
-                  style="border-radius: 1rem;"
-                  class="bg-blue-grey-2 q-my-sm"
-                  @click="goToOrganismDetail(link.organismRelationId)"
-                >
-                  <q-item-section>
-                    <q-item-label> {{ link.organismRelationName }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
+              <div v-if="relations">
+                <q-list v-if="relations.length">
+                  <q-item
+                    clickable
+                    v-for="link in relations"
+                    :key="link"
+                    style="border-radius: 1rem;"
+                    class="bg-blue-grey-2 q-my-sm"
+                    @click="goToOrganismDetail(link.organismRelationId)"
+                  >
+                    <q-item-section>
+                      <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
               <div v-else class="text-subtitle1">
               Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
             </div>
