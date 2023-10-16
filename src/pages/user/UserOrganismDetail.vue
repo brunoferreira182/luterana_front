@@ -543,7 +543,7 @@
             <div class="text-caption text-h6" >
               Organismos vínculados:
             </div>
-            <q-list v-if="relations.length">
+            <q-list v-if="relations && relations.length">
               <q-item
                 clickable
                 v-for="link in relations"

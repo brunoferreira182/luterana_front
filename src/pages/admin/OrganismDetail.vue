@@ -780,14 +780,14 @@
                   color="primary"
                   @click="dialogInsertNewOrganismGroup = false"
                 />
-                <q-btn
+                <!-- <q-btn
                   unelevated
                   rounded
                   label="Confirmar"
                   no-caps
                   color="primary"
                   @click="createNewChildOrganismUsingGroupConfig"
-                />
+                /> -->
               </q-card-actions>
             </q-card>
           </q-dialog>
@@ -1312,19 +1312,48 @@ export default defineComponent({
         location.reload()
       }, 200)
     },
-    createNewChildOrganismUsingGroupConfig(){
-      if(this.organismGroupConfigId === ''){
-        this.$q.notify('Selecione uma sugestão ou uma configuração de sua preferência')
-      }else{
-        const organismGroupConfigId = this.organismGroupConfigId._id
-        const organismParentId = this.$route.query.organismId
-        this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismGroupConfigId + '&organismParentId=' + organismParentId)
-      }
-    },
-    clkCreateNewChildOrganism(item){
-      const organismChildConfigId = item.organismChildConfigId
-      const organismParentId = this.$route.query.organismId
-      this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismChildConfigId + '&organismParentId=' + organismParentId)
+    // createNewChildOrganismUsingGroupConfig(){
+    //   if(this.organismGroupConfigId === ''){
+    //     this.$q.notify('Selecione uma sugestão ou uma configuração de sua preferência')
+    //   }else{
+    //     const organismGroupConfigId = this.organismGroupConfigId._id
+    //     const organismParentId = this.$route.query.organismId
+    //     this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismGroupConfigId + '&organismParentId=' + organismParentId)
+    //   }
+    // },
+
+    async clkCreateNewChildOrganism(item){
+      const opt = {
+          route: "/desktop/adm/createChildOrganism",
+          body: {
+            organismData: {
+              organismParentId: this.$route.query.organismId,
+              organismConfigId: item.organismChildConfigId,
+              fields: [{
+                label: "Nome",
+                type: {
+                  type: "string",
+                },
+                hint: "Informe o nome",
+                required: true,
+                model: "nome",
+                value: item.organismConfigName
+              }]
+            },
+          },
+        };
+        this.$q.loading.show()
+        const r = await useFetch(opt)
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro. Tente novamente.')
+          return
+        }
+        this.dialogInsertNewOrganismGroup = false
+        this.getChildOrganismsById()
+      // const organismChildConfigId = item.organismChildConfigId
+      // const organismParentId = this.$route.query.organismId
+      // this.$router.push('/admin/createChildOrganism?organismChildConfigId=' + organismChildConfigId + '&organismParentId=' + organismParentId)
     },
     async getLinkedOrganismConfig() {
       if (!this.organismConfigId) {
