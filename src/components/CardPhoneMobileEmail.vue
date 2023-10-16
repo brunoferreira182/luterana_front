@@ -8,7 +8,7 @@
       {{ showHeader }}
     </q-item-label>
     <q-item
-      v-for="(value, iValue) in props.data.value"
+      v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
       <q-item-section>

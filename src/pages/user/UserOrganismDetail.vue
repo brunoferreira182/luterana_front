@@ -6,7 +6,7 @@
           <div class="text-h5">
             {{ organismName }}
           </div>
-          <div class="text-caption">
+          <div class="text-caption text-capitalize">
             detalhe do organismo 
           </div>
         </div>
