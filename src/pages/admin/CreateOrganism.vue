@@ -177,7 +177,7 @@
                 :disable="field.onlyAdm"
               />
               <CardPhoneMobileEmail
-                :data="field"
+                :data="field.value"
                 :fieldIndex="fieldIndex"
                 @edit="editPhoneMobileEmail"
                 @remove="removePhoneMobileEmail"
