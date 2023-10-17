@@ -5,7 +5,6 @@
         <div class="text-h6 text-center">Informe os dados</div>
       </q-card-section>
       <q-card-section class="q-gutter-md">
-
         <div
           v-for="(field, fieldIndex) in data.fields"
           :key="fieldIndex"
@@ -13,8 +12,6 @@
         >
           <div class="row q-gutter-sm justify-left items-left">
             <div class="col q-mx-lg">
-
-
               <div v-if="
                 field.type.type === 'string'
                 || field.type.type === 'int'
@@ -34,7 +31,6 @@
                 >
                 </q-input>
               </div>
-
               <div class="text-right" v-if="field.type.type === 'options'">
                 <q-select
                   outlined
@@ -48,7 +44,6 @@
                 >
                 </q-select>
               </div>
-
               <div v-if="field.type.type === 'person'">
                 <div v-if="field.value && field.value.length > 0">
                   <div class="text-body">{{ field.label }}</div>
@@ -70,10 +65,6 @@
                   @click="clkOpenAddPersonDialog(fieldIndex)"
                 />
               </div>
-
-
-
-
             </div>
           </div>
         </div>
@@ -98,61 +89,46 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-
   <DialogAddPerson
     :open="addPerson.open"
     @closeDialog="closeAddPersonDialog"
     @addPerson="confirmAddPerson"
   />
-
 </template>
-
 <script setup>
 import { ref, watch } from 'vue'
 // import { Loading, Notify } from 'quasar'
 import DialogAddPerson from './DialogAddPerson.vue'
 import CardPerson from './CardPerson.vue'
-
 const props = defineProps(['open', 'dataProps'])
 const emits = defineEmits(['closeDialog', 'confirm'])
-
 const data = ref(null)
 const addPerson = ref({
   open: false,
   data: null,
   fieldIndex: null,
 })
-
 watch(() => props.dataProps, (nV) => {
   data.value = {...nV}
 }, { deep: true })
-
 function closeAddPersonDialog() {
-  
   addPerson.value.open = false
 }
-
 function clkOpenAddPersonDialog(fieldIndex) {
   addPerson.value.fieldIndex = fieldIndex
   addPerson.value.open = true
 }
-
 function confirmAddPerson (userSelected) {
   data.value.fields[addPerson.value.fieldIndex].value = [userSelected]
   closeAddPersonDialog()
 }
-
 function removeThisPerson (fieldIndex) {
   data.value.fields[fieldIndex].value = []
 }
-
 function confirm () {
   emits('confirm', data.value)
 }
-
-
 function closeDialog() {
   emits('closeDialog')
 }
-
 </script>
