@@ -309,9 +309,9 @@ export default defineComponent({
       }
       this.btnNextLoading = true;
       const opt = {
-        route: '/auth/sendAccessCodeToUserEmail',
+        route: '/getKey',
         body: {
-          email: this.formData.user
+          login: this.formData.user
         }
       }
       useFetch(opt).then(r => {
@@ -322,7 +322,7 @@ export default defineComponent({
           return;
         }
         this.$q.notify(
-          "Enviamos sua senha por e-mail. Utilize ela para entrar no sistema."
+          "Sua senha foi enviada por e-mail. Utilize ela para acessar o sistema."
         );
         // comentado
         // if (r.data.info === "makeNewPassword") {
@@ -338,42 +338,6 @@ export default defineComponent({
         this.key = r.data.key;
       });
     },
-    // clkNext() {
-    //   if (this.formData.user === "") {
-    //     this.$q.notify("Favor preencher o login");
-    //     return;
-    //   } else if (!this.emailValidated) {
-    //     this.$q.notify("Favor preencher um login válido");
-    //     return;
-    //   }
-    //   this.btnNextLoading = true;
-    //   const opt = {
-    //     route: '/getKey',
-    //     body: {
-    //       login: this.formData.user
-    //     }
-    //   }
-    //   useFetch(opt).then(r => {
-    //     this.btnNextLoading = false;
-    //     if (r.error) {
-    //       this.$q.notify(r.errorMessage);
-    //       if (r.errorType === "keyNonExistent") this.loginStep = "login";
-    //       return;
-    //     }
-    //     // comentado
-    //     if (r.data.info === "makeNewPassword") {
-    //       this.loginStep = "newPassword";
-    //       this.key = r.data.key;
-    //       this.$q.notify(
-    //         "Não há senha cadastrada para o seu login. Crie uma acima."
-    //       );
-    //       return;
-    //     }
-    //     this.loginStep = "password";
-    //     // comentado
-    //     this.key = r.data.key;
-    //   });
-    // },
     clkBack() {
       this.loginStep = "login";
     },
