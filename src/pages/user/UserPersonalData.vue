@@ -630,7 +630,6 @@
                           @remove="removeThisAddress"
                         />
                       </div>
-  
                       <div v-if="field.type.type === 'person'">
                         <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
@@ -653,7 +652,6 @@
                           :disable="tabs.onlyAdm"
                         />
                       </div>
-  
                       <div v-if="field.type.type === 'maritalStatus'">
                         <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
@@ -676,7 +674,6 @@
                           :disable="tabs.onlyAdm"
                         />
                       </div>
-  
                       <div v-if="field.type.type === 'bank_data'">
                         <q-btn
                           label="Adicionar dados bancários"
@@ -696,7 +693,6 @@
                           @remove="removeBankData"
                         />
                       </div>
-  
                       <div v-if="
                         field.type.type === 'email'
                         || field.type.type === 'phone'
@@ -1030,6 +1026,9 @@ export default defineComponent({
         action: null,
       }
     },
+    // closeDialog() {
+    //   thius.dialogAddPastoralData.open = false
+    // },
     clkAddMaritalStatus (fieldIndex, tabsIndex) {
       this.maritalStatus = {
         open: true,
