@@ -1,14 +1,14 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="q-pa-md q-ml-sm row justify-between">
+      <div class="q-pa-md row justify-between">
         <div class="col text-h5 text-capitalize" v-if="!isMobile">
           Preencher dados pessoais
         </div>
-        <div class="col-5 text-subtitle2 text-capitalize" v-if="isMobile">
+        <div class="col-5 text-subtitle1 text-capitalize" v-if="isMobile">
           Preencher dados pessoais
         </div>
-        <div class="col-5" v-if="isMobile">
+        <div class="col-5 self-center" v-if="isMobile">
           <q-btn
             no-caps
             dense
