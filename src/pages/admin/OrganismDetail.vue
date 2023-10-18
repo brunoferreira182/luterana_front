@@ -562,11 +562,9 @@
                 </q-dialog>
                 <q-dialog v-model="dialogLinks" @hide="clearDialogAndFunctions">
                   <q-card>
-                    <q-card-section>
-                      <div class="text-h6 text-center">
+                      <div class=" q-mt-sm text-h6 text-center">
                         Vínculos
                       </div>
-                    </q-card-section>
                     <q-card-section>
                       <div>
                         <div>
@@ -608,7 +606,7 @@
                         </div>
                         <q-separator vertical />
                         <div>
-                          <div class="text-subtitle2 q-ma-sm">
+                          <div class="text-subtitle2 q-ma-sm q-mt-lg">
                             Organismos vinculados:
                           </div>
                           <q-chip
