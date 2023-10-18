@@ -67,6 +67,24 @@
                   :v-model:pagination="pagination"
                   @request="nextPage"
                 >
+                  <template #top-right>
+                    <div class="flex row q-gutter-sm items-center text-right">
+                      <div class="col">
+                        <q-input
+                          @keyup="getFunctionsSolicitationsByUserId"
+                          outlined
+                          dense
+                          debounce="300"
+                          v-model="filter"
+                          placeholder="Procurar"
+                        >
+                          <template #append>
+                            <q-icon name="search" />
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                  </template>
                   <template #body-cell-status="props">
                     <q-td :props="props">
                       <q-chip
@@ -116,6 +134,24 @@
                   :v-model:pagination="pagination"
                   @request="nextPage"
                 >
+                  <template #top-right>
+                    <div class="flex row q-gutter-sm items-center text-right">
+                      <div class="col">
+                        <q-input
+                          @keyup="getFunctionsSolicitationsByUserId"
+                          outlined
+                          dense
+                          debounce="300"
+                          v-model="filter"
+                          placeholder="Procurar"
+                        >
+                          <template #append>
+                            <q-icon name="search" />
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                  </template>
                   <template #body-cell-status="props">
                     <q-td :props="props">
                       <q-chip
@@ -176,6 +212,24 @@
               :v-model:pagination="pagination"
               @request="nextPage"
             >
+              <!-- <template #top-right>
+                <div class="flex row q-gutter-sm items-center text-right">
+                  <div class="col">
+                    <q-input
+                      @keyup="getFunctionsSolicitationsByUserId"
+                      outlined
+                      dense
+                      debounce="300"
+                      v-model="filter"
+                      placeholder="Procurar"
+                    >
+                      <template #append>
+                        <q-icon name="search" />
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+              </template> -->
               <template #body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
@@ -229,6 +283,24 @@
               :v-model:pagination="pagination"
               @request="nextPage"
             >
+              <!-- <template #top-right>
+                <div class="flex row q-gutter-sm items-center text-right">
+                  <div class="col">
+                    <q-input
+                      @keyup="getFunctionsSolicitationsByUserId"
+                      outlined
+                      dense
+                      debounce="300"
+                      v-model="filter"
+                      placeholder="Procurar"
+                    >
+                      <template #append>
+                        <q-icon name="search" />
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+              </template> -->
               <template #body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
