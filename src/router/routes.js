@@ -60,7 +60,7 @@ const routes = [
       },
       {
         path: "/admin/admSolicitationsList",
-        component: () => import("pages/admin/SolicitationsList.vue"),
+        component: () => import("pages/admin/AdmSolicitationsList.vue"),
       },
       
       //configurations// tipos de organismos
