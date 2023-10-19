@@ -7,6 +7,7 @@
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
+            v-if="userType === 'user'"
             color="primary"
             rounded
             flat
@@ -40,160 +41,216 @@
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
         <q-list bordered>
-          <q-expansion-item
-            v-for="(tabs, i) in userData.userDataTabs" :key="i"
-            group="somegroup"
-            class="bg-grey-3"
-            header-class="text-primary"
-            :label="tabs.tabLabel"
-          >
-            <q-card>
-              <q-card-section>
-                <div
-                  v-for="(field, fieldIndex) in tabs.fields"
-                  :key="fieldIndex"
-                  class="q-my-md"
-                >
-                  <div class="row q-gutter-sm justify-left items-left">
-                    <div class="col q-mx-lg">
-                      <div v-if="
-                        field.type.type === 'string'
-                        || field.type.type === 'int'
-                        || field.type.type === 'date'
-                        || field.type.type === 'cpf'
-                        || field.type.type === 'cnpj'
-                        || field.type.type === 'money'
-                        || field.type.type === 'textarea'
-                        "
-                      >
-                        <q-input
-                          :label="field.label"
-                          :hint="field.hint"
-                          :mask="field.type.mask"
-                          v-model="field.value"
+          <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
+            <q-expansion-item
+              v-if="userType === 'user' ? tabs.tabLabel !== 'Dados pastorais' : tabs.tabLabel"
+              group="somegroup"
+              class="bg-grey-3"
+              header-class="text-primary"
+              :label="tabs.tabLabel"
+            >
+              <q-card>
+                <q-card-section>
+                  <div
+                    v-for="(field, fieldIndex) in tabs.fields"
+                    :key="fieldIndex"
+                    class="q-my-md"
+                  >
+                    <div class="row q-gutter-sm justify-left items-left">
+                      <div class="col q-mx-lg">
+                        <div v-if="
+                          field.type.type === 'string'
+                          || field.type.type === 'int'
+                          || field.type.type === 'date'
+                          || field.type.type === 'cpf'
+                          || field.type.type === 'cnpj'
+                          || field.type.type === 'money'
+                          || field.type.type === 'textarea'
+                          "
+                        >
+                          <q-input
+                            :label="field.label"
+                            :hint="field.hint"
+                            :mask="field.type.mask"
+                            v-model="field.value"
+                            outlined
+                            :readonly="!tabs.onlyAdm"
+                          >
+                          </q-input>
+                        </div>
+                        <q-file
+                          v-if="field.type.type === 'image'"
+                          v-model="files"
+                          @rejected="onRejected"
+                          :filter="checkFileType"
+                          label="Clique aqui para adicionar imagem de perfil"
                           outlined
+                          @input="saveProfilePhoto()"
                           :readonly="!tabs.onlyAdm"
                         >
-                        </q-input>
-                      </div>
-                      <q-file
-                        v-if="field.type.type === 'image'"
-                        v-model="files"
-                        @rejected="onRejected"
-                        :filter="checkFileType"
-                        label="Clique aqui para adicionar imagem de perfil"
-                        outlined
-                        @input="saveProfilePhoto()"
-                        :readonly="!tabs.onlyAdm"
-                      >
-                        <template #append>
-                          <q-icon name="attach_file" />
-                        </template>
-                      </q-file>
-  
-                      <div class="text-right" v-if="field.type.type === 'options'">
-                        <q-select
-                          outlined
+                          <template #append>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+    
+                        <div class="text-right" v-if="field.type.type === 'options'">
+                          <q-select
+                            outlined
+                            :label="field.label"
+                            option-label="optionName"
+                            emit-value
+                            map-options
+                            :hint="field.hint"
+                            v-model="field.value"
+                            :options="field.options"
+                            :readonly="!tabs.onlyAdm"
+                          >
+                          </q-select>
+                        </div>
+    
+                        <div v-if="field.type.type === 'attach'">
+                          <q-item class="bg-grey-3" style="border-radius: 1rem">
+                            <q-item-section>
+                              <q-item-label class="text-h5">
+                                {{ field.label }}
+                              </q-item-label>
+                              <q-item-label class="text-subtitle1">
+                                {{ field.hint }}
+                              </q-item-label>
+                              <q-item-label>
+                                <q-file
+                                  class="bg-white"
+                                  v-model="field.value"
+                                  label="Escolha um ou mais arquivos"
+                                  outlined
+                                  use-chips
+                                  multiple
+                                  :readonly="!tabs.onlyAdm"
+                                >
+                                  <template v-slot:prepend>
+                                    <q-icon name="attach_file" />
+                                  </template>
+                                </q-file>
+                              </q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </div>
+    
+                        <q-checkbox
+                          v-if="field.type.type === 'boolean'"
+                          class="q-pt-lg"
                           :label="field.label"
-                          option-label="optionName"
-                          emit-value
-                          map-options
                           :hint="field.hint"
                           v-model="field.value"
-                          :options="field.options"
                           :readonly="!tabs.onlyAdm"
-                        >
-                        </q-select>
-                      </div>
-  
-                      <div v-if="field.type.type === 'attach'">
-                        <q-item class="bg-grey-3" style="border-radius: 1rem">
-                          <q-item-section>
-                            <q-item-label class="text-h5">
-                              {{ field.label }}
-                            </q-item-label>
-                            <q-item-label class="text-subtitle1">
-                              {{ field.hint }}
-                            </q-item-label>
-                            <q-item-label>
-                              <q-file
-                                class="bg-white"
-                                v-model="field.value"
-                                label="Escolha um ou mais arquivos"
-                                outlined
-                                use-chips
-                                multiple
-                                :readonly="!tabs.onlyAdm"
+                        />
+    
+                        <div v-if="field.type.type === 'multiple_select'">
+                          <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
+                            <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
+                            <div class="q-pa-sm">
+                              <q-btn
+                                v-if="field.multiple || (!field.value || field.value.length === 0)"
+                                icon="add"
+                                color="primary"
+                                outline
+                                rounded
+                                @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                                no-caps
+                                :disable="!tabs.onlyAdm"
                               >
-                                <template v-slot:prepend>
-                                  <q-icon name="attach_file" />
-                                </template>
-                              </q-file>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </div>
-  
-                      <q-checkbox
-                        v-if="field.type.type === 'boolean'"
-                        class="q-pt-lg"
-                        :label="field.label"
-                        :hint="field.hint"
-                        v-model="field.value"
-                        :readonly="!tabs.onlyAdm"
-                      />
-  
-                      <div v-if="field.type.type === 'multiple_select'">
-                        <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
-                          <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
-                          <div class="q-pa-sm">
-                            <q-btn
-                              v-if="field.multiple || (!field.value || field.value.length === 0)"
-                              icon="add"
-                              color="primary"
-                              outline
-                              rounded
-                              @click="addDoubleSelection(tabsIndex, fieldIndex)"
-                              no-caps
-                              :disable="!tabs.onlyAdm"
-                            >
-                              Adicionar nova seleção dupla
-                            </q-btn>
-                          </div>
-                          <div>
-                            <div v-if="field.value">
-                              <div
-                                v-for="(value, valueIndex) in field.value"
-                                :key="valueIndex"
-                                class="row wrap justify-left q-pa-sm items-left content-center"
-                              >
-                                <q-select 
-                                  v-for="(select, selectIndex) in field.selects"
-                                  :key="'internalSelect' + selectIndex"
-                                  :label="select.label"
-                                  option-label="options"
-                                  emit-value
-                                  map-options
-                                  v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
-                                  :options="select.options"
-                                  class="col-5"
-                                />
-                                <q-btn
-                                  icon="delete"
-                                  class="q-ml-lg"
-                                  rounded
-                                  flat
-                                  color="red"
-                                  @click="userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(valueIndex, 1)" 
+                                Adicionar nova seleção dupla
+                              </q-btn>
+                            </div>
+                            <div>
+                              <div v-if="field.value">
+                                <div
+                                  v-for="(value, valueIndex) in field.value"
+                                  :key="valueIndex"
+                                  class="row wrap justify-left q-pa-sm items-left content-center"
+                                >
+                                  <q-select 
+                                    v-for="(select, selectIndex) in field.selects"
+                                    :key="'internalSelect' + selectIndex"
+                                    :label="select.label"
+                                    option-label="options"
+                                    emit-value
+                                    map-options
+                                    v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
+                                    :options="select.options"
+                                    class="col-5"
                                   />
+                                  <q-btn
+                                    icon="delete"
+                                    class="q-ml-lg"
+                                    rounded
+                                    flat
+                                    color="red"
+                                    @click="userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(valueIndex, 1)" 
+                                    />
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-  
-                      <div v-if="field.type.type === 'organism'">
-                        <div v-if="field.value && field.value.length > 0">
+    
+                        <div v-if="field.type.type === 'organism'">
+                          <div v-if="field.value && field.value.length > 0">
+                            <q-btn
+                              :label="`Adicionar ${field.label}`"
+                              no-caps
+                              rounded
+                              flat
+                              color="primary"
+                              icon="add"
+                              v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                              @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                              :disable="!tabs.onlyAdm"
+                            />
+                            <CardOrganism
+                              :data="field"
+                              :fieldIndex="fieldIndex"
+                              :tabsIndex="tabsIndex"
+                              :disableButtons="!tabs.onlyAdm"
+                              @remove="removeThisOrganism"
+                            />
+                          </div>
+                        </div>
+    
+                        <div v-if="field.type.type === 'address'">
+                          <q-btn
+                            label="Endereço"
+                            no-caps
+                            rounded
+                            unelevated
+                            flat
+                            color="primary"
+                            icon="add"
+                            @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                            class="q-mt-xs"
+                            :disable="!tabs.onlyAdm"
+                          />
+                          <CardAddress
+                            :data="field.value"
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="tabsIndex"
+                            @edit="editThisAddress"
+                            @remove="removeThisAddress"
+                            :disableButtons="!tabs.onlyAdm"
+                          />
+                        </div>
+    
+                        <div v-if="field.type.type === 'person'">
+                          <div v-if="field.value && field.value.length > 0">
+                            <div class="text-body">{{ field.label }}</div>
+                            <CardPerson
+                              :data="field"
+                              :fieldIndex="fieldIndex"
+                              :tabsIndex="tabsIndex"
+                              @remove="removeThisPerson"
+                              :disableButtons="!tabs.onlyAdm"
+                            />
+                          </div>
                           <q-btn
                             :label="`Adicionar ${field.label}`"
                             no-caps
@@ -202,170 +259,116 @@
                             color="primary"
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                            @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                            @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
                             :disable="!tabs.onlyAdm"
                           />
-                          <CardOrganism
+                        </div>
+    
+                        <div v-if="field.type.type === 'maritalStatus'">
+                          <div v-if="field.value && field.value.length > 0">
+                            <div class="text-body">{{ field.label }}</div>
+                            <CardMaritalStatus
+                              :data="field"
+                              :fieldIndex="fieldIndex"
+                              :tabsIndex="tabsIndex"
+                              @remove="removeThisPerson"
+                              :disableButtons="!tabs.onlyAdm"
+                            />
+                          </div>
+                          <q-btn
+                            :label="`Modificar ${field.label}`"
+                            no-caps
+                            rounded
+                            flat
+                            color="primary"
+                            icon="add"
+                            v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                            @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
+                            :disable="!tabs.onlyAdm"
+                          />
+                        </div>
+    
+                        <div v-if="field.type.type === 'bank_data'">
+                          <q-btn
+                            label="Adicionar dados bancários"
+                            no-caps
+                            rounded
+                            flat
+                            color="primary"
+                            @click="clkAddBankData(fieldIndex, tabsIndex)"
+                            icon="add"
+                            :disable="!tabs.onlyAdm"
+                          />
+                          <CardBankData
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
+                            @edit="editBankData"
+                            @remove="removeBankData"
                             :disableButtons="!tabs.onlyAdm"
-                            @remove="removeThisOrganism"
                           />
                         </div>
-                      </div>
-  
-                      <div v-if="field.type.type === 'address'">
-                        <q-btn
-                          label="Endereço"
-                          no-caps
-                          rounded
-                          unelevated
-                          flat
-                          color="primary"
-                          icon="add"
-                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                          class="q-mt-xs"
-                          :disable="!tabs.onlyAdm"
-                        />
-                        <CardAddress
-                          :data="field.value"
-                          :fieldIndex="fieldIndex"
-                          :tabsIndex="tabsIndex"
-                          @edit="editThisAddress"
-                          @remove="removeThisAddress"
-                          :disableButtons="!tabs.onlyAdm"
-                        />
-                      </div>
-  
-                      <div v-if="field.type.type === 'person'">
-                        <div v-if="field.value && field.value.length > 0">
-                          <div class="text-body">{{ field.label }}</div>
-                          <CardPerson
+    
+                        <div v-if="
+                          field.type.type === 'email'
+                          || field.type.type === 'phone'
+                          || field.type.type === 'mobile'
+                          "
+                        >
+                          <q-btn
+                            :label="`${field.type.label}`"
+                            no-caps
+                            flat
+                            v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                            icon="add"
+                            color="primary"
+                            rounded
+                            @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
+                            class="q-mt-xs"
+                            :disable="!tabs.onlyAdm"
+                          />
+                          <CardPhoneMobileEmail
+                            :data="field.value"
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="tabsIndex"
+                            @edit="editPhoneMobileEmail"
+                            @remove="removePhoneMobileEmail"
+                            :disableButtons="!tabs.onlyAdm"
+                          />
+                        </div>
+    
+                        <div v-if="field.type.type === 'formation'">
+                          <q-btn
+                            label="Formação"
+                            no-caps
+                            rounded
+                            unelevated
+                            flat
+                            color="primary"
+                            icon="add"
+                            @click="clkAddFormation(fieldIndex, tabsIndex)"
+                            class="q-mt-xs"
+                            :disable="!tabs.onlyAdm"
+                          />
+                          <CardFormation
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @remove="removeThisPerson"
+                            @edit="editFormation"
+                            @remove="removeFormation"
                             :disableButtons="!tabs.onlyAdm"
                           />
+                          
                         </div>
-                        <q-btn
-                          :label="`Adicionar ${field.label}`"
-                          no-caps
-                          rounded
-                          flat
-                          color="primary"
-                          icon="add"
-                          v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                          @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
-                          :disable="!tabs.onlyAdm"
-                        />
+    
                       </div>
-  
-                      <div v-if="field.type.type === 'maritalStatus'">
-                        <div v-if="field.value && field.value.length > 0">
-                          <div class="text-body">{{ field.label }}</div>
-                          <CardMaritalStatus
-                            :data="field"
-                            :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
-                            @remove="removeThisPerson"
-                            :disableButtons="!tabs.onlyAdm"
-                          />
-                        </div>
-                        <q-btn
-                          :label="`Modificar ${field.label}`"
-                          no-caps
-                          rounded
-                          flat
-                          color="primary"
-                          icon="add"
-                          v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                          @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
-                          :disable="!tabs.onlyAdm"
-                        />
-                      </div>
-  
-                      <div v-if="field.type.type === 'bank_data'">
-                        <q-btn
-                          label="Adicionar dados bancários"
-                          no-caps
-                          rounded
-                          flat
-                          color="primary"
-                          @click="clkAddBankData(fieldIndex, tabsIndex)"
-                          icon="add"
-                          :disable="!tabs.onlyAdm"
-                        />
-                        <CardBankData
-                          :data="field"
-                          :fieldIndex="fieldIndex"
-                          :tabsIndex="tabsIndex"
-                          @edit="editBankData"
-                          @remove="removeBankData"
-                          :disableButtons="!tabs.onlyAdm"
-                        />
-                      </div>
-  
-                      <div v-if="
-                        field.type.type === 'email'
-                        || field.type.type === 'phone'
-                        || field.type.type === 'mobile'
-                        "
-                      >
-                        <q-btn
-                          :label="`${field.type.label}`"
-                          no-caps
-                          flat
-                          v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
-                          icon="add"
-                          color="primary"
-                          rounded
-                          @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
-                          class="q-mt-xs"
-                          :disable="!tabs.onlyAdm"
-                        />
-                        <CardPhoneMobileEmail
-                          :data="field.value"
-                          :fieldIndex="fieldIndex"
-                          :tabsIndex="tabsIndex"
-                          @edit="editPhoneMobileEmail"
-                          @remove="removePhoneMobileEmail"
-                          :disableButtons="!tabs.onlyAdm"
-                        />
-                      </div>
-  
-                      <div v-if="field.type.type === 'formation'">
-                        <q-btn
-                          label="Formação"
-                          no-caps
-                          rounded
-                          unelevated
-                          flat
-                          color="primary"
-                          icon="add"
-                          @click="clkAddFormation(fieldIndex, tabsIndex)"
-                          class="q-mt-xs"
-                          :disable="!tabs.onlyAdm"
-                        />
-                        <CardFormation
-                          :data="field"
-                          :fieldIndex="fieldIndex"
-                          :tabsIndex="tabsIndex"
-                          @edit="editFormation"
-                          @remove="removeFormation"
-                          :disableButtons="!tabs.onlyAdm"
-                        />
-                        
-                      </div>
-  
                     </div>
                   </div>
-                </div>
-              </q-card-section>
-              
-            </q-card>
-          </q-expansion-item>
+                </q-card-section>
+                
+              </q-card>
+            </q-expansion-item>
+          </div>
         </q-list>
       </div>
       
@@ -1069,6 +1072,7 @@ export default defineComponent({
       selectIndex: null,
       tab: "",
       tabTitles: "",
+      userType: '',
       isSaving: false,
       newPhone: "",
       userTitleName: '',
@@ -1294,6 +1298,7 @@ export default defineComponent({
           return
         }
         this.userData = userConfig.data
+        this.userType = r.data.userType
         // this.tab = r.data.userDataTabs[0].tabValue
         this.mountUserData(r.data)
       });
