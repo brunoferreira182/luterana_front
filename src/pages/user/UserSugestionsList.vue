@@ -47,7 +47,7 @@
               emit-value
               hint="Especifique o tipo"
               map-options
-              label="Tipo (opcional)"
+              label="Tipo"
               :option-value="(item) => item.label"
               :options="suggestionOptions"
               v-model="dialogNewSugestion.suggestionTitle"
