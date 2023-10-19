@@ -443,7 +443,7 @@
             :label="tabs.tabLabel"
           >
             <q-card>
-              <q-card-section>
+              <q-card-section v-if="tabs.tabLabel !== 'Dados pastorais'">
                 <div
                   v-for="(field, fieldIndex) in tabs.fields"
                   :key="fieldIndex"
@@ -747,7 +747,9 @@
                   </div>
                 </div>
               </q-card-section>
-              
+              <div v-else class="text-h6 text-center q-pa-md">
+                Estamos carregando estes dados...
+              </div>
             </q-card>
           </q-expansion-item>
         </q-list>
