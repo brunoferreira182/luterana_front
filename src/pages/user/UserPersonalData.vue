@@ -864,6 +864,7 @@
                     :data="otherField"
                     :tabsIndex="i"
                   />
+                  <div v-else> Nenhum dado inserido</div>
                 </q-card-section>
               </q-card>
             </q-expansion-item>
