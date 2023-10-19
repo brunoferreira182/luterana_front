@@ -13,7 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenSuggestionDetail"
+        @row-click="clkGoToFunctionInOrganismDetail"
         :selected-rows-label="getSelectedString"
         v-model:pagination="pagination"
         @request="nextPage"
@@ -51,6 +51,35 @@
           </q-td>
         </template>
       </q-table>
+      <q-dialog v-model="dialogNewSugestion.open" @hide="clearDialog()">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <div class="text-h6 text-center q-pa-md ">Escreva</div>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Descrição"
+              autogrow
+              v-model="dialogNewSugestion.suggestionTitle"
+            />
+            <q-input
+              outlined
+              label="Descrição"
+              autogrow
+              v-model="dialogNewSugestion.suggestionText"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              rounded
+              @click="dialogNewSugestion.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -69,6 +98,11 @@ export default defineComponent({
         page: 1,
         rowsPerPage: 10,
       },
+      dialogNewSugestion: {
+        open: false,
+        suggestionTitle: '',
+        suggestionText: ''
+      },
     };
   },
   mounted() {
@@ -78,9 +112,10 @@ export default defineComponent({
     this.getSuggestionsList();
   },
   methods: {
-    clkOpenSuggestionDetail(e, r) {
-      const sId = r._id
-      this.$router.push("/admin/suggestionDetail?suggestionId=" + sId);
+      clkGoToFunctionInOrganismDetail(e, r) {
+      this.dialogNewSugestion.open = true
+      this.dialogNewSugestion.suggestionText = r.suggestionText
+      this.dialogNewSugestion.suggestionTitle = r.suggestionTitle
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -108,6 +143,11 @@ export default defineComponent({
         this.suggestionList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
       });
+    },
+    clearDialog(){
+      this.dialogNewSugestion.open = false
+      this.dialogNewSugestion.suggestionText = ''
+      this.dialogNewSugestion.suggestionTitle = ''
     },
   },
 });
