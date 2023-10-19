@@ -334,7 +334,20 @@
                         </div>
     
                         <div v-if="field.type.type === 'maritalStatus'">
-                          <div v-if="field.value && field.value.length > 0">
+                          <q-list
+                            style="border-radius: 1rem"
+                            class="bg-grey-3"
+                            separator
+                          >
+                            <q-item>
+                              <q-item-section>
+                                <q-item-label class="text-capitalize">
+                                  Estamos importando seus dados conjugais
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                          <!-- <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
                             <CardMaritalStatus
                               :data="field"
@@ -353,7 +366,7 @@
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                             :disable="tabs.onlyAdm"
-                          />
+                          /> -->
                         </div>
     
                         <div v-if="field.type.type === 'bank_data'">
@@ -659,7 +672,20 @@
                         />
                       </div>
                       <div v-if="field.type.type === 'maritalStatus'">
-                        <div v-if="field.value && field.value.length > 0">
+                        <q-list
+                            style="border-radius: 1rem"
+                            class="bg-grey-3"
+                            separator
+                          >
+                            <q-item>
+                              <q-item-section>
+                                <q-item-label class="text-capitalize">
+                                  Estamos importando seus dados conjugais
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        <!-- <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
                           <CardMaritalStatus
                             :data="field"
@@ -678,7 +704,7 @@
                           v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                           @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                           :disable="tabs.onlyAdm"
-                        />
+                        /> -->
                       </div>
                       <div v-if="field.type.type === 'bank_data'">
                         <q-btn
@@ -988,7 +1014,7 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 </script>
 
 <script>

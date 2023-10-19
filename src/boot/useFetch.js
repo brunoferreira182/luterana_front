@@ -73,7 +73,9 @@ const useFetch = async ({
   Loading.hide();
   if (ret.data.error && ret.data.errorFetch)
     Notify.create(ret.data.errorFetch.message);
+  
   else if (ret.data.error) {
+    if (ret.data.errorMessage) Notify.create(ret.data.errorMessage);
     if (
       (ret.data.errorType === "tokenNonExistent" ||
         ret.data.errorType === "loginNonExistent" ||
