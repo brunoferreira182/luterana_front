@@ -313,6 +313,11 @@ const useUtils = {
           route: "/user/userSolicitationsList",
           icon: "format_list_bulleted",
         },
+        {
+          label: "Lista de sugestões",
+          route: "/user/userSugestionsList",
+          icon: "assistant",
+        },
         // {
         //   label: "Falar com admin",
         //   route: "/user/talkToAdmin",

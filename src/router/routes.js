@@ -252,7 +252,14 @@ const routes = [
         path: "/user/userFormDetail",
         component: () => import("pages/user/UserFormDetail.vue"),
       },
-      
+      {
+        path: "/user/userSugestionsList",
+        component: () => import("pages/user/UserSugestionsList.vue"),
+      },
+      {
+        path: "/user/createNewSugestion",
+        component: () => import("pages/user/CreateNewSugestion.vue"),
+      },
     ],
   },
 
