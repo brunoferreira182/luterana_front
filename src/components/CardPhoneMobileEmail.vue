@@ -29,7 +29,7 @@
           color="primary"
           @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
           :disable="disableButtons"
-        ><q-tooltip>Editar este {{ props.data.type.label }}</q-tooltip></q-btn>
+        ><q-tooltip>Editar este {{ props.data[0].type.label }}</q-tooltip></q-btn>
         <q-btn
           icon="delete"
           flat
@@ -37,7 +37,7 @@
           color="red"
           @click="remove(fieldIndex, tabsIndex, props.data, value, iValue)"
           :disable="disableButtons"
-        ><q-tooltip>Excluir este {{ props.data.type.label }}</q-tooltip></q-btn>
+        ><q-tooltip>Excluir este {{ props.data[0].type.label }}</q-tooltip></q-btn>
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -47,7 +47,6 @@
 <script setup>
 const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
 const emits = defineEmits(['edit', 'remove'])
-
 
 function edit(fieldIndex, tabsIndex, field, value, iValue) {
   emits('edit', fieldIndex, tabsIndex, field, value, iValue)

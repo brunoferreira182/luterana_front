@@ -70,6 +70,7 @@
             >
               <template v-for="(tabs, i) in userData.userDataTabs" :key="i">
                 <q-tab 
+                  v-if="userType === 'user' ? tabs.tabLabel !== 'Dados pastorais' : tabs.tabLabel"
                   class="flex-left flex"
                   :name="tabs.tabValue" 
                   :label="tabs.tabLabel" 
@@ -95,7 +96,7 @@
           </template>
           <template v-slot:after>
             <q-tab-panels 
-              v-if="userData && userData.userDataTabs"
+              v-show="userData && userData.userDataTabs"
               animated 
               swipeable
               transition-prev="jump-up"
@@ -108,7 +109,7 @@
                 :key="tabsIndex"
                 :name="tabs.tabValue" 
               >
-                <div>
+                <div v-if="tabs.tabLabel !== 'Dados pastorais'">
                   <q-btn
                     no-caps
                     rounded
@@ -397,7 +398,7 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editPhoneMobileEmail"
+                            @edit="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
                             @remove="removePhoneMobileEmail"
                           />
                         </div>
@@ -428,6 +429,9 @@
                       </div>
                     </div>
                   </div>
+                </div>
+                <div v-else class="text-h6 text-center q-pa-md">
+                  Estamos carregando estes dados...
                 </div>
               </q-tab-panel>
             </q-tab-panels>
@@ -716,7 +720,7 @@
                           :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
-                          @edit="editPhoneMobileEmail"
+                          @edit="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
                           @remove="removePhoneMobileEmail"
                         />
                       </div>
@@ -888,6 +892,7 @@ export default defineComponent({
       openDialogVinculateUserToTitle: false,
       tab: "",
       tabTitles: "",
+      userType: '',
       visionSelected: 'personalData',
       isSaving: false,
       dialogConfirmAddress: {
@@ -1052,7 +1057,6 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     editFormation (fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(value, 'value dentro do user')
       this.dialogFormation = {
         open: true,
         tabsIndex,
@@ -1128,9 +1132,7 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
-    clkShowDetailPerson(field, fieldIndex) {
-      console.log("field", field)
-      console.log("fieldIndex", fieldIndex)
+    clkShowDetailPerson(field) {
       const opt = {
         route: '/getUserInfoById',
         body: {
@@ -1139,10 +1141,8 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) {
-          console.log("Macaquinho")
           return
         } else {
-          console.log("Bananinha")
         }
       })
     },
@@ -1168,9 +1168,7 @@ export default defineComponent({
       let tabWithDoc
       let fieldWithDoc
       this.userData.userDataTabs.forEach((userTab, iTab) => {
-        // console.log(userTab, iTab, 'userTab aqui')
         userTab.fields.forEach((userField, iField) => {
-          // console.log(userField, iTab, 'userField aqui')
           if (userField.model === 'cpf' || userField.model === 'cnpj' || userField.model === 'documento') {
             tabWithDoc = iTab
             fieldWithDoc = iField
@@ -1235,7 +1233,6 @@ export default defineComponent({
       this.dialogAddBankData.action = 'add'
     },
     saveProfilePhoto() {
-      console.log(this.files)
       const opt = {
         route:'/desktop/commonUsers/addProfilePhotoById',
         file: [
@@ -1423,17 +1420,24 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
     },
     confirmAddPhoneMobileEmail (data) {
+      console.log(data, 'DATA FORA DO EDIT')
       if (this.dialogAddPhoneMobileEmail.action === 'add') {
         if (!this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
           this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
         }
         this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({...data})
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
+        console.log(data, 'DATA NO EDIT')
         this
           .userData
           .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
           .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
           .value[this.dialogAddPhoneMobileEmail.iValue] = {...data}
+          console.log(this
+          .userData
+          .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
+          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+          .value[this.dialogAddPhoneMobileEmail.iValue], 'MASPODPOASKDPOSA')
       }
       this.dialogAddPhoneMobileEmail.open = false
     },
@@ -1455,7 +1459,6 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     confirmAddress(data) {
-      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const tabsIndex = this.dialogConfirmAddress.tabsIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
@@ -1570,10 +1573,10 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Ocorreu um erro, tente novamente kakak")
           return
         }
         // this.userDetail = r.data
+        this.userType = r.data.userType
         this.mountUserData(r.data)
       })
     },
@@ -1585,9 +1588,7 @@ export default defineComponent({
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {
             userTab.fields.forEach((userField) => {
-              // console.log(iConfigTab, pastorTab, iUserTab)
               if (configField.model === userField.model && userField.value) {
-                // console.log(iConfigTab, pastorTab, iUserTab)
                 this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
               }
             })
