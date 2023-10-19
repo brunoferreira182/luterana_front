@@ -345,11 +345,10 @@
                   :showHeader="field.value && field.value.length > 0 ? field.label : false"
                 />
               </div>
-
             </div>
-
             <div class="text-right">
                 <q-btn
+                  v-if="!this.$route.query.e === 'f'"
                   label="Salvar dados"
                   color="primary"
                   unelevated
@@ -371,7 +370,7 @@
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
-                :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
+                :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -1213,7 +1212,7 @@ export default defineComponent({
 
     },
     goToOrganismDetail(id) {
-      this.$router.push("/user/userOrganismDetail?organismId=" + id)
+      this.$router.push("/user/userOrganismDetail?organismId=" + id + "&e=f")
     },
     getChildOrganismsConfigsByOrganismId() {
       const organismId = this.$route.query.organismId
