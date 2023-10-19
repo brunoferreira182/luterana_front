@@ -814,6 +814,118 @@
         </q-card>
       </q-dialog>
 
+      <q-dialog v-model="dialogShowOtherData.open">
+        <q-card v-if="otherData" style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              {{ otherData.userDataTabs[0].fields[0].value }}
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-expansion-item
+              dense
+              dense-toggle
+              expand-separator
+              :label="otherData.userDataTabs[0].tabLabel"
+            >
+              <q-card>
+                <q-card-section>
+                  <q-input
+                    v-for="otherField in otherData.userDataTabs[0].fields"
+                    :key="otherField"
+                    :label="otherField.label"
+                    :hint="otherField.hint"
+                    :mask="otherField.type.mask"
+                    v-model="otherField.value"
+                    outlined
+                    readonly
+                  >
+                  </q-input>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-card-section>
+          <q-card-section>
+            <q-expansion-item
+              dense
+              dense-toggle
+              expand-separator
+              :label="otherData.userDataTabs[1].tabLabel"
+            >
+              <q-card>
+                <q-card-section
+                  v-for="(otherField, i) in otherData.userDataTabs[1].fields"
+                  :key="otherField"
+                >
+                {{ otherData.userDataTabs[1].fields[i].label }}:
+                  <CardPerson
+                    v-if="otherField.value"
+                    :data="otherField"
+                    :tabsIndex="i"
+                  />
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-card-section>
+          <q-card-section>
+            <q-expansion-item
+              dense
+              dense-toggle
+              expand-separator
+              :label="otherData.userDataTabs[2].tabLabel"
+            >
+              <q-card>
+                <q-card-section
+                  v-for="(otherField, i) in otherData.userDataTabs[2].fields"
+                  :key="otherField"
+                >
+                  {{ otherData.userDataTabs[2].fields[i].label }}:
+                  <CardPhoneMobileEmail
+                    v-if="otherField.value"
+                    :data="otherField.value"
+                    :tabsIndex="i"
+                  />
+                  <div v-else>Nenhum dado inserido</div>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-card-section>
+          <q-card-section>
+            <q-expansion-item
+              dense
+              dense-toggle
+              expand-separator
+              :label="otherData.userDataTabs[3].tabLabel"
+            >
+              <q-card>
+                <q-card-section 
+                  v-for="(otherField, i) in otherData.userDataTabs[3].fields"
+                  :key="otherField"
+                >
+                  <CardAddress
+                    v-if="otherField.value"
+                    :data="otherField.value"
+                    :tabsIndex="i"
+                  />
+                  <div v-else>Nenhum dado inserido</div>
+                </q-card-section>
+              </q-card>
+            </q-expansion-item>
+          </q-card-section>
+          <q-card-actions align="center">
+            
+            <q-btn
+              unelevated
+              rounded
+              label="Sair"
+              no-caps
+              color="primary"
+              @click="dialogShowOtherData.open=false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <DialogBankData
         :open="dialogAddBankData.open"
         :dataProp="dialogAddBankData.data"
@@ -879,6 +991,10 @@ export default defineComponent({
   name: "UserPersonalData",
   data() {
     return {
+      dialogShowOtherData: {
+        open: true
+      },
+      otherData: null,
       isMobileState: useScreenStore().checkScreenSize(),
       isMobile: false,
       deleteTitle: {
@@ -1128,21 +1244,18 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
-    clkShowDetailPerson(field, fieldIndex) {
-      console.log("field", field)
-      console.log("fieldIndex", fieldIndex)
+    clkShowDetailPerson(field) {
       const opt = {
-        route: '/getUserInfoById',
+        route: '/desktop/users/getOtherUserDetailById',
         body: {
-          userId: field.value[0]._id
+          _id: field.value[0]._id
         }
       }
       useFetch(opt).then((r) => {
-        if (r.error) {
-          console.log("Macaquinho")
-          return
-        } else {
-          console.log("Bananinha")
+        if (r.error) return 
+        else {
+          this.otherData = r.data
+          this.dialogShowOtherData.open = true
         }
       })
     },
