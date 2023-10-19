@@ -57,7 +57,6 @@ const options = ref(null)
 const organismSelected = ref(null)
 
 function confirmAddOrganism () {
-  console.log(organismSelected.value)
   emits('addOrganism', organismSelected.value)
 }
 

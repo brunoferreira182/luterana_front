@@ -52,7 +52,6 @@ const emits = defineEmits(['edit', 'remove'])
 
 
 function edit(fieldIndex, tabsIndex, field, value, iValue) {
-  console.log(value)
   emits('edit', fieldIndex, tabsIndex, field, value, iValue)
 }
 

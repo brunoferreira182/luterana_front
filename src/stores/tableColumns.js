@@ -1,11 +1,22 @@
 import { defineStore } from "pinia";
 export const useTableColumns = defineStore("tableColumns", {
   state: () => ({
+    suggestionList: [
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Tipo de sugestão",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+    ],
     allFunctionsSolicitations: [
       {
         name: "userName",
         align: "left",
         label: "Nome de usuário",
+        
+        
         field: "userName",
         sortable: true,
       },
@@ -16,7 +27,6 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "functionName",
         sortable: true,
       },
-    
     ],
     recivedSolicitations: [
       // {
@@ -380,6 +390,22 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "organismName",
         sortable: true,
       },
+    ],
+    suggestionList: [
+      {
+        name: "tile",
+        align: "left",
+        label: "Título",
+        field: (row) => row.suggestionTitle,
+        sortable: true,
+      },
+      {
+        name: "date",
+        align: "left",
+        label: "Data",
+        field: (row) => row.createdAt,
+        sortable: true,
+      }
     ],
     usersList: [
       {

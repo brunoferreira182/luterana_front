@@ -6,7 +6,7 @@
           {{ userData.userDataTabs[0].fields[0].value }}
         </div>
         <div class="col q-gutter-sm text-right">
-          <q-btn
+          <!-- <q-btn
             v-if="userType === 'user'"
             color="primary"
             rounded
@@ -15,7 +15,7 @@
             no-caps
             label="Tornar pastor"
             @click="dialogBecomePastor.open = true"
-          />
+          /> -->
           <!-- <q-btn
             rounded
             no-caps
@@ -1133,7 +1133,6 @@ export default defineComponent({
   },
   methods: {
     openUserFormDialog(form){
-      console.log(this.userFormDialog.open)
       this.userFormDialog.formId = form._id
       this.userFormDialog.open = true
     },

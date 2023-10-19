@@ -654,7 +654,6 @@ export default defineComponent({
       });
     },
     getOrganismFunctionConfigNames() {
-      console.log(this.organismConfigId)
       const opt = {
         route: "/desktop/config/getOrganismFunctionConfigNames",
         body: {

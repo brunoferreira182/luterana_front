@@ -160,7 +160,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Ocorreu um erro, tenta novamente")
+          this.$q.notify("Ocorreu um erro, tenta novamente")
           return
         }
         this.$router.push("/login")
@@ -184,7 +184,6 @@ export default defineComponent({
       })
     },
     checkEmailValidity(){
-      console.log(this.userDataTabs[0].fields[1].value)
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
       const emailVerify = this.userDataTabs[0].fields[1].value
       if (emailRegex.test(emailVerify) === false) {
@@ -194,7 +193,6 @@ export default defineComponent({
       this.clkNext()
     },
     // getMasks(field){
-    //   console.log(field, 'AOPSIDA')
     //   switch(field){
     //     case 'cpf':
     //       this.cpfMask = '###.###.###-##'

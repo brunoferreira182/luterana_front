@@ -1069,7 +1069,6 @@ export default defineComponent({
       }
     },
     confirmAddress(data) {
-      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
       if (this.dialogConfirmAddress.action === 'add') {
@@ -1136,9 +1135,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          console.log()
-        }
+        } 
       });
     },
     editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue) {
@@ -1185,7 +1182,6 @@ export default defineComponent({
       });
     },
     getOrganismsConfigsListBySearchString(val, update) {
-      console.log()
       const opt = {
         route: "/desktop/config/getOrganismsConfigs",
         body: {
@@ -1206,7 +1202,6 @@ export default defineComponent({
       })
     },
     getOrganismsConfigsList() {
-      console.log()
       const opt = {
         route: "/desktop/config/getOrganismsConfigsList",
         body: {
@@ -1292,7 +1287,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Ocorreu um erro")
+          this.$q.notify("Ocorreu um erro")
           return
         }
         this.getOrganismDetailById()
@@ -1369,9 +1364,6 @@ export default defineComponent({
       useFetch(opt).then(r => {
         this.linkedOrganismsData = r.data;
       });
-    },
-    filterInOrganismLinks(val){
-      console.log(val)
     },
     getOrganismsConfigs() {
       const opt = {
@@ -1633,9 +1625,6 @@ export default defineComponent({
         this.clearDialogAndFunctions();
       });
     },
-    abortFilterFn () {
-      console.log('delayed filter aborted')
-    },
     getUsers(val, update, abort) {
       if(val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
@@ -1667,7 +1656,6 @@ export default defineComponent({
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
     linkUserToFunction(func, funcIndex) {
-      console.log(func, funcIndex, 'ocaraiaiaii')
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
       this.dialogInsertUserInFunction.selectedFunc = func
       this.dialogInsertUserInFunction.open = true;

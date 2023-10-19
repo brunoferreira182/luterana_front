@@ -65,7 +65,6 @@ watch(() => props.addressDataProp, (nV) => {
   addressData.value = nV
 }, { deep: true })
 
-console.log('destruiu?')
 
 const addressData = ref({
   cep: '',

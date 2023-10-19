@@ -35,7 +35,7 @@
             rounded
             no-caps
             unelevated
-            icon="school"
+            icon="hotel_class"
             color="secondary"
             label="Vínculos"
             @click="visionSelected = 'links'"
@@ -67,7 +67,7 @@
             rounded
             no-caps
             unelevated
-            icon="school"
+            icon="hotel_class"
             color="secondary"
             label="Vínculos"
             @click="visionSelected = 'links'"
@@ -925,27 +925,25 @@
         <div v-show="visionSelected === 'links'">
           <div class="q-ma-lg justify-start" v-if="childOrganismsData">
             <div class="q-gutter-md">
-              <div class="text-h5 col"> Vínculos</div>
-              <div class="text-caption text-h6" >
+              <div class="text-h4 col"> Vínculos</div>
+              <div class="text-h6 " >
                 Organismos vínculados:
               </div>
-              <div v-if="relations">
-                <q-list v-if="relations.length">
-                  <q-item
-                    clickable
-                    v-for="link in relations"
-                    :key="link"
-                    style="border-radius: 1rem;"
-                    class="bg-blue-grey-2 q-my-sm"
-                    @click="goToOrganismDetail(link.organismRelationId)"
-                  >
-                    <q-item-section>
-                      <q-item-label> {{ link.organismRelationName }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-              <div v-else class="text-subtitle1">
+              <q-list v-if="relations.length">
+                <q-item
+                  clickable
+                  v-for="link in relations"
+                  :key="link"
+                  style="border-radius: 1rem;"
+                  class="bg-blue-grey-2 q-my-sm"
+                  @click="goToOrganismDetail(link.organismRelationId)"
+                >
+                  <q-item-section>
+                    <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              <div v-else class="text-caption">
               Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
             </div>
             </div>
@@ -1356,7 +1354,6 @@ export default defineComponent({
       this.dialogConfirmAddress.open = false;
     },
     confirmAddress(data) {
-      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
       if (this.dialogConfirmAddress.action === 'add') {
@@ -1430,7 +1427,6 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     clkOpenDialogSolicitation(func) {
-      console.log(func)
       this.dialogOpenSolicitation.open = true;
       // if(func.functionNumOfOccupants === func.numOfUser){
       //   this.isReplacement = true

@@ -585,9 +585,6 @@ export default defineComponent({
         this.linkedOrganismsData = r.data;
       });
     },
-    filterInOrganismLinks(val){
-      console.log(val)
-    },
     getOrganismsConfigs() {
       const opt = {
         route: "/desktop/adm/getOrganismsConfigs",
