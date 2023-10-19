@@ -17,7 +17,7 @@
           "
           class="col-6 text-h5 text-capitalize">Criar configuração de organismo
         </div>
-        <div class="col text-right">
+        <div class="col text-right self-center">
           <q-btn
             @click="clkSaveConfig"
             rounded
