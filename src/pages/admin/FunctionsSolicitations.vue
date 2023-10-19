@@ -303,7 +303,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error) {
-          console.log("Ocorreu um erro, tente novamente kakak")
+          this.$q.notify("Ocorreu um erro, tente novamente kakak")
           return
         }
         this.userDetail = r.data
@@ -342,7 +342,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Ocorreu um erro, tente novamente")
+          this.$q.notify("Ocorreu um erro, tente novamente")
           return
         }
         this.functionsList = r.data.list

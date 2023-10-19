@@ -1133,7 +1133,6 @@ export default defineComponent({
   },
   methods: {
     openUserFormDialog(form){
-      console.log(this.userFormDialog.open)
       this.userFormDialog.formId = form._id
       this.userFormDialog.open = true
     },

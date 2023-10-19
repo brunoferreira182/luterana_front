@@ -381,6 +381,22 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    suggestionList: [
+      {
+        name: "tile",
+        align: "left",
+        label: "Título",
+        field: (row) => row.suggestionTitle,
+        sortable: true,
+      },
+      {
+        name: "date",
+        align: "left",
+        label: "Data",
+        field: (row) => row.createdAt,
+        sortable: true,
+      }
+    ],
     usersList: [
       {
         name: "name",

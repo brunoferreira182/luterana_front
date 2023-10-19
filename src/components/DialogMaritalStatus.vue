@@ -130,7 +130,6 @@ function addSpouse() {
 }
 
 function confirmAddPerson () {
-  console.log(userSelected.value)
   emits('addPerson', userSelected.value)
 }
 

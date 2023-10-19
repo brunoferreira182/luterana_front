@@ -450,7 +450,6 @@ export default defineComponent({
   },
   methods: {
     editField (tabIndex, fieldIndex, field) {
-      console.log(field, 'field aqui')
       this.newField = {
         label: field.label,
         type: field.type,
@@ -625,7 +624,6 @@ export default defineComponent({
           }
         }
         useFetch(opt).then((r) => {
-          console.log("userDataTabs" + this.userDataTabs)
           if (!r.error) {
             this.$q.notify("Nome da aba atualizado com sucesso");
           } else {

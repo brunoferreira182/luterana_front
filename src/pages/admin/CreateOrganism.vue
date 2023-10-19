@@ -585,7 +585,6 @@
                 label="Buscar" 
                 outlined
                 v-model="organismVinculated"
-                @update:model-value="filterInOrganismLinks"
                 type="search"
               >
                 <template #append>
@@ -813,7 +812,6 @@ export default defineComponent({
       }
     },
     confirmAddress(data) {
-      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
       if (this.dialogConfirmAddress.action === 'add') {
@@ -883,9 +881,6 @@ export default defineComponent({
         this.organismData.fields[i].value = []
       }
       this.organismData.fields[i].value.push([])
-    },
-    filterInOrganismLinks(val){
-      console.log(val)
     },
     getOrganismsList() {
       const opt = {

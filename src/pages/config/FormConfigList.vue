@@ -124,7 +124,6 @@ export default defineComponent({
       selecionadas de ${this.expensesData.length}`;
     },
     nextPage(e) {
-      console.log('chegou aqui')
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;

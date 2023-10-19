@@ -1137,7 +1137,6 @@ export default defineComponent({
       });
     },
     clkSaveConfig() {
-      console.log(this.requiresLink)
       if (this.$route.path === "/config/organismConfigDetail") {
         this.updateOrganismConfig();
       } else {
@@ -1269,7 +1268,6 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if(r.error) {
-          console.log("Erro getOrganismConfigsList")
           return
         }
         this.organismConfigsList = r.data.list
@@ -1292,7 +1290,7 @@ export default defineComponent({
         if(!r.error) {
           this.occupantsOptions = r.data
         } else {
-          console.log("erro em getOccupantsOptions")
+          this.$q.notify("Ocorreu um erro, tente novamente.")
         }
       })
     },

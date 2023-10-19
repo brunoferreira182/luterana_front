@@ -1354,7 +1354,6 @@ export default defineComponent({
       this.dialogConfirmAddress.open = false;
     },
     confirmAddress(data) {
-      console.log(data,' aqui data')
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
       if (this.dialogConfirmAddress.action === 'add') {
@@ -1428,7 +1427,6 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     clkOpenDialogSolicitation(func) {
-      console.log(func)
       this.dialogOpenSolicitation.open = true;
       // if(func.functionNumOfOccupants === func.numOfUser){
       //   this.isReplacement = true

@@ -1540,29 +1540,21 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
     },
     confirmAddPhoneMobileEmail (data) {
-      console.log(data, 'DATA FORA DO EDIT')
       if (this.dialogAddPhoneMobileEmail.action === 'add') {
         if (!this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
           this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
         }
         this.userData.userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex].fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({...data})
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
-        console.log(data, 'DATA NO EDIT')
         this
           .userData
           .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
           .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
           .value[this.dialogAddPhoneMobileEmail.iValue] = {...data}
-          console.log(this
-          .userData
-          .userDataTabs[this.dialogAddPhoneMobileEmail.tabsIndex]
-          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
-          .value[this.dialogAddPhoneMobileEmail.iValue], 'MASPODPOASKDPOSA')
       }
       this.dialogAddPhoneMobileEmail.open = false
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(fieldIndex, tabsIndex, field, value, iValue)
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
