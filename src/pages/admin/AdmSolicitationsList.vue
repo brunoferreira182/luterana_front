@@ -58,7 +58,6 @@
             <q-input
               outlined
               label="Título"
-              autogrow
               v-model="dialogNewSugestion.suggestionTitle"
             />
             <q-input
