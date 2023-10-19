@@ -9,7 +9,7 @@
               : "Novo Anexo"
           }}
         </div>
-        <div class="col text-right">
+        <div class="col text-right self-center">
           <q-btn
             @click="clkSaveAttachment"
             color="primary"

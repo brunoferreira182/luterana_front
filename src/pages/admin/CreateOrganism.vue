@@ -3,7 +3,7 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col text-h5 text-capitalize">novo organismo</div>
-        <div class="col text-right">
+        <div class="col text-right self-center">
           <q-btn
             @click="createOrganism()"
             no-caps
