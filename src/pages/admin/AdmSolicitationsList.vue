@@ -57,7 +57,7 @@
           <q-card-section class="q-gutter-md">
             <q-input
               outlined
-              label="Descrição"
+              label="Título"
               autogrow
               v-model="dialogNewSugestion.suggestionTitle"
             />
