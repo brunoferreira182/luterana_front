@@ -10,7 +10,7 @@
             detalhe do organismo 
           </div>
         </div>
-        <div class="col text-right q-gutter-sm" v-if="!$route.query.isChild && !isMobile">
+        <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
           <q-btn
             rounded
             no-caps
@@ -42,7 +42,7 @@
             :outline="visionSelected === 'links' ? false : true"
           />
         </div>
-        <div class="row text-right q-gutter-sm q-mt-sm" v-if="!$route.query.isChild && isMobile">
+        <div class="row text-right q-gutter-sm q-mt-sm " v-if="!$route.query.isChild && isMobile">
           <q-btn
             rounded
             no-caps

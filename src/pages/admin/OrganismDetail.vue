@@ -6,7 +6,7 @@
           <div class="text-h5">{{ organismName }}</div>
           <div class="text-caption">Detalhe do organismo</div>
         </div>
-        <div class="col text-right">
+        <div class="col text-right self-center">
           <q-btn
             no-caps
             color="primary"
