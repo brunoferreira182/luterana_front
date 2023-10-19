@@ -1198,16 +1198,6 @@ export default defineComponent({
             organismData: {
               organismParentId: this.$route.query.organismId,
               organismConfigId: item.organismChildConfigId,
-              fields: [{
-                label: "Nome",
-                type: {
-                  type: "string",
-                },
-                hint: "Informe o nome",
-                required: true,
-                model: "nome",
-                value: item.organismConfigName
-              }]
             },
           },
         };
