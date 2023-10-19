@@ -345,9 +345,7 @@
                   :showHeader="field.value && field.value.length > 0 ? field.label : false"
                 />
               </div>
-
             </div>
-
             <div class="text-right">
                 <q-btn
                   v-if="!this.$route.query.e === 'f'"

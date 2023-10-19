@@ -315,6 +315,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
+                              @click="clkShowDetailPerson(field, fieldIndex)"
                               @remove="removeThisPerson"
                             />
                           </div>
@@ -1126,6 +1127,24 @@ export default defineComponent({
         .fields[fieldIndex]
         .value
         .splice(iValue, 1)
+    },
+    clkShowDetailPerson(field, fieldIndex) {
+      console.log("field", field)
+      console.log("fieldIndex", fieldIndex)
+      const opt = {
+        route: '/getUserInfoById',
+        body: {
+          userId: field.value[0]._id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          console.log("Macaquinho")
+          return
+        } else {
+          console.log("Bananinha")
+        }
+      })
     },
     clearDialogAddPhoneMobileEmail () {
       this.dialogAddPhoneMobileEmail = {
