@@ -315,7 +315,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
-                              @click="clkShowDetailPerson(field, fieldIndex)"
+                              @click="clkShowDetailPerson(field)"
                               @remove="removeThisPerson"
                             />
                           </div>
@@ -635,6 +635,7 @@
                         <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
                           <CardPerson
+                            @click="clkShowDetailPerson(field)"
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
@@ -814,8 +815,8 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="dialogShowOtherData.open">
-        <q-card v-if="otherData" style="border-radius: 1rem; width: 400px">
+      <q-dialog v-model="dialogShowOtherData.open" v-if="otherData">
+        <q-card  style="border-radius: 1rem; width: 400px">
           <q-card-section>
             <div class="text-h6 text-center">
               {{ otherData.userDataTabs[0].fields[0].value }}
@@ -884,6 +885,7 @@
                     v-if="otherField.value"
                     :data="otherField.value"
                     :tabsIndex="i"
+                    :disable="disableButtons"
                   />
                   <div v-else>Nenhum dado inserido</div>
                 </q-card-section>
@@ -992,7 +994,7 @@ export default defineComponent({
   data() {
     return {
       dialogShowOtherData: {
-        open: true
+        open: false
       },
       otherData: null,
       isMobileState: useScreenStore().checkScreenSize(),
