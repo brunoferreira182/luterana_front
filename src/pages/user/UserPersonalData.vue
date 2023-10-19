@@ -398,7 +398,7 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
+                            @edit="editPhoneMobileEmail"
                             @remove="removePhoneMobileEmail"
                           />
                         </div>
@@ -721,7 +721,7 @@
                           :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
-                          @edit="editPhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue)"
+                          @edit="editPhoneMobileEmail"
                           @remove="removePhoneMobileEmail"
                         />
                       </div>
@@ -1562,8 +1562,9 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.open = false
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(fieldIndex, tabsIndex, field, value, iValue)
       this.dialogAddPhoneMobileEmail.open = true
-      this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.type = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
       this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogAddPhoneMobileEmail.data = {...value}
