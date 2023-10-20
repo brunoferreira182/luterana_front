@@ -366,7 +366,7 @@
                   </div>
                 </q-card-section>
                 <div v-else class="text-h6 text-center q-pa-md">
-                  Estamos carregando estes dados...
+                  Em construção...
                 </div>
               </q-card>
             </q-expansion-item>
