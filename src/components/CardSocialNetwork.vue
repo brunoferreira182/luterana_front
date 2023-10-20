@@ -12,7 +12,7 @@
       v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
-    <q-item-section>
+      <q-item-section>
         <q-item-label>
           {{ value.selectedSocialType }}
         </q-item-label>
