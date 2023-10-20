@@ -10,6 +10,7 @@
           v-model="data.selectedSocialType" 
           :options="options" 
           label="Outlined" 
+          @update:model-value="clearInputs"
         />
       </q-card-section>
       <q-card-section v-if="data.selectedSocialType === 'Instagram'">
@@ -123,19 +124,18 @@ const typeProfileOptions = ref (['Pessoal', 'Profissional'])
 watch(() => props.dataProp, (nV) => {
   data.value = nV
 }, { deep: true })
-// watch(() => data.selectedSocialType, () => {
-//   // Zera os valores dos campos
-//   data.value.name = '';
-//   data.value.value = '';
-//   data.value.type = '';
-// });
+
 const data = ref({
   name: '',
   value: '',
   type: '',
   selectedSocialType: null,
 })
-
+function clearInputs () {
+  data.value.name = ''
+  data.value.value = ''
+  data.value.type = ''
+}
 function confirm () {
   if (data.value.value === '' || data.value.type === '') {
     Notify('Prencha os campos')
