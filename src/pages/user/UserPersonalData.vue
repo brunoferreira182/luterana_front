@@ -125,7 +125,7 @@
                     <div  class="row justify-center">
                       <q-item-section avatar>
                         <q-img 
-                          style="border-radius: 10rem"
+                          style="border-radius: 1rem"
                           :src="userImg !== null ? userPhoto : avatar" 
                           width="208px" 
                           height="208px"
@@ -516,7 +516,7 @@
                 <div  class="row justify-center">
                   <q-item-section avatar class="q-px-md q-pa-md">
                     <q-img 
-                      style="border-radius: 10rem"
+                      style="border-radius: 1rem"
                       :src="userImg !== null ? userPhoto : avatar" 
                       width="208px" 
                       height="208px"
