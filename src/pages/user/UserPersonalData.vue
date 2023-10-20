@@ -1320,6 +1320,7 @@ export default defineComponent({
           .value[this.dialogFormation.iValue] = data
       }
       this.clearFormationInputs()
+      
     },
     clearFormationInputs () {
       this.dialogFormation = {
@@ -1443,6 +1444,7 @@ export default defineComponent({
           .value[this.dialogAddBankData.iValue] = { ...data }
       }
       this.dialogAddBankData.open = false
+      this.updateUserData()
     },
     clkAddBankData(fieldIndex, tabsIndex) {
       const userHasDoc = this.verifyIfUserHasDocument()
@@ -1654,6 +1656,7 @@ export default defineComponent({
           .value[this.dialogAddPhoneMobileEmail.iValue] = {...data}
       }
       this.dialogAddPhoneMobileEmail.open = false
+      this.updateUserData()
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddPhoneMobileEmail.open = true
