@@ -124,32 +124,31 @@
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
                     <div  class="row justify-center">
                       <q-item-section avatar>
-                        <q-img :src="avatar" width="208px" height="208px"/>
+                        <q-img 
+                          style="border-radius: 1rem"
+                          :src="userImg !== null ? userPhoto : avatar" 
+                          width="208px" 
+                          height="208px"
+                        />
                       </q-item-section>
                     </div>
                     <div class="row justify-center q-pa-md">
-                      <!-- <q-btn
-                        flat
-                        color="primary"
-                        no-caps
-                        rounded
-                      >
-                        <div class="text-h5">
-                          Inserir foto
-                        </div>
-                        <q-icon right size="3em" name="photo_camera" />
-                      </q-btn> -->
-                      <q-file
-                        v-model="userImg"
-                        label="Inserir foto"
-                        borderless
-                        @update:model-value="addUserImage()"
-                        max-files="1"
-                      >
-                        <template v-slot:prepend>
-                          <q-icon name="photo_camera" />
-                        </template>
-                      </q-file>
+                      <div class="col-4">
+                        <q-file
+                          v-model="userImg"
+                          label="Clique para inserir foto"
+                          borderless
+                          clearable
+                          @update:model-value="addUserImage()"
+                          accept=".png, .jpg, image/*"
+                          @rejected="rejectUserPhoto"
+                          max-files="1"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="photo_camera" />
+                          </template>
+                        </q-file>
+                      </div>
                     </div>
                   </div>
                   <div
@@ -513,6 +512,36 @@
             :label="tabs.tabLabel"
           >
             <q-card>
+              <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                <div  class="row justify-center">
+                  <q-item-section avatar class="q-px-md q-pa-md">
+                    <q-img 
+                      style="border-radius: 1rem"
+                      :src="userImg !== null ? userPhoto : avatar" 
+                      width="208px" 
+                      height="208px"
+                    />
+                  </q-item-section>
+                </div>
+                <div class="row justify-center q-pa-md text-center">
+                  <div class="col-10 q-px-xl">
+                    <q-file
+                      v-model="userImg"
+                      label="Clique para inserir foto"
+                      borderless
+                      clearable
+                      @update:model-value="addUserImage()"
+                      accept=".png, .jpg, image/*"
+                      @rejected="rejectUserPhoto"
+                      max-files="1"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="photo_camera" />
+                      </template>
+                    </q-file>
+                  </div>
+                </div>
+              </div>
               <q-card-section v-if="tabs.tabLabel !== 'Dados pastorais'">
                 <div
                   v-for="(field, fieldIndex) in tabs.fields"
@@ -1227,6 +1256,7 @@ export default defineComponent({
         action: null,
         iValue: null,
       },
+      userPhoto: null,
       dialogAddPastoralData: {
         open: false,
         data: null,
@@ -1261,24 +1291,30 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
+    rejectUserPhoto(){
+      $q.notify({
+        type: 'negative',
+        message: 'Os formatos de imagem aceitos são jpg e png'
+      })
+    },
     addUserImage() {
-      const files = [{file:this.userImg,name:'userPhoto'}]
+      const file = [{file:this.userImg,name:'userPhoto'}]
       const opt = {
         route: "/desktop/user/addUserImage",
-        files: null
+        file: null
       };
       if(this.userImg !== null){
-        opt.files = files
+        opt.file = file
+        // this.userPhoto = URL.createObjectURL(this.userImg);
       }
-      console.log(opt)
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        console.log(r, 'OKDAPOSKDOP AQUI OPT')
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
           return
         } this.$q.notify('Imagem inserida criado com sucesso!')
+        this.getUserDetailById()
       });
     },
     confirmAddSocialNetwork(data) {
