@@ -610,19 +610,21 @@
                             Organismos vinculados:
                           </div>
                           <q-chip
+                            clickable
+                            @click="goToParentOrganismDetail(parent)"
                             v-for="(parent, i) in relations"
                             :key="parent"
                           >
-                          {{ parent.organismRelationName }}
-                          <q-btn
-                            icon="close"
-                            flat
-                            rounded
-                            style="width: 10px;"
-                            @click="removeRelation(i)"
-                            >
-                          </q-btn>
-                        </q-chip>
+                            {{ parent.organismRelationName }}
+                            <q-btn
+                              icon="close"
+                              flat
+                              rounded
+                              style="width: 10px;"
+                              @click="removeRelation(i)"
+                              >
+                            </q-btn>
+                          </q-chip>
                         </div>
                       </div>
                     </q-card-section>
@@ -990,7 +992,15 @@ export default defineComponent({
       },
       relations: [],
       loadingState: false,
+      organismRelationId: '',
     };
+  },
+  watch: {
+    $route(to, from) {
+      if (to.fullPath !== from.fullPath) {
+        this.getOrganismDetailById();
+      }
+    }
   },
   mounted() {
     this.$q.loading.hide()
@@ -1008,6 +1018,10 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    goToParentOrganismDetail(parent) {
+      const organismRelationId = parent.organismRelationId
+      this.$router.replace('/admin/organismDetail?organismId=' + organismRelationId)
+    },
     clearAddressInputs(){
       this.dialogConfirmAddress.data = {
         addressType: '',

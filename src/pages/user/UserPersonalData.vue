@@ -121,11 +121,36 @@
                   >
                     Solicitar alterações
                   </q-btn>
-                  <!-- <div v-if="tabs.tabLabel === 'Dados obrigatórios'" class="row">
-                    <q-item-section avatar>
-                      <q-img :src="avatar" width="108px" height="108px"/>
-                    </q-item-section>
-                  </div> -->
+                  <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                    <div  class="row justify-center">
+                      <q-item-section avatar>
+                        <q-img 
+                          style="border-radius: 1rem"
+                          :src="userImg !== null ? userPhoto : avatar" 
+                          width="208px" 
+                          height="208px"
+                        />
+                      </q-item-section>
+                    </div>
+                    <div class="row justify-center q-pa-md">
+                      <div class="col-4">
+                        <q-file
+                          v-model="userImg"
+                          label="Clique para inserir foto"
+                          borderless
+                          clearable
+                          @update:model-value="addUserImage()"
+                          accept=".png, .jpg, image/*"
+                          @rejected="rejectUserPhoto"
+                          max-files="1"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="photo_camera" />
+                          </template>
+                        </q-file>
+                      </div>
+                    </div>
+                  </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
                     :key="fieldIndex"
@@ -460,8 +485,8 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editFormation"
-                            @remove="removeFormation"
+                            @edit="editSocialNetwork"
+                            @remove="removeSocialNetwork"
                           />
                         </div>
     
@@ -487,6 +512,36 @@
             :label="tabs.tabLabel"
           >
             <q-card>
+              <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                <div  class="row justify-center">
+                  <q-item-section avatar class="q-px-md q-pa-md">
+                    <q-img 
+                      style="border-radius: 1rem"
+                      :src="userImg !== null ? userPhoto : avatar" 
+                      width="208px" 
+                      height="208px"
+                    />
+                  </q-item-section>
+                </div>
+                <div class="row justify-center q-pa-md text-center">
+                  <div class="col-10 q-px-xl">
+                    <q-file
+                      v-model="userImg"
+                      label="Clique para inserir foto"
+                      borderless
+                      clearable
+                      @update:model-value="addUserImage()"
+                      accept=".png, .jpg, image/*"
+                      @rejected="rejectUserPhoto"
+                      max-files="1"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="photo_camera" />
+                      </template>
+                    </q-file>
+                  </div>
+                </div>
+              </div>
               <q-card-section v-if="tabs.tabLabel !== 'Dados pastorais'">
                 <div
                   v-for="(field, fieldIndex) in tabs.fields"
@@ -800,17 +855,28 @@
                         />
                         
                       </div>
-                      <!-- <div v-if="field.type.type === 'social_network'">
-                        Coco
-                        <CardFormation
-                          :data="field"
+                      <div v-if="field.type.type === 'social_network'">
+                        <q-btn
+                          label="Rede social"
+                          no-caps
+                          rounded
+                          unelevated
+                          flat
+                          color="primary"
+                          icon="add"
+                          @click="clkAddSocialNetwork(fieldIndex, tabsIndex)"
+                          class="q-mt-xs"
+                          :disable="tabs.onlyAdm"
+                        />
+                        <CardSocialNetwork
+                          style="width: 350px;margin-right:40px;"
+                          :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
-                          @edit="editFormation"
-                          @remove="removeFormation"
+                          @edit="editSocialNetwork"
+                          @remove="removeSocialNetwork"
                         />
-                        
-                      </div> -->
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1012,7 +1078,13 @@
         @confirm="confirmAddPhoneMobileEmail"
         @closeDialog="clearDialogAddPhoneMobileEmail"
       />
-
+      <DialogRemovePhoneMobileEmail
+        :dataType="dialogRemovePhoneMobileEmail.dataType"
+        :open="dialogRemovePhoneMobileEmail.open"
+        :type="dialogAddPhoneMobileEmail.type"
+        @confirm="confirmRemovePhoneMobileEmail"
+        @closeDialog="clearDialogAddPhoneMobileEmail"
+      />
       <DialogAddSocialNetwork
         :open="dialogAddSocialNetwork.open"
         :dataProp="dialogAddSocialNetwork.data"
@@ -1061,8 +1133,8 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-// import avatar from '../../assets/avatar.svg'
-// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
+import avatar from '../../assets/avatar.svg'
 </script>
 
 <script>
@@ -1076,6 +1148,7 @@ export default defineComponent({
         open: false
       },
       otherData: null,
+      userImg:null,
       isMobileState: useScreenStore().checkScreenSize(),
       isMobile: false,
       deleteTitle: {
@@ -1143,6 +1216,13 @@ export default defineComponent({
           pix: ''
         }
       },
+      dialogRemovePhoneMobileEmail: {
+        dataType: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        iValue: null
+      },
       dialogAddPhoneMobileEmail: {
         type: null,
         open: false,
@@ -1161,6 +1241,7 @@ export default defineComponent({
         tabsIndex: null,
         fieldIndex: null,
         data: {
+          name: '',
           value: '',
           type: ''
         },
@@ -1189,6 +1270,7 @@ export default defineComponent({
         action: null,
         iValue: null,
       },
+      userPhoto: null,
       dialogAddPastoralData: {
         open: false,
         data: null,
@@ -1204,6 +1286,71 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
+    rejectUserPhoto(){
+      $q.notify({
+        type: 'negative',
+        message: 'Os formatos de imagem aceitos são jpg e png'
+      })
+    },
+    addUserImage() {
+      const file = [{file:this.userImg,name:'userPhoto'}]
+      const opt = {
+        route: "/desktop/user/addUserImage",
+        file: null
+      };
+      if(this.userImg !== null){
+        opt.file = file
+        // this.userPhoto = URL.createObjectURL(this.userImg);
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
+          return
+        } this.$q.notify('Imagem inserida criado com sucesso!')
+        this.getUserDetailById()
+      });
+    },
+    confirmAddSocialNetwork(data) {
+      if (this.dialogAddSocialNetwork.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value){
+          this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value = []
+        }
+        this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value.push({...data})
+      } else if (this.dialogAddSocialNetwork.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogAddSocialNetwork.tabsIndex]
+          .fields[this.dialogAddSocialNetwork.fieldIndex]
+          .value[this.dialogAddSocialNetwork.iValue] = {...data}
+      }
+      this.dialogAddSocialNetwork.open = false
+    },
+    clearDialogSocialNetwork() {
+      this.dialogAddSocialNetwork = {
+        open: false,
+      }
+    },
     async savePastoralDataSugestion (data) {
       const opt = {
         route: '/desktop/users/savePastoralDataSuggestion',
@@ -1368,6 +1515,14 @@ export default defineComponent({
       })
     },
     clearDialogAddPhoneMobileEmail () {
+      this.dialogRemovePhoneMobileEmail = {
+        open: false,
+        dataType: null,
+        tabsIndex: null,
+        fieldIndex: null,
+        iValue: null
+      }
+      this.dialogRemovePhoneMobileEmail.open = false
       this.dialogAddPhoneMobileEmail = {
         type: null,
         open: false,
@@ -1399,7 +1554,6 @@ export default defineComponent({
           || (userField.model === 'documento' && userField.value && userField.value !== '')) {
             hasDoc = true
             doc = userField.value
-
           }
         })
       })
@@ -1668,12 +1822,20 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.iValue = iValue
     },
     removePhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogRemovePhoneMobileEmail.open = true
+      this.dialogRemovePhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogRemovePhoneMobileEmail.tabsIndex = tabsIndex
+      this.dialogRemovePhoneMobileEmail.iValue = iValue
+    },
+    confirmRemovePhoneMobileEmail(){
       this
         .userData
-        .userDataTabs[tabsIndex]
-        .fields[fieldIndex]
+        .userDataTabs[this.dialogRemovePhoneMobileEmail.tabsIndex]
+        .fields[this.dialogRemovePhoneMobileEmail.fieldIndex]
         .value
-        .splice(iValue, 1)
+        .splice(this.dialogRemovePhoneMobileEmail.iValue , 1)
+        this.dialogRemovePhoneMobileEmail.open = false
+        this.updateUserData()
     },
     confirmAddress(data) {
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
