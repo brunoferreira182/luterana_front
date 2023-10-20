@@ -1636,6 +1636,7 @@ export default defineComponent({
           this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value.push(this.addPerson.userSelected)
         }
       }
+      this.updateUserData()
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
