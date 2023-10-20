@@ -1078,7 +1078,13 @@
         @confirm="confirmAddPhoneMobileEmail"
         @closeDialog="clearDialogAddPhoneMobileEmail"
       />
-
+      <DialogRemovePhoneMobileEmail
+        :dataType="dialogRemovePhoneMobileEmail.dataType"
+        :open="dialogRemovePhoneMobileEmail.open"
+        :type="dialogAddPhoneMobileEmail.type"
+        @confirm="confirmRemovePhoneMobileEmail"
+        @closeDialog="clearDialogAddPhoneMobileEmail"
+      />
       <DialogAddSocialNetwork
         :open="dialogAddSocialNetwork.open"
         :dataProp="dialogAddSocialNetwork.data"
@@ -1127,8 +1133,8 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
+import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
 import avatar from '../../assets/avatar.svg'
-// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 </script>
 
 <script>
@@ -1209,6 +1215,13 @@ export default defineComponent({
           account: '',
           pix: ''
         }
+      },
+      dialogRemovePhoneMobileEmail: {
+        dataType: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        iValue: null
       },
       dialogAddPhoneMobileEmail: {
         type: null,
@@ -1501,6 +1514,14 @@ export default defineComponent({
       })
     },
     clearDialogAddPhoneMobileEmail () {
+      this.dialogRemovePhoneMobileEmail = {
+        open: false,
+        dataType: null,
+        tabsIndex: null,
+        fieldIndex: null,
+        iValue: null
+      }
+      this.dialogRemovePhoneMobileEmail.open = false
       this.dialogAddPhoneMobileEmail = {
         type: null,
         open: false,
@@ -1532,7 +1553,6 @@ export default defineComponent({
           || (userField.model === 'documento' && userField.value && userField.value !== '')) {
             hasDoc = true
             doc = userField.value
-
           }
         })
       })
@@ -1799,12 +1819,20 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.iValue = iValue
     },
     removePhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogRemovePhoneMobileEmail.open = true
+      this.dialogRemovePhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogRemovePhoneMobileEmail.tabsIndex = tabsIndex
+      this.dialogRemovePhoneMobileEmail.iValue = iValue
+    },
+    confirmRemovePhoneMobileEmail(){
       this
         .userData
-        .userDataTabs[tabsIndex]
-        .fields[fieldIndex]
+        .userDataTabs[this.dialogRemovePhoneMobileEmail.tabsIndex]
+        .fields[this.dialogRemovePhoneMobileEmail.fieldIndex]
         .value
-        .splice(iValue, 1)
+        .splice(this.dialogRemovePhoneMobileEmail.iValue , 1)
+        this.dialogRemovePhoneMobileEmail.open = false
+        this.updateUserData()
     },
     confirmAddress(data) {
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
