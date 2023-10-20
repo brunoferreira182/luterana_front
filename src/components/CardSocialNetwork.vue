@@ -19,11 +19,20 @@
         <q-item-label>
           {{ value.name }}
         </q-item-label>
-        <q-item-label class="text-subtitle2">
+        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Instagram'">
+          https://www.instagram.com/{{ value.name }}
+        </q-item-label>
+        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Facebook'">
+          https://www.facebook.com/{{ value.name }}
+        </q-item-label>
+        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Youtube'">
+          https://www.youtube.com/{{ value.name }}
+        </q-item-label>
+        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Site pessoal'">
           {{ value.value }}
         </q-item-label>
         <q-item-label caption >
-          <q-badge>{{ value.type }}</q-badge>
+          <q-badge v-if="value.type">{{ value.type }}</q-badge>
           <q-badge class="q-ml-xs" color="green" v-if="value.allowPublication">Publicável</q-badge>
         </q-item-label>
       </q-item-section>
@@ -52,16 +61,27 @@
 </template>
 
 <script setup>
+// import { ref, watch } from 'vue'
+
 const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
 const emits = defineEmits(['edit', 'remove'])
+
+// const data = ref({
+//   name: '',
+//   value: '',
+//   type: '',
+//   selectedSocialType: null,
+// })
+
+// watch(() => props.dataProp, (nV) => {
+//   data.value = nV
+// }, { deep: true })
+
 
 function edit(fieldIndex, tabsIndex, field, value, iValue) {
   emits('edit', fieldIndex, tabsIndex, field, value, iValue)
 }
-
 function remove(fieldIndex, tabsIndex, field, value, iValue) {
   emits('remove', fieldIndex, tabsIndex, field, value, iValue)
 }
-
-
 </script>

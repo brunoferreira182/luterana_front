@@ -20,12 +20,6 @@
           v-model="data.name"
           outlined
         />
-        <q-input
-          label="URL"
-          hint="Insira a url do seu perfil"
-          v-model="data.value"
-          outlined
-        />
         <q-select
           label="Tipo de perfil"
           hint="Insira o tipo de perfil"
@@ -36,15 +30,9 @@
       </q-card-section>
       <q-card-section v-if="data.selectedSocialType === 'Facebook'">
         <q-input
-          label="Seu nome de perfil do Facebook"
+          label="Seu nome do perfil do Facebook"
           hint="Informe seu nome de usuário do Facebook"
           v-model="data.name"
-          outlined
-        />
-        <q-input
-          label="URL"
-          hint="Insira a url do seu perfil"
-          v-model="data.value"
           outlined
         />
         <q-select
@@ -60,12 +48,6 @@
           label="Nome do seu canal"
           hint="Informe o nome do seu canal no Youtube"
           v-model="data.name"
-          outlined
-        />
-        <q-input
-          label="URL"
-          hint="Insira a url do seu canal"
-          v-model="data.value"
           outlined
         />
       </q-card-section>
@@ -114,8 +96,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-// import { Notify } from 'quasar'
+import { useQuasar } from 'quasar'
 
+const quasar = useQuasar()
 const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint'])
 const emits = defineEmits(['confirm', 'closeDialog'])
 const options = ref([ 'Instagram', 'Facebook', 'Youtube', 'Site pessoal'])
@@ -137,15 +120,21 @@ function clearInputs () {
   data.value.type = ''
 }
 function confirm () {
-  if (data.value.value === '' || data.value.type === '') {
-    Notify('Prencha os campos')
+  if (data.value.name === '') {
+    quasar.notify('Prencha os campos')
     return
   }
-  if (data.value.selectedSocialType === 'Instagram' ||
-    data.value.selectedSocialType === 'Facebook'||
-    data.value.selectedSocialType === 'Site pessoal' ) {
-      if (data.value.type === '') {
-        Notify('Preencha os campos')
+  if (data.value.selectedSocialType === 'Instagram'
+      ||data.value.selectedSocialType === 'Facebook'
+      || data.value.selectedSocialType === 'Site pessoal' ) {
+        if (data.value.type === '') {
+          quasar.notify("Preencha todos os dados")
+          return
+        }
+      }
+  if (data.value.selectedSocialType === 'Site pessoal') {
+      if (data.value.value === '') {
+        quasar.notify('Preencha os campos')
         return
       }
     }
