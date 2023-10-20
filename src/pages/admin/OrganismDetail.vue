@@ -610,6 +610,7 @@
                             Organismos vinculados:
                           </div>
                           <q-chip
+                            @click="goToOtherDetail(parent, i)"
                             v-for="(parent, i) in relations"
                             :key="parent"
                           >
@@ -1021,6 +1022,10 @@ export default defineComponent({
         complement: ""
       }
       this.dialogConfirmAddress.open = false;
+    },
+    goToOtherDetail(parent, i) {
+      console.log(parent,"cu")
+      console.log(i, "xota")
     },
     clkOpenAddressDialog(fieldIndex) {
       this.dialogConfirmAddress.action = 'add'
