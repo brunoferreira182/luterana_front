@@ -512,6 +512,36 @@
             :label="tabs.tabLabel"
           >
             <q-card>
+              <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                <div  class="row justify-center">
+                  <q-item-section avatar class="q-px-md q-pa-md">
+                    <q-img 
+                      style="border-radius: 10rem"
+                      :src="userImg !== null ? userPhoto : avatar" 
+                      width="208px" 
+                      height="208px"
+                    />
+                  </q-item-section>
+                </div>
+                <div class="row justify-center q-pa-md text-center">
+                  <div class="col-10 q-px-xl">
+                    <q-file
+                      v-model="userImg"
+                      label="Clique para inserir foto"
+                      borderless
+                      clearable
+                      @update:model-value="addUserImage()"
+                      accept=".png, .jpg, image/*"
+                      @rejected="rejectUserPhoto"
+                      max-files="1"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="photo_camera" />
+                      </template>
+                    </q-file>
+                  </div>
+                </div>
+              </div>
               <q-card-section v-if="tabs.tabLabel !== 'Dados pastorais'">
                 <div
                   v-for="(field, fieldIndex) in tabs.fields"
