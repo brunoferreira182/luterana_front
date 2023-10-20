@@ -485,8 +485,8 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editFormation"
-                            @remove="removeFormation"
+                            @edit="editSocialNetwork"
+                            @remove="removeSocialNetwork"
                           />
                         </div>
     
@@ -1231,6 +1231,25 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
     addUserImage() {
       const files = [{file:this.userImg,name:'userPhoto'}]
       const opt = {
