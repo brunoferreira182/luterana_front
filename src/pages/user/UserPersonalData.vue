@@ -826,17 +826,27 @@
                         />
                         
                       </div>
-                      <!-- <div v-if="field.type.type === 'social_network'">
-                        Coco
-                        <CardFormation
-                          :data="field"
+                      <div v-if="field.type.type === 'social_network'">
+                        <q-btn
+                          label="Rede social"
+                          no-caps
+                          rounded
+                          unelevated
+                          flat
+                          color="primary"
+                          icon="add"
+                          @click="clkAddSocialNetwork(fieldIndex, tabsIndex)"
+                          class="q-mt-xs"
+                          :disable="tabs.onlyAdm"
+                        />
+                        <CardSocialNetwork
+                          :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
-                          @edit="editFormation"
-                          @remove="removeFormation"
+                          @edit="editSocialNetwork"
+                          @remove="removeSocialNetwork"
                         />
-                        
-                      </div> -->
+                      </div>
                     </div>
                   </div>
                 </div>
