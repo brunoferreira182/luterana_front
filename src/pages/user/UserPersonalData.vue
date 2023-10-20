@@ -438,6 +438,27 @@
                           />
                           
                         </div>
+                        <div v-if="field.type.type === 'social_network'">
+                          <q-btn
+                            label="Rede social"
+                            no-caps
+                            rounded
+                            unelevated
+                            flat
+                            color="primary"
+                            icon="add"
+                            @click="clkAddSocialNetwork(fieldIndex, tabsIndex)"
+                            class="q-mt-xs"
+                            :disable="tabs.onlyAdm"
+                          />
+                          <CardSocialNetwork
+                            :data="field.value"
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="tabsIndex"
+                            @edit="editFormation"
+                            @remove="removeFormation"
+                          />
+                        </div>
     
                       </div>
                     </div>
@@ -774,6 +795,17 @@
                         />
                         
                       </div>
+                      <!-- <div v-if="field.type.type === 'social_network'">
+                        Coco
+                        <CardFormation
+                          :data="field"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                          @edit="editFormation"
+                          @remove="removeFormation"
+                        />
+                        
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -976,6 +1008,14 @@
         @closeDialog="clearDialogAddPhoneMobileEmail"
       />
 
+      <DialogAddSocialNetwork
+        :open="dialogAddSocialNetwork.open"
+        :dataProp="dialogAddSocialNetwork.data"
+        :type="dialogAddSocialNetwork.type"
+        @confirm="confirmAddSocialNetwork"
+        @closeDialog="clearDialogSocialNetwork"
+      />
+
       <DialogFormation
         :open="dialogFormation.open"
         :dataProp="dialogFormation.data"
@@ -1000,6 +1040,7 @@
 
 import useFetch from "../../boot/useFetch";
 import DialogAddPerson from '../../components/DialogAddPerson.vue'
+import DialogAddSocialNetwork from  '../../components/DialogAddSocialNetwork.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
 import DialogAddOrganism from '../../components/DialogAddOrganism.vue'
 import DialogBankData from '../../components/DialogBankData.vue'
@@ -1008,6 +1049,7 @@ import DialogUserTitle from '../../components/DialogUserTitle.vue'
 import DialogFormation from '../../components/DialogFormation.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
+import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1096,6 +1138,18 @@ export default defineComponent({
         }
       },
       dialogAddPhoneMobileEmail: {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      },
+      dialogAddSocialNetwork: {
         type: null,
         open: false,
         tabsIndex: null,
@@ -1217,6 +1271,20 @@ export default defineComponent({
         open: true,
         tabsIndex,
         fieldIndex,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: 'add',
+        iValue: null
+      }
+    },
+    clkAddSocialNetwork (fieldIndex, tabsIndex) {
+      console.log("toa qui")
+      this.dialogAddSocialNetwork = {
+        open: true,
+        fieldIndex,
+        tabsIndex,
         data: {
           value: '',
           type: ''
