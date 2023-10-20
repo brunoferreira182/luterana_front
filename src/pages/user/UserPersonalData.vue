@@ -121,6 +121,11 @@
                   >
                     Solicitar alterações
                   </q-btn>
+                  <!-- <div v-if="tabs.tabLabel === 'Dados obrigatórios'" class="row">
+                    <q-item-section avatar>
+                      <q-img :src="avatar" width="108px" height="108px"/>
+                    </q-item-section>
+                  </div> -->
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
                     :key="fieldIndex"
@@ -444,7 +449,7 @@
                   </div>
                 </div>
                 <div v-else class="text-h6 text-center q-pa-md">
-                  Estamos carregando estes dados...
+                  Em construção...
                 </div>
               </q-tab-panel>
             </q-tab-panels>
@@ -779,7 +784,7 @@
                 </div>
               </q-card-section>
               <div v-else class="text-h6 text-center q-pa-md">
-                Estamos carregando estes dados...
+                Em construção...
               </div>
             </q-card>
           </q-expansion-item>
@@ -1014,6 +1019,7 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
+// import avatar from '../../assets/avatar.svg'
 // import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 </script>
 
