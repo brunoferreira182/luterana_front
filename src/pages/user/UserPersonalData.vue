@@ -121,11 +121,36 @@
                   >
                     Solicitar alterações
                   </q-btn>
-                  <!-- <div v-if="tabs.tabLabel === 'Dados obrigatórios'" class="row">
-                    <q-item-section avatar>
-                      <q-img :src="avatar" width="108px" height="108px"/>
-                    </q-item-section>
-                  </div> -->
+                  <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                    <div  class="row justify-center">
+                      <q-item-section avatar>
+                        <q-img :src="avatar" width="208px" height="208px"/>
+                      </q-item-section>
+                    </div>
+                    <div class="row justify-center q-pa-md">
+                      <!-- <q-btn
+                        flat
+                        color="primary"
+                        no-caps
+                        rounded
+                      >
+                        <div class="text-h5">
+                          Inserir foto
+                        </div>
+                        <q-icon right size="3em" name="photo_camera" />
+                      </q-btn> -->
+                      <q-file
+                        v-model="userImg"
+                        label="Inserir foto"
+                        borderless
+                        max-files="1"
+                      >
+                        <template v-slot:prepend>
+                          <q-icon name="photo_camera" />
+                        </template>
+                      </q-file>
+                    </div>
+                  </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
                     :key="fieldIndex"
@@ -1061,7 +1086,7 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-// import avatar from '../../assets/avatar.svg'
+import avatar from '../../assets/avatar.svg'
 // import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 </script>
 
@@ -1076,6 +1101,7 @@ export default defineComponent({
         open: false
       },
       otherData: null,
+      userImg:null,
       isMobileState: useScreenStore().checkScreenSize(),
       isMobile: false,
       deleteTitle: {
@@ -1204,6 +1230,24 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    addUserImage() {
+      const files = [{file:this.userImg,name:'userPhoto'}]
+      const opt = {
+        route: "/desktop/user/addUserImage",
+        files: null
+      };
+      if(this.userImg !== null){
+        opt.files = files
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
+          return
+        } this.$q.notify('Imagem inserida criado com sucesso!')
+      });
+    },
     async savePastoralDataSugestion (data) {
       const opt = {
         route: '/desktop/users/savePastoralDataSuggestion',
