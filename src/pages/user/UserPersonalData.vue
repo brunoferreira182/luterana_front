@@ -1155,6 +1155,7 @@ export default defineComponent({
         tabsIndex: null,
         fieldIndex: null,
         data: {
+          name: '',
           value: '',
           type: ''
         },
@@ -1198,6 +1199,26 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    confirmAddSocialNetwork(data) {
+      if (this.dialogAddSocialNetwork.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value){
+          this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value = []
+        }
+        this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value.push({...data})
+      } else if (this.dialogAddSocialNetwork.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogAddSocialNetwork.tabsIndex]
+          .fields[this.dialogAddSocialNetwork.fieldIndex]
+          .value[this.dialogAddSocialNetwork.iValue] = {...data}
+      }
+      this.dialogAddSocialNetwork.open = false
+    },
+    clearDialogSocialNetwork() {
+      this.dialogAddSocialNetwork = {
+        open: false,
+      }
+    },
     async savePastoralDataSugestion (data) {
       const opt = {
         route: '/desktop/users/savePastoralDataSuggestion',
