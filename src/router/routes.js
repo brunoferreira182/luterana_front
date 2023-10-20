@@ -254,12 +254,12 @@ const routes = [
       },
       {
         path: "/user/userSugestionsList",
-        component: () => import("pages/user/UserSugestionsList.vue"),
+        component: () => import("src/pages/user/UserSugestionsList.vue"),
       },
-      {
-        path: "/user/createNewSugestion",
-        component: () => import("pages/user/CreateNewSugestion.vue"),
-      },
+      // {
+      //   path: "/user/createNewSugestion",
+      //   component: () => import("src/pages/user/CreateNewSugestion.vue"),
+      // },
     ],
   },
 

@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="open" @hide="closeDialog">
-    <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+    <q-card style="border-radius: 1rem; width: 400px">
       <q-card-section class="text-center">
         <div class="text-h6 text-center">Informe os dados</div>
         <q-badge color="orange" v-if="hint">{{ hint }}</q-badge>
