@@ -69,8 +69,8 @@
               <q-input
                 outlined
                 v-model="formData.password"
-                label="Senha"
-                placeholder="Sua senha"
+                label="Token"
+                placeholder="Sua token"
                 hint="Com letras e números"
                 type="password"
                 @keyup.enter="clkEnter"
@@ -92,8 +92,8 @@
               <q-input
                 outlined
                 v-model="newPassword.pass1"
-                label="Senha"
-                placeholder="Digite sua nova senha"
+                label="Token"
+                placeholder="Digite sua nova token"
                 hint="Com letras e números"
                 type="password"
                 autofocus
@@ -322,7 +322,7 @@ export default defineComponent({
           return;
         }
         this.$q.notify(
-          "Sua senha foi enviada por e-mail. Utilize ela para acessar o sistema."
+          "Sua token foi enviada por e-mail. Utilize ela para acessar o sistema."
         );
         // comentado
         // if (r.data.info === "makeNewPassword") {
@@ -346,7 +346,7 @@ export default defineComponent({
     },
     async clkEnter () {
       if (this.formData.user === "" || this.formData.password === "") {
-        this.$q.notify("Favor preencher a senha");
+        this.$q.notify("Favor preencher a token");
         return;
       }
       this.btnEnterLoading = true;
@@ -364,7 +364,7 @@ export default defineComponent({
         if (r.error) {
           this.btnEnterLoading = false;
           if (r.errorType === "passwordNonExistent") this.loginStep = "login";
-          if (r.errorType === "wrongUserPassword") this.$q.notify('Usuário ou senha incorretos')
+          if (r.errorType === "wrongUserPassword") this.$q.notify('Usuário ou token incorretos')
           return;
         }
         await utils.registerUserDataAndKey({
