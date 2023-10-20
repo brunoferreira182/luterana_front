@@ -7,12 +7,19 @@
     <q-item-label header v-if="showHeader">
       {{ showHeader }}
     </q-item-label>
+    <!-- {{ props.data }} -->
     <q-item
       v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
       <q-item-section>
         <q-item-label>
+          {{ value.selectedSocialType }}
+        </q-item-label>
+        <q-item-label>
+          {{ value.name }}
+        </q-item-label>
+        <q-item-label class="text-subtitle2">
           {{ value.value }}
         </q-item-label>
         <q-item-label caption >

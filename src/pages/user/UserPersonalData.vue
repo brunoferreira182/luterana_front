@@ -486,8 +486,8 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editFormation"
-                            @remove="removeFormation"
+                            @edit="editSocialNetwork"
+                            @remove="removeSocialNetwork"
                           />
                         </div>
     
@@ -1188,6 +1188,7 @@ export default defineComponent({
         tabsIndex: null,
         fieldIndex: null,
         data: {
+          name: '',
           value: '',
           type: ''
         },
@@ -1231,6 +1232,25 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
     addUserImage() {
       const files = [{file:this.userImg,name:'userPhoto'}]
       const opt = {
@@ -1250,6 +1270,26 @@ export default defineComponent({
           return
         } this.$q.notify('Imagem inserida criado com sucesso!')
       });
+    },
+    confirmAddSocialNetwork(data) {
+      if (this.dialogAddSocialNetwork.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value){
+          this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value = []
+        }
+        this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value.push({...data})
+      } else if (this.dialogAddSocialNetwork.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogAddSocialNetwork.tabsIndex]
+          .fields[this.dialogAddSocialNetwork.fieldIndex]
+          .value[this.dialogAddSocialNetwork.iValue] = {...data}
+      }
+      this.dialogAddSocialNetwork.open = false
+    },
+    clearDialogSocialNetwork() {
+      this.dialogAddSocialNetwork = {
+        open: false,
+      }
     },
     async savePastoralDataSugestion (data) {
       const opt = {
