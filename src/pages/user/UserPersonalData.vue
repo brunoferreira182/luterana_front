@@ -1288,14 +1288,14 @@ export default defineComponent({
       })
     },
     addUserImage() {
-      const files = [{file:this.userImg,name:'userPhoto'}]
+      const file = [{file:this.userImg,name:'userPhoto'}]
       const opt = {
         route: "/desktop/user/addUserImage",
-        files: null
+        file: null
       };
       if(this.userImg !== null){
-        opt.files = files
-        this.userPhoto = URL.createObjectURL(this.userImg);
+        opt.file = file
+        // this.userPhoto = URL.createObjectURL(this.userImg);
       }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
@@ -1304,7 +1304,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
           return
         } this.$q.notify('Imagem inserida criado com sucesso!')
-        console.log(this.userPhoto, 'OPKDAPOSK')
         this.getUserDetailById()
       });
     },
