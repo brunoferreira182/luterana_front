@@ -67,6 +67,7 @@ const useFetch = async ({
   try {
     ret = await axios.post(routeMasterServer, bodyToSend);
   } catch (e) {
+    
     Loading.hide();
     console.log("AQUI ERRO CATCH", e);
   }

@@ -143,6 +143,7 @@
                         v-model="userImg"
                         label="Inserir foto"
                         borderless
+                        @update:model-value="addUserImage()"
                         max-files="1"
                       >
                         <template v-slot:prepend>
@@ -1259,9 +1260,11 @@ export default defineComponent({
       if(this.userImg !== null){
         opt.files = files
       }
+      console.log(opt)
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
+        console.log(r, 'OKDAPOSKDOP AQUI OPT')
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
           return
