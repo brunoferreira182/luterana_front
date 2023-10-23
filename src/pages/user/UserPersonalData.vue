@@ -1705,6 +1705,7 @@ export default defineComponent({
     removeThisPerson(fieldIndex, tabsIndex, personIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
       this.closeAddPersonDialog()
+      this.updateUserData()
     },
     removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(organismIndex, 1);
