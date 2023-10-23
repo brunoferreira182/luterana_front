@@ -45,10 +45,10 @@
               swipeable
               transition-prev="jump-up"
               transition-next="jump-up"
-              class="bg-accent"
+              class="bg-accent "
               :model-value="tab"
             >
-              <q-tab-panel name="Recebidas">
+              <q-tab-panel class="no-padding" name="Recebidas"> 
                 <q-table
                   flat
                   class="bg-accent"
@@ -77,6 +77,7 @@
                       >
                         Aceito
                       </q-chip>
+              
                       <q-chip
                         outline
                         v-else-if="!props.row.status"
@@ -88,7 +89,7 @@
                       <q-chip
                         outline
                         v-else-if="props.row.status && props.row.status.status === 'refused'"
-                        color="red-8"
+                        color="orange-8"
                         size="14px"
                       >
                         Recusado
@@ -97,7 +98,7 @@
                   </template>
                 </q-table>
               </q-tab-panel>
-              <q-tab-panel name="Enviadas">
+              <q-tab-panel class="no-padding" name="Enviadas">
                 <q-table
                   flat
                   class="bg-accent"
@@ -125,6 +126,14 @@
                         size="14px"
                       >
                         Aceito
+                      </q-chip>
+                      <q-chip
+                        outline
+                        v-else-if="props.row.status && props.row.status.status === 'cancelled'"
+                        color="red-8"
+                        size="14px"
+                      >
+                        Cancelado
                       </q-chip>
                       <q-chip
                         outline
@@ -509,7 +518,9 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         this.recivedSolicitations = r.data.recivedSolicitations.list
         this.sendedSolicitations = r.data.sendedSolicitations.list
       });
