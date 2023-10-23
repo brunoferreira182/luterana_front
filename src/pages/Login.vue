@@ -72,7 +72,7 @@
                 label="Token"
                 placeholder="Sua token"
                 hint="Com letras e números"
-                type="password"
+                type="text"
                 @keyup.enter="clkEnter"
                 autofocus
               />
@@ -95,7 +95,7 @@
                 label="Token"
                 placeholder="Digite sua nova token"
                 hint="Com letras e números"
-                type="password"
+                type="text"
                 autofocus
               />
               <q-input
@@ -103,7 +103,7 @@
                 v-model="newPassword.pass2"
                 label="Confirme a senha"
                 placeholder="Deve ser igual à senha digitada anteriormente"
-                type="password"
+                type="text"
                 @keyup.enter="clkEnter"
                 @keyup="checkEqualPassword"
                 :rules="[
