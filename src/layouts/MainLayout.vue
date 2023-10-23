@@ -134,8 +134,8 @@
           :width="300"
           class="bg-grey-3"
         >
-          <div class="fit row justify-start" >
-            <div class="col-3 gradient text-white text-center">
+          <div :class="`${permissions.length === 1 ? 'justify-center' : 'justify-start'} fit row`">
+            <div class="col-3 gradient text-white text-center" v-if="permissions.length > 1">
               <q-list>
                 <q-item
                   :active="activeRightDrawer === item.id"
@@ -285,11 +285,7 @@ export default defineComponent({
 
     this.isMobile = useScreenStore().isMobile
     this.userInfo = utils.presentUserInfo();
-    
     if (!this.userInfo || !this.userInfo.token) {
-      // se a rota for /login e tiver na query tk e key, não faz nada
-      // if (this.$route.query.tk && this.$route.query.key) return
-      // senao, abaixo
       this.$router.push("/login");
       return;
     }
@@ -300,19 +296,19 @@ export default defineComponent({
     utils.getPermissions().then((r) => {
       this.permissions = r.data;
       this.activeRightDrawer = this.permissions[0].id;
+      console.log(this.permissions,'this.permissions')
       if (
-        this.$route.path === "/" ||
-        this.$route.path === "/plans" ||
-        this.$route.path === "/plans/home"
+        this.permissions.length === 1
       ) {
-        this.options = utils.getDrawerOptions("plans");
+        this.options = utils.getDrawerOptions(this.permissions[0].role.toLowerCase());
+        this.activeRightDrawer = this.permissions[0].id;
         this.active = this.options[0].label;
+        this.$router.push(this.options[0].route)
       } else {
         this.options = utils.getDrawerOptions(this.$route.path.split("/")[1]);
       }
       this.permissions.forEach((element) => {
         if (this.$route.path.split("/")[1] === element.role.toLowerCase()) {
-          
           this.activeRightDrawer = element.id;
           this.indexMenu1 = this.permissions.indexOf(element);
         }
@@ -345,6 +341,7 @@ export default defineComponent({
       return;
     },
     clkOptionMenu(item) {
+      console.log(item, 'label')
       this.$router.push(item.route);
       this.active = item.label;
     },
@@ -352,6 +349,7 @@ export default defineComponent({
       this.leftDrawerOpen = !this.leftDrawerOpen;
     },
     clkItem(item, i) {
+      
       this.indexMenu1 = i;
       this.activeRightDrawer = item.id;
       this.$router.push("/" + item.role.toLowerCase());
