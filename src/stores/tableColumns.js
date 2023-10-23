@@ -47,7 +47,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "organismName",
         align: "left",
         label: "Nome do organismo",
-        field: "functionName",
+        field: "organismName",
         sortable: true,
       },
       {

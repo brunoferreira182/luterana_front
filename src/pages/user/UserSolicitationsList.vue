@@ -110,7 +110,7 @@
                   no-data-label="Nenhum dado inserido até o momento"
                   no-results-label="A pesquisa não retornou nenhum resultado"
                   :rows-per-page-options="[10, 20, 30, 50]"
-                  @row-click="clkOpenSolicitation"
+                  @row-click="clkOpenSolicitationSended"
                   :selected-rows-label="getSelectedString"
                   :filter="filter"
                   :v-model:pagination="pagination"
@@ -297,6 +297,42 @@
           </div>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="dialogOpenSolicitationSended.open" @hide="clearDialogSolicitation">
+        <q-card style="border-radius: 1rem; width: 400px; padding: 10px">
+          <div class="text-center" v-if="hideDiv">
+            <img :src="gif" />
+          </div>
+          <div class="fade" v-if="!hideDiv">
+            <q-card-section align="center">
+              <div class="text-h6">
+                Deseja cancelar sua participação? 
+              </div>
+              <div class="subtitle2 q-px-md">
+                Organismo {{ dialogOpenSolicitation.data.organismName }}
+                Função {{ dialogOpenSolicitation.data.functionName }}
+              </div>
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Sair"
+                no-caps
+                rounded
+                color="primary"
+                @click="this.dialogOpenSolicitationSended.open = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Cancelar"
+                no-caps
+                color="primary"
+                @click="cancelSolicitation"
+              />
+            </q-card-actions>
+          </div>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -325,6 +361,10 @@ export default defineComponent({
       dialogOpenSolicitation: {
         open: false,
         data: {},
+      },
+      dialogOpenSolicitationSended: {
+        open:false,
+        data: {}
       },
       myUserIdMongo: '',
       hideDiv: false,
@@ -416,6 +456,28 @@ export default defineComponent({
           this.dialogOpenSolicitation.open = true
         break
       }
+    },
+    clkOpenSolicitationSended(e, r) {
+      this.dialogOpenSolicitationSended.open = true
+      this.dialogOpenSolicitationSended.data = r
+      console.log(r)
+    },
+    cancelSolicitation() {
+      const opt = {
+        route: '',
+        body: {
+          solicitationId: r._id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        }
+        this.dialogOpenSolicitationSended.data = null
+        this.dialogOpenSolicitationSended.open = false
+        this.$q.notify('Solicitação cancelada com sucesso')
+      })
     },
     getSelectedString() {
       return this.selected.length === 0
