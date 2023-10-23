@@ -133,12 +133,13 @@
                       </q-item-section>
                     </div>
                     <div class="row justify-center q-pa-md">
-                      <div class="col-4">
+                      <div class="col-4 q-px-xl">
                         <q-file
                           v-model="userImg"
                           label="Clique para inserir foto"
                           borderless
                           clearable
+                          class="q-px-lg"
                           @update:model-value="addUserImage()"
                           accept=".png, .jpg, image/*"
                           @rejected="rejectUserPhoto"
@@ -530,6 +531,7 @@
                       label="Clique para inserir foto"
                       borderless
                       clearable
+                      class="q-px-lg"
                       @update:model-value="addUserImage()"
                       accept=".png, .jpg, image/*"
                       @rejected="rejectUserPhoto"
