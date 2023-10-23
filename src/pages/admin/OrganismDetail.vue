@@ -609,22 +609,32 @@
                           <div class="text-subtitle2 q-ma-sm q-mt-lg">
                             Organismos vinculados:
                           </div>
-                          <q-chip
+                        <q-list v-if="relations">
+                          <q-item
                             clickable
-                            @click="goToParentOrganismDetail(parent)"
-                            v-for="(parent, i) in relations"
-                            :key="parent"
+                            v-for="link, i in relations"
+                            :key="link"
+                            style="border-radius: 1rem;"
+                            class="bg-grey-3 q-ma-sm"
+                            @click="goToParentOrganismDetail(link)"
                           >
-                            {{ parent.organismRelationName }}
-                            <q-btn
-                              icon="close"
+                            <q-item-section>
+                              <q-item-label class="text-subtitle1"> {{ link.organismRelationName }}</q-item-label>
+                              <q-item-label>{{ link.organismConfigName }}</q-item-label>
+                            </q-item-section>
+                            <q-item-section side top>
+                              <q-btn
+                              icon="delete"
+                              color="red"
                               flat
                               rounded
                               style="width: 10px;"
                               @click="removeRelation(i)"
                               >
                             </q-btn>
-                          </q-chip>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
                         </div>
                       </div>
                     </q-card-section>
