@@ -282,6 +282,7 @@ export default defineComponent({
       height(document.getElementById("idMainToolbar"));
   },
   beforeMount() {
+
     this.isMobile = useScreenStore().isMobile
     this.userInfo = utils.presentUserInfo();
     
