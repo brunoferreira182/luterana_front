@@ -19,16 +19,16 @@
         <q-item-label>
           {{ value.name }}
         </q-item-label>
-        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Instagram'">
+        <q-item-label class="text-subtitle2" style="font-size: 12px;" v-if="value.selectedSocialType === 'Instagram'">
           https://www.instagram.com/{{ value.name }}
         </q-item-label>
-        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Facebook'">
+        <q-item-label style="font-size: 12px;" class="text-subtitle2" v-if="value.selectedSocialType === 'Facebook'">
           https://www.facebook.com/{{ value.name }}
         </q-item-label>
-        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Youtube'">
+        <q-item-label class="text-subtitle2" style="font-size: 12px;" v-if="value.selectedSocialType === 'Youtube'">
           https://www.youtube.com/{{ value.name }}
         </q-item-label>
-        <q-item-label class="text-subtitle2" v-if="value.selectedSocialType === 'Site pessoal'">
+        <q-item-label class="text-subtitle2" style="font-size: 12px;" v-if="value.selectedSocialType === 'Site pessoal'">
           {{ value.value }}
         </q-item-label>
         <q-item-label caption >
