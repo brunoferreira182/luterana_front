@@ -310,7 +310,7 @@
                   "
                 >
                   <q-btn
-                    :label="`${field.type.label}`"
+                    :label="`${field.type.label}` + ' ' + `${ organismConfigName}`"
                     no-caps
                     flat
                     v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
