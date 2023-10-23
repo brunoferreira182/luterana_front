@@ -895,7 +895,6 @@
         @addPerson="confirmAddPerson"
         @closeDialog="clearMaritalStatus"
       />
-      
       <DialogUserTitle
         :open="openDialogVinculateUserToTitle"
         @closeDialog="openDialogVinculateUserToTitle = false"
