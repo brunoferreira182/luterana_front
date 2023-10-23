@@ -464,9 +464,9 @@ export default defineComponent({
     },
     cancelSolicitation() {
       const opt = {
-        route: '',
+        route: '/desktop/commonUsers/cancelFunctionSolicitation',
         body: {
-          solicitationId: r._id
+          functionSolicitationId: this.dialogOpenSolicitationSended.data._id
         }
       }
       useFetch(opt).then((r) => {
@@ -477,6 +477,7 @@ export default defineComponent({
         this.dialogOpenSolicitationSended.data = null
         this.dialogOpenSolicitationSended.open = false
         this.$q.notify('Solicitação cancelada com sucesso')
+        this.getFunctionsSolicitationsByUserId()
       })
     },
     getSelectedString() {
