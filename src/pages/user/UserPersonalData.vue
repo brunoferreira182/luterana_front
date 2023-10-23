@@ -524,7 +524,7 @@
                   </q-item-section>
                 </div>
                 <div class="row justify-center q-pa-md text-center">
-                  <div class="col-10 q-px-xl">
+                  <div class="col q-px-xl">
                     <q-file
                       v-model="userImg"
                       label="Clique para inserir foto"
