@@ -1828,6 +1828,7 @@ export default defineComponent({
       this.dialogRemovePhoneMobileEmail.fieldIndex = fieldIndex
       this.dialogRemovePhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogRemovePhoneMobileEmail.iValue = iValue
+      this.updateUserData()
     },
     confirmRemovePhoneMobileEmail(){
       this
@@ -1869,6 +1870,7 @@ export default defineComponent({
         }
       }
       this.clearAddressInputs()
+      this.updateUserData()
     },
     clearAddressInputs(){
       this.dialogConfirmAddress.data = {
@@ -1886,12 +1888,15 @@ export default defineComponent({
     },
     removePhone(i) {
       this.userData.generalData.phones.splice(i, 1);
+      this.updateUserData()
     },
     removeAddress(i) {
       this.userData.generalData.address.splice(i, 1);
+      this.updateUserData()
     },
     removeEmail(i) {
       this.userData.generalData.email.splice(i, 1);
+      this.updateUserData()
     },
     getUsersConfig() {
       const opt = {
