@@ -1036,26 +1036,33 @@
             </div>
           </q-card-section>
           <q-card-section>
-            <q-item>
-              vinculo nome
-            </q-item>
+            <q-list v-if="userLinks">
+              <q-item
+                clickable
+                v-for="link in userLinks"
+                :key="link"
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm"
+                @click="goToOrganismDetail(link.organismId)"
+              >
+                <q-item-section>
+                  <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
+                  <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
+                </q-item-section>
+                <q-item-section side top>
+                  <q-icon name="star" color="yellow" />
+                </q-item-section>
+              </q-item>
+            </q-list>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
               flat
-              label="Não"
+              label="Sair"
               no-caps
               rounded
               color="primary"
-              @click="deleteTitle.openDialog = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="clkConfirmDeleteTitle"
+              @click="dialogShowLinks.open = false"
             />
           </q-card-actions>
         </q-card>
@@ -1134,6 +1141,7 @@ export default defineComponent({
         data: {},
         open: false,
       },
+      userLinks: null
     };
   },
   mounted() {
@@ -1163,6 +1171,9 @@ export default defineComponent({
         default:
           return "text";
       }
+    },
+    goToOrganismDetail(id) {
+      this.$router.push('/admin/organismDetail?organismId=' + id)
     },
     saveFormData(){
       const opt = {
@@ -1311,6 +1322,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
+        this.userLinks =r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
         // this.tab = r.data.userDataTabs[0].tabValue
