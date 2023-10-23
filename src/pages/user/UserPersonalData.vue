@@ -869,7 +869,7 @@
                           :disable="tabs.onlyAdm"
                         />
                         <CardSocialNetwork
-                          style="width: 350px;margin-right:40px;"
+                          style="width: 350px;"
                           :data="field.value"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"

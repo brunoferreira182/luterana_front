@@ -7,7 +7,6 @@
     :hint="fieldHint"
     :label="label"
     @keyup="onChange"
-    :rules="[val => this.validated || 'Email inválido']"
     ref="value"
     @input="val => { value = val.toLowerCase() }"
     @keyup.enter="onEnter"

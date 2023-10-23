@@ -284,7 +284,11 @@ export default defineComponent({
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
     this.userInfo = utils.presentUserInfo();
+    
     if (!this.userInfo || !this.userInfo.token) {
+      // se a rota for /login e tiver na query tk e key, não faz nada
+      // if (this.$route.query.tk && this.$route.query.key) return
+      // senao, abaixo
       this.$router.push("/login");
       return;
     }

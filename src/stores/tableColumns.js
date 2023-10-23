@@ -102,7 +102,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "nome",
         align: "left",
         label: "Nome do organismo",
-        field: "nome",
+        field: (row) => row.apelido || row.nome,
         sortable: true,
       },
       // {
@@ -334,7 +334,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "nome",
         align: "left",
         label: "Nome do organismo",
-        field: "nome",
+        field: (row) => row.apelido || row.nome,
         sortable: true,
       },
       // {
@@ -364,7 +364,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "nome",
         align: "left",
         label: "Nome do organismo",
-        field: "nome",
+        field: (row) => row.apelido || row.nome,
         sortable: true,
       },
       {

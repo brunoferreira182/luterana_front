@@ -3,39 +3,17 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
-          {{ userData.userDataTabs[0].fields[0].value }}
+          {{ userData.userDataTabs[0].fields[0].value }} 
         </div>
         <div class="col q-gutter-sm text-right">
-          <!-- <q-btn
-            v-if="userType === 'user'"
+          <q-btn
             color="primary"
             rounded
-            flat
-            icon="school"
-            no-caps
-            label="Tornar pastor"
-            @click="dialogBecomePastor.open = true"
-          /> -->
-          <!-- <q-btn
-            rounded
-            no-caps
             unelevated
-            icon="person"
-            color="secondary"
-            label="Dados pessoais"
-            @click="visionSelected = 'personalData'"
-            :outline="visionSelected === 'personalData' ? false : true"
+            no-caps
+            label="Vínculos"
+            @click="dialogShowLinks.open = true"
           />
-          <q-btn
-            rounded
-            no-caps
-            unelevated
-            icon="school"
-            color="secondary"
-            label="Títulos"
-            @click="visionSelected = 'titles'"
-            :outline="visionSelected === 'titles' ? false : true"
-          /> -->
         </div>
       </div>
       <q-separator class="q-mx-md"/>
@@ -1050,7 +1028,38 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-
+      <q-dialog v-model="dialogShowLinks.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Vínculos:
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-item>
+              vinculo nome
+            </q-item>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Não"
+              no-caps
+              rounded
+              color="primary"
+              @click="deleteTitle.openDialog = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="clkConfirmDeleteTitle"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1090,6 +1099,10 @@ export default defineComponent({
       openDialogVinculateUserToTitle: false,
       dialogInactiveUser: {
         open: false,
+      },
+      dialogShowLinks: {
+        open: false,
+        data: null
       },
       dialogBecomePastor: {
         selectPastor: [
