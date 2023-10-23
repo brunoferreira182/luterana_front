@@ -1042,7 +1042,7 @@
                 v-for="link in userLinks"
                 :key="link"
                 style="border-radius: 1rem;"
-                class="bg-grey-3 q-ma-sm"
+                class="bg-blue-grey-2 q-ma-sm"
                 @click="goToOrganismDetail(link.organismId)"
               >
                 <q-item-section>
