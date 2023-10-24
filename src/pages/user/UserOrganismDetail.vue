@@ -841,6 +841,7 @@
           >
             <div v-for="(func, funcIndex) in functions" :key="func" class="bg-white q-pa-sm">
               <CardFunction
+                v-if="func.functionName !== 'Pastor'"
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
@@ -919,6 +920,46 @@
                   </q-card-actions>
                 </q-card>
               </q-dialog>
+            </div>
+          </q-expansion-item>
+          <q-expansion-item
+            group="somegroup"
+            class="bg-grey-3"
+            header-class="text-primary"
+            label="Pastores"
+          >
+            <div 
+              v-for="func in functions" 
+              :key="func"
+            >
+              <div v-if="func.functionName === 'Pastor'">
+                <q-item
+                  v-for="pastor in func.users"
+                  :key="pastor"
+                  style="border-radius: 0.5rem;"
+                  class="bg-white q-ma-xs"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="account_circle" size="38px" color="grey"/>
+                  </q-item-section>
+                  <q-item-section 
+                    class="text-wrap" 
+                    lines="2" 
+                  >
+                    {{ pastor.userName}}
+                    <div class="text-caption text-grey-7" v-if="pastor.dates && pastor.dates.initialDate">
+                      Data início:
+                      {{ formatDate(pastor.dates.initialDate) }}
+                    </div>
+                    <div
+                      v-if="pastor.dates && pastor.dates.finalDate"
+                      class="text-caption text-grey-7"
+                    >
+                      Data Fim: {{ formatDate(pastor.dates.finalDate) }}
+                    </div>
+                  </q-item-section>
+                </q-item>
+              </div>
             </div>
           </q-expansion-item>
         </q-list>
