@@ -320,13 +320,8 @@
                   <CardPhoneMobileEmail
                     :data="field.value"
                     :fieldIndex="fieldIndex"
-<<<<<<< HEAD
                     :disableButtons="true"
-=======
-                    @edit="editPhoneMobileEmail"
-                    @remove="removePhoneMobileEmail"
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
->>>>>>> 3f587d02f74d7834ece874a1dc97c0cd68f65a5a
                   />
                 </div> 
                 <div v-if="field.type.type === 'formation'">
