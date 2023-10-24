@@ -9,7 +9,7 @@
           outlined
           v-model="data.selectedSocialType" 
           :options="options" 
-          label="Outlined" 
+          label="Selecione" 
           @update:model-value="clearInputs"
         />
       </q-card-section>
@@ -17,6 +17,7 @@
         <q-input
           label="Seu @ do Instagram"
           hint="Informe seu nome de usuário do Instagram"
+          prefix="https://www.instagram.com/"
           v-model="data.name"
           outlined
         />
@@ -32,6 +33,7 @@
         <q-input
           label="Seu nome do perfil do Facebook"
           hint="Informe seu nome de usuário do Facebook"
+          prefix="https://www.facebook.com/"
           v-model="data.name"
           outlined
         />
@@ -47,17 +49,19 @@
         <q-input
           label="Nome do seu canal"
           hint="Informe o nome do seu canal no Youtube"
+          prefix="https://youtube.com/"
           v-model="data.name"
+          outlined
+        />
+        <q-select
+          label="Tipo de perfil"
+          hint="Insira o tipo de perfil"
+          v-model="data.type"
+          :options="typeProfileOptions"
           outlined
         />
       </q-card-section>
       <q-card-section v-if="data.selectedSocialType === 'Site pessoal'">
-        <q-input
-          label="Nome do site"
-          hint="Informe seu nome do seu site"
-          v-model="data.name"
-          outlined
-        />
         <q-input
           label="URL"
           hint="Insira a url do seu site"
@@ -120,10 +124,6 @@ function clearInputs () {
   data.value.type = ''
 }
 function confirm () {
-  if (data.value.name === '') {
-    quasar.notify('Prencha os campos')
-    return
-  }
   if (data.value.selectedSocialType === 'Instagram'
       ||data.value.selectedSocialType === 'Facebook'
       || data.value.selectedSocialType === 'Site pessoal' ) {
