@@ -7,7 +7,7 @@
             {{ organismName }}
           </div>
           <div class="text-caption text-capitalize">
-            detalhe do organismo 
+            Detalhe do organismo 
           </div>
         </div>
         <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
@@ -1412,9 +1412,12 @@ export default defineComponent({
       this.dialogConfirmAddress.tabsIndex = tabIndex
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(field)
       this.dialogAddPhoneMobileEmail.open = true
-      this.dialogAddPhoneMobileEmail.type = field.type
+      // this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.type = this.organismData.fields[fieldIndex].type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogAddPhoneMobileEmail.data = {...value}
       this.dialogAddPhoneMobileEmail.action = 'edit'
       this.dialogAddPhoneMobileEmail.iValue = iValue

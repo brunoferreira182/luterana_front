@@ -365,6 +365,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: "organismParentName",
         sortable: true,
       },
+      {
+        name: "endereco",
+        align: "left",
+        label: "Cidade",
+        field: "endereco",
+        sortable: true,
+      },
     ],
     userOrganismListMobile: [
       {

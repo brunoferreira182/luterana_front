@@ -81,6 +81,18 @@
             </q-chip>
           </q-td>
         </template>
+        <template #body-cell-endereco="props">
+          <q-td :props="props">
+            <q-chip 
+              v-if="props.row.endereco" 
+              :style="{ color: props.row.organismStyle }" 
+              size="14px"
+              outline
+            >
+              {{ props.row.endereco }}
+            </q-chip>
+          </q-td>
+        </template>
       </q-table>
       <div class="text-left">
         <q-btn 

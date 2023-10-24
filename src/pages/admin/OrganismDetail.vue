@@ -326,6 +326,7 @@
                     :fieldIndex="fieldIndex"
                     @edit="editPhoneMobileEmail"
                     @remove="removePhoneMobileEmail"
+                    :showHeader="field.value && field.value.length > 0 ? field.label : false"
                   />
                 </div> 
                 <div v-if="field.type.type === 'formation'">
@@ -913,6 +914,7 @@ export default defineComponent({
       dialogConfirmAddress: {
         open: false,
         fieldIndex: null,
+        tabsIndex: null,
         valueIndex: null,
         data: {
           cep: "",
@@ -928,6 +930,7 @@ export default defineComponent({
       dialogAddPhoneMobileEmail: {
         type: null,
         open: false,
+        tabsIndex: null,
         fieldIndex: null,
         data: {
           value: '',
@@ -956,6 +959,7 @@ export default defineComponent({
       },
       maritalStatus: {
         open: false,
+        tabsIndex: null,
         fieldIndex: null,
         data: {
           status: '',
@@ -967,6 +971,7 @@ export default defineComponent({
       organismGroupConfigId: '',
       dialogAddBankData: {
         open: false,
+        tabsIndex: null,
         fieldIndex: null,
         iValue: null,
         userHasDoc: {
@@ -1055,6 +1060,7 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail = {
         type: null,
         open: false,
+        tabsIndex: null,
         fieldIndex: null,
         data: {
           value: '',
@@ -1073,7 +1079,7 @@ export default defineComponent({
       this.dialogLinks = false
       this.$q.notify("Vínculos criados com sucesso.")
     },
-    editThisAddress(fieldIndex, valueIndex){
+    editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {
         open: true,
         fieldIndex,
@@ -1125,9 +1131,16 @@ export default defineComponent({
     confirmAddPhoneMobileEmail (data) {
       if (this.dialogAddPhoneMobileEmail.action === 'add') {
         if (!this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value){
-          this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value = []
+          this
+          .organismData
+          .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+          .value = []
         }
-        this.organismData.fields[this.dialogAddPhoneMobileEmail.fieldIndex].value.push({...data})
+        this
+        .organismData
+        .fields[this.dialogAddPhoneMobileEmail.fieldIndex]
+        .value
+        .push({...data})
       } else if (this.dialogAddPhoneMobileEmail.action === 'edit') {
         this
           .organismData
@@ -1143,11 +1156,14 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
-    addPhoneMobileEmail(fieldIndex, field) {
+    addPhoneMobileEmail(fieldIndex, tabsIndex, field) {
       this.dialogAddPhoneMobileEmail.action = 'add'
+      this.dialogAddPhoneMobileEmail.hint = field.hint
+      this.dialogAddPhoneMobileEmail.label = field.label
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
     },
     getUserVisionPermissionByOrganismId() {
       const opt = {
@@ -1166,6 +1182,7 @@ export default defineComponent({
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogAddPhoneMobileEmail.data = {...value}
       this.dialogAddPhoneMobileEmail.action = 'edit'
       this.dialogAddPhoneMobileEmail.iValue = iValue

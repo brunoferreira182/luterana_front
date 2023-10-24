@@ -19,11 +19,14 @@
           CEP
           {{ item.cep }}
         </q-item-label>
-        <q-item-label caption>
+        <q-item-label caption v-if="item.complement && item.complement !== ''">
           Complemento:
           {{ item.complement }}
         </q-item-label>
-        <q-item-label caption class="text-capitalize">
+        <q-item-label caption v-else>
+          Complemento: Não informado
+        </q-item-label>
+        <q-item-label caption class="text-capitalize" v-if="item.type && item.type !== ''">
           <q-badge>{{ item.type }}</q-badge>
         </q-item-label>
       </q-item-section>
