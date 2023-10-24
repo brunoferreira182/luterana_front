@@ -219,7 +219,6 @@
                     <CardOrganism
                       :data="field"
                       :fieldIndex="fieldIndex"
-                      @remove="removeThisOrganism"
                     />
                   </div>
                 </div> 
@@ -239,8 +238,7 @@
                   <CardAddress
                     :data="field.value"
                     :fieldIndex="fieldIndex"
-                    @edit="editThisAddress"
-                    @remove="removeThisAddress"
+                    :disableButtons="true"
                   />
                 </div>
                 <div v-if="field.type.type === 'person'">
@@ -249,7 +247,7 @@
                     <CardPerson
                       :data="field"
                       :fieldIndex="fieldIndex"
-                      @remove="removeThisPerson"
+                      :disableButtons="true"
                     />
                   </div>
                   <q-btn
@@ -270,7 +268,6 @@
                     <CardMaritalStatus
                       :data="field"
                       :fieldIndex="fieldIndex"
-                      @remove="removeThisPerson"
                     />
                   </div>
                   <q-btn
@@ -299,8 +296,7 @@
                   <CardBankData
                     :data="field"
                     :fieldIndex="fieldIndex"
-                    @edit="editBankData"
-                    @remove="removeBankData"
+                    :disableButtons="true"
                   />
                 </div> 
                 <div v-if="
@@ -324,8 +320,7 @@
                   <CardPhoneMobileEmail
                     :data="field.value"
                     :fieldIndex="fieldIndex"
-                    @edit="editPhoneMobileEmail"
-                    @remove="removePhoneMobileEmail"
+                    :disableButtons="true"
                   />
                 </div> 
                 <div v-if="field.type.type === 'formation'">
@@ -1006,8 +1001,8 @@ export default defineComponent({
     };
   },
   watch: {
-    $route(to, from) {
-      if (to.fullPath !== from.fullPath) {
+    $route(to) {
+      if (to.path === '/admin/organismDetail') {
         this.getOrganismDetailById();
       }
     }
