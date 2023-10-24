@@ -95,7 +95,7 @@
     <q-expansion-item
       color="primary"
       icon="forward_to_inbox"
-      :label="props.func.functionsSolicitations ? `${props.func.functionsSolicitations.length} Convites` : '0 Convites'"
+      :label="props.func.functionDescription.toLowerCase() === 'pastor' ? 'Convites' : `${props.func.functionsSolicitations.length} Convites`"
     >
       <q-item
         v-for="user in props.func.functionsSolicitations"
@@ -172,6 +172,9 @@
         no-caps
         @click="clkOpenDialogSolicitation"
       />
+      <div class="text-center q-pa-md" v-if="!showInviteUserButton">
+        Mudança de pastor é via administrativa
+      </div>
       <q-btn
         v-if="showAddUserButton"
         label="Adicionar pessoa"
