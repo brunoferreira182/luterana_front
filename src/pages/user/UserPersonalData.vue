@@ -169,6 +169,8 @@
                           || field.type.type === 'textarea'
                           "
                         >
+                          
+                  
                           <q-input
                             :label="field.label"
                             :hint="field.hint"
@@ -176,8 +178,7 @@
                             v-model="field.value"
                             outlined
                             :readonly="tabs.onlyAdm"
-                          >
-                          </q-input>
+                          />
                         </div>
                         <q-file
                           v-if="field.type.type === 'image'"

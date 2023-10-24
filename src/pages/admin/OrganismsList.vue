@@ -14,7 +14,8 @@
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]" 
         :filter="filter" 
-        v-model:pagination="pagination" 
+        v-model:pagination="pagination"
+        :visible-columns="collumns" 
         @request="nextPage">
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
@@ -59,6 +60,13 @@
             </div>
           </div>
         </template>
+        <template #body-cell-nome="props">
+          <q-td :props="props">
+            <div class="text-bold">{{ props.row.nome }}</div>
+            <div>Apelido: {{ props.row.apelido }}</div>
+            <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+          </q-td>
+        </template>
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
@@ -78,6 +86,18 @@
               outline
             >
               {{ props.row.organismConfigName }}
+            </q-chip>
+          </q-td>
+        </template>
+        <template #body-cell-endereco="props">
+          <q-td :props="props">
+            <q-chip 
+              v-if="props.row.endereco" 
+              :style="{ color: props.row.organismStyle }" 
+              size="14px"
+              outline
+            >
+              
             </q-chip>
           </q-td>
         </template>
@@ -110,6 +130,7 @@ export default defineComponent({
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
+      collumns: ['nome', 'organismConfigName', 'organismParentName'],
       organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",

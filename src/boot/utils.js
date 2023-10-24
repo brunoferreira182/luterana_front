@@ -313,11 +313,11 @@ const useUtils = {
         //   route: "/user/userFunctionsList",
         //   icon: "comment_bank",
         // },
-        {
-          label: "Documentos",
-          route: "/user/UserDocuments",
-          icon: "description",
-        },
+        // {
+        //   label: "Documentos",
+        //   route: "/user/UserDocuments",
+        //   icon: "description",
+        // },
         {
           label: "Lista de solicitações",
           route: "/user/userSolicitationsList",

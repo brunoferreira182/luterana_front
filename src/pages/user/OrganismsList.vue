@@ -17,6 +17,7 @@
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
+        :visible-columns="collumns"
         @request="nextPage"
       >
         <!-- <template #top-right>
@@ -37,6 +38,13 @@
             </div>
           </div>
         </template> -->
+        <template #body-cell-nome="props">
+          <q-td :props="props">
+            <div class="text-bold">{{ props.row.nome }}</div>
+            <div>Apelido: {{ props.row.apelido }}</div>
+            <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+          </q-td>
+        </template>
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
@@ -57,6 +65,10 @@
             >
               {{ props.row.organismConfigName.split(' ')[0] }}
             </q-chip>
+          </q-td>
+        </template>
+        <template #body-cell-endereco="props">
+          <q-td :props="props">
           </q-td>
         </template>
       </q-table>
@@ -92,6 +104,7 @@ export default defineComponent({
       columnsDataMobile: useTableColumns().userOrganismListMobile,
       isMobile: false,
       searchAllOrganismsList: [],
+      collumns: ['nome', 'organismConfigName', 'organismParentName'],
       userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",

@@ -49,6 +49,7 @@ const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 
 const emits = defineEmits(['edit', 'remove'])
 
 function edit(fieldIndex, tabsIndex, field, value, iValue) {
+  console.log(fieldIndex, tabsIndex, field, value, iValue, 'oisdad')
   emits('edit', fieldIndex, tabsIndex, field, value, iValue)
 }
 

@@ -7,7 +7,7 @@
             {{ organismName }}
           </div>
           <div class="text-caption text-capitalize">
-            detalhe do organismo 
+            Detalhe do organismo 
           </div>
         </div>
         <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
@@ -98,7 +98,7 @@
                 "
               >
                 <q-input
-                  :label="field.label"
+                  :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
                   :hint="field.hint"
                   :mask="field.type.mask"
                   v-model="field.value"
@@ -124,7 +124,7 @@
               <div class="text-right" v-if="field.type.type === 'options'">
                 <q-select
                   outlined
-                  :label="field.label"
+                  :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
                   option-label="optionName"
                   emit-value
                   map-options
@@ -591,7 +591,7 @@
                   "
                 >
                   <q-input
-                    :label="field.label"
+                    :label="field.model === 'filiada' || field.model === 'chave_ata' ? 'Estamos imporando estes dados' : field.label"
                     :hint="field.hint"
                     :mask="field.type.mask"
                     v-model="field.value"
@@ -617,7 +617,7 @@
                 <div class="text-right" v-if="field.type.type === 'options'">
                   <q-select
                     outlined
-                    :label="field.label"
+                    :label="field.model === 'filiada' || field.model === 'chave_ata' ? 'Estamos imporando estes dados' : field.label"
                     option-label="optionName"
                     emit-value
                     map-options
@@ -1453,9 +1453,12 @@ export default defineComponent({
       this.dialogConfirmAddress.tabsIndex = tabIndex
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(field)
       this.dialogAddPhoneMobileEmail.open = true
-      this.dialogAddPhoneMobileEmail.type = field.type
+      // this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.type = this.organismData.fields[fieldIndex].type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogAddPhoneMobileEmail.data = {...value}
       this.dialogAddPhoneMobileEmail.action = 'edit'
       this.dialogAddPhoneMobileEmail.iValue = iValue
