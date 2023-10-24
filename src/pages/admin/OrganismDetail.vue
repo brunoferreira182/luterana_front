@@ -321,8 +321,11 @@
                     :data="field.value"
                     :fieldIndex="fieldIndex"
                     :disableButtons="true"
+<<<<<<< HEAD
                     @edit="editPhoneMobileEmail"
                     @remove="removePhoneMobileEmail"
+=======
+>>>>>>> c9d2acd9d6f7310405f9ae0499f0ddbabb1a69f8
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
                   />
                 </div> 
