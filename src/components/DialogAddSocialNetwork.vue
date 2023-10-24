@@ -80,6 +80,7 @@
         <q-btn
           unelevated
           rounded
+          flat
           label="Fechar"
           no-caps
           color="primary"
