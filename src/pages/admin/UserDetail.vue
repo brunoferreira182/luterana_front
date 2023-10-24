@@ -190,7 +190,6 @@
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
                               :disableButtons="!tabs.onlyAdm"
-                              @remove="removeThisOrganism"
                             />
                           </div>
                         </div>
@@ -212,8 +211,6 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editThisAddress"
-                            @remove="removeThisAddress"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -225,7 +222,6 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
-                              @remove="removeThisPerson"
                               :disableButtons="!tabs.onlyAdm"
                             />
                           </div>
@@ -249,7 +245,6 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
-                              @remove="removeThisPerson"
                               :disableButtons="!tabs.onlyAdm"
                             />
                           </div>
@@ -281,8 +276,6 @@
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editBankData"
-                            @remove="removeBankData"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -309,8 +302,6 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editPhoneMobileEmail"
-                            @remove="removePhoneMobileEmail"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -332,8 +323,6 @@
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @edit="editFormation"
-                            @remove="removeFormation"
                             :disableButtons="!tabs.onlyAdm"
                           />
                           

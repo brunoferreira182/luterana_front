@@ -190,11 +190,11 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
-        {
-          label: "Documentos",
-          route: "/admin/AdmDocuments",
-          icon: "description",
-        },
+        // {
+        //   label: "Documentos",
+        //   route: "/admin/AdmDocuments",
+        //   icon: "description",
+        // },
         // {
         //   label: "Títulos",
         //   route: "/admin/titlesList",
@@ -313,11 +313,11 @@ const useUtils = {
         //   route: "/user/userFunctionsList",
         //   icon: "comment_bank",
         // },
-        {
-          label: "Documentos",
-          route: "/user/UserDocuments",
-          icon: "description",
-        },
+        // {
+        //   label: "Documentos",
+        //   route: "/user/UserDocuments",
+        //   icon: "description",
+        // },
         {
           label: "Lista de solicitações",
           route: "/user/userSolicitationsList",

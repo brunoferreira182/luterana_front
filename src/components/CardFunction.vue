@@ -1,7 +1,7 @@
 <template>
   <q-card
     style="border-radius: 1rem"
-    class="bg-grey-3 q-ma-sm q-pa-sm"
+    :class="isPastor ? 'bg-grey-3 q-ma-sm q-pa-sm' : 'bg-blue-grey-1 q-ma-sm q-pa-sm'"
     flat
   >
     <q-item>
@@ -192,7 +192,7 @@
 
 <script setup>
 // import { defineComponent } from "vue";
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 

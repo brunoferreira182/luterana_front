@@ -122,7 +122,7 @@
                     Solicitar alterações
                   </q-btn>
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                    <div  class="row justify-center">
+                    <!-- <div  class="row justify-center">
                       <q-item-section avatar>
                         <q-img 
                           style="border-radius: 1rem"
@@ -150,7 +150,7 @@
                           </template>
                         </q-file>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
