@@ -1,7 +1,7 @@
 <template>
   <q-card
     style="border-radius: 1rem"
-    class="bg-grey-3 q-ma-sm q-pa-sm"
+    :class="isPastor ? 'bg-grey-3 q-ma-sm q-pa-sm' : 'bg-blue-grey-1 q-ma-sm q-pa-sm'"
     flat
   >
     <q-item>
@@ -95,7 +95,7 @@
     <q-expansion-item
       color="primary"
       icon="forward_to_inbox"
-      :label="props.func.functionsSolicitations ? `${props.func.functionsSolicitations.length} Convites` : '0 Convites'"
+      :label="props.func.functionDescription.toLowerCase() === 'pastor' ? 'Convites' : `${props.func.functionsSolicitations.length} Convites`"
     >
       <q-item
         v-for="user in props.func.functionsSolicitations"
@@ -172,6 +172,9 @@
         no-caps
         @click="clkOpenDialogSolicitation"
       />
+      <div class="text-center q-pa-md" v-if="!showInviteUserButton">
+        Mudança de pastor é via administrativa
+      </div>
       <q-btn
         v-if="showAddUserButton"
         label="Adicionar pessoa"
@@ -189,7 +192,7 @@
 
 <script setup>
 // import { defineComponent } from "vue";
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 

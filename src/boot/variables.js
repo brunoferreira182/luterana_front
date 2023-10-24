@@ -1,7 +1,11 @@
 //////////// VARIAVEIS DA APLICACAO //////
 const MODE_MASTER_SERVER = "prod";
 const COMPANY_ID = 10;
+<<<<<<< HEAD
 const VERSION = "1.1 Beta"
+=======
+const VERSION = "1.2 Beta"
+>>>>>>> ec9a7bc431a39b38b6e50cdbb09a8cb34f9c9fd2
 const BUILD = 13
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;

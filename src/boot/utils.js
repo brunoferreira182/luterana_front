@@ -191,6 +191,11 @@ const useUtils = {
           icon: "diversity_2",
         },
         // {
+        //   label: "Documentos",
+        //   route: "/admin/AdmDocuments",
+        //   icon: "description",
+        // },
+        // {
         //   label: "Títulos",
         //   route: "/admin/titlesList",
         //   icon: "school",
@@ -307,6 +312,11 @@ const useUtils = {
         //   label: "Lista das minhas funções",
         //   route: "/user/userFunctionsList",
         //   icon: "comment_bank",
+        // },
+        // {
+        //   label: "Documentos",
+        //   route: "/user/UserDocuments",
+        //   icon: "description",
         // },
         {
           label: "Lista de solicitações",

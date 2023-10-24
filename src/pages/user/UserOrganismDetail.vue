@@ -7,7 +7,7 @@
             {{ organismName }}
           </div>
           <div class="text-caption text-capitalize">
-            detalhe do organismo 
+            Detalhe do organismo 
           </div>
         </div>
         <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
@@ -98,7 +98,7 @@
                 "
               >
                 <q-input
-                  :label="field.label"
+                  :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
                   :hint="field.hint"
                   :mask="field.type.mask"
                   v-model="field.value"
@@ -124,7 +124,7 @@
               <div class="text-right" v-if="field.type.type === 'options'">
                 <q-select
                   outlined
-                  :label="field.label"
+                  :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
                   option-label="optionName"
                   emit-value
                   map-options
@@ -347,6 +347,15 @@
               </div>
             </div>
             <div class="text-right">
+              <q-btn
+                label="Salvar dados"
+                color="primary"
+                unelevated
+                class="q-mt-md"
+                @click="updateOrganism"
+              />
+            </div>
+            <div class="text-right">
                 <q-btn
                   v-if="!this.$route.query.e === 'f'"
                   label="Salvar dados"
@@ -371,6 +380,7 @@
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                :isPastor="func.functionName === 'Pastor' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -559,7 +569,8 @@
             <div v-else class="text-subtitle1">
               Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
             </div>
-          </div>
+            
+        </div>
         </div>
       </div>
 
@@ -591,7 +602,7 @@
                   "
                 >
                   <q-input
-                    :label="field.label"
+                    :label="field.model === 'filiada' || field.model === 'chave_ata' ? 'Estamos imporando estes dados' : field.label"
                     :hint="field.hint"
                     :mask="field.type.mask"
                     v-model="field.value"
@@ -617,7 +628,7 @@
                 <div class="text-right" v-if="field.type.type === 'options'">
                   <q-select
                     outlined
-                    :label="field.label"
+                    :label="field.model === 'filiada' || field.model === 'chave_ata' ? 'Estamos imporando estes dados' : field.label"
                     option-label="optionName"
                     emit-value
                     map-options
@@ -841,6 +852,7 @@
           >
             <div v-for="(func, funcIndex) in functions" :key="func" class="bg-white q-pa-sm">
               <CardFunction
+                v-if="func.functionName !== 'Pastor'"
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
@@ -919,6 +931,46 @@
                   </q-card-actions>
                 </q-card>
               </q-dialog>
+            </div>
+          </q-expansion-item>
+          <q-expansion-item
+            group="somegroup"
+            class="bg-grey-3"
+            header-class="text-primary"
+            label="Pastores"
+          >
+            <div 
+              v-for="func in functions" 
+              :key="func"
+            >
+              <div v-if="func.functionName === 'Pastor'">
+                <q-item
+                  v-for="pastor in func.users"
+                  :key="pastor"
+                  style="border-radius: 0.5rem;"
+                  class="bg-white q-ma-xs"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="account_circle" size="38px" color="grey"/>
+                  </q-item-section>
+                  <q-item-section 
+                    class="text-wrap" 
+                    lines="2" 
+                  >
+                    {{ pastor.userName}}
+                    <div class="text-caption text-grey-7" v-if="pastor.dates && pastor.dates.initialDate">
+                      Data início:
+                      {{ formatDate(pastor.dates.initialDate) }}
+                    </div>
+                    <div
+                      v-if="pastor.dates && pastor.dates.finalDate"
+                      class="text-caption text-grey-7"
+                    >
+                      Data Fim: {{ formatDate(pastor.dates.finalDate) }}
+                    </div>
+                  </q-item-section>
+                </q-item>
+              </div>
             </div>
           </q-expansion-item>
         </q-list>
@@ -1412,9 +1464,12 @@ export default defineComponent({
       this.dialogConfirmAddress.tabsIndex = tabIndex
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(field)
       this.dialogAddPhoneMobileEmail.open = true
-      this.dialogAddPhoneMobileEmail.type = field.type
+      // this.dialogAddPhoneMobileEmail.type = field.type
+      this.dialogAddPhoneMobileEmail.type = this.organismData.fields[fieldIndex].type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
       this.dialogAddPhoneMobileEmail.data = {...value}
       this.dialogAddPhoneMobileEmail.action = 'edit'
       this.dialogAddPhoneMobileEmail.iValue = iValue

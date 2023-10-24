@@ -14,7 +14,8 @@
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]" 
         :filter="filter" 
-        v-model:pagination="pagination" 
+        v-model:pagination="pagination"
+        :visible-columns="collumns" 
         @request="nextPage">
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
@@ -59,6 +60,13 @@
             </div>
           </div>
         </template>
+        <template #body-cell-nome="props">
+          <q-td :props="props">
+            <div class="text-bold">{{ props.row.nome }}</div>
+            <div>Apelido: {{ props.row.apelido }}</div>
+            <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+          </q-td>
+        </template>
         <template #body-cell-organismParentName="props">
           <q-td :props="props">
             <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
@@ -81,20 +89,32 @@
             </q-chip>
           </q-td>
         </template>
+        <template #body-cell-endereco="props">
+          <q-td :props="props">
+            <q-chip 
+              v-if="props.row.endereco" 
+              :style="{ color: props.row.organismStyle }" 
+              size="14px"
+              outline
+            >
+              
+            </q-chip>
+          </q-td>
+        </template>
       </q-table>
-      <div class="text-left">
-        <q-btn 
-          v-for="(name, nameIndex) in organismsConfigsNamesList" 
+      <div class="q-gutter-md q-pa-md">
+        <q-chip
+          v-for="(name, nameIndex) in organismsConfigsNamesList"
           :key="name"
-          size="md"
           class="q-ma-sm"
-          :style="{ textTransform: 'capitalize', color: name.organismStyle }"
           outline
-          rounded
+          clickable
+          :style="{ textTransform: 'capitalize', color: name.organismStyle }"
+          :icon="selectedChipIndex === nameIndex ? 'check_circle' : ''"
           @click="filterOrganisms(nameIndex)"
         >
           {{ name.organismConfigName }}
-        </q-btn>
+        </q-chip>
       </div>
     </q-page>
   </q-page-container>
@@ -105,16 +125,19 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "OrganismTypeList",
+  name: "OrganismList",
   data() {
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
+      collumns: ['nome', 'organismConfigName', 'organismParentName'],
       organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       filterRow: [],
+      selectedChipIndex: null,
       selectFilter: '',
+      selectedChips: [],
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -131,6 +154,20 @@ export default defineComponent({
     this.getOrganismsConfigsNamesList();
   },
   methods: {
+    toggleChipSelection(nameIndex) {
+      if (this.isChipSelected(nameIndex)) {
+        // Se o chip estiver selecionado, desmarque-o (remova do array)
+        this.selectedChips = this.selectedChips.filter((item) => item !== nameIndex);
+      } else {
+        // Se o chip não estiver selecionado, marque-o (adicione ao array)
+        this.selectedChips.push(nameIndex);
+      }
+      this.getOrganismsList(nameIndex);
+    },
+    isChipSelected(index) {
+      // Verifique se o chip com o índice fornecido está selecionado
+      return this.selectedChips.includes(index);
+    },
     clkOpenOrganismDetail(e, r) {
       const organismId = r.organismId;
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
@@ -162,6 +199,7 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.organismList = r.data.list
@@ -181,15 +219,32 @@ export default defineComponent({
       })
     },
     filterOrganisms(nameIndex) {
-      const selectedOrganism = this.organismsConfigsNamesList[nameIndex]
-      if (nameIndex >= 0 && nameIndex < this.organismsConfigsNamesList.length &&
-        this.selectFilter !== selectedOrganism.organismConfigName) {
-          this.selectFilter = selectedOrganism.organismConfigName 
-      } else if(selectedOrganism.organismConfigName === this.organismsConfigsNamesList[nameIndex].organismConfigName) {
-        this.selectFilter = null
+      const selectedOrganism = this.organismsConfigsNamesList[nameIndex];
+      if (this.selectedChipIndex === nameIndex) {
+        // Se o chip já está selecionado, desmarque-o
+        this.selectedChipIndex = null;
+        this.selectFilter = ''
+        this.getOrganismsList();
+      } else {
+        // Se um chip diferente for selecionado, atualize o índice
+        this.selectedChipIndex = nameIndex;
+        this.selectFilter = selectedOrganism.organismConfigName;
       }
-      this.getOrganismsList()
-    }
+      this.getOrganismsList();
+    },
+    // filterOrganisms(nameIndex) {
+    //   const selectedOrganism = this.organismsConfigsNamesList[nameIndex];
+
+    //   if (this.selectFilter === selectedOrganism.organismConfigName) {
+    //     // Se o chip clicado já está selecionado, desmarque-o
+    //     this.selectFilter = null;
+    //   } else {
+    //     // Se o chip clicado não está selecionado, marque-o (mude a seleção)
+    //     this.selectFilter = selectedOrganism.organismConfigName;
+    //   }
+
+    //   this.getOrganismsList();
+    // }
   },
 });
 </script>
