@@ -7,11 +7,12 @@
           fit="fill"
           class="q-ma-xl"
           align="center"
-          width="50%"
+          width="30%"
         />
         <div class="text-h3 app-font-calibri-italic text-primary">
           Tabula
         </div>
+        <div>Versão {{ VERSION }} - {{ BUILD }}</div>
       </div>
       <div class="">
         <q-carousel
@@ -158,8 +159,7 @@
       </div>
     </div>
     <q-footer flat class="bg-transparent text-primary q-pa-md">
-      <div>Versão {{ VERSION }}</div>
-      <div>Build {{ BUILD }}</div>
+      
     </q-footer>
   </q-layout>
 </template>
