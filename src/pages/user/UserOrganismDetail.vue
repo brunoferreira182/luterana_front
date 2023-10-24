@@ -371,6 +371,7 @@
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                :isPastor="func.functionName === 'Pastor' ? false : true"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">

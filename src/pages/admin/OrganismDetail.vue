@@ -320,13 +320,10 @@
                   <CardPhoneMobileEmail
                     :data="field.value"
                     :fieldIndex="fieldIndex"
-<<<<<<< HEAD
                     :disableButtons="true"
-=======
                     @edit="editPhoneMobileEmail"
                     @remove="removePhoneMobileEmail"
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
->>>>>>> 3f587d02f74d7834ece874a1dc97c0cd68f65a5a
                   />
                 </div> 
                 <div v-if="field.type.type === 'formation'">
@@ -365,6 +362,7 @@
                   @linkUserToFunction="linkUserToFunction"
                   :showAddUserButton="true"
                   :showInviteUserButton="false"
+                  :isPastor="func.functionName === 'Pastor' ? false : true"
                 />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">

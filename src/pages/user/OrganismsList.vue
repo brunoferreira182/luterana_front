@@ -40,8 +40,8 @@
         </template> -->
         <template #body-cell-nome="props">
           <q-td :props="props">
-            <div class="text-bold">{{ props.row.nome }}</div>
-            <div>Apelido: {{ props.row.apelido }}</div>
+            <div class="text-bold text-wrap">{{ props.row.nome }}</div>
+            <div class="text-wrap">Apelido: {{ props.row.apelido }}</div>
             <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
           </q-td>
         </template>
