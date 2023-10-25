@@ -20,29 +20,10 @@
         :visible-columns="collumns"
         @request="nextPage"
       >
-        <!-- <template #top-right>
-          <div class="flex row justify-end q-gutter-sm items-center">
-            <div class="col">
-              <q-input
-                @keyup="getAllOrganismsByString"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
-              >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </div>
-          </div>
-        </template> -->
-        <template #body-cell-nome="props">
+        <template #body-cell-city="props">
           <q-td :props="props">
-            <div class="text-bold text-wrap">{{ props.row.nome }}</div>
-            <div class="text-wrap">Apelido: {{ props.row.apelido }}</div>
-            <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+            <div class="text-bold" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+            <div class="text-caption" v-else-if="!props.row.endereco">Não consta</div>
           </q-td>
         </template>
         <template #body-cell-organismParentName="props">
@@ -104,7 +85,7 @@ export default defineComponent({
       columnsDataMobile: useTableColumns().userOrganismListMobile,
       isMobile: false,
       searchAllOrganismsList: [],
-      collumns: ['nome', 'organismConfigName', 'organismParentName'],
+      collumns: ['nome', 'organismConfigName', 'organismParentName', 'city'],
       userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",

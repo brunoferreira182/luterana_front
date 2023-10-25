@@ -15,7 +15,6 @@
         :rows-per-page-options="[10, 20, 30, 50]" 
         :filter="filter" 
         v-model:pagination="pagination"
-        :visible-columns="collumns" 
         @request="nextPage">
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
@@ -24,7 +23,7 @@
                 outlined 
                 dense 
                 label="Selecionar"
-                debounce="300" 
+                debounce="1000" 
                 v-model="selectFilter" 
                 :options="selectStatus"
                 @update:model-value="getOrganismsList"
@@ -35,7 +34,7 @@
                 @keyup="getOrganismsList" 
                 outlined 
                 dense 
-                debounce="300" 
+                debounce="1000" 
                 v-model="filter" 
                 placeholder="Procurar"
               >
@@ -60,10 +59,10 @@
             </div>
           </div>
         </template>
-        <template #body-cell-nome="props">
+        <template #body-cell-city="props">
           <q-td :props="props">
-            <div class="text-bold">{{ props.row.nome }}</div>
             <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+            <div class="text-caption" v-else-if="!props.row.endereco">Não consta</div>
           </q-td>
         </template>
         <template #body-cell-organismParentName="props">
@@ -117,6 +116,7 @@
       </div>
     </q-page>
   </q-page-container>
+  
 </template>
 <script>
 import { defineComponent } from "vue";
@@ -129,7 +129,7 @@ export default defineComponent({
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
-      collumns: ['nome', 'apelido', 'organismConfigName', 'organismParentName'],
+      collumns: ['nome', 'apelido', 'organismConfigName', 'organismParentName', 'city'],
       organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
@@ -155,16 +155,13 @@ export default defineComponent({
   methods: {
     toggleChipSelection(nameIndex) {
       if (this.isChipSelected(nameIndex)) {
-        // Se o chip estiver selecionado, desmarque-o (remova do array)
         this.selectedChips = this.selectedChips.filter((item) => item !== nameIndex);
       } else {
-        // Se o chip não estiver selecionado, marque-o (adicione ao array)
         this.selectedChips.push(nameIndex);
       }
       this.getOrganismsList(nameIndex);
     },
     isChipSelected(index) {
-      // Verifique se o chip com o índice fornecido está selecionado
       return this.selectedChips.includes(index);
     },
     clkOpenOrganismDetail(e, r) {
@@ -220,30 +217,15 @@ export default defineComponent({
     filterOrganisms(nameIndex) {
       const selectedOrganism = this.organismsConfigsNamesList[nameIndex];
       if (this.selectedChipIndex === nameIndex) {
-        // Se o chip já está selecionado, desmarque-o
         this.selectedChipIndex = null;
         this.selectFilter = ''
         this.getOrganismsList();
       } else {
-        // Se um chip diferente for selecionado, atualize o índice
         this.selectedChipIndex = nameIndex;
         this.selectFilter = selectedOrganism.organismConfigName;
       }
       this.getOrganismsList();
     },
-    // filterOrganisms(nameIndex) {
-    //   const selectedOrganism = this.organismsConfigsNamesList[nameIndex];
-
-    //   if (this.selectFilter === selectedOrganism.organismConfigName) {
-    //     // Se o chip clicado já está selecionado, desmarque-o
-    //     this.selectFilter = null;
-    //   } else {
-    //     // Se o chip clicado não está selecionado, marque-o (mude a seleção)
-    //     this.selectFilter = selectedOrganism.organismConfigName;
-    //   }
-
-    //   this.getOrganismsList();
-    // }
   },
 });
 </script>
