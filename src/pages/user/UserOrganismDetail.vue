@@ -521,26 +521,73 @@
             <q-list v-if="childOrganismsData.length">
               <q-item
                 clickable
+                style="border-radius: 1rem;"
                 v-for="child in childOrganismsData"
                 :key="child"
-                style="border-radius: 1rem;"
-                @click="clkOpenChildOrganismDetail(child)"
                 class="bg-green-3 q-my-sm"
               >
-                <q-item-section>
+                <q-item-section @click="clkOpenChildOrganismDetail(child)">
                   <q-item-label> {{ child.organismName }}</q-item-label>
                   <q-item-label caption> {{ child.organismConfigName }}</q-item-label>
                   <q-item-label caption lines="2">Criado em {{ child.createdAt }}</q-item-label>
                 </q-item-section>
-
-                <q-item-section side top>
-                  <q-icon name="star" color="yellow" />
-                </q-item-section>
+                <!-- <q-item-section side top>
+                  <q-btn
+                    v-if="child.organismConfigName.toLowerCase() === 'ponto de missão'"
+                    icon="delete"
+                    flat
+                    color="red-8"
+                    dense
+                    rounded
+                    @click="clkOpenDialogDeleteMissionPoint(child)"
+                  >
+                    <q-tooltip>
+                      Remover ponto de missão
+                    </q-tooltip>
+                  </q-btn>
+                </q-item-section> -->
               </q-item>
             </q-list>
             <div v-else class="text-subtitle1">
               Nenhum grupo de organismo criado <q-icon name="warning" color="warning" size="md"/>
             </div>
+            <q-dialog v-model="dialogDeleteMissionPoint.open">
+              <q-card style="border-radius: 1rem">
+                <q-card-section class="text-subtitle1 text-center">
+                  Informe para onde serão transferidos os X membros do ponto de missão 
+                  <div class="text-bold">{{ dialogDeleteMissionPoint.data.organismName }}?</div> 
+                  <q-select
+                    v-model="userSelected"
+                    filled
+                    clearable
+                    use-input
+                    label="Selecione a congregação"
+                    option-label="userName"
+                    :options="usersOptions.list"
+                    @filter="getUsers"
+                    :option-value="(item) => item._id"
+                    hint="Digite o nome da congregação para qual irá transferir estes usuários"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          Nenhum resultado
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps">
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                          <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      
+                    </template>
+                  </q-select>
+                </q-card-section>
+              </q-card>
+            </q-dialog>
           </div>
         </div>
       </div>
@@ -1199,7 +1246,11 @@ export default defineComponent({
       dialogInsertNewOrganismGroup: {
         open: false,
         data: null
-      }
+      },
+      dialogDeleteMissionPoint:{
+        data: {},
+        open: false,
+      },
     };
   },
   mounted() {
@@ -1223,6 +1274,11 @@ export default defineComponent({
     }
   },
   methods: {
+    clkOpenDialogDeleteMissionPoint(child){
+      console.log(child)
+      this.dialogDeleteMissionPoint.open = true
+      this.dialogDeleteMissionPoint.data = child
+    },
     async updateOrganism () {
       const opt = {
         route: '/desktop/users/updateOrganismData',

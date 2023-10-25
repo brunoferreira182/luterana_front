@@ -172,7 +172,7 @@
         no-caps
         @click="clkOpenDialogSolicitation"
       />
-      <div class="text-center q-pa-md" v-if="!showInviteUserButton">
+      <div class="text-center q-pa-md" v-if="!showInviteUserButton && $route.path.includes('/user')">
         Mudança de pastor é via administrativa
       </div>
       <q-btn
