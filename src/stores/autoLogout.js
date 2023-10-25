@@ -6,16 +6,23 @@ export const useAutoLogoutStore = defineStore({
     timer: null,
   }),
   actions: {
+    init(router) {
+      this.router = router;
+      this.startAutoLogoutTimer();
+    },
     startAutoLogoutTimer() {
       this.timer = setTimeout(() => {
-        localStorage.clear();
         Notify.create({
           message: 'Você foi desconectado devido à inatividade.',
           timeout: 2000,
           type: 'negative',
         });
-        this.timer = null
-      }, 3600000); 
+        this.timer = null;
+        if (this.router) {
+          localStorage.clear();
+          this.router.push('/login');
+        }
+      }, 3600000);
     },
     resetAutoLogoutTimer() {
       if (this.timer) {

@@ -1434,7 +1434,6 @@ export default defineComponent({
       }
     },
     clkAddSocialNetwork (fieldIndex, tabsIndex) {
-      console.log("toa qui")
       this.dialogAddSocialNetwork = {
         open: true,
         fieldIndex,
