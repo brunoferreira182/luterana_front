@@ -79,8 +79,23 @@
       <div v-show="visionSelected === 'data'">
         <div class="row justify-around q-pa-md" v-if="!isMobile">
           <div class="col-7 q-gutter-md q-mt-sm" align="start" >
+            <div v-if="existsPastor === true">
+              <div class="text-h5 no-margin q-px-md">Pastores:</div>
+              <div v-for="func in functions" :key="func">
+                <CardPastor
+                  class="no-margin"
+                  v-if="func.functionName === 'Pastor'"
+                  :func="func"
+                  :funcIndex="funcIndex"
+                  @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                  :showAddUserButton="false"
+                  :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                />
+              </div>
+              <q-separator class="q-mb-md"/>
+            </div>
             <div class="text-h5 no-margin q-px-md">
-              Dados
+              Dados:
             </div>
             <q-chip>{{ organismConfigName }}</q-chip>
             <div v-if="fields.length" class="text-h5">
@@ -348,6 +363,7 @@
             </div>
             <div class="text-right">
               <q-btn
+                v-if="canEdit === true"
                 label="Salvar dados"
                 color="primary"
                 unelevated
@@ -375,12 +391,14 @@
             </div>
             <div v-for="(func, funcIndex) in functions" :key="func">
               <CardFunction
+                v-if="func.functionName !== 'Pastor'"
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
                 :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                 :isPastor="func.functionName === 'Pastor' ? false : true"
+                :canEdit="canEdit === true ? true : false"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -1058,7 +1076,9 @@
 
 <script>
 import { defineComponent } from "vue";
+import utils from "../../boot/utils";
 import CardFunction from '../../components/CardFunction.vue'
+import CardPastor from '../../components/CardPastor.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1076,7 +1096,7 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail,
-    DialogPhoneMobileEmail
+    DialogPhoneMobileEmail, CardPastor
   },
   data() {
     return {
@@ -1144,6 +1164,7 @@ export default defineComponent({
           name: ''
         },
       },
+      canEdit: false,
       relations: null,
       addPerson: {
         dialogOpen: false,
@@ -1199,7 +1220,8 @@ export default defineComponent({
       dialogInsertNewOrganismGroup: {
         open: false,
         data: null
-      }
+      },
+      existsPastor: false
     };
   },
   mounted() {
@@ -1223,6 +1245,23 @@ export default defineComponent({
     }
   },
   methods: {
+    verifyIfHasPastor() {
+      this.functions.forEach((func) => {
+        if (func.functionName === 'Pastor') {
+          this.existsPastor = true
+        }
+      })
+    },
+    verifyCanEdit() {
+      this.functions.forEach((func) => {
+        func.users.forEach((user) => {
+          const userInfo = utils.presentUserInfo()
+          if (user.userId === userInfo.user_id) {
+            this.canEdit = true
+          } 
+        })
+      })
+    },
     async updateOrganism () {
       const opt = {
         route: '/desktop/users/updateOrganismData',
@@ -1582,6 +1621,8 @@ export default defineComponent({
         this.organismConfigName = r.data.organismData.organismConfigName
         this.relations = r.data.relations
         this.visionSelected = 'data'
+        this.verifyCanEdit()
+        this.verifyIfHasPastor()
       });
     },
     getInputType(type) {

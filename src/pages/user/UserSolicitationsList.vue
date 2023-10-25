@@ -314,7 +314,7 @@
           <div class="fade" v-if="!hideDiv">
             <q-card-section align="center">
               <div class="text-h6">
-                Deseja cancelar sua participação? 
+                Deseja cancelar sua solicitação? 
               </div>
               <div class="subtitle2 q-px-md">
                 Organismo {{ dialogOpenSolicitation.data.organismName }}

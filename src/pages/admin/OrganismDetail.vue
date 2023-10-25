@@ -68,7 +68,22 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <q-separator class="q-mx-md" />
+              <div v-if="existsPastor === true">
+                <q-separator class="q-mx-md q-mb-md" />
+                <div class="text-h5 no-margin q-px-md">Pastores:</div>
+                <div v-for="func in functions" :key="func">
+                  <CardPastor
+                    class="no-margin"
+                    v-if="func.functionName === 'Pastor'"
+                    :func="func"
+                    :funcIndex="funcIndex"
+                    @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                    :showAddUserButton="false"
+                    :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                  />
+                </div>
+              </div>
+            <q-separator class="q-mx-md" />
               <div v-if="organismData.fields.length" class="text-h5">
                 Dados
               </div>
@@ -353,6 +368,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
+                v-if="func.functionName !== 'Pastor'"
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
@@ -857,6 +873,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import CardPastor from '../../components/CardPastor.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -875,7 +892,7 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
-    DialogPhoneMobileEmail
+    DialogPhoneMobileEmail, CardPastor
   },
   data() {
     return {
@@ -1004,6 +1021,7 @@ export default defineComponent({
       relations: [],
       loadingState: false,
       organismRelationId: '',
+      existsPastor: false
     };
   },
   watch: {
@@ -1029,6 +1047,13 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    verifyIfHasPastor() {
+      this.functions.forEach((func) => {
+        if (func.functionName === 'Pastor') {
+          this.existsPastor = true
+        }
+      })
+    },
     goToParentOrganismDetail(parent) {
       const organismRelationId = parent.organismRelationId
       this.$router.replace('/admin/organismDetail?organismId=' + organismRelationId)
@@ -1312,6 +1337,7 @@ export default defineComponent({
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
           this.relations = r.data.relations
+          this.verifyIfHasPastor()
         }
       });
     },
