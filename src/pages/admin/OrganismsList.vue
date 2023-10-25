@@ -15,7 +15,6 @@
         :rows-per-page-options="[10, 20, 30, 50]" 
         :filter="filter" 
         v-model:pagination="pagination"
-        :visible-columns="collumns" 
         @request="nextPage">
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
@@ -60,10 +59,10 @@
             </div>
           </div>
         </template>
-        <template #body-cell-nome="props">
+        <template #body-cell-city="props">
           <q-td :props="props">
-            <div class="text-bold">{{ props.row.nome }}</div>
             <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
+            <div class="text-caption" v-else-if="!props.row.endereco">Não consta</div>
           </q-td>
         </template>
         <template #body-cell-organismParentName="props">
@@ -130,7 +129,7 @@ export default defineComponent({
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
-      collumns: ['nome', 'apelido', 'organismConfigName', 'organismParentName'],
+      collumns: ['nome', 'apelido', 'organismConfigName', 'organismParentName', 'city'],
       organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",

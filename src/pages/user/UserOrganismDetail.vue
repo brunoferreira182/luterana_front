@@ -1272,7 +1272,7 @@ export default defineComponent({
         data: {},
         open: false,
       },
-      existsPastor: false
+      existsPastor: false,
     };
   },
   mounted() {
