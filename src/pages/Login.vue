@@ -88,6 +88,14 @@
               />
             </div>
           </q-carousel-slide>
+          <q-carousel-slide name="loading" class="text-center">
+            <div>
+              <q-spinner-dots
+                color="primary"
+                size="2em"
+              />
+            </div>
+          </q-carousel-slide>
           <q-carousel-slide name="newPassword" class="no-wrap flex-center">
             <div class="padding q-gutter-lg q-mt-none">
               <q-input
@@ -202,7 +210,8 @@ export default defineComponent({
   components: {
     InputEmail
   },
-  beforeMount() {
+  mounted() {
+    this.verifyQuery()
     // this.$logoAndColors.reset()
     // this.$q.localStorage.clear()
     // if (this.$route.query.cId) {
@@ -210,8 +219,14 @@ export default defineComponent({
     //   this.getCompanyColors()
     // }
   },
-
   methods: {
+    verifyQuery() {
+      if (this.$route.query.k) {
+        console.log("sou um macaco")
+        this.loginStep = "loading"
+        
+      }
+    },
     // async getCompanyColors () {
     //   await this.$logoAndColors.getFromServer(this.$route.query.cId)
     // },
@@ -223,7 +238,7 @@ export default defineComponent({
       const opt = {
         route: '/np',
         body: {
-          user: this.formData.user,
+          // user: this.formData.user,
           token: CryptoJS.AES.encrypt(
             this.newPassword.pass1,
             this.key
@@ -345,7 +360,10 @@ export default defineComponent({
       this.$router.push("/usercreatelogin");
     },
     async clkEnter () {
-      if (this.formData.user === "" || this.formData.password === "") {
+      if (
+        // this.formData.user === "" ||
+        this.formData.password === ""
+      ) {
         this.$q.notify("Favor preencher a token");
         return;
       }
