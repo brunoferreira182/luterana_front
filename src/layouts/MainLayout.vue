@@ -296,7 +296,6 @@ export default defineComponent({
     utils.getPermissions().then((r) => {
       this.permissions = r.data;
       this.activeRightDrawer = this.permissions[0].id;
-      console.log(this.permissions,'this.permissions')
       if (
         this.permissions.length === 1
       ) {
@@ -341,7 +340,6 @@ export default defineComponent({
       return;
     },
     clkOptionMenu(item) {
-      console.log(item, 'label')
       this.$router.push(item.route);
       this.active = item.label;
     },
