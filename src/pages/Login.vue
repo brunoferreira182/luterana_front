@@ -88,14 +88,6 @@
               />
             </div>
           </q-carousel-slide>
-          <q-carousel-slide name="loading" class="text-center">
-            <div>
-              <q-spinner-dots
-                color="primary"
-                size="2em"
-              />
-            </div>
-          </q-carousel-slide>
           <q-carousel-slide name="newPassword" class="no-wrap flex-center">
             <div class="padding q-gutter-lg q-mt-none">
               <q-input
@@ -210,8 +202,7 @@ export default defineComponent({
   components: {
     InputEmail
   },
-  mounted() {
-    this.verifyQuery()
+  beforeMount() {
     // this.$logoAndColors.reset()
     // this.$q.localStorage.clear()
     // if (this.$route.query.cId) {
@@ -219,14 +210,8 @@ export default defineComponent({
     //   this.getCompanyColors()
     // }
   },
+
   methods: {
-    verifyQuery() {
-      if (this.$route.query.k) {
-        console.log("sou um macaco")
-        this.loginStep = "loading"
-        
-      }
-    },
     // async getCompanyColors () {
     //   await this.$logoAndColors.getFromServer(this.$route.query.cId)
     // },
@@ -238,7 +223,7 @@ export default defineComponent({
       const opt = {
         route: '/np',
         body: {
-          // user: this.formData.user,
+          user: this.formData.user,
           token: CryptoJS.AES.encrypt(
             this.newPassword.pass1,
             this.key
@@ -360,10 +345,7 @@ export default defineComponent({
       this.$router.push("/usercreatelogin");
     },
     async clkEnter () {
-      if (
-        // this.formData.user === "" ||
-        this.formData.password === ""
-      ) {
+      if (this.formData.user === "" || this.formData.password === "") {
         this.$q.notify("Favor preencher a token");
         return;
       }
@@ -404,3 +386,76 @@ export default defineComponent({
   background-color: #ccc;
 }
 </style>
+// Alterações 25-10-2023
+// verifyQuery() {
+//   if (this.$route.query.k) {
+//     this.loginStep = "loading"
+//     const querySplit = this.$route.query.k.split(':')
+//     this.key = querySplit[0] + ':' + querySplit[1]
+//     this.$q.localStorage.set('$k', querySplit[0])
+//     this.formData.password = querySplit[2]
+//     this.clkEnter()
+//   }
+// },
+// clkNext() {
+//   if (this.formData.user === "") {
+//     this.$q.notify("Favor preencher o login");
+//     return;
+//   } else if (!this.emailValidated) {
+//     this.$q.notify("Favor preencher um login válido");
+//     return;
+//   }
+//   this.btnNextLoading = true;
+//   const opt = {
+//     route: '/getKey',
+//     body: {
+//       login: this.formData.user
+//     }
+//   }
+//   useFetch(opt).then(r => {
+//     this.btnNextLoading = false;
+//     if (r.error) {
+//       this.$q.notify(r.errorMessage);
+//       if (r.errorType === "keyNonExistent") this.loginStep = "login";
+//       return;
+//     }
+//     this.$q.notify("Sua token foi enviada por e-mail. Utilize ela para acessar o sistema.")
+//     this.loginStep = "password";
+//     this.$q.localStorage.set('$k', r.data.key)
+//     this.key = r.data.key;
+//   });
+// },
+// async clkEnter () {
+//   if (
+//     // this.formData.user === "" ||
+//     this.formData.password === ""
+//   ) {
+//     this.$q.notify("Favor preencher a token");
+//     return;
+//   }
+//   this.btnEnterLoading = true;
+//   const opt = {
+//     route: '/makeLogin',
+//     body: {
+//       token: CryptoJS.AES.encrypt(
+//         this.formData.password,
+//         this.key
+//         ).toString()
+//     }
+//   }
+//   useFetch(opt).then(async r => {
+//     if (r.error) {
+//       this.btnEnterLoading = false;
+//       if (r.errorType === "passwordNonExistent") this.loginStep = "login";
+//       if (r.errorType === "wrongUserPassword") this.$q.notify('Usuário ou token incorretos')
+//       return;
+//     }
+//     await utils.registerUserDataAndKey({
+//       data: r.data,
+//       key: this.key
+//     })
+//     // await this.$logoAndColors.getFromServer(this.$route.query.cId)
+//     this.btnEnterLoading = false;
+//     this.$router.push("/");
+//   });
+// },

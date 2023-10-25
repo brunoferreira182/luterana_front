@@ -37,9 +37,11 @@ const useFetch = async ({
     const ud = JSON.parse(
       CryptoJS.AES.decrypt(udCr, key).toString(CryptoJS.enc.Utf8)
     );
+    console.log(token)
     token = ud.token + ":" + ud.userId;
   }
   if (token) {
+    console.log(token)
     axios.defaults.headers.common["Authorization"] = token;
   }
   axios.defaults.headers.common["cid"] = COMPANY_ID;
