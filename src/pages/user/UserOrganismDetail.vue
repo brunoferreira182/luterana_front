@@ -371,7 +371,7 @@
                 @click="updateOrganism"
               />
             </div>
-            <div class="text-right">
+            <!-- <div class="text-right">
                 <q-btn
                   v-if="!this.$route.query.e === 'f'"
                   label="Salvar dados"
@@ -380,7 +380,7 @@
                   class="q-mt-md"
                   @click="updateOrganism"
                 />
-              </div>
+              </div> -->
           </div>
           <q-separator vertical class="q-ma-md" />
           <div class="col-4">
@@ -530,6 +530,7 @@
               @click="dialogInsertNewOrganismGroup.open = true"
               label="Adicionar grupo"
               color="primary"
+              v-if="canEdit"
             />
             
             <div class="text-caption text-subtitle1" v-if="childOrganismsData.length">
@@ -899,6 +900,7 @@
               </div>
               <div class="text-right">
                 <q-btn
+                  v-if="canEdit"
                   label="Salvar dados"
                   color="primary"
                   unelevated
@@ -922,7 +924,7 @@
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
                 :isMobile="isMobile"
-                :showInviteUserButton="func.functionName === 'Pastor' ? false : true"
+                :showInviteUserButton="canEdit"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
@@ -1308,6 +1310,7 @@ export default defineComponent({
       })
     },
     verifyCanEdit() {
+      this.canEdit = false
       this.functions.forEach((func) => {
         func.users.forEach((user) => {
           const userInfo = utils.presentUserInfo()

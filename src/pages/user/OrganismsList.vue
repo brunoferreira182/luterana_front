@@ -100,7 +100,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.$q.loading.hide();
+    // this.$q.loading.hide();
   },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
