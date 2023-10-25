@@ -386,3 +386,76 @@ export default defineComponent({
   background-color: #ccc;
 }
 </style>
+// Alterações 25-10-2023
+// verifyQuery() {
+//   if (this.$route.query.k) {
+//     this.loginStep = "loading"
+//     const querySplit = this.$route.query.k.split(':')
+//     this.key = querySplit[0] + ':' + querySplit[1]
+//     this.$q.localStorage.set('$k', querySplit[0])
+//     this.formData.password = querySplit[2]
+//     this.clkEnter()
+//   }
+// },
+// clkNext() {
+//   if (this.formData.user === "") {
+//     this.$q.notify("Favor preencher o login");
+//     return;
+//   } else if (!this.emailValidated) {
+//     this.$q.notify("Favor preencher um login válido");
+//     return;
+//   }
+//   this.btnNextLoading = true;
+//   const opt = {
+//     route: '/getKey',
+//     body: {
+//       login: this.formData.user
+//     }
+//   }
+//   useFetch(opt).then(r => {
+//     this.btnNextLoading = false;
+//     if (r.error) {
+//       this.$q.notify(r.errorMessage);
+//       if (r.errorType === "keyNonExistent") this.loginStep = "login";
+//       return;
+//     }
+//     this.$q.notify("Sua token foi enviada por e-mail. Utilize ela para acessar o sistema.")
+//     this.loginStep = "password";
+//     this.$q.localStorage.set('$k', r.data.key)
+//     this.key = r.data.key;
+//   });
+// },
+// async clkEnter () {
+//   if (
+//     // this.formData.user === "" ||
+//     this.formData.password === ""
+//   ) {
+//     this.$q.notify("Favor preencher a token");
+//     return;
+//   }
+//   this.btnEnterLoading = true;
+//   const opt = {
+//     route: '/makeLogin',
+//     body: {
+//       token: CryptoJS.AES.encrypt(
+//         this.formData.password,
+//         this.key
+//         ).toString()
+//     }
+//   }
+//   useFetch(opt).then(async r => {
+//     if (r.error) {
+//       this.btnEnterLoading = false;
+//       if (r.errorType === "passwordNonExistent") this.loginStep = "login";
+//       if (r.errorType === "wrongUserPassword") this.$q.notify('Usuário ou token incorretos')
+//       return;
+//     }
+//     await utils.registerUserDataAndKey({
+//       data: r.data,
+//       key: this.key
+//     })
+//     // await this.$logoAndColors.getFromServer(this.$route.query.cId)
+//     this.btnEnterLoading = false;
+//     this.$router.push("/");
+//   });
+// },

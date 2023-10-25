@@ -162,7 +162,7 @@
     </div>
     <q-item-section class="q-pa-xs">
       <q-btn
-        v-if="showInviteUserButton && canEdit === true"
+        v-if="showInviteUserButton"
         label="Convidar pessoa"
         color="primary"
         dense
@@ -192,7 +192,7 @@
 
 <script setup>
 // import { defineComponent } from "vue";
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor', 'canEdit'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 

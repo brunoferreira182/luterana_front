@@ -92,7 +92,7 @@
                   :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                 />
               </div>
-              <q-separator class="q-mb-md"/>
+              <q-separator class="q-my-md"/>
             </div>
             <div class="text-h5 no-margin q-px-md">
               Dados:
@@ -363,7 +363,7 @@
             </div>
             <div class="text-right">
               <q-btn
-                v-if="canEdit === true"
+                v-if="canEdit"
                 label="Salvar dados"
                 color="primary"
                 unelevated
@@ -396,9 +396,8 @@
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                 :showAddUserButton="false"
-                :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                :showInviteUserButton="canEdit"
                 :isPastor="func.functionName === 'Pastor' ? false : true"
-                :canEdit="canEdit === true ? true : false"
               />
               <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
                 <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
