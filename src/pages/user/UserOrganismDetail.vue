@@ -347,6 +347,15 @@
               </div>
             </div>
             <div class="text-right">
+              <q-btn
+                label="Salvar dados"
+                color="primary"
+                unelevated
+                class="q-mt-md"
+                @click="updateOrganism"
+              />
+            </div>
+            <div class="text-right">
                 <q-btn
                   v-if="!this.$route.query.e === 'f'"
                   label="Salvar dados"
@@ -560,7 +569,8 @@
             <div v-else class="text-subtitle1">
               Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
             </div>
-          </div>
+            
+        </div>
         </div>
       </div>
 
