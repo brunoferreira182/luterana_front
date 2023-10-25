@@ -119,13 +119,6 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.apelido,
         sortable: true,
       },
-      // {
-      //   name: "data_de_criacao",
-      //   align: "left",
-      //   label: "Data de criação",
-      //   field: (row) => row.data_de_criacao.dateLocale,
-      //   sortable: true,
-      // },
       {
         name: "organismConfigName",
         align: "left",
@@ -138,13 +131,6 @@ export const useTableColumns = defineStore("tableColumns", {
         align: "left",
         label: "Organismo superior",
         field: "organismParentName",
-        sortable: true,
-      },
-      {
-        name: "endereco",
-        align: "left",
-        label: "Cidade",
-        field: "endereco",
         sortable: true,
       },
     ],

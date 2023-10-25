@@ -63,7 +63,6 @@
         <template #body-cell-nome="props">
           <q-td :props="props">
             <div class="text-bold">{{ props.row.nome }}</div>
-            <div>Apelido: {{ props.row.apelido }}</div>
             <div class="text-caption" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
           </q-td>
         </template>
@@ -130,7 +129,7 @@ export default defineComponent({
     return {
       columnsData: useTableColumns().organismList,
       organismList: [],
-      collumns: ['nome', 'organismConfigName', 'organismParentName'],
+      collumns: ['nome', 'apelido', 'organismConfigName', 'organismParentName'],
       organismsConfigsNamesList: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
