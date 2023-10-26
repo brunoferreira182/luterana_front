@@ -24,28 +24,6 @@
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
           </q-btn>
         </div>
-        <!-- <div class="col text-right q-gutter-sm">
-          <q-btn
-            rounded
-            no-caps
-            unelevated
-            icon="person"
-            color="secondary"
-            label="Dados pessoais"
-            @click="visionSelected = 'personalData'"
-            :outline="visionSelected === 'personalData' ? false : true"
-          />
-          <q-btn
-            rounded
-            no-caps
-            unelevated
-            icon="school"
-            color="secondary"
-            label="Títulos"
-            @click="visionSelected = 'titles'"
-            :outline="visionSelected === 'titles' ? false : true"
-          />
-        </div> -->
       </div>
       <q-separator />
       
@@ -122,7 +100,7 @@
                     Solicitar alterações
                   </q-btn>
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                    <div  class="row justify-center">
+                    <!-- <div  class="row justify-center">
                       <q-item-section avatar>
                         <q-img 
                           style="border-radius: 1rem"
@@ -131,7 +109,7 @@
                           height="208px"
                         />
                       </q-item-section>
-                    </div>
+                    </div> -->
                     <div class="row justify-center q-pa-md">
                       <div class="col-4 q-px-lg">
                         <q-file
