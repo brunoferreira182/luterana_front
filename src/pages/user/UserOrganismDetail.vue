@@ -2,8 +2,20 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
+        <q-btn
+          v-if="!isMobile" 
+          icon="arrow_back_ios"
+          flat
+          class="q-px-sm"
+          dense
+          @click="$router.back()"
+        >
+          <q-tooltip>
+            Voltar
+          </q-tooltip>
+        </q-btn>
         <div class="col-6">
-          <div class="text-h5">
+          <div :class="`${isMobile ? 'text-subtitle' : 'text-h5'}`" >
             {{ organismName }}
           </div>
           <div class="text-caption text-capitalize">
@@ -31,16 +43,6 @@
             @click="visionSelected = 'groups'"
             :outline="visionSelected === 'groups' ? false : true"
           />
-          <q-btn
-            rounded
-            no-caps
-            unelevated
-            icon="hotel_class"
-            color="secondary"
-            label="Vínculos"
-            @click="visionSelected = 'links'"
-            :outline="visionSelected === 'links' ? false : true"
-          />
         </div>
         <div class="row text-right q-gutter-sm q-mt-sm " v-if="!$route.query.isChild && isMobile">
           <q-btn
@@ -63,25 +65,15 @@
             @click="visionSelected = 'groups'"
             :outline="visionSelected === 'groups' ? false : true"
           />
-          <q-btn
-            rounded
-            no-caps
-            unelevated
-            icon="hotel_class"
-            color="secondary"
-            label="Vínculos"
-            @click="visionSelected = 'links'"
-            :outline="visionSelected === 'links' ? false : true"
-          />
         </div>
       </div>
       <q-separator class="q-mx-md" v-if="!isMobile"/>
       <div v-show="visionSelected === 'data'">
         <div class="row justify-around q-pa-md" v-if="!isMobile">
           <div class="col-7 q-gutter-md q-mt-sm" align="start" >
-            <div v-if="existsPastor === true">
-              <div class="text-h5 no-margin q-px-md">Pastores:</div>
-              <div v-for="func in functions" :key="func">
+            <div v-if="existsPastor">
+              <div class="text-h5 no-margin q-px-md" >Pastores:</div>
+              <div v-for="(func,funcIndex) in functions" :key="func">
                 <CardPastor
                   class="no-margin"
                   v-if="func.functionName === 'Pastor'"
@@ -361,26 +353,58 @@
                 />
               </div>
             </div>
+            <div class="q-ma-lg justify-start" v-if="childOrganismsData">
+              <div class="q-gutter-md">
+                <div class="text-h5 col"> Vínculos</div>
+                <div class="text-caption text-h6" >
+                  Organismos vínculados:
+                </div>
+                <q-list v-if="relations && relations.length">
+                  <q-item
+                    clickable
+                    v-for="link in relations"
+                    :key="link"
+                    style="border-radius: 1rem;"
+                    class="bg-blue-grey-2 q-my-sm q-col-gutteter-md"
+                    @click="clkOpenDialogOrganismDetail(link)"
+                  >
+                    <q-item-section>
+                      <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                      <q-item-label class="text-subtitle1">{{ link.organismConfigName }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div v-else class="text-subtitle1">
+                  Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
+                </div>
+            
+              </div>
+    
+            </div>
             <div class="text-right">
               <q-btn
                 v-if="canEdit"
                 label="Salvar dados"
                 color="primary"
                 unelevated
+                no-caps
+                rounded
                 class="q-mt-md"
                 @click="updateOrganism"
               />
             </div>
             <div class="text-right">
-                <q-btn
-                  v-if="!this.$route.query.e === 'f'"
-                  label="Salvar dados"
-                  color="primary"
-                  unelevated
-                  class="q-mt-md"
-                  @click="updateOrganism"
-                />
-              </div>
+              <q-btn
+                v-if="!this.$route.query.e === 'f'"
+                label="Salvar dados"
+                color="primary"
+                no-caps
+                rounded
+                unelevated
+                class="q-mt-md"
+                @click="updateOrganism"
+              />
+            </div>
           </div>
           <q-separator vertical class="q-ma-md" />
           <div class="col-4">
@@ -515,8 +539,336 @@
           </div>
         </div>
       </div>
-
-
+      <q-dialog 
+        v-model="dialogChildOrganism.open" 
+        @hide="clearChildOrganismDetailOnDialog" 
+        @before-show="getChildOrganismDetailOnDialog"
+      >
+        <q-card style="width: 800px; max-width: 100vw; border-radius: 1rem">
+          <q-btn icon="close" size="large" flat round dense v-close-popup/>
+          <div class="row justify-center q-py-lg" >
+            <div class="text-h5 text-center">
+              {{ dialogChildOrganism.orgData.organismName }}
+              <div class="text-caption text-capitalize">
+                {{ dialogChildOrganism.orgData.organismConfigName }}
+              </div>
+            </div>
+            <div class="col-12 q-gutter-md q-mt-sm" align="start" >
+              <div class="text-h6">
+                Dados
+              </div>
+              <div v-for="(field, fieldIndex) in dialogChildOrganism.orgFields" :key="fieldIndex">
+                <div v-if="
+                  field.type.type === 'string'
+                  || field.type.type === 'int'
+                  || field.type.type === 'date'
+                  || field.type.type === 'cpf'
+                  || field.type.type === 'cnpj'
+                  || field.type.type === 'money'
+                  || field.type.type === 'textarea'
+                  "
+                >
+                  <q-input
+                    :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
+                    :hint="field.hint"
+                    :mask="field.type.mask"
+                    v-model="field.value"
+                    outlined
+                    readonly
+                  >
+                  </q-input>
+                </div>
+                <q-file
+                  v-if="field.type.type === 'image'"
+                  v-model="files"
+                  @rejected="onRejected"
+                  :filter="checkFileType"
+                  label="Clique aqui para adicionar imagem de perfil"
+                  outlined
+                  @input="saveProfilePhoto()"
+                  readonly
+                >
+                  <template #append>
+                    <q-icon name="attach_file" />
+                  </template>
+                </q-file>
+                <div class="text-right" v-if="field.type.type === 'options'">
+                  <q-select
+                    outlined
+                    :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
+                    option-label="optionName"
+                    emit-value
+                    map-options
+                    :hint="field.hint"
+                    v-model="field.value"
+                    :options="field.options"
+                    readonly
+                  >
+                  </q-select>
+                </div>
+                <div v-if="field.type.type === 'attach'">
+                  <q-item class="bg-grey-3" style="border-radius: 1rem">
+                    <q-item-section>
+                      <q-item-label class="text-h5">
+                        {{ field.label }}
+                      </q-item-label>
+                      <q-item-label class="text-subtitle1">
+                        {{ field.hint }}
+                      </q-item-label>
+                      <q-item-label>
+                        <q-file
+                          class="bg-white"
+                          v-model="field.value"
+                          label="Escolha um ou mais arquivos"
+                          outlined
+                          use-chips
+                          multiple
+                          :readonly="field.onlyAdm"
+                        >
+                          <template v-slot:prepend>
+                            <q-icon name="attach_file" />
+                          </template>
+                        </q-file>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </div>
+                <q-checkbox
+                  v-if="field.type.type === 'boolean'"
+                  class="q-pt-lg"
+                  :label="field.label"
+                  :hint="field.hint"
+                  v-model="field.value"
+                  readonly
+                />
+                <div v-if="field.type.type === 'multiple_select'">
+                  <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
+                    <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
+                    <div class="q-pa-sm">
+                      <q-btn
+                        v-if="field.multiple || (!field.value || field.value.length === 0)"
+                        icon="add"
+                        color="primary"
+                        outline
+                        rounded
+                        @click="addDoubleSelection(fieldIndex)"
+                        no-caps
+                        disable
+                      >
+                        Adicionar nova seleção dupla
+                      </q-btn>
+                    </div>
+                    <div>
+                      <div v-if="field.value">
+                        <div
+                          v-for="(value, valueIndex) in field.value"
+                          :key="valueIndex"
+                          class="row wrap justify-left q-pa-sm items-left content-center"
+                        >
+                          <q-select 
+                            v-for="(select, selectIndex) in field.selects"
+                            :key="'internalSelect' + selectIndex"
+                            :label="select.label"
+                            option-label="options"
+                            emit-value
+                            map-options
+                            v-model="organismData.fields[fieldIndex].value[valueIndex][selectIndex]"
+                            :options="select.options"
+                            class="col-5"
+                          />
+                          <q-btn
+                            icon="delete"
+                            class="q-ml-lg"
+                            rounded
+                            flat
+                            color="red"
+                            @click="organismData.fields[fieldIndex].value.splice(valueIndex, 1)" 
+                            />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="field.type.type === 'organism'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <!-- <div class="text-body">{{ field.label }}</div> -->
+                    <q-btn
+                      :label="`Adicionar ${field.label}`"
+                      no-caps
+                      rounded
+                      flat
+                      color="primary"
+                      icon="add"
+                      v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                      @click="clkOpenAddOrganismDialog(fieldIndex)"
+                      disable
+                    />
+                    <CardOrganism
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      @remove="removeThisOrganism"
+                      :disableButtons="true"
+                    />
+                  </div>
+                </div>
+                <div v-if="field.type.type === 'address'">
+                  <q-btn
+                    label="Endereço"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkOpenAddressDialog(fieldIndex)"
+                    class="q-mt-xs"
+                    disable
+                  />
+                  <CardAddress
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    :disableButtons="true"
+                    @edit="editThisAddress"
+                    @remove="removeThisAddress"
+                  />
+                </div>
+                <div v-if="field.type.type === 'person'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <div class="text-body">{{ field.label }}</div>
+                    <CardPerson
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      @remove="removeThisPerson"
+                      :disableButtons="true"
+                    />
+                  </div>
+                  <q-btn
+                    :label="`Adicionar ${field.label}`"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    icon="add"
+                    v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                    @click="clkOpenAddPersonDialog(fieldIndex)"
+                    disable
+                  />
+                </div>
+                <div v-if="field.type.type === 'maritalStatus'">
+                  <div v-if="field.value && field.value.length > 0">
+                    <div class="text-body">{{ field.label }}</div>
+                    <CardMaritalStatus
+                      :data="field"
+                      :fieldIndex="fieldIndex"
+                      :disableButtons="true"
+                      @remove="removeThisPerson"
+                    />
+                  </div>
+                  <q-btn
+                    :label="`Modificar ${field.label}`"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    icon="add"
+                    v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                    @click="clkAddMaritalStatus(fieldIndex)"
+                    disable
+                  />
+                </div>
+                <div v-if="field.type.type === 'bank_data'">
+                  <q-btn
+                    label="Adicionar dados bancários"
+                    no-caps
+                    rounded
+                    flat
+                    color="primary"
+                    @click="clkAddBankData(fieldIndex)"
+                    icon="add"
+                    disable
+                  />
+                  <CardBankData
+                    :data="field"
+                    :fieldIndex="fieldIndex"
+                    @edit="editBankData"
+                    :disableButtons="true"
+                    @remove="removeBankData"
+                  />
+                </div>
+                <div v-if="
+                  field.type.type === 'email'
+                  || field.type.type === 'phone'
+                  || field.type.type === 'mobile'
+                  "
+                >
+                  <q-btn
+                    :label="`${field.type.label}`"
+                    no-caps
+                    flat
+                    v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                    icon="add"
+                    color="primary"
+                    rounded
+                    @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
+                    class="q-mt-xs"
+                    disable
+                  />
+                  <CardPhoneMobileEmail
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    :disableButtons="true"
+                    @edit="editPhoneMobileEmail"
+                    @remove="removePhoneMobileEmail"
+                    :showHeader="field.value && field.value.length > 0 ? field.label : false"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-h6 q-pa-md">
+            Funções
+          </div>
+          <q-card
+            style="border-radius: 1rem"
+            class="bg-grey-3 q-ma-sm q-pa-sm q"
+            flat
+            v-for="orgFunc in dialogChildOrganism.orgFunc"
+            :key="orgFunc"
+          >
+            <div class="text-subtitle1 text-subtitle2 q-px-md">
+              {{ orgFunc.functionName }}
+            </div>
+            <div v-if="orgFunc.users && orgFunc.users.length">
+              <q-item
+                v-for="orgUser in orgFunc.users"
+                :key="orgUser"
+                style="border-radius: 0.5rem;"
+                class="bg-white q-ma-xs"
+              >
+                <q-item-section avatar>
+                  <q-icon name="account_circle" size="38px" color="grey"/>
+                </q-item-section>
+                <q-item-section class="text-wrap" lines="2" v-if="orgUser.userName">
+                  {{ orgUser.userName }}
+                  <div class="text-caption text-grey-7" v-if="orgUser.dates && orgUser.dates.initialDate">
+                    Data início:
+                    {{ formatDate(orgUser.dates.initialDate) }}
+                  </div>
+                  <div
+                    v-if="orgUser.dates && orgUser.dates.finalDate"
+                    class="text-caption text-grey-7"
+                  >
+                    Data Fim: {{ formatDate(orgUser.dates.finalDate) }}
+                  </div>
+                </q-item-section>
+              </q-item>
+            </div>
+            <div class="q-px-md " v-else>
+              Nenhum usuário nesta função
+            </div>
+          </q-card>
+        </q-card>
+      </q-dialog>
 
       <div v-show="visionSelected === 'groups'">
         <div class="q-ma-lg row justify-start" v-if="childOrganismsData">
@@ -608,37 +960,6 @@
           </div>
         </div>
       </div>
-      <div v-show="visionSelected === 'links'" v-if="!isMobile">
-        <div class="q-ma-lg justify-start" v-if="childOrganismsData">
-          <div class="q-gutter-md">
-            <div class="text-h5 col"> Vínculos</div>
-            <div class="text-caption text-h6" >
-              Organismos vínculados:
-            </div>
-            <q-list v-if="relations && relations.length">
-              <q-item
-                clickable
-                v-for="link in relations"
-                :key="link"
-                style="border-radius: 1rem;"
-                class="bg-blue-grey-2 q-my-sm q-col-gutteter-md"
-                @click="goToOrganismDetail(link.organismRelationId)"
-              >
-                <q-item-section>
-                  <q-item-label> {{ link.organismRelationName }}</q-item-label>
-                  <q-item-label class="text-subtitle1">{{ link.organismConfigName }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-            <div v-else class="text-subtitle1">
-              Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
-            </div>
-            
-        </div>
-        </div>
-      </div>
-
-
 
       <div v-if="isMobile" class="q-gutter-md">
         <q-list bordered v-show="visionSelected === 'data'">
@@ -893,16 +1214,40 @@
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
                   />
                 </div>
-
-                
-
+              </div>
+              <div class="q-px-sm justify-start" v-if="childOrganismsData">
+                <div class="q-gutter-md">
+                  <div class="text-h4 col"> Vínculos</div>
+                  <div class="text-h6 " >
+                    Organismos vínculados:
+                  </div>
+                  <q-list v-if="relations && relations.length">
+                    <q-item
+                      clickable
+                      v-for="link in relations"
+                      :key="link"
+                      style="border-radius: 1rem;"
+                      class="bg-blue-grey-2 q-my-sm"
+                      @click="clkOpenDialogOrganismDetail(link)"
+                    >
+                      <q-item-section>
+                        <q-item-label> {{ link.organismRelationName }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                  <div v-else class="text-caption">
+                    Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
+                  </div>
+                </div>
               </div>
               <div class="text-right">
                 <q-btn
                   label="Salvar dados"
                   color="primary"
                   unelevated
-                  class="q-mt-md"
+                  rounded
+                  no-caps
+                  class="q-mt-md full-width"
                   @click="updateOrganism"
                 />
               </div>
@@ -1038,33 +1383,7 @@
             </div>
           </q-expansion-item>
         </q-list>
-        <div v-show="visionSelected === 'links'">
-          <div class="q-ma-lg justify-start" v-if="childOrganismsData">
-            <div class="q-gutter-md">
-              <div class="text-h4 col"> Vínculos</div>
-              <div class="text-h6 " >
-                Organismos vínculados:
-              </div>
-              <q-list v-if="relations.length">
-                <q-item
-                  clickable
-                  v-for="link in relations"
-                  :key="link"
-                  style="border-radius: 1rem;"
-                  class="bg-blue-grey-2 q-my-sm"
-                  @click="goToOrganismDetail(link.organismRelationId)"
-                >
-                  <q-item-section>
-                    <q-item-label> {{ link.organismRelationName }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <div v-else class="text-caption">
-              Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
-            </div>
-            </div>
-          </div>
-        </div>
+  
       </div>
       <DialogAddress
         :open="dialogConfirmAddress.open"
@@ -1272,6 +1591,13 @@ export default defineComponent({
         open: false,
       },
       existsPastor: false,
+      dialogChildOrganism:{
+        open: false,
+        orgData: {},
+        organismRelationId: '',
+        orgFunc: [],
+        orgFields: [],
+      }
     };
   },
   mounted() {
@@ -1286,15 +1612,38 @@ export default defineComponent({
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
   },
-  watch: {
-    $route (to) {
-      if (to.path === '/user/userOrganismDetail' || to.path === '/user/userOrganismChildDetail') {
-        this.getOrganismDetailById();
-        // this.getOrganismsConfigs()
-      }
-    }
-  },
   methods: {
+    clearChildOrganismDetailOnDialog(){
+      this.dialogChildOrganism.orgData = {}
+      this.dialogChildOrganism.open = false
+      this.dialogChildOrganism.organismRelationId = ''
+    },
+    getChildOrganismDetailOnDialog() {
+      const childOrganismId = this.dialogChildOrganism.organismRelationId
+      console.log(childOrganismId, 'OKDSPOK CIHLD')
+      const opt = {
+        route: "/desktop/commonUsers/getOrganismDetailById",
+        body: {
+          organismId: childOrganismId,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.dialogChildOrganism.orgData = r.data.organismData
+          this.dialogChildOrganism.orgFields = r.data.organismData.fields
+          this.dialogChildOrganism.orgFunc = r.data.functions
+        }
+      });
+    },
+    clkOpenDialogOrganismDetail(link) {
+      this.dialogChildOrganism.open = true
+      this.dialogChildOrganism.organismRelationId = link.organismRelationId
+      console.log(this.dialogChildOrganism.organismRelationId)
+    },
     clkOpenDialogDeleteMissionPoint(child){
       console.log(child)
       this.dialogDeleteMissionPoint.open = true
@@ -1302,7 +1651,7 @@ export default defineComponent({
     },
     verifyIfHasPastor() {
       this.functions.forEach((func) => {
-        if (func.functionName === 'Pastor') {
+        if (func.functionName === 'Pastor' && func.users.length) {
           this.existsPastor = true
         }
       })
@@ -1336,27 +1685,23 @@ export default defineComponent({
     },
     async clkCreateNewChildOrganism(item){
       const opt = {
-          route: "/desktop/commonUsers/createChildOrganism",
-          body: {
-            organismData: {
-              organismParentId: this.$route.query.organismId,
-              organismConfigId: item.organismChildConfigId,
-            },
+        route: "/desktop/commonUsers/createChildOrganism",
+        body: {
+          organismData: {
+            organismParentId: this.$route.query.organismId,
+            organismConfigId: item.organismChildConfigId,
           },
-        };
-        this.$q.loading.show()
-        const r = await useFetch(opt)
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um erro. Tente novamente.')
-          return
-        }
-        this.dialogInsertNewOrganismGroup.open = false
-        this.getChildOrganismsById()
-
-    },
-    goToOrganismDetail(id) {
-      this.$router.push("/user/userOrganismDetail?organismId=" + id + "&e=f")
+        },
+      };
+      this.$q.loading.show()
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro. Tente novamente.')
+        return
+      }
+      this.dialogInsertNewOrganismGroup.open = false
+      this.getChildOrganismsById()
     },
     getChildOrganismsConfigsByOrganismId() {
       const organismId = this.$route.query.organismId

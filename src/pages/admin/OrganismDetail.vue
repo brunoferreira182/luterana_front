@@ -574,10 +574,10 @@
                   </q-card>
                 </q-dialog>
                 <q-dialog v-model="dialogLinks" @hide="clearDialogAndFunctions">
-                  <q-card>
-                      <div class=" q-mt-sm text-h6 text-center">
-                        Vínculos
-                      </div>
+                  <q-card style="width: 500px; border-radius: 1rem;">
+                    <div class=" q-mt-sm text-h6 text-center">
+                      Vínculos
+                    </div>
                     <q-card-section>
                       <div>
                         <div>
@@ -592,7 +592,7 @@
                             v-model="organismSelected"
                             hint="Faça uma busca para visualizar os organismos disponíveis"
                             @update:model-value="getOrganismsList"
-                            >
+                          >
                             <template #append>
                               <q-icon v-if="organismSelected !== ''" name="close" @click="organismSelected = ''" class="cursor-pointer" />
                               <q-icon name="search" />
@@ -622,32 +622,32 @@
                           <div class="text-subtitle2 q-ma-sm q-mt-lg">
                             Organismos vinculados:
                           </div>
-                        <q-list v-if="relations">
-                          <q-item
-                            clickable
-                            v-for="link, i in relations"
-                            :key="link"
-                            style="border-radius: 1rem;"
-                            class="bg-grey-3 q-ma-sm"
-                            @click="goToParentOrganismDetail(link)"
-                          >
-                            <q-item-section>
-                              <q-item-label class="text-subtitle1"> {{ link.organismRelationName }}</q-item-label>
-                              <q-item-label>{{ link.organismConfigName }}</q-item-label>
-                            </q-item-section>
-                            <q-item-section side top>
-                              <q-btn
-                              icon="delete"
-                              color="red"
-                              flat
-                              rounded
-                              style="width: 10px;"
-                              @click="removeRelation(i)"
-                              >
-                            </q-btn>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
+                          <q-list v-if="relations">
+                            <q-item
+                              clickable
+                              v-for="link, i in relations"
+                              :key="link"
+                              style="border-radius: 1rem;"
+                              class="bg-grey-3 q-ma-sm"
+                              @click="goToParentOrganismDetail(link)"
+                            >
+                              <q-item-section>
+                                <q-item-label class="text-subtitle1"> {{ link.organismRelationName }}</q-item-label>
+                                <q-item-label>{{ link.organismConfigName }}</q-item-label>
+                              </q-item-section>
+                              <q-item-section side top>
+                                <q-btn
+                                icon="delete"
+                                color="red"
+                                flat
+                                rounded
+                                style="width: 10px;"
+                                @click="removeRelation(i)"
+                                >
+                              </q-btn>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
                         </div>
                       </div>
                     </q-card-section>
