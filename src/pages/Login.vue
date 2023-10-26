@@ -88,73 +88,6 @@
               />
             </div>
           </q-carousel-slide>
-          <q-carousel-slide name="newPassword" class="no-wrap flex-center">
-            <div class="padding q-gutter-lg q-mt-none">
-              <q-input
-                outlined
-                v-model="newPassword.pass1"
-                label="Token"
-                placeholder="Digite sua nova token"
-                hint="Com letras e números"
-                type="text"
-                autofocus
-              />
-              <q-input
-                outlined
-                v-model="newPassword.pass2"
-                label="Confirme a senha"
-                placeholder="Deve ser igual à senha digitada anteriormente"
-                type="text"
-                @keyup.enter="clkEnter"
-                @keyup="checkEqualPassword"
-                :rules="[
-                  val => this.checkEqualPassword(val) || 'Senhas diferentes'
-                ]"
-              />
-              <q-btn color="primary" label="Voltar" flat @click="clkBack" />
-              <q-btn
-                color="primary"
-                label="Cadastrar"
-                @click="registerNewPassword"
-                :loading="btnEnterLoading"
-                unelevated
-                no-caps
-              />
-            </div>
-          </q-carousel-slide>
-          <q-carousel-slide name="forgotPassword" class="no-wrap flex-center">
-            <div class="q-gutter-lg q-mt-none">
-              <div class="text-subtitle1 text-secondary">
-                Para recuperar sua senha digite seu email abaixo
-              </div>
-              <InputEmail
-                label="Digite seu email"
-                field-hint="email@email.com"
-                id-field="forgotPasswordUser"
-                @onChange="inputChange"
-                :value-field="formData.forgotPasswordUser"
-                @keyup.enter="btnCheckEmail"
-                autofocus
-              ></InputEmail>
-              <q-btn
-                color="primary"
-                label="Voltar"
-                flat
-                @click="loginStep = 'login'"
-                :disable="btncheckEmailLoading"
-                unelevated
-                no-caps
-              />
-              <q-btn
-                color="primary"
-                label="Próximo"
-                @click="btnCheckEmail"
-                :loading="btncheckEmailLoading"
-                unelevated
-                no-caps
-              />
-            </div>
-          </q-carousel-slide>
         </q-carousel>
       </div>
     </div>
@@ -203,101 +136,41 @@ export default defineComponent({
     InputEmail
   },
   beforeMount() {
-    // this.$logoAndColors.reset()
     // this.$q.localStorage.clear()
-    // if (this.$route.query.cId) {
-    //   this.imageUrl = this.$attachmentsAddress() + 'logo_cid_' + this.$route.query.cId + '.png'
-    //   this.getCompanyColors()
-    // }
+  },
+  mounted () {
+    if (this.$route.query.k) {
+      this.step = 'loading'
+      this.makeLoginWithQuery()
+    }
   },
 
   methods: {
-    // async getCompanyColors () {
-    //   await this.$logoAndColors.getFromServer(this.$route.query.cId)
-    // },
-    registerNewPassword() {
-      if (this.newPassword.pass1 !== this.newPassword.pass2) {
-        this.$q.notify("As senhas não conferem. Verifique e tente novamente.");
-        return;
-      }
-      const opt = {
-        route: '/np',
-        body: {
-          user: this.formData.user,
-          token: CryptoJS.AES.encrypt(
-            this.newPassword.pass1,
-            this.key
-          ).toString(),
-          token2: CryptoJS.AES.encrypt(
-            this.newPassword.pass2,
-            this.key
-          ).toString()
-        }
-      }
-      useFetch(opt).then(r => {
-        if (r.error) {
-          this.$q.notify(this.errorMessages(r.errorType));
-          return;
-        }
-        this.$q.notify(
-          "Senha cadastrada com sucesso. Faça o login para continuar."
-        );
-        this.loginStep = "login";
-      });
-    },
-    checkEqualPassword(val) {
-      if (this.newPassword.pass1 !== val) {
-        this.newPassword.checkEqual = false;
-        return false;
-      } else {
-        this.newPassword.checkEqual = true;
-        return true;
-      }
-    },
-    btnCheckEmail() {
-      if (this.formData.forgotPasswordUser === "") {
-        this.$q.notify("Favor preencher o email");
-        return;
-      } else if (!this.forgotPasswordValidated) {
-        this.$q.notify("Favor preencher um email válido");
-        return;
-      }
-      this.btncheckEmailLoading = true;
-      // const opt = {
-      //   method: "POST",
-      //   route: this.authRoute() + "/checkEmailExists",
-      //   body: {
-      //     email: this.formData.forgotPasswordUser
-      //   }
+    makeLoginWithQuery () {
+      // if (this.formData.user === "" || this.formData.password === "") {
+      //   this.$q.notify("Favor preencher a token");
+      //   return;
       // }
       const opt = {
-        route: '/checkEmailExists',
+        route: '/makeLoginWQ',
         body: {
-          email: this.formData.forgotPasswordUser
+          k: this.$route.query.k
         }
       }
-      useFetch(opt).then(r => {
-        this.btnNextLoading = false;
+      useFetch(opt).then(async r => {
         if (r.error) {
-          this.$q.notify(this.errorMessages(r.errorType));
+          this.btnEnterLoading = false;
+          if (r.errorType === "passwordNonExistent") this.loginStep = "login";
+          if (r.errorType === "wrongUserPassword") this.$q.notify('Usuário ou token incorretos')
           return;
         }
-        this.loginStep = "password";
-        this.key = r.data.key;
+        await utils.registerUserDataAndKey({
+          data: r.data,
+          key: r.data.token
+        })
+        this.btnEnterLoading = false;
+        this.$router.push("/");
       });
-      this.btncheckEmailLoading = false;
-    },
-    clkForgotPassword() {
-      this.loginStep = "forgotPassword";
-      this.formData.forgotPasswordUser = this.formData.user
-    },
-    inputChange(d) {
-      this.formData[d.id] = d.value;
-      if (d.id === "user") {
-        this.emailValidated = d.validated;
-      } else if (d.id === "forgotPasswordUser") {
-        this.forgotPasswordValidated = d.validated;
-      }
     },
     clkNext() {
       if (this.formData.user === "") {
@@ -324,25 +197,9 @@ export default defineComponent({
         this.$q.notify(
           "Sua token foi enviada por e-mail. Utilize ela para acessar o sistema."
         );
-        // comentado
-        // if (r.data.info === "makeNewPassword") {
-        //   this.loginStep = "newPassword";
-        //   this.key = r.data.key;
-        //   this.$q.notify(
-        //     "Não há senha cadastrada para o seu login. Crie uma acima."
-        //   );
-        //   return;
-        // }
         this.loginStep = "password";
-        // comentado
         this.key = r.data.key;
       });
-    },
-    clkBack() {
-      this.loginStep = "login";
-    },
-    clkCreateLogin() {
-      this.$router.push("/usercreatelogin");
     },
     async clkEnter () {
       if (this.formData.user === "" || this.formData.password === "") {
@@ -371,11 +228,27 @@ export default defineComponent({
           data: r.data,
           key: this.key
         })
-        // await this.$logoAndColors.getFromServer(this.$route.query.cId)
         this.btnEnterLoading = false;
         this.$router.push("/");
       });
     },
+
+    inputChange(d) {
+      this.formData[d.id] = d.value;
+      if (d.id === "user") {
+        this.emailValidated = d.validated;
+      } else if (d.id === "forgotPasswordUser") {
+        this.forgotPasswordValidated = d.validated;
+      }
+    },
+    
+    clkBack() {
+      this.loginStep = "login";
+    },
+    clkCreateLogin() {
+      this.$router.push("/usercreatelogin");
+    },
+    
   }
 })
 </script>
