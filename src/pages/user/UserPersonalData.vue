@@ -188,33 +188,24 @@
                           </q-select>
                         </div>
     
-                        <div v-if="field.type.type === 'attach'">
-                          <q-item class="bg-grey-3" style="border-radius: 1rem">
-                            <q-item-section>
-                              <q-item-label class="text-h5">
-                                {{ field.label }}
-                              </q-item-label>
-                              <q-item-label class="text-subtitle1">
-                                {{ field.hint }}
-                              </q-item-label>
-                              <q-item-label>
-                                <q-file
-                                  class="bg-white"
-                                  v-model="field.value"
-                                  label="Escolha um ou mais arquivos"
-                                  outlined
-                                  use-chips
-                                  multiple
-                                  :readonly="tabs.onlyAdm"
-                                >
-                                  <template v-slot:prepend>
-                                    <q-icon name="attach_file" />
-                                  </template>
-                                </q-file>
-                              </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </div>
+                        <!-- <div v-if="field.type.type === 'attach'">
+                          <q-btn
+                          :label="`Adicionar ${field.label}`"
+                          no-caps
+                          rounded
+                          flat
+                          color="primary"
+                          icon="add"
+                          v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                          :disable="tabs.onlyAdm"
+                          @click="clkOpenAttachDialog(fieldIndex, tabsIndex)"
+                        />
+                        <CardAttach
+                          :data="field"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                        />
+                        </div> -->
     
                         <q-checkbox
                           v-if="field.type.type === 'boolean'"
@@ -378,7 +369,6 @@
                             :disable="tabs.onlyAdm"
                           /> -->
                         </div>
-    
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
                             label="Adicionar dados bancários"
@@ -398,7 +388,6 @@
                             @remove="removeBankData"
                           />
                         </div>
-    
                         <div v-if="
                           field.type.type === 'email'
                           || field.type.type === 'phone'
@@ -425,7 +414,6 @@
                             @remove="removePhoneMobileEmail"
                           />
                         </div>
-    
                         <div v-if="field.type.type === 'formation'">
                           <q-btn
                             label="Formação"
@@ -446,7 +434,6 @@
                             @edit="editFormation"
                             @remove="removeFormation"
                           />
-                          
                         </div>
                         <div v-if="field.type.type === 'social_network'">
                           <q-btn
@@ -469,7 +456,6 @@
                             @remove="removeSocialNetwork"
                           />
                         </div>
-    
                       </div>
                     </div>
                   </div>
@@ -581,34 +567,24 @@
                         </q-select>
                       </div>
   
-                      <div v-if="field.type.type === 'attach'">
-                        <q-item class="bg-grey-3" style="border-radius: 1rem">
-                          <q-item-section>
-                            <q-item-label class="text-h5">
-                              {{ field.label }}
-                            </q-item-label>
-                            <q-item-label class="text-subtitle1">
-                              {{ field.hint }}
-                            </q-item-label>
-                            <q-item-label>
-                              <q-file
-                                class="bg-white"
-                                v-model="field.value"
-                                label="Escolha um ou mais arquivos"
-                                outlined
-                                use-chips
-                                multiple
-                                :readonly="tabs.onlyAdm"
-                              >
-                                <template v-slot:prepend>
-                                  <q-icon name="attach_file" />
-                                </template>
-                              </q-file>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </div>
-  
+                      <!-- <div v-if="field.type.type === 'attach'">
+                        <q-btn
+                          :label="`Adicionar ${field.label}`"
+                          no-caps
+                          rounded
+                          flat
+                          color="primary"
+                          icon="add"
+                          v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                          :disable="tabs.onlyAdm"
+                        />
+                        <CardAttach
+                          :data="field.value"
+                          :fieldIndex="fieldIndex"
+                          :tabsIndex="tabsIndex"
+                          @edit="editAttach"
+                        />
+                      </div> -->
                       <q-checkbox
                         v-if="field.type.type === 'boolean'"
                         class="q-pt-lg"
@@ -617,7 +593,6 @@
                         v-model="field.value"
                         :readonly="tabs.onlyAdm"
                       />
-  
                       <div v-if="field.type.type === 'multiple_select'">
                         <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
                           <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
@@ -899,6 +874,12 @@
         @addOrganism="confirmAddOrganism"
       />
 
+      <!-- <DialogAddAttach
+        :open="dialogAddAttach.open"
+        @closeDialog="clearAttachInputs"
+        @addAttach="confirmAddAttach"
+      /> -->
+
       <q-dialog v-model="deleteTitle.openDialog">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -1106,6 +1087,8 @@ import DialogFormation from '../../components/DialogFormation.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
 import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
+// import CardAttach from '../../components/CardAttach.vue'
+// import DialogAddAttach from '../../components/DialogAddAttach.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1254,6 +1237,13 @@ export default defineComponent({
         open: false,
         data: null,
         fields: null
+      },
+      dialogAddAttach: {
+        open: false,
+        data: null,
+        tabsIndex: null,
+        fieldIndex: null,
+        ivalue: null
       }
     };
   },
@@ -1265,6 +1255,27 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    editAttach(fieldIndex, tabsIndex, field, value, ivalue) {
+      this.dialogAddAttach.open = true,
+      this.dialogAddAttach.fieldIndex = fieldIndex
+      this.dialogAddAttach.tabsIndex = tabsIndex
+      this.dialogAddAttach.data = {...value}
+      this.dialogAddAttach.ivalue = ivalue
+    },
+    confirmAddAttach(attach) {
+      this
+          .userData
+          .userDataTabs[this.dialogAddAttach.tabsIndex]
+          .fields[this.dialogAddAttach.fieldIndex]
+          .value = attach._value.__key
+      this.dialogAddAttach.open = false
+    },
+    clkOpenAttachDialog(fieldIndex, tabsIndex, ivalue) {
+      this.dialogAddAttach.fieldIndex = fieldIndex
+      this.dialogAddAttach.tabsIndex = tabsIndex
+      this.dialogAddAttach.ivalue = ivalue
+      this.dialogAddAttach.open = true
+    },
     editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddSocialNetwork = {
         open: true,
