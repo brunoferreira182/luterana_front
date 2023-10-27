@@ -1270,7 +1270,12 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify(r.errorMessage);
         } else {
-          this.$q.notify("Usuário cadastrado com sucesso!");
+          if (this.selectedType === 'user') {
+            this.$q.notify("Usuário cadastrado com sucesso!");
+          }
+          if (this.selectedType === 'pastor') {
+            this.$q.notify("Pastor cadastrado com sucesso!");
+          }
           this.$router.push("/admin/usersList");
         }
       });
