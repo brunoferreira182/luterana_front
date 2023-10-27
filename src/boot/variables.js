@@ -10,6 +10,7 @@ const MODE_APP_SERVER = "local";
 const PROJECT_NAME = "luterana_system";
 const DEFAULT_SERVER_NAME = "application";
 const SYSTEM_COMPLETE = false;
+const MODE_SERVER = 'app'
 
 export {
   MODE_MASTER_SERVER,
@@ -21,5 +22,6 @@ export {
   DEFAULT_SERVER_NAME,
   SYSTEM_COMPLETE,
   VERSION,
-  BUILD
+  BUILD,
+  MODE_SERVER
 };
