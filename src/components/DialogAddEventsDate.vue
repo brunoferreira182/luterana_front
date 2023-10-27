@@ -1,83 +1,120 @@
 <template>
   <q-dialog :model-value="props.open" @hide="closeDialog">
-    <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-      <q-card-section>
-        <div class="text-h6 text-center">Selecione o organismo</div>
-      </q-card-section>
-      <q-card-section class="q-gutter-md">
-        <q-select
-          v-model="organismSelected"
-          filled
-          use-input
-          label="Nome do organismo"
-          option-label="organismName"
-          :options="options"
-          @filter="getOrganismByString"
-          :option-value="(item) => item"
-        >
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                Nenhum resultado
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
-      </q-card-section>
-      <q-card-actions align="center">
+    <q-carousel
+      v-model="data.step"
+      transition-prev="scale"
+      transition-next="scale"
+      swipeable
+      animated
+      control-color="primary"
+    >
+      <q-carousel-slide name="frequency" class="column no-wrap flex-center">
+        <div>
+          <div>
+            Selecione a frequência do culto
+          </div>
+          <q-select
+            v-model="data.selectedOption"
+            :options="selectOptions"
+            label="Frequência"
+          />
+          <q-btn
+            class="full-width"
+            color="primary"
+            label="Próximo"
+            @click="clkNext1"
+            :loading="btnNextLoading"
+            unelevated
+            no-caps
+          />
+        </div>
+      </q-carousel-slide>
+      <q-carousel-slide name="dayOption" class="column no-wrap flex-center">
+        <div class="q-mt-md text-center">
+          <div class="text-h6">
+            Quais os dias do mês 
+          </div>
+          <q-input
+            class="q-pa-sm"
+            v-model="data.daysOfMonth"
+            outlined
+            >
+          </q-input>
+          <q-btn
+            class="full-width"
+            color="primary"
+            label="Próximo"
+            @click="clkNext2"
+            :loading="btnNextLoading"
+            unelevated
+            no-caps
+          />
+        </div>
+      </q-carousel-slide>
+      <q-carousel-slide name="time" class="column no-wrap flex-center">
+        <div class="text-h6">
+            Quais os dias do mês 
+        </div>
+        <q-input
+          class="q-pa-sm"
+          v-model="data.daysOfMonth"
+          outlined
+          >
+        </q-input>
         <q-btn
-          flat
-          label="Voltar"
-          no-caps
+          class="full-width"
           color="primary"
-          @click="closeDialog"
-        />
-        <q-btn
-          unelevated
-          rounded
           label="Confirmar"
+          @click="clkNext3"
+          :loading="btnNextLoading"
+          unelevated
           no-caps
-          color="primary"
-          @click="confirmAddOrganism"
         />
-      </q-card-actions>
-    </q-card>
+      </q-carousel-slide>
+    </q-carousel>
   </q-dialog>
 </template>
 
 <script setup>
-import useFetch from "../boot/useFetch";
+// import useFetch from "../boot/useFetch";
 // import utils from '../../boot/utils'
 import { ref } from 'vue'
-
+const data = ref({
+  step: 'frequency',
+  selectedOption: null,
+  daysOfMonth: null,
+  time: null
+})
+const selectOptions = ['2x Semana', 'Semanal', 'Quinzenal', 'Mensal']
 const props = defineProps(['open'])
 const emits = defineEmits(['closeDialog', 'addOrganism'])
 
-const options = ref(null)
-const organismSelected = ref(null)
-
-function confirmAddOrganism () {
-  emits('addOrganism', organismSelected.value)
-}
-
-function getOrganismByString(val, update) {
-  if (val < 2) return
-  const opt = {
-    route: '/desktop/adm/getOrganismsNames',
-    body: {
-      searchString: val
-    }
+function clkNext1() {
+  if (!data.value.selectedOption) {
+    console.log("Ainda não")
+    return
   }
-  useFetch(opt).then(r => {
-    if (r.error) return this.$q.notify(r.errorMessage)
-    update(() => {
-      options.value = r.data
-    })
-  })
-}
+  data.value.step = 'dayOption'
+};
+
+function clkNext2() {
+  if (!data.value.daysOfMonth) {
+    console.log("Ainda não")
+    return
+  }
+  data.value.step = 'time'
+};
+
+function clkNext3() {
+  if (!data.value.time) {
+    console.log("Ainda não")
+    return
+  }
+  console.log("concluiu a etapa de seleção")
+};
 
 function closeDialog() {
   emits('closeDialog')
-}
+};
 
 </script>
