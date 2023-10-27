@@ -80,21 +80,40 @@
                 >
                   <q-item-label>
                     <div class="text-caption">
-                      {{ org.organismConfigName }}
+                      {{ org.organismParentLocal }}
                     </div>
                   </q-item-label>
                 </q-item-section>
-                <q-item-section class="q-pl-sm">
+                <q-item-section 
+                  class="q-pl-sm text-capitalize text-weight-bold"
+                >
                   <q-item-label>
-                    <span class="text-weight-bold">{{ org.nome }}</span>
+                    <span>{{ org.organismParentName }}</span>
                   </q-item-label>
                 </q-item-section>
               </template>
               <q-card>
-                <q-card-section>
-                  <!-- Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
-                  commodi magni quaerat ex numquam, dolorum officiis modi facere maiores architecto suscipit iste
-                  eveniet doloribus ullam aliquid. -->
+                <q-separator></q-separator>
+                <q-card-section  class="no-padding">
+                  <div class="q-px-sm q-ma-sm text-subtitle text-center" style="font-size: 20px;">
+                    Vínculos
+                  </div>
+                  <q-list separator v-if="org.childrenData && org.childrenData.length">
+                    <q-item
+                      v-for="item in org.childrenData"
+                      :key="item"
+                    >
+                      <q-item-section align="center" class="text-wrap">
+                        <q-item-label style="font-size: 18px;">
+                          {{ item.organismChildName }}
+                        </q-item-label>
+                        {{ item.organismChildConfig }}
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                  <div v-else class="text-center">
+                    Nenhum vínculo
+                  </div>
                 </q-card-section>
               </q-card>
             </q-expansion-item> 
@@ -168,7 +187,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
-    this.getAllOrganismsByString();
+    this.getMyOrganisms();
   },
   methods: {
     clkOpenUserOrganismDetail(org) {
@@ -187,11 +206,11 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getAllOrganismsByString();
+      this.getMyOrganisms();
     },
-    getAllOrganismsByString() {
+    getMyOrganisms() {
       const opt = {
-        route: "/desktop/commonUsers/getAllOrganismsByString",
+        route: "/desktop/commonUsers/getMyOrganisms",
         body: {
           searchString: this.filter,
           page: this.pagination.page,
@@ -228,7 +247,7 @@ export default defineComponent({
       } else if(selectedOrganism.organismConfigName === this.userOrganismList[nameIndex].organismConfigName) {
         this.selectFilter = null
       }
-      this.getAllOrganismsByString()
+      this.getMyOrganisms()
     },
   },
 });
