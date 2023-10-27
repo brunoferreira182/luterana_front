@@ -68,7 +68,7 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <div v-if="existsPastor === true">
+              <div v-if="existsPastor">
                 <q-separator class="q-mx-md q-mb-md" />
                 <div class="text-h5 no-margin q-px-md">Pastores:</div>
                 <div v-for="func in functions" :key="func">
@@ -1049,7 +1049,7 @@ export default defineComponent({
   methods: {
     verifyIfHasPastor() {
       this.functions.forEach((func) => {
-        if (func.functionName === 'Pastor') {
+        if (func.functionName === 'Pastor' && func.users.length) {
           this.existsPastor = true
         }
       })
