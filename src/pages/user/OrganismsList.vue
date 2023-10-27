@@ -114,23 +114,6 @@
                   <div v-else class="text-center">
                     Nenhum vínculo
                   </div>
-                  <!-- <div>
-                    Vínculos:
-                  </div>
-                  <div
-                    
-                    class="row"
-                  >
-                    <div class="col">
-                      
-                    </div>
-                    <div class="text-h6">
-                      {{ item.organismChildName }}
-                    </div>
-                    <div>
-                      {{ item.organismChildConfig }}
-                    </div>
-                  </div> -->
                 </q-card-section>
               </q-card>
             </q-expansion-item> 
