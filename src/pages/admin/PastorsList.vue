@@ -45,6 +45,19 @@
                 </template>
               </q-input>
             </div>
+            <div class="col text-right">
+              <q-btn
+                @click="$router.push('/admin/createUser?userType=pastor')"
+                color="primary"
+                unelevated
+                no-caps
+                rounded
+                icon="add"
+                class="q-pa-sm"
+              >
+                Criar pastor
+              </q-btn>
+            </div>
           </div>
         </template>
         <template #body-cell-document="props">
