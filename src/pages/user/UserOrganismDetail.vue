@@ -555,7 +555,7 @@
         @before-show="getChildOrganismDetailOnDialog"
       >
         <q-card style="width: 800px; max-width: 100vw; border-radius: 1rem">
-          <q-btn icon="close" size="large" flat round dense v-close-popup/>
+          <q-btn icon="close" size="large" class="q-ma-sm" flat round dense v-close-popup/>
           <div class="row justify-center q-py-lg" >
             <div class="text-h5 text-center">
               {{ dialogChildOrganism.orgData.organismName }}
@@ -860,16 +860,6 @@
                 </q-item-section>
                 <q-item-section class="text-wrap" lines="2" v-if="orgUser.userName">
                   {{ orgUser.userName }}
-                  <div class="text-caption text-grey-7" v-if="orgUser.dates && orgUser.dates.initialDate">
-                    Data início:
-                    {{ formatDate(orgUser.dates.initialDate) }}
-                  </div>
-                  <div
-                    v-if="orgUser.dates && orgUser.dates.finalDate"
-                    class="text-caption text-grey-7"
-                  >
-                    Data Fim: {{ formatDate(orgUser.dates.finalDate) }}
-                  </div>
                 </q-item-section>
               </q-item>
             </div>
