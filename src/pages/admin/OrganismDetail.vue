@@ -359,6 +359,19 @@
                     @remove="removeFormation"
                   />
                 </div>     
+                <div v-if="field.type.type === 'services_per_week'">
+                  <q-btn
+                    label="Quantidade de cultos"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkAddServicesPerWeek(fieldIndex)"
+                    class="q-mt-xs"
+                  />
+                </div>
               </div>
             </div>
             <q-separator vertical class="q-ma-md" />
@@ -998,6 +1011,9 @@ export default defineComponent({
           pix: ''
         }
       },
+      dialogAddServices: {
+        open: true,
+      },
       functions: [],
       organismList: [],
       organismLinks: [],
@@ -1047,6 +1063,9 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    clkAddServicesPerWeek() {
+      this.dialogAddServices.open = true
+    },
     verifyIfHasPastor() {
       this.functions.forEach((func) => {
         if (func.functionName === 'Pastor' && func.users.length) {
