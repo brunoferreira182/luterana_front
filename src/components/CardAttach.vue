@@ -5,9 +5,11 @@
     separator
   >
   <q-item
+    v-for="(value, iValue) in props.data.value"
+    :key="value + iValue"
   >
     <q-item-section>
-      {{ props.data.value }} 
+      {{ value.attach }} 
     </q-item-section>
     <q-item-section side>
       <q-item-label>

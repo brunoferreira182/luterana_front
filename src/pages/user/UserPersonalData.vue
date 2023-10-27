@@ -188,7 +188,7 @@
                           </q-select>
                         </div>
     
-                        <div v-if="field.type.type === 'attach'">
+                        <!-- <div v-if="field.type.type === 'attach'">
                           <q-btn
                           :label="`Adicionar ${field.label}`"
                           no-caps
@@ -204,8 +204,10 @@
                           :data="field"
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
+                          @remove="removeAttach"
+                          @edit="editAttach"
                         />
-                        </div>
+                        </div> -->
     
                         <q-checkbox
                           v-if="field.type.type === 'boolean'"
@@ -567,7 +569,7 @@
                         </q-select>
                       </div>
   
-                      <div v-if="field.type.type === 'attach'">
+                      <!-- <div v-if="field.type.type === 'attach'">
                         <q-btn
                           :label="`Adicionar ${field.label}`"
                           no-caps
@@ -583,8 +585,9 @@
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
                           @edit="editAttach"
+                          @remove="removeAttach"
                         />
-                      </div>
+                      </div> -->
                       <q-checkbox
                         v-if="field.type.type === 'boolean'"
                         class="q-pt-lg"
@@ -1087,8 +1090,8 @@ import DialogFormation from '../../components/DialogFormation.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
 import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
-import CardAttach from '../../components/CardAttach.vue'
-import DialogAddAttach from '../../components/DialogAddAttach.vue'
+// import CardAttach from '../../components/CardAttach.vue'
+// import DialogAddAttach from '../../components/DialogAddAttach.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1243,7 +1246,8 @@ export default defineComponent({
         data: null,
         tabsIndex: null,
         fieldIndex: null,
-        ivalue: null
+        iValue: null,
+        action: 'add'
       }
     };
   },
@@ -1255,28 +1259,38 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
-    editAttach(fieldIndex, tabsIndex, field, value, ivalue) {
+    editAttach(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddAttach.open = true,
       this.dialogAddAttach.fieldIndex = fieldIndex
       this.dialogAddAttach.tabsIndex = tabsIndex
       this.dialogAddAttach.data = {...value}
-      this.dialogAddAttach.ivalue = ivalue
+      this.dialogAddAttach.iValue = iValue
+      this.dialogAddAttach.action = 'edit'
     },
     confirmAddAttach(attach) {
-      if (!this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value) {
-        this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value[ivalue] = []
-      }
-      this
+      if (this.dialogAddAttach.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value) {
+          this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value = []
+        }
+        this
           .userData
           .userDataTabs[this.dialogAddAttach.tabsIndex]
           .fields[this.dialogAddAttach.fieldIndex]
-          .value = attach._value.__key
-      this.dialogAddAttach.open = false
+          .value.push({attach: attach._value.__key})
+        this.dialogAddAttach.open = false
+      } else if (this.dialogAddAttach.action === 'edit') {
+        console.log(this.dialogAddAttach.iValue)
+        this
+          .userData
+          .userDataTabs[this.dialogAddAttach.tabsIndex]
+          .fields[this.dialogAddAttach.fieldIndex]
+          .value[this.dialogAddAttach.iValue] = attach._value.__key
+      }
     },
-    clkOpenAttachDialog(fieldIndex, tabsIndex, ivalue) {
+    clkOpenAttachDialog(fieldIndex, tabsIndex, iValue) {
       this.dialogAddAttach.fieldIndex = fieldIndex
       this.dialogAddAttach.tabsIndex = tabsIndex
-      this.dialogAddAttach.ivalue = ivalue
+      this.dialogAddAttach.iValue = iValue
       this.dialogAddAttach.open = true
     },
     editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
@@ -1289,6 +1303,20 @@ export default defineComponent({
         iValue,
         field
       }
+    },
+    removeAttach(fieldIndex, tabsIndex, field, value, iValue) {
+      console.log(this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value)
+        console.log(iValue)
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
     },
     removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
       this
