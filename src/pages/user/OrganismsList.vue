@@ -1,7 +1,7 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-table
+      <!-- <q-table
         flat
         class="bg-accent"
         title="Minha rede"
@@ -52,21 +52,43 @@
           <q-td :props="props">
           </q-td>
         </template>
-      </q-table>
-      <!-- <div class="text-left">
-        <q-btn 
-          v-for="(organism, nameIndex) in userOrganismList" 
-          :key="organism"
-          size="md"
-          class="q-ma-sm"
-          :style="{ textTransform: 'capitalize', color: organism.organismStyle }"
-          outline
-          rounded
-          @click="filterOrganisms(nameIndex)"
-        >
-        {{ organism.organismConfigName }}
-        </q-btn>
-      </div> -->
+      </q-table> -->
+      <q-expansion-item
+        v-for="org in userOrganismList"
+        :key="org"
+        group="somegroup"
+        dense
+        default-opened
+        class="bg-cyan-1"
+      >
+        <template v-slot:header>
+          <q-item-section avatar>
+            {{ org.userOrganismList.length }}
+          </q-item-section>
+
+          <q-item-section>
+            {{ org.nome }}
+          </q-item-section>
+
+          <q-item-section side>
+            <div class="row items-center">
+              <q-btn @click="console.log('cuzinho')" icon="star" color="red" size="24px">
+                <q-tooltip>
+                  oapskpodas
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </q-item-section>
+        </template>
+
+        <q-card>
+          <q-card-section>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
+            commodi magni quaerat ex numquam, dolorum officiis modi facere maiores architecto suscipit iste
+            eveniet doloribus ullam aliquid.
+          </q-card-section>
+        </q-card>
+      </q-expansion-item>
     </q-page>
   </q-page-container>
 </template>
