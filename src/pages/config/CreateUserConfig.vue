@@ -109,7 +109,7 @@
                     v-if="fieldIndex > 1 || tabIndex > 0"
                     icon="delete"
                     round
-                    @click="tabCard.fields.splice(i, 1)"
+                    @click="tabCard.fields.splice(fieldIndex, 1)"
                     flat
                     color="negative"
                   />
