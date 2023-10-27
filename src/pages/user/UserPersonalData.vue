@@ -100,16 +100,16 @@
                     Solicitar alterações
                   </q-btn>
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                    <!-- <div  class="row justify-center">
+                    <div  class="row justify-center">
                       <q-item-section avatar>
                         <q-img 
                           style="border-radius: 1rem"
-                          :src="userImg !== null ? userPhoto : avatar" 
+                          :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
                           width="208px" 
                           height="208px"
                         />
                       </q-item-section>
-                    </div> -->
+                    </div>
                     <div class="row justify-center q-pa-md">
                       <div class="col-4 q-px-lg">
                         <q-file
@@ -188,7 +188,7 @@
                           </q-select>
                         </div>
     
-                        <!-- <div v-if="field.type.type === 'attach'">
+                        <div v-if="field.type.type === 'attach'">
                           <q-btn
                           :label="`Adicionar ${field.label}`"
                           no-caps
@@ -205,7 +205,7 @@
                           :fieldIndex="fieldIndex"
                           :tabsIndex="tabsIndex"
                         />
-                        </div> -->
+                        </div>
     
                         <q-checkbox
                           v-if="field.type.type === 'boolean'"
@@ -567,7 +567,7 @@
                         </q-select>
                       </div>
   
-                      <!-- <div v-if="field.type.type === 'attach'">
+                      <div v-if="field.type.type === 'attach'">
                         <q-btn
                           :label="`Adicionar ${field.label}`"
                           no-caps
@@ -584,7 +584,7 @@
                           :tabsIndex="tabsIndex"
                           @edit="editAttach"
                         />
-                      </div> -->
+                      </div>
                       <q-checkbox
                         v-if="field.type.type === 'boolean'"
                         class="q-pt-lg"
@@ -722,7 +722,7 @@
                               </q-item-section>
                             </q-item>
                           </q-list>
-                        <!-- <div v-if="field.value && field.value.length > 0">
+                        <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
                           <CardMaritalStatus
                             :data="field"
@@ -741,7 +741,7 @@
                           v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                           @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                           :disable="tabs.onlyAdm"
-                        /> -->
+                        />
                       </div>
                       <div v-if="field.type.type === 'bank_data'">
                         <q-btn
@@ -874,11 +874,11 @@
         @addOrganism="confirmAddOrganism"
       />
 
-      <!-- <DialogAddAttach
+      <DialogAddAttach
         :open="dialogAddAttach.open"
         @closeDialog="clearAttachInputs"
         @addAttach="confirmAddAttach"
-      /> -->
+      />
 
       <q-dialog v-model="deleteTitle.openDialog">
         <q-card style="border-radius: 1rem; width: 400px">
@@ -1087,8 +1087,8 @@ import DialogFormation from '../../components/DialogFormation.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
 import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
-// import CardAttach from '../../components/CardAttach.vue'
-// import DialogAddAttach from '../../components/DialogAddAttach.vue'
+import CardAttach from '../../components/CardAttach.vue'
+import DialogAddAttach from '../../components/DialogAddAttach.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1097,6 +1097,7 @@ import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
 import avatar from '../../assets/avatar.svg'
+import utils from '../../boot/utils'
 </script>
 
 <script>
@@ -1263,6 +1264,9 @@ export default defineComponent({
       this.dialogAddAttach.ivalue = ivalue
     },
     confirmAddAttach(attach) {
+      if (!this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value) {
+        this.userData.userDataTabs[this.dialogAddAttach.tabsIndex].fields[this.dialogAddAttach.fieldIndex].value[ivalue] = []
+      }
       this
           .userData
           .userDataTabs[this.dialogAddAttach.tabsIndex]
@@ -1969,6 +1973,7 @@ export default defineComponent({
           })
         })
       })
+      this.userData.profileImage = userDetail.profileImage
     },
   },
 });
