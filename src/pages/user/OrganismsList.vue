@@ -53,42 +53,70 @@
           </q-td>
         </template>
       </q-table> -->
-      <q-expansion-item
-        v-for="org in userOrganismList"
-        :key="org"
-        group="somegroup"
-        dense
-        default-opened
-        class="bg-cyan-1"
-      >
-        <template v-slot:header>
-          <q-item-section avatar>
-            {{ org.userOrganismList.length }}
-          </q-item-section>
-
-          <q-item-section>
-            {{ org.nome }}
-          </q-item-section>
-
-          <q-item-section side>
-            <div class="row items-center">
-              <q-btn @click="console.log('cuzinho')" icon="star" color="red" size="24px">
+      <div class="q-pa-md" >
+        <q-list class="rounded-borders">
+          <div class="text-h6 q-px-sm text-bold">
+            Minha Rede
+          </div>
+          <div v-if="isMobile" class="q-px-sm">
+            Clique no ícone <q-icon name="east"></q-icon> para acessar o organismo
+          </div>
+          <div 
+            v-for="org in userOrganismList"
+            :key="org"
+            class="row q-py-md"
+          >
+            <q-expansion-item
+              :class="`shadow-2 overflow-hidden ${!isMobile ? 'col-11' : 'col-10'}`"
+              style="border-radius: 10px"
+              default-opened
+              expand-separator 
+            >
+              <template v-slot:header>
+                <q-item-section
+                  thumbnail
+                  :class="`bg-${org.color} text-white q-px-sm`"
+                  style="margin-block: -8px"
+                >
+                  <q-item-label>teste out 2</q-item-label>
+                </q-item-section>
+                <q-item-section class="q-pl-sm">
+                  <q-item-label>
+                    <span class="text-weight-bold">{{ org.nome }}</span>
+                    <div class="text-caption">
+                      {{ org.organismConfigName }}
+                    </div>
+                  </q-item-label>
+                </q-item-section>
+                <!-- <q-item-section>
+                  <q-item-label>
+                    <span class="text-weight-bold">{{ org.nome }}</span>
+                  </q-item-label>
+                </q-item-section> -->
+              </template>
+              <q-card>
+                <q-card-section>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
+                  commodi magni quaerat ex numquam, dolorum officiis modi facere maiores architecto suscipit iste
+                  eveniet doloribus ullam aliquid.
+                </q-card-section>
+              </q-card>
+            </q-expansion-item> 
+            <div :class="`q-px-sm ${!isMobile ? 'col-1' : 'col-2'}`">
+              <q-btn 
+                flat
+                rounded
+                @click="clkOpenUserOrganismDetail(org)"
+                icon="east"
+              >
                 <q-tooltip>
-                  oapskpodas
+                  Ir para organismo
                 </q-tooltip>
               </q-btn>
             </div>
-          </q-item-section>
-        </template>
-
-        <q-card>
-          <q-card-section>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
-            commodi magni quaerat ex numquam, dolorum officiis modi facere maiores architecto suscipit iste
-            eveniet doloribus ullam aliquid.
-          </q-card-section>
-        </q-card>
-      </q-expansion-item>
+          </div>
+        </q-list>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -110,6 +138,27 @@ export default defineComponent({
       collumns: ['nome', 'organismConfigName', 'organismParentName', 'city'],
       userOrganismList: [],
       selectStatus: ["Ativos", "Inativos"],
+      colors:[
+        { name: 'red-8' },
+        { name: 'pink-8' },
+        { name: 'purple-8' },
+        { name: 'deep-purple-8' },
+        { name: 'indigo-8' },
+        { name: 'blue-8' },
+        { name: 'light-blue-8' },
+        { name: 'cyan-8' },
+        { name: 'teal-8' },
+        { name: 'green-8' },
+        { name: 'light-green-8' },
+        { name: 'lime-8' },
+        { name: 'yellow-8' },
+        { name: 'amber-8' },
+        { name: 'orange-8' },
+        { name: 'deep-orange-8' },
+        { name: 'brown-8' },
+        { name: 'grey-8' },
+        { name: 'blue-grey-8' }
+      ],
       filter: "",
       selectFilter: "Selecionar",
       pagination: {
@@ -121,16 +170,13 @@ export default defineComponent({
       verifyBtn: 1
     };
   },
-  mounted() {
-    // this.$q.loading.hide();
-  },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
     this.getAllOrganismsByString();
   },
   methods: {
-    clkOpenUserOrganismDetail(e, r) {
-      const organismId = r.organismId;
+    clkOpenUserOrganismDetail(org) {
+      const organismId = org.organismId;
       this.$router.push("/user/userOrganismDetail?organismId=" + organismId);
     },
     getSelectedString() {
@@ -162,7 +208,14 @@ export default defineComponent({
         this.$q.loading.hide()
         this.userOrganismList = r.data.list
         r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        this.userOrganismList.forEach((item)=>{
+          item.color = this.getRandomColor()
+        })
       });
+    },
+    getRandomColor() {
+      const randomIndex = Math.floor(Math.random() * this.colors.length);
+      return this.colors[randomIndex].name;
     },
     filterOrganisms(nameIndex) {
       const selectedOrganism = this.userOrganismList[nameIndex]

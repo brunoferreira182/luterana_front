@@ -436,13 +436,6 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.email,
         sortable: true,
       },
-      {
-        name: "status",
-        align: "left",
-        label: "Status",
-        field: "status",
-        sortable: true,
-      },
     ],
     sentAttachments: [
       {

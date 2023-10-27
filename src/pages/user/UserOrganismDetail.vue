@@ -15,7 +15,7 @@
           </q-tooltip>
         </q-btn>
         <div class="col-6">
-          <div :class="`${isMobile ? 'text-subtitle' : 'text-h5'}`" >
+          <div :class="`${isMobile ? 'text-subtitle2 text-bold' : 'text-h5'}`" >
             {{ organismName }}
           </div>
           <div class="text-caption text-capitalize">
@@ -1602,9 +1602,6 @@ export default defineComponent({
       }
     };
   },
-  mounted() {
-    this.$q.loading.hide()
-  },
   beforeMount() {
     this.isMobile = useScreenStore().isMobile
     this.getUserIdMongo()
@@ -1622,7 +1619,6 @@ export default defineComponent({
     },
     getChildOrganismDetailOnDialog() {
       const childOrganismId = this.dialogChildOrganism.organismRelationId
-      console.log(childOrganismId, 'OKDSPOK CIHLD')
       const opt = {
         route: "/desktop/commonUsers/getOrganismDetailById",
         body: {
@@ -1644,10 +1640,8 @@ export default defineComponent({
     clkOpenDialogOrganismDetail(link) {
       this.dialogChildOrganism.open = true
       this.dialogChildOrganism.organismRelationId = link.organismRelationId
-      console.log(this.dialogChildOrganism.organismRelationId)
     },
     clkOpenDialogDeleteMissionPoint(child){
-      console.log(child)
       this.dialogDeleteMissionPoint.open = true
       this.dialogDeleteMissionPoint.data = child
     },
@@ -1906,7 +1900,6 @@ export default defineComponent({
       this.dialogConfirmAddress.tabsIndex = tabIndex
     },
     editPhoneMobileEmail (fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(field)
       this.dialogAddPhoneMobileEmail.open = true
       // this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.type = this.organismData.fields[fieldIndex].type

@@ -7,6 +7,16 @@
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
+            color="red-8"
+            rounded
+            outline
+            icon="delete"
+            size="md"
+            no-caps
+            label="Inativar"
+            @click="openDialogRemoveUser = true"
+          />
+          <q-btn
             color="primary"
             rounded
             unelevated
@@ -1056,6 +1066,32 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="openDialogRemoveUser">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Tem certeza que deseja remover este usuário? 
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              no-caps
+              label="Sair"
+              flat
+              @click="openDialogRemoveUser = false"
+              color="primary"
+            />
+            <q-btn
+              no-caps
+              label="Confirmar"
+              unelevated
+              rounded
+              @click="removeUser"
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1078,6 +1114,7 @@ export default defineComponent({
     return {
       selectIndex: null,
       tab: "",
+      openDialogRemoveUser: false,
       tabTitles: "",
       userType: '',
       isSaving: false,
@@ -1142,6 +1179,23 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    removeUser(){
+      const opt = {
+        route:'/desktop/adm/removeUser',
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
+        }
+        else {
+          this.$q.notify("Usuário removido!")
+          this.openDialogRemoveUser = false
+          this.$router.back()
+        }
+      })
+    },
     openUserFormDialog(form){
       this.userFormDialog.formId = form._id
       this.userFormDialog.open = true
