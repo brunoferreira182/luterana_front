@@ -100,16 +100,16 @@
                     Solicitar alterações
                   </q-btn>
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                    <!-- <div  class="row justify-center">
+                    <div  class="row justify-center">
                       <q-item-section avatar>
                         <q-img 
                           style="border-radius: 1rem"
-                          :src="userImg !== null ? userPhoto : avatar" 
+                          :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
                           width="208px" 
                           height="208px"
                         />
                       </q-item-section>
-                    </div> -->
+                    </div>
                     <div class="row justify-center q-pa-md">
                       <div class="col-4 q-px-lg">
                         <q-file
@@ -1097,6 +1097,7 @@ import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
 import avatar from '../../assets/avatar.svg'
+import utils from '../../boot/utils'
 </script>
 
 <script>
@@ -1969,6 +1970,7 @@ export default defineComponent({
           })
         })
       })
+      this.userData.profileImage = userDetail.profileImage
     },
   },
 });
