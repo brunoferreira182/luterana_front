@@ -58,7 +58,7 @@
           <div class="text-h6 q-px-sm text-bold">
             Minha Rede
           </div>
-          <div v-if="isMobile" class="q-px-sm">
+          <div class="q-px-sm">
             Clique no ícone <q-icon name="east"></q-icon> para acessar o organismo
           </div>
           <div 
@@ -76,29 +76,25 @@
                 <q-item-section
                   thumbnail
                   :class="`bg-${org.color} text-white q-px-sm`"
-                  style="margin-block: -8px"
+                  :style="{ 'margin-block': '-8px', 'width': isMobile ? '86px' : '106px' }"
                 >
-                  <q-item-label>teste out 2</q-item-label>
-                </q-item-section>
-                <q-item-section class="q-pl-sm">
                   <q-item-label>
-                    <span class="text-weight-bold">{{ org.nome }}</span>
                     <div class="text-caption">
                       {{ org.organismConfigName }}
                     </div>
                   </q-item-label>
                 </q-item-section>
-                <!-- <q-item-section>
+                <q-item-section class="q-pl-sm">
                   <q-item-label>
                     <span class="text-weight-bold">{{ org.nome }}</span>
                   </q-item-label>
-                </q-item-section> -->
+                </q-item-section>
               </template>
               <q-card>
                 <q-card-section>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
+                  <!-- Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, eius reprehenderit eos corrupti
                   commodi magni quaerat ex numquam, dolorum officiis modi facere maiores architecto suscipit iste
-                  eveniet doloribus ullam aliquid.
+                  eveniet doloribus ullam aliquid. -->
                 </q-card-section>
               </q-card>
             </q-expansion-item> 
@@ -214,7 +210,14 @@ export default defineComponent({
       });
     },
     getRandomColor() {
-      const randomIndex = Math.floor(Math.random() * this.colors.length);
+      const assignedColors = new Set();
+      let randomIndex;
+
+      do {
+        randomIndex = Math.floor(Math.random() * this.colors.length);
+      } while (assignedColors.has(this.colors[randomIndex].name));
+
+      assignedColors.add(this.colors[randomIndex].name);
       return this.colors[randomIndex].name;
     },
     filterOrganisms(nameIndex) {
