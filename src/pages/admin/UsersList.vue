@@ -47,7 +47,7 @@
             </div>
             <div class="col text-right">
               <q-btn
-                @click="$router.push('/admin/createUser?configType=user')"
+                @click="$router.push('/admin/createUser?userType=user')"
                 color="primary"
                 unelevated
                 no-caps

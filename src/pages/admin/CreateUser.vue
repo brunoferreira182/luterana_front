@@ -1230,8 +1230,8 @@ export default defineComponent({
     //Não substituir
     getUsersConfig() {
       let selectedType = null
-      if (this.$route.query.configType === 'user') selectedType = 'user'
-      if (this.$route.query.configType === 'pastor') selectedType = 'pastor'
+      if (this.$route.query.userType === 'user') selectedType = 'user'
+      if (this.$route.query.userType === 'pastor') selectedType = 'pastor'
       if (selectedType === 'user') this.userType = 'user'
       if (selectedType === 'pastor') this.userType = 'pastor'
       const opt = {
@@ -1262,6 +1262,7 @@ export default defineComponent({
         route: "/desktop/adm/createNewUser",
         body: {
           userDataTabs: this.userData.userDataTabs,
+          userType: this.$route.query.userType
         },
       };
       this.$q.loading.show();
