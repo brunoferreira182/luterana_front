@@ -13,7 +13,7 @@ function masterServerRoute () {
 }
 
 function calculateMasterServerAttachmentsRoute() {
-  const extraRoute = MODE_SERVER === 'master' ? '/static/escolas_app/' : '/static/'
+  const extraRoute = MODE_SERVER === 'master' ? '/static/luterana_v2/' : '/static/'
   if (
     MODE_MASTER_SERVER === "dev" ||
     MODE_MASTER_SERVER === "dev_ext" ||
