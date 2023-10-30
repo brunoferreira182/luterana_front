@@ -882,6 +882,10 @@
     @confirmAddress="confirmAddress"
     @closeDialog="clearAddressInputs"
   />
+
+  <DialogAddEventsDate
+    :open="dialogAddServices.open"
+  />
 </template>
 
 <script>
@@ -895,6 +899,7 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPerson from '../../components/CardPerson.vue'
+import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
@@ -905,7 +910,7 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
-    DialogPhoneMobileEmail, CardPastor
+    DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate
   },
   data() {
     return {
@@ -1012,7 +1017,7 @@ export default defineComponent({
         }
       },
       dialogAddServices: {
-        open: true,
+        open: false,
       },
       functions: [],
       organismList: [],
