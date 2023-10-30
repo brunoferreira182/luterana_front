@@ -62,11 +62,11 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
-        // {
-        //   label: "Documentos",
-        //   route: "/admin/AdmDocuments",
-        //   icon: "description",
-        // },
+        {
+          label: "Documentos",
+          route: "/admin/admDocuments",
+          icon: "description",
+        },
         // {
         //   label: "Títulos",
         //   route: "/admin/titlesList",
