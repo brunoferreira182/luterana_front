@@ -13,7 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkGoToAttachDetail"
+        @row-click="goToOptions"
         v-model:pagination="pagination"
         @request="nextPage"
       >
@@ -44,7 +44,12 @@
               autogrow
               v-model="dialogAddAttach.description"
             />
-            <q-file outlined v-model="dialogAddAttach.files" label="Clique aqui para adicionar anexos" />
+            <q-file 
+              multiple 
+              outlined 
+              v-model="dialogAddAttach.files" 
+              label="Clique aqui para adicionar anexos" 
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -66,7 +71,32 @@
         </q-card>
       </q-dialog>
       <q-dialog v-model="dialogAttachDetail.open" @hide="clearDialogDetail()">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+        <q-card class="text-center">
+          <div class="text-h5">
+            {{ this.dialogAttachDetail.data.attachTitle }}
+          </div>
+          <q-separator/>
+          <q-card-section>
+            <q-btn
+              color="primary"
+              icon="arrow_downward"
+              @click="downloadAttach"
+            >
+              Fazer download
+            </q-btn> <br/>
+            <div class="q-mt-md">
+              Ou
+            </div>
+          </q-card-section>
+            <q-btn
+              color='negative'
+              flat
+              @click="removeAttach"
+            >
+              Excluir
+            </q-btn>
+        </q-card>
+        <!-- <q-card style="border-radius: 1rem; height: 150x; width: 400px">
           <div class="text-h6 text-center q-pa-md ">{{ dialogAttachDetail.attachDetail.attachTitle }}</div>
           <q-card-section class="q-gutter-md">
             <q-input
@@ -100,13 +130,13 @@
               @click="clearDialogDetail"
             />
           </q-card-actions>
-        </q-card>
+        </q-card> -->
       </q-dialog>
     </q-page>
   </q-page-container>
 </template>
 <script setup>
-import utils from '../../boot/utils'
+// import utils from '../../boot/utils'
 </script>
 <script>
 import { defineComponent } from "vue";
@@ -130,7 +160,7 @@ export default defineComponent({
       },
       dialogAttachDetail: {
         open: false,
-        attachDetail: null
+        data: null
       },
     };
   },
@@ -154,59 +184,67 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       // this.SendAttach();
     },
-    clkGoToAttachDetail(e, r) {
+    downloadAttach () {
       const opt = {
-        route:'/desktop/adm/getAttachFileDetail',
+        route: '/desktop/adm/downloadAttachFile',
         body: {
-          attachFileId: r._id
+          attachFileId: this.dialogAttachDetail.data._id
         }
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente")
-          return
-        } else {
-          this.dialogAttachDetail.open = true
-          this.dialogAttachDetail.attachDetail = r.data
-        }
-      })
-    },
-    clearDialogDetail() {
-      this.dialogAttachDetail.attachDetail = null
-      this.dialogAttachDetail.open = false
-    },
-    SendAttach() {
-      if (this.dialogAddAttach.title === '' || this.dialogAddAttach.description === '' || this.dialogAddAttach.files === null) {
-        this.$q.notify("Preencha todos os campos antes de enviar")
-        return
-      }
-      const file = [{file:this.dialogAddAttach.files,name:'admAttach'}]
-      const opt = {
-        route: "/desktop/adm/addAttachFiles",
-        body: {
-          attachTitle: this.dialogAddAttach.title,
-          attachDescription: this.dialogAddAttach.description
-        },
-        file: null
-      };
-      if(this.dialogAddAttach.files !== null){
-        opt.file = file
       }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
           return
         } else {
-          this.clearDialog()
-          this.getAllAttachedFiles()
+          this.dialogAttachDetail.data = null
+          this.dialogAttachDetail.open = false
+          this.$q.notify('Fazendo o download')
         }
+      })
+    },
+    goToOptions(e, r) {
+      this.dialogAttachDetail.open = true
+      this.dialogAttachDetail.data = r
+    },
+    clearDialogDetail() {
+      this.dialogAttachDetail.attachDetail = null
+      this.dialogAttachDetail.open = false
+    },
+    SendAttach() {
+      if (this.dialogAddAttach.title === '' || this.dialogAddAttach.description === '' || !this.dialogAddAttach.files) {
+        this.$q.notify("Preencha todos os campos antes de enviar")
+        return
+      }
+      this.dialogAddAttach.files.forEach(attach => {
+        const file = [{file:this.dialogAddAttach.files,name:attach.name}]     
+        console.log(file, 'file')  
+        const opt = {
+          route: "/desktop/adm/addAttachFiles",
+          body: {
+            attachTitle: this.dialogAddAttach.title,
+            attachDescription: this.dialogAddAttach.description
+          },
+          file: null
+        };
+        if(this.dialogAddAttach.files){
+          opt.file = file
+        }
+        useFetch(opt).then((r) => {
+          if (r.error) {
+            this.$q.notify('Ocorreu um erro, tente novamente')
+            return
+          } else {
+            this.clearDialog()
+            this.getAllAttachedFiles()
+          }
+        });
       });
     },
-    removeAttach(_id) {
+    removeAttach() {
       const opt = {
         route: '/desktop/adm/removeAttachFile',
         body: {
-          attachFieldId: _id
+          attachFileId: this.dialogAttachDetail.data._id
         }
       }
       useFetch(opt).then((r) => {

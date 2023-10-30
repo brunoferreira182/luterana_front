@@ -88,7 +88,7 @@
               </div>
               <div v-if="existsPastor">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div class="text-h5 no-margin q-px-md">Pastores:</div>
+                <div class="text-h5">Pastores:</div>
                 <div v-for="func in functions" :key="func">
                   <CardPastor
                     class="no-margin"

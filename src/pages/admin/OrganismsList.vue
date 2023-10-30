@@ -175,32 +175,41 @@ export default defineComponent({
       this.getOrganismsList();
     },
     getOrganismsList() {
-      const page = this.pagination.page
-      const rowsPerPage = this.pagination.rowsPerPage
-      const searchString = this.filter
-      const sortBy = this.pagination.sortBy
-      const selectFilter = this.selectFilter
-      const opt = {
-        route: "/desktop/adm/getOrganismsList",
-        body: {
-          page: page,
-          rowsPerPage: rowsPerPage,
-          searchString: searchString,
-          sortBy: sortBy,
-          selectFilter: selectFilter
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
+      if (this.organismListTimer) {
+    clearTimeout(this.organismListTimer);
+  }
+  const delay = 700; 
+  this.organismListTimer = setTimeout(() => {
+    const page = this.pagination.page;
+    const rowsPerPage = this.pagination.rowsPerPage;
+    const searchString = this.filter;
+    const sortBy = this.pagination.sortBy;
+    const selectFilter = this.selectFilter;
+    const opt = {
+      route: "/desktop/adm/getOrganismsList",
+      body: {
+        page: page,
+        rowsPerPage: rowsPerPage,
+        searchString: searchString,
+        sortBy: sortBy,
+        selectFilter: selectFilter
       }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.organismList = r.data.list
-        this.pagination.rowsNumber = r.data.count[0].count
-      });
+    };
+
+    if (this.selectFilter === "Ativos") {
+      opt.body.isActive = 1;
+    } else if (this.selectFilter === "Inativos") {
+      opt.body.isActive = 0;
+    }
+
+    this.$q.loading.show();
+
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide();
+      this.organismList = r.data.list;
+      this.pagination.rowsNumber = r.data.count[0].count;
+    });
+  }, delay);
     },
     getOrganismsConfigsNamesList() {
       const opt = {

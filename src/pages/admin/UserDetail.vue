@@ -1216,7 +1216,13 @@ export default defineComponent({
       }
     },
     goToOrganismDetail(id) {
-      this.$router.push('/admin/organismDetail?organismId=' + id)
+      // this.$router.push('/admin/organismDetail?organismId=' + id)
+      // const opt = {
+      //   route: "/desktop/adm/getOrganismDetailById",
+      //   body: {
+      //     organismId: organismId,
+      //   },
+      // };
     },
     saveFormData(){
       const opt = {
