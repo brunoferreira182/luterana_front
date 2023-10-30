@@ -3,16 +3,18 @@
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col-6 text-h5 text-capitalize">
-          Novo arquivo
+          {{ attachTitle }}
         </div>
         <div class="col text-right">
           <q-btn
             rounded
-            color="primary"
+            icon="delete"
             unelevated
+            outline
+            color="red-8"
             no-caps
-            @click="addAttachFiles"
-            label="Criar arquivo"
+            @click="removeAttachFile"
+            label="Deletar arquivo"
           />
         </div>
       </div>
@@ -34,18 +36,11 @@
             label="Descrição"
             v-model="attachDescription"
           />
-          <q-file
-            v-model="attachData"
-            label="Clique para inserir seu arquivo"
-            outlined
-            clearable
-            class="full-width q-pl-md"
-            max-files="1"
-          >
-            <template v-slot:prepend>
-              <q-icon name="attach_file" />
-            </template>
-          </q-file>
+          <q-img 
+            :src="attachData ? utils.makeFileUrl(attachData) : ''" 
+            width="208px" 
+            height="208px"
+          />
         </div>
       </div>
     </q-page>
@@ -54,35 +49,54 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from '../../boot/utils'
 export default defineComponent({
-  name: "CreateAttachments",
+  name: "AttachmentsDetail",
   data() {
     return {
+      utils,
       attachTitle: '',
       attachDescription: '',
       attachData: null,
     }
   },
+  beforeMount(){
+    this.getAttachFileDetail()
+  },
   methods: {
-    addAttachFiles() {
-      const file = [{file:this.attachData,name:'userAttach'}]
+    removeAttachFile() {
       const opt = {
-        route: "/desktop/commonUsers/addAttachFiles",
+        route: "/desktop/commonUsers/removeAttachFile",
         body: {
-          attachTitle : this.attachTitle,
-          attachDescription: this.attachDescription
+          attachFileId : this.$route.query.attachFileId,
         },
-        file: null
       };
-      if(this.attachData !== null){
-        opt.file = file
-      }
       this.$q.loading.show();
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.$q.notify("Arquivo anexado com sucesso!");
+          this.$q.notify("Arquivo deletado com sucesso!");
           this.$router.back()
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    getAttachFileDetail() {
+      const opt = {
+        route: "/desktop/commonUsers/getAttachFileDetail",
+        body: {
+          attachFileId : this.$route.query.attachFileId,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then(r => {
+        this.$q.loading.hide();
+        if (!r.error) {
+          this.attachTitle = r.data.attachTitle
+          this.attachDescription = r.data.attachDescription
+          this.attachData = r.data.attach.filename
+       
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
