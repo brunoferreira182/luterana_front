@@ -7,6 +7,7 @@
       swipeable
       animated
       control-color="primary"
+      style="height: 200px;"
     >
       <q-carousel-slide name="frequency" class="column no-wrap flex-center">
         <div>
@@ -19,7 +20,7 @@
             label="Frequência"
           />
           <q-btn
-            class="full-width"
+            class="full-width q-mt-md"
             color="primary"
             label="Próximo"
             @click="clkNext1"
@@ -53,11 +54,11 @@
       </q-carousel-slide>
       <q-carousel-slide name="time" class="column no-wrap flex-center">
         <div class="text-h6">
-            Quais os dias do mês 
+            Horário do culto 
         </div>
         <q-input
           class="q-pa-sm"
-          v-model="data.daysOfMonth"
+          v-model="data.time"
           outlined
           >
         </q-input>
@@ -86,12 +87,12 @@ const data = ref({
   time: null
 })
 const selectOptions = ['2x Semana', 'Semanal', 'Quinzenal', 'Mensal']
-const props = defineProps(['open'])
-const emits = defineEmits(['closeDialog', 'addOrganism'])
+const props = defineProps(['open', 'edit'])
+const emits = defineEmits(['closeDialog', 'addServicesData'])
 
 function clkNext1() {
   if (!data.value.selectedOption) {
-    console.log("Ainda não")
+    this.$q.notify("Preencha a frequência")
     return
   }
   data.value.step = 'dayOption'
@@ -99,7 +100,7 @@ function clkNext1() {
 
 function clkNext2() {
   if (!data.value.daysOfMonth) {
-    console.log("Ainda não")
+    this.$q.notify("Preencha os dias do mês")
     return
   }
   data.value.step = 'time'
@@ -107,10 +108,14 @@ function clkNext2() {
 
 function clkNext3() {
   if (!data.value.time) {
-    console.log("Ainda não")
+    this.$q.notify("Preencha o horário do culto")
     return
   }
-  console.log("concluiu a etapa de seleção")
+  emits('addServicesData', data.value.selectedOption, data.value.daysOfMonth, data.value.time)
+  data.value.step = 'frequency'
+  data.value.selectedOption = null
+  data.value.daysOfMonth = null
+  data.value.time = null
 };
 
 function closeDialog() {

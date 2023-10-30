@@ -26,38 +26,7 @@
             icon="add"
             @click="dialogAddAttach.open = true"
           >
-
           </q-btn>
-        </template>
-        <template #body-cell-document="props">
-          <q-td :props="props">
-            <div v-if="!props.row.document || props.row.document === ''">
-              Não informado
-            </div>
-            <div v-else-if="props.row.document !== ''">
-              {{props.row.document}}
-            </div>
-          </q-td>
-        </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
         </template>
       </q-table>
       <q-dialog v-model="dialogAddAttach.open" @hide="clearDialog()">
@@ -109,13 +78,21 @@
             <q-img 
               style="border-radius: 1rem"
               :src=" utils.makeFileUrl(dialogAttachDetail.attachDetail.attach.filename)" 
-              width="108px" 
-              height="108px"
+              width="138px" 
+              height="138px"
             />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
               flat
+              label="Excluir"
+              no-caps
+              color="negative"
+              rounded
+              @click="removeAttach(dialogAttachDetail.attachDetail._id)"
+            />
+            <q-btn
+              unelevated
               label="Voltar"
               no-caps
               color="primary"
@@ -224,6 +201,23 @@ export default defineComponent({
           this.getAllAttachedFiles()
         }
       });
+    },
+    removeAttach(_id) {
+      const opt = {
+        route: '/desktop/adm/removeAttachFile',
+        body: {
+          attachFieldId: _id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.clearDialogDetail()
+          this.getAllAttachedFiles()
+          this.$q.notify('Documento removido com sucesso.')
+        }
+      })
     },
     clearDialog(){
       this.dialogAddAttach.open = false
