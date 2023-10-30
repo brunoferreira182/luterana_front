@@ -78,9 +78,9 @@ export default defineComponent({
     this.getAttachedFilesByUserId()
   },
   methods: {
-    clkGoToAttachDetail(row){
-      const formId = row._id;
-      this.$router.push("/user/attachmentsDetail?formId=" + formId);
+    clkGoToAttachDetail(e, r){
+      const attachFileId = r._id;
+      this.$router.push("/user/attachmentsDetail?attachFileId=" + attachFileId);
     },
     getSelectedString() {
       return this.selected.length === 0
