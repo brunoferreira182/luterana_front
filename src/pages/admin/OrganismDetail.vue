@@ -56,6 +56,24 @@
                 :options="organismConfigOptions"
               /> -->
               <q-separator class="q-mx-md" />
+              <div class="text-h5">
+                Vínculos
+              </div>
+              <q-list class="text-h6">
+                <q-item 
+                  v-for="link in relations" 
+                  :key="link" 
+                  class="bg-grey-3 q-ma-sm" 
+                  style="border-radius: 1rem"
+                  clickable
+                  @click="goToParentOrganismDetail(link)"
+                >
+                  <q-item-section>
+                    {{ link.organismRelationName }} -
+                    {{ link.organismConfigName }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
               <div v-if="$route.path.includes('/admin')">
                 <q-btn
                   label="Gerenciar Vínculos"
