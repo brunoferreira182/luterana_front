@@ -15,6 +15,10 @@ const routes = [
         component: () => import("pages/admin/PastorsList.vue"),
       },
       {
+        path: "/admin/admDocuments",
+        component: () => import("pages/admin/AdmDocuments.vue"),
+      },
+      {
         path: "/admin/createUser",
         component: () => import("pages/admin/CreateUser.vue"),
       },
