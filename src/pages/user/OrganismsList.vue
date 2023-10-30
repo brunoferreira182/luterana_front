@@ -191,8 +191,8 @@ export default defineComponent({
   },
   methods: {
     clkOpenUserOrganismDetail(org) {
-      const organismId = org.organismId;
-      this.$router.push("/user/userOrganismDetail?organismId=" + organismId);
+      const organismParentId = org.organismParentId;
+      this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
     },
     getSelectedString() {
       return this.selected.length === 0

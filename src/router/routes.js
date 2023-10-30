@@ -227,10 +227,21 @@ const routes = [
         component: () => import("src/pages/user/UserFunctionsList.vue"),
       },
       {
+        path: "/user/userAttachments",
+        component: () => import("src/pages/user/UserAttachments.vue"),
+      },
+      {
+        path: "/user/createAttachments",
+        component: () => import("pages/user/CreateAttachments.vue"),
+      },
+      {
+        path: "/user/attachmentsDetail",
+        component: () => import("pages/user/AttachmentsDetail.vue"),
+      },
+      {
         path: "/user/organismsList",
         component: () => import("pages/user/OrganismsList.vue"),
       },
-      
       { path: "/user", redirect: "/user/userPersonalData" },
       {
         path: "/user/userPersonalData",

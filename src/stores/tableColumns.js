@@ -405,6 +405,15 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    userAttachments: [
+      {
+        name: "attachTitle",
+        align: "left",
+        label: "Nome do arquivo",
+        field: "attachTitle",
+        sortable: true,
+      },
+    ],
     suggestionList: [
       {
         name: "tile",
