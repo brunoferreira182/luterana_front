@@ -877,11 +877,11 @@
         @addOrganism="confirmAddOrganism"
       />
 
-      <DialogAddAttach
+      <!-- <DialogAddAttach
         :open="dialogAddAttach.open"
         @closeDialog="clearAttachInputs"
         @addAttach="confirmAddAttach"
-      />
+      /> -->
 
       <q-dialog v-model="deleteTitle.openDialog">
         <q-card style="border-radius: 1rem; width: 400px">
@@ -1093,6 +1093,7 @@ import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
 // import CardAttach from '../../components/CardAttach.vue'
 // import DialogAddAttach from '../../components/DialogAddAttach.vue'
 import CardAddress from '../../components/CardAddress.vue'
+import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
