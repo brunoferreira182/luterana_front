@@ -448,10 +448,10 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
       {
-        name: "email",
+        name: "userType",
         align: "left",
-        label: "E-mail",
-        field: (row) => row.email,
+        label: "Tipo",
+        field: (row) => row.userType,
         sortable: true,
       },
     ],

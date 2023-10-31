@@ -28,7 +28,7 @@
             hint="Nome do arquivo"
             v-model="attachTitle"
           />
-          <div class="text-h5">Escreva uma descrição de forma sugestiva</div>
+          <div class="text-h5">Descrição</div>
           <q-input
             outlined
             autogrow
@@ -96,7 +96,6 @@ export default defineComponent({
           this.attachTitle = r.data.attachTitle
           this.attachDescription = r.data.attachDescription
           this.attachData = r.data.attach.filename
-       
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }

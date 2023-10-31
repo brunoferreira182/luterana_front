@@ -16,7 +16,6 @@
         @row-click="clkOpenUserDetail"
         :selected-rows-label="getSelectedString"
         :filter="filter"
-        v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
@@ -60,35 +59,66 @@
             </div>
           </div>
         </template>
-        <template #body-cell-document="props">
-          <q-td :props="props">
-            <div v-if="!props.row.document || props.row.document === ''">
-              Não informado
-            </div>
-            <div v-else-if="props.row.document !== ''">
-              {{props.row.document}}
-            </div>
-          </q-td>
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th auto-width />
+            <q-th
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+            >
+              {{ col.label }}
+            </q-th>
+          </q-tr>
         </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td auto-width>
+              <q-btn 
+                size="sm" 
+                color="primary" 
+                unelevated
+                round dense 
+                @click="props.expand = !props.expand" :icon="props.expand ? 'expand_less' : 'expand_more'" 
+              />
+            </q-td>
+            <q-td
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
             >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
+              {{ col.value }}
+            </q-td>
+          </q-tr>
+          <q-tr v-show="props.expand" :props="props" >
+            <q-td colspan="100%" >
+              <q-item>
+                <q-item-section class="text-wrap">
+                  <div class="row">
+                    <div class="col" v-if="props.row.userOrganisms.length && props.row.userType === 'pastor'">
+                      <q-chip
+                        v-for="organism in props.row.userOrganisms" 
+                        :key="organism"
+                        :props="props"
+                        class="q-pa-lg"
+                      >
+                        
+                        <div class="text-caption text-bold text-wrap text-capitalize" >
+                          <div >{{ organism.organismName }}</div>
+                          <div class="text-caption">
+                            {{ organism.userFunction }}
+                          </div>
+                        </div> 
+                      </q-chip>
+                    </div>
+                    <div v-else-if="!props.row.userOrganisms.length && props.row.userType === 'pastor'">
+                      Sem chamado
+                    </div>
+                  </div>
+                  </q-item-section>
+                </q-item>
+            </q-td>
+          </q-tr>
         </template>
       </q-table>
     </q-page>
@@ -162,9 +192,7 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
-      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.$q.loading.hide()
         this.usersOptions = r.data;
         this.usersList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
