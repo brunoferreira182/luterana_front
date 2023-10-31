@@ -1,14 +1,14 @@
 <template>
   <q-card
     style="border-radius: 1rem"
-    class="bg-grey-3 q-ma-sm q-pa-sm"
+    class="bg-white q-ma-sm q-pa-sm"
     flat
   >
     <q-item
       v-for="user in props.func.users"
       :key="user"
       style="border-radius: 0.5rem;"
-      class="bg-white q-ma-xs"
+      class="bg-grey-3 q-ma-xs"
     >
       <q-item-section avatar>
         <q-icon name="account_circle" size="38px" color="grey"/>

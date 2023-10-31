@@ -56,6 +56,24 @@
                 :options="organismConfigOptions"
               /> -->
               <q-separator class="q-mx-md" />
+              <div class="text-h5">
+                Vínculos
+              </div>
+              <q-list class="text-h6">
+                <q-item 
+                  v-for="link in relations" 
+                  :key="link" 
+                  class="bg-grey-3 q-ma-sm" 
+                  style="border-radius: 1rem"
+                  clickable
+                  @click="goToParentOrganismDetail(link)"
+                >
+                  <q-item-section>
+                    {{ link.organismRelationName }} -
+                    {{ link.organismConfigName }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
               <div v-if="$route.path.includes('/admin')">
                 <q-btn
                   label="Gerenciar Vínculos"
@@ -70,7 +88,7 @@
               </div>
               <div v-if="existsPastor">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div class="text-h5 no-margin q-px-md">Pastores:</div>
+                <div class="text-h5">Pastores:</div>
                 <div v-for="func in functions" :key="func">
                   <CardPastor
                     class="no-margin"
@@ -360,7 +378,8 @@
                   />
                 </div>     
                 <div v-if="field.type.type === 'services_per_week'">
-                  <q-btn
+                  <q-btn 
+                    v-if="!field.value"
                     label="Quantidade de cultos"
                     no-caps
                     rounded
@@ -371,6 +390,13 @@
                     @click="clkAddServicesPerWeek(fieldIndex)"
                     class="q-mt-xs"
                   />
+                  <CardServices
+                    v-if="field.value"
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    @edit="editServicesData"
+                    @remove="removeServicesData"
+                    />
                 </div>
               </div>
             </div>
@@ -882,15 +908,16 @@
     @confirmAddress="confirmAddress"
     @closeDialog="clearAddressInputs"
   />
-
   <DialogAddEventsDate
     :open="dialogAddServices.open"
+    @addServicesData="confirmServicesData"
+    @closeDialog="closeDialogAddServices"
   />
 </template>
-
 <script>
 import { defineComponent } from "vue";
 import CardPastor from '../../components/CardPastor.vue'
+import CardServices from '../../components/CardServices.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -910,7 +937,8 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
-    DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate
+    DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
+    CardServices
   },
   data() {
     return {
@@ -1018,6 +1046,9 @@ export default defineComponent({
       },
       dialogAddServices: {
         open: false,
+        fieldIndex: null,
+        action: 'add', 
+        data: null
       },
       functions: [],
       organismList: [],
@@ -1068,7 +1099,15 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
-    clkAddServicesPerWeek() {
+    closeDialogAddServices () {
+      this.dialogAddServices.open = false
+      this.dialogAddServices.fieldIndex = null
+      this.dialogAddServices.action = 'add'
+      this.dialogAddServices.data = null
+    },
+    clkAddServicesPerWeek(fieldIndex) {
+      this.dialogAddServices.fieldIndex = fieldIndex
+      this.dialogAddServices.action = 'add'
       this.dialogAddServices.open = true
     },
     verifyIfHasPastor() {
@@ -1101,6 +1140,26 @@ export default defineComponent({
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
     },
+    confirmServicesData(freq, day, time) {
+      this.dialogAddServices.open = false
+      if (this.dialogAddServices.action === 'add') {
+        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+          this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
+        }
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
+          frequency: freq, 
+          days: day,
+          times: time
+        })
+      } else if (this.dialogAddServices.action === 'edit') {
+        this.organismData.fields[this.dialogAddServices.fieldIndex]
+        .value[this.dialogAddServices.ivalue] = {
+          frequency: freq, 
+          days: day,
+          times: time
+        }
+      }
+    },
     clearDialogAddPhoneMobileEmail () {
       this.dialogAddPhoneMobileEmail = {
         type: null,
@@ -1123,6 +1182,17 @@ export default defineComponent({
     clkSaveLink() {
       this.dialogLinks = false
       this.$q.notify("Vínculos criados com sucesso.")
+    },
+    removeServicesData (fieldIndex, tabsIndex, field, value, iValue) {
+      this.organismData.fields[fieldIndex].value.splice(iValue, 1)
+    },
+    editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {
+      this.dialogAddServices.action = 'edit'
+      this.dialogAddServices.open = true
+      this.dialogAddServices.fieldIndex = fieldIndex
+      this.dialogAddServices.tabsIndex = tabsIndex
+      this.dialogAddServices.data = {...value}
+      this.dialogAddServices.ivalue = ivalue
     },
     editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {

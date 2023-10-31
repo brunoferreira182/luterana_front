@@ -28,6 +28,15 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    admAttachList: [
+      {
+        name: "attachTitle",
+        align: "left",
+        label: "Título",
+        field: "attachTitle",
+        sortable: true
+      }
+    ],
     recivedSolicitations: [
       // {
       //   name: "userName",
