@@ -76,6 +76,7 @@
               v-for="col in props.cols"
               :key="col.name"
               :props="props"
+              @click="clkOpenUserDetail(col, props.row)"
             >
               {{ col.value }}
             </q-td>
@@ -85,7 +86,7 @@
               <q-item>
                 <q-item-section class="text-wrap">
                   <div class="row">
-                    <div class="col" v-if="props.row.userOrganisms.length && props.row.userType === 'pastor'">
+                    <div class="col" v-if="props.row.userOrganisms.length && props.row.userType === 'Pastor'">
                       <q-chip
                         v-for="organism in props.row.userOrganisms" 
                         :key="organism"
@@ -100,7 +101,7 @@
                         </div> 
                       </q-chip>
                     </div>
-                    <div v-else-if="!props.row.userOrganisms.length && props.row.userType === 'pastor'">
+                    <div v-else-if="!props.row.userOrganisms.length && props.row.userType === 'Pastor'">
                       Sem chamado
                     </div>
                   </div>
@@ -145,7 +146,7 @@ export default defineComponent({
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
     },
-    clkOpenUserDetail(e, r) {
+    clkOpenUserDetail(c, r) {
       const userId = r._id;
       this.$router.push("/admin/userDetail?userId=" + userId);
     },
@@ -184,6 +185,13 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.usersOptions = r.data;
         this.usersList = r.data.list
+        this.usersList.forEach((user) => {
+          if (user.userType === 'user') {
+            user.userType = 'Usuário'
+          } else if (user.userType === 'pastor') {
+            user.userType = 'Pastor'
+          }
+        })
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },
