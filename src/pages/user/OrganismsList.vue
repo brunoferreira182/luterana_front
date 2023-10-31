@@ -95,9 +95,9 @@
               <q-card>
                 <q-separator></q-separator>
                 <q-card-section  class="no-padding">
-                  <div class="q-px-sm q-ma-sm text-subtitle text-left" style="font-size: 20px;">
+                  <!-- <div class="q-px-sm q-ma-sm text-subtitle text-left" style="font-size: 20px;">
                     Vínculos
-                  </div>
+                  </div> -->
                   <q-list separator v-if="org.childrenData && org.childrenData.length">
                     <q-item
                       v-for="item in org.childrenData"
@@ -115,9 +115,9 @@
                       </q-item-section>
                     </q-item>
                   </q-list>
-                  <div v-else class="text-left q-pa-md">
+                  <!-- <div v-else class="text-left q-pa-md">
                     Nenhum vínculo
-                  </div>
+                  </div> -->
                 </q-card-section>
               </q-card>
             </q-expansion-item> 
