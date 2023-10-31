@@ -20,16 +20,6 @@
       >
         <template #top-right>
           <div class="flex row justify-end">
-            <div class="col q-px-sm">
-              <q-select
-                outlined
-                dense
-                debounce="300"
-                v-model="selectFilter"
-                :options="selectStatus"
-                @update:model-value="getUsersList"
-              ></q-select>
-            </div>
             <div class="col">
               <q-input
                 @keyup="getUsersList"
@@ -102,7 +92,6 @@
                         :props="props"
                         class="q-pa-lg"
                       >
-                        
                         <div class="text-caption text-bold text-wrap text-capitalize" >
                           <div >{{ organism.organismName }}</div>
                           <div class="text-caption">
