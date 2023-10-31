@@ -381,7 +381,7 @@
               </div>
     
             </div>
-            <div class="text-right">
+            <div class="text-center">
               <q-btn
                 v-if="canEdit"
                 label="Salvar dados"
@@ -393,7 +393,7 @@
                 @click="updateOrganism"
               />
             </div>
-            <div class="text-right">
+            <div class="text-center">
               <q-btn
                 v-if="!this.$route.query.e === 'f'"
                 label="Salvar dados"

@@ -95,7 +95,7 @@
               <q-card>
                 <q-separator></q-separator>
                 <q-card-section  class="no-padding">
-                  <div class="q-px-sm q-ma-sm text-subtitle text-center" style="font-size: 20px;">
+                  <div class="q-px-sm q-ma-sm text-subtitle text-left" style="font-size: 20px;">
                     Vínculos
                   </div>
                   <q-list separator v-if="org.childrenData && org.childrenData.length">
@@ -103,15 +103,19 @@
                       v-for="item in org.childrenData"
                       :key="item"
                     >
-                      <q-item-section align="center" class="text-wrap">
+                      <q-item-section align="left" class="text-wrap">
                         <q-item-label style="font-size: 18px;">
                           {{ item.organismChildName }}
                         </q-item-label>
-                        {{ item.organismChildConfig }}
+                        <div>
+                          <q-chip outline>
+                            {{ item.organismChildConfig }}
+                          </q-chip>
+                        </div>
                       </q-item-section>
                     </q-item>
                   </q-list>
-                  <div v-else class="text-center">
+                  <div v-else class="text-left q-pa-md">
                     Nenhum vínculo
                   </div>
                 </q-card-section>
@@ -229,14 +233,16 @@ export default defineComponent({
       });
     },
     getRandomColor() {
-      const assignedColors = new Set();
+      if (!this.assignedColors) {
+        this.assignedColors = new Set();
+      }
       let randomIndex;
 
       do {
         randomIndex = Math.floor(Math.random() * this.colors.length);
-      } while (assignedColors.has(this.colors[randomIndex].name));
+      } while (this.assignedColors.has(this.colors[randomIndex].name));
 
-      assignedColors.add(this.colors[randomIndex].name);
+      this.assignedColors.add(this.colors[randomIndex].name);
       return this.colors[randomIndex].name;
     },
     filterOrganisms(nameIndex) {

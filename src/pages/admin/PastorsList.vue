@@ -8,16 +8,16 @@
         :columns="columnsData"
         :rows="pastorsList"
         row-key="_id"
-        virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="clkOpenUserDetail"
-        :selected-rows-label="getSelectedString"
         :filter="filter"
-        v-model:pagination="pagination"
         @request="nextPage"
+        v-model:pagination="pagination"
+        :loading="loading"
+        binary-state-sort
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -25,9 +25,9 @@
               <q-select
                 outlined
                 dense
-                debounce="300"
                 v-model="selectFilter"
                 :options="selectStatus"
+                debounce="300"
                 @update:model-value="getPastorList"
               ></q-select>
             </div>
@@ -59,16 +59,6 @@
               </q-btn>
             </div>
           </div>
-        </template>
-        <template #body-cell-document="props">
-          <q-td :props="props">
-            <div v-if="!props.row.document || props.row.document === ''">
-              Não informado
-            </div>
-            <div v-else-if="props.row.document !== ''">
-              {{props.row.document}}
-            </div>
-          </q-td>
         </template>
         <template #body-cell-status="props">
           <q-td :props="props">
@@ -108,12 +98,25 @@ export default defineComponent({
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
+      initialPagination: {
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10
+        // rowsNumber: xx if getting data from a server
+      },
       pagination: {
+        sortBy: '',
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
-        sortBy: "",
+        sortBy: 'desc',
+        descending: false,
       },
+      loading: false,
+      // pagesNumber: computed(() => {
+      //   return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
+      // })
     };
   },
   mounted() {
@@ -129,13 +132,6 @@ export default defineComponent({
     clkOpenUserDetail(e, r) {
       const userId = r._id;
       this.$router.push("/admin/userDetail?userId=" + userId);
-    },
-    getSelectedString() {
-      return this.selected.length === 0
-        ? ""
-        : `${this.selected.length}
-      despesa${this.selected.length > 1 ? "s" : ""}
-      selecionadas de ${this.expensesData.length}`;
     },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
@@ -162,11 +158,19 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
-      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.$q.loading.hide()
         this.usersOptions = r.data;
         this.pastorsList = r.data.list
+        // let projectList = []
+        // r.data.list.forEach(projeto => {
+        //   console.log(projeto)
+        //   projectList.push({
+        //     name: projeto.userName,
+        //     status: projeto.status,
+        //     _id: projeto._id
+        //   })
+        // })
+        // this.pastorsList = projectList
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },
