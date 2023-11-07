@@ -868,7 +868,7 @@
       <DialogAddPerson
         :open="addPerson.dialogOpen"
         @closeDialog="closeAddPersonDialog"
-        @addPerson="confirmAddPerson"
+        @addPerson="confirmCreateParentalRelation"
       />
       
       <DialogAddOrganism
@@ -1147,6 +1147,7 @@ export default defineComponent({
       splitterModel: 25,
       userData: {},
       addPerson: {
+        relationType: '',
         dialogOpen: false,
         fieldIndex: null,
         tabIndex: null,
@@ -1758,20 +1759,23 @@ export default defineComponent({
       })
     },
     
-    confirmAddPerson (userSelected) {
-      this.addPerson.userSelected = userSelected
-      if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
-        this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-      else {
-        if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value
-          || this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value === ''
-          ) {
-            this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-        } else {
-          this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value.push(this.addPerson.userSelected)
+    confirmCreateParentalRelation (userSelected) {
+      const myInfo = utils.presentUserInfo()
+      const opt = {
+        route: '/desktop/users/updateUserRelations',
+        body: {
+          parentId: myInfo.user_id,
+          childId: userSelected._id,
+          relationType: this.addPerson.relationType
         }
       }
-      this.updateUserData()
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+          return
+        } 
+      })
+      this.getUserDetailById()
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
@@ -1793,6 +1797,11 @@ export default defineComponent({
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
+      if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filhos(s)') {
+        this.addPerson.relationType = 'parentToChild'
+      } else if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Mãe' || this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Pai') {
+        this.addPerson.relationType = 'childToParent'
+      }
     },
     clkOpenAddOrganismDialog(fieldIndex, tabIndex) {
       this.addOrganism.fieldIndex = fieldIndex
