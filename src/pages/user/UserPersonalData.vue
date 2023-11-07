@@ -868,7 +868,7 @@
       <DialogAddPerson
         :open="addPerson.dialogOpen"
         @closeDialog="closeAddPersonDialog"
-        @addPerson="confirmAddPerson"
+        @addPerson="confirmCreateParentalRelation"
       />
       
       <DialogAddOrganism
@@ -1147,6 +1147,8 @@ export default defineComponent({
       splitterModel: 25,
       userData: {},
       addPerson: {
+        parentGender: '',
+        relationType: '',
         dialogOpen: false,
         fieldIndex: null,
         tabIndex: null,
@@ -1726,9 +1728,20 @@ export default defineComponent({
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
     },
     removeThisPerson(fieldIndex, tabsIndex, personIndex) {
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
-      this.closeAddPersonDialog()
-      this.updateUserData()
+      const opt = {
+        route: '',
+        body: {
+          personIndex: personIndex
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Familiar removido com sucesso')
+          this.getUserDetailById()
+        }
+      })
     },
     removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(organismIndex, 1);
@@ -1758,20 +1771,26 @@ export default defineComponent({
       })
     },
     
-    confirmAddPerson (userSelected) {
-      this.addPerson.userSelected = userSelected
-      if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)
-        this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-      else {
-        if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value
-          || this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value === ''
-          ) {
-            this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value = [ this.addPerson.userSelected ]
-        } else {
-          this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].value.push(this.addPerson.userSelected)
+    confirmCreateParentalRelation (userSelected) {
+      const myInfo = utils.presentUserInfo()
+      const opt = {
+        route: '/desktop/users/createParentalRelation',
+        body: {
+          parentId: myInfo.user_id,
+          childId: userSelected._id,
+          relationModel: this.addPerson.relationType,
+          parentGender: this.addPerson.parentGender
         }
       }
-      this.updateUserData()
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+          return
+        } else {
+          this.getUserDetailById()
+        }
+      })
+      this.getUserDetailById()
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
@@ -1793,6 +1812,17 @@ export default defineComponent({
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
+      console.log(this.userData.userDataTabs[tabIndex].fields[fieldIndex].label, 'nsei')
+      if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filho(s)') {
+        this.addPerson.relationType = 'parentToChild'
+        this.addPerson.parentGender = 'child'
+      } else if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Mãe'){
+        this.addPerson.relationType = 'childToParent'
+        this.addPerson.parentGender = 'mother'
+      } else if  (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Pai') {
+        this.addPerson.relationType = 'childToParent'
+        this.addPerson.parentGender = 'father'
+      }
     },
     clkOpenAddOrganismDialog(fieldIndex, tabIndex) {
       this.addOrganism.fieldIndex = fieldIndex
@@ -1975,8 +2005,13 @@ export default defineComponent({
       }
     },
     getUserDetailById(){
+      let myId = utils.presentUserInfo()
+      console.log(myId)
       const opt = {
-        route:"/desktop/user/getUserDetailById"
+        route:"/desktop/user/getUserDetailById",
+        body: {
+          _id: myId.user_id
+        }
       }
       useFetch(opt).then((r) => {
         if(r.error) {
