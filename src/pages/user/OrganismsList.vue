@@ -1,59 +1,67 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <!-- <q-table
-        flat
-        class="bg-accent"
-        title="Minha rede"
-        :columns="isMobile ? columnsDataMobile : columnsData"
-        :rows="userOrganismList"
-        row-key="_id"
-        virtual-scroll
-        rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento"
-        no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenUserOrganismDetail"
-        :selected-rows-label="getSelectedString"
-        :filter="filter"
-        :v-model:pagination="pagination"
-        :visible-columns="collumns"
-        @request="nextPage"
-      >
-        <template #body-cell-city="props">
-          <q-td :props="props">
-            <div class="text-bold" v-if="props.row.endereco">{{ props.row.endereco[0].city }}</div>
-            <div class="text-caption" v-else-if="!props.row.endereco">Não consta</div>
-          </q-td>
-        </template>
-        <template #body-cell-organismParentName="props">
-          <q-td :props="props">
-            <q-chip outline v-if="props.row.organismParentName" color="green" size="14px">
-              {{ props.row.organismParentName }}
-            </q-chip>
-            <q-chip outline v-if="!props.row.organismParentName" color="red" size="14px">
-              Nenhum
-            </q-chip>
-          </q-td>
-        </template>
-        <template #body-cell-organismConfigName="props">
-          <q-td :props="props">
-            <q-chip 
-              v-if="props.row.organismConfigName" 
-              :style="{ color: props.row.organismStyle }" 
-              size="14px"
-              outline
-            >
-              {{ props.row.organismConfigName.split(' ')[0] }}
-            </q-chip>
-          </q-td>
-        </template>
-        <template #body-cell-endereco="props">
-          <q-td :props="props">
-          </q-td>
-        </template>
-      </q-table> -->
-      <div class="q-pa-md" >
+      <div class="text-center q-mt-md text-weight-bold">Minha rede</div>
+      <div class="q-pa-md">
+        <q-tree
+          default-expand-all
+          :nodes="organismListTree"
+          node-key="label"
+          ref="tree"
+        >
+          <template v-slot:default-header="prop">
+            <div class=" items-center" v-if="prop.node.header">
+              <!-- <q-icon
+                v-if="prop.node.type === 'Congregação'"
+                name="church"
+                color="blue"
+                size="28px"
+                class=""
+              />
+              <q-icon
+                name="workspaces"
+                color="orange"
+                size="28px"
+                class="q-mr-sm"
+                v-if="prop.node.type === 'Paróquia'"
+              /> -->
+              <span class="text-weight-bold text-primary">{{ prop.node.label }}</span>
+              <q-btn
+                icon="navigate_next"
+                round
+                unelevated
+                color="primary"
+                flat
+                v-on:click.stop="clkParent(prop.node.organismId)"
+              >
+                <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
+              </q-btn>
+            </div>
+            <div class="items-center" v-else>
+              <q-icon
+                v-if="prop.node.type === 'Congregação'"
+                name="church"
+                color="blue"
+                size="20px"
+                class="q-mr-sm"
+              />
+              <q-icon
+                v-if="prop.node.type === 'Paróquia'"
+                name="workspaces"
+                color="blue"
+                size="20px"
+                class="q-mr-sm"
+              />
+              <span
+                class="cursor-pointer"
+                @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
+              >{{ prop.node.label }}</span>
+            </div>
+          </template>
+        </q-tree>
+      </div>
+      
+      <!-- <div class="q-pa-md" >
         <q-list class="rounded-borders">
           <div class="text-h6 q-px-sm text-bold">
             Minha Rede
@@ -95,9 +103,6 @@
               <q-card>
                 <q-separator></q-separator>
                 <q-card-section  class="no-padding">
-                  <!-- <div class="q-px-sm q-ma-sm text-subtitle text-left" style="font-size: 20px;">
-                    Vínculos
-                  </div> -->
                   <q-list separator v-if="org.childrenData && org.childrenData.length">
                     <q-item
                       v-for="item in org.childrenData"
@@ -115,9 +120,6 @@
                       </q-item-section>
                     </q-item>
                   </q-list>
-                  <!-- <div v-else class="text-left q-pa-md">
-                    Nenhum vínculo
-                  </div> -->
                 </q-card-section>
               </q-card>
             </q-expansion-item> 
@@ -135,7 +137,7 @@
             </div>
           </div>
         </q-list>
-      </div>
+      </div> -->
     </q-page>
   </q-page-container>
 </template>
@@ -186,7 +188,8 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
-      verifyBtn: 1
+      verifyBtn: 1,
+      organismListTree: []
     };
   },
   beforeMount() {
@@ -194,6 +197,9 @@ export default defineComponent({
     this.getMyOrganisms();
   },
   methods: {
+    clkParent (organismParentId) {
+      this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
+    },
     clkOpenUserOrganismDetail(org) {
       const organismParentId = org.organismParentId;
       this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
@@ -230,7 +236,32 @@ export default defineComponent({
         this.userOrganismList.forEach((item)=>{
           item.color = this.getRandomColor()
         })
+
+        this.mountTree(r.data.list)
+        
       });
+    },
+    mountTree (list) {
+      let tree = []
+      list.forEach(org => {
+        tree = {
+          type: org.organismParentLocal,
+          label: org.organismParentLocal + ' ' + org.organismParentName,
+          header: 'generic',
+          organismId: org.organismParentId,
+          children: []
+        }
+        org.childrenData.forEach(child => {
+          tree.children.push({
+            type: child.organismChildConfig,
+            label: child.organismChildConfig + ' ' + child.organismChildName,
+            body: 'normal',
+            organismId: child.organismChildId
+          })
+        })
+        this.organismListTree.push(tree)
+        this.$refs.tree.expandAll()
+      })
     },
     getRandomColor() {
       if (!this.assignedColors) {

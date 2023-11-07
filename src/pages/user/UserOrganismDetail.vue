@@ -15,12 +15,13 @@
           </q-tooltip>
         </q-btn>
         <div class="col-6">
-          <div :class="`${isMobile ? 'text-subtitle2 text-bold' : 'text-h5'}`" >
+          <div class="text-caption text-capitalize">
+            {{ organismConfigName }}
+          </div>
+          <div :class="`${isMobile ? 'text-h6 text-bold' : 'text-h5'}`" >
             {{ organismName }}
           </div>
-          <div class="text-caption text-capitalize">
-            Detalhe do organismo 
-          </div>
+          
         </div>
         <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
           <q-btn
@@ -89,7 +90,7 @@
             <div class="text-h5 no-margin q-px-md">
               Dados:
             </div>
-            <q-chip>{{ organismConfigName }}</q-chip>
+            <!-- <q-chip>{{ organismConfigName }}</q-chip> -->
             <div v-if="fields.length" class="text-h5">
               Dados
             </div>
@@ -971,7 +972,7 @@
             label="Dados"
           >
             <div class="bg-white q-pa-md">
-              <q-chip>{{ organismConfigName }}</q-chip>
+              <!-- <q-chip>{{ organismConfigName }}</q-chip> -->
               <div
                 v-for="(field, fieldIndex) in organismData.fields"
                 :key="fieldIndex"
