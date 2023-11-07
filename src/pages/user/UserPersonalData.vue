@@ -1728,9 +1728,20 @@ export default defineComponent({
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
     },
     removeThisPerson(fieldIndex, tabsIndex, personIndex) {
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(personIndex, 1);
-      this.closeAddPersonDialog()
-      this.updateUserData()
+      const opt = {
+        route: '',
+        body: {
+          personIndex: personIndex
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Familiar removido com sucesso')
+          this.getUserDetailById()
+        }
+      })
     },
     removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(organismIndex, 1);
