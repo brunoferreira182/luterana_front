@@ -1147,6 +1147,7 @@ export default defineComponent({
       splitterModel: 25,
       userData: {},
       addPerson: {
+        parentGender: '',
         relationType: '',
         dialogOpen: false,
         fieldIndex: null,
@@ -1762,11 +1763,12 @@ export default defineComponent({
     confirmCreateParentalRelation (userSelected) {
       const myInfo = utils.presentUserInfo()
       const opt = {
-        route: '/desktop/users/updateUserRelations',
+        route: '/desktop/users/createParentalRelation',
         body: {
           parentId: myInfo.user_id,
           childId: userSelected._id,
-          relationType: this.addPerson.relationType
+          relationModel: this.addPerson.relationType,
+          parentGender: this.addPerson.parentGender
         }
       }
       useFetch(opt).then((r) => {
@@ -1797,10 +1799,16 @@ export default defineComponent({
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
-      if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filhos(s)') {
+      console.log(this.userData.userDataTabs[tabIndex].fields[fieldIndex].label, 'nsei')
+      if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filho(s)') {
         this.addPerson.relationType = 'parentToChild'
-      } else if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Mãe' || this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Pai') {
+        this.addPerson.parentGender = 'child'
+      } else if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Mãe'){
         this.addPerson.relationType = 'childToParent'
+        this.addPerson.parentGender = 'mother'
+      } else if  (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Pai') {
+        this.addPerson.relationType = 'childToParent'
+        this.addPerson.parentGender = 'father'
       }
     },
     clkOpenAddOrganismDialog(fieldIndex, tabIndex) {
@@ -1984,8 +1992,13 @@ export default defineComponent({
       }
     },
     getUserDetailById(){
+      let myId = utils.presentUserInfo()
+      console.log(myId)
       const opt = {
-        route:"/desktop/user/getUserDetailById"
+        route:"/desktop/user/getUserDetailById",
+        body: {
+          _id: myId.user_id
+        }
       }
       useFetch(opt).then((r) => {
         if(r.error) {
