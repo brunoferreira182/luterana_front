@@ -1775,7 +1775,9 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente.')
           return
-        } 
+        } else {
+          this.getUserDetailById()
+        }
       })
       this.getUserDetailById()
       this.closeAddPersonDialog()
