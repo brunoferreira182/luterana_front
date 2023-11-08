@@ -1283,7 +1283,6 @@ export default defineComponent({
           .value.push({attach: attach._value.__key})
         this.dialogAddAttach.open = false
       } else if (this.dialogAddAttach.action === 'edit') {
-        console.log(this.dialogAddAttach.iValue)
         this
           .userData
           .userDataTabs[this.dialogAddAttach.tabsIndex]
@@ -1309,12 +1308,6 @@ export default defineComponent({
       }
     },
     removeAttach(fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(this
-        .userData
-        .userDataTabs[tabsIndex]
-        .fields[fieldIndex]
-        .value)
-        console.log(iValue)
       this
         .userData
         .userDataTabs[tabsIndex]
@@ -1728,7 +1721,6 @@ export default defineComponent({
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
     },
     removeThisPerson(fieldIndex, tabsIndex, i) {
-      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i])
       const opt = {
         route: '/desktop/users/inactivateParentalRelation',
         body: {
@@ -1813,7 +1805,6 @@ export default defineComponent({
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
-      console.log(this.userData.userDataTabs[tabIndex].fields[fieldIndex].label, 'nsei')
       if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filho(s)') {
         this.addPerson.relationType = 'parentToChild'
         this.addPerson.parentGender = 'child'
@@ -2007,7 +1998,6 @@ export default defineComponent({
     },
     getUserDetailById(){
       let myId = utils.presentUserInfo()
-      console.log(myId)
       const opt = {
         route:"/desktop/user/getUserDetailById",
         body: {

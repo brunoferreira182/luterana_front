@@ -1719,14 +1719,11 @@ export default defineComponent({
     },
 
     addUserToFunction() {
-      console.log(this.dialogInsertUserInFunction.selectedFunc, 'índice da função que era pra ser passado')
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
       }
-      console.log(selectedFuncIndex, 'selectedFuncIndex')
-      console.log(this.dialogInsertUserInFunction.userSelected.userId, 'outro paramtro que é enviado')
       if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
         this.$q.notify('Usuário já incluído nesta função')
         return
@@ -1803,7 +1800,6 @@ export default defineComponent({
       });
     },
     getUsers(val, update, abort) {
-      console.log(val, 'esse é o val')
       if(val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
@@ -1828,7 +1824,6 @@ export default defineComponent({
 
         update(() => {
           this.usersOptions = r.data.list;
-          console.log(this.usersOptions)
         })
       });
     },
@@ -1836,27 +1831,15 @@ export default defineComponent({
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
     linkPastorToFunction() {
-      console.log('ai meu cuzinho')
       this.functions.forEach((func, ifunc) => {
-        console.log(func, 'func dentro do foreach')
         if (func.functionName === 'Pastor') {
-          console.log('achou o pastor')
-          console.log(func, 'func que tem ppastor como name')
           this.dialogInsertUserInFunction.selectedFunc = func;
           this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
           this.dialogInsertUserInFunction.open = true;
-          func.users.forEach((user, iuser) => {
-
-            console.log(user, iuser)
-          })
         }
       })
     },
     linkUserToFunction(func, funcIndex) {
-      console.log(func, 'func da q funciona')
-      console.log(funcIndex, 'funcindex que funciona')
-      console.log(func, 'func')
-      console.log(funcIndex, 'funcIndex')
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
       this.dialogInsertUserInFunction.selectedFunc = func
       this.dialogInsertUserInFunction.open = true;
