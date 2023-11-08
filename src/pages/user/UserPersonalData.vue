@@ -337,29 +337,13 @@
                         </div>
     
                         <div v-if="field.type.type === 'maritalStatus'">
-                          <q-list
-                            style="border-radius: 1rem"
-                            class="bg-grey-3"
-                            separator
-                          >
-                            <q-item>
-                              <q-item-section>
-                                <q-item-label class="text-capitalize">
-                                  Estamos importando seus dados conjugais
-                                </q-item-label>
-                              </q-item-section>
-                            </q-item>
-                          </q-list>
-                          <!-- <div v-if="field.value && field.value.length > 0">
-                            <div class="text-body">{{ field.label }}</div>
-                            <CardMaritalStatus
-                              :data="field"
-                              :fieldIndex="fieldIndex"
-                              :tabsIndex="tabsIndex"
-                              @remove="removeThisPerson"
-                            />
-                          </div>
-                          <q-btn
+                          <CardMaritalStatus
+                            :data="field.value"  
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="tabsIndex"
+                            @remove="removeThisPerson"
+                          />
+                          <!-- <q-btn
                             :label="`Modificar ${field.label}`"
                             no-caps
                             rounded
@@ -368,8 +352,8 @@
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
-                            :disable="tabs.onlyAdm"
-                          /> -->
+                            :disable="tabs.onlyAdm" -->
+                          <!-- /> --> 
                         </div>
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
@@ -850,7 +834,6 @@
       <DialogMaritalStatus
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
-        @addPerson="confirmAddPerson"
         @closeDialog="clearMaritalStatus"
       />
       <DialogUserTitle
@@ -1689,7 +1672,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error){
-          this.$q.notify('Ocorreu um erro, tente novamente')
+          this.$q.notify('Ocorreu um erro, tente novamente');
           return
         } else{
           this.$q.notify('Título atualizado com sucesso!'); 
@@ -1727,13 +1710,15 @@ export default defineComponent({
           relationId: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].relationId
         }
       }
+      this.$q.loading.show();
       useFetch(opt).then((r) => {
+        this.$q.loading.hide();
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
-        } else {
+          return
+        } 
           this.$q.notify('Familiar removido com sucesso')
           this.getUserDetailById()
-        }
       })
     },
     removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
@@ -1783,7 +1768,6 @@ export default defineComponent({
           this.getUserDetailById()
         }
       })
-      this.getUserDetailById()
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },

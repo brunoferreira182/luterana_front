@@ -22,7 +22,7 @@
             icon="delete"
             flat
             color="red"
-            @click="remove(fieldIndex, tabsIndex, i)"
+            @click.stop="remove(fieldIndex, tabsIndex, i)"
             :disable="disableButtons"
           />
         </q-item-label>

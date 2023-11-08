@@ -4,16 +4,17 @@
     class="bg-grey-3"
     separator
   >
+  {{ props.data }}
     <q-item
-      v-for="(item, i) in props.data.value"
+      v-for="(item, i) in props.data"
       :key="item + i"
     >
       <q-item-section>
         <q-item-label class="text-capitalize">
-          {{ item.userName }}
+          {{ item.partner1}}
         </q-item-label>
         <q-item-label caption>
-          {{ item.email }}
+          {{ item.partner2 }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>

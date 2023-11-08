@@ -95,7 +95,6 @@
                     v-if="func.functionName === 'Pastor'"
                     :func="func"
                     :funcIndex="funcIndex"
-                    @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
                     @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                     :showAddUserButton="false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
