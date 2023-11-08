@@ -1727,11 +1727,12 @@ export default defineComponent({
       }
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
     },
-    removeThisPerson(fieldIndex, tabsIndex, personIndex) {
+    removeThisPerson(fieldIndex, tabsIndex, i) {
+      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i])
       const opt = {
-        route: '',
+        route: '/desktop/users/inactivateParentalRelation',
         body: {
-          personIndex: personIndex
+          relationId: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].relationId
         }
       }
       useFetch(opt).then((r) => {

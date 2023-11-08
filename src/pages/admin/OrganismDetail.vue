@@ -86,19 +86,31 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <div v-if="existsPastor">
+              <div>
                 <q-separator class="q-mx-md q-mb-md" />
                 <div class="text-h5">Pastores:</div>
-                <div v-for="func in functions" :key="func">
+                <div v-for="(func, funcIndex) in functions" :key="func">
                   <CardPastor
                     class="no-margin"
                     v-if="func.functionName === 'Pastor'"
                     :func="func"
                     :funcIndex="funcIndex"
                     @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                    @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                     :showAddUserButton="false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
+                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1">
+                    <q-btn
+                      label="Adicionar pastor"
+                      color="primary"
+                      rounded
+                      no-caps
+                      unelevated
+                      @click="linkPastorToFunction()"
+                    >
+                    </q-btn>
+                  </div>
                 </div>
               </div>
             <q-separator class="q-mx-md" />
@@ -423,7 +435,7 @@
                       <div class="text-h6">
                         Informe o usuário que ocupará a função
                       </div>
-                      <div v-if="dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
+                      <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
                         <q-chip color="red-8" outline>
                           Esta função requer o título {{ dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName }}
                         </q-chip>
@@ -943,6 +955,7 @@ export default defineComponent({
   data() {
     return {
       tab: 'organismData',
+      lastFuncIndex: -1,
       usersOptions: [],
       organismVinculated: '',
       organismTypeId: null,
@@ -968,7 +981,8 @@ export default defineComponent({
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
-        selectedFunc: null
+        selectedFunc: null,
+        userSelected: null
       },
       dialogConfirmAddress: {
         open: false,
@@ -1073,7 +1087,7 @@ export default defineComponent({
       relations: [],
       loadingState: false,
       organismRelationId: '',
-      existsPastor: false
+      selectedFuncIndexToInserPastor: null
     };
   },
   watch: {
@@ -1703,12 +1717,16 @@ export default defineComponent({
         this.organismList = r.data.list;
       });
     },
+
     addUserToFunction() {
-      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFuncIndex;
+      console.log(this.dialogInsertUserInFunction.selectedFunc, 'índice da função que era pra ser passado')
+      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
       }
+      console.log(selectedFuncIndex, 'selectedFuncIndex')
+      console.log(this.dialogInsertUserInFunction.userSelected.userId, 'outro paramtro que é enviado')
       if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
         this.$q.notify('Usuário já incluído nesta função')
         return
@@ -1739,9 +1757,11 @@ export default defineComponent({
     },
     verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
       let ret = false
-      this.functions[functionIndex].users.forEach(u => {
-        if (u.userId === userIdToVerify) ret = true
-      })
+      if (this.functions[functionIndex.users.length > 0]) {
+        this.functions[functionIndex].users.forEach(u => {
+          if (u.userId === userIdToVerify) ret = true
+        }) 
+      } 
       return ret
     },
     getParentOrganismsById() {
@@ -1783,6 +1803,7 @@ export default defineComponent({
       });
     },
     getUsers(val, update, abort) {
+      console.log(val, 'esse é o val')
       if(val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
@@ -1797,22 +1818,45 @@ export default defineComponent({
           rowsPerPage: 50
         }
       }
-      if (this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
+      if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
         opt.body.filterByTitleId = this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId
       }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error){ this.$q.notify(r.errorMessage) }
+
         update(() => {
           this.usersOptions = r.data.list;
+          console.log(this.usersOptions)
         })
       });
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
+    linkPastorToFunction() {
+      console.log('ai meu cuzinho')
+      this.functions.forEach((func, ifunc) => {
+        console.log(func, 'func dentro do foreach')
+        if (func.functionName === 'Pastor') {
+          console.log('achou o pastor')
+          console.log(func, 'func que tem ppastor como name')
+          this.dialogInsertUserInFunction.selectedFunc = func;
+          this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+          this.dialogInsertUserInFunction.open = true;
+          func.users.forEach((user, iuser) => {
+
+            console.log(user, iuser)
+          })
+        }
+      })
+    },
     linkUserToFunction(func, funcIndex) {
+      console.log(func, 'func da q funciona')
+      console.log(funcIndex, 'funcindex que funciona')
+      console.log(func, 'func')
+      console.log(funcIndex, 'funcIndex')
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
       this.dialogInsertUserInFunction.selectedFunc = func
       this.dialogInsertUserInFunction.open = true;
