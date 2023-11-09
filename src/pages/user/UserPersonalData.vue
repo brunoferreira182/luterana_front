@@ -2017,7 +2017,6 @@ export default defineComponent({
       this.dialogAddPastoralData.fields = {
         fields: {...this.userData.userDataTabs[this.userData.userDataTabs.length - 1].fields}
       }
-      console.log('entrou')
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {

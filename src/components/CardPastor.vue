@@ -24,6 +24,7 @@
       <q-item-section side>
         <q-item-label>
           <q-btn
+            v-if="canEditPerson"
             icon="delete"
             flat
             color="red"
@@ -39,7 +40,7 @@
 <script setup>
 // import { defineComponent } from "vue";
 import avatar from '../assets/avatar.svg'
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo', 'canEditPerson'])
 const emits = defineEmits(['remove'])
 
 
