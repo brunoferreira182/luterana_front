@@ -258,7 +258,7 @@
                           />
                         </div>
     
-                        <div v-if="field.type.type === 'maritalStatus'">
+                        <!-- <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
                             <CardMaritalStatus
@@ -279,7 +279,7 @@
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                             :disable="!tabs.onlyAdm"
                           />
-                        </div>
+                        </div> -->
     
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
@@ -1315,7 +1315,7 @@
                     disable
                   />
                 </div>
-                <div v-if="field.type.type === 'maritalStatus'">
+                <!-- <div v-if="field.type.type === 'maritalStatus'">
                   <div v-if="field.value && field.value.length > 0">
                     <div class="text-body">{{ field.label }}</div>
                     <CardMaritalStatus
@@ -1336,7 +1336,7 @@
                     @click="clkAddMaritalStatus(fieldIndex)"
                     disable
                   />
-                </div>
+                </div> -->
                 <div v-if="field.type.type === 'bank_data'">
                   <q-btn
                     label="Adicionar dados bancários"
@@ -1448,7 +1448,7 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
 </script>

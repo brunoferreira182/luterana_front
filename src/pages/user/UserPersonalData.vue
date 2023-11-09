@@ -337,13 +337,16 @@
                         </div>
     
                         <div v-if="field.type.type === 'maritalStatus'">
-                          <CardMaritalStatus
-                            :data="field.value"  
-                            :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
-                            @remove="removeThisPerson"
-                          />
-                          <!-- <q-btn
+                          <!-- <div v-if="field.value">
+                            Dados Conjugais:
+                            <CardMaritalStatus
+                              :data="field.value"  
+                              :fieldIndex="fieldIndex"
+                              :tabsIndex="tabsIndex"
+                              @remove="editMaritalRelation"
+                            />
+                          </div>
+                          <q-btn
                             :label="`Modificar ${field.label}`"
                             no-caps
                             rounded
@@ -352,8 +355,21 @@
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
-                            :disable="tabs.onlyAdm" -->
-                          <!-- /> --> 
+                            :disable="tabs.onlyAdm"
+                          />  -->
+                          <q-list
+                            style="border-radius: 1rem"
+                            class="bg-grey-3"
+                            separator
+                          >
+                            <q-item>
+                              <q-item-section>
+                                <q-item-label class="text-capitalize">
+                                  Estamos importando seus dados conjugais
+                                </q-item-label>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
                         </div>
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
@@ -2001,12 +2017,14 @@ export default defineComponent({
       this.dialogAddPastoralData.fields = {
         fields: {...this.userData.userDataTabs[this.userData.userDataTabs.length - 1].fields}
       }
+      console.log('entrou')
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {
             userTab.fields.forEach((userField) => {
-              if (configField.model === userField.model && userField.value) {
-                this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+              if (configField.model === userField.model) {
+                if (userField.value) this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+                else delete this.userData.userDataTabs[iConfigTab].fields[iConfigField].value
               }
             })
           })
