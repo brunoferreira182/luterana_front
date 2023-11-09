@@ -18,7 +18,7 @@
         @request="nextPage">
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
-            <div class="col">
+            <!-- <div class="col">
               <q-select 
                 outlined 
                 dense 
@@ -28,6 +28,20 @@
                 :options="selectStatus"
                 @update:model-value="getOrganismsList"
               />
+            </div> -->
+            <div class="col">
+              <q-input 
+                @keyup="getOrganismsList" 
+                outlined 
+                dense 
+                debounce="1000" 
+                v-model="filter" 
+                placeholder="Procurar nome"
+              >
+                <template #append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
             </div>
             <div class="col">
               <q-input 
@@ -36,7 +50,7 @@
                 dense 
                 debounce="1000" 
                 v-model="filter" 
-                placeholder="Procurar"
+                placeholder="Procurar cidade"
               >
                 <template #append>
                   <q-icon name="search" />
