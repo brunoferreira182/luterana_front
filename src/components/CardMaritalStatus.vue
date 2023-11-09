@@ -10,7 +10,8 @@
     >
       <q-item-section>
         <q-item-label>
-          Parceiro(a): {{ item.partner.name}}
+          
+          {{ item.partner.name}}
         </q-item-label>
         <q-item-label>
           Data inicial: {{ item.partner.dates.initialDate }}
@@ -18,32 +19,32 @@
         <q-item-label v-if="item.partner.dates.finalDate !== ''">
           Data final: {{ item.partner.dates.finalDate }}
         </q-item-label>
-        <q-item-label v-if="!item.partner.endReason">
+        <q-item-label v-if="item.partner.endReason && item.partner.endReason!== ' '">
           Motivo: {{ item.partner.endReason }}
         </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <!-- <q-item-section side>
         <q-item-label>
           <q-btn
-            icon="delete"
+            icon="edit"
             flat
-            color="red"
-            @click="remove(fieldIndex, tabsIndex, i)"
+            color="primary"
+            @click="edit(fieldIndex, tabsIndex, i)"
             :disable="disableButtons"
           />
         </q-item-label> 
-      </q-item-section>
+      </q-item-section> -->
     </q-item>
   </q-list>
 </template>
 
 <script setup>
 const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
-const emits = defineEmits(['remove'])
+// const emits = defineEmits(['edit'])
 
-function remove(fieldIndex, tabsIndex, i) {
-  emits('remove', fieldIndex, tabsIndex, i)
-}
+// function edit(fieldIndex, tabsIndex, i) {
+//   emits('edit', fieldIndex, tabsIndex, i)
+// }
 
 
 </script>

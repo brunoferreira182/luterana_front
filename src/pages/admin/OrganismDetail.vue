@@ -95,20 +95,21 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <div>
+              <div  v-if="organismConfigName === 'Congregação'">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div class="text-h5">Pastores:</div>
+                <div  class="text-h5">Pastores:</div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
-                  <CardPastor
+                  <cardPastor
                     class="no-margin"
                     v-if="func.functionName === 'Pastor'"
                     :func="func"
                     :funcIndex="funcIndex"
                     @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                     :showAddUserButton="false"
+                    :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
-                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1">
+                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1 && organismConfigName === 'Congregação'">
                     <q-btn
                       label="Adicionar pastor"
                       color="primary"
