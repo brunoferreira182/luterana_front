@@ -273,7 +273,7 @@
                   <CardPerson
                     :data="field"
                     :fieldIndex="fieldIndex"
-                    :canEdit="$route.path.includes('/admin') ? true : false"
+                    :canEditPerson="$route.path.includes('/admin') ? true : false"
                     @remove="removeThisPerson"
                   />
                 </div>
