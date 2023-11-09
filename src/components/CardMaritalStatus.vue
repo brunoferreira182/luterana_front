@@ -5,15 +5,21 @@
     separator
   >
     <q-item
-      v-for="(item, i) in props.data.value"
+      v-for="(item, i) in props.data"
       :key="item + i"
     >
       <q-item-section>
-        <q-item-label class="text-capitalize">
-          {{ item.userName }}
+        <q-item-label>
+          Parceiro(a): {{ item.partner.name}}
         </q-item-label>
-        <q-item-label caption>
-          {{ item.email }}
+        <q-item-label>
+          Data inicial: {{ item.partner.dates.initialDate }}
+        </q-item-label>
+        <q-item-label v-if="item.partner.dates.finalDate !== ''">
+          Data final: {{ item.partner.dates.finalDate }}
+        </q-item-label>
+        <q-item-label v-if="!item.partner.endReason">
+          Motivo: {{ item.partner.endReason }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -25,7 +31,7 @@
             @click="remove(fieldIndex, tabsIndex, i)"
             :disable="disableButtons"
           />
-        </q-item-label>
+        </q-item-label> 
       </q-item-section>
     </q-item>
   </q-list>

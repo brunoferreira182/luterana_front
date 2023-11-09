@@ -337,6 +337,26 @@
                         </div>
     
                         <div v-if="field.type.type === 'maritalStatus'">
+                          <!-- <div v-if="field.value">
+                            Dados Conjugais:
+                            <CardMaritalStatus
+                              :data="field.value"  
+                              :fieldIndex="fieldIndex"
+                              :tabsIndex="tabsIndex"
+                              @remove="editMaritalRelation"
+                            />
+                          </div>
+                          <q-btn
+                            :label="`Modificar ${field.label}`"
+                            no-caps
+                            rounded
+                            flat
+                            color="primary"
+                            icon="add"
+                            v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                            @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
+                            :disable="tabs.onlyAdm"
+                          />  -->
                           <q-list
                             style="border-radius: 1rem"
                             class="bg-grey-3"
@@ -350,26 +370,6 @@
                               </q-item-section>
                             </q-item>
                           </q-list>
-                          <!-- <div v-if="field.value && field.value.length > 0">
-                            <div class="text-body">{{ field.label }}</div>
-                            <CardMaritalStatus
-                              :data="field"
-                              :fieldIndex="fieldIndex"
-                              :tabsIndex="tabsIndex"
-                              @remove="removeThisPerson"
-                            />
-                          </div>
-                          <q-btn
-                            :label="`Modificar ${field.label}`"
-                            no-caps
-                            rounded
-                            flat
-                            color="primary"
-                            icon="add"
-                            v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                            @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
-                            :disable="tabs.onlyAdm"
-                          /> -->
                         </div>
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
@@ -850,7 +850,6 @@
       <DialogMaritalStatus
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
-        @addPerson="confirmAddPerson"
         @closeDialog="clearMaritalStatus"
       />
       <DialogUserTitle
@@ -1283,7 +1282,6 @@ export default defineComponent({
           .value.push({attach: attach._value.__key})
         this.dialogAddAttach.open = false
       } else if (this.dialogAddAttach.action === 'edit') {
-        console.log(this.dialogAddAttach.iValue)
         this
           .userData
           .userDataTabs[this.dialogAddAttach.tabsIndex]
@@ -1309,12 +1307,6 @@ export default defineComponent({
       }
     },
     removeAttach(fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(this
-        .userData
-        .userDataTabs[tabsIndex]
-        .fields[fieldIndex]
-        .value)
-        console.log(iValue)
       this
         .userData
         .userDataTabs[tabsIndex]
@@ -1696,7 +1688,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error){
-          this.$q.notify('Ocorreu um erro, tente novamente')
+          this.$q.notify('Ocorreu um erro, tente novamente');
           return
         } else{
           this.$q.notify('Título atualizado com sucesso!'); 
@@ -1727,20 +1719,22 @@ export default defineComponent({
       }
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.push([])
     },
-    removeThisPerson(fieldIndex, tabsIndex, personIndex) {
+    removeThisPerson(fieldIndex, tabsIndex, i) {
       const opt = {
-        route: '',
+        route: '/desktop/users/inactivateParentalRelation',
         body: {
-          personIndex: personIndex
+          relationId: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].relationId
         }
       }
+      this.$q.loading.show();
       useFetch(opt).then((r) => {
+        this.$q.loading.hide();
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
-        } else {
+          return
+        } 
           this.$q.notify('Familiar removido com sucesso')
           this.getUserDetailById()
-        }
       })
     },
     removeThisOrganism(fieldIndex, tabsIndex, organismIndex) {
@@ -1790,7 +1784,6 @@ export default defineComponent({
           this.getUserDetailById()
         }
       })
-      this.getUserDetailById()
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
@@ -1812,7 +1805,6 @@ export default defineComponent({
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
-      console.log(this.userData.userDataTabs[tabIndex].fields[fieldIndex].label, 'nsei')
       if (this.userData.userDataTabs[tabIndex].fields[fieldIndex].label === 'Filho(s)') {
         this.addPerson.relationType = 'parentToChild'
         this.addPerson.parentGender = 'child'
@@ -2006,7 +1998,6 @@ export default defineComponent({
     },
     getUserDetailById(){
       let myId = utils.presentUserInfo()
-      console.log(myId)
       const opt = {
         route:"/desktop/user/getUserDetailById",
         body: {
@@ -2030,8 +2021,9 @@ export default defineComponent({
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {
             userTab.fields.forEach((userField) => {
-              if (configField.model === userField.model && userField.value) {
-                this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+              if (configField.model === userField.model) {
+                if (userField.value) this.userData.userDataTabs[iConfigTab].fields[iConfigField].value = userField.value
+                else delete this.userData.userDataTabs[iConfigTab].fields[iConfigField].value
               }
             })
           })

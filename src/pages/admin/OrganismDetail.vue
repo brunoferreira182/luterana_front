@@ -89,19 +89,30 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <div v-if="existsPastor">
+              <div>
                 <q-separator class="q-mx-md q-mb-md" />
                 <div class="text-h5">Pastores:</div>
-                <div v-for="func in functions" :key="func">
+                <div v-for="(func, funcIndex) in functions" :key="func">
                   <CardPastor
                     class="no-margin"
                     v-if="func.functionName === 'Pastor'"
                     :func="func"
                     :funcIndex="funcIndex"
-                    @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                    @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
                     :showAddUserButton="false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
+                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1">
+                    <q-btn
+                      label="Adicionar pastor"
+                      color="primary"
+                      rounded
+                      no-caps
+                      unelevated
+                      @click="linkPastorToFunction()"
+                    >
+                    </q-btn>
+                  </div>
                 </div>
               </div>
             <q-separator class="q-mx-md" />
@@ -426,7 +437,7 @@
                       <div class="text-h6">
                         Informe o usuário que ocupará a função
                       </div>
-                      <div v-if="dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
+                      <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
                         <q-chip color="red-8" outline>
                           Esta função requer o título {{ dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName }}
                         </q-chip>
@@ -946,6 +957,7 @@ export default defineComponent({
   data() {
     return {
       tab: 'organismData',
+      lastFuncIndex: -1,
       usersOptions: [],
       organismVinculated: '',
       organismTypeId: null,
@@ -971,7 +983,8 @@ export default defineComponent({
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
-        selectedFunc: null
+        selectedFunc: null,
+        userSelected: null
       },
       dialogConfirmAddress: {
         open: false,
@@ -1076,7 +1089,7 @@ export default defineComponent({
       relations: [],
       loadingState: false,
       organismRelationId: '',
-      existsPastor: false
+      selectedFuncIndexToInserPastor: null
     };
   },
   watch: {
@@ -1707,8 +1720,9 @@ export default defineComponent({
         this.organismList = r.data.list;
       });
     },
+
     addUserToFunction() {
-      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFuncIndex;
+      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
@@ -1743,9 +1757,11 @@ export default defineComponent({
     },
     verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
       let ret = false
-      this.functions[functionIndex].users.forEach(u => {
-        if (u.userId === userIdToVerify) ret = true
-      })
+      if (this.functions[functionIndex.users.length > 0]) {
+        this.functions[functionIndex].users.forEach(u => {
+          if (u.userId === userIdToVerify) ret = true
+        }) 
+      } 
       return ret
     },
     getParentOrganismsById() {
@@ -1801,13 +1817,14 @@ export default defineComponent({
           rowsPerPage: 50
         }
       }
-      if (this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
+      if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId) {
         opt.body.filterByTitleId = this.dialogInsertUserInFunction.selectedFunc.functionRequiredTitleId
       }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error){ this.$q.notify(r.errorMessage) }
+
         update(() => {
           this.usersOptions = r.data.list;
         })
@@ -1815,6 +1832,15 @@ export default defineComponent({
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
+    },
+    linkPastorToFunction() {
+      this.functions.forEach((func, ifunc) => {
+        if (func.functionName === 'Pastor') {
+          this.dialogInsertUserInFunction.selectedFunc = func;
+          this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+          this.dialogInsertUserInFunction.open = true;
+        }
+      })
     },
     linkUserToFunction(func, funcIndex) {
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;

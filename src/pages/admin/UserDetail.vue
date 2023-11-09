@@ -2,6 +2,16 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
+        <div class="row">
+          <q-item-section avatar>
+            <q-img 
+              style="border-radius: 1rem"
+              :src="userProfileImage ? utils.makeFileUrl(userProfileImage) : avatar" 
+              width="74px" 
+              height="74px"
+            />
+          </q-item-section>
+        </div>
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
         </div>
@@ -248,7 +258,7 @@
                           />
                         </div>
     
-                        <div v-if="field.type.type === 'maritalStatus'">
+                        <!-- <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
                             <CardMaritalStatus
@@ -269,7 +279,7 @@
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                             :disable="!tabs.onlyAdm"
                           />
-                        </div>
+                        </div> -->
     
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
@@ -1305,7 +1315,7 @@
                     disable
                   />
                 </div>
-                <div v-if="field.type.type === 'maritalStatus'">
+                <!-- <div v-if="field.type.type === 'maritalStatus'">
                   <div v-if="field.value && field.value.length > 0">
                     <div class="text-body">{{ field.label }}</div>
                     <CardMaritalStatus
@@ -1326,7 +1336,7 @@
                     @click="clkAddMaritalStatus(fieldIndex)"
                     disable
                   />
-                </div>
+                </div> -->
                 <div v-if="field.type.type === 'bank_data'">
                   <q-btn
                     label="Adicionar dados bancários"
@@ -1438,7 +1448,9 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+import utils from '../../boot/utils'
+import avatar from '../../assets/avatar.svg'
 </script>
 <script>
 import { defineComponent } from "vue";
@@ -1486,6 +1498,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      userProfileImage: null,
       userName: '',
       splitterModel: 25,
       titleFields: [],
@@ -1728,6 +1741,7 @@ export default defineComponent({
         this.userLinks =r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
+        this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.mountUserData(r.data)
       });
