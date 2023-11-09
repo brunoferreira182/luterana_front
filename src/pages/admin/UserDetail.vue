@@ -90,7 +90,6 @@
                             <q-icon name="attach_file" />
                           </template>
                         </q-file>
-    
                         <div class="text-right" v-if="field.type.type === 'options'">
                           <q-select
                             outlined
@@ -105,7 +104,6 @@
                           >
                           </q-select>
                         </div>
-    
                         <div v-if="field.type.type === 'attach'">
                           <q-item class="bg-grey-3" style="border-radius: 1rem">
                             <q-item-section>
@@ -133,7 +131,6 @@
                             </q-item-section>
                           </q-item>
                         </div>
-    
                         <q-checkbox
                           v-if="field.type.type === 'boolean'"
                           class="q-pt-lg"
@@ -142,7 +139,6 @@
                           v-model="field.value"
                           :readonly="!tabs.onlyAdm"
                         />
-    
                         <div v-if="field.type.type === 'multiple_select'">
                           <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
                             <div class="q-pl-md q-py-sm">{{ field.label }}:</div>
@@ -191,7 +187,6 @@
                             </div>
                           </div>
                         </div>
-    
                         <div v-if="field.type.type === 'organism'">
                           <div v-if="field.value && field.value.length > 0">
                             <q-btn
@@ -213,7 +208,6 @@
                             />
                           </div>
                         </div>
-    
                         <div v-if="field.type.type === 'address'">
                           <q-btn
                             label="Endereço"
@@ -234,7 +228,6 @@
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
-    
                         <div v-if="field.type.type === 'person'">
                           <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
@@ -257,7 +250,6 @@
                             :disable="!tabs.onlyAdm"
                           />
                         </div>
-    
                         <!-- <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
@@ -280,7 +272,6 @@
                             :disable="!tabs.onlyAdm"
                           />
                         </div> -->
-    
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
                             label="Adicionar dados bancários"
@@ -299,7 +290,6 @@
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
-    
                         <div v-if="
                           field.type.type === 'email'
                           || field.type.type === 'phone'
@@ -325,7 +315,6 @@
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
-    
                         <div v-if="field.type.type === 'formation'">
                           <q-btn
                             label="Formação"
@@ -345,9 +334,7 @@
                             :tabsIndex="tabsIndex"
                             :disableButtons="!tabs.onlyAdm"
                           />
-                          
                         </div>
-    
                       </div>
                     </div>
                   </div>
@@ -577,6 +564,76 @@
               rounded
               color="primary"
               @click="clkConfirmRemoveUserFromFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="dialogSwapUserFromFunction.open" @hide="clearDialogSwapData">
+        <q-card style="border-radius: 1rem">
+          <q-card-section>
+            <div class="text-h6 text-center">Substituição</div>
+            <div>O usuário será substituido da função</div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              v-model="dialogSwapUserFromFunction.observation"
+              filled
+              label="Observação"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              v-model="dialogSwapUserFromFunction.finalDate"
+              label="Data final"
+              hint="Informe a data final de ocupação da função"
+            />
+            <q-card-section align="center">
+              <q-select
+                filled
+                use-input
+                label="Nome do usuário"
+                option-label="userName"
+                v-model="dialogSwapUserFromFunction.newUser"
+                :options="usersOptions"
+                @filter="getUsers"
+                :loading="false"
+                :option-value="(item) => item._id"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                      <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </q-card-section>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogSwapData"
+              color="primary"
+            />
+            <q-btn
+              label="Confirma"
+              no-caps
+              @click="clkConfirmSwapUser"
+              rounded
+              color="primary"
             />
           </q-card-actions>
         </q-card>
@@ -1005,6 +1062,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      usersOptions: [],
       userProfileImage: null,
       userName: '',
       splitterModel: 25,
@@ -1032,6 +1090,13 @@ export default defineComponent({
         organismFunctionId: null,
         obsText: null,
         finalDate: null
+      },
+      dialogSwapUserFromFunction: {
+        open: false,
+        data: null,
+        observation: null,
+        finalDate: null,
+        newUser: null
       }
     };
   },
@@ -1044,6 +1109,66 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    clkConfirmSwapUser() {
+      const organismFunctionUserId = this.dialogSwapUserFromFunction.data._id
+      const finalDate = this.dialogSwapUserFromFunction.finalDate
+      const newUser = this.dialogSwapUserFromFunction.newUser
+      const observation = this.dialogSwapUserFromFunction.observation
+      const opt = {
+        route: '/desktop/adm/swapUserFromFunction',
+        body: {
+          organismFunctionUserId: organismFunctionUserId,
+          obs: observation,
+          finalDate: finalDate,
+          newUser: newUser
+        }
+      }
+      useFetch(opt).then((r) => {
+        this.clearDialogSwapData()
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.getUserDetailById()
+        }
+      })
+    },
+    clearDialogSwapData(){
+      this.dialogSwapUserFromFunction.open = false
+      this.dialogSwapUserFromFunction.data = null
+      this.dialogSwapUserFromFunction.observation = null
+      this.dialogSwapUserFromFunction.finalDate = null
+      this.dialogSwapUserFromFunction.newUser = null
+    },
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getUsers",
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+
+        update(() => {
+          this.usersOptions = r.data.list;
+        })
+      });
+    },
+    swapUserFromFunction(link) {
+      this.dialogSwapUserFromFunction.data = link
+      console.log()
+      this.dialogSwapUserFromFunction.open = true
+    },
     clkConfirmRemoveUserFromFunction () {
       if (
         this.dialogRemoveUserFromFunction.obsText === "" ||
