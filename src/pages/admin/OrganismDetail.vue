@@ -72,6 +72,9 @@
                     {{ link.organismRelationName }} -
                     {{ link.organismConfigName }}
                   </q-item-section>
+                  <q-item-section v-if="link.organismRelationIsMain === 'SIM'">
+                    <q-icon color="secondary" name="home"></q-icon>
+                  </q-item-section>
                 </q-item>
               </q-list>
               <div v-if="$route.path.includes('/admin')">
@@ -1432,6 +1435,7 @@ export default defineComponent({
           this.functions = r.data.functions
           this.relations = r.data.relations
           this.verifyIfHasPastor()
+
         }
       });
     },
