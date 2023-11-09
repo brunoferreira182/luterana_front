@@ -25,7 +25,7 @@
                 @keyup="getUsersList"
                 outlined
                 dense
-                debounce="300"
+                debounce="1000"
                 v-model="filter"
                 placeholder="Procurar"
               >

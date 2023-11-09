@@ -1997,12 +1997,8 @@ export default defineComponent({
       }
     },
     getUserDetailById(){
-      let myId = utils.presentUserInfo()
       const opt = {
         route:"/desktop/user/getUserDetailById",
-        body: {
-          _id: myId.user_id
-        }
       }
       useFetch(opt).then((r) => {
         if(r.error) {
