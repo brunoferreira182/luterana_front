@@ -5,7 +5,7 @@
         <q-header>
           <q-toolbar class="bg-grey-3 text-primary" id="idMainToolbar">
             <q-btn
-              v-if="!isMobile"
+              v-if="!isMobile && canEdit"
               flat
               dense
               round

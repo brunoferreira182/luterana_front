@@ -273,6 +273,7 @@
                   <CardPerson
                     :data="field"
                     :fieldIndex="fieldIndex"
+                    :canEdit="$route.path.includes('/admin') ? true : false"
                     @remove="removeThisPerson"
                   />
                 </div>
@@ -749,6 +750,7 @@
                     <CardPerson
                       :data="field"
                       :fieldIndex="fieldIndex"
+                      :canEdit="$route.path.includes('/admin') ? true : false"
                       @remove="removeThisPerson"
                       :disableButtons="true"
                     />
@@ -1155,6 +1157,7 @@
                     <div class="text-body">{{ field.label }}</div>
                     <CardPerson
                       :data="field"
+                      :canEdit="$route.path.includes('/admin') ? true : false"
                       :fieldIndex="fieldIndex"
                       @remove="removeThisPerson"
                     />
