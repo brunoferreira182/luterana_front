@@ -360,561 +360,6 @@
           </div>
         </q-list>
       </div>
-      
-      <!-- <q-splitter
-        v-model="splitterModel"
-        style="height: 100vh;"
-        v-show="visionSelected === 'personalData'"
-      >
-        <template v-slot:before>
-          <q-tabs
-            v-model="tab"
-            vertical
-            align="left"
-            class="text-left flex-center"
-            no-caps
-            active-bg-color="blue-1"
-            indicator-color="primary"
-            inline-label
-            @update:model-value="addBar = false"
-          >
-            <template v-for="(tabs, i) in userData.userDataTabs" :key="i">
-              <q-tab 
-                class="flex-left flex"
-                :name="tabs.tabValue" 
-                :label="tabs.tabLabel" 
-              />
-              <q-separator/>
-            </template>
-            <template v-if="userForms && userForms.length">
-              <q-tab 
-                class="flex-left flex"
-                name="forms" 
-                label="Formulários" 
-                icon="feed"
-              />
-              <q-separator />
-            </template>
-          </q-tabs>
-        </template>
-        <template v-slot:after>
-          <q-tab-panels 
-            animated 
-            swipeable
-            transition-prev="jump-up"
-            transition-next="jump-up"
-            class="bg-accent"
-            :model-value="tab"
-          >
-            <q-tab-panel 
-              v-for="(tabs, tabsIndex) in userData.userDataTabs"
-              :key="tabsIndex"
-              :name="tabs.tabValue" 
-            >
-              <q-list class="text-left text-h6">
-                <q-item>
-                  <q-item-section>{{ tabs.tabLabel }}:</q-item-section>
-                </q-item>
-              </q-list>
-              <div
-                v-for="(field, fieldIndex) in tabs.fields"
-                :key="fieldIndex"
-                class="q-my-md"
-              >
-                <div class="row q-gutter-sm justify-left items-left">
-                  <div class="col q-mx-lg">
-                    <div v-if="
-                      field.type.type !== 'boolean'
-                      && field.type.type !== 'address'
-                      && field.type.type !== 'options'
-                      && field.type.type !== 'person'
-                      && field.type.type !== 'organism'
-                      && field.type.type !== 'attach'
-                      && field.type.type !== 'multiple_select'
-                      && field.type.type !== 'bank_data'
-                      && field.type.type !== 'email'
-                      && field.type.type !== 'phone'
-                      && field.type.type !== 'mobile'
-                    "
-                    >
-                      <q-input
-                        :label="field.label"
-                        :hint="field.hint"
-                        :mask="field.type.mask"
-                        v-model="field.value"
-                        outlined
-                      >
-                      </q-input>
-                    </div>
-                    <div class="text-right" v-if="field.type.type === 'options'">
-                      <q-select
-                        outlined
-                        :label="field.label"
-                        option-label="optionName"
-                        emit-value
-                        map-options
-                        :hint="field.hint"
-                        v-model="field.value"
-                        :options="field.options"
-                      />
-                    </div>
-                    <div class="text-center" v-if="field.type.type === 'multiple_select'">
-                      <div
-                        v-for="(value, valueIndex) in field.value"
-                        :key="valueIndex"
-                        class="q-pa-sm"
-                      >
-                        <div class="col text-h5 q-pa-sm" style="border-radius: 1rem">
-                          <div class="q-pl-md q-py-sm">
-                            {{ field.label }}:
-                          </div>
-                          <div class="row text-center justify-center">
-                            <q-select
-                              v-for="(select, selectIndex) in field.selects"
-                              :key="select"
-                              outlined
-                              disable
-                              :label="select.label"
-                              emit-value
-                              map-options
-                              v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
-                              style="width: 50%;"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div v-if="field.type.type === 'address'">
-                      <div class="text-body2">Endereços</div>
-                      <q-list
-                        class="bg-grey-3"
-                        style="border-radius: 1rem"
-                        v-if="field.value"
-                        separator
-                      >
-                        <q-item
-                          v-for="(item, i) in field.value"
-                          :key="item + i"
-                        >
-                          <q-item-section>
-                            <q-item-label class="text-capitalize">
-                              {{ item.street }}, {{ item.number }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              {{ item.district }} - {{ item.city }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              CEP
-                              {{ item.cep }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Complemento:
-                              {{ item.complement }}
-                            </q-item-label>
-                            <q-item-label caption class="text-capitalize">
-                              <q-badge>{{ item.type }}</q-badge>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </div>
-
-                    <div v-if="field.type.type === 'attach'">
-                      <q-item>
-                        <q-item-section>
-                          <q-item-label class="text-h5">
-                            {{ field.label }}
-                          </q-item-label>
-                          <q-item-label class="text-subtitle1">
-                            {{ field.hint }}
-                          </q-item-label>
-                          <q-item-label v-for="docs in field.value" :key="docs">
-                              {{ docs.__key }}
-                          </q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </div>
-
-                    <q-checkbox
-                      v-if="field.type.type === 'boolean'"
-                      class="q-pt-lg"
-                      readonly
-                      :label="field.label"
-                      :hint="field.hint"
-                      v-model="field.value"
-                    />
-
-                    <div v-if="field.type.type === 'person'">
-                      <div v-if="field.value && field.value.length > 0">
-                        <div class="text-body">{{ field.label }}</div>
-                        <q-list class="no-margin">
-                          <q-item
-                            v-for="(item, i) in field.value"
-                            :key="item + i"
-                            style="border-radius: 1rem"
-                            class="bg-grey-3 q-ma-sm q-pa-md"
-                          >
-                            <q-item-section>
-                              <q-item-label class="text-capitalize">
-                                {{ item.userName }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                {{ item.email }}
-                              </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      </div>
-                    </div>
-                    <div v-if="field.type.type === 'organism'">
-                      <div v-if="field.value && field.value.length > 0">
-                        <div class="text-body">{{ field.label }}</div>
-                        <q-list class="no-margin">
-                          <q-item
-                            v-for="(item, i) in field.value"
-                            :key="item + i"
-                            style="border-radius: 1rem"
-                            class="bg-grey-3 q-ma-sm q-pa-md"
-                          >
-                            <q-item-section>
-                              <q-item-label class="text-capitalize">
-                                {{ item.organismName }}
-                              </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-                      </div>
-                    </div>
-
-                    <div v-if="field.type.type === 'bank_data'">
-                      <div class="text-body2">Dados bancários</div>
-                      <q-list
-                        v-if="field.value"
-                        separator
-                        style="border-radius: 1rem"
-                        class="bg-grey-3"
-                      >
-                        <q-item
-                          v-for="(item, i) in field.value"
-                          :key="item + i"
-                        >
-                          <q-item-section>
-                            <q-item-label class="text-capitalize">
-                              {{ item.bank }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Agência {{ item.agency }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              Agência {{ item.account }}
-                            </q-item-label>
-                            <q-item-label caption v-if="item.pix !== ''">
-                              Pix {{ item.pix }}
-                            </q-item-label>
-                            <q-item-label></q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </div>
-
-                    <div v-if="
-                      field.type.type === 'email'
-                      || field.type.type === 'phone'
-                      || field.type.type === 'mobile'
-                      "
-                    >
-                      <div class="text-body2">{{ field.type.label }}</div>
-                      <q-list
-                        class="bg-grey-3"
-                        v-if="field.value"
-                        style="border-radius: 1rem"
-                        separator
-                      >
-                        <q-item
-                          v-for="(value, iValue) in field.value"
-                          :key="'multField' + iValue"
-                        >
-                          <q-item-section>
-                            <q-item-label>
-                              {{ value.value }}
-                            </q-item-label>
-                            <q-item-label caption >
-                              <q-badge>{{ value.type }}</q-badge>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </q-tab-panel>
-            <q-tab-panel
-              name="forms"
-            >
-              <div class="text-body1 q-pa-sm" v-if="userForms && userForms.length">
-                Formulários direcionados ao usuário
-              </div>
-              <div class="text-caption q-pa-sm" v-if="userForms && userForms.length">
-                Utilize os botões abaixo para preencher um formulário
-              </div>
-              <div class="row" v-if="userForms && userForms.length">
-                <div
-                  class="col q-px-xs"
-                >
-                  <q-btn
-                    v-for="form in userForms"
-                    :key="form"
-                    no-caps
-                    class="q-ma-sm"
-                    outline
-                    unelevated
-                    color="primary"
-                    @click="openUserFormDialog(form)"
-                    :label="form.formName"
-                  />
-                </div>
-                <div class="row full-width q-pa-md">
-                  <div class="col-12">
-                    <div class="text-body1 q-pa-sm" v-if="savedForms && savedForms.length">
-                      Formulários enviados
-                    </div>
-                    <q-list>
-                      <q-item
-                        class="form-list"
-                        v-for="item in savedForms"
-                        :key="item"
-                      >
-                        <q-item-section class="texr-wrap" lines="2">
-                          <q-item-label class="text-h6">{{ item.formName }}</q-item-label>
-                          <div v-for="field in item.fields" :key="field">
-                            <q-item-label class="text-subtitle2">
-                              {{ field.label }}
-                            </q-item-label>
-                            <q-item-label caption>
-                              {{ field.type.label }}
-                            </q-item-label>
-                          </div>
-                        </q-item-section>
-                        <q-item-section side top>
-                          <q-item-label caption>{{ item.createdAt.createdAtLocale }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </div>
-                </div>
-              </div>
-              
-            </q-tab-panel>
-          </q-tab-panels>
-        </template>
-      </q-splitter> -->
-
-      <div v-show="visionSelected === 'titles'">
-        
-        <q-splitter
-          v-model="splitterModel"
-          style="height: 100vh;"
-          v-if="userDetail"
-        >
-          <template v-slot:before>
-            <q-tabs
-              v-model="tabTitles"
-              vertical
-              align="left"
-              class="text-left "
-              no-caps
-              active-bg-color="blue-1"
-              indicator-color="primary"
-              inline-label
-              @update:model-value="addBar = false"
-            >
-              <template v-for="(tab) in userDetail.userTitleData" :key="tab._id">
-                <q-tab 
-                  class="flex-left flex"
-                  :name="tab._id" 
-                  :label="tab.titleName" 
-                >
-                <q-icon
-                  v-if="tab.status.status === 'pendingApproval'"
-                  name="error"
-                  flat
-                  size="sm"
-                  color="orange"
-                />
-                </q-tab>
-                <q-separator/>
-              </template>
-              <div class="text-center">
-                <q-btn
-                  color="secondary"
-                  rounded
-                  icon="add"
-                  class="q-ma-md"
-                  label="Adicionar"
-                  unelevated
-                  @click="openDialogVinculateUserToTitle = true"
-                  no-caps
-                />
-              </div>
-            </q-tabs>
-          </template>
-          <template v-slot:after>
-            <q-tab-panels 
-              animated 
-              swipeable
-              transition-prev="jump-up"
-              transition-next="jump-up"
-              class="bg-accent"
-              :model-value="tabTitles"
-            >
-              <q-tab-panel 
-                v-for="(tab, tabIndex) in userDetail.userTitleData"
-                :key="tab._id"
-                :name="tab._id" 
-              >
-                <div class="row">
-                  <div 
-                    class="col text-h6"
-                  >
-                  {{ tab.titleName }}:</div>
-                  <div 
-                    v-if="tab.status.status === 'pendingApproval'"
-                    class="q-mr-lg"
-                  >
-                  <q-btn
-                    label="Aprovar título"
-                    color="green"
-                    icon="done"
-                    rounded
-                    flat
-                    @click="clkActiveTitle(tabIndex)"
-                    no-caps
-                  />
-                </div>
-                <q-btn
-                  label="Excluir título"
-                  color="red"
-                  icon="close"
-                  rounded
-                  flat
-                  @click="clkInactiveTitle(tabIndex)"
-                  no-caps
-                />
-                </div>
-                <div class="row q-gutter-sm justify-left items-left q-mt-sm">
-                  <div class="col q-mx-lg">
-                    <div
-                    class="q-my-md"
-                      v-for="(field, fieldIndex) in tab.titleFields"
-                      :key="fieldIndex"
-                    >
-                      <div v-if="field.type.type !== 'boolean' && field.type.type !== 'address' ">
-                        <q-input
-                          :label="field.label"
-                          :hint="field.hint"
-                          :type="field.type.type"
-                          v-model="field.value"
-                          outlined
-                        >
-                          <template
-                            v-if="field.multiple"
-                            #append
-                          >
-                            <q-btn
-                              disabled
-                              icon="add"
-                              color="primary"
-                              flat
-                              round
-                              @click="addMultipleField"
-                            >
-                              <q-tooltip
-                                >Adicionar multiplo
-                                {{ field.type.label }}</q-tooltip
-                              >
-                            </q-btn>
-                          </template>
-                        </q-input>
-                      </div>
-                      <div class="text-right" v-if="field.type.type === 'address'">
-                        <q-btn
-                          label="Adicionar um endereço"
-                          no-caps
-                          rounded
-                          unelevated
-                          outline
-                          color="primary"
-                          @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
-                        />
-                      </div>
-                      <div
-                        v-if="field.type.type === 'address' && !field.address"
-                        class="text-subtilte1 text-start"
-                      >
-                        <div class="text-h6">Endereços</div>
-                        Nenhum endereço vinculado
-                      </div>
-                      <q-list
-                        class="no-margin"
-                        v-if="field.address"
-                      >
-                        <q-item
-                          v-for="(item, i) in field.address"
-                          :key="item + i"
-                          style="border-radius: 1rem"
-                          class="bg-grey-3 q-ma-sm q-pa-md"
-                        >
-                        <q-item-section>
-                          <q-item-label lines="3" class="text-capitalize">
-                            {{ item.street }}, {{ item.number }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            {{ item.district }} - {{ item.city }}
-                          </q-item-label>
-                          <q-item-label caption>
-                            CEP
-                            {{ item.cep }}
-                          </q-item-label>
-                          <q-item-label></q-item-label>
-                        </q-item-section>
-                        <q-item-section side top>
-                          <q-item-label caption class="text-capitalize">{{
-                            item.type
-                          }}</q-item-label>
-                        </q-item-section>
-                        </q-item>
-                      </q-list>
-                      <q-checkbox
-                        v-if="field.type.type === 'boolean'"
-                        class="q-pt-lg"
-                        readonly
-                        :label="field.label"
-                        :hint="field.hint"
-                        v-model="field.value"
-                      />
-                    </div>
-                    <div 
-                      class="col-6 q-gutter-sm text-right"
-                    >
-                      <q-btn
-                        rounded
-                        no-caps
-                        unelevated
-                        color="primary"
-                        label="Salvar"
-                        @click="updateUserTitle(tab)"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </q-tab-panel>
-            </q-tab-panels>
-          </template>
-        </q-splitter>
-      </div>
 
       <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
         <q-card style="border-radius: 1rem; min-width: 650px">
@@ -1037,6 +482,8 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+
       <q-dialog v-model="dialogShowLinks.open">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -1052,14 +499,32 @@
                 :key="link"
                 style="border-radius: 1rem;"
                 class="bg-blue-grey-2 q-ma-sm"
-                @click="goToOrganismDetail(link.organismId)"
               >
-                <q-item-section>
+                <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
                   <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
                   <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
                 </q-item-section>
-                <q-item-section side top>
-                  <q-icon name="star" color="yellow" />
+                <q-item-section side>
+                  <q-item-label>
+                  <q-btn
+                    icon="delete"
+                    color="red"
+                    round
+                    @click="removeUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Remover usuário</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    icon="refresh"
+                    color="primary"
+                    round
+                    @click="swapUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Trocar por outro usuário</q-tooltip>
+                  </q-btn>
+                  </q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -1076,6 +541,48 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="dialogRemoveUserFromFunction.open">
+        <q-card style="border-radius: 1rem">
+          <q-card-section>
+            <div class="text-h6 text-center">Confirma?</div>
+            <div>O usuário será removido da função</div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              filled
+              label="Observação"
+              v-model="dialogRemoveUserFromFunction.obsText"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              label="Data final"
+              v-model="dialogRemoveUserFromFunction.finalDate"
+              hint="Informe a data final de ocupação da função"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogRemoveUserFromFunction.open = false"
+            />
+            <q-btn
+              label="Confirma"
+              no-caps
+              rounded
+              color="primary"
+              @click="clkConfirmRemoveUserFromFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+
       <q-dialog v-model="openDialogRemoveUser">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
@@ -1519,6 +1026,12 @@ export default defineComponent({
       dialogLinkDetail: {
         open: false,
         data: null
+      },
+      dialogRemoveUserFromFunction: {
+        open: false,
+        organismFunctionId: null,
+        obsText: null,
+        finalDate: null
       }
     };
   },
@@ -1531,29 +1044,44 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    clkConfirmRemoveUserFromFunction () {
+      if (
+        this.dialogRemoveUserFromFunction.obsText === "" ||
+        this.dialogRemoveUserFromFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivateUserFromFunction",
+        body: {
+          userFunctionId: this.dialogRemoveUserFromFunction.organismFunctionUserId,
+          finalDate: this.dialogRemoveUserFromFunction.finalDate,
+          obsText: this.dialogRemoveUserFromFunction.obsText,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }
+        this.getUserDetailById()
+        this.$q.notify("Usuário removido");
+        this.dialogRemoveUserFromFunction.open = false
+      });
+    },
+    removeUserFromFunction (link) {
+      this.dialogRemoveUserFromFunction.open = true
+      this.dialogRemoveUserFromFunction.organismFunctionUserId = link.organismFunctionUserId
+    },
     pushToLinkDetail() {
       this.$router.push('/admin/organismDetail?organismId=' + this.dialogLinkDetail.data._id)
     },
     clearLinkDialog() {
       this.dialogLinkDetail.open = false,
       this.dialogLinkDetail.data = null
-    },
-    removeUser(){
-      const opt = {
-        route:'/desktop/adm/removeUser',
-      };
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if(r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente mais tarde.")
-        }
-        else {
-          this.$q.notify("Usuário removido!")
-          this.openDialogRemoveUser = false
-          this.$router.back()
-        }
-      })
     },
     openUserFormDialog(form){
       this.userFormDialog.formId = form._id
@@ -1738,7 +1266,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        this.userLinks =r.data.userLinksToOrganisms.data
+        this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.userProfileImage = r.data.profileImage
