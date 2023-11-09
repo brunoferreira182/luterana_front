@@ -69,12 +69,18 @@
                   @click="goToParentOrganismDetail(link)"
                 >
                   <q-item-section>
-                    {{ link.organismRelationName }} -
-                    {{ link.organismConfigName }}
+                    <div class="row">
+                      {{ link.organismRelationName }} -
+                      {{ link.organismConfigName }}
+                      <q-icon 
+                        v-if="link.organismRelationIsMain === 'SIM'" 
+                        color="secondary" 
+                        name="home"
+                        class="q-mt-sm q-ml-xs"
+                      ></q-icon>
+                    </div>
                   </q-item-section>
-                  <q-item-section v-if="link.organismRelationIsMain === 'SIM'">
-                    <q-icon color="secondary" name="home"></q-icon>
-                  </q-item-section>
+                  
                 </q-item>
               </q-list>
               <div v-if="$route.path.includes('/admin')">
@@ -140,6 +146,7 @@
                   >
                   </q-input>
                 </div>
+                
                 <q-file
                   v-if="field.type.type === 'image'"
                   v-model="files"
@@ -167,6 +174,7 @@
                   >
                   </q-select>
                 </div>
+                
                 <div v-if="field.type.type === 'attach'">
                   <q-item class="bg-grey-3" style="border-radius: 1rem">
                     <q-item-section>
@@ -413,6 +421,11 @@
                     />
                 </div>
               </div>
+              <CardAddress v-if="congregacaoSedeAddress.length > 0"
+                :data="congregacaoSedeAddress"
+                :fieldIndex="0"
+                :disableButtons="true"
+              />
             </div>
             <q-separator vertical class="q-ma-md" />
             <div class="col-4">
@@ -1089,7 +1102,8 @@ export default defineComponent({
       relations: [],
       loadingState: false,
       organismRelationId: '',
-      selectedFuncIndexToInserPastor: null
+      selectedFuncIndexToInserPastor: null,
+      congregacaoSedeAddress: ''
     };
   },
   watch: {
@@ -1448,7 +1462,11 @@ export default defineComponent({
           this.functions = r.data.functions
           this.relations = r.data.relations
           this.verifyIfHasPastor()
-
+          for(let i = 0; r.data.relations.length > i; i++) {
+            if(r.data.relations[i].organismRelationIsMain === 'SIM') {
+              this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
+            }
+          }
         }
       });
     },
@@ -1808,8 +1826,12 @@ export default defineComponent({
         abort()
         return
       }
+      let route
+      if (this.dialogInsertUserInFunction.selectedFunc._id !== '6530496b892eac36fc130cb2') {
+        route = "/desktop/adm/getUsers"
+      } else if (this.dialogInsertUserInFunction.selectedFunc._id === '6530496b892eac36fc130cb2') route = "/desktop/adm/getPastores"
       const opt = {
-        route: "/desktop/adm/getUsers",
+        route: route,
         body: {
           searchString: val,
           isActive: 1,

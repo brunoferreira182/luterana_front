@@ -47,7 +47,8 @@
           <q-td :props="props">
             <div class="text-caption" v-if="props.row.endereco && props.row.endereco[0]">{{ props.row.endereco[0].city }}
             </div>
-            <div class="text-caption" v-else-if="!props.row.endereco">Não consta</div>
+            <div class="text-caption" v-else-if="props.row.childOrganismCity">{{ props.row.childOrganismCity }}</div>
+            <div class="text-caption" v-else-if="!props.row.endereco && !props.row.childOrganismCity">Não consta</div>
           </q-td>
         </template>
         <template #body-cell-organismParentName="props">
