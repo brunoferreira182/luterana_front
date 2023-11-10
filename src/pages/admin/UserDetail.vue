@@ -26,18 +26,59 @@
             label="Inativar"
             @click="openDialogRemoveUser = true"
           />
-          <q-btn
+          <!-- <q-btn
             color="primary"
             rounded
             unelevated
             no-caps
             label="Vínculos"
             @click="dialogShowLinks.open = true"
-          />
+          /> -->
         </div>
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
+        <div v-if="userLinks">
+          <div class="text-h6 q-ma-sm q-ml-md">
+              Vínculos:
+            </div>
+          <q-list >
+            <q-item
+              clickable
+              v-for="link in userLinks"
+              :key="link"
+              style="border-radius: 1rem;"
+              class="bg-grey-3 q-ma-sm q-mx-md"
+            >
+              <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
+                <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
+                <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                  <q-item-label>
+                  <q-btn
+                    icon="delete"
+                    color="red"
+                    round
+                    @click="removeUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Remover usuário</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    icon="refresh"
+                    color="primary"
+                    round
+                    @click="swapUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Trocar por outro usuário</q-tooltip>
+                  </q-btn>
+                  </q-item-label>
+                </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -149,7 +190,7 @@
                                 color="primary"
                                 outline
                                 rounded
-                                @click="addDoubleSelection(tabsIndex, fieldIndex)"
+                                @click="addDoubleSelection(i, fieldIndex)"
                                 no-caps
                                 :disable="!tabs.onlyAdm"
                               >
@@ -170,7 +211,7 @@
                                     option-label="options"
                                     emit-value
                                     map-options
-                                    v-model="userData.userDataTabs[tabsIndex].fields[fieldIndex].value[valueIndex][selectIndex]"
+                                    v-model="userData.userDataTabs[i].fields[fieldIndex].value[valueIndex][selectIndex]"
                                     :options="select.options"
                                     class="col-5"
                                   />
@@ -180,7 +221,7 @@
                                     rounded
                                     flat
                                     color="red"
-                                    @click="userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(valueIndex, 1)" 
+                                    @click="userData.userDataTabs[i].fields[fieldIndex].value.splice(valueIndex, 1)" 
                                     />
                                 </div>
                               </div>
@@ -197,13 +238,13 @@
                               color="primary"
                               icon="add"
                               v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                              @click="clkOpenAddOrganismDialog(fieldIndex, tabsIndex)"
+                              @click="clkOpenAddOrganismDialog(fieldIndex, i)"
                               :disable="!tabs.onlyAdm"
                             />
                             <CardOrganism
                               :data="field"
                               :fieldIndex="fieldIndex"
-                              :tabsIndex="tabsIndex"
+                              :tabsIndex="i"
                               :disableButtons="!tabs.onlyAdm"
                             />
                           </div>
@@ -217,14 +258,14 @@
                             flat
                             color="primary"
                             icon="add"
-                            @click="clkOpenAddressDialog(fieldIndex, tabsIndex)"
+                            @click="clkOpenAddressDialog(fieldIndex, i)"
                             class="q-mt-xs"
                             :disable="!tabs.onlyAdm"
                           />
                           <CardAddress
                             :data="field.value"
                             :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
+                            :tabsIndex="i"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -234,7 +275,7 @@
                             <CardPerson
                               :data="field"
                               :fieldIndex="fieldIndex"
-                              :tabsIndex="tabsIndex"
+                              :tabsIndex="i"
                               :disableButtons="!tabs.onlyAdm"
                             />
                           </div>
@@ -246,17 +287,17 @@
                             color="primary"
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                            @click="clkOpenAddPersonDialog(fieldIndex, tabsIndex)"
+                            @click="clkOpenAddPersonDialog(fieldIndex, i)"
                             :disable="!tabs.onlyAdm"
                           />
                         </div>
-                        <!-- <div v-if="field.type.type === 'maritalStatus'">
+                        <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value && field.value.length > 0">
                             <div class="text-body">{{ field.label }}</div>
                             <CardMaritalStatus
-                              :data="field"
+                              :data="field.value"
                               :fieldIndex="fieldIndex"
-                              :tabsIndex="tabsIndex"
+                              :tabsIndex="i"
                               :disableButtons="!tabs.onlyAdm"
                             />
                           </div>
@@ -268,10 +309,10 @@
                             color="primary"
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                            @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
+                            @click="clkAddMaritalStatus(fieldIndex, i)"
                             :disable="!tabs.onlyAdm"
                           />
-                        </div> -->
+                        </div>
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
                             label="Adicionar dados bancários"
@@ -279,14 +320,14 @@
                             rounded
                             flat
                             color="primary"
-                            @click="clkAddBankData(fieldIndex, tabsIndex)"
+                            @click="clkAddBankData(fieldIndex, i)"
                             icon="add"
                             :disable="!tabs.onlyAdm"
                           />
                           <CardBankData
                             :data="field"
                             :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
+                            :tabsIndex="i"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -304,14 +345,14 @@
                             icon="add"
                             color="primary"
                             rounded
-                            @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
+                            @click="addPhoneMobileEmail(fieldIndex, i, field)"
                             class="q-mt-xs"
                             :disable="!tabs.onlyAdm"
                           />
                           <CardPhoneMobileEmail
                             :data="field.value"
                             :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
+                            :tabsIndex="i"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -324,14 +365,13 @@
                             flat
                             color="primary"
                             icon="add"
-                            @click="clkAddFormation(fieldIndex, tabsIndex)"
                             class="q-mt-xs"
                             :disable="!tabs.onlyAdm"
                           />
                           <CardFormation
                             :data="field"
                             :fieldIndex="fieldIndex"
-                            :tabsIndex="tabsIndex"
+                            :tabsIndex="i"
                             :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
@@ -347,7 +387,6 @@
           </div>
         </q-list>
       </div>
-
       <q-dialog v-model="userFormDialog.open" @before-show="getFormDetailById">
         <q-card style="border-radius: 1rem; min-width: 650px">
           <q-card-section>
@@ -471,7 +510,7 @@
       </q-dialog>
 
 
-      <q-dialog v-model="dialogShowLinks.open">
+      <!-- <q-dialog v-model="dialogShowLinks.open">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
             <div class="text-h6 text-center">
@@ -527,7 +566,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
       <q-dialog v-model="dialogRemoveUserFromFunction.open">
         <q-card style="border-radius: 1rem">
           <q-card-section>
@@ -1012,7 +1051,7 @@ import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
-// import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
+import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
 </script>

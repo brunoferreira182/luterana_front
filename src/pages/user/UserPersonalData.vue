@@ -337,13 +337,12 @@
                         </div>
     
                         <div v-if="field.type.type === 'maritalStatus'">
-                          <!-- <div v-if="field.value">
+                          <div v-if="field.value">
                             Dados Conjugais:
                             <CardMaritalStatus
                               :data="field.value"  
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
-                              @remove="editMaritalRelation"
                             />
                           </div>
                           <q-btn
@@ -356,8 +355,8 @@
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkAddMaritalStatus(fieldIndex, tabsIndex)"
                             :disable="tabs.onlyAdm"
-                          />  -->
-                          <q-list
+                          /> 
+                          <!-- <q-list
                             style="border-radius: 1rem"
                             class="bg-grey-3"
                             separator
@@ -369,7 +368,7 @@
                                 </q-item-label>
                               </q-item-section>
                             </q-item>
-                          </q-list>
+                          </q-list> -->
                         </div>
                         <div v-if="field.type.type === 'bank_data'">
                           <q-btn
