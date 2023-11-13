@@ -26,14 +26,14 @@
             label="Inativar"
             @click="openDialogRemoveUser = true"
           />
-          <!-- <q-btn
+          <q-btn
             color="primary"
             rounded
             unelevated
             no-caps
-            label="Vínculos"
-            @click="dialogShowLinks.open = true"
-          /> -->
+            label="Atualizar email"
+            @click="updateUserEmail"
+          />
         </div>
       </div>
       <q-separator class="q-mx-md"/>
@@ -98,13 +98,24 @@
                     <div class="row q-gutter-sm justify-left items-left">
                       <div class="col q-mx-lg">
                         <div v-if="
-                          field.type.type === 'string'
-                          || field.type.type === 'int'
+                          field.type.type === 'string' && field.label === 'E-mail'"
+                        >
+                          <q-input
+                            :label="field.label"
+                            :hint="field.hint"
+                            :mask="field.type.mask"
+                            v-model="field.value"
+                            outlined
+                          >
+                          </q-input>
+                        </div>
+                        <div v-if="field.type.type === 'int'
                           || field.type.type === 'date'
                           || field.type.type === 'cpf'
                           || field.type.type === 'cnpj'
                           || field.type.type === 'money'
                           || field.type.type === 'textarea'
+                          || (field.type.type === 'string' && field.label === 'Nome')
                           "
                         >
                           <q-input
@@ -114,7 +125,7 @@
                             v-model="field.value"
                             outlined
                             :readonly="!tabs.onlyAdm"
-                          >
+                            >
                           </q-input>
                         </div>
                         <q-file
@@ -354,7 +365,7 @@
                             :fieldIndex="fieldIndex"
                             :tabsIndex="i"
                             :disableButtons="!tabs.onlyAdm"
-                          />
+                            />
                         </div>
                         <div v-if="field.type.type === 'formation'">
                           <q-btn
@@ -1148,6 +1159,23 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    updateUserEmail() {
+      const opt = {
+        route: '/desktop/adm/updateUserEmail',
+        body: {
+          userDataTabs: this.userData.userDataTabs,
+          userId: this.$route.query.userId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+        } else {
+          this.$q.notify('Email atualizado.')
+          this.getUserDetailById()
+        }
+      })
+    },
     clkConfirmSwapUser() {
       const organismFunctionUserId = this.dialogSwapUserFromFunction.data._id
       const finalDate = this.dialogSwapUserFromFunction.finalDate
