@@ -1075,6 +1075,9 @@
         :orgData="dialogChildOrganism.orgData"
         :orgFields="dialogChildOrganism.orgFields"
         :orgFunc="dialogChildOrganism.orgFunc"
+        :isAdm="false"
+        @closeDialog="closeDialogOrganismDetail"
+        @goToDetail="routeToDetail"
       />
       <DialogAddress
         :open="dialogConfirmAddress.open"
@@ -1303,6 +1306,9 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
+    closeDialogOrganismDetail() {
+      this.dialogChildOrganism.open = false
+    },
     clearChildOrganismDetailOnDialog(){
       this.dialogChildOrganism.orgData = {}
       this.dialogChildOrganism.open = false

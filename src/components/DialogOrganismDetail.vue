@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="props.open">
+  <q-dialog :model-value="props.open" @hide="closeDialog">
     <q-card style="width: 800px; max-width: 100vw; border-radius: 1rem">
       {{ userDataTabs }}
       <q-btn icon="close" size="large" class="q-ma-sm" flat round dense v-close-popup/>
@@ -315,6 +315,24 @@
           Nenhum usuário nesta função
         </div>
       </q-card>
+      <q-card-actions align="center">
+        <q-btn
+          flat
+          label="Voltar"
+          no-caps
+          color="primary"
+          @click="closeDialog"
+        />
+        <q-btn
+          v-if="isAdm"
+          unelevated
+          rounded
+          label="Ir para o organismo"
+          no-caps
+          color="primary"
+          @click="goToDetail"
+        />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -326,7 +344,14 @@ import CardPerson from './CardOrganism.vue'
 import CardMaritalStatus from './CardMaritalStatus.vue'
 import CardBankData from './CardBankData.vue'
 import CardPhoneMobileEmail from './CardPhoneMobileEmail.vue'
-const props = defineProps(['orgData', 'orgFields', 'orgFunc', 'open'])
-// const emits = defineEmits(['edit', 'remove'])
+const props = defineProps(['orgData', 'orgFields', 'orgFunc', 'open', 'isAdm'])
+const emits = defineEmits(['closeDialog', 'goToDetail'])
 
+function closeDialog() {
+  emits('closeDialog')
+};
+
+function goToDetail() {
+  emits('goToDetail')
+};
 </script>

@@ -4,7 +4,7 @@
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col text-capitalize"> 
           <div class="text-h5">{{ organismName }}</div>
-          <q-badge size="large">{{ organismConfigName }}</q-badge>
+          <q-badge size="large">{{ organismConfigName }} - {{ idLegado }}</q-badge>
         </div>
         <div class="col text-right self-center">
           <q-btn
@@ -1459,7 +1459,8 @@ export default defineComponent({
         open: false,
         data: null
       },
-      otherData: null
+      otherData: null,
+      idLegado: null
     };
   },
   watch: {
@@ -1838,6 +1839,7 @@ export default defineComponent({
           this.functions = r.data.functions
           this.relations = r.data.relations
           this.parentData = r.data.parentData
+          this.idLegado = r.data.idLegado
           this.verifyIfHasPastor()
           for(let i = 0; r.data.relations.length > i; i++) {
             if(r.data.relations[i].organismRelationIsMain === 'SIM') {
