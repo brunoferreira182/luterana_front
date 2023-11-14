@@ -1,10 +1,23 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-table flat class="bg-accent" title="Organismos" :columns="columnsData" :rows="organismList" row-key="_id"
-        @row-click="clkOpenOrganismDetail" virtual-scroll rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento" no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]" :filter="filter" v-model:pagination="pagination" @request="nextPage">
+      <q-table 
+        flat 
+        class="bg-accent" 
+        title="Organismos" 
+        :columns="columnsData" 
+        :rows="organismList" 
+        row-key="_id"
+        @row-click="clkOpenOrganismDetail" 
+        virtual-scroll 
+        rows-per-page-label="Registros por página"
+        no-data-label="Nenhum dado inserido até o momento" 
+        no-results-label="A pesquisa não retornou nenhum resultado"
+        :rows-per-page-options="[10, 20, 30, 50]" 
+        :filter="filter" 
+        v-model:pagination="pagination"
+        @request="nextPage"
+      >
         <template #top-right>
           <div class="flex row q-gutter-sm items-center text-right">
             <!-- <div class="col">
@@ -19,8 +32,14 @@
               />
             </div> -->
             <div class="col">
-              <q-input @keyup="getOrganismsList" outlined dense debounce="1000" v-model="filter"
-                placeholder="Procurar nome">
+              <q-input 
+                @keyup="getOrganismsList" 
+                outlined 
+                dense 
+                debounce="1000" 
+                v-model="filter"
+                placeholder="Procurar nome"
+              >
                 <template #append>
                   <q-icon name="search" />
                 </template>
@@ -28,8 +47,13 @@
             </div>
 
             <div class="col">
-              <q-input @keyup="getOrganismsList" outlined dense  v-model="filterCity"
-                placeholder="Procurar cidade">
+              <q-input 
+                @keyup="getOrganismsList" 
+                outlined 
+                dense  
+                v-model="filterCity"
+                placeholder="Procurar cidade"
+              >
                 <template #append>
                   <q-icon name="search" />
                 </template>
@@ -45,10 +69,9 @@
         </template>
         <template #body-cell-city="props">
           <q-td :props="props">
-            <div class="text-caption" v-if="props.row.endereco && props.row.endereco[0]">{{ props.row.endereco[0].city }}
+            <div class="text-caption" v-if="props.row.city">{{ props.row.city }}
             </div>
-            <div class="text-caption" v-else-if="props.row.childOrganismCity">{{ props.row.childOrganismCity }}</div>
-            <div class="text-caption" v-else-if="!props.row.endereco && !props.row.childOrganismCity">Não consta</div>
+            <div class="text-caption" v-else-if="!props.row.city">Não consta</div>
           </q-td>
         </template>
         <template #body-cell-organismParentName="props">
@@ -142,6 +165,7 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
+      console.log(this.pagination)
       this.getOrganismsList();
     },
     getOrganismsList() {
@@ -167,6 +191,7 @@ export default defineComponent({
             sortBy: this.pagination.sortBy,
             selectFilter: this.selectFilter,
             filterCity: this.filterCity,
+            descending: this.pagination.descending
           }
         };
         if (this.selectFilter === "Ativos") {
