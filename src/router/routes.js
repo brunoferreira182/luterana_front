@@ -5,10 +5,10 @@ const routes = [
     children: [
       { path: "/mobileMainPage", component: () => import("pages/MobileMainPage.vue") },
       //admin
-      { path: "/admin", redirect: "/admin/usersList" },
+      { path: "/admin", redirect: "/admin/UsersList" },
       {
         path: "/admin/usersList",
-        component: () => import("pages/admin/UsersList.vue"),
+        component: () => import("src/pages/admin/UsersList.vue"),
       },
       {
         path: "/admin/pastorsList",

@@ -8,15 +8,16 @@
         :columns="columnsData"
         :rows="usersList"
         row-key="_id"
-        virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="clkOpenUserDetail"
-        :selected-rows-label="getSelectedString"
         :filter="filter"
         @request="nextPage"
+        v-model:pagination="pagination"
+        :loading="loading"
+        binary-state-sort
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -25,7 +26,7 @@
                 @keyup="getUsersList"
                 outlined
                 dense
-                debounce="1000"
+                debounce="300"
                 v-model="filter"
                 placeholder="Procurar"
               >
@@ -36,7 +37,7 @@
             </div>
             <div class="col text-right">
               <q-btn
-                @click="$router.push('/admin/createUser?userType=user')"
+                @click="$router.push('/admin/createUser?userType=pastor')"
                 color="primary"
                 unelevated
                 no-caps
@@ -44,7 +45,7 @@
                 icon="add"
                 class="q-pa-sm"
               >
-                Criar Usuário
+                Criar usuário
               </q-btn>
             </div>
           </div>
@@ -128,12 +129,25 @@ export default defineComponent({
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
+      initialPagination: {
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10
+        // rowsNumber: xx if getting data from a server
+      },
       pagination: {
+        sortBy: '',
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 0,
-        sortBy: "",
+        sortBy: 'desc',
+        descending: false,
       },
+      loading: false,
+      // pagesNumber: computed(() => {
+      //   return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
+      // })
     };
   },
   mounted() {
@@ -150,18 +164,11 @@ export default defineComponent({
       const userId = r._id;
       this.$router.push("/admin/userDetail?userId=" + userId);
     },
-    getSelectedString() {
-      return this.selected.length === 0
-        ? ""
-        : `${this.selected.length}
-      despesa${this.selected.length > 1 ? "s" : ""}
-      selecionadas de ${this.expensesData.length}`;
-    },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getUsersList();
+      this.getPastorList();
     },
     getUsersList() {
       const page = this.pagination.page
