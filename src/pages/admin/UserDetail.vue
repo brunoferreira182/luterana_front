@@ -51,7 +51,8 @@
               class="bg-grey-3 q-ma-sm q-mx-md"
             >
               <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
-                <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
+                <q-item-label class="text-subtitle1"> {{ link.organismName }} - {{ link.organismConfigName }}</q-item-label>
+                <q-item-label v-if="link.organismCity && link.organismCity.city">Cidade: {{ link.organismCity.city }}</q-item-label>
                 <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
               </q-item-section>
               <q-item-section side>
