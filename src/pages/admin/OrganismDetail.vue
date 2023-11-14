@@ -77,30 +77,32 @@
                 <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
                 </q-btn>
               </div>
-              <q-separator/>
-              <div class="text-h5">
-                Vinculado a:
+              <div v-if="organismConfigName === 'Congregação'">
+                <q-separator/>
+                <div class="text-h5">
+                  Vinculado a:
+                </div>
+                <q-list class="text-h6" v-if="parentData">
+                  <q-item 
+                    class="bg-grey-3 q-ma-sm" 
+                    style="border-radius: 1rem"
+                    clickable
+                    @click="clkShowDialogParentDetail()"
+                  >
+                    <q-item-section >
+                      <div class="row">
+                        {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
+                      </div>
+                    </q-item-section>
+                    
+                  </q-item>
+                </q-list>
+                <q-list v-else class="text-h6">
+                  <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
+                    Nenhum vínculo criado
+                  </q-item>
+                </q-list>
               </div>
-              <q-list class="text-h6" v-if="parentData">
-                <q-item 
-                  class="bg-grey-3 q-ma-sm" 
-                  style="border-radius: 1rem"
-                  clickable
-                  @click="clkShowDialogParentDetail()"
-                >
-                  <q-item-section >
-                    <div class="row">
-                      {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
-                    </div>
-                  </q-item-section>
-                  
-                </q-item>
-              </q-list>
-              <q-list v-else class="text-h6">
-                <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
-                  Nenhum vínculo criado
-                </q-item>
-              </q-list>
               <div  v-if="organismConfigName === 'Congregação'">
                 <q-separator class="q-mx-md q-mb-md" />
                 <div  class="text-h5">Pastores:</div>
@@ -134,7 +136,7 @@
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
-                    v-if="func.functionName === 'Pastor'"
+                    v-if="func.functionName === 'Pastor em Paróquia'"
                     :func="func"
                     :funcIndex="funcIndex"
                     @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
@@ -468,7 +470,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                v-if="func.functionName !== 'Pastor'"
+                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia'"
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
