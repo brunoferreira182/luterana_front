@@ -21,7 +21,9 @@
           <div :class="`${isMobile ? 'text-h6 text-bold' : 'text-h5'}`" >
             {{ organismName }}
           </div>
-          
+          <div class="col-6" v-if="idLegado">
+            <q-badge>{{ idLegado }}</q-badge>
+          </div>          
         </div>
         <div class="col text-right q-gutter-sm self-center" v-if="!$route.query.isChild && !isMobile">
           <q-btn
@@ -72,7 +74,7 @@
       <div v-show="visionSelected === 'data'">
         <div class="row justify-around q-pa-md" v-if="!isMobile">
           <div class="col-7 q-gutter-md q-mt-sm" align="start" >
-            <div v-if="existsPastor">
+            <div v-if="existsPastor  && organismConfigName === 'Congregação'">
               <div class="text-h5 no-margin q-px-md" >Pastores:</div>
               <div v-for="(func,funcIndex) in functions" :key="func">
                 <CardPastor
@@ -86,6 +88,45 @@
                 />
               </div>
               <q-separator class="q-my-md"/>
+            </div>
+            <div class="text-h5">
+              Vinculado a:
+            </div>
+            <q-list class="text-h6" v-if="parentData">
+              <q-item 
+                class="bg-grey-3 q-ma-sm" 
+                style="border-radius: 1rem"
+                clickable
+                @click="clkShowDialogParentDetail()"
+              >
+                <q-item-section >
+                  <div class="row">
+                    {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
+                  </div>
+                </q-item-section>
+                
+              </q-item>
+            </q-list>
+            <q-list v-else class="text-h6">
+              <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
+                Nenhum vínculo criado
+              </q-item>
+            </q-list>
+            <div  v-if="organismConfigName === 'Paróquia'">
+              <div  class="text-h5">Pastor em paróquia:</div>
+              <div v-for="(func, funcIndex) in functions" :key="func">
+                <cardPastor
+                  class="no-margin"
+                  v-if="func.functionName === 'Pastor em Paróquia'"
+                  :func="func"
+                  :funcIndex="funcIndex"
+                  @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                  :showAddUserButton="false"
+                  :canEditPastor="$route.path.includes('/admin') ? true : false"
+                  :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
+                />
+              </div>
+              <q-separator class="q-ma-sm"/>
             </div>
             <div class="text-h5 no-margin q-px-md">
               Dados:
@@ -427,7 +468,7 @@
             </div>
             <div v-for="(func, funcIndex) in functions" :key="func">
               <CardFunction
-                v-if="func.functionName !== 'Pastor'"
+                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia'"
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
@@ -645,6 +686,31 @@
       </div>
 
       <div v-if="isMobile" class="q-gutter-md">
+        <div v-if="organismConfigName === 'Congregação'">
+          <div class="text-h6 q-ml-md">
+            Vinculado a:
+          </div>
+          <q-list class="text-h6" v-if="parentData">
+            <q-item 
+              class="bg-grey-3 q-ma-sm" 
+              style="border-radius: 1rem"
+              clickable
+              @click="clkShowDialogParentDetail()"
+            >
+              <q-item-section >
+                <div class="row">
+                  {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
+                </div>
+              </q-item-section>
+              
+            </q-item>
+          </q-list>
+          <q-list v-else class="text-h6">
+            <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
+              Nenhum vínculo criado
+            </q-item>
+          </q-list>
+        </div>
         <q-list bordered v-show="visionSelected === 'data'">
           <q-expansion-item
             group="somegroup"
@@ -1293,7 +1359,9 @@ export default defineComponent({
         organismRelationId: '',
         orgFunc: [],
         orgFields: [],
-      }
+      },
+      idLegado: null,
+      parentData: null
     };
   },
   beforeMount() {
@@ -1306,6 +1374,28 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
+    clkShowDialogParentDetail() {
+      this.dialogChildOrganism.data = this.parentData
+      this.clkShowDetailOrganism(this.parentData._id)
+    },
+    clkShowDetailOrganism(_id) {
+      const opt = {
+        route: "/desktop/adm/getOrganismDetailById",
+        body: {
+          organismId: _id,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) return 
+        else {
+          this.dialogChildOrganism.orgData = r.data.organismData
+          this.dialogChildOrganism.orgFields = r.data.organismData.fields
+          this.dialogChildOrganism.orgFunc = r.data.functions
+          this.dialogChildOrganism.orgId = r.data._id
+          this.dialogChildOrganism.open = true
+        }
+      })
+    },
     closeDialogOrganismDetail() {
       this.dialogChildOrganism.open = false
     },
@@ -1714,6 +1804,8 @@ export default defineComponent({
         this.organismData.fields = r.data.organismData.fields;
         this.organismConfigName = r.data.organismData.organismConfigName
         this.relations = r.data.relations
+        this.idLegado = r.data.idLegado
+        this.parentData = r.data.parentData
         this.visionSelected = 'data'
         this.verifyCanEdit()
         this.verifyIfHasPastor()

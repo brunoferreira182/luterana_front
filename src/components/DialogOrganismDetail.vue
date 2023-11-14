@@ -1,7 +1,6 @@
 <template>
   <q-dialog :model-value="props.open" @hide="closeDialog">
     <q-card style="width: 800px; max-width: 100vw; border-radius: 1rem">
-      {{ userDataTabs }}
       <q-btn icon="close" size="large" class="q-ma-sm" flat round dense v-close-popup/>
       <div class="row justify-center q-py-lg" >
         <div class="text-h5 text-center">
@@ -163,8 +162,7 @@
                 <CardOrganism
                   :data="field"
                   :fieldIndex="fieldIndex"
-                  @remove="removeThisOrganism"
-                  :disableButtons="true"
+                  :disableButtons="data.disableButtons"
                 />
               </div>
             </div>
@@ -184,9 +182,7 @@
               <CardAddress
                 :data="field.value"
                 :fieldIndex="fieldIndex"
-                :disableButtons="true"
-                @edit="editThisAddress"
-                @remove="removeThisAddress"
+                :disableButtons="data.disableButtons"
               />
             </div>
             <div v-if="field.type.type === 'person'">
@@ -196,8 +192,7 @@
                   :data="field"
                   :fieldIndex="fieldIndex"
                   :canEdit="$route.path.includes('/admin') ? true : false"
-                  @remove="removeThisPerson"
-                  :disableButtons="true"
+                  :disableButtons="data.disableButtons"
                 />
               </div>
               <q-btn
@@ -218,8 +213,7 @@
                 <CardMaritalStatus
                   :data="field"
                   :fieldIndex="fieldIndex"
-                  :disableButtons="true"
-                  @remove="removeThisPerson"
+                  :disableButtons="data.disableButtons"
                 />
               </div>
               <q-btn
@@ -230,7 +224,6 @@
                 color="primary"
                 icon="add"
                 v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                @click="clkAddMaritalStatus(fieldIndex)"
                 disable
               />
             </div>
@@ -241,7 +234,6 @@
                 rounded
                 flat
                 color="primary"
-                @click="clkAddBankData(fieldIndex)"
                 icon="add"
                 disable
               />
@@ -249,7 +241,7 @@
                 :data="field"
                 :fieldIndex="fieldIndex"
                 @edit="editBankData"
-                :disableButtons="true"
+                :disableButtons="data.disableButtons"
                 @remove="removeBankData"
               />
             </div>
@@ -267,16 +259,13 @@
                 icon="add"
                 color="primary"
                 rounded
-                @click="addPhoneMobileEmail(fieldIndex, tabsIndex, field)"
                 class="q-mt-xs"
                 disable
               />
               <CardPhoneMobileEmail
                 :data="field.value"
                 :fieldIndex="fieldIndex"
-                :disableButtons="true"
-                @edit="editPhoneMobileEmail"
-                @remove="removePhoneMobileEmail"
+                :disableButtons="data.disableButtons"
                 :showHeader="field.value && field.value.length > 0 ? field.label : false"
               />
             </div>
@@ -338,6 +327,10 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+const data = ref({
+  disableButtons: true
+})
 import CardOrganism from './CardOrganism.vue'
 import CardAddress from './CardOrganism.vue'
 import CardPerson from './CardOrganism.vue'
