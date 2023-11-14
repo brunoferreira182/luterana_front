@@ -161,11 +161,13 @@ export default defineComponent({
       const organismId = r.organismId;
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
+    sortList(e) {
+      console.log(e, 'eu sou uma puta.')
+    },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      console.log(this.pagination)
       this.getOrganismsList();
     },
     getOrganismsList() {
@@ -176,12 +178,6 @@ export default defineComponent({
       this.organismListTimer = setTimeout(() => {
         console.log(this.filterCity)
         console.log(this.filter)
-        // const page = this.pagination.page;
-        // const rowsPerPage = this.pagination.rowsPerPage;
-        // const searchString = this.filter;
-        // const sortBy = this.pagination.sortBy;
-        // const selectFilter = this.selectFilter;
-
         const opt = {
           route: "/desktop/adm/getOrganismsList",
           body: {

@@ -134,7 +134,6 @@ export default defineComponent({
         descending: false,
         page: 1,
         rowsPerPage: 10
-        // rowsNumber: xx if getting data from a server
       },
       pagination: {
         sortBy: '',
@@ -145,9 +144,6 @@ export default defineComponent({
         descending: false,
       },
       loading: false,
-      // pagesNumber: computed(() => {
-      //   return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
-      // })
     };
   },
   mounted() {
@@ -168,7 +164,7 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getPastorList();
+      this.getUsersList();
     },
     getUsersList() {
       const page = this.pagination.page
