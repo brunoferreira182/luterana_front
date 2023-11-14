@@ -38,11 +38,11 @@
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
-        <div v-if="userLinks">
+        <div>
           <div class="text-h6 q-ma-sm q-ml-md">
               Vínculos:
             </div>
-          <q-list >
+          <q-list v-if="userLinks && userLinks.length > 0">
             <q-item
               clickable
               v-for="link in userLinks"
@@ -77,6 +77,11 @@
                   </q-btn>
                   </q-item-label>
                 </q-item-section>
+            </q-item>
+          </q-list>
+          <q-list v-else>
+            <q-item>
+              Nenhum vínculo criado
             </q-item>
           </q-list>
         </div>
@@ -632,6 +637,7 @@
               filled
               label="Observação"
               hint="Informe o motivo"
+              class="q-pa-sm q-mb-lg"
             />
             <q-input
               filled
@@ -639,36 +645,36 @@
               v-model="dialogSwapUserFromFunction.finalDate"
               label="Data final"
               hint="Informe a data final de ocupação da função"
+              class="q-pa-sm q-mb-lg"
             />
-            <q-card-section align="center">
-              <q-select
-                filled
-                use-input
-                label="Nome do usuário"
-                option-label="userName"
-                v-model="dialogSwapUserFromFunction.newUser"
-                :options="usersOptions"
-                @filter="getUsers"
-                :loading="false"
-                :option-value="(item) => item._id"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                      <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </q-card-section>
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              v-model="dialogSwapUserFromFunction.newUser"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
