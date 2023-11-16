@@ -40,7 +40,8 @@
             outlined
             clearable
             class="full-width q-pl-md"
-            max-files="1"
+            max-files="5"
+            multiple
           >
             <template v-slot:prepend>
               <q-icon name="attach_file" />
@@ -65,7 +66,10 @@ export default defineComponent({
   },
   methods: {
     addAttachFiles() {
-      const file = [{file:this.attachData,name:'userAttach'}]
+      if (!this.attachData || this.attachTitle === '' || this.attachDescription === '') {
+        this.$q.notify('Preencha todos os campos para prosseguir')
+        return
+      }
       const opt = {
         route: "/desktop/commonUsers/addAttachFiles",
         body: {
@@ -75,7 +79,7 @@ export default defineComponent({
         file: null
       };
       if(this.attachData !== null){
-        opt.file = file
+        opt.file = [ { file: this.attachData, name: this.attachData.name } ]
       }
       this.$q.loading.show();
       useFetch(opt).then(r => {
