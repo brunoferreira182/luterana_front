@@ -134,6 +134,7 @@ export const useTableColumns = defineStore("tableColumns", {
         label: "Tipo de organismo",
         field: "organismConfigName",
         sortable: true,
+        color: "organismStyle"
       },
       {
         name: "city",

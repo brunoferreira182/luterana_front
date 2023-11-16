@@ -86,7 +86,7 @@
         </template>
         <template #body-cell-organismConfigName="props">
           <q-td :props="props">
-            <q-chip v-if="props.row.organismConfigName" :style="{ color: props.row.organismStyle }" size="14px" outline>
+            <q-chip v-if="props.row.organismConfigName" :style="{ color: props.row.organismStyle}" size="14px" outline>
               {{ props.row.organismConfigName }}
             </q-chip>
           </q-td>
