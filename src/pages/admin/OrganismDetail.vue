@@ -4,7 +4,7 @@
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col text-capitalize"> 
           <div class="text-h5">{{ organismName }}</div>
-          <q-badge size="large">{{ organismConfigName }} - {{ idLegado }}</q-badge>
+          <q-badge :style="{background: organismConfigStyle}" size="large">{{ organismConfigName }} - {{ idLegado }}</q-badge>
         </div>
         <div class="col text-right self-center">
           <q-btn
@@ -40,58 +40,96 @@
             <div class="col-7 q-gutter-md" align="start">
               <div class="text-h6">
                 Vínculos
+                <span v-if="$route.path.includes('/admin')">
+                  <q-btn
+                    icon="folder"
+                    color="primary"
+                    size="15px"
+                    dense
+                    rounded
+                    no-caps
+                    unelevated
+                    @click="dialogLinks = true"
+                  >
+                    <q-tooltip>Gerenciar vínculos</q-tooltip>
+                  </q-btn>
+                </span>
               </div>
-              <q-list>
+              <q-list class="q-ml-md q-px-sm">
                 <q-item 
                   v-for="link in relations" 
                   :key="link" 
-                  class="bg-grey-3 q-ma-sm" 
-                  style="border-radius: 1rem"
+                  class="bg-grey-3 q-ma-xs" 
+                  style="border-radius: 0.5rem"
                   clickable
                   @click="clkShowDialogLink(link)"
                 >
                   <q-item-section>
-                    <div class="row">
-                      {{ link.organismRelationName }}
-                      <q-chip>{{ link.organismConfigName }}</q-chip>
-                      <q-icon 
+                    <q-item-label>
+                      <div class="q-mt-sx text-bold">{{ link.organismRelationName }}</div>
+                      <q-badge
+                        class="q-ml-sm"
+                        :style="{ color: link.organismConfigStyle}" 
+                        size="15px" 
+                        outline
+                      >{{ link.organismConfigName }}</q-badge>
+                      
+                    </q-item-label>
+                    <q-item-label class="text-subtitle1 text-bold" lines="2">
+                      Pastores:
+                    </q-item-label>
+                    <q-item-label 
+                      v-for="(child, childIndex) in link.functions[0].users" 
+                      :key="child" 
+                      class="text-subtitle2" lines="3"
+                    >
+                      {{ child.userName }}
+                      <q-btn
+                      v-if="canEditPastor"
+                      icon="delete"
+                      flat
+                      color="red"
+                      @click="deleteUserFromFunction(childIndex)"
+                      :disable="disableButtons"
+                      ></q-btn>
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>
+                      <q-icon
+                        class="q-mr-md"
+                        size="25px"
                         v-if="link.organismRelationIsMain === 'SIM'" 
                         color="secondary" 
                         name="home"
-                        class="q-mt-sm q-ml-xs"
                       ></q-icon>
-                    </div>
+                    </q-item-label>
                   </q-item-section>
-                  
                 </q-item>
               </q-list>
-              <div v-if="$route.path.includes('/admin')">
-                <q-btn
-                  label="Gerenciar Vínculos"
-                  color="primary"
-                  rounded
-                  no-caps
-                  unelevated
-                  @click="dialogLinks = true"
-                >
-                <q-badge class="q-ml-sm" rounded color="accent"  text-color="primary">{{ relations.length }}</q-badge>
-                </q-btn>
-              </div>
+              
               <div v-if="organismConfigName === 'Congregação'">
                 <q-separator/>
-                <div class="text-h5">
-                  Vinculado a:
+                <div class="text-h6">
+                  Vinculado a
                 </div>
-                <q-list class="text-h6" v-if="parentData">
+                <q-list class="q-px-xs" v-if="parentData">
                   <q-item 
                     class="bg-grey-3 q-ma-sm" 
-                    style="border-radius: 1rem"
+                    style="border-radius: 0.5rem"
                     clickable
                     @click="clkShowDialogParentDetail()"
                   >
                     <q-item-section >
                       <div class="row">
-                        {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
+                        <div class="q-mt-sm">{{ parentData.parentName}}</div>
+                        <q-chip
+                          class="q-ml-sm"
+                          :style="{ color: parentData.parentConfigStyle}" 
+                          size="15px" 
+                          outline
+                        >{{ parentData.parentOrganismConfigName }}</q-chip>
+                        
                       </div>
                     </q-item-section>
                     
@@ -103,9 +141,25 @@
                   </q-item>
                 </q-list>
               </div>
-              <div  v-if="organismConfigName === 'Congregação'">
+              <div v-if="organismConfigName === 'Congregação'">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div  class="text-h5">Pastores:</div>
+                <div class="text-h6" v-if="$route.path.includes('/admin')">
+                  Pastores
+                  <span>
+                    <q-btn
+                      icon="add"
+                      color="primary"
+                      size="15px"
+                      dense
+                      rounded
+                      no-caps
+                      unelevated
+                      @click="linkPastorToFunction()"
+                    >
+                      <q-tooltip>Adicionar pastor</q-tooltip>
+                    </q-btn>
+                  </span>
+                </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
@@ -117,22 +171,27 @@
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
-                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1 && organismConfigName === 'Congregação'">
-                    <q-btn
-                      label="Adicionar pastor"
-                      color="primary"
-                      rounded
-                      no-caps
-                      unelevated
-                      @click="linkPastorToFunction()"
-                    >
-                    </q-btn>
-                  </div>
                 </div>
               </div>
               <div  v-if="organismConfigName === 'Paróquia'">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div  class="text-h6">Pastor em paróquia:</div>
+                <div class="text-h6" v-if="$route.path.includes('/admin')">
+                  Pastores em paróquia
+                  <span>
+                    <q-btn
+                      icon="add"
+                      color="primary"
+                      size="15px"
+                      dense
+                      rounded
+                      no-caps
+                      unelevated
+                      @click="addPastorFunctionInParoquia()"
+                    >
+                      <q-tooltip>Adicionar pastor</q-tooltip>
+                    </q-btn>
+                  </span>
+                </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
@@ -144,17 +203,7 @@
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
-                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1 && organismConfigName === 'Paróquia'">
-                    <q-btn
-                      label="Adicionar pastor"
-                      color="primary"
-                      rounded
-                      no-caps
-                      unelevated
-                      @click="addPastorFunctionInParoquia()"
-                    >
-                    </q-btn>
-                  </div>
+                  
                 </div>
               </div>
             <q-separator class="q-mx-md" />
@@ -1086,6 +1135,7 @@ export default defineComponent({
       organismVinculated: '',
       organismTypeId: null,
       organismName: '',
+      organismConfigStyle: '',
       userSelected: '',
       organism: null,
       fields: [],
@@ -1672,6 +1722,7 @@ export default defineComponent({
           this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
+          this.organismConfigStyle = r.data.organismData.organismConfigStyle
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
