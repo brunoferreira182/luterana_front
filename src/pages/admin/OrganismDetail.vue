@@ -52,8 +52,8 @@
                 >
                   <q-item-section>
                     <div class="row">
-                      {{ link.organismRelationName }} -
-                      {{ link.organismConfigName }}
+                      {{ link.organismRelationName }}
+                      <q-chip>{{ link.organismConfigName }}</q-chip>
                       <q-icon 
                         v-if="link.organismRelationIsMain === 'SIM'" 
                         color="secondary" 
