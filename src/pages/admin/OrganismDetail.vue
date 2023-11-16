@@ -211,7 +211,7 @@
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
-                    v-if="func.functionName === 'Pastor em Paróquia'"
+                    v-if="func.functionName === 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"
                     :func="func"
                     :funcIndex="funcIndex"
                     @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
@@ -535,7 +535,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia'"
+                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
