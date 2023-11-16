@@ -12,9 +12,7 @@
           </div>
         </div>
         <div 
-          v-if="
-            $route.path === '/config/CreateOrganismsConfig'
-          "
+          v-if="$route.path === '/config/CreateOrganismsConfig'"
           class="col-6 text-h5 text-capitalize">Criar configuração de organismo
         </div>
         <div class="col text-right self-center">
@@ -573,6 +571,11 @@
                 label="Esta função poderá criar e editar grupos de organismos?"
                 v-model="newFunction.functionProperties.canCreateAndEditChildOrganism"
               />
+              <q-checkbox
+                class="q-px-sm"
+                label="Ocultar função dentro do organismo?"
+                v-model="newFunction.functionProperties.hideFunctionDetail"
+              />
             </div>
           </q-card-section>
           <q-card-actions align="center" class="q-mb-md">
@@ -675,6 +678,11 @@
                 label="Esta função poderá criar e editar grupos de organismos?"
                 v-model="editFunctionDialog.function.functionProperties.canCreateAndEditChildOrganism"
               />
+              <q-checkbox
+                class="q-px-sm"
+                label="Ocultar função dentro do organismo?"
+                v-model="editFunctionDialog.function.functionProperties.hideFunctionDetail"
+              />
             </div>
           </q-card-section>
           <q-card-actions align="center" class="q-mb-md">
@@ -770,6 +778,7 @@ export default defineComponent({
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
+          hideFunctionDetail:false,
           numRequired: false,
         },
         isRequired: true,
@@ -787,6 +796,7 @@ export default defineComponent({
           numRequired: false,
           functionProperties: {
             canManageFuncAndOrgSolicitations: false,
+            hideFunctionDetail:false,
             canCreateAndEditChildOrganism: false,
           },
           isRequired: true,
