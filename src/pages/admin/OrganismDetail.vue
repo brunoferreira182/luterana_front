@@ -38,10 +38,10 @@
         <q-tab-panel name="organismData">
           <div class="row justify-around">
             <div class="col-7 q-gutter-md" align="start">
-              <div class="text-h5">
+              <div class="text-h6">
                 Vínculos
               </div>
-              <q-list class="text-h6">
+              <q-list>
                 <q-item 
                   v-for="link in relations" 
                   :key="link" 
@@ -132,7 +132,7 @@
               </div>
               <div  v-if="organismConfigName === 'Paróquia'">
                 <q-separator class="q-mx-md q-mb-md" />
-                <div  class="text-h5">Pastor em paróquia:</div>
+                <div  class="text-h6">Pastor em paróquia:</div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
@@ -144,21 +144,21 @@
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
-                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1 && organismConfigName === 'Congregação'">
+                  <div v-if="$route.path.includes('/admin') && funcIndex === functions.length - 1 && organismConfigName === 'Paróquia'">
                     <q-btn
                       label="Adicionar pastor"
                       color="primary"
                       rounded
                       no-caps
                       unelevated
-                      @click="linkPastorToFunction()"
+                      @click="addPastorFunctionInParoquia()"
                     >
                     </q-btn>
                   </div>
                 </div>
               </div>
             <q-separator class="q-mx-md" />
-              <div v-if="organismData.fields.length" class="text-h5">
+              <div v-if="organismData.fields.length" class="text-h6">
                 Dados
               </div>
               <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex">
@@ -466,7 +466,7 @@
             <q-separator vertical class="q-ma-md" />
             <div class="col-4">
               <div class="row">
-                <div class="text-h5">Funções</div>
+                <div class="text-h6">Funções</div>
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
@@ -860,6 +860,71 @@
                     </q-card-actions>
                   </q-card>
                 </q-dialog> -->
+                <q-dialog v-model="dialogInserPastorInParoquia.open" @hide="clearDialogInsertPastor">
+                  <q-card style="border-radius: 1rem; width: 400px">
+                    <q-card-section align="center">
+                      <div class="text-h6">
+                        Informe o pastor que ocupará a função
+                      </div>
+                    </q-card-section>
+                    <q-card-section align="center">
+                      <q-select
+                        v-model="dialogInserPastorInParoquia.pastorSelected"
+                        filled
+                        use-input
+                        label="Nome do usuário"
+                        option-label="userName"
+                        :options="usersOptions"
+                        @filter="getUsers"
+                        :loading="false"
+                        :option-value="(item) => item._id"
+                      >
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              Nenhum resultado
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                              <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
+                    </q-card-section>
+                    <q-card-section align="center">
+                      <q-input
+                        filled
+                        label="Data início"
+                        type="date"
+                        hint="Informe a data início de ocupação da função"
+                        v-model="dialogInserPastorInParoquia.initialDate"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogInserPastorInParoquia.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Confirmar"
+                        no-caps
+                        color="primary"
+                        @click="insertPastorToFunctionParoquia"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </div>
             </div>
           </div>
@@ -1159,7 +1224,13 @@ export default defineComponent({
         orgId: null
       },
       otherData: null,
-      idLegado: null
+      idLegado: null,
+      dialogInserPastorInParoquia: {
+        open: false,
+        pastorSelected: null,
+        initialDate: null,
+        funcId: null
+      }
     };
   },
   watch: {
@@ -1185,6 +1256,46 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    verifyPastorInParoquia() {
+      this.functions.forEach((func) => {
+        console.log(func.functionName, 'func')
+        if (func.functionName === 'Pastor em Paróquia'){
+          this.dialogInserPastorInParoquia.funcId = func._id
+        }
+      })
+    },
+    clearDialogInsertPastor() {
+      this.dialogInserPastorInParoquia.open = false
+      this.dialogInserPastorInParoquia.pastorSelected = null
+      this.dialogInserPastorInParoquia.initialDate = null
+      this.dialogInserPastorInParoquia.funcId = null
+    },
+    insertPastorToFunctionParoquia() {
+      const opt = {
+        route: '/desktop/adm/addPastorToPastorFunctionInParoquia',
+        body: {
+          userId: this.dialogInserPastorInParoquia.pastorSelected.userId,
+          dates: {
+            initialDate: this.dialogInserPastorInParoquia.initialDate
+          },
+          organismFunctionId: this.dialogInserPastorInParoquia.funcId
+        }
+      } 
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          this.clearDialogInsertPastor()
+        } else {
+          this.$q.notify('Pastor inserido')
+          this.clearDialogInsertPastor()
+          this.getOrganismDetailById()
+          this.getOrganismsConfigs()
+          this.getParentOrganismsById()
+          this.getChildOrganismsConfigsByOrganismId()
+          this.getChildOrganismsById()
+        }
+      })
+    },
     clkShowDialogLink (i) {
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
@@ -1568,6 +1679,7 @@ export default defineComponent({
           this.parentData = r.data.parentData
           this.idLegado = r.data.idLegado
           this.verifyIfHasPastor()
+          this.verifyPastorInParoquia()
           for(let i = 0; r.data.relations.length > i; i++) {
             if(r.data.relations[i].organismRelationIsMain === 'SIM') {
               this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
@@ -1933,9 +2045,11 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogInsertUserInFunction.selectedFunc._id !== '6530496b892eac36fc130cb2') {
+      if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id !== '6530496b892eac36fc130cb2') {
         route = "/desktop/adm/getUsers"
-      } else if (this.dialogInsertUserInFunction.selectedFunc._id === '6530496b892eac36fc130cb2') route = "/desktop/adm/getPastores"
+      } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id === '6530496b892eac36fc130cb2'){
+        route = "/desktop/adm/getPastores" 
+      } else if (this.dialogInserPastorInParoquia. open = true) route = "/desktop/adm/getPastores"
       const opt = {
         route: route,
         body: {
@@ -1969,6 +2083,9 @@ export default defineComponent({
           this.dialogInsertUserInFunction.open = true;
         }
       })
+    },
+    addPastorFunctionInParoquia() {
+      this.dialogInserPastorInParoquia.open = true
     },
     linkUserToFunction(func, funcIndex) {
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
