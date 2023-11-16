@@ -38,7 +38,7 @@
         <q-tab-panel name="organismData">
           <div class="row justify-around">
             <div class="col-7 q-gutter-md" align="start">
-              <div class="text-h6">
+              <div class="text-h6" v-if="relations.length > 0">
                 Vínculos
                 <span v-if="$route.path.includes('/admin')">
                   <q-btn
@@ -55,9 +55,9 @@
                   </q-btn>
                 </span>
               </div>
-              <q-list class="q-ml-md q-px-sm">
+              <q-list class="q-ml-md q-px-sm" v-if="relations.length > 0">
                 <q-item 
-                  v-for="link in relations" 
+                  v-for="(link, i) in relations" 
                   :key="link" 
                   class="bg-grey-3 q-ma-xs" 
                   style="border-radius: 0.5rem"
@@ -65,33 +65,49 @@
                   @click="clkShowDialogLink(link)"
                 >
                   <q-item-section>
-                    <q-item-label>
-                      <div class="q-mt-sx text-bold">{{ link.organismRelationName }}</div>
+                    <q-item-label class="q-mt-sx text-bold" lines="1">
+                      {{ link.organismRelationName }}
                       <q-badge
-                        class="q-ml-sm"
-                        :style="{ color: link.organismConfigStyle}" 
+                      class="q-ml-sm"
+                      :style="{ color: link.organismConfigStyle}" 
                         size="15px" 
                         outline
-                      >{{ link.organismConfigName }}</q-badge>
-                      
+                        >
+                        {{ link.organismConfigName }}
+                      </q-badge>
                     </q-item-label>
                     <q-item-label class="text-subtitle1 text-bold" lines="2">
                       Pastores:
+                      <q-btn
+                        icon="add"
+                        color="primary"
+                        size="8px"
+                        dense
+                        rounded
+                        no-caps
+                        unelevated
+                        @click.stop="linkPastorToChildOrganisms(i)"
+                      >
+                        <q-tooltip>Adicionar pastor</q-tooltip>
+                      </q-btn>
                     </q-item-label>
                     <q-item-label 
-                      v-for="(child, childIndex) in link.functions[0].users" 
+                      v-for="(child) in link.functions[0].users" 
                       :key="child" 
                       class="text-subtitle2" lines="3"
                     >
                       {{ child.userName }}
+                      <!-- v-if="canEditPastor" -->
                       <q-btn
-                      v-if="canEditPastor"
                       icon="delete"
                       flat
                       color="red"
-                      @click="deleteUserFromFunction(childIndex)"
+                      size="10px"
+                      @click.stop="dialogOpenDeleteUserFromFunction(child)"
                       :disable="disableButtons"
-                      ></q-btn>
+                      >
+                        <q-tooltip>Remover pastor</q-tooltip>
+                      </q-btn>
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -106,10 +122,10 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-separator/>
               </q-list>
               
               <div v-if="organismConfigName === 'Congregação'">
-                <q-separator/>
                 <div class="text-h6">
                   Vinculado a
                 </div>
@@ -142,7 +158,7 @@
                 </q-list>
               </div>
               <div v-if="organismConfigName === 'Congregação'">
-                <q-separator class="q-mx-md q-mb-md" />
+                <q-separator class="q-mx-lg q-mb-md" />
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
@@ -174,7 +190,7 @@
                 </div>
               </div>
               <div  v-if="organismConfigName === 'Paróquia'">
-                <q-separator class="q-mx-md q-mb-md" />
+                <!-- <q-separator class="q-mx-md q-mb-md" /> -->
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores em paróquia
                   <span>
@@ -206,8 +222,8 @@
                   
                 </div>
               </div>
-            <q-separator class="q-mx-md" />
               <div v-if="organismData.fields.length" class="text-h6">
+                <q-separator class="q-mx-md q-mb-md" />
                 Dados
               </div>
               <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex">
@@ -2124,6 +2140,13 @@ export default defineComponent({
     },
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
+    },
+    linkPastorToChildOrganisms(i) {
+      this.relations[i].functions.forEach((func, ifunc) => {
+        this.dialogInsertUserInFunction.selectedFunc = func;
+        this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+        this.dialogInsertUserInFunction.open = true;
+      })
     },
     linkPastorToFunction() {
       this.functions.forEach((func, ifunc) => {
