@@ -63,7 +63,7 @@
           </q-tr>
         </template>
         <template v-slot:body="props">
-          <q-tr :props="props">
+          <q-tr :props="props" class="pointer-cursor">
             <q-td auto-width>
               <q-btn 
                 size="sm" 
@@ -201,3 +201,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.pointer-cursor {
+  cursor: pointer;
+}
+</style>
+
