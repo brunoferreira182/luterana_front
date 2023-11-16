@@ -463,7 +463,7 @@
                 :disableButtons="true"
               />
             </div>
-            <q-separator vertical class="q-ma-md" />
+            <q-separator vertical class="q-ma-md"/>
             <div class="col-4">
               <div class="row">
                 <div class="text-h6">Funções</div>
@@ -1258,7 +1258,6 @@ export default defineComponent({
   methods: {
     verifyPastorInParoquia() {
       this.functions.forEach((func) => {
-        console.log(func.functionName, 'func')
         if (func.functionName === 'Pastor em Paróquia'){
           this.dialogInserPastorInParoquia.funcId = func._id
         }
