@@ -861,6 +861,7 @@ export default defineComponent({
       visionsList: [],
       functionsGroupList: [],
       permissionName: '',
+      organismConfigStyle: null
     };
   },
   mounted() {
@@ -1104,6 +1105,7 @@ export default defineComponent({
           organismConfigName: this.organismConfigName,
           functions: this.functions,
           organismConfigId: organismConfigId,
+          organismConfigStyle: this.organismConfigStyle,
           organismFields: this.organismFields,
           requiresLink: this.requiresLink,
           organismStyle: this.selectedColor
@@ -1131,6 +1133,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor")
           return
         }
+        this.organismConfigStyle = r.data.organismConfigData.organismStyle
         this.organismConfigName = r.data.organismConfigData.organismConfigName;
         this.organismFields = r.data.organismConfigData.organismFields;
         r.data.organismConfigData.functions[0].organismFunctionId
