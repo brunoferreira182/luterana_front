@@ -27,6 +27,7 @@
             v-if="canEditPastor"
             icon="delete"
             flat
+            rounded
             color="red"
             @click="deleteUserFromFunction(user)"
             :disable="disableButtons"

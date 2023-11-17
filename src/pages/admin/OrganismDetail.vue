@@ -81,7 +81,7 @@
                       <q-btn
                         icon="add"
                         color="primary"
-                        size="8px"
+                        size="9px"
                         dense
                         rounded
                         no-caps
@@ -102,11 +102,23 @@
                       icon="delete"
                       flat
                       color="red"
-                      size="10px"
+                      size="9px"
+                      rounded
                       @click.stop="dialogOpenDeleteUserFromFunction(child)"
                       :disable="disableButtons"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
+                      </q-btn>
+                      <q-btn
+                      icon="sync"
+                      flat
+                      color="primary"
+                      size="9px"
+                      rounded
+                      @click.stop="swapPastorToFunction(child)"
+                      :disable="disableButtons"
+                      >
+                        <q-tooltip>Trocar pastor</q-tooltip>
                       </q-btn>
                     </q-item-label>
                   </q-item-section>
@@ -122,7 +134,6 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-separator/>
               </q-list>
               
               <div v-if="organismConfigName === 'Congregação'">
@@ -158,13 +169,13 @@
                 </q-list>
               </div>
               <div v-if="organismConfigName === 'Congregação'">
-                <q-separator class="q-mx-lg q-mb-md" />
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
                     <q-btn
                       icon="add"
                       color="primary"
+                      align="center"
                       size="15px"
                       dense
                       rounded
@@ -189,7 +200,7 @@
                   />
                 </div>
               </div>
-              <div  v-if="organismConfigName === 'Paróquia'">
+              <div  v-if="organismConfigName === 'Paróquia' && hidePastorInParoquia === false">
                 <!-- <q-separator class="q-mx-md q-mb-md" /> -->
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores em paróquia
@@ -223,7 +234,6 @@
                 </div>
               </div>
               <div v-if="organismData.fields.length" class="text-h6">
-                <q-separator class="q-mx-md q-mb-md" />
                 Dados
               </div>
               <div v-for="(field, fieldIndex) in organismData.fields" :key="fieldIndex">
@@ -1055,8 +1065,8 @@
                     rounded
                     @click="dialogInsertNewOrganismGroup = true"
                     label="Adicionar grupo"
-                  />
-                </div>
+                    />
+                  </div>
               </div>
               <div class="text-caption text-subtitle1" v-if="childOrganismsData.length">
                 Clique em um dos organismos abaixo para exibir detalhes
@@ -1086,6 +1096,76 @@
           </div>
         </q-tab-panel>
       </q-tab-panels>
+      <q-dialog v-model="dialogSwapPastorFromFunction.open" @hide="clearDialogSwapData">
+        <q-card style="border-radius: 1rem">
+          <q-card-section>
+            <div class="text-h6 text-center">Substituição</div>
+            <div>O usuário será substituido da função</div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              v-model="dialogSwapPastorFromFunction.observation"
+              filled
+              label="Observação"
+              hint="Informe o motivo"
+              class="q-pa-sm q-mb-lg"
+            />
+            <q-input
+              filled
+              type="date"
+              v-model="dialogSwapPastorFromFunction.finalDate"
+              label="Data final"
+              hint="Informe a data final de ocupação da função"
+              class="q-pa-sm q-mb-lg"
+            />
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              v-model="dialogSwapPastorFromFunction.newUser"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogSwapData"
+              color="primary"
+            />
+            <q-btn
+              label="Confirma"
+              no-caps
+              @click="clkConfirmSwapUser"
+              rounded
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
   <DialogPhoneMobileEmail
@@ -1296,6 +1376,14 @@ export default defineComponent({
         pastorSelected: null,
         initialDate: null,
         funcId: null
+      },
+      hidePastorInParoquia: false,
+      dialogSwapPastorFromFunction: {
+        open: false,
+        data: null,
+        observation: null,
+        finalDate: null,
+        newUser: null
       }
     };
   },
@@ -1322,10 +1410,49 @@ export default defineComponent({
     // this.getUserVisionPermissionByOrganismId()
   },
   methods: {
+    clearDialogSwapData(){
+      this.dialogSwapPastorFromFunction.open = false
+      this.dialogSwapPastorFromFunction.data = null
+      this.dialogSwapPastorFromFunction.observation = null
+      this.dialogSwapPastorFromFunction.finalDate = null
+      this.dialogSwapPastorFromFunction.newUser = null
+    },
+    clkConfirmSwapUser() {
+      console.log()
+      const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
+      const finalDate = this.dialogSwapPastorFromFunction.finalDate
+      const newUser = this.dialogSwapPastorFromFunction.newUser
+      const observation = this.dialogSwapPastorFromFunction.observation
+      const opt = {
+        route: '/desktop/adm/swapUserFromFunction',
+        body: {
+          organismFunctionUserId: organismFunctionUserId,
+          obs: observation,
+          finalDate: finalDate,
+          newUser: newUser
+        }
+      }
+      useFetch(opt).then((r) => {
+        this.clearDialogSwapData()
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.getOrganismDetailById()
+        }
+      })
+    },
+    swapPastorToFunction(child) {
+      this.dialogSwapPastorFromFunction.data = child
+      this.dialogSwapPastorFromFunction.open = true
+      console.log(this.dialogSwapPastorFromFunction)
+    },
     verifyPastorInParoquia() {
       this.functions.forEach((func) => {
         if (func.functionName === 'Pastor em Paróquia'){
           this.dialogInserPastorInParoquia.funcId = func._id
+          if (func.properties.data.properties.hideFunctionDetail === true) {
+            this.hidePastorInParoquia = true
+          }
         }
       })
     },
@@ -1336,6 +1463,7 @@ export default defineComponent({
       this.dialogInserPastorInParoquia.funcId = null
     },
     insertPastorToFunctionParoquia() {
+      console.log('quem me chamou')
       const opt = {
         route: '/desktop/adm/addPastorToPastorFunctionInParoquia',
         body: {
@@ -2113,9 +2241,11 @@ export default defineComponent({
       let route
       if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id !== '6530496b892eac36fc130cb2') {
         route = "/desktop/adm/getUsers"
+      } else if (this.dialogSwapPastorFromFunction.open === true) {
+        route = "/desktop/adm/getPastores"
       } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id === '6530496b892eac36fc130cb2'){
         route = "/desktop/adm/getPastores" 
-      } else if (this.dialogInserPastorInParoquia. open = true) route = "/desktop/adm/getPastores"
+      } else if (this.dialogInserPastorInParoquia.open = true) route = "/desktop/adm/getPastores"
       const opt = {
         route: route,
         body: {
