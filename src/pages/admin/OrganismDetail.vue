@@ -99,7 +99,20 @@
                       {{ child.userName }}
                       <!-- v-if="canEditPastor" -->
                       <q-btn
+                      icon="sync"
+                      flat
+                      dense
+                      color="primary"
+                      size="9px"
+                      rounded
+                      @click.stop="swapPastorToFunction(child)"
+                      :disable="disableButtons"
+                      >
+                        <q-tooltip>Trocar pastor</q-tooltip>
+                      </q-btn>
+                      <q-btn
                       icon="delete"
+                      dense
                       flat
                       color="red"
                       size="9px"
@@ -108,17 +121,6 @@
                       :disable="disableButtons"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                      icon="sync"
-                      flat
-                      color="primary"
-                      size="9px"
-                      rounded
-                      @click.stop="swapPastorToFunction(child)"
-                      :disable="disableButtons"
-                      >
-                        <q-tooltip>Trocar pastor</q-tooltip>
                       </q-btn>
                     </q-item-label>
                   </q-item-section>
@@ -225,7 +227,7 @@
                     v-if="func.functionName === 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"
                     :func="func"
                     :funcIndex="funcIndex"
-                    @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                    @deleteUserFromFunction="dialogOpenDeletePastorFromFunction"
                     :showAddUserButton="false"
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
@@ -746,6 +748,52 @@
                         no-caps
                         color="primary"
                         @click="inactivateUserFromFunction"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+                <q-dialog
+                  v-model="dialogDeletePastorFromFunction.open"
+                  @hide="clearDialogAndFunctions"
+                >
+                  <q-card style="border-radius: 1rem; width: 400px">
+                    <q-card-section>
+                      <div class="text-h6 text-center">
+                        Tem certeza que deseja inativar
+                        {{ dialogDeletePastorFromFunction.userData.userName }}?
+                      </div>
+                    </q-card-section>
+                    <q-card-section align="center" class="q-gutter-sm">
+                      <q-input
+                        filled
+                        label="Observação"
+                        v-model="dialogDeletePastorFromFunction.obsText"
+                        hint="Informe o motivo"
+                      />
+                      <q-input
+                        filled
+                        type="date"
+                        label="Data final"
+                        v-model="dialogDeletePastorFromFunction.finalDate"
+                        hint="Informe a data final de ocupação da função"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        label="Depois"
+                        no-caps
+                        rounded
+                        color="primary"
+                        @click="dialogDeletePastorFromFunction.open = false"
+                      />
+                      <q-btn
+                        unelevated
+                        rounded
+                        label="Confirmar"
+                        no-caps
+                        color="primary"
+                        @click="inactivatePastorFromFunction"
                       />
                     </q-card-actions>
                   </q-card>
@@ -1285,6 +1333,13 @@ export default defineComponent({
         iValue: null
       },
       dialogInsertNewOrganismGroup: false,
+      dialogDeletePastorFromFunction: {
+        obsText: "",
+        finalDate: "",
+        functionUserId: "",
+        open: false,
+        userData: {},
+      },
       dialogDeleteUserFromFunction: {
         obsText: "",
         finalDate: "",
@@ -2137,6 +2192,10 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.open = true;
       this.dialogDeleteUserFromFunction.userData = user;
     },
+    dialogOpenDeletePastorFromFunction(user) {
+      this.dialogDeletePastorFromFunction.open = true;
+      this.dialogDeletePastorFromFunction.userData = user;
+    },
     getOrganismsList(val) {
       const opt = {
         route: "/desktop/adm/getOrganismsList",
@@ -2229,6 +2288,32 @@ export default defineComponent({
         }
         this.getOrganismDetailById();
         this.$q.notify("Usuário deletado com sucesso!");
+        this.clearDialogAndFunctions();
+      });
+    },
+    inactivatePastorFromFunction() {
+      if (
+        this.dialogDeletePastorFromFunction.obsText === "" ||
+        this.dialogDeletePastorFromFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivatePastorInPastorFunctionInParoquia",
+        body: {
+          userFunctionId: this.dialogDeletePastorFromFunction.userData._id,
+          finalDate: this.dialogDeletePastorFromFunction.finalDate,
+          obsText: this.dialogDeletePastorFromFunction.obsText,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }
+        this.getOrganismDetailById();
+        this.$q.notify("Pastor deletado com sucesso!");
         this.clearDialogAndFunctions();
       });
     },
