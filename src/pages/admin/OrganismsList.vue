@@ -143,6 +143,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getOrganismsList();
+    // this.getParoquias()
     this.getOrganismsConfigsNamesList();
   },
   methods: {
@@ -170,14 +171,37 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getOrganismsList();
     },
+    // getParoquias() {
+    //   const opt = {
+    //     route: '/desktop/adm/getParoquiasList',
+    //     body: {
+    //       page: this.pagination.page,
+    //         rowsPerPage: this.pagination.rowsPerPage,
+    //         searchString: this.filter,
+    //         sortBy: this.pagination.sortBy,
+    //         selectFilter: this.selectFilter,
+    //         filterCity: this.filterCity,
+    //         descending: this.pagination.descending
+    //     }
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     if (r.error) {
+    //       this.$q.notify('Ocorreu um erro, tente novamente')
+    //       return
+    //     } else {
+    //       this.organismList = r.data.list
+    //     }
+    //   })
+    // },
+    getOrganisms() {
+
+    },
     getOrganismsList() {
       
       if (this.organismListTimer) {
         clearTimeout(this.organismListTimer);
       }
       this.organismListTimer = setTimeout(() => {
-        console.log(this.filterCity)
-        console.log(this.filter)
         const opt = {
           route: "/desktop/adm/getOrganismsList",
           body: {

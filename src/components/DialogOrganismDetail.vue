@@ -25,7 +25,7 @@
               "
             >
               <q-input
-                :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
+                :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos importando estes dados...' : field.label"
                 :hint="field.hint"
                 :mask="field.type.mask"
                 v-model="field.value"
@@ -51,7 +51,7 @@
             <div class="text-right" v-if="field.type.type === 'options'">
               <q-select
                 outlined
-                :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos imporando estes dados...' : field.label"
+                :label="field.model === 'chave_ata' || field.model === 'filiada'? 'Estamos importando estes dados...' : field.label"
                 option-label="optionName"
                 emit-value
                 map-options
