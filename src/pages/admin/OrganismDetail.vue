@@ -104,7 +104,7 @@
                       color="primary"
                       size="9px"
                       rounded
-                      @click.stop="swapPastorToFunction(child)"
+                      @click.stop="swapPastorToFunctionInCongregacao(child)"
                       :disable="disableButtons"
                       >
                         <q-tooltip>Trocar pastor</q-tooltip>
@@ -229,6 +229,7 @@
                     :func="func"
                     :funcIndex="funcIndex"
                     @deleteUserFromFunction="dialogOpenDeletePastorFromFunction"
+                    @swapPastorToFunctionPastor="swapPastorToFunctionPastor"
                     :showAddUserButton="false"
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
@@ -1206,9 +1207,18 @@
               color="primary"
             />
             <q-btn
+              v-if="dialogSwapPastorFromFunction.isPastorFromParoquia === false"
               label="Confirma"
               no-caps
               @click="clkConfirmSwapUser"
+              rounded
+              color="primary"
+            />
+            <q-btn
+              v-else-if="dialogSwapPastorFromFunction.isPastorFromParoquia === true"
+              label="Confirma"
+              no-caps
+              @click="clkConfirmSwapPastor"
               rounded
               color="primary"
             />
@@ -1439,10 +1449,16 @@ export default defineComponent({
         data: null,
         observation: null,
         finalDate: null,
+<<<<<<< HEAD
         newUser: null
       },
       organismParentData: null,
       organismChildData: null
+=======
+        newUser: null,
+        isPastorFromParoquia: false
+      }
+>>>>>>> 14378c0959b2aa0a0073e6b5bb8d232c84f5db2a
     };
   },
   watch: {
@@ -1499,9 +1515,42 @@ export default defineComponent({
         }
       })
     },
-    swapPastorToFunction(child) {
+    clkConfirmSwapPastor() {
+      console.log()
+      const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
+      const finalDate = this.dialogSwapPastorFromFunction.finalDate
+      const newUser = this.dialogSwapPastorFromFunction.newUser
+      const observation = this.dialogSwapPastorFromFunction.observation
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: '/desktop/adm/swapPastorInPastorFunctionInParoquia',
+        body: {
+          organismFunctionUserId: organismFunctionUserId,
+          obs: observation,
+          finalDate: finalDate,
+          newUser: newUser,
+          organismId
+        }
+      }
+      useFetch(opt).then((r) => {
+        this.clearDialogSwapData()
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.getOrganismDetailById()
+        }
+      })
+    },
+    swapPastorToFunctionInCongregacao(child) {
       this.dialogSwapPastorFromFunction.data = child
       this.dialogSwapPastorFromFunction.open = true
+      this.dialogSwapPastorFromFunction.isPastorFromParoquia = false
+      console.log(this.dialogSwapPastorFromFunction)
+    },
+    swapPastorToFunctionPastor(user) {
+      this.dialogSwapPastorFromFunction.data = user
+      this.dialogSwapPastorFromFunction.open = true
+      this.dialogSwapPastorFromFunction.isPastorFromParoquia = true
       console.log(this.dialogSwapPastorFromFunction)
     },
     verifyPastorInParoquia() {
@@ -2187,8 +2236,13 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.finalDate = "";
       this.dialogDeleteUserFromFunction.functionUserId = "";
       this.dialogDeleteUserFromFunction.obsText = "";
+      this.dialogDeletePastorFromFunction.data = {};
+      this.dialogDeletePastorFromFunction.finalDate = "";
+      this.dialogDeletePastorFromFunction.functionUserId = "";
+      this.dialogDeletePastorFromFunction.obsText = "";
       this.dialogOpenObservation.obsText = "";
       this.dialogDeleteUserFromFunction.open = false;
+      this.dialogDeletePastorFromFunction.open = false;
       this.dialogOpenObservation.open = false;
       this.dialogInsertUserInFunction.open = false;
     },
@@ -2303,12 +2357,15 @@ export default defineComponent({
         this.$q.notify("Preencha observação e data final para prosseguir!");
         return;
       }
+      const organismId = this.$route.query.organismId
       const opt = {
+        
         route: "/desktop/adm/inactivatePastorInPastorFunctionInParoquia",
         body: {
           userFunctionId: this.dialogDeletePastorFromFunction.userData._id,
           finalDate: this.dialogDeletePastorFromFunction.finalDate,
           obsText: this.dialogDeletePastorFromFunction.obsText,
+          organismId
         },
       };
       useFetch(opt).then((r) => {
