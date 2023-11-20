@@ -55,18 +55,18 @@
                   </q-btn>
                 </span>
               </div>
-              <q-list class="q-ml-md q-px-sm" v-if="relations.length > 0">
+              <q-list class="q-ml-md q-px-sm" v-if="organismChildData && organismChildData.length > 0">
                 <q-item 
-                  v-for="(link, i) in relations" 
+                  v-for="(link, i) in organismChildData" 
                   :key="link" 
                   class="bg-grey-3 q-ma-xs" 
                   style="border-radius: 0.5rem"
                   clickable
-                  @click="clkShowDialogLink(link)"
+                  @click="clkShowDialogLink(link.childId)"
                 >
                   <q-item-section>
                     <q-item-label class="q-mt-sx text-bold" lines="1">
-                      {{ link.organismRelationName }}
+                      {{ link.childName }}
                       <q-badge
                       class="q-ml-sm"
                       :style="{ color: link.organismConfigStyle}" 
@@ -91,13 +91,12 @@
                         <q-tooltip>Adicionar pastor</q-tooltip>
                       </q-btn>
                     </q-item-label>
-                    <q-item-label 
+                    <!-- <q-item-label 
                       v-for="(child) in link.functions[0].users" 
                       :key="child" 
                       class="text-subtitle2" lines="3"
                     >
                       {{ child.userName }}
-                      <!-- v-if="canEditPastor" -->
                       <q-btn
                       icon="sync"
                       flat
@@ -122,7 +121,7 @@
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
                       </q-btn>
-                    </q-item-label>
+                    </q-item-label> -->
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label>
@@ -142,22 +141,24 @@
                 <div class="text-h6">
                   Vinculado a
                 </div>
-                <q-list class="q-px-xs" v-if="parentData">
+                <q-list class="q-px-xs" v-if="organismParentData && organismParentData.length > 0">
                   <q-item 
                     class="bg-grey-3 q-ma-sm" 
                     style="border-radius: 0.5rem"
                     clickable
                     @click="clkShowDialogParentDetail()"
+                    v-for="parent in organismParentData"
+                    :key="parent"
                   >
                     <q-item-section >
                       <div class="row">
-                        <div class="q-mt-sm">{{ parentData.parentName}}</div>
+                        <div class="q-mt-sm">{{ parent.parentName}}</div>
                         <q-chip
                           class="q-ml-sm"
-                          :style="{ color: parentData.parentConfigStyle}" 
+                          :style="{ color: parent.parentConfigStyle}" 
                           size="15px" 
                           outline
-                        >{{ parentData.parentOrganismConfigName }}</q-chip>
+                        >{{ parent.parentOrganismConfigName }}</q-chip>
                         
                       </div>
                     </q-item-section>
@@ -1439,7 +1440,9 @@ export default defineComponent({
         observation: null,
         finalDate: null,
         newUser: null
-      }
+      },
+      organismParentData: null,
+      organismChildData: null
     };
   },
   watch: {
@@ -1548,7 +1551,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
-          organismId: i.childInReation,
+          organismId: i,
         },
       };
       useFetch(opt).then((r) => {
@@ -1924,7 +1927,8 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields;
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
-          this.relations = r.data.relations
+          this.organismParentData = r.data.relations.parent[0].parentRelationData
+          this.organismChildData = r.data.relations.child[0].childRelationData
           this.parentData = r.data.parentData
           this.idLegado = r.data.idLegado
           this.verifyIfHasPastor()
