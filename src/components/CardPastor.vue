@@ -25,8 +25,21 @@
         <q-item-label>
           <q-btn
             v-if="canEditPastor"
+            icon="sync"
+            flat
+            dense
+            rounded
+            color="primary"
+            @click="swapPastorToFunctionPastor(user)"
+            :disable="disableButtons"
+          >
+            <q-tooltip>Trocar pastor</q-tooltip>
+          </q-btn>
+          <q-btn
+            v-if="canEditPastor"
             icon="delete"
             flat
+            dense
             rounded
             color="red"
             @click="deleteUserFromFunction(user)"
@@ -48,6 +61,9 @@ const emits = defineEmits(['remove'])
 
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
+}
+function swapPastorToFunctionPastor (user) {
+  emits('swapPastorToFunctionPastor', user)
 }
 
 </script>
