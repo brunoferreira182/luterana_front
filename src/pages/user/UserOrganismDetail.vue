@@ -92,16 +92,18 @@
             <div class="text-h5">
               Vinculado a:
             </div>
-            <q-list class="text-h6" v-if="parentData">
+            <q-list class="text-h6" v-if="parent && parent.length > 0">
               <q-item 
+                v-for="(user, iuser) in parent"
+                :key="user"
                 class="bg-grey-3 q-ma-sm" 
                 style="border-radius: 1rem"
                 clickable
-                @click="clkShowDialogParentDetail()"
+                @click="clkShowDialogParentDetail(user, iuser)"
               >
                 <q-item-section >
                   <div class="row">
-                    {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
+                    {{ user.parentName}} - {{ user.organismConfigName }}
                   </div>
                 </q-item-section>
                 
@@ -396,31 +398,27 @@
                 />
               </div>
             </div>
-            <div class="q-ma-lg justify-start" v-if="childOrganismsData">
+            <div class="q-ma-lg justify-start" v-if="child && child.length > 0">
               <div class="q-gutter-md">
                 <div class="text-h5 col"> Vínculos</div>
                 <div class="text-caption text-h6" >
                   Organismos vínculados:
                 </div>
-                <q-list v-if="relations && relations.length">
+                <q-list>
                   <q-item
                     clickable
-                    v-for="link in relations"
-                    :key="link"
+                    v-for="(user) in child"
+                    :key="user"
                     style="border-radius: 1rem;"
                     class="bg-blue-grey-2 q-my-sm q-col-gutteter-md"
-                    @click="clkOpenDialogOrganismDetail(link)"
+                    @click="clkOpenDialogOrganismDetail(user)"
                   >
                     <q-item-section>
-                      <q-item-label> {{ link.organismRelationName }}</q-item-label>
-                      <q-item-label class="text-subtitle1">{{ link.organismConfigName }}</q-item-label>
+                      <q-item-label> {{ user.childName }}</q-item-label>
+                      <q-item-label class="text-subtitle1">{{ user.organismConfigName }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
-                <div v-else class="text-subtitle1">
-                  Nenhum vínculo de organismo criado <q-icon name="warning" color="warning" size="md"/>
-                </div>
-            
               </div>
     
             </div>
@@ -1361,7 +1359,8 @@ export default defineComponent({
         orgFields: [],
       },
       idLegado: null,
-      parentData: null
+      child: null,
+      parent: null
     };
   },
   beforeMount() {
@@ -1374,9 +1373,9 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
-    clkShowDialogParentDetail() {
-      this.dialogChildOrganism.data = this.parentData
-      this.clkShowDetailOrganism(this.parentData._id)
+    clkShowDialogParentDetail(user) {
+      this.dialogChildOrganism.data = user
+      this.clkShowDetailOrganism(user.parentId)
     },
     clkShowDetailOrganism(_id) {
       const opt = {
@@ -1425,8 +1424,13 @@ export default defineComponent({
       });
     },
     clkOpenDialogOrganismDetail(link) {
+      console.log(link)
       this.dialogChildOrganism.open = true
-      this.dialogChildOrganism.organismRelationId = link.organismRelationId
+      if (link.organismRelationId) {
+        this.dialogChildOrganism.organismRelationId = link.organismRelationId
+      } else if (link.childId) {
+        this.dialogChildOrganism.organismRelationId = link.childId
+      }
       this.getChildOrganismDetailOnDialog()
     },
     clkOpenDialogDeleteMissionPoint(child){
@@ -1805,7 +1809,8 @@ export default defineComponent({
         this.organismConfigName = r.data.organismData.organismConfigName
         this.relations = r.data.relations
         this.idLegado = r.data.idLegado
-        this.parentData = r.data.parentData
+        this.child = r.data.relations.child
+        this.parent = r.data.relations.parent
         this.visionSelected = 'data'
         this.verifyCanEdit()
         this.verifyIfHasPastor()

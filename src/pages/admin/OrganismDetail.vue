@@ -38,7 +38,7 @@
         <q-tab-panel name="organismData">
           <div class="row justify-around">
             <div class="col-7 q-gutter-md" align="start">
-              <div class="text-h6" v-if="relations.length > 0">
+              <div class="text-h6" v-if="organismChildData && organismChildData.length > 0">
                 Vínculos
                 <span v-if="$route.path.includes('/admin')">
                   <q-btn
@@ -57,23 +57,23 @@
               </div>
               <q-list class="q-ml-md q-px-sm" v-if="organismChildData && organismChildData.length > 0">
                 <q-item 
-                  v-for="(link, i) in organismChildData" 
-                  :key="link" 
+                  v-for="(child, ichild) in organismChildData" 
+                  :key="child" 
                   class="bg-grey-3 q-ma-xs" 
                   style="border-radius: 0.5rem"
                   clickable
-                  @click="clkShowDialogLink(link.childId)"
+                  @click="clkShowDialogLink(child)"
                 >
                   <q-item-section>
                     <q-item-label class="q-mt-sx text-bold" lines="1">
-                      {{ link.childName }}
+                      {{ child.childName }}
                       <q-badge
                       class="q-ml-sm"
-                      :style="{ color: link.organismConfigStyle}" 
+                      :style="{ color: child.organismConfigStyle}" 
                         size="15px" 
                         outline
                         >
-                        {{ link.organismConfigName }}
+                        {{ child.organismConfigName }}
                       </q-badge>
                     </q-item-label>
                     <q-item-label class="text-subtitle1 text-bold" lines="2">
@@ -83,20 +83,21 @@
                         color="primary"
                         size="9px"
                         dense
+                        flat
                         rounded
                         no-caps
                         unelevated
-                        @click.stop="linkPastorToChildOrganisms(i)"
+                        @click.stop="linkPastorToChildOrganisms(child, ichild)"
                       >
                         <q-tooltip>Adicionar pastor</q-tooltip>
                       </q-btn>
                     </q-item-label>
-                    <!-- <q-item-label 
-                      v-for="(child) in link.functions[0].users" 
-                      :key="child" 
+                    <q-item-label 
+                      v-for="pastor in child.functions.users" 
+                      :key="pastor" 
                       class="text-subtitle2" lines="3"
                     >
-                      {{ child.userName }}
+                      {{ pastor.userName }}
                       <q-btn
                       icon="sync"
                       flat
@@ -104,7 +105,7 @@
                       color="primary"
                       size="9px"
                       rounded
-                      @click.stop="swapPastorToFunctionInCongregacao(child)"
+                      @click.stop="swapPastorToFunctionInCongregacao(pastor)"
                       :disable="disableButtons"
                       >
                         <q-tooltip>Trocar pastor</q-tooltip>
@@ -116,14 +117,14 @@
                       color="red"
                       size="9px"
                       rounded
-                      @click.stop="dialogOpenDeleteUserFromFunction(child)"
+                      @click.stop="dialogOpenDeleteUserFromFunction(pastor)"
                       :disable="disableButtons"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
                       </q-btn>
-                    </q-item-label> -->
+                    </q-item-label>
                   </q-item-section>
-                  <q-item-section side>
+                  <!-- <q-item-section side>
                     <q-item-label>
                       <q-icon
                         class="q-mr-md"
@@ -133,11 +134,11 @@
                         name="home"
                       ></q-icon>
                     </q-item-label>
-                  </q-item-section>
-                </q-item>
+                  </q-item-section> -->
+                </q-item> 
               </q-list>
               
-              <div v-if="organismConfigName === 'Congregação'">
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia'">
                 <div class="text-h6">
                   Vinculado a
                 </div>
@@ -146,19 +147,19 @@
                     class="bg-grey-3 q-ma-sm" 
                     style="border-radius: 0.5rem"
                     clickable
-                    @click="clkShowDialogParentDetail()"
                     v-for="parent in organismParentData"
                     :key="parent"
+                    @click="clkShowDialogParentDetail(parent)"
                   >
                     <q-item-section >
                       <div class="row">
                         <div class="q-mt-sm">{{ parent.parentName}}</div>
                         <q-chip
                           class="q-ml-sm"
-                          :style="{ color: parent.parentConfigStyle}" 
+                          :style="{ color: parent.organismConfigStyle}" 
                           size="15px" 
                           outline
-                        >{{ parent.parentOrganismConfigName }}</q-chip>
+                        >{{ parent.organismConfigName }}</q-chip>
                         
                       </div>
                     </q-item-section>
@@ -197,6 +198,7 @@
                     :func="func"
                     :funcIndex="funcIndex"
                     @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                    @swapPastorToFunctionPastor="swapPastorToFunctionInCongregacao"
                     :showAddUserButton="false"
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
@@ -1312,7 +1314,9 @@ export default defineComponent({
       dialogInsertUserInFunction:{
         initialDate: '',
         open: false,
+        functionType: '',
         selectedFunc: null,
+        selectedFuncIndex: null,
         userSelected: null
       },
       dialogConfirmAddress: {
@@ -1439,6 +1443,7 @@ export default defineComponent({
       idLegado: null,
       dialogInserPastorInParoquia: {
         open: false,
+        user: null,
         pastorSelected: null,
         initialDate: null,
         funcId: null
@@ -1449,16 +1454,11 @@ export default defineComponent({
         data: null,
         observation: null,
         finalDate: null,
-<<<<<<< HEAD
-        newUser: null
+        newUser: null,
+        isPastorFromParoquia: false
       },
       organismParentData: null,
       organismChildData: null
-=======
-        newUser: null,
-        isPastorFromParoquia: false
-      }
->>>>>>> 14378c0959b2aa0a0073e6b5bb8d232c84f5db2a
     };
   },
   watch: {
@@ -1492,7 +1492,6 @@ export default defineComponent({
       this.dialogSwapPastorFromFunction.newUser = null
     },
     clkConfirmSwapUser() {
-      console.log()
       const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
       const finalDate = this.dialogSwapPastorFromFunction.finalDate
       const newUser = this.dialogSwapPastorFromFunction.newUser
@@ -1516,7 +1515,6 @@ export default defineComponent({
       })
     },
     clkConfirmSwapPastor() {
-      console.log()
       const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
       const finalDate = this.dialogSwapPastorFromFunction.finalDate
       const newUser = this.dialogSwapPastorFromFunction.newUser
@@ -1541,17 +1539,16 @@ export default defineComponent({
         }
       })
     },
-    swapPastorToFunctionInCongregacao(child) {
-      this.dialogSwapPastorFromFunction.data = child
+    swapPastorToFunctionInCongregacao(pastor) {
+      console.log('me chamou né putinha', pastor)
+      this.dialogSwapPastorFromFunction.data = pastor
       this.dialogSwapPastorFromFunction.open = true
       this.dialogSwapPastorFromFunction.isPastorFromParoquia = false
-      console.log(this.dialogSwapPastorFromFunction)
     },
     swapPastorToFunctionPastor(user) {
       this.dialogSwapPastorFromFunction.data = user
       this.dialogSwapPastorFromFunction.open = true
       this.dialogSwapPastorFromFunction.isPastorFromParoquia = true
-      console.log(this.dialogSwapPastorFromFunction)
     },
     verifyPastorInParoquia() {
       this.functions.forEach((func) => {
@@ -1570,7 +1567,6 @@ export default defineComponent({
       this.dialogInserPastorInParoquia.funcId = null
     },
     insertPastorToFunctionParoquia() {
-      console.log('quem me chamou')
       const opt = {
         route: '/desktop/adm/addPastorToPastorFunctionInParoquia',
         body: {
@@ -1596,11 +1592,11 @@ export default defineComponent({
         }
       })
     },
-    clkShowDialogLink (i) {
+    clkShowDialogLink (child) {
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
-          organismId: i,
+          organismId: child.childId,
         },
       };
       useFetch(opt).then((r) => {
@@ -1618,7 +1614,6 @@ export default defineComponent({
       this.dialogShowOtherDetail.open = false
     },
     routeToDetail() {
-      console.log(this.dialogShowOtherDetail.orgId)
       this.$router.push('/admin/organismDetail?organismId=' + this.dialogShowOtherDetail.orgId)
     },
     clkShowDetailOrganism(_id) {
@@ -1639,9 +1634,8 @@ export default defineComponent({
         }
       })
     },
-    clkShowDialogParentDetail() {
-      this.dialogShowOtherDetail.data = this.parentData
-      this.clkShowDetailOrganism(this.parentData._id)
+    clkShowDialogParentDetail(parent) {
+      this.clkShowDetailOrganism(parent.parentId)
     },
     closeDialogAddServices () {
       this.dialogAddServices.open = false
@@ -1662,7 +1656,6 @@ export default defineComponent({
       })
     },
     goToParentOrganismDetail(parent) {
-      console.log('luisito suarezs', parent)
       const organismRelationId = parent.organismRelationId
       this.$router.replace('/admin/organismDetail?organismId=' + organismRelationId)
     },
@@ -1973,11 +1966,11 @@ export default defineComponent({
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
           this.organismConfigStyle = r.data.organismData.organismConfigStyle
-          this.organismData.fields = r.data.organismData.fields;
+          this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
-          this.organismParentData = r.data.relations.parent[0].parentRelationData
-          this.organismChildData = r.data.relations.child[0].childRelationData
+          this.organismParentData = r.data.relations.parent
+          this.organismChildData = r.data.relations.child
           this.parentData = r.data.parentData
           this.idLegado = r.data.idLegado
           this.verifyIfHasPastor()
@@ -2245,6 +2238,11 @@ export default defineComponent({
       this.dialogDeletePastorFromFunction.open = false;
       this.dialogOpenObservation.open = false;
       this.dialogInsertUserInFunction.open = false;
+      this.dialogInsertUserInFunction.initialDate = '',
+      this.dialogInsertUserInFunction.functionType = '',
+      this.dialogInsertUserInFunction.open = false,
+      this.dialogInsertUserInFunction.selectedFunc = null,
+      this.dialogInsertUserInFunction.userSelected = null
     },
     dialogOpenDeleteUserFromFunction(user) {
       this.dialogDeleteUserFromFunction.open = true;
@@ -2269,6 +2267,7 @@ export default defineComponent({
     },
 
     addUserToFunction() {
+      let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
@@ -2278,10 +2277,15 @@ export default defineComponent({
         this.$q.notify('Usuário já incluído nesta função')
         return
       }
+      if (this.dialogInsertUserInFunction.selectedFunc.functions) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functions._id
+      } else if (this.dialogInsertUserInFunction.selectedFunc.functionId) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functionId
+      }
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismFunctionId: this.dialogInsertUserInFunction.selectedFunc._id,
+          organismFunctionId: organismFunctionId,
           userId:  this.dialogInsertUserInFunction.userSelected.userId,
           dates: {
             initialDate: this.dialogInsertUserInFunction.initialDate
@@ -2304,11 +2308,15 @@ export default defineComponent({
     },
     verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
       let ret = false
-      if (this.functions[functionIndex.users.length > 0]) {
+      if ( this.functions && this.functions[functionIndex] && this.functions[functionIndex].functions) {
+        this.functions[functionIndex].functions.users.forEach(u => {
+          if (u.userId === userIdToVerify) ret = true
+        }) 
+      } else if (this.functions && this.functions[functionIndex] && this.functions[functionIndex].users) {
         this.functions[functionIndex].users.forEach(u => {
           if (u.userId === userIdToVerify) ret = true
         }) 
-      } 
+      }
       return ret
     },
     getParentOrganismsById() {
@@ -2385,13 +2393,16 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id !== '6530496b892eac36fc130cb2') {
+      if (this.dialogInsertUserInFunction.selectedFunc !== null && this.dialogInsertUserInFunction.open === true) {
         route = "/desktop/adm/getUsers"
       } else if (this.dialogSwapPastorFromFunction.open === true) {
         route = "/desktop/adm/getPastores"
-      } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.selectedFunc._id === '6530496b892eac36fc130cb2'){
+      } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.functionType === 'Pastor'){
         route = "/desktop/adm/getPastores" 
-      } else if (this.dialogInserPastorInParoquia.open = true) route = "/desktop/adm/getPastores"
+      } else if (this.dialogInserPastorInParoquia.open = true && this.dialogInserPastorInParoquia.user === 'Pastor') {
+        route = "/desktop/adm/getPastores" 
+      }
+      
       const opt = {
         route: route,
         body: {
@@ -2417,17 +2428,17 @@ export default defineComponent({
     formatDate(newDate) {
       return date.formatDate(newDate, "DD/MM/YYYY");
     },
-    linkPastorToChildOrganisms(i) {
-      this.relations[i].functions.forEach((func, ifunc) => {
-        this.dialogInsertUserInFunction.selectedFunc = func;
-        this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+    linkPastorToChildOrganisms(child, ichild) {
+        this.dialogInsertUserInFunction.selectedFunc = child;
+        this.dialogInsertUserInFunction.selectedFuncIndex = ichild;  
+        this.dialogInsertUserInFunction.functionType = 'Pastor'
         this.dialogInsertUserInFunction.open = true;
-      })
     },
     linkPastorToFunction() {
       this.functions.forEach((func, ifunc) => {
         if (func.functionName === 'Pastor') {
           this.dialogInsertUserInFunction.selectedFunc = func;
+          this.dialogInsertUserInFunction.functionType = 'Pastor';
           this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
           this.dialogInsertUserInFunction.open = true;
         }
@@ -2435,10 +2446,12 @@ export default defineComponent({
     },
     addPastorFunctionInParoquia() {
       this.dialogInserPastorInParoquia.open = true
+      this.dialogInserPastorInParoquia.user = 'Pastor'
     },
     linkUserToFunction(func, funcIndex) {
-      this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;
-      this.dialogInsertUserInFunction.selectedFunc = func
+      this.dialogInsertUserInFunction.selectedFunc = func;
+      this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;  
+      this.dialogInsertUserInFunction.functionType = 'Usuário';
       this.dialogInsertUserInFunction.open = true;
     },
     
