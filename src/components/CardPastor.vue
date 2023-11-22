@@ -44,7 +44,9 @@
             color="red"
             @click="deleteUserFromFunction(user)"
             :disable="disableButtons"
-          />
+          >
+            <q-tooltip>Remover pastor</q-tooltip>
+          </q-btn>
         </q-item-label>
       </q-item-section>
     </q-item>
