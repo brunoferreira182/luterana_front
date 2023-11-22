@@ -189,20 +189,13 @@ export default defineComponent({
     },
     getOrganismsList() {
       if (savedOrganismList().list.length && savedOrganismList().list.length > 0) {
-        console.log()
-        console.log()
-        console.log()
-        console.log()
-        console.log()
-        console.log()
-        console.log()
-        if (this.pagination.page !== 1 &&
-          this.pagination.rowsPerPage !== 10 &&
-          this.pagination.rowsNumber !== 0 &&
-          this.pagination.sortBy !== '' &&
-          this.filter !== '' &&
-          this.selectFilter !== '' &&
-          this.filterCity !== ''
+        if (this.pagination.page === 1 &&
+          this.pagination.rowsPerPage === 10 &&
+          this.pagination.rowsNumber === 0 &&
+          this.pagination.sortBy === '' &&
+          this.filter === '' &&
+          this.selectFilter === '' &&
+          this.filterCity === ''
         ) {
           console.log('entrou nos ifs')
           this.organismList = savedOrganismList().list,
