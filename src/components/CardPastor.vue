@@ -56,7 +56,7 @@
 <script setup>
 // import { defineComponent } from "vue";
 import avatar from '../assets/avatar.svg'
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo', 'canEditPastor'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo', 'canEditPastor', 'disableButtons'])
 const emits = defineEmits(['remove', 'deleteUserFromFunction', 'swapPastorToFunctionPastor'])
 
 

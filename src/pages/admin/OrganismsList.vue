@@ -197,7 +197,6 @@ export default defineComponent({
           this.selectFilter === '' &&
           this.filterCity === ''
         ) {
-          console.log('entrou nos ifs')
           this.organismList = savedOrganismList().list,
           this.pagination.page = savedOrganismList().page,
           this.pagination.rowsPerPage = savedOrganismList().rowsPerPage,
@@ -208,7 +207,6 @@ export default defineComponent({
           return
         }
       }
-      console.log('saiu dos ifs')
       if (this.organismListTimer) {
         clearTimeout(this.organismListTimer);
       }
@@ -244,7 +242,6 @@ export default defineComponent({
           savedOrganismList().filterCity = this.filterCity
         });
       }, 500);
-      // console.log(this.filterCity)
     },
     getOrganismsConfigsNamesList() {
       const opt = {
