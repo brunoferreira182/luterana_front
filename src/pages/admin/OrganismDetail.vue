@@ -99,42 +99,40 @@
                     >
                       {{ pastor.userName }}
                       <q-btn
-                      icon="sync"
-                      flat
-                      dense
-                      color="primary"
-                      size="9px"
-                      rounded
-                      @click.stop="swapPastorToFunctionInCongregacao(pastor)"
-                      :disable="disableButtons"
+                        icon="sync"
+                        flat
+                        dense
+                        color="primary"
+                        size="9px"
+                        rounded
+                        @click.stop="swapPastorToFunctionInCongregacao(pastor)"
                       >
                         <q-tooltip>Trocar pastor</q-tooltip>
                       </q-btn>
                       <q-btn
-                      icon="delete"
-                      dense
-                      flat
-                      color="red"
-                      size="9px"
-                      rounded
-                      @click.stop="dialogOpenDeleteUserFromFunction(pastor)"
-                      :disable="disableButtons"
+                        icon="delete"
+                        dense
+                        flat
+                        color="red"
+                        size="9px"
+                        rounded
+                        @click.stop="dialogOpenDeleteUserFromFunction(pastor)"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
                       </q-btn>
                     </q-item-label>
                   </q-item-section>
-                  <!-- <q-item-section side>
+                  <q-item-section side>
                     <q-item-label>
                       <q-icon
                         class="q-mr-md"
                         size="25px"
-                        v-if="link.organismRelationIsMain === 'SIM'" 
+                        v-if="child && child.organismRelationIsMain && child.organismRelationIsMain === 'SIM'" 
                         color="secondary" 
                         name="home"
                       ></q-icon>
                     </q-item-label>
-                  </q-item-section> -->
+                  </q-item-section>
                 </q-item> 
               </q-list>
               
@@ -347,7 +345,7 @@
                     <div>
                       <div v-if="field.value">
                         <div
-                          v-for="(value, valueIndex) in field.value"
+                          v-for="(valueIndex) in field.value"
                           :key="valueIndex"
                           class="row wrap justify-left q-pa-sm items-left content-center"
                         >
@@ -385,7 +383,6 @@
                       color="primary"
                       icon="add"
                       v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                      @click="clkOpenAddOrganismDialog(fieldIndex)"
                       :disable="field.onlyAdm"
                     />
                     <CardOrganism
@@ -430,7 +427,6 @@
                     color="primary"
                     icon="add"
                     v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                    @click="clkOpenAddPersonDialog(fieldIndex)"
                     :disable="field.onlyAdm"
                   />
                 </div>
@@ -1533,6 +1529,18 @@ export default defineComponent({
         }
       })
     },
+    clkAddMaritalStatus (fieldIndex, tabsIndex) {
+      this.maritalStatus = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {
+          status: '',
+          spouses: []
+        },
+        action: 'add',
+      }
+    },
     clkConfirmSwapPastor() {
       const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
       const finalDate = this.dialogSwapPastorFromFunction.finalDate
@@ -1799,6 +1807,14 @@ export default defineComponent({
         }
       }
       this.clearAddressInputs()
+    },
+    removeFormation (fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
     },
     confirmAddPhoneMobileEmail (data) {
       if (this.dialogAddPhoneMobileEmail.action === 'add') {

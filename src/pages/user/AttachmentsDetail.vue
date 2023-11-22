@@ -5,18 +5,6 @@
         <div class="col-6 text-h5 text-capitalize">
           {{ attachTitle }}
         </div>
-        <div class="col text-right">
-          <q-btn
-            rounded
-            icon="delete"
-            unelevated
-            outline
-            color="red-8"
-            no-caps
-            @click="removeAttachFile"
-            label="Deletar arquivo"
-          />
-        </div>
       </div>
       <q-separator class="q-mx-md" />
       <div class="row justify-around q-pa-md">

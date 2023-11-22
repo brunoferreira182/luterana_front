@@ -35,18 +35,6 @@
                 </template>
               </q-input>
             </div>
-            <div class="col text-center">
-              <q-btn
-                @click="$router.push('/user/createAttachments')"
-                color="primary"
-                unelevated
-                no-caps
-                rounded
-                label="Novo anexo"
-                icon="add"
-                class="q-pa-sm"
-              />
-            </div>
           </div>
         </template>
       </q-table>
