@@ -141,6 +141,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from '../../boot/utils'
 import { useTableColumns } from "stores/tableColumns";
 export default defineComponent({
   name: "DocumentList",
@@ -185,21 +186,9 @@ export default defineComponent({
       // this.SendAttach();
     },
     downloadAttach () {
-      const opt = {
-        route: '/desktop/adm/downloadAttachFile',
-        body: {
-          attachFileId: this.dialogAttachDetail.data._id
-        }
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) {
-          this.$q.notify('Ocorreu um erro, tente novamente')
-          return
-        } else {
-          this.dialogAttachDetail.data = null
-          this.dialogAttachDetail.open = false
-          this.$q.notify('Fazendo o download')
-        }
+        utils.downloadFile({  
+          filename: this.dialogAttachDetail.data.attach[0].filename,
+          originalname: this.dialogAttachDetail.data.attach[0].originalname
       })
     },
     goToOptions(e, r) {
