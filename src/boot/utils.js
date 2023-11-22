@@ -16,7 +16,7 @@ const useUtils = {
       let url = window.URL.createObjectURL(downloadedFile);
       let a = document.createElement('a');
       a.href = url;
-      a.download = item.messageData.file.originalname
+      a.download = options.originalname
       document.body.appendChild(a)
       a.click()    
       a.remove()
