@@ -68,15 +68,15 @@
                     <q-item-label class="q-mt-sx text-bold" lines="1">
                       {{ child.childName }}
                       <q-badge
-                      class="q-ml-sm"
-                      :style="{ color: child.organismConfigStyle}" 
+                        class="q-ml-sm"
+                        :style="{ color: child.organismConfigStyle}" 
                         size="15px" 
                         outline
-                        >
+                      >
                         {{ child.organismConfigName }}
                       </q-badge>
                     </q-item-label>
-                    <q-item-label class="text-subtitle1 text-bold" lines="2">
+                    <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
                       Pastores:
                       <q-btn
                         icon="add"
@@ -551,7 +551,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"
+                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"   
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
@@ -564,8 +564,11 @@
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 400px">
                     <q-card-section align="center">
-                      <div class="text-h6">
+                      <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType !== 'Pastor'">
                         Informe o usuário que ocupará a função
+                      </div>
+                      <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+                        Informe o pastor que ocupará a função
                       </div>
                       <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
                         <q-chip color="red-8" outline>
@@ -1272,6 +1275,7 @@ import CardPerson from '../../components/CardPerson.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
+import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
@@ -1483,7 +1487,22 @@ export default defineComponent({
     // this.getOrganismsConfigsList()
     // this.getUserVisionPermissionByOrganismId()
   },
+  unmounted() {
+    const currentRoute = this.$route
+    if (currentRoute && !currentRoute.path.includes('/admin/organismsList')) {
+      this.clearOrganismStore()
+    }
+  },
   methods: {
+    clearOrganismStore() {
+      savedOrganismList().list =[],
+      savedOrganismList().page = 1,
+      savedOrganismList().rowsPerPage = 10,
+      savedOrganismList().rowsNumber = 0,
+      savedOrganismList().sortBy = '',
+      savedOrganismList().selectFilter = '',
+      savedOrganismList().filterCity = ''
+    },
     clearDialogSwapData(){
       this.dialogSwapPastorFromFunction.open = false
       this.dialogSwapPastorFromFunction.data = null
@@ -2393,7 +2412,7 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogInsertUserInFunction.selectedFunc !== null && this.dialogInsertUserInFunction.open === true) {
+      if (this.dialogInsertUserInFunction.selectedFunc !== null && this.dialogInsertUserInFunction.open === true && this.dialogInsertUserInFunction.functionType !== 'Pastor') {
         route = "/desktop/adm/getUsers"
       } else if (this.dialogSwapPastorFromFunction.open === true) {
         route = "/desktop/adm/getPastores"

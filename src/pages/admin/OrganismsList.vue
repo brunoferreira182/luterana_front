@@ -114,6 +114,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { savedOrganismList } from "stores/organismList";
 
 export default defineComponent({
   name: "OrganismList",
@@ -146,6 +147,12 @@ export default defineComponent({
     // this.getParoquias()
     this.getOrganismsConfigsNamesList();
   },
+  unmounted() {
+    const currentRoute = this.$route
+    if (currentRoute && !currentRoute.path.includes('/admin/organismDetail')) {
+      this.clearOrganismStore()
+    }
+  },
   methods: {
     toggleChipSelection(nameIndex) {
       if (this.isChipSelected(nameIndex)) {
@@ -171,33 +178,44 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getOrganismsList();
     },
-    // getParoquias() {
-    //   const opt = {
-    //     route: '/desktop/adm/getParoquiasList',
-    //     body: {
-    //       page: this.pagination.page,
-    //         rowsPerPage: this.pagination.rowsPerPage,
-    //         searchString: this.filter,
-    //         sortBy: this.pagination.sortBy,
-    //         selectFilter: this.selectFilter,
-    //         filterCity: this.filterCity,
-    //         descending: this.pagination.descending
-    //     }
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     if (r.error) {
-    //       this.$q.notify('Ocorreu um erro, tente novamente')
-    //       return
-    //     } else {
-    //       this.organismList = r.data.list
-    //     }
-    //   })
-    // },
-    getOrganisms() {
-
+    clearOrganismStore() {
+      savedOrganismList().list =[],
+      savedOrganismList().page = 1,
+      savedOrganismList().rowsPerPage = 10,
+      savedOrganismList().rowsNumber = 0,
+      savedOrganismList().sortBy = '',
+      savedOrganismList().selectFilter = '',
+      savedOrganismList().filterCity = ''
     },
     getOrganismsList() {
-      
+      if (savedOrganismList().list.length && savedOrganismList().list.length > 0) {
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        if (this.pagination.page !== 1 &&
+          this.pagination.rowsPerPage !== 10 &&
+          this.pagination.rowsNumber !== 0 &&
+          this.pagination.sortBy !== '' &&
+          this.filter !== '' &&
+          this.selectFilter !== '' &&
+          this.filterCity !== ''
+        ) {
+          console.log('entrou nos ifs')
+          this.organismList = savedOrganismList().list,
+          this.pagination.page = savedOrganismList().page,
+          this.pagination.rowsPerPage = savedOrganismList().rowsPerPage,
+          this.pagination.rowsNumber = savedOrganismList().rowsNumber,
+          this.pagination.sortBy = savedOrganismList().sortBy,
+          this.selectFilter = savedOrganismList().selectFilter,
+          this.filterCity = savedOrganismList().filterCity
+          return
+        }
+      }
+      console.log('saiu dos ifs')
       if (this.organismListTimer) {
         clearTimeout(this.organismListTimer);
       }
@@ -224,6 +242,13 @@ export default defineComponent({
           this.$q.loading.hide();
           this.organismList = r.data.list;
           this.pagination.rowsNumber = r.data.count[0].count;
+          savedOrganismList().list = r.data.list
+          savedOrganismList().page = this.pagination.page
+          savedOrganismList().rowsPerPage = this.pagination.rowsPerPage
+          savedOrganismList().rowsNumber = this.pagination.rowsNumber
+          savedOrganismList().sortBy = this.pagination.sortBy
+          savedOrganismList().selectFilter = this.selectFilter
+          savedOrganismList().filterCity = this.filterCity
         });
       }, 500);
       // console.log(this.filterCity)
