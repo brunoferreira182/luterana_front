@@ -73,7 +73,7 @@ const useFetch = async ({
 
   let ret;
   try {
-    ret = await axios.post(routeMasterServer, bodyToSend);
+    ret = method === 'POST' ? await axios.post(routeMasterServer, bodyToSend) : await axios.get(routeMasterServer, bodyToSend)
     // console.log(ret, 'aqui')
   } catch (e) {
     
