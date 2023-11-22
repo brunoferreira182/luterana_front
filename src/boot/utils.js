@@ -6,6 +6,22 @@ import useFetch from "./useFetch";
 import { calculateMasterServerAttachmentsRoute } from "./masterServerRoutes";
 
 const useUtils = {
+  downloadFile (options) {
+    const opt = {
+      route: '/download/' + options.filename,
+      method: 'GET'
+    }
+    useFetch(opt).then(async httpResponse => {
+      let downloadedFile = new Blob([httpResponse], { type: 'application/pdf' })
+      let url = window.URL.createObjectURL(downloadedFile);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = options.originalname
+      document.body.appendChild(a)
+      a.click()    
+      a.remove()
+    })
+  },
   makeFileUrl (filename) {
     if (!filename) return '/assets/default_avatar.svg'
     return this.attachmentsAddress() + filename + '?' + new Date().getTime()
