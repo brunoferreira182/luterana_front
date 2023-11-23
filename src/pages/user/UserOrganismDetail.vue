@@ -1424,7 +1424,6 @@ export default defineComponent({
       });
     },
     clkOpenDialogOrganismDetail(link) {
-      console.log(link)
       this.dialogChildOrganism.open = true
       if (link.organismRelationId) {
         this.dialogChildOrganism.organismRelationId = link.organismRelationId

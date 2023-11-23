@@ -1567,7 +1567,6 @@ export default defineComponent({
       })
     },
     swapPastorToFunctionInCongregacao(pastor) {
-      console.log('me chamou né putinha', pastor)
       this.dialogSwapPastorFromFunction.data = pastor
       this.dialogSwapPastorFromFunction.open = true
       this.dialogSwapPastorFromFunction.isPastorFromParoquia = false

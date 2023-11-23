@@ -66,6 +66,10 @@ const routes = [
         path: "/admin/admSolicitationsList",
         component: () => import("pages/admin/AdmSolicitationsList.vue"),
       },
+      {
+        path: "/admin/attachDetail",
+        component: () => import("pages/admin/AttachDetail.vue"),
+      },
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },

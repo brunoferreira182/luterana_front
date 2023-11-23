@@ -13,7 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="goToOptions"
+        @row-click="goToAttachDetail"
         v-model:pagination="pagination"
         @request="nextPage"
       >
@@ -46,7 +46,8 @@
             />
             <q-file 
               multiple 
-              outlined 
+              outlined
+              max-file-size="10000000000000000"
               v-model="dialogAddAttach.files" 
               label="Clique aqui para adicionar anexos" 
             />
@@ -65,7 +66,7 @@
               no-caps
               color="primary"
               rounded
-              @click="SendAttach"
+              @click="sendAttach"
             />
           </q-card-actions>
         </q-card>
@@ -96,18 +97,18 @@
               Excluir
             </q-btn>
         </q-card>
-        <!-- <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <div class="text-h6 text-center q-pa-md ">{{ dialogAttachDetail.attachDetail.attachTitle }}</div>
+        <!-- <q-card style="border-radius: 1rem; height: 150x; width: 400px" v-if="dialogAddAttach">
+          <div class="text-h6 text-center q-pa-md ">{{ dialogAttachDetail.data.attachDetail.attachTitle }}</div>
           <q-card-section class="q-gutter-md">
             <q-input
               outlined
               hint="Descrição"
-              v-model="dialogAttachDetail.attachDetail.attachDescription"
+              v-model="dialogAttachDetail.attachDetail.data.attachDescription"
               readonly
             />
             <q-img 
               style="border-radius: 1rem"
-              :src=" utils.makeFileUrl(dialogAttachDetail.attachDetail.attach.filename)" 
+              :src=" utils.makeFileUrl(dialogAttachDetail.fata.attachDetail.attach.filename)" 
               width="138px" 
               height="138px"
             />
@@ -141,10 +142,9 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
-import utils from '../../boot/utils'
 import { useTableColumns } from "stores/tableColumns";
 export default defineComponent({
-  name: "DocumentList",
+  name: "admDocuments",
   data() {
     return {
       attachData: useTableColumns().admAttachList,
@@ -163,6 +163,7 @@ export default defineComponent({
         open: false,
         data: null
       },
+      filesToSend: []
     };
   },
   mounted() {
@@ -172,6 +173,9 @@ export default defineComponent({
     this.getAllAttachedFiles();
   },
   methods: {
+    goToAttachDetail(e, r) {
+      this.$router.push('/admin/attachDetail?attachId=' + r._id)
+    },
     // getSelectedString() { 
     //   return this.selected.length === 0
     //     ? ""
@@ -183,12 +187,23 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      // this.SendAttach();
     },
     downloadAttach () {
-        utils.downloadFile({  
-          filename: this.dialogAttachDetail.data.attach[0].filename,
-          originalname: this.dialogAttachDetail.data.attach[0].originalname
+      const opt = {
+        route: '/desktop/adm/downloadAttachFile',
+        body: {
+          attachFileId: this.dialogAttachDetail.data._id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else {
+          this.dialogAttachDetail.data = null
+          this.dialogAttachDetail.open = false
+          this.$q.notify('Fazendo o download')
+        }
       })
     },
     goToOptions(e, r) {
@@ -199,34 +214,32 @@ export default defineComponent({
       this.dialogAttachDetail.attachDetail = null
       this.dialogAttachDetail.open = false
     },
-    SendAttach() {
+    sendAttach() {
       if (this.dialogAddAttach.title === '' || this.dialogAddAttach.description === '' || !this.dialogAddAttach.files) {
         this.$q.notify("Preencha todos os campos antes de enviar")
         return
       }
-      this.dialogAddAttach.files.forEach(attach => {
-        const file = [{file:this.dialogAddAttach.files,name:attach.name}]     
-        console.log(file, 'file')  
-        const opt = {
-          route: "/desktop/adm/addAttachFiles",
-          body: {
-            attachTitle: this.dialogAddAttach.title,
-            attachDescription: this.dialogAddAttach.description
-          },
-          file: null
-        };
-        if(this.dialogAddAttach.files){
-          opt.file = file
+      this.dialogAddAttach.files.forEach((file, ifile) => {
+        this.filesToSend.push({ file: this.dialogAddAttach.files[ifile], name: this.dialogAddAttach.files[ifile].name})
+      })
+      const opt = {
+        route: "/desktop/adm/addAttachFiles",
+        body: {
+          attachTitle: this.dialogAddAttach.title,
+          attachDescription: this.dialogAddAttach.description
+        },
+        file: this.filesToSend
+      };
+      console.log(opt.file, 'antes do useFetch')
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else {
+          console.log(opt.file, 'dentro do useFetch')
+          this.clearDialog()
+          this.getAllAttachedFiles()
         }
-        useFetch(opt).then((r) => {
-          if (r.error) {
-            this.$q.notify('Ocorreu um erro, tente novamente')
-            return
-          } else {
-            this.clearDialog()
-            this.getAllAttachedFiles()
-          }
-        });
       });
     },
     removeAttach() {

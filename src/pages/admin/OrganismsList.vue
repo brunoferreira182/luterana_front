@@ -169,9 +169,8 @@ export default defineComponent({
       const organismId = r.organismId;
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
-    sortList(e) {
-      console.log(e, 'eu sou uma puta.')
-    },
+    // sortList(e) {
+    // },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
