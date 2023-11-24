@@ -15,11 +15,9 @@ const useUtils = {
     useFetch(opt).then(async httpResponse => {
       let downloadedFile = new Blob([httpResponse])
       let url = window.URL.createObjectURL(downloadedFile);
-      console.log(url, 'URL HAHAHAHAHAH') 
       let a = document.createElement('a'); 
       a.href = url;
       a.download = options.originalname
-      console.log(a.download, 'a HAHAHAHAHAHAHAHAHAH')
       document.body.appendChild(a)
       a.click()    
       a.remove()

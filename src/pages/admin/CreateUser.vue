@@ -602,7 +602,6 @@ export default defineComponent({
           .value.push({attach: attach._value.__key})
         this.dialogAddAttach.open = false
       } else if (this.dialogAddAttach.action === 'edit') {
-        console.log(this.dialogAddAttach.iValue)
         this
           .userData
           .userDataTabs[this.dialogAddAttach.tabsIndex]
@@ -628,12 +627,6 @@ export default defineComponent({
       }
     },
     removeAttach(fieldIndex, tabsIndex, field, value, iValue) {
-      console.log(this
-        .userData
-        .userDataTabs[tabsIndex]
-        .fields[fieldIndex]
-        .value)
-        console.log(iValue)
       this
         .userData
         .userDataTabs[tabsIndex]
@@ -1160,7 +1153,6 @@ export default defineComponent({
       const fieldIndex = this.dialogConfirmAddress.fieldIndex
       const tabsIndex = this.dialogConfirmAddress.tabsIndex
       const valueIndex = this.dialogConfirmAddress.valueIndex
-      console.log(fieldIndex, 'fi',  tabsIndex, 'ts', valueIndex, 'vi')
       if (this.dialogConfirmAddress.action === 'add') {
         if (!this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value)
           this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value = []

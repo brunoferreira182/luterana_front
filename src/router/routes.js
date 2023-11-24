@@ -70,6 +70,10 @@ const routes = [
         path: "/admin/attachDetail",
         component: () => import("pages/admin/AttachDetail.vue"),
       },
+      {
+        path: "/admin/createNewAttach",
+        component: () => import("src/pages/admin/CreateNewAttach.vue"),
+      },
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },

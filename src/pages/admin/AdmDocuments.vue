@@ -24,12 +24,12 @@
             unelevated
             label="Anexo"
             icon="add"
-            @click="dialogAddAttach.open = true"
+            @click="addNewAttach"
           >
           </q-btn>
         </template>
       </q-table>
-      <q-dialog v-model="dialogAddAttach.open" @hide="clearDialog()">
+      <!-- <q-dialog v-model="dialogAddAttach.open" @hide="clearDialog()">
         <q-card style="border-radius: 1rem; height: 150x; width: 400px">
           <div class="text-h6 text-center q-pa-md ">Novo anexo</div>
           <q-card-section class="q-gutter-md">
@@ -96,7 +96,7 @@
             >
               Excluir
             </q-btn>
-        </q-card>
+        </q-card> -->
         <!-- <q-card style="border-radius: 1rem; height: 150x; width: 400px" v-if="dialogAddAttach">
           <div class="text-h6 text-center q-pa-md ">{{ dialogAttachDetail.data.attachDetail.attachTitle }}</div>
           <q-card-section class="q-gutter-md">
@@ -132,7 +132,7 @@
             />
           </q-card-actions>
         </q-card> -->
-      </q-dialog>
+      <!-- </q-dialog> -->
     </q-page>
   </q-page-container>
 </template>
@@ -173,6 +173,9 @@ export default defineComponent({
     this.getAllAttachedFiles();
   },
   methods: {
+    addNewAttach() {
+      this.$router.push('/admin/createNewAttach')
+    },
     goToAttachDetail(e, r) {
       this.$router.push('/admin/attachDetail?attachId=' + r._id)
     },
@@ -230,13 +233,11 @@ export default defineComponent({
         },
         file: this.filesToSend
       };
-      console.log(opt.file, 'antes do useFetch')
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
           return
         } else {
-          console.log(opt.file, 'dentro do useFetch')
           this.clearDialog()
           this.getAllAttachedFiles()
         }

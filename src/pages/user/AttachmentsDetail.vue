@@ -1,103 +1,97 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize">
-          {{ attachTitle }}
-        </div>
+      <div class="q-pa-md q-ml-sm row justify-between text-h5">
+        Informações sobre o documento:
       </div>
-      <q-separator class="q-mx-md" />
-      <div class="row justify-around q-pa-md">
-        <div class="col-12 q-gutter-md" align="start">
-          <div class="text-h5">Nome</div>
-          <q-input
-            label="Escreva o nome"
-            outlined
-            hint="Nome do arquivo"
-            v-model="attachTitle"
-          />
-          <div class="text-h5">Descrição</div>
-          <q-input
-            outlined
-            autogrow
-            hint="Uma descrição completa sobre o arquivo"
-            label="Descrição"
-            v-model="attachDescription"
-          />
-          <q-img 
-            :src="attachData ? utils.makeFileUrl(attachData) : ''" 
-            width="208px" 
-            height="208px"
-          />
-        </div>
-      </div>
+      <q-input
+        class="q-mx-md q-my-sm"
+        label="Nome"
+        readonly
+        outlined
+        v-model="attachDetail.attachTitle"
+      />
+      <q-input
+        class="q-mx-md q-my-sm"
+        label="Descrição"
+        readonly
+        outlined
+        v-model="attachDetail.attachDescription"
+      />
+      <q-list
+        class="bg-grey-1 q-ma-md"
+        style="border-radius: 1rem;"
+        separator
+      >
+        <q-item
+          v-for="(attach, i) in attachDetail.attach"
+          :key="attach"
+        >
+          <q-item-section>
+            <q-item-label>
+              {{ attach.originalname }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side class="no-padding no-margin">
+            <q-btn
+              icon="download"
+              color="primary"
+              flat
+              rounded
+              @click="downloadAttach(i)"
+            >
+              <q-tooltip>Fazer download</q-tooltip>
+            </q-btn>
+          </q-item-section> 
+        </q-item>
+      </q-list>
     </q-page>
   </q-page-container>
 </template>
+
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
-import utils from '../../boot/utils'
+import utils from "../../boot/utils";
 export default defineComponent({
-  name: "AttachmentsDetail",
+  name: "AttachDetail",
   data() {
     return {
-      utils,
-      attachTitle: '',
-      attachDescription: '',
-      attachData: null,
-    }
+      attachDetail: {},
+    };
   },
-  beforeMount(){
-    this.getAttachFileDetail()
+  mounted() {
+    this.$q.loading.hide();
+  },
+  beforeMount() {
+    this.getAttachFileDetail();
   },
   methods: {
-    removeAttachFile() {
-      const opt = {
-        route: "/desktop/commonUsers/removeAttachFile",
-        body: {
-          attachFileId : this.$route.query.attachFileId,
-        },
-      };
-      this.$q.loading.show();
-      useFetch(opt).then(r => {
-        this.$q.loading.hide();
-        if (!r.error) {
-          this.$q.notify("Arquivo deletado com sucesso!");
-          this.$router.back()
-        } else {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        }
-      });
-    },
     getAttachFileDetail() {
       const opt = {
         route: "/desktop/commonUsers/getAttachFileDetail",
         body: {
-          attachFileId : this.$route.query.attachFileId,
+          attachId : this.$route.query.attachFileId,
         },
       };
       this.$q.loading.show();
       useFetch(opt).then(r => {
         this.$q.loading.hide();
         if (!r.error) {
-          this.attachTitle = r.data.attachTitle
-          this.attachDescription = r.data.attachDescription
-          this.attachData = r.data.attach.filename
+          this.attachDetail = r.data
         } else {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         }
       });
     },
+    downloadAttach (i) {
+      utils.downloadFile({
+        filename: this.attachDetail.attach[i].filename,
+        originalname: this.attachDetail.attach[i].originalname
+      })
+    }
   },
 });
 </script>
-<style scoped>
 
-.separator {
-  position: fixed;
-  top: 68px;
-  border-left: 2px solid rgb(216, 216, 216);
-  height: 806px;
-}
-</style>
+

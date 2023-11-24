@@ -53,6 +53,31 @@
       />
       <div class="q-pa-md q-ml-sm text-h5">
         Anexos:
+        <q-btn 
+          color="primary" 
+          label="Anexo" 
+          unelevated 
+          icon="add" 
+          flat
+        >
+          <q-tooltip>Adicionar novo documento</q-tooltip>
+          <q-menu anchor="bottom middle" self="top left">
+            <div style="width: 400px">
+              <q-file 
+                class="q-mx-md q-my-sm"
+                multiple 
+                outlined
+                label="Clique aqui para adicionar anexos" 
+                hint="Adicione aqui os anexos"
+                v-model="documentFiles"
+              >
+              <template v-slot:after>
+                <q-btn round color="primary" @click="addDocument" flat icon="send" />
+              </template>
+            </q-file>            
+            </div>
+          </q-menu>
+        </q-btn>
       </div>
       <q-list
         class="bg-grey-1 q-ma-md"
@@ -69,15 +94,15 @@
             </q-item-label>
           </q-item-section>
           <q-item-section side class="no-padding no-margin">
-            <!-- <q-btn
+            <q-btn
               icon="delete"
-              color="negative"
+              color="red"
               flat
               rounded
-              @click="downloadAttach(i)"
+              @click="deleteAttach(i)"
             >
-              <q-tooltip>Fazer download</q-tooltip>
-            </q-btn> -->
+              <q-tooltip>Excluir anexo</q-tooltip>
+            </q-btn>
           </q-item-section> 
           <q-item-section side class="no-padding no-margin">
             <q-btn
@@ -119,6 +144,33 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="dialogDeleteAttach.open">
+        <q-card style="border-radius: 1rem;width: 400px;">
+          <q-card-section align="center">
+            <div class="text-h6">
+              Excluir documento?
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Depois"
+              no-caps
+              flat
+              rounded
+              @click="dialogDeleteAttach.open = false"
+              color="primary"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Excluir"
+              no-caps
+              color="red"
+              @click="confirmDeleteAttach"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -134,7 +186,13 @@ export default defineComponent({
       attachDetail: {},
       dialogInactivateDocument: {
         open: false
-      }
+      },
+      dialogDeleteAttach:{
+        open: false,
+        index: null
+      },
+      documentFiles: [],
+      filesToSend: []
     };
   },
   mounted() {
@@ -144,6 +202,53 @@ export default defineComponent({
     this.getAttachDetail();
   },
   methods: {
+    addDocument() {
+      this.documentFiles.forEach((file, ifile) => {
+        this.filesToSend.push({ file: this.documentFiles[ifile], name: this.documentFiles[ifile].name})
+      })
+      const opt = {
+        route: "/desktop/adm/addNewAttachToDocument",
+        body: {
+          documentId: this.$route.query.attachId,
+        },
+        file: this.filesToSend
+      };
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          return
+        } else {
+          this.$q.notify('Anexo criado com sucesso')
+          this.documentFiles = []
+          this.filesToSend = []
+          this.getAttachDetail()
+        }
+      });
+    },
+    confirmDeleteAttach() {
+      const opt = {
+        route: '/desktop/adm/updateAttach',
+        body: {
+          documentId: this.$route.query.attachId,
+          filename: this.attachDetail.attach[this.dialogDeleteAttach.index].filename
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente mais tarde')
+          this.dialogDeleteAttach.open = false
+          this.getAttachDetail()
+        } else {
+          this.$q.notify('Anexo excluído com sucesso')
+          this.dialogDeleteAttach.open = false
+          this.getAttachDetail()
+        }
+      })
+    },
+    deleteAttach(i) {
+      this.dialogDeleteAttach.index = i
+      this.dialogDeleteAttach.open = true
+    },
     getAttachDetail () {
       const opt = {
         route: '/desktop/adm/getAttachDetail',
@@ -165,7 +270,7 @@ export default defineComponent({
         originalname: this.attachDetail.attach[i].originalname
       })
     },
-    inactivateDocument() {
+    inactivateDocument () {
       const opt = {
         route: '/desktop/adm/inactivateAttach',
         body: {
