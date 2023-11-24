@@ -1,50 +1,124 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="q-pa-md q-ml-sm text-h5">
+      <div class="q-pa-md q-ml-sm row justify-between text-h5">
         Informações sobre o documento:
+        <div class="col text-right self-center">
+          <q-btn
+            no-caps
+            color="red"
+            rounded
+            flat
+            icon="delete"
+            unelevated
+            @click="dialogInactivateDocument.open = true"
+            label="Excluir documento"
+          />
+        </div>
       </div>
-      <div class="q-pa-md q-ml-sm">
+      <!-- <div class="q-pa-md q-ml-sm text-h5">
+        Informações sobre o documento:
+        <q-btn
+          class="text-right"
+          no-caps
+          color="primary"
+          rounded
+          icon="bookmark"
+          unelevated
+          @click="updateOrganism"
+          label="Salvar Edição"
+        />
+      </div> -->
+      <!-- <div class="q-pa-md q-ml-sm">
         <div class="text-h6 text-capitalize">
           Nome: {{ attachDetail.attachTitle }}
         </div>
         <div class="text-h6 q-mt-sm text-capitalize">
           Descrição: {{ attachDetail.attachDescription }}
         </div>
+      </div> -->
+      <q-input
+        class="q-mx-md q-my-sm"
+        label="Nome"
+        readonly
+        outlined
+        v-model="attachDetail.attachTitle"
+      />
+      <q-input
+        class="q-mx-md q-my-sm"
+        label="Descrição"
+        readonly
+        outlined
+        v-model="attachDetail.attachDescription"
+      />
+      <div class="q-pa-md q-ml-sm text-h5">
+        Anexos:
       </div>
-      <div class="text-center fixed-bottom q-mb-md">
-        <q-btn
-          flat
-          label="Excluir"
-          no-caps
-          color="negative"
-          rounded
-        />
-        <q-btn
-          unelevated
-          label="Fazer download"
-          icon="download"
-          no-caps
-          color="primary"
-          rounded
-          @click="downloadAttach"
-        />
-      </div>
-      <!-- <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-        <div class="text-h6 text-center q-pa-md ">{{ dialogAttachDetail.data.attachDetail.attachTitle }}</div> 
-        <q-card-section class="q-gutter-md">
-          <q-input
-            outlined
-            hint="Descrição"
-            readonly
-          />
-          <q-img 
-            style="border-radius: 1rem"
-            width="138px" 
-            height="138px"
-          />
-        </q-card-section>
-      </q-card> -->
+      <q-list
+        class="bg-grey-1 q-ma-md"
+        style="border-radius: 1rem;"
+        separator
+      >
+        <q-item
+          v-for="(attach, i) in attachDetail.attach"
+          :key="attach"
+        >
+          <q-item-section>
+            <q-item-label>
+              {{ attach.originalname }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side class="no-padding no-margin">
+            <!-- <q-btn
+              icon="delete"
+              color="negative"
+              flat
+              rounded
+              @click="downloadAttach(i)"
+            >
+              <q-tooltip>Fazer download</q-tooltip>
+            </q-btn> -->
+          </q-item-section> 
+          <q-item-section side class="no-padding no-margin">
+            <q-btn
+              icon="download"
+              color="primary"
+              flat
+              rounded
+              @click="downloadAttach(i)"
+            >
+              <q-tooltip>Fazer download</q-tooltip>
+            </q-btn>
+          </q-item-section> 
+        </q-item>
+      </q-list>
+      <q-dialog v-model="dialogInactivateDocument.open">
+        <q-card style="border-radius: 1rem;width: 400px;">
+          <q-card-section align="center">
+            <div class="text-h6">
+              Excluir documento?
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Depois"
+              no-caps
+              flat
+              rounded
+              @click="dialogInactivateDocument.open = false"
+              color="primary"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Excluir"
+              no-caps
+              color="red"
+              @click="inactivateDocument"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -57,7 +131,10 @@ export default defineComponent({
   name: "AttachDetail",
   data() {
     return {
-      attachDetail: {}
+      attachDetail: {},
+      dialogInactivateDocument: {
+        open: false
+      }
     };
   },
   mounted() {
@@ -82,29 +159,28 @@ export default defineComponent({
         }
       })
     },
-    downloadAttach () {
+    downloadAttach (i) {
       utils.downloadFile({
-        filename: this.attachDetail.attach[0].filename,
-        originalname: this.attachDetail.attach[0].originalname
+        filename: this.attachDetail.attach[i].filename,
+        originalname: this.attachDetail.attach[i].originalname
       })
     },
-    // removeAttach() {
-    //   const opt = {
-    //     route: '/desktop/adm/removeAttachFile',
-    //     body: {
-    //       attachFileId: this.dialogAttachDetail.data._id
-    //     }
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     if (r.error) {
-    //       this.$q.notify('Ocorreu um erro, tente novamente')
-    //     } else {
-    //       this.clearDialogDetail()
-    //       this.getAllAttachedFiles()
-    //       this.$q.notify('Documento removido com sucesso.')
-    //     }
-    //   })
-    // },
+    inactivateDocument() {
+      const opt = {
+        route: '/desktop/adm/inactivateAttach',
+        body: {
+          documentId: this.$route.query.attachId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Documento excluído com sucesso')
+          this.$router.push('/admin/admDocuments')
+        }
+      })
+    }
   },
 });
 </script>
