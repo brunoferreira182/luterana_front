@@ -136,7 +136,7 @@
                 </q-item> 
               </q-list>
               
-              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia'">
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
                 </div>
@@ -170,7 +170,7 @@
                   </q-item>
                 </q-list>
               </div>
-              <div v-if="organismConfigName === 'Congregação'">
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
@@ -1271,6 +1271,7 @@ import CardPerson from '../../components/CardPerson.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
+// import utils from '../../boot/utils'
 import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
@@ -1282,7 +1283,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    CardServices, DialogOrganismDetail
+    CardServices, DialogOrganismDetail, 
   },
   data() {
     return {

@@ -13,7 +13,7 @@
       <q-item-section avatar>
         <q-img 
           style="border-radius: 1rem"
-          :src="user.userImage ? user.userImage : avatar" 
+          :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
           width="46px" 
           height="46px"
         />
@@ -56,6 +56,7 @@
 <script setup>
 // import { defineComponent } from "vue";
 import avatar from '../assets/avatar.svg'
+import utils from '../boot/utils'
 const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo', 'canEditPastor', 'disableButtons'])
 const emits = defineEmits(['remove', 'deleteUserFromFunction', 'swapPastorToFunctionPastor'])
 
