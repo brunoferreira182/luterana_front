@@ -523,9 +523,8 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <div v-if="field.type.type === 'services_per_week'">
+                <div v-if="field.type.type === 'services'">
                   <q-btn 
-                    v-if="!field.value"
                     label="Quantidade de cultos"
                     no-caps
                     rounded
@@ -545,7 +544,6 @@
                   />
                 </div>
                 <div v-if="field.type.type === 'secretary'">
-                  Secretária, que trabalha o dia inteiro comigo, estou correndo um grande perigo
                   <q-btn
                     label="Secretária"
                     no-caps
@@ -562,6 +560,7 @@
                     v-if="field.value"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
+                    @remove="removeSecretary"
                   />
                 </div>
               </div>
@@ -1633,6 +1632,9 @@ export default defineComponent({
     }
   },
   methods: {
+    removeSecretary(fieldIndex, isecretary) {
+      this.organismData.fields[fieldIndex].value.splice(isecretary, 1);
+    },
     clearOrganismStore() {
       savedOrganismList().list =[],
       savedOrganismList().page = 1,

@@ -16,8 +16,6 @@
         :filter="filter"
         @request="nextPage"
         v-model:pagination="pagination"
-        :loading="loading"
-        binary-state-sort
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -145,6 +143,7 @@ export default defineComponent({
         descending: false,
       },
       loading: false,
+      pastorListTimer: null
       // pagesNumber: computed(() => {
       //   return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
       // })
@@ -175,7 +174,11 @@ export default defineComponent({
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
       const sortBy = this.pagination.sortBy
-      const opt = {
+      if (this.pastorListTimer) {
+        clearTimeout(this.pastorListTimer);
+      }
+      this.pastorListTimer = setTimeout(() => {
+        const opt = {
         route: "/desktop/adm/getPastorList",
         body: {
           page: page,
@@ -189,7 +192,9 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
+      this.$q.loading.show();
       useFetch(opt).then((r) => {
+        this.$q.loading.hide();
         this.usersOptions = r.data;
         this.pastorsList = r.data.list
         this.pastorsList.forEach((pastor) => {
@@ -209,6 +214,7 @@ export default defineComponent({
         // this.pastorsList = projectList
         this.pagination.rowsNumber = r.data.count[0].count
       });
+      }, 500)
     },
   },
 });
