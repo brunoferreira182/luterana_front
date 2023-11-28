@@ -137,6 +137,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
+      organismListTimer: null
     };
   },
   mounted() {

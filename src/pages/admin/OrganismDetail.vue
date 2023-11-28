@@ -9,6 +9,17 @@
         <div class="col text-right self-center">
           <q-btn
             no-caps
+            color="red"
+            flat
+            class="q-mr-sm"
+            rounded
+            icon="delete"
+            unelevated
+            @click="dialogCloseOrganism.open = true"
+            label="Encerrar organismo"
+          />
+          <q-btn
+            no-caps
             color="primary"
             rounded
             icon="bookmark"
@@ -136,7 +147,7 @@
                 </q-item> 
               </q-list>
               
-              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia'">
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
                 </div>
@@ -170,7 +181,7 @@
                   </q-item>
                 </q-list>
               </div>
-              <div v-if="organismConfigName === 'Congregação'">
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
@@ -512,9 +523,8 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <div v-if="field.type.type === 'services_per_week'">
+                <div v-if="field.type.type === 'services'">
                   <q-btn 
-                    v-if="!field.value"
                     label="Quantidade de cultos"
                     no-caps
                     rounded
@@ -531,7 +541,27 @@
                     :fieldIndex="fieldIndex"
                     @edit="editServicesData"
                     @remove="removeServicesData"
-                    />
+                  />
+                </div>
+                <div v-if="field.type.type === 'secretary'">
+                  <q-btn
+                    label="Secretária"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    class="q-mt-xs"
+                    @click="clkAddSecretary(fieldIndex)"
+                    :disable="field.onlyAdm"
+                  />
+                  <CardSecretary
+                    v-if="field.value"
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    @remove="removeSecretary"
+                  />
                 </div>
               </div>
               <CardAddress v-if="congregacaoSedeAddress.length > 0"
@@ -1226,6 +1256,105 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogCloseOrganism.open"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section align="center" class="text-h6">
+            Encerrar organismo?
+          </q-card-section>
+          <q-card-section>
+            <q-input 
+              type="date" 
+              v-model="dialogCloseOrganism.finalDate"
+              filled
+              label="Data fim"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogCloseOrganism.open = false"
+            />
+            <q-btn
+              flat
+              label="Encerrar"
+              no-caps
+              rounded
+              color="red"
+              @click="confirmCloseOrganism"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddSecretary.open"
+        @hide="clearSecretarydialog"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section align="center" class="text-h6">
+            Selecione o usuário
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              v-model="dialogAddSecretary.selectedUser"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <q-input 
+              type="text" 
+              filled
+              label='Horário de trabalho'
+              v-model="dialogAddSecretary.officeHours"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearSecretarydialog"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddSecretary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
   <DialogPhoneMobileEmail
@@ -1268,9 +1397,11 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPerson from '../../components/CardPerson.vue'
+import CardSecretary from '../../components/CardSecretary.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
+// import utils from '../../boot/utils'
 import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
@@ -1282,7 +1413,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    CardServices, DialogOrganismDetail
+    CardServices, DialogOrganismDetail, CardSecretary
   },
   data() {
     return {
@@ -1355,6 +1486,13 @@ export default defineComponent({
         open: false,
         userData: {},
       },
+      dialogAddSecretary: {
+        open: false,
+        fieldIndex: null,
+        action: 'add',
+        selectedUser: '',
+        officeHours: ''
+      },
       dialogDeleteUserFromFunction: {
         obsText: "",
         finalDate: "",
@@ -1367,6 +1505,10 @@ export default defineComponent({
         functionUserId: "",
         obsText: "",
         data: {},
+      },
+      dialogCloseOrganism: {
+        open: false,
+        finalDate: ''
       },
       organismData: {
         organismConfigId: '',
@@ -1496,6 +1638,9 @@ export default defineComponent({
     }
   },
   methods: {
+    removeSecretary(fieldIndex, isecretary) {
+      this.organismData.fields[fieldIndex].value.splice(isecretary, 1);
+    },
     clearOrganismStore() {
       savedOrganismList().list =[],
       savedOrganismList().page = 1,
@@ -1546,6 +1691,25 @@ export default defineComponent({
         },
         action: 'add',
       }
+    },
+    confirmCloseOrganism() {
+      const opt = {
+        route: '/desktop/adm/closeOrganism',
+        body: {
+          organismId: this.$route.query.organismId,
+          finalDate: this.dialogCloseOrganism.finalDate
+        }
+      } 
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+          this.dialogCloseOrganism.open = false
+        } else {
+          this.$q.notify('Organismo encerrado com sucesso')
+          this.dialogCloseOrganism.open = false
+          this.$router.push('/admin/organismsList')
+        }
+      })
     },
     clkConfirmSwapPastor() {
       const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
@@ -1669,6 +1833,17 @@ export default defineComponent({
     clkShowDialogParentDetail(parent) {
       this.clkShowDetailOrganism(parent.parentId)
     },
+    confirmAddSecretary() {
+      if (!this.organismData.fields[this.dialogAddSecretary.fieldIndex].value) {
+        this.organismData.fields[this.dialogAddSecretary.fieldIndex].value = []
+      }
+      this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push({
+        user: this.dialogAddSecretary.selectedUser,
+        officeHours: this.dialogAddSecretary.officeHours
+      })
+      this.$q.notify('Secretária adicionada com sucesso')
+      this.clearSecretarydialog()
+    },
     closeDialogAddServices () {
       this.dialogAddServices.open = false
       this.dialogAddServices.fieldIndex = null
@@ -1679,6 +1854,18 @@ export default defineComponent({
       this.dialogAddServices.fieldIndex = fieldIndex
       this.dialogAddServices.action = 'add'
       this.dialogAddServices.open = true
+    },
+    clearSecretarydialog() {
+      this.dialogAddSecretary.open = false
+      this.dialogAddSecretary.fieldIndex = null
+      this.dialogAddSecretary.action = 'add'
+      this.dialogAddSecretary.selectedUser = ''
+      this.dialogAddSecretary.officeHours = ''
+    },
+    clkAddSecretary(fieldIndex) {
+      this.dialogAddSecretary.fieldIndex = fieldIndex,
+      this.dialogAddSecretary.action == 'add',
+      this.dialogAddSecretary.open = true
     },
     verifyIfHasPastor() {
       this.functions.forEach((func) => {
@@ -2441,6 +2628,8 @@ export default defineComponent({
         route = "/desktop/adm/getPastores" 
       } else if (this.dialogInserPastorInParoquia.open = true && this.dialogInserPastorInParoquia.user === 'Pastor') {
         route = "/desktop/adm/getPastores" 
+      } else if (this.dialogAddSecretary.open = true) {
+        route = "/desktop/adm/getUsers" 
       }
       
       const opt = {

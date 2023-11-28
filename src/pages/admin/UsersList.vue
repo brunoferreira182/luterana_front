@@ -144,6 +144,7 @@ export default defineComponent({
         descending: false,
       },
       loading: false,
+      usersListTimer: null
     };
   },
   mounted() {
@@ -171,7 +172,8 @@ export default defineComponent({
       const rowsPerPage = this.pagination.rowsPerPage
       const searchString = this.filter
       const sortBy = this.pagination.sortBy
-      const opt = {
+      this.usersListTimer = setTimeout(() => {
+        const opt = {
         route: "/desktop/adm/getUsersList",
         body: {
           page: page,
@@ -185,7 +187,9 @@ export default defineComponent({
       } else if (this.selectFilter === "Inativos") {
         opt.body.isActive = 0;
       }
+      this.$q.loading.show();
       useFetch(opt).then((r) => {
+        this.$q.loading.hide();
         this.usersOptions = r.data;
         this.usersList = r.data.list
         this.usersList.forEach((user) => {
@@ -197,6 +201,8 @@ export default defineComponent({
         })
         this.pagination.rowsNumber = r.data.count[0].count
       });
+      }, 300)
+      
     },
   },
 });

@@ -1,25 +1,31 @@
 <template>
-  <q-list
-    class="bg-grey-3"
+  <q-card
+    class="bg-grey-2"
     style="border-radius: 1rem"
     separator
+    flat
   >
-    <q-item-label header v-if="props.data[0] && props.data[0].frequency">
-      Dados sobre os cultos:
+    <q-item-label header v-if="props.data[0] && props.data[0].frequency" class="no-padding">
+      <div class="q-pl-md q-pt-sm">
+        Dados sobre os cultos:
+      </div>
     </q-item-label>
     <q-item
+    class="no-margin"
       v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
       <q-item-section>
         <q-item-label>
-          Frequência: {{ value.frequency }}
+          <strong>
+            Dias em que ocorrerão cultos este mês: 
+          </strong>
+          <div v-for="date in value.days" :key="date">
+            {{date}}
+          </div>
         </q-item-label>
         <q-item-label>
-          Dias do mês: {{ value.days }}
-        </q-item-label>
-        <q-item-label>
-          Horário: {{ value.times }}
+          <strong>Horário:</strong>  {{ value.times }}
         </q-item-label>
       </q-item-section>
       <q-item-section side>
@@ -43,7 +49,7 @@
         </q-item-label>
       </q-item-section>
     </q-item>
-  </q-list>
+  </q-card>
 </template>
 
 <script setup>

@@ -1,125 +1,91 @@
 <template>
   <q-dialog :model-value="props.open" @hide="closeDialog">
-    <q-carousel
-      v-model="data.step"
-      transition-prev="scale"
-      transition-next="scale"
-      swipeable
-      animated
-      control-color="primary"
-      style="height: 200px;"
-    >
-      <q-carousel-slide name="frequency" class="column no-wrap flex-center">
+    <q-card style="width: 600px;height: 750px;">
+      <q-card-section class="text-h6 text-center">
+        Informações sobre os cultos:
+      </q-card-section>
+      <q-separator/>
+      <q-card-section class="q-mt-sm">
         <div>
-          <div>
-            Selecione a frequência do culto
-          </div>
-          <q-select
-            v-model="data.selectedOption"
-            :options="selectOptions"
-            label="Frequência"
-          />
-          <q-btn
-            class="full-width q-mt-md"
-            color="primary"
-            label="Próximo"
-            @click="clkNext1"
-            :loading="btnNextLoading"
-            unelevated
-            no-caps
+          <strong>
+            Frequência:
+          </strong>
+        </div>
+        <q-select
+          class="q-mt-md"
+          outlined
+          v-model="data.selectedOption"
+          :options="selectOptions"
+          label="Frequência"
+        />
+      </q-card-section>
+      <q-card-section class="q-mt-sm" v-if="data.selectedOption">
+        <div>
+          <strong>
+            Marque os dias da semana que irão ocorrer os cultos:
+          </strong>
+        </div>
+        <div class="text-center">
+          <q-date
+            mask="DD/MM/YYYY"
+            class="q-mt-md"
+            multiple
+            minimal
+            v-model="data.date"
+            landscape
           />
         </div>
-      </q-carousel-slide>
-      <q-carousel-slide name="dayOption" class="column no-wrap flex-center">
-        <div class="q-mt-md text-center">
-          <div class="text-h6">
-            Quais os dias do mês 
-          </div>
-          <q-input
-            class="q-pa-sm"
-            v-model="data.daysOfMonth"
-            outlined
-            >
-          </q-input>
-          <q-btn
-            class="full-width"
-            color="primary"
-            label="Próximo"
-            @click="clkNext2"
-            :loading="btnNextLoading"
-            unelevated
-            no-caps
-          />
-        </div>
-      </q-carousel-slide>
-      <q-carousel-slide name="time" class="column no-wrap flex-center">
-        <div class="text-h6">
-            Horário do culto 
+      </q-card-section>
+      <q-card-section class="q-mt-sm" v-if="data.date">
+        <div>
+          <strong>
+            Informe o horário dos cultos:
+          </strong>
         </div>
         <q-input
-          class="q-pa-sm"
-          v-model="data.time"
+          type="time"
+          class="q-mt-md"
+          label="Horário dos cultos"
           outlined
-          >
-        </q-input>
-        <q-btn
-          class="full-width"
-          color="primary"
-          label="Confirmar"
-          @click="clkNext3"
-          :loading="btnNextLoading"
-          unelevated
-          no-caps
+          v-model="data.time"
         />
-      </q-carousel-slide>
-    </q-carousel>
+      </q-card-section>
+      <q-card-actions align="center" v-if="data.time">
+        <q-btn
+          flat
+          label="depois"
+          color="primary"
+          rounded
+        />
+        <q-btn
+          rounded
+          color="primary"
+          label="confirmar"
+          unelevated
+          @click="confirm"
+        />
+      </q-card-actions>
+    </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-// import useFetch from "../boot/useFetch";
-// import utils from '../../boot/utils'
 import { ref } from 'vue'
 const data = ref({
   step: 'frequency',
   selectedOption: null,
-  daysOfMonth: null,
-  time: null
+  time: null,
+  date: null
 })
-const selectOptions = ['2x Semana', 'Semanal', 'Quinzenal', 'Mensal']
+const selectOptions = [ 'Semanal','2x Semana', 'Quinzenal', 'Mensal']
 const props = defineProps(['open', 'edit'])
 const emits = defineEmits(['closeDialog', 'addServicesData'])
 
-function clkNext1() {
-  if (!data.value.selectedOption) {
-    this.$q.notify("Preencha a frequência")
-    return
-  }
-  data.value.step = 'dayOption'
-};
-
-function clkNext2() {
-  if (!data.value.daysOfMonth) {
-    this.$q.notify("Preencha os dias do mês")
-    return
-  }
-  data.value.step = 'time'
-};
-
-function clkNext3() {
-  if (!data.value.time) {
-    this.$q.notify("Preencha o horário do culto")
-    return
-  }
-  emits('addServicesData', data.value.selectedOption, data.value.daysOfMonth, data.value.time)
+function confirm() {
+  emits('addServicesData', data.value.selectedOption, data.value.date, data.value.time)
   data.value.step = 'frequency'
   data.value.selectedOption = null
-  data.value.daysOfMonth = null
+  data.value.date = null
   data.value.time = null
-};
-
-function closeDialog() {
-  emits('closeDialog')
-};
-
+}
 </script>

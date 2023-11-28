@@ -33,6 +33,7 @@ const useUtils = {
     })
   },
   makeFileUrl (filename) {
+    console.log(filename, 'quer ver que ta chegando')
     if (!filename) return '/assets/default_avatar.svg'
     return this.attachmentsAddress() + filename + '?' + new Date().getTime()
   },

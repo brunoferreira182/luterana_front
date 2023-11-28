@@ -47,7 +47,12 @@
         class="bg-white q-ma-xs"
       >
         <q-item-section avatar>
-          <q-icon name="account_circle" size="38px" color="grey"/>
+          <q-img 
+          style="border-radius: 1rem"
+          :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
+          width="46px" 
+          height="46px"
+        />
         </q-item-section>
         <q-item-section class="text-wrap" lines="2">
           {{ user.userName }}
@@ -104,9 +109,12 @@
         class="bg-white q-ma-xs"
       >
         <q-item-section avatar>
-          <q-avatar rounded>
-            <q-icon name="markunread" size="lg" color="cyan-8"> </q-icon>
-          </q-avatar>
+          <q-img 
+            style="border-radius: 1rem"
+            :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
+            width="208px" 
+            height="208px"
+          />
         </q-item-section>
         <q-item-section class="text-wrap" lines="2">
           Enviado por {{ user.sendBy }}
@@ -192,6 +200,8 @@
 
 <script setup>
 // import { defineComponent } from "vue";
+import utils from '../boot/utils'
+import avatar from '../assets/avatar.svg'
 const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
