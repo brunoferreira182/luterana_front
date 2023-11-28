@@ -2,25 +2,34 @@ import { MODE_AUTH_SERVER } from "./variables";
 import CryptoJS from "crypto-js";
 import { LocalStorage } from "quasar";
 import useFetch from "./useFetch";
-
 import { calculateMasterServerAttachmentsRoute } from "./masterServerRoutes";
 
 const useUtils = {
+  // forceFileDownload(response, options) {
+  //   const url = window.URL.createObjectURL(new Blob([response], {type: 'arraybuffer'}))
+  //   console.log(url)
+  //   const link = document.createElement('a')
+  //   link.href = url
+  //   link.setAttribute('download', options.originalname)
+  //   document.body.appendChild(link)
+  //   console.log(link)
+  //   link.click()
+  //   document.body.removeChild(link)
+  // },
   downloadFile (options) {
     const opt = {
-      route: '/download/' + options.filename,
-      method: 'GET'
+      method: 'get',
+      responseType: 'arraybuffer',
+      route: '/donwload/' + options.filename
     }
-
-    useFetch(opt).then(async httpResponse => {
-      let downloadedFile = new Blob([httpResponse])
-      let url = window.URL.createObjectURL(downloadedFile);
-      let a = document.createElement('a'); 
-      a.href = url;
-      a.download = options.originalname
-      document.body.appendChild(a)
-      a.click()    
-      a.remove()
+    useFetch(opt).then(async response => {
+      const link = window.URL.createObjectURL(new Blob([response], {type: options.type}))
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.href = link;
+      a.download = options.originalname;
+      a.click();
+      window.URL.revokeObjectURL(link);
     })
   },
   makeFileUrl (filename) {

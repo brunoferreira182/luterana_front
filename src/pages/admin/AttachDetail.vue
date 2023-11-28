@@ -267,7 +267,8 @@ export default defineComponent({
     downloadAttach (i) {
       utils.downloadFile({
         filename: this.attachDetail.attach[i].filename,
-        originalname: this.attachDetail.attach[i].originalname
+        originalname: this.attachDetail.attach[i].originalname,
+        type: this.attachDetail.attach[i].mimetype
       })
     },
     inactivateDocument () {

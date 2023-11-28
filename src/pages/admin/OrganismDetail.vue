@@ -1480,6 +1480,12 @@ export default defineComponent({
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
+    // if (this.organismConfigName === 'Paróquia') {
+    //   console.log('aaaaaaaaaaaaaaaaaa')
+    //   if (this.organismChildData.length === 1) {
+    //     this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
+    //   }
+    // }
     // this.getOrganismsConfigsList()
     // this.getUserVisionPermissionByOrganismId()
   },
