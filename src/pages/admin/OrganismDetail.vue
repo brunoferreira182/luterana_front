@@ -1615,6 +1615,7 @@ export default defineComponent({
   },
   created(){
     this.getOrganismDetailById();
+    
   },
   beforeMount(){
     // this.getOrganismsList()
@@ -2189,6 +2190,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
+          
           this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
@@ -2198,6 +2200,12 @@ export default defineComponent({
           this.functions = r.data.functions
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
+          if (this.organismConfigName === 'Paróquia') {
+            console.log('aaaaaaaaaaaaaaaaaa')
+            if (this.organismChildData.length === 1) {
+              this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
+            }
+          }
           this.parentData = r.data.parentData
           this.idLegado = r.data.idLegado
           this.verifyIfHasPastor()

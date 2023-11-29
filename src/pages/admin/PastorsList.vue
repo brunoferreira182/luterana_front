@@ -117,6 +117,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { savedUsersList } from "stores/usersList";
 
 export default defineComponent({
   name: "pastorsList",
@@ -155,6 +156,12 @@ export default defineComponent({
   beforeMount() {
     this.getPastorList();
   },
+  unmounted() {
+    const currentRoute = this.$route
+    if (currentRoute && !currentRoute.path.includes('/admin/userDetail')) {
+      this.clearOrganismStore()
+    }
+  },
   methods: {
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
@@ -169,22 +176,48 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getPastorList();
     },
+    clearUsersStore() {
+      savedUsersList().list =[],
+      savedUsersList().page = 1,
+      savedUsersList().rowsPerPage = 10,
+      savedUsersList().rowsNumber = 0,
+      savedUsersList().sortBy = '',
+      savedUsersList().selectFilter = '',
+      savedUsersList().filter = ''
+    },
     getPastorList() {
-      const page = this.pagination.page
-      const rowsPerPage = this.pagination.rowsPerPage
-      const searchString = this.filter
-      const sortBy = this.pagination.sortBy
-      if (this.pastorListTimer) {
-        clearTimeout(this.pastorListTimer);
+      if (savedUsersList().list.length && savedUsersList().list.length > 0) {
+        if (this.pagination.page === 1 &&
+          this.pagination.rowsPerPage === 10 &&
+          this.pagination.rowsNumber === 0 &&
+          this.pagination.sortBy === '' &&
+          this.filter === '' &&
+          this.selectFilter === '' &&
+          this.filter === ''
+        ) {
+          this.organismList = savedUsersList().list,
+          this.pagination.page = savedUsersList().page,
+          this.pagination.rowsPerPage = savedUsersList().rowsPerPage,
+          this.pagination.rowsNumber = savedUsersList().rowsNumber,
+          this.pagination.sortBy = savedUsersList().sortBy,
+          this.selectFilter = savedUsersList().selectFilter,
+          this.filter = savedUsersList().filter
+          return
+        }
       }
-      this.pastorListTimer = setTimeout(() => {
+      if (this.usersListTimer) {
+        clearTimeout(this.usersListTimer);
+      }
+      this.usersListTimer = setTimeout(() => {
         const opt = {
         route: "/desktop/adm/getPastorList",
         body: {
-          page: page,
-          rowsPerPage: rowsPerPage,
-          searchString: searchString,
-          sortBy: sortBy,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: this.filter,
+          sortBy: this.pagination.sortBy,
+          selectFilter: this.selectFilter,
+          descending: this.pagination.descending
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -196,23 +229,20 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         this.usersOptions = r.data;
-        this.pastorsList = r.data.list
-        this.pastorsList.forEach((pastor) => {
+        this.usersList = r.data.list;
+        this.usersList.forEach((pastor) => {
           if (pastor.userType === 'pastor') {
             pastor.userType = 'Pastor'
           }
         })
-        // let projectList = []
-        // r.data.list.forEach(projeto => {
-        //   console.log(projeto)
-        //   projectList.push({
-        //     name: projeto.userName,
-        //     status: projeto.status,
-        //     _id: projeto._id
-        //   })
-        // })
-        // this.pastorsList = projectList
         this.pagination.rowsNumber = r.data.count[0].count
+        savedUsersList().list = r.data.list
+        savedUsersList().page = this.pagination.page
+        savedUsersList().rowsPerPage = this.pagination.rowsPerPage
+        savedUsersList().rowsNumber = this.pagination.rowsNumber
+        savedUsersList().sortBy = this.pagination.sortBy
+        savedUsersList().selectFilter = this.selectFilter
+        savedUsersList().filter = this.filter
       });
       }, 500)
     },

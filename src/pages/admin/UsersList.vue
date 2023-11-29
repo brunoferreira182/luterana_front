@@ -8,16 +8,15 @@
         :columns="columnsData"
         :rows="usersList"
         row-key="_id"
+        @row-click="clkOpenUserDetail"
+        virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenUserDetail"
         :filter="filter"
-        @request="nextPage"
         v-model:pagination="pagination"
-        :loading="loading"
-        binary-state-sort
+        @request="nextPage"
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -119,6 +118,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { savedUsersList } from "stores/usersList";
 
 export default defineComponent({
   name: "UsersList",
@@ -153,6 +153,12 @@ export default defineComponent({
   beforeMount() {
     this.getUsersList();
   },
+  unmounted() {
+    const currentRoute = this.$route
+    if (currentRoute && !currentRoute.path.includes('/admin/organismDetail')) {
+      this.clearOrganismStore()
+    }
+  },
   methods: {
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
@@ -167,19 +173,48 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getUsersList();
     },
+    clearUsersStore() {
+      savedUsersList().list =[],
+      savedUsersList().page = 1,
+      savedUsersList().rowsPerPage = 10,
+      savedUsersList().rowsNumber = 0,
+      savedUsersList().sortBy = '',
+      savedUsersList().selectFilter = '',
+      savedUsersList().filter = ''
+    },
     getUsersList() {
-      const page = this.pagination.page
-      const rowsPerPage = this.pagination.rowsPerPage
-      const searchString = this.filter
-      const sortBy = this.pagination.sortBy
+      if (savedUsersList().list.length && savedUsersList().list.length > 0) {
+        if (this.pagination.page === 1 &&
+          this.pagination.rowsPerPage === 10 &&
+          this.pagination.rowsNumber === 0 &&
+          this.pagination.sortBy === '' &&
+          this.filter === '' &&
+          this.selectFilter === '' &&
+          this.filter === ''
+        ) {
+          this.organismList = savedUsersList().list,
+          this.pagination.page = savedUsersList().page,
+          this.pagination.rowsPerPage = savedUsersList().rowsPerPage,
+          this.pagination.rowsNumber = savedUsersList().rowsNumber,
+          this.pagination.sortBy = savedUsersList().sortBy,
+          this.selectFilter = savedUsersList().selectFilter,
+          this.filter = savedUsersList().filter
+          return
+        }
+      }
+      if (this.usersListTimer) {
+        clearTimeout(this.usersListTimer);
+      }
       this.usersListTimer = setTimeout(() => {
         const opt = {
         route: "/desktop/adm/getUsersList",
         body: {
-          page: page,
-          rowsPerPage: rowsPerPage,
-          searchString: searchString,
-          sortBy: sortBy,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: this.filter,
+          sortBy: this.pagination.sortBy,
+          selectFilter: this.selectFilter,
+          descending: this.pagination.descending
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -191,7 +226,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         this.usersOptions = r.data;
-        this.usersList = r.data.list
+        this.usersList = r.data.list;
         this.usersList.forEach((user) => {
           if (user.userType === 'user') {
             user.userType = 'Usuário'
@@ -200,8 +235,15 @@ export default defineComponent({
           }
         })
         this.pagination.rowsNumber = r.data.count[0].count
+        savedUsersList().list = r.data.list
+        savedUsersList().page = this.pagination.page
+        savedUsersList().rowsPerPage = this.pagination.rowsPerPage
+        savedUsersList().rowsNumber = this.pagination.rowsNumber
+        savedUsersList().sortBy = this.pagination.sortBy
+        savedUsersList().selectFilter = this.selectFilter
+        savedUsersList().filter = this.filter
       });
-      }, 300)
+      }, 500)
       
     },
   },
