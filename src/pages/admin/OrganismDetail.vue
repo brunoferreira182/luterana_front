@@ -7,7 +7,7 @@
           <q-badge :style="{background: organismConfigStyle}" size="large">{{ organismConfigName }} - {{ idLegado }}</q-badge>
         </div>
         <div class="col text-right self-center">
-          <q-btn
+          <!-- <q-btn
             no-caps
             color="red"
             flat
@@ -17,7 +17,7 @@
             unelevated
             @click="dialogCloseOrganism.open = true"
             label="Encerrar organismo"
-          />
+          /> -->
           <q-btn
             no-caps
             color="primary"
@@ -562,6 +562,18 @@
                     :fieldIndex="fieldIndex"
                     @remove="removeSecretary"
                   />
+                </div>
+                <div v-if="field.type.type === 'closeDate'">
+                  <q-input
+                    type="date"
+                    :label="field.label"
+                    :hint="field.hint"
+                    :mask="field.type.mask"
+                    v-model="field.value"
+                    outlined
+                    :readonly="field.onlyAdm"
+                  >
+                  </q-input>
                 </div>
               </div>
               <CardAddress v-if="congregacaoSedeAddress.length > 0"
@@ -1256,7 +1268,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-dialog
+      <!-- <q-dialog
         v-model="dialogCloseOrganism.open"
       >
         <q-card style="border-radius: 1rem; width: 400px">
@@ -1290,7 +1302,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
       <q-dialog
         v-model="dialogAddSecretary.open"
         @hide="clearSecretarydialog"
@@ -1692,25 +1704,25 @@ export default defineComponent({
         action: 'add',
       }
     },
-    confirmCloseOrganism() {
-      const opt = {
-        route: '/desktop/adm/closeOrganism',
-        body: {
-          organismId: this.$route.query.organismId,
-          finalDate: this.dialogCloseOrganism.finalDate
-        }
-      } 
-      useFetch(opt).then((r) => {
-        if (r.error) {
-          this.$q.notify('Ocorreu um erro, tente novamente')
-          this.dialogCloseOrganism.open = false
-        } else {
-          this.$q.notify('Organismo encerrado com sucesso')
-          this.dialogCloseOrganism.open = false
-          this.$router.push('/admin/organismsList')
-        }
-      })
-    },
+    // confirmCloseOrganism() {
+    //   const opt = {
+    //     route: '/desktop/adm/closeOrganism',
+    //     body: {
+    //       organismId: this.$route.query.organismId,
+    //       finalDate: this.dialogCloseOrganism.finalDate
+    //     }
+    //   } 
+    //   useFetch(opt).then((r) => {
+    //     if (r.error) {
+    //       this.$q.notify('Ocorreu um erro, tente novamente')
+    //       this.dialogCloseOrganism.open = false
+    //     } else {
+    //   ;    this.$q.notify('Organismo encerrado com sucesso')
+    //       this.dialogCloseOrganism.open = false
+    //       this.$router.push('/admin/organismsList')
+    //     }
+    //   })
+    // },
     clkConfirmSwapPastor() {
       const organismFunctionUserId = this.dialogSwapPastorFromFunction.data._id
       const finalDate = this.dialogSwapPastorFromFunction.finalDate
