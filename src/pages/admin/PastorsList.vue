@@ -8,14 +8,15 @@
         :columns="columnsData"
         :rows="pastorsList"
         row-key="_id"
+        @row-click="clkOpenUserDetail"
+        virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenUserDetail"
         :filter="filter"
-        @request="nextPage"
         v-model:pagination="pagination"
+        @request="nextPage"
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -117,7 +118,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
-import { savedUsersList } from "stores/usersList";
+import { savedPastorsList } from "stores/pastorsList";
 
 export default defineComponent({
   name: "pastorsList",
@@ -159,7 +160,7 @@ export default defineComponent({
   unmounted() {
     const currentRoute = this.$route
     if (currentRoute && !currentRoute.path.includes('/admin/userDetail')) {
-      this.clearOrganismStore()
+      this.clearPastorStore()
     }
   },
   methods: {
@@ -176,17 +177,17 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getPastorList();
     },
-    clearUsersStore() {
-      savedUsersList().list =[],
-      savedUsersList().page = 1,
-      savedUsersList().rowsPerPage = 10,
-      savedUsersList().rowsNumber = 0,
-      savedUsersList().sortBy = '',
-      savedUsersList().selectFilter = '',
-      savedUsersList().filter = ''
+    clearPastorStore() {
+      savedPastorsList().list =[],
+      savedPastorsList().page = 1,
+      savedPastorsList().rowsPerPage = 10,
+      savedPastorsList().rowsNumber = 0,
+      savedPastorsList().sortBy = '',
+      savedPastorsList().selectFilter = '',
+      savedPastorsList().filter = ''
     },
     getPastorList() {
-      if (savedUsersList().list.length && savedUsersList().list.length > 0) {
+      if (savedPastorsList().list.length && savedPastorsList().list.length > 0) {
         if (this.pagination.page === 1 &&
           this.pagination.rowsPerPage === 10 &&
           this.pagination.rowsNumber === 0 &&
@@ -195,20 +196,20 @@ export default defineComponent({
           this.selectFilter === '' &&
           this.filter === ''
         ) {
-          this.organismList = savedUsersList().list,
-          this.pagination.page = savedUsersList().page,
-          this.pagination.rowsPerPage = savedUsersList().rowsPerPage,
-          this.pagination.rowsNumber = savedUsersList().rowsNumber,
-          this.pagination.sortBy = savedUsersList().sortBy,
-          this.selectFilter = savedUsersList().selectFilter,
-          this.filter = savedUsersList().filter
+          this.organismList = savedPastorsList().list,
+          this.pagination.page = savedPastorsList().page,
+          this.pagination.rowsPerPage = savedPastorsList().rowsPerPage,
+          this.pagination.rowsNumber = savedPastorsList().rowsNumber,
+          this.pagination.sortBy = savedPastorsList().sortBy,
+          this.selectFilter = savedPastorsList().selectFilter,
+          this.filter = savedPastorsList().filter
           return
         }
       }
-      if (this.usersListTimer) {
-        clearTimeout(this.usersListTimer);
+      if (this.pastorListTimer) {
+        clearTimeout(this.pastorListTimer);
       }
-      this.usersListTimer = setTimeout(() => {
+      this.pastorListTimer = setTimeout(() => {
         const opt = {
         route: "/desktop/adm/getPastorList",
         body: {
@@ -228,21 +229,20 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        this.usersOptions = r.data;
-        this.usersList = r.data.list;
-        this.usersList.forEach((pastor) => {
+        this.pastorsList = r.data.list;
+        this.pastorsList.forEach((pastor) => {
           if (pastor.userType === 'pastor') {
             pastor.userType = 'Pastor'
           }
         })
         this.pagination.rowsNumber = r.data.count[0].count
-        savedUsersList().list = r.data.list
-        savedUsersList().page = this.pagination.page
-        savedUsersList().rowsPerPage = this.pagination.rowsPerPage
-        savedUsersList().rowsNumber = this.pagination.rowsNumber
-        savedUsersList().sortBy = this.pagination.sortBy
-        savedUsersList().selectFilter = this.selectFilter
-        savedUsersList().filter = this.filter
+        savedPastorsList().list = r.data.list
+        savedPastorsList().page = this.pagination.page
+        savedPastorsList().rowsPerPage = this.pagination.rowsPerPage
+        savedPastorsList().rowsNumber = this.pagination.rowsNumber
+        savedPastorsList().sortBy = this.pagination.sortBy
+        savedPastorsList().selectFilter = this.selectFilter
+        savedPastorsList().filter = this.filter
       });
       }, 500)
     },

@@ -155,8 +155,8 @@ export default defineComponent({
   },
   unmounted() {
     const currentRoute = this.$route
-    if (currentRoute && !currentRoute.path.includes('/admin/organismDetail')) {
-      this.clearOrganismStore()
+    if (currentRoute && !currentRoute.path.includes('/admin/userDetail')) {
+      this.clearUsersStore()
     }
   },
   methods: {
