@@ -523,7 +523,7 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <div v-if="field.type.type === 'services'">
+                <!-- <div v-if="field.type.type === 'services'">
                   <q-btn 
                     label="Quantidade de cultos"
                     no-caps
@@ -542,8 +542,8 @@
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
-                </div>
-                <div v-if="field.type.type === 'secretary'">
+                </div> -->
+                <!-- <div v-if="field.type.type === 'secretary'">
                   <q-btn
                     label="Secretária"
                     no-caps
@@ -562,7 +562,7 @@
                     :fieldIndex="fieldIndex"
                     @remove="removeSecretary"
                   />
-                </div>
+                </div> -->
                 <div v-if="field.type.type === 'closeDate'">
                   <q-input
                     type="date"
@@ -1399,7 +1399,7 @@
 <script>
 import { defineComponent } from "vue";
 import CardPastor from '../../components/CardPastor.vue'
-import CardServices from '../../components/CardServices.vue'
+// import CardServices from '../../components/CardServices.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1408,7 +1408,7 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPerson from '../../components/CardPerson.vue'
-import CardSecretary from '../../components/CardSecretary.vue'
+// import CardSecretary from '../../components/CardSecretary.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1424,7 +1424,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    CardServices, DialogOrganismDetail, CardSecretary
+    DialogOrganismDetail
   },
   data() {
     return {
@@ -2049,7 +2049,6 @@ export default defineComponent({
         .splice(iValue, 1)
     },
     addPhoneMobileEmail(fieldIndex, field) {
-      console.log(field, 'macaquinhos me mordam safados')
       this.dialogAddPhoneMobileEmail.action = 'add'
       this.dialogAddPhoneMobileEmail.hint = field.hint
       this.dialogAddPhoneMobileEmail.label = field.label
@@ -2213,7 +2212,6 @@ export default defineComponent({
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (this.organismConfigName === 'Paróquia') {
-            console.log('aaaaaaaaaaaaaaaaaa')
             if (this.organismChildData.length === 1) {
               this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
             }

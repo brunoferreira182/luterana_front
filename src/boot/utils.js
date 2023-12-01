@@ -33,7 +33,7 @@ const useUtils = {
     })
   },
   makeFileUrl (filename) {
-    console.log(filename, 'quer ver que ta chegando')
+    // console.log(filename, 'quer ver que ta chegando')
     if (!filename) return '/assets/default_avatar.svg'
     return this.attachmentsAddress() + filename + '?' + new Date().getTime()
   },
@@ -89,11 +89,11 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
-        {
-          label: "Documentos",
-          route: "/admin/admDocuments",
-          icon: "description",
-        },
+        // {
+        //   label: "Documentos",
+        //   route: "/admin/admDocuments",
+        //   icon: "description",
+        // },
         // {
         //   label: "Títulos",
         //   route: "/admin/titlesList",
@@ -212,11 +212,11 @@ const useUtils = {
         //   route: "/user/userFunctionsList",
         //   icon: "comment_bank",
         // },
-        {
-          label: "Documentos",
-          route: "/user/userAttachments",
-          icon: "description",
-        },
+        // {
+        //   label: "Documentos",
+        //   route: "/user/userAttachments",
+        //   icon: "description",
+        // },
         {
           label: "Lista de solicitações",
           route: "/user/userSolicitationsList",

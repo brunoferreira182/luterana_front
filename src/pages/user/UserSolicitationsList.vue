@@ -469,7 +469,7 @@ export default defineComponent({
     clkOpenSolicitationSended(e, r) {
       this.dialogOpenSolicitationSended.open = true
       this.dialogOpenSolicitationSended.data = r
-      console.log(r)
+      // console.log(r)
     },
     cancelSolicitation() {
       const opt = {
