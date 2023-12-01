@@ -616,8 +616,9 @@
                 v-for="child in childOrganismsData"
                 :key="child"
                 class="bg-green-3 q-my-sm"
+                @click="clkOpenChildOrganismDetail(child)"
               >
-                <q-item-section @click="clkOpenChildOrganismDetail(child)">
+                <q-item-section >
                   <q-item-label> {{ child.organismName }}</q-item-label>
                   <q-item-label caption> {{ child.organismConfigName }}</q-item-label>
                   <q-item-label caption lines="2">Criado em {{ child.createdAt }}</q-item-label>
@@ -1141,7 +1142,6 @@
         :orgFunc="dialogChildOrganism.orgFunc"
         :isAdm="false"
         @closeDialog="closeDialogOrganismDetail"
-        @goToDetail="routeToDetail"
       />
       <DialogAddress
         :open="dialogConfirmAddress.open"
@@ -1509,7 +1509,22 @@ export default defineComponent({
     },
     clkOpenChildOrganismDetail(child){
       const childOrganismId = child.childOrganismId
-      this.$router.push('/user/userOrganismDetail?organismId=' + childOrganismId + '&isChild=true')
+      const opt = {
+        route: "/desktop/adm/getOrganismDetailById",
+        body: {
+          organismId: childOrganismId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return 
+        else {
+          this.dialogChildOrganism.orgData = r.data.organismData
+          this.dialogChildOrganism.orgFields = r.data.organismData.fields
+          this.dialogChildOrganism.orgFunc = r.data.functions
+          this.dialogChildOrganism.orgId = r.data._id
+          this.dialogChildOrganism.open = true
+        }
+      })
     },
     getChildOrganismsById() {
       const organismId = this.$route.query.organismId

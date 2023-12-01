@@ -14,6 +14,35 @@
         </div>
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
+
+          <div class="text-subtitle1" v-if="canUseSystem">
+            Acesso ao sistema: 
+            <q-badge color="green">Sim</q-badge>
+            <q-btn
+              icon="sync"
+              color="primary"
+              rounded
+              size="9px"
+              flat
+              @click="updateCanUseSystem(false)"
+            >
+              <q-tooltip>Alterar status de acesso</q-tooltip>
+            </q-btn>
+          </div>
+          <div class="text-subtitle1" v-if="!canUseSystem">
+            Acesso ao sistema: 
+            <q-badge color="red">Não</q-badge>
+            <q-btn
+              icon="sync"
+              color="primary"
+              rounded
+              size="9px"
+              flat
+              @click="updateCanUseSystem(true)"
+            >
+              <q-tooltip>Alterar status de acesso</q-tooltip>
+            </q-btn>
+          </div>
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
@@ -755,6 +784,7 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      canUseSystem: null,
       selectIndex: null,
       tab: "",
       openDialogRemoveUser: false,
@@ -844,6 +874,23 @@ export default defineComponent({
     this.getUserDetailById();
   },
   methods: {
+    updateCanUseSystem (status) {
+      const opt = {
+        route: '/desktop/adm/updateCanUseSystem',
+        body: {
+          userId : this.$route.query.userId,
+          update: status
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Status de acesso alterado')
+          this.getUserDetailById()
+        }
+      })
+    },
     routeToDetail() {
       this.$router.push('/admin/organismDetail?organismId=' + this.dialogLinkDetail.orgId)
     },
@@ -1155,6 +1202,7 @@ export default defineComponent({
         this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
+        this.canUseSystem = r.data.canUseSystem
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.mountUserData(r.data)

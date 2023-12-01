@@ -56,6 +56,7 @@
           label="depois"
           color="primary"
           rounded
+          @click="closeDialog"
         />
         <q-btn
           rounded
@@ -87,5 +88,8 @@ function confirm() {
   data.value.selectedOption = null
   data.value.date = null
   data.value.time = null
+}
+function closeDialog() {
+  emits('closeDialog')
 }
 </script>

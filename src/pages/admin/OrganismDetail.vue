@@ -1394,7 +1394,6 @@
     :orgFunc="dialogShowOtherDetail.orgFunc"
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
-    @goToDetail="routeToDetail"
   />
 </template>
 <script>
@@ -2048,14 +2047,15 @@ export default defineComponent({
         .value
         .splice(iValue, 1)
     },
-    addPhoneMobileEmail(fieldIndex, tabsIndex, field) {
+    addPhoneMobileEmail(fieldIndex, field) {
+      console.log(field, 'macaquinhos me mordam safados')
       this.dialogAddPhoneMobileEmail.action = 'add'
       this.dialogAddPhoneMobileEmail.hint = field.hint
       this.dialogAddPhoneMobileEmail.label = field.label
       this.dialogAddPhoneMobileEmail.open = true
       this.dialogAddPhoneMobileEmail.type = field.type
       this.dialogAddPhoneMobileEmail.fieldIndex = fieldIndex
-      this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
+      // this.dialogAddPhoneMobileEmail.tabsIndex = tabsIndex
     },
     getUserVisionPermissionByOrganismId() {
       const opt = {
