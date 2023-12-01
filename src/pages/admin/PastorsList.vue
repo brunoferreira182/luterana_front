@@ -8,14 +8,15 @@
         :columns="columnsData"
         :rows="pastorsList"
         row-key="_id"
+        @row-click="clkOpenUserDetail"
+        virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
-        @row-click="clkOpenUserDetail"
         :filter="filter"
-        @request="nextPage"
         v-model:pagination="pagination"
+        @request="nextPage"
       >
         <template #top-right>
           <div class="flex row justify-end">
@@ -117,6 +118,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import { savedPastorsList } from "stores/pastorsList";
 
 export default defineComponent({
   name: "pastorsList",
@@ -155,6 +157,12 @@ export default defineComponent({
   beforeMount() {
     this.getPastorList();
   },
+  unmounted() {
+    const currentRoute = this.$route
+    if (currentRoute && !currentRoute.path.includes('/admin/userDetail')) {
+      this.clearPastorStore()
+    }
+  },
   methods: {
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
@@ -169,11 +177,35 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getPastorList();
     },
+    clearPastorStore() {
+      savedPastorsList().list =[],
+      savedPastorsList().page = 1,
+      savedPastorsList().rowsPerPage = 10,
+      savedPastorsList().rowsNumber = 0,
+      savedPastorsList().sortBy = '',
+      savedPastorsList().selectFilter = '',
+      savedPastorsList().filter = ''
+    },
     getPastorList() {
-      const page = this.pagination.page
-      const rowsPerPage = this.pagination.rowsPerPage
-      const searchString = this.filter
-      const sortBy = this.pagination.sortBy
+      if (savedPastorsList().list.length && savedPastorsList().list.length > 0) {
+        if (this.pagination.page === 1 &&
+          this.pagination.rowsPerPage === 10 &&
+          this.pagination.rowsNumber === 0 &&
+          this.pagination.sortBy === '' &&
+          this.filter === '' &&
+          this.selectFilter === '' &&
+          this.filter === ''
+        ) {
+          this.organismList = savedPastorsList().list,
+          this.pagination.page = savedPastorsList().page,
+          this.pagination.rowsPerPage = savedPastorsList().rowsPerPage,
+          this.pagination.rowsNumber = savedPastorsList().rowsNumber,
+          this.pagination.sortBy = savedPastorsList().sortBy,
+          this.selectFilter = savedPastorsList().selectFilter,
+          this.filter = savedPastorsList().filter
+          return
+        }
+      }
       if (this.pastorListTimer) {
         clearTimeout(this.pastorListTimer);
       }
@@ -181,10 +213,12 @@ export default defineComponent({
         const opt = {
         route: "/desktop/adm/getPastorList",
         body: {
-          page: page,
-          rowsPerPage: rowsPerPage,
-          searchString: searchString,
-          sortBy: sortBy,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: this.filter,
+          sortBy: this.pagination.sortBy,
+          selectFilter: this.selectFilter,
+          descending: this.pagination.descending
         },
       };
       if (this.selectFilter === "Ativos") {
@@ -195,24 +229,20 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
-        this.usersOptions = r.data;
-        this.pastorsList = r.data.list
+        this.pastorsList = r.data.list;
         this.pastorsList.forEach((pastor) => {
           if (pastor.userType === 'pastor') {
             pastor.userType = 'Pastor'
           }
         })
-        // let projectList = []
-        // r.data.list.forEach(projeto => {
-        //   console.log(projeto)
-        //   projectList.push({
-        //     name: projeto.userName,
-        //     status: projeto.status,
-        //     _id: projeto._id
-        //   })
-        // })
-        // this.pastorsList = projectList
         this.pagination.rowsNumber = r.data.count[0].count
+        savedPastorsList().list = r.data.list
+        savedPastorsList().page = this.pagination.page
+        savedPastorsList().rowsPerPage = this.pagination.rowsPerPage
+        savedPastorsList().rowsNumber = this.pagination.rowsNumber
+        savedPastorsList().sortBy = this.pagination.sortBy
+        savedPastorsList().selectFilter = this.selectFilter
+        savedPastorsList().filter = this.filter
       });
       }, 500)
     },

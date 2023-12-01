@@ -263,7 +263,7 @@ export default defineComponent({
         this.getOrganismsList();
       } else {
         this.selectedChipIndex = nameIndex;
-        this.selectFilter = selectedOrganism.organismConfigName;
+        this.selectFilter = selectedOrganism._id;
       }
       this.getOrganismsList();
     },
