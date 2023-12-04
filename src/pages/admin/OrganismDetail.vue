@@ -523,7 +523,7 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <!-- <div v-if="field.type.type === 'services'">
+                <div v-if="field.type.type === 'services'">
                   <q-btn 
                     label="Quantidade de cultos"
                     no-caps
@@ -542,8 +542,8 @@
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
-                </div> -->
-                <!-- <div v-if="field.type.type === 'secretary'">
+                </div>
+                <div v-if="field.type.type === 'secretary'">
                   <q-btn
                     label="Secretária"
                     no-caps
@@ -562,7 +562,7 @@
                     :fieldIndex="fieldIndex"
                     @remove="removeSecretary"
                   />
-                </div> -->
+                </div>
                 <div v-if="field.type.type === 'closeDate'">
                   <q-input
                     type="date"
@@ -589,7 +589,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true"   
+                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true && func.group === 'função'"   
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
@@ -1094,6 +1094,12 @@
                   </q-card>
                 </q-dialog>
               </div>
+              <q-separator class="q-mt-lg" />
+              <div class="q-mt-sm text-left">
+                <div class="row">
+                  <div class="text-h6">Coordenação/Representação</div>
+                </div>
+              </div>
             </div>
           </div>
         </q-tab-panel>
@@ -1268,7 +1274,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <q-dialog
+      <q-dialog
         v-model="dialogCloseOrganism.open"
       >
         <q-card style="border-radius: 1rem; width: 400px">
@@ -1302,12 +1308,12 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog> -->
+      </q-dialog>
       <q-dialog
         v-model="dialogAddSecretary.open"
         @hide="clearSecretarydialog"
       >
-        <q-card style="border-radius: 1rem; width: 400px">
+        <q-card style="width: 800px;">
           <q-card-section align="center" class="text-h6">
             Selecione o usuário
             <q-select
@@ -1339,13 +1345,65 @@
               </template>
             </q-select>
           </q-card-section>
+          <q-card-section align="left" class="text-h6 no-padding q-ml-lg">
+            Dias
+            <q-btn
+              color=primary
+              flat
+              icon="add"
+              @click="insertDay"
+            >
+              <q-tooltip>
+                Adicionar dia
+              </q-tooltip>            
+            </q-btn>
+          </q-card-section>
           <q-card-section>
-            <q-input 
-              type="text" 
-              filled
-              label='Horário de trabalho'
-              v-model="dialogAddSecretary.officeHours"
-            />
+            <div 
+              class="row q-mb-lg no-padding q-ml-lg" 
+              v-for="(day, i) in dialogAddSecretary.days"
+              :key="day"  
+            >
+              <q-select 
+                class="col-4 q-pa-sm"
+                type="text" 
+                label='Dia'
+                :options="diasDaSemana"
+                v-model="dialogAddSecretary.days[i].value"
+              />
+              <div class="column q-ml-md">
+                <q-chip
+                  class="row q-mr-xl"  
+                  size="10px"
+                  color="primary" 
+                  text-color="white"
+                  v-for="(time) in dialogAddSecretary.days[i].time"
+                  :key="time"
+                >
+                  {{ time.initial }} - {{ time.final }}
+                </q-chip>
+              </div>
+              <q-btn
+                class="q-ml-xl"
+                v-if="day.value !== ''"
+                icon="add"
+                color="primary"
+                flat
+                @click="addTime(i)"
+              >
+              <q-tooltip>
+                Adicionar horário
+              </q-tooltip>
+              </q-btn>
+              <q-btn
+                class="col-2"
+                icon="delete"
+                @click="removeDay(i)"
+                flat
+                color="red"
+                rounded
+              />
+            </div>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1363,6 +1421,49 @@
               rounded
               color="primary"
               @click="confirmAddSecretary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        @hide="clearTimeDialog"
+        v-model="dialogAddTime.open"
+      >
+        <q-card style="width: 300px;">
+          <q-card-section>
+            <div class='text-center text-h6'>
+              Horários
+            </div>
+            <q-input 
+              type="time" 
+              class="q-my-sm"
+              outlined
+              label="Início" 
+              v-model="dialogAddTime.initial"
+            />
+            <q-input 
+              type="time" 
+              label="Fim" 
+              outlined
+              v-model="dialogAddTime.final"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearTimeDialog"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddTime"
             />
           </q-card-actions>
         </q-card>
@@ -1408,7 +1509,7 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import CardPerson from '../../components/CardPerson.vue'
-// import CardSecretary from '../../components/CardSecretary.vue'
+import CardSecretary from '../../components/CardSecretary.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1424,10 +1525,19 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    DialogOrganismDetail
+    DialogOrganismDetail, CardSecretary
   },
   data() {
     return {
+      diasDaSemana: [
+        { label: 'Domingo', value: 'domingo' },
+        { label: 'Segunda-feira', value: 'segunda-feira' },
+        { label: 'Terça-feira', value: 'terça-feira' },
+        { label: 'Quarta-feira', value: 'quarta-feira' },
+        { label: 'Quinta-feira', value: 'quinta-feira' },
+        { label: 'Sexta-feira', value: 'sexta-feira' },
+        { label: 'Sábado', value: 'sábado' }
+      ],
       tab: 'organismData',
       lastFuncIndex: -1,
       usersOptions: [],
@@ -1502,7 +1612,8 @@ export default defineComponent({
         fieldIndex: null,
         action: 'add',
         selectedUser: '',
-        officeHours: ''
+        days: [],
+        time: []
       },
       dialogDeleteUserFromFunction: {
         obsText: "",
@@ -1610,6 +1721,12 @@ export default defineComponent({
         newUser: null,
         isPastorFromParoquia: false
       },
+      dialogAddTime: {
+        open: false,
+        index: null,
+        initial: null,
+        final: null
+      },
       organismParentData: null,
       organismChildData: null
     };
@@ -1650,6 +1767,29 @@ export default defineComponent({
     }
   },
   methods: {
+    clearTimeDialog() {
+      this.dialogAddTime.initial = null
+      this.dialogAddTime.final = null
+      this.dialogAddTime.index = null
+      this.dialogAddTime.open = false
+    },
+    confirmAddTime () {
+      if (!this.dialogAddSecretary.days[this.dialogAddTime.index].time) {
+        this.dialogAddSecretary.days[this.dialogAddTime.index].time = []
+      }
+      this.dialogAddSecretary.days[this.dialogAddTime.index].time.push({initial: this.dialogAddTime.initial, final: this.dialogAddTime.final})
+      this.dialogAddTime.open = false
+    },
+    addTime(i) {
+      this.dialogAddTime.open = true
+      this.dialogAddTime.index= i
+    },
+    removeDay(i) {
+      this.dialogAddSecretary.days.splice(i, 1)
+    },
+    insertDay() {
+      this.dialogAddSecretary.days.push({ value: '', times: [] });
+    },
     removeSecretary(fieldIndex, isecretary) {
       this.organismData.fields[fieldIndex].value.splice(isecretary, 1);
     },
@@ -1849,10 +1989,9 @@ export default defineComponent({
       if (!this.organismData.fields[this.dialogAddSecretary.fieldIndex].value) {
         this.organismData.fields[this.dialogAddSecretary.fieldIndex].value = []
       }
-      this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push({
-        user: this.dialogAddSecretary.selectedUser,
-        officeHours: this.dialogAddSecretary.officeHours
-      })
+      this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push(
+        this.dialog
+      )
       this.$q.notify('Secretária adicionada com sucesso')
       this.clearSecretarydialog()
     },
@@ -2649,7 +2788,6 @@ export default defineComponent({
       } else if (this.dialogAddSecretary.open = true) {
         route = "/desktop/adm/getUsers" 
       }
-      
       const opt = {
         route: route,
         body: {
@@ -2725,5 +2863,10 @@ export default defineComponent({
 .list-container {
   max-height: 300px;
   overflow-y: auto;
+}
+
+.dialogStyle {
+  border-radius: 1rem;
+  width: 700px;
 }
 </style>

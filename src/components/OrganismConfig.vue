@@ -534,6 +534,17 @@
                 :options="functionsGroupList"
                 v-model="newFunction.functionGroupId"
               />
+              <q-select
+                outlined
+                clearable
+                option-label="label"
+                emit-value
+                map-options
+                hint="Selecione o grupo que esta função pertence"
+                label="Grupamento"
+                :options="groupOptions"
+                v-model="newFunction.group"
+              />
               <div class="text-grey-8 text-subtitle1 q-px-xs">Visões:</div>
               <div class="visions-field q-mt-none row ">
                 <div v-for="(vision, visionIndex) in visionsList" :key="visionIndex" class="col-6 q-my-md">
@@ -638,6 +649,17 @@
                 :option-value="(item) => item.label"
                 :options="occupantsOptions"
                 v-model="editFunctionDialog.function.numOfOccupants"
+              />
+              <q-select
+                outlined
+                clearable
+                option-label="label"
+                emit-value
+                map-options
+                hint="Selecione o grupo que esta função pertence"
+                label="Grupamento"
+                :options="groupOptions"
+                v-model="editFunctionDialog.function.group"
               />
               <div>
                 <q-checkbox 
@@ -775,6 +797,7 @@ export default defineComponent({
         description: '',
         requiredTitleId: null,
         numOfOccupants: '',
+        group: null,
         functionProperties: {
           canManageFuncAndOrgSolicitations: false,
           canCreateAndEditChildOrganism: false,
@@ -783,7 +806,7 @@ export default defineComponent({
         },
         isRequired: true,
         onlyPastor: false,
-        visions: []
+        visions: [],
       },
       colorPalette: useColorsPalette().colors,
       editFunctionDialog: {
@@ -861,7 +884,11 @@ export default defineComponent({
       visionsList: [],
       functionsGroupList: [],
       permissionName: '',
-      organismConfigStyle: null
+      organismConfigStyle: null,
+      groupOptions: [
+        {label: 'Função', value: 'função'},
+        {label: 'Coordenação', value: 'coordenação'}
+      ]
     };
   },
   mounted() {

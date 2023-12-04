@@ -14,15 +14,15 @@
       :key="secretary"
       class="bg-grey-2"
     >
-    
-      <q-item-section>
+    {{ secretary }}
+      <!-- <q-item-section>
         <q-item-label>
           <strong>Nome:</strong> {{ secretary.user.userName }}
         </q-item-label>
         <q-item-label>
           <strong>Horário de trabalho:</strong> {{ secretary.officeHours }}
         </q-item-label>
-      </q-item-section>
+      </q-item-section> -->
       <q-item-section side>
         <q-btn 
           icon="delete"
