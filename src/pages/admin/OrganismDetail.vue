@@ -1990,7 +1990,7 @@ export default defineComponent({
         this.organismData.fields[this.dialogAddSecretary.fieldIndex].value = []
       }
       this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push(
-        this.dialog
+        this.dialogAddSecretary.days
       )
       this.$q.notify('Secretária adicionada com sucesso')
       this.clearSecretarydialog()
