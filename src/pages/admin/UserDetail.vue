@@ -69,8 +69,8 @@
       <div v-if="userData && userData.userDataTabs">
         <div>
           <div class="text-h6 q-ma-sm q-ml-md">
-              Vínculos:
-            </div>
+            Vínculos:
+          </div>
           <q-list v-if="userLinks && userLinks.length > 0">
             <q-item
               clickable
@@ -114,6 +114,26 @@
             </q-item>
           </q-list>
         </div>
+        <q-separator class="q-mx-md"/>
+        <div class="text-h6 q-ma-sm q-ml-md">
+          Status pastoral:
+          <q-btn
+            icon="add"
+            color="primary"
+            flat
+            @click="addPastoralStatus"
+          >
+            <q-tooltip>Adicionar status</q-tooltip>
+          </q-btn>
+        </div>
+        <q-list>
+          <!-- <q-item 
+            v-for=status in "
+            :key='status'
+          >
+            {{ status.substatus }}
+          </q-item> -->
+        </q-list>
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -761,6 +781,123 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddPastoralStatus.open"
+        @hide="clearDialogAddPastoralStatus"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Adicionar status pastoral: 
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <strong>
+              Selecione o status:
+            </strong>
+            <q-select
+              class="q-pa-sm"
+              outlined
+              use-input
+              label="Status"
+              :option-label="(item) => item.label"
+              v-model="dialogAddPastoralStatus.status"
+              :options="pastoralStatusTypes.statusTypes"
+              :loading="false"
+              :option-value="(item) => item._id"
+            />
+            <strong>
+              Selecione o sub-status:
+            </strong>
+            <q-select
+              class="q-pa-sm"
+              outlined
+              use-input
+              label="Sub-status"
+              :option-label="(item) => item.label"
+              v-model="dialogAddPastoralStatus.subStatus"
+              :options="pastoralStatusTypes.subStatusTypes"
+              :loading="false"
+              :option-value="(item) => item._id"
+            />
+            <div>
+              <strong>
+                Selecione o local:
+              </strong>
+              <q-select
+                class="q-pa-sm"
+                outlined
+                use-input
+                label="Local"
+                :option-label="(item) => item.label"
+                v-model="dialogAddPastoralStatus.local"
+                :options="pastoralStatusTypes.localStatusTypes"
+                :loading="false"
+                :option-value="(item) => item._id"
+              />
+            </div>
+            <strong>
+              Selecione o organismo:
+            </strong>
+            <q-select
+              class="q-pa-sm"
+              outlined
+              use-input
+              label="Nome do organismo"
+              :option-label="(item) => item.name"
+              v-model="dialogAddPastoralStatus.organism"
+              :options="organismsOptions"
+              @filter="getOrganisms"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <strong>
+              Datas:
+            </strong>
+            <div class="row">
+              <q-input 
+                type="date" 
+                outlined 
+                class="col-6 q-pa-sm" 
+                label="Ínicio"
+                v-model="dialogAddPastoralStatus.initialDate"
+              />
+              <q-input 
+                type="date" 
+                outlined 
+                v-model="dialogAddPastoralStatus.finalDate"
+                class="col-6 q-pa-sm"
+                label="Fim"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              no-caps
+              label="Sair"
+              flat
+              @click="clearDialogAddPastoralStatus"
+              color="primary"
+            />
+            <q-btn
+              no-caps
+              label="Confirmar"
+              unelevated
+              rounded
+              @click="clkConfirmAddPastoralStatus"
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -862,6 +999,17 @@ export default defineComponent({
         observation: null,
         finalDate: null,
         newUser: null
+      },
+      pastoralStatusTypes: null,
+      organismsOptions: null,
+      dialogAddPastoralStatus: {
+        open: false,
+        organism: null,
+        initialDate: '',
+        finalDate: '',
+        status: null,
+        subStatus: null,
+        local: null
       }
     };
   },
@@ -872,8 +1020,93 @@ export default defineComponent({
   beforeMount() {
     // this.getUsersConfig()
     this.getUserDetailById();
+    this.getPastoralStatusTypes()
   },
   methods: {
+    clkConfirmAddPastoralStatus () {
+      if (!this.dialogAddPastoralStatus.organism
+          || !this.dialogAddPastoralStatus.initialDate
+          || !this.dialogAddPastoralStatus.status
+          || !this.dialogAddPastoralStatus.subStatus
+          || !this.dialogAddPastoralStatus.local
+      ) {
+        this.$q.notify("Preencha todos os campos antes de confirmar")
+        return
+      } else {
+        const opt = {
+          route: '/desktop/adm/createPastoralStatus',
+          body: {
+            userId: this.$route.query.userId,
+            initialDate: this.dialogAddPastoralStatus.initialDate,
+            finalDate: this.dialogAddPastoralStatus.finalDate,
+            organismId: this.dialogAddPastoralStatus.organism._id,
+            statusId: this.dialogAddPastoralStatus.status._id,
+            subStatusId: this.dialogAddPastoralStatus.subStatus._id,
+            localId: this.dialogAddPastoralStatus.local._id
+          }
+        }
+        useFetch(opt).then((r) => {
+          if (r.error) {
+            this.$q.notify('Ocorreu um erro, tente novamente.')
+            return
+          } else {
+            this.$q.notify('Status adicionado com sucesso')
+            this.getUserDetailById()
+            this.clearDialogAddPastoralStatus()
+          }
+        })
+      }
+    },
+    getOrganisms (val, update, abort) {
+      console.log(val)
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/getOrganismsListInUser',
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+
+        update(() => {
+          this.organismsOptions = r.data.list;
+        })
+      });
+    },
+    clearDialogAddPastoralStatus () {
+      this.dialogAddPastoralStatus.open = false
+      this.dialogAddPastoralStatus.organism = null
+      this.dialogAddPastoralStatus.initialDate = ''
+      this.dialogAddPastoralStatus.finalDate = ''
+      this.dialogAddPastoralStatus.status = null
+      this.dialogAddPastoralStatus.subStatus = null
+      this.dialogAddPastoralStatus.local = null
+    },
+    addPastoralStatus() {
+      this.dialogAddPastoralStatus.open = true
+    },
+    getPastoralStatusTypes () {
+      const opt = {
+        route: '/desktop/adm/getPastoralStatusTypes'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente mais tarde')
+        } else {
+          this.pastoralStatusTypes = r.data
+        }
+      })
+    },
     updateCanUseSystem (status) {
       const opt = {
         route: '/desktop/adm/updateCanUseSystem',

@@ -589,7 +589,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true && func.group === 'função'"   
+                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true && func.group === 'function'"   
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
@@ -1094,10 +1094,23 @@
                   </q-card>
                 </q-dialog>
               </div>
-              <q-separator class="q-mt-lg" />
-              <div class="q-mt-sm text-left">
+              <q-separator class="q-mt-lg" v-if="organismConfigName === 'Distrito'"/>
+              <div class="q-mt-sm text-left" v-if="organismConfigName === 'Distrito'">
                 <div class="row">
                   <div class="text-h6">Coordenação/Representação</div>
+                  <div v-for="(func, funcIndex) in functions" :key="funcIndex">
+                    <CardFunction
+                      v-if="func.group === 'coordination'"   
+                      :func="func"
+                      :funcIndex="funcIndex"
+                      @insertObservation="dialogInsertObservation"
+                      @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                      @linkUserToFunction="linkUserToFunction"
+                      :showAddUserButton="true"
+                      :showInviteUserButton="false"
+                      :isPastor="func.functionName === 'Pastor' ? false : true"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1386,7 +1399,7 @@
               <q-btn
                 class="q-ml-xl"
                 v-if="day.value !== ''"
-                icon="add"
+                icon="more_time"
                 color="primary"
                 flat
                 @click="addTime(i)"

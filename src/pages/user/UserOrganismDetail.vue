@@ -587,6 +587,25 @@
                 </q-card>
               </q-dialog>
             </div>
+            <q-separator class="q-mt-lg" v-if="organismConfigName === 'Distrito'"/>
+              <div class="q-mt-sm text-left" v-if="organismConfigName === 'Distrito'">
+                <div class="row">
+                  <div class="text-h6">Coordenação/Representação</div>
+                  <div v-for="(func, funcIndex) in functions" :key="funcIndex">
+                    <CardFunction
+                      v-if="func.group === 'coordination'"   
+                      :func="func"
+                      :funcIndex="funcIndex"
+                      @insertObservation="dialogInsertObservation"
+                      @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                      @linkUserToFunction="linkUserToFunction"
+                      :showAddUserButton="true"
+                      :showInviteUserButton="false"
+                      :isPastor="func.functionName === 'Pastor' ? false : true"
+                    />
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -1092,6 +1111,25 @@
               </q-dialog>
             </div>
           </q-expansion-item>
+          <q-expansion-item
+            v-if="organismConfigName === 'Distrito'"
+            group="somegroup"
+            class="bg-grey-3"
+            header-class="text-primary"
+            label="Coordenação/Representação"
+          >
+            <div v-for="(func, funcIndex) in functions" :key="func" class="bg-white q-pa-sm">
+              <CardFunction
+                v-if="func.functionName !== 'Pastor' && func.group === 'coordination'"
+                :func="func"
+                :funcIndex="funcIndex"
+                @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
+                :showAddUserButton="false"
+                :isMobile="isMobile"
+                :showInviteUserButton="canEdit"
+              />
+            </div>
+          </q-expansion-item> 
           <q-expansion-item
             group="somegroup"
             class="bg-grey-3"
