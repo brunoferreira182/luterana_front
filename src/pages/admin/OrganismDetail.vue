@@ -146,14 +146,15 @@
                   </q-item-section>
                 </q-item> 
               </q-list>
-              <div class="text-h6">
-                Status Pastorais
+              <!-- <div class="text-h6">
+                Status Pastoral
                 <q-btn
                   icon="add"
                   color="primary"
                   round
                   size="12px"
                   unelevated
+                  @click="addPastoralStatus"
                 >
                 <q-tooltip>Adicionar status pastoral</q-tooltip>
                 </q-btn>
@@ -196,6 +197,7 @@
                           round
                           icon="edit" 
                           rounded
+                          @click="editStatus(status)"
                         >
                           <q-tooltip>Editar status</q-tooltip>
                         </q-btn>
@@ -240,7 +242,7 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-              </div>
+              </div> -->
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
@@ -617,7 +619,7 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <div v-if="field.type.type === 'services'">
+                <!-- <div v-if="field.type.type === 'services'">
                   <q-btn 
                     label="Quantidade de cultos"
                     no-caps
@@ -636,8 +638,8 @@
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
-                </div>
-                <div v-if="field.type.type === 'secretary'">
+                </div> -->
+                <!-- <div v-if="field.type.type === 'secretary'">
                   <q-btn
                     label="Secretária"
                     no-caps
@@ -656,7 +658,7 @@
                     :fieldIndex="fieldIndex"
                     @remove="removeSecretary"
                   />
-                </div>
+                </div> -->
                 <div v-if="field.type.type === 'closeDate'">
                   <q-input
                     type="date"
@@ -1603,7 +1605,14 @@
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
   />
-
+  <!-- <DialogAddPastoralStatus
+    :pastoralStatusTypes="pastoralStatusTypes"
+    :open="dialogAddPastoralStatus.open"
+    :editStatus="statusData"
+    :route="`organism`"
+    @closeDialog="closeDialogPastoralStatus"
+    @confirm="clkCreatePastoralStatus"
+  /> -->
 
 </template>
 <script>
@@ -1617,8 +1626,9 @@ import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
+// import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
-import CardSecretary from '../../components/CardSecretary.vue'
+// import CardSecretary from '../../components/CardSecretary.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1634,7 +1644,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    DialogOrganismDetail, CardSecretary
+    DialogOrganismDetail
   },
   data() {
     return {
@@ -1839,7 +1849,12 @@ export default defineComponent({
       organismParentData: null,
       organismChildData: null,
       pastoralStatusData: null,
-      inactivePastoralStatusData: null
+      inactivePastoralStatusData: null,
+      dialogAddPastoralStatus: {
+        open: false
+      },
+      pastoralStatusTypes: null,
+      statusData: null
     };
   },
   watch: {
@@ -1862,6 +1877,7 @@ export default defineComponent({
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
+    this.getPastoralStatusTypes()
     // if (this.organismConfigName === 'Paróquia') {
     //   console.log('aaaaaaaaaaaaaaaaaa')
     //   if (this.organismChildData.length === 1) {
@@ -1878,14 +1894,87 @@ export default defineComponent({
     }
   },
   methods: {
+    editStatus(status) {
+      this.statusData = status
+      console.log(this.statusData, 'ajaj' )
+      this.dialogAddPastoralStatus.open = true
+    },
+    clkCreatePastoralStatus(organism, initialDate, finalDate, status, subStatus, local, user, editId) {
+      if (editId !== '') {
+        const opt = {
+          route: '/desktop/adm/updatePastoralStatus',
+          body: {
+            userId: user._id,
+            initialDate: initialDate,
+            finalDate: finalDate,
+            organismId: this.$route.query.organismId,
+            statusId: status._id,
+            subStatusId: subStatus._id,
+            localId: local._id,
+            statusId : editId
+          }
+        }
+        useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+          return
+        } else {
+          this.$q.notify('Status atualizado com sucesso')
+          this.getUserDetailById()
+          this.clearDialogAddPastoralStatus()
+        }
+      })
+      return
+      }
+      const opt = {
+        route: '/desktop/adm/createPastoralStatus',
+        body: {
+          userId: user._id,
+          initialDate: initialDate,
+          finalDate: finalDate,
+          organismId: this.$route.query.organismId,
+          statusId: status._id,
+          subStatusId: subStatus._id,
+          localId: local._id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+          return
+        } else {
+          this.$q.notify('Status adicionado com sucesso')
+          this.getUserDetailById()
+          this.clearDialogAddPastoralStatus()
+        }
+      })
+    },
+    clearDialogAddPastoralStatus () {
+      this.dialogAddPastoralStatus.open = false
+    },
+    getPastoralStatusTypes () {
+      const opt = {
+        route: '/desktop/adm/getPastoralStatusTypes'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente mais tarde')
+        } else {
+          this.pastoralStatusTypes = r.data
+        }
+      })
+    },
+    addPastoralStatus() {
+      this.dialogAddPastoralStatus.open = true
+    },
     verifyPastoralStatus() {
       if (this.pastoralStatusData && this.pastoralStatusData.length > 0) {
+        this.inactivePastoralStatusData = []
+        let activeStatus = []
         this.pastoralStatusData.forEach((status) => {
           if (status.dates.finalDate && status.dates.finalDate !== '') {
-            this.inactivePastoralStatusData = []
             this.inactivePastoralStatusData.push(status)
           } else if (!status.dates.finalDate || status.dates.finalDate === '') {
-            let activeStatus = []
             activeStatus.push(status)
             this.pastoralStatusData = activeStatus
           }
@@ -2473,7 +2562,7 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
-          this.pastoralStatusData = r.data.pastoralStatus.data
+          // this.pastoralStatusData = r.data.pastoralStatus.data
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (this.organismConfigName === 'Paróquia') {

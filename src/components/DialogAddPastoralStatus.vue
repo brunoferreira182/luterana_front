@@ -54,10 +54,14 @@
             :option-value="(item) => item._id"
           />
         </div>
-        <strong>
+        <strong v-if="props.route === 'user'">
           Selecione o organismo:
         </strong>
+        <strong v-if="props.route === 'organism'">
+          Selecione o usuário:
+        </strong>
         <q-select
+          v-if="props.route === 'user'"
           class="q-pa-sm"
           outlined
           use-input
@@ -66,6 +70,27 @@
           v-model="data.organism"
           :options="data.organismList"
           @filter="getOrganisms"
+          :loading="false"
+          :option-value="(item) => item._id"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
+          v-if="props.route === 'organism'"
+          class="q-pa-sm"
+          outlined
+          use-input
+          label="Nome do usuário"
+          :option-label="(item) => item.userName"
+          v-model="data.user"
+          :options="data.usersList"
+          @filter="getUsers"
           :loading="false"
           :option-value="(item) => item._id"
         >
@@ -121,7 +146,7 @@
 <script setup>
   import { ref, watchEffect  } from 'vue'
   import useFetch from "../boot/useFetch";
-  const props = defineProps(['open', 'pastoralStatusTypes', 'editStatus'])
+  const props = defineProps(['open', 'pastoralStatusTypes', 'editStatus', 'route'])
   const emits = defineEmits(['closeDialog', 'confirm'])
 
   const data = ref({
@@ -131,25 +156,35 @@
     status: null,
     subStatus: null,
     local: null,
-    organismList: null
+    organismList: null,
+    usersList: null,
+    user: null,
+    edit: false,
+    editId: ''
   })
 
   watchEffect (() => {
-    if (props.editStatus) {
-      console.log(props.editStatus)
+    if (props.editStatus && data.value.edit !== true) {
+      console.log(props.editStatus.userData)
       data.value.organism = props.editStatus.organismData
       data.value.initialDate = props.editStatus.dates.initialDate
       data.value.finalDate = props.editStatus.dates.finalDate 
       data.value.status = props.editStatus.pastoralStatusData.status
       data.value.subStatus = props.editStatus.pastoralStatusData.subStatus
       data.value.local= props.editStatus.pastoralStatusData.local
-    } else {
+      data.value.user= props.editStatus.userData
+      data.value.user.userName = data.value.user.name
+      data.value.editId = props.editStatus._id
+      data.value.edit = true
+    } else if (data.value.edit !== true) {
       data.value.organism = null
       data.value.initialDate = ''
       data.value.finalDate = ''
       data.value.status = null
       data.value.subStatus = null
       data.value.local= null
+      data.value.user = null
+      data.value.editId = ''
     }
   })
 
@@ -159,33 +194,56 @@
 
   function getOrganisms(val, update, abort) {
 
-  if (val.length < 3) {
-    abort();
-    return;
-  }
+    if (val.length < 3) {
+      abort();
+      return;
+    }
 
-  const opt = {
-    route: '/desktop/adm/getOrganismsListInUser',
-    body: {
-      searchString: val,
-      isActive: 1,
-      page: 1,
-      rowsPerPage: 50
-    }
-  };
-  useFetch(opt).then((r) => {
-    if (r.error) {
-        return
-    }
-    update(() => {
-      data.value.organismList = r.data.list;
-    })
-  });
-}
+    const opt = {
+      route: '/desktop/adm/getOrganismsListInUser',
+      body: {
+        searchString: val,
+        isActive: 1,
+        page: 1,
+        rowsPerPage: 50
+      }
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) {
+          return
+      }
+      update(() => {
+        data.value.organismList = r.data.list;
+      })
+    });
+  }
 
   function confirm () {
     emits('confirm', data.value.organism, 
     data.value.initialDate, data.value.finalDate, 
-    data.value.status, data.value.subStatus, data.value.local)
+    data.value.status, data.value.subStatus, data.value.local,
+    data.value.user, data.value.editId
+    )
+  }
+
+  function getUsers(val, update, abort) {
+    if(val.length < 3) {
+      abort()
+      return
+    }
+    const opt = {
+      route: "/desktop/adm/getUsers",
+      body: {
+        searchString: val,
+        isActive: 1,
+        page: 1,
+        rowsPerPage: 50
+      },
+    };
+    useFetch(opt).then((r) => {
+      update(() => {
+        data.value.usersList = r.data.list;
+      })
+    });
   }
 </script>

@@ -114,7 +114,7 @@
             </q-item>
           </q-list>
         </div>
-        <div v-if="pastoralStatusData">
+        <!-- <div v-if="pastoralStatusData">
           <q-separator class="q-mx-md"/>
           <div class="text-h6 q-ma-sm q-ml-md">
             Status pastoral:
@@ -211,7 +211,7 @@
               </q-item>
             </q-expansion-item>
           </div>
-        </div>
+        </div> -->
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -827,6 +827,7 @@
         :pastoralStatusTypes="pastoralStatusTypes"
         :open="dialogAddPastoralStatus.open"
         :editStatus="statusData"
+        :route="`user`"
         @closeDialog="closeDialogPastoralStatus"
         @confirm="clkCreatePastoralStatus"
       />
@@ -1219,12 +1220,6 @@ export default defineComponent({
     // },
     clearDialogAddPastoralStatus () {
       this.dialogAddPastoralStatus.open = false
-      this.dialogAddPastoralStatus.organism = null
-      this.dialogAddPastoralStatus.initialDate = ''
-      this.dialogAddPastoralStatus.finalDate = ''
-      this.dialogAddPastoralStatus.status = null
-      this.dialogAddPastoralStatus.subStatus = null
-      this.dialogAddPastoralStatus.local = null
     },
     addPastoralStatus() {
       this.dialogAddPastoralStatus.open = true
@@ -1570,11 +1565,11 @@ export default defineComponent({
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.canUseSystem = r.data.canUseSystem
-        this.pastoralStatusData = r.data.pastoralStatus.data
+        // this.pastoralStatusData = r.data.pastoralStatus.data
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.mountUserData(r.data)
-        this.verifyInactiveStatus()
+        // this.verifyInactiveStatus()
       });
     },
     mountUserData (userDetail) {
