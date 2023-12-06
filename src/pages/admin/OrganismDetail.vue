@@ -146,7 +146,101 @@
                   </q-item-section>
                 </q-item> 
               </q-list>
-              
+              <div class="text-h6">
+                Status Pastorais
+                <q-btn
+                  icon="add"
+                  color="primary"
+                  round
+                  size="12px"
+                  unelevated
+                >
+                <q-tooltip>Adicionar status pastoral</q-tooltip>
+                </q-btn>
+              </div>
+              <div v-if="pastoralStatusData">
+                <q-list>
+                  <q-item 
+                    v-for="status in pastoralStatusData"
+                    :key="status"
+                    class="bg-grey-3 q-ma-sm q-mx-md"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      <q-item-label lines="1">
+                        <strong>Pastor: </strong>{{ status.userData.name }}
+                      </q-item-label>
+                      <q-item-label lines="2" class="text-capitalize">
+                        <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
+                      </q-item-label>
+                      <q-item-label lines="3" class="text-capitalize">
+                        <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
+                      </q-item-label>
+                      <q-item-label lines="4" class="text-capitalize">
+                        <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
+                      </q-item-label>
+                      <q-item-label lines="5">
+                        <div>
+                          <strong>Data inicial:</strong> {{ status.dates.initialDate }}
+                        </div>
+                        <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
+                          <strong>Data Final:</strong> {{ status.dates.finalDate }}
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn 
+                          color="primary" 
+                          flat 
+                          round
+                          icon="edit" 
+                          rounded
+                        >
+                          <q-tooltip>Editar status</q-tooltip>
+                        </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+              <div class="q-pa-md" v-if="inactivePastoralStatusData">
+                <q-expansion-item 
+                  class="bg-grey-3 q-pa-sm" 
+                  label="Histórico" 
+                  style="border-radius: 1rem;"
+                >
+                  <q-item 
+                    v-for="status in inactivePastoralStatusData"
+                    :key="status"
+                    class="bg-white q-ma-sm q-mx-md"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      <q-item-label lines="1">
+                        <strong>Pastor: </strong>{{ status.userData.name }}
+                      </q-item-label>
+                      <q-item-label lines="2" class="text-capitalize">
+                        <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
+                      </q-item-label>
+                      <q-item-label lines="3" class="text-capitalize">
+                        <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
+                      </q-item-label>
+                      <q-item-label lines="4" class="text-capitalize">
+                        <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
+                      </q-item-label>
+                      <q-item-label lines="5">
+                        <div>
+                          <strong>Data inicial:</strong> {{ status.dates.initialDate }}
+                        </div>
+                        <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
+                          <strong>Data Final:</strong> {{ status.dates.finalDate }}
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-expansion-item>
+              </div>
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
@@ -1509,6 +1603,8 @@
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
   />
+
+
 </template>
 <script>
 import { defineComponent } from "vue";
@@ -1741,7 +1837,9 @@ export default defineComponent({
         final: null
       },
       organismParentData: null,
-      organismChildData: null
+      organismChildData: null,
+      pastoralStatusData: null,
+      inactivePastoralStatusData: null
     };
   },
   watch: {
@@ -1780,6 +1878,20 @@ export default defineComponent({
     }
   },
   methods: {
+    verifyPastoralStatus() {
+      if (this.pastoralStatusData && this.pastoralStatusData.length > 0) {
+        this.pastoralStatusData.forEach((status) => {
+          if (status.dates.finalDate && status.dates.finalDate !== '') {
+            this.inactivePastoralStatusData = []
+            this.inactivePastoralStatusData.push(status)
+          } else if (!status.dates.finalDate || status.dates.finalDate === '') {
+            let activeStatus = []
+            activeStatus.push(status)
+            this.pastoralStatusData = activeStatus
+          }
+        })
+      }
+    },
     clearTimeDialog() {
       this.dialogAddTime.initial = null
       this.dialogAddTime.final = null
@@ -2361,6 +2473,7 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
+          this.pastoralStatusData = r.data.pastoralStatus.data
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (this.organismConfigName === 'Paróquia') {
@@ -2370,6 +2483,7 @@ export default defineComponent({
           }
           this.parentData = r.data.parentData
           this.idLegado = r.data.idLegado
+          this.verifyPastoralStatus()
           this.verifyIfHasPastor()
           this.verifyPastorInParoquia()
           for(let i = 0; r.data.relations.length > i; i++) {

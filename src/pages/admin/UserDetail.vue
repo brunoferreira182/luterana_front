@@ -80,12 +80,12 @@
               class="bg-grey-3 q-ma-sm q-mx-md"
             >
               <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
-                <q-item-label class="text-subtitle1"> {{ link.organismName }} - {{ link.organismConfigName }}</q-item-label>
-                <q-item-label v-if="link.organismCity && link.organismCity.city">Cidade: {{ link.organismCity.city }}</q-item-label>
-                <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
+                <q-item-label class="text-subtitle1"> <strong>{{ link.organismName }} - {{ link.organismConfigName }}</strong></q-item-label>
+                <q-item-label v-if="link.organismCity && link.organismCity.city"><strong>Cidade: </strong>{{ link.organismCity.city }}</q-item-label>
+                <q-item-label><strong>Função: </strong>{{ link.functionConfigName }}</q-item-label>
               </q-item-section>
               <q-item-section side>
-                  <q-item-label>
+                <q-item-label>
                   <q-btn
                     icon="delete"
                     color="red"
@@ -104,8 +104,8 @@
                   >
                     <q-tooltip>Trocar por outro usuário</q-tooltip>
                   </q-btn>
-                  </q-item-label>
-                </q-item-section>
+                </q-item-label>
+              </q-item-section>
             </q-item>
           </q-list>
           <q-list v-else>
@@ -114,26 +114,104 @@
             </q-item>
           </q-list>
         </div>
-        <q-separator class="q-mx-md"/>
-        <div class="text-h6 q-ma-sm q-ml-md">
-          Status pastoral:
-          <q-btn
-            icon="add"
-            color="primary"
-            flat
-            @click="addPastoralStatus"
-          >
-            <q-tooltip>Adicionar status</q-tooltip>
-          </q-btn>
+        <div v-if="pastoralStatusData">
+          <q-separator class="q-mx-md"/>
+          <div class="text-h6 q-ma-sm q-ml-md">
+            Status pastoral:
+            <q-btn
+              icon="add"
+              color="primary"
+              flat
+              @click="addPastoralStatus"
+            >
+              <q-tooltip>Adicionar status</q-tooltip>
+            </q-btn>
+          </div>
+          <q-list>
+            <q-item 
+              v-for="status in pastoralStatusData"
+              :key="status"
+              class="bg-grey-3 q-ma-sm q-mx-md"
+              style="border-radius: 1rem;"
+            >
+              <q-item-section>
+                <q-item-label lines="1">
+                  <strong>{{ status.organismData.name }} - {{ status.organismData.config }}</strong>
+                  
+                </q-item-label>
+                <q-item-label lines="2" class="text-capitalize">
+                  <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
+                </q-item-label>
+                <q-item-label lines="3" class="text-capitalize">
+                  <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
+                </q-item-label>
+                <q-item-label lines="4" class="text-capitalize">
+                  <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
+                </q-item-label>
+                <q-item-label lines="5">
+                  <div>
+                    <strong>Data inicial:</strong> {{ status.dates.initialDate }}
+                  </div>
+                  <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
+                    <strong>Data Final:</strong> {{ status.dates.finalDate }}
+                  </div>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-item-label>
+                  <q-btn 
+                    color="primary" 
+                    flat 
+                    round
+                    icon="edit" 
+                    rounded
+                    @click="editStatus(status)"
+                  >
+                    <q-tooltip>Editar status</q-tooltip>
+                  </q-btn>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <div class="q-ma-sm q-ml-sm q-pa-sm" v-if="inactiveStatus">
+            <q-expansion-item 
+              class="bg-grey-3 q-pa-sm" 
+              label="Histórico" 
+              style="border-radius: 1rem;"
+            >
+              <q-item 
+                v-for="status in inactiveStatus"
+                :key="status"
+                class="bg-white q-ma-sm q-mx-md q-mb-sm"
+                style="border-radius: 1rem;"
+              >
+                <q-item-section>
+                  <q-item-label lines="1">
+                    <strong>{{ status.organismData.name }} - {{ status.organismData.config }}</strong>
+                    
+                  </q-item-label>
+                  <q-item-label lines="2" class="text-capitalize">
+                    <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
+                  </q-item-label>
+                  <q-item-label lines="3" class="text-capitalize">
+                    <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
+                  </q-item-label>
+                  <q-item-label lines="4" class="text-capitalize">
+                    <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
+                  </q-item-label>
+                  <q-item-label lines="5">
+                    <div>
+                      <strong>Data inicial:</strong> {{ status.dates.initialDate }}
+                    </div>
+                    <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
+                      <strong>Data Final:</strong> {{ status.dates.finalDate }}
+                    </div>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-expansion-item>
+          </div>
         </div>
-        <q-list>
-          <!-- <q-item 
-            v-for=status in "
-            :key='status'
-          >
-            {{ status.substatus }}
-          </q-item> -->
-        </q-list>
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -744,6 +822,14 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      
+      <DialogAddPastoralStatus
+        :pastoralStatusTypes="pastoralStatusTypes"
+        :open="dialogAddPastoralStatus.open"
+        :editStatus="statusData"
+        @closeDialog="closeDialogPastoralStatus"
+        @confirm="clkCreatePastoralStatus"
+      />
 
       <DialogOrganismDetail
         :open="dialogLinkDetail.open"
@@ -781,7 +867,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-dialog
+      <!-- <q-dialog
         v-model="dialogAddPastoralStatus.open"
         @hide="clearDialogAddPastoralStatus"
       >
@@ -897,7 +983,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
     </q-page>
   </q-page-container>
 </template>
@@ -908,6 +994,7 @@ import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue';
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
+import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
@@ -1010,7 +1097,10 @@ export default defineComponent({
         status: null,
         subStatus: null,
         local: null
-      }
+      },
+      pastoralStatusData: null,
+      inactiveStatus: null,
+      statusData: null
     };
   },
   mounted() {
@@ -1023,6 +1113,50 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    closeDialogPastoralStatus() {
+      this.statusData = null
+      this.dialogAddPastoralStatus.open = false
+    },
+    editStatus(status) {
+      this.statusData = status
+      this.dialogAddPastoralStatus.open = true
+    },
+    clkCreatePastoralStatus(organism, initialDate, finalDate, status, subStatus, local) {
+      const opt = {
+        route: '/desktop/adm/createPastoralStatus',
+        body: {
+          userId: this.$route.query.userId,
+          initialDate: initialDate,
+          finalDate: finalDate,
+          organismId: organism._id,
+          statusId: status._id,
+          subStatusId: subStatus._id,
+          localId: local._id
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente.')
+          return
+        } else {
+          this.$q.notify('Status adicionado com sucesso')
+          this.getUserDetailById()
+          this.clearDialogAddPastoralStatus()
+        }
+      })
+    },
+    verifyInactiveStatus() {
+      this.inactiveStatus = []
+      let activeStatus = []
+      this.pastoralStatusData.forEach((status) => {
+        if (status.dates.finalDate && status.dates.finalDate !== '') {
+          this.inactiveStatus.push(status)
+        } else if (!status.dates.finalDate || status.dates.finalDate === "") {
+          activeStatus.push(status)
+          this.pastoralStatusData = activeStatus
+        }
+      })
+    },
     clkConfirmAddPastoralStatus () {
       if (!this.dialogAddPastoralStatus.organism
           || !this.dialogAddPastoralStatus.initialDate
@@ -1057,32 +1191,32 @@ export default defineComponent({
         })
       }
     },
-    getOrganisms (val, update, abort) {
-      console.log(val)
-      if(val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres')
-        abort()
-        return
-      }
-      const opt = {
-        route: '/desktop/adm/getOrganismsListInUser',
-        body: {
-          searchString: val,
-          isActive: 1,
-          page: 1,
-          rowsPerPage: 50
-        }
-      }
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if(r.error){ this.$q.notify(r.errorMessage) }
+    // getOrganisms (val, update, abort) {
+    //   console.log(val)
+    //   if(val.length < 3) {
+    //     this.$q.notify('Digite no mínimo 3 caracteres')
+    //     abort()
+    //     return
+    //   }
+    //   const opt = {
+    //     route: '/desktop/adm/getOrganismsListInUser',
+    //     body: {
+    //       searchString: val,
+    //       isActive: 1,
+    //       page: 1,
+    //       rowsPerPage: 50
+    //     }
+    //   }
+    //   this.$q.loading.show();
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide();
+    //     if(r.error){ this.$q.notify(r.errorMessage) }
 
-        update(() => {
-          this.organismsOptions = r.data.list;
-        })
-      });
-    },
+    //     update(() => {
+    //       this.organismsOptions = r.data.list;
+    //     })
+    //   });
+    // },
     clearDialogAddPastoralStatus () {
       this.dialogAddPastoralStatus.open = false
       this.dialogAddPastoralStatus.organism = null
@@ -1436,9 +1570,11 @@ export default defineComponent({
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.canUseSystem = r.data.canUseSystem
+        this.pastoralStatusData = r.data.pastoralStatus.data
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.mountUserData(r.data)
+        this.verifyInactiveStatus()
       });
     },
     mountUserData (userDetail) {
