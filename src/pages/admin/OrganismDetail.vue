@@ -146,8 +146,8 @@
                   </q-item-section>
                 </q-item> 
               </q-list>
-              <!-- <div class="text-h6">
-                Status Pastoral
+              <div class="text-h6">
+                Histórico Pastoral
                 <q-btn
                   icon="add"
                   color="primary"
@@ -156,7 +156,7 @@
                   unelevated
                   @click="addPastoralStatus"
                 >
-                <q-tooltip>Adicionar status pastoral</q-tooltip>
+                  <q-tooltip>Adicionar histórico pastoral</q-tooltip>
                 </q-btn>
               </div>
               <div v-if="pastoralStatusData">
@@ -204,18 +204,10 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                </q-list>
-              </div>
-              <div class="q-pa-md" v-if="inactivePastoralStatusData">
-                <q-expansion-item 
-                  class="bg-grey-3 q-pa-sm" 
-                  label="Histórico" 
-                  style="border-radius: 1rem;"
-                >
                   <q-item 
                     v-for="status in inactivePastoralStatusData"
                     :key="status"
-                    class="bg-white q-ma-sm q-mx-md"
+                    class="bg-grey-3 q-ma-sm q-mx-md"
                     style="border-radius: 1rem;"
                   >
                     <q-item-section>
@@ -241,8 +233,8 @@
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                </q-expansion-item>
-              </div> -->
+                </q-list>
+              </div>
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
@@ -619,7 +611,7 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <!-- <div v-if="field.type.type === 'services'">
+                <div v-if="field.type.type === 'services'">
                   <q-btn 
                     label="Quantidade de cultos"
                     no-caps
@@ -638,8 +630,8 @@
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
-                </div> -->
-                <!-- <div v-if="field.type.type === 'secretary'">
+                </div>
+                <div v-if="field.type.type === 'secretary'">
                   <q-btn
                     label="Secretária"
                     no-caps
@@ -658,7 +650,7 @@
                     :fieldIndex="fieldIndex"
                     @remove="removeSecretary"
                   />
-                </div> -->
+                </div>
                 <div v-if="field.type.type === 'closeDate'">
                   <q-input
                     type="date"
@@ -1605,20 +1597,20 @@
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
   />
-  <!-- <DialogAddPastoralStatus
+  <DialogAddPastoralStatus
     :pastoralStatusTypes="pastoralStatusTypes"
     :open="dialogAddPastoralStatus.open"
     :editStatus="statusData"
     :route="`organism`"
     @closeDialog="closeDialogPastoralStatus"
     @confirm="clkCreatePastoralStatus"
-  /> -->
+  />
 
 </template>
 <script>
 import { defineComponent } from "vue";
 import CardPastor from '../../components/CardPastor.vue'
-// import CardServices from '../../components/CardServices.vue'
+import CardServices from '../../components/CardServices.vue'
 import CardOrganism from '../../components/CardOrganism.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
@@ -1626,9 +1618,9 @@ import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
-// import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
+import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
-// import CardSecretary from '../../components/CardSecretary.vue'
+import CardSecretary from '../../components/CardSecretary.vue'
 import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1644,7 +1636,8 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
-    DialogOrganismDetail
+    DialogOrganismDetail, DialogAddPastoralStatus, CardSecretary,
+    CardServices
   },
   data() {
     return {
@@ -1894,6 +1887,10 @@ export default defineComponent({
     }
   },
   methods: {
+    closeDialogPastoralStatus() {
+      this.statusData = null
+      this.dialogAddPastoralStatus.open = false
+    },
     editStatus(status) {
       this.statusData = status
       console.log(this.statusData, 'ajaj' )
@@ -1911,7 +1908,7 @@ export default defineComponent({
             statusId: status._id,
             subStatusId: subStatus._id,
             localId: local._id,
-            statusId : editId
+            editId : editId
           }
         }
         useFetch(opt).then((r) => {
@@ -1920,7 +1917,7 @@ export default defineComponent({
           return
         } else {
           this.$q.notify('Status atualizado com sucesso')
-          this.getUserDetailById()
+          this.getOrganismDetailById()
           this.clearDialogAddPastoralStatus()
         }
       })
@@ -1944,7 +1941,7 @@ export default defineComponent({
           return
         } else {
           this.$q.notify('Status adicionado com sucesso')
-          this.getUserDetailById()
+          this.getOrganismDetailById()
           this.clearDialogAddPastoralStatus()
         }
       })
@@ -2203,8 +2200,13 @@ export default defineComponent({
       if (!this.organismData.fields[this.dialogAddSecretary.fieldIndex].value) {
         this.organismData.fields[this.dialogAddSecretary.fieldIndex].value = []
       }
-      this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push(
-        this.dialogAddSecretary.days
+      this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push({
+        days: this.dialogAddSecretary.days,
+        user: {
+          name: this.dialogAddSecretary.selectedUser.userName,
+          _id: this.dialogAddSecretary.selectedUser._id
+        }
+      }
       )
       this.$q.notify('Secretária adicionada com sucesso')
       this.clearSecretarydialog()
@@ -2554,7 +2556,6 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
-          
           this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
@@ -2562,7 +2563,7 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
-          // this.pastoralStatusData = r.data.pastoralStatus.data
+          this.pastoralStatusData = r.data.pastoralStatus.data
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (this.organismConfigName === 'Paróquia') {

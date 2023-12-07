@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="props.open" @hide="closeDialog">
-    <q-card style="width: 600px;height: 750px;">
+    <q-card style="width: 600px;height: 550px;">
       <q-card-section class="text-h6 text-center">
         Informações sobre os cultos:
       </q-card-section>
@@ -22,18 +22,16 @@
       <q-card-section class="q-mt-sm" v-if="data.selectedOption">
         <div>
           <strong>
-            Marque os dias da semana que irão ocorrer os cultos:
+            Informe os dias da semana que irão ocorrer os cultos:
           </strong>
         </div>
         <div class="text-center">
-          <q-date
-            mask="DD/MM/YYYY"
-            class="q-mt-md"
-            multiple
-            minimal
-            v-model="data.date"
-            landscape
-          />
+          <q-input
+          class="q-mt-md"
+          label="Dias da semana"
+          outlined
+          v-model="data.date"
+        />
         </div>
       </q-card-section>
       <q-card-section class="q-mt-sm" v-if="data.date">

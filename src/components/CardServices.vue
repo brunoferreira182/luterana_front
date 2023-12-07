@@ -20,8 +20,8 @@
           <strong>
             Dias em que ocorrerão cultos este mês: 
           </strong>
-          <div v-for="date in value.days" :key="date">
-            {{date}}
+          <div class="q-ml-md">
+            {{value.days}}
           </div>
         </q-item-label>
         <q-item-label>

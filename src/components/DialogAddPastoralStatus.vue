@@ -172,9 +172,11 @@
       data.value.status = props.editStatus.pastoralStatusData.status
       data.value.subStatus = props.editStatus.pastoralStatusData.subStatus
       data.value.local= props.editStatus.pastoralStatusData.local
-      data.value.user= props.editStatus.userData
-      data.value.user.userName = data.value.user.name
       data.value.editId = props.editStatus._id
+      if (props.editStatus.userData) {
+        data.value.user= props.editStatus.userData
+        data.value.user.userName = data.value.user.name
+      }
       data.value.edit = true
     } else if (data.value.edit !== true) {
       data.value.organism = null

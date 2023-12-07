@@ -14,15 +14,18 @@
       :key="secretary"
       class="bg-grey-2"
     >
-    {{ secretary }}
-      <!-- <q-item-section>
+      <q-item-section>
         <q-item-label>
-          <strong>Nome:</strong> {{ secretary.user.userName }}
+          <strong>Nome:</strong> {{ secretary.user.name }}
         </q-item-label>
-        <q-item-label>
-          <strong>Horário de trabalho:</strong> {{ secretary.officeHours }}
-        </q-item-label>
-      </q-item-section> -->
+        <strong>Horário de trabalho:</strong> 
+        <q-item-section v-for="day in secretary.days" :key="day" class="q-ml-sm">
+          {{ day.value.label }}:
+          <div v-for="time in day.time" :key="time" class="text-subtitle1 q-ml-xl">
+            {{ time.initial }} às {{ time.final }}
+          </div>
+        </q-item-section>
+      </q-item-section>
       <q-item-section side>
         <q-btn 
           icon="delete"
