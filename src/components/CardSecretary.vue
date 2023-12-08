@@ -19,14 +19,14 @@
           <strong>Nome:</strong> {{ secretary.user.name }}
         </q-item-label>
         <strong>Horário de trabalho:</strong> 
-        <q-item-section v-for="day in secretary.days" :key="day" class="q-ml-sm">
+        <q-item-label v-for="day in secretary.days" :key="day" class="q-ml-sm">
           {{ day.value.label }}:
           <div v-for="time in day.time" :key="time" class="text-subtitle1 q-ml-xl">
             {{ time.initial }} às {{ time.final }}
           </div>
-        </q-item-section>
+        </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="props.user !== 'true'">
         <q-btn 
           icon="delete"
           color="red"
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-  const props = defineProps(['data', 'fieldIndex'])
+  const props = defineProps(['data', 'fieldIndex', 'user'])
   const emits = defineEmits(['remove'])
 
   function remove(fieldIndex, isecretary) {

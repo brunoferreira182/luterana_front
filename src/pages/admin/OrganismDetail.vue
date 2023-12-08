@@ -627,6 +627,7 @@
                     v-if="field.value"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
+                    :user="`false`"
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
@@ -648,6 +649,7 @@
                     v-if="field.value"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
+                    :user="`false`"
                     @remove="removeSecretary"
                   />
                 </div>

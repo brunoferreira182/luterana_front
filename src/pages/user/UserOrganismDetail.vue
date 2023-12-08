@@ -397,6 +397,25 @@
                   :showHeader="field.value && field.value.length > 0 ? field.label : false"
                 />
               </div>
+              <div v-if="field.type.type === 'services'">
+                <CardServices
+                  v-if="field.value"
+                  :data="field.value"
+                  :fieldIndex="fieldIndex"
+                  :user="`true`"
+                  @edit="editServicesData"
+                  @remove="removeServicesData"
+                />
+              </div>
+              <div v-if="field.type.type === 'secretary'">
+                <CardSecretary
+                  v-if="field.value"
+                  :data="field.value"
+                  :user="`true`"
+                  :fieldIndex="fieldIndex"
+                  @remove="removeSecretary"
+                />
+              </div>
             </div>
             <div class="q-ma-lg justify-start" v-if="child && child.length > 0">
               <div class="q-gutter-md">
@@ -982,6 +1001,25 @@
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
                   />
                 </div>
+                <div v-if="field.type.type === 'services'">
+                <CardServices
+                  v-if="field.value"
+                  :data="field.value"
+                  :fieldIndex="fieldIndex"
+                  :user="`true`"
+                  @edit="editServicesData"
+                  @remove="removeServicesData"
+                />
+              </div>
+              <div v-if="field.type.type === 'secretary'">
+                <CardSecretary
+                  v-if="field.value"
+                  :data="field.value"
+                  :user="`true`"
+                  :fieldIndex="fieldIndex"
+                  @remove="removeSecretary"
+                />
+              </div>
               </div>
               <div class="q-px-sm justify-start" v-if="childOrganismsData">
                 <div class="q-gutter-md">
@@ -1239,6 +1277,8 @@
 import { defineComponent } from "vue";
 import utils from "../../boot/utils";
 import CardFunction from '../../components/CardFunction.vue';
+import CardSecretary from '../../components/CardSecretary.vue';
+import CardServices from '../../components/CardServices.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue';
 import DialogAddress from '../../components/DialogAddress.vue';
 import CardPastor from '../../components/CardPastor.vue';
@@ -1259,7 +1299,8 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail,
     DialogPhoneMobileEmail, CardPastor,
-    DialogOrganismDetail
+    DialogOrganismDetail, CardSecretary,
+    CardServices
   },
   data() {
     return {

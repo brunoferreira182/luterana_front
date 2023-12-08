@@ -11,24 +11,26 @@
       </div>
     </q-item-label>
     <q-item
-    class="no-margin"
+      class="no-margin"
       v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
       <q-item-section>
         <q-item-label>
+          <strong>Frequência:</strong>
+          {{ value.frequency }}
+        </q-item-label>
+        <q-item-label>
           <strong>
-            Dias em que ocorrerão cultos este mês: 
+            Dia: 
           </strong>
-          <div class="q-ml-md">
-            {{value.days}}
-          </div>
+          {{value.days}}
         </q-item-label>
         <q-item-label>
           <strong>Horário:</strong>  {{ value.times }}
         </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="props.user !== 'true'">
         <q-item-label>
         <q-btn
           icon="edit"
@@ -53,7 +55,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'user'])
 const emits = defineEmits(['edit', 'remove'])
 
 function edit(fieldIndex, tabsIndex, field, value, iValue) {

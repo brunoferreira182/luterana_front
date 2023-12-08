@@ -241,7 +241,7 @@ export default defineComponent({
           savedOrganismList().selectFilter = this.selectFilter
           savedOrganismList().filterCity = this.filterCity
         });
-      }, 500);
+      }, 300);
     },
     getOrganismsConfigsNamesList() {
       const opt = {
