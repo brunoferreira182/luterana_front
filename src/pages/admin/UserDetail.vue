@@ -1104,6 +1104,14 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    verifyLinks() {
+      if (this.userLinks && this.userLinks.length === 2){
+        this.userLinks.forEach((link, i) => {
+          if (link.organismConfigName === 'Paróquia')
+          this.userLinks.splice(i, 1)
+        })
+      }
+    },
     closeDialogPastoralStatus() {
       this.statusData = null
       this.dialogAddPastoralStatus.open = false
@@ -1583,6 +1591,7 @@ export default defineComponent({
         this.pastoralStatusData = r.data.pastoralStatus.data
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
+        this.verifyLinks()
         this.mountUserData(r.data)
         this.verifyInactiveStatus()
       });

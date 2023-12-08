@@ -133,7 +133,7 @@ export default defineComponent({
       selectedChips: [],
       pagination: {
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 20,
         rowsNumber: 0,
         sortBy: "",
       },
@@ -145,7 +145,6 @@ export default defineComponent({
   },
   beforeMount() {
     this.getOrganismsList();
-    // this.getParoquias()
     this.getOrganismsConfigsNamesList();
   },
   unmounted() {
@@ -170,8 +169,6 @@ export default defineComponent({
       const organismId = r.organismId;
       this.$router.push("/admin/organismDetail?organismId=" + organismId);
     },
-    // sortList(e) {
-    // },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
@@ -241,7 +238,7 @@ export default defineComponent({
           savedOrganismList().selectFilter = this.selectFilter
           savedOrganismList().filterCity = this.filterCity
         });
-      }, 300);
+      }, 500);
     },
     getOrganismsConfigsNamesList() {
       const opt = {

@@ -613,6 +613,7 @@
                 </div>     
                 <div v-if="field.type.type === 'services'">
                   <q-btn 
+                    v-if="!field.value || !field.value.length > 0"
                     label="Quantidade de cultos"
                     no-caps
                     rounded
@@ -624,7 +625,7 @@
                     class="q-mt-xs"
                   />
                   <CardServices
-                    v-if="field.value"
+                    v-if="field.value && field.value.length"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
                     :user="`false`"
@@ -634,6 +635,7 @@
                 </div>
                 <div v-if="field.type.type === 'secretary'">
                   <q-btn
+                    v-if="!field.value || !field.value.length > 0"
                     label="Secretária"
                     no-caps
                     rounded
@@ -646,11 +648,12 @@
                     :disable="field.onlyAdm"
                   />
                   <CardSecretary
-                    v-if="field.value"
+                    v-if="field.value && field.value.length > 0"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
                     :user="`false`"
                     @remove="removeSecretary"
+                    @edit="editSecretary"
                   />
                 </div>
                 <div v-if="field.type.type === 'closeDate'">
@@ -1464,7 +1467,7 @@
           <q-card-section>
             <div 
               class="row q-mb-lg no-padding q-ml-lg" 
-              v-for="(day, i) in dialogAddSecretary.days"
+              v-for="(day, iDay) in dialogAddSecretary.days"
               :key="day"  
             >
               <q-select 
@@ -1472,7 +1475,7 @@
                 type="text" 
                 label='Dia'
                 :options="diasDaSemana"
-                v-model="dialogAddSecretary.days[i].value"
+                v-model="dialogAddSecretary.days[iDay].value"
               />
               <div class="column q-ml-md">
                 <q-chip
@@ -1480,10 +1483,19 @@
                   size="10px"
                   color="primary" 
                   text-color="white"
-                  v-for="(time) in dialogAddSecretary.days[i].time"
+                  v-for="(time, iTime) in dialogAddSecretary.days[iDay].time"
                   :key="time"
                 >
                   {{ time.initial }} - {{ time.final }}
+                  <q-btn
+                    icon="close"
+                    flat
+                    color="primary"
+                    class="bg-white q-ml-sm"
+                    round
+                    @click="removeTime(iDay, iTime)"
+                    size="4px"
+                  />
                 </q-chip>
               </div>
               <q-btn
@@ -1492,16 +1504,17 @@
                 icon="more_time"
                 color="primary"
                 flat
-                @click="addTime(i)"
+                round
+                @click="addTime(iDay)"
               >
               <q-tooltip>
                 Adicionar horário
               </q-tooltip>
               </q-btn>
               <q-btn
-                class="col-2"
                 icon="delete"
-                @click="removeDay(i)"
+                round
+                @click="removeDay(iDay)"
                 flat
                 color="red"
                 rounded
@@ -1586,8 +1599,10 @@
     @confirmAddress="confirmAddress"
     @closeDialog="clearAddressInputs"
   />
-  <DialogAddEventsDate
+  <DialogAddServices
     :open="dialogAddServices.open"
+    :action="dialogAddServices.action"
+    :editData="this.dialogAddServices.data"
     @addServicesData="confirmServicesData"
     @closeDialog="closeDialogAddServices"
   />
@@ -1623,7 +1638,7 @@ import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardSecretary from '../../components/CardSecretary.vue'
-import DialogAddEventsDate from '../../components/DialogAddEventsDate.vue'
+import DialogAddServices from '../../components/DialogAddServices.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
 // import utils from '../../boot/utils'
@@ -1637,7 +1652,7 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
-    DialogPhoneMobileEmail, CardPastor, DialogAddEventsDate,
+    DialogPhoneMobileEmail, CardPastor, DialogAddServices,
     DialogOrganismDetail, DialogAddPastoralStatus, CardSecretary,
     CardServices
   },
@@ -1867,20 +1882,11 @@ export default defineComponent({
     
   },
   beforeMount(){
-    // this.getOrganismsList()
     this.getOrganismsConfigs()
     this.getParentOrganismsById()
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
     this.getPastoralStatusTypes()
-    // if (this.organismConfigName === 'Paróquia') {
-    //   console.log('aaaaaaaaaaaaaaaaaa')
-    //   if (this.organismChildData.length === 1) {
-    //     this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
-    //   }
-    // }
-    // this.getOrganismsConfigsList()
-    // this.getUserVisionPermissionByOrganismId()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -1889,6 +1895,16 @@ export default defineComponent({
     }
   },
   methods: {
+    removeTime(iDay, iTime) {
+      this.dialogAddSecretary.days[iDay].time.splice(iTime, 1)
+    },
+    editSecretary(fieldIndex) {
+      this.dialogAddSecretary.selectedUser = this.organismData.fields[fieldIndex].value[0].user
+      this.dialogAddSecretary.days = this.organismData.fields[fieldIndex].value[0].days
+      this.dialogAddSecretary.fieldIndex = fieldIndex
+      this.dialogAddSecretary.action = 'edit'
+      this.dialogAddSecretary.open = true
+    },
     closeDialogPastoralStatus() {
       this.statusData = null
       this.dialogAddPastoralStatus.open = false
@@ -1987,6 +2003,7 @@ export default defineComponent({
       this.dialogAddTime.open = false
     },
     confirmAddTime () {
+      console.log(this.dialogAddTime.index)
       if (!this.dialogAddSecretary.days[this.dialogAddTime.index].time) {
         this.dialogAddSecretary.days[this.dialogAddTime.index].time = []
       }
@@ -2001,7 +2018,7 @@ export default defineComponent({
       this.dialogAddSecretary.days.splice(i, 1)
     },
     insertDay() {
-      this.dialogAddSecretary.days.push({ value: '', times: [] });
+      this.dialogAddSecretary.days.push({ value: ''});
     },
     removeSecretary(fieldIndex, isecretary) {
       this.organismData.fields[fieldIndex].value.splice(isecretary, 1);
@@ -2202,10 +2219,14 @@ export default defineComponent({
       if (!this.organismData.fields[this.dialogAddSecretary.fieldIndex].value) {
         this.organismData.fields[this.dialogAddSecretary.fieldIndex].value = []
       }
+      if (this.dialogAddSecretary.action === 'edit' 
+        && this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.length > 0) {
+          this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.splice(0, 1)
+        }
       this.organismData.fields[this.dialogAddSecretary.fieldIndex].value.push({
         days: this.dialogAddSecretary.days,
         user: {
-          name: this.dialogAddSecretary.selectedUser.userName,
+          userName: this.dialogAddSecretary.selectedUser.userName,
           _id: this.dialogAddSecretary.selectedUser._id
         }
       }
@@ -2229,7 +2250,7 @@ export default defineComponent({
       this.dialogAddSecretary.fieldIndex = null
       this.dialogAddSecretary.action = 'add'
       this.dialogAddSecretary.selectedUser = ''
-      this.dialogAddSecretary.officeHours = ''
+      this.dialogAddSecretary.days = null
     },
     clkAddSecretary(fieldIndex) {
       this.dialogAddSecretary.fieldIndex = fieldIndex,
@@ -2275,14 +2296,14 @@ export default defineComponent({
         this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
           frequency: freq, 
           days: day,
-          times: time
+          time: time
         })
       } else if (this.dialogAddServices.action === 'edit') {
         this.organismData.fields[this.dialogAddServices.fieldIndex]
         .value[this.dialogAddServices.ivalue] = {
           frequency: freq, 
           days: day,
-          times: time
+          time: time
         }
       }
     },
@@ -2314,11 +2335,11 @@ export default defineComponent({
     },
     editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {
       this.dialogAddServices.action = 'edit'
-      this.dialogAddServices.open = true
       this.dialogAddServices.fieldIndex = fieldIndex
       this.dialogAddServices.tabsIndex = tabsIndex
       this.dialogAddServices.data = {...value}
       this.dialogAddServices.ivalue = ivalue
+      this.dialogAddServices.open = true
     },
     editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {

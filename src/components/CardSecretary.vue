@@ -16,7 +16,7 @@
     >
       <q-item-section>
         <q-item-label>
-          <strong>Nome:</strong> {{ secretary.user.name }}
+          <strong>Nome:</strong> {{ secretary.user.userName }}
         </q-item-label>
         <strong>Horário de trabalho:</strong> 
         <q-item-label v-for="day in secretary.days" :key="day" class="q-ml-sm">
@@ -27,14 +27,26 @@
         </q-item-label>
       </q-item-section>
       <q-item-section side v-if="props.user !== 'true'">
-        <q-btn 
-          icon="delete"
-          color="red"
-          flat
-          size="md"
-          rounded
-          @click="remove(fieldIndex, isecretary)"
-        />
+        <q-item-label>
+          <q-btn 
+            icon="edit"
+            color="primary"
+            flat
+            round
+            size="md"
+            rounded
+            @click="edit"
+          />
+          <q-btn 
+            icon="delete"
+            color="red"
+            round
+            flat
+            size="md"
+            rounded
+            @click="remove(fieldIndex, isecretary)"
+          />
+        </q-item-label>
       </q-item-section>
     </q-item>
   </q-card>
@@ -42,9 +54,12 @@
 
 <script setup>
   const props = defineProps(['data', 'fieldIndex', 'user'])
-  const emits = defineEmits(['remove'])
+  const emits = defineEmits(['remove', 'edit'])
 
   function remove(fieldIndex, isecretary) {
     emits('remove', fieldIndex, isecretary)
-}
+  }
+  function edit() {
+    emits('edit', props.fieldIndex)
+  }
 </script>

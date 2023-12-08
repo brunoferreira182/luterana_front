@@ -69,24 +69,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
+
 const data = ref({
   step: 'frequency',
   selectedOption: null,
   time: null,
   date: null
 })
-const selectOptions = [ 'Semanal','2x Semana', 'Quinzenal', 'Mensal']
-const props = defineProps(['open', 'edit'])
+
+const selectOptions = ['Semanal', '2x Semana', 'Quinzenal', 'Mensal']
+const props = defineProps(['open', 'action', 'editData'])
 const emits = defineEmits(['closeDialog', 'addServicesData'])
 
+watchEffect(() => {
+  if (props.action === 'edit') {
+    data.value.selectedOption = props.editData.frequency;
+    data.value.time = props.editData.time;
+    data.value.date = props.editData.days;
+  }
+})
+
 function confirm() {
-  emits('addServicesData', data.value.selectedOption, data.value.date, data.value.time)
+  emits('addServicesData', data.value.selectedOption, data.value.date, data.value.time, props.action)
   data.value.step = 'frequency'
   data.value.selectedOption = null
   data.value.date = null
   data.value.time = null
 }
+
 function closeDialog() {
   emits('closeDialog')
 }

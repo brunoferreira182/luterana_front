@@ -27,7 +27,7 @@
           {{value.days}}
         </q-item-label>
         <q-item-label>
-          <strong>Horário:</strong>  {{ value.times }}
+          <strong>Horário:</strong>  {{ value.time }}
         </q-item-label>
       </q-item-section>
       <q-item-section side v-if="props.user !== 'true'">
