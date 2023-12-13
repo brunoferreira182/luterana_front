@@ -16,16 +16,23 @@
     >
       <q-item-section>
         <q-item-label>
-            <strong>Nome:</strong> {{ secretary.user.userNa }}
+          <strong>Nome:</strong> {{ secretary.user.userNa }}
         </q-item-label>
         <strong>Horário de trabalho:</strong>
-        <div v-for="day in secretary.days" :key="day" class="q-ml-sm row">
-          <div class="col-3">
+        <div v-for="day in secretary.days" :key="day" class="q-ml-xs q-py-md row">
+          <div class="col-4">
             {{ day.value.label }}:
           </div>
-          <div v-for="time in day.time" :key="time" class="text-subtitle1 q-ml-xl col-9">
+          <q-list>
+            <q-item
+              dense
+              class="no-padding"
+              v-for="time in day.time" 
+              :key="time"
+            >
               {{ time.initial }} às {{ time.final }}
-          </div>
+            </q-item>
+          </q-list>
         </div>
       </q-item-section>
       <q-item-section side v-if="props.user !== 'true'">
