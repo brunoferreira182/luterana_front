@@ -25,14 +25,17 @@
             Informe os dias da semana que irão ocorrer os cultos:
           </strong>
         </div>
-        <div class="text-center">
-          <q-input
-          class="q-mt-md"
-          label="Dias da semana"
-          outlined
-          v-model="data.date"
-        />
+        <div v-if="data.selectedOption === '4x semana'">
+          
         </div>
+        <!-- <div class="text-center">
+          <q-input
+            class="q-mt-md"
+            label="Dias da semana"
+            outlined
+            v-model="data.date"
+          />
+        </div> -->
       </q-card-section>
       <q-card-section class="q-mt-sm" v-if="data.date">
         <div>
@@ -78,7 +81,8 @@ const data = ref({
   date: null
 })
 
-const selectOptions = ['Semanal', '2x Semana', 'Quinzenal', 'Mensal']
+const selectOptions = ['4x semana', '3x semana', '2x semana', '1x semana', '4x mês', '3x mês', '2x mês', '1x mês']
+// const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 const props = defineProps(['open', 'action', 'editData'])
 const emits = defineEmits(['closeDialog', 'addServicesData'])
 

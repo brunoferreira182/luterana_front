@@ -146,7 +146,7 @@
                   </q-item-section>
                 </q-item> 
               </q-list>
-              <div class="text-h6">
+              <!-- <div class="text-h6">
                 Histórico Pastoral
                 <q-btn
                   icon="add"
@@ -158,7 +158,7 @@
                 >
                   <q-tooltip>Adicionar histórico pastoral</q-tooltip>
                 </q-btn>
-              </div>
+              </div> 
               <div v-if="pastoralStatusData">
                 <q-list>
                   <q-item 
@@ -234,7 +234,7 @@
                     </q-item-section>
                   </q-item>
                 </q-list>
-              </div>
+              </div> -->
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
@@ -1599,13 +1599,105 @@
     @confirmAddress="confirmAddress"
     @closeDialog="clearAddressInputs"
   />
-  <DialogAddServices
+  <!-- <DialogAddServices
     :open="dialogAddServices.open"
     :action="dialogAddServices.action"
     :editData="this.dialogAddServices.data"
     @addServicesData="confirmServicesData"
     @closeDialog="closeDialogAddServices"
-  />
+  /> -->
+  <q-dialog
+    v-model="dialogAddServices.open"
+  >
+    <q-card>
+      <q-card-section>
+        <div>
+          <strong>Frequência:</strong>
+          <q-select
+            class="q-pa-sm"
+            filled
+            use-input
+            label="Selecione a Frequência"
+            option-label="label"
+            v-model="dialogAddServices.selectedEventOption"
+            :options="dialogAddServices.eventsOptions"
+            :loading="false"
+          />
+        </div>
+        <div class=q-mt-md v-if="dialogAddServices.selectedEventOption">
+          <strong>Dias:</strong>
+          <div
+            v-for="(day, iDay) in dialogAddServices.selectedEventOption.days"
+            :key="day"
+            class="row"
+          >
+            <q-select
+              class="q-pa-sm col-10"
+              filled
+              use-input
+              label="Selecione o dia"
+              option-label="label"
+              v-model="day.value"
+              :options="dialogAddServices.daysOfWeek"
+              :loading="false"
+            />
+            <q-btn
+              class="col-2 q-pa-sm"
+              color="primary"
+              flat
+              icon="schedule"
+              rounded
+              @click="addTimeForADay(iDay)"
+            >
+              <q-tooltip>Selecione o horário</q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+  <q-dialog
+    v-model="dialogAddTimeForDay.open"
+  >
+    <q-card style="width: 300px;">
+      <q-card-section>
+        <div class='text-center text-h6'>
+          Horários
+        </div>
+        <q-input 
+          type="time" 
+          class="q-my-sm"
+          outlined
+          label="Início" 
+          v-model="dialogAddTimeForDay.initial"
+        />
+        <q-input 
+          type="time" 
+          label="Fim" 
+          outlined
+          v-model="dialogAddTimeForDay.final"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          flat
+          label="Voltar"
+          no-caps
+          rounded
+          color="primary"
+          @click="clearTimeForDayDialog"
+        />
+        <q-btn
+          label="Adicionar"
+          unelevated
+          no-caps
+          rounded
+          color="primary"
+          @click="confirmAddTime"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <DialogOrganismDetail
     :open="dialogShowOtherDetail.open"
     :orgData="dialogShowOtherDetail.orgData"
@@ -1638,7 +1730,7 @@ import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import CardSecretary from '../../components/CardSecretary.vue'
-import DialogAddServices from '../../components/DialogAddServices.vue'
+// import DialogAddServices from '../../components/DialogAddServices.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
 // import utils from '../../boot/utils'
@@ -1652,9 +1744,8 @@ export default defineComponent({
     CardFunction, CardOrganism, DialogAddress,
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
-    DialogPhoneMobileEmail, CardPastor, DialogAddServices,
-    DialogOrganismDetail, DialogAddPastoralStatus, CardSecretary,
-    CardServices
+    DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
+    DialogAddPastoralStatus, CardSecretary, CardServices
   },
   data() {
     return {
@@ -1793,12 +1884,6 @@ export default defineComponent({
           pix: ''
         }
       },
-      dialogAddServices: {
-        open: false,
-        fieldIndex: null,
-        action: 'add', 
-        data: null
-      },
       functions: [],
       organismList: [],
       organismLinks: [],
@@ -1864,7 +1949,19 @@ export default defineComponent({
         open: false
       },
       pastoralStatusTypes: null,
-      statusData: null
+      statusData: null,
+      dialogAddServices: {
+        open: false,
+        eventsOptions: null,
+        daysOfWeek: null,
+        selectedEventOption: null,
+        selectedDay: null
+      },
+      dialogAddTimeForDay: {
+        open: false,
+        initial: null,
+        final: null
+      }
     };
   },
   watch: {
@@ -1887,6 +1984,8 @@ export default defineComponent({
     this.getChildOrganismsConfigsByOrganismId()
     this.getChildOrganismsById()
     this.getPastoralStatusTypes()
+    this.getEventsOptions()
+    this.getDaysOfWeek()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -1895,6 +1994,33 @@ export default defineComponent({
     }
   },
   methods: {
+    clearTimeForDayDialog() {
+      this.dialogAddTimeFor
+    },
+    addTimeForADay(i) {
+      this.dialogAddServices.selectedDay = i
+      this.dialogAddTimeForDay.open = true
+    },
+    getDaysOfWeek() {
+      const opt = {
+        route: '/desktop/adm/getDaysOfWeek'
+      }
+      useFetch(opt).then((r) => {
+        this.dialogAddServices.daysOfWeek = r.data
+      })
+    },
+    getEventsOptions() {
+      const opt = {
+        route: '/desktop/adm/getEventsOptions'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.dialogAddServices.eventsOptions = r.data
+        }
+      })
+    },
     removeTime(iDay, iTime) {
       this.dialogAddSecretary.days[iDay].time.splice(iTime, 1)
     },
@@ -1911,7 +2037,6 @@ export default defineComponent({
     },
     editStatus(status) {
       this.statusData = status
-      console.log(this.statusData, 'ajaj' )
       this.dialogAddPastoralStatus.open = true
     },
     clkCreatePastoralStatus(organism, initialDate, finalDate, status, subStatus, local, user, editId) {
@@ -2003,7 +2128,6 @@ export default defineComponent({
       this.dialogAddTime.open = false
     },
     confirmAddTime () {
-      console.log(this.dialogAddTime.index)
       if (!this.dialogAddSecretary.days[this.dialogAddTime.index].time) {
         this.dialogAddSecretary.days[this.dialogAddTime.index].time = []
       }
@@ -2234,15 +2358,13 @@ export default defineComponent({
       this.$q.notify('Secretária adicionada com sucesso')
       this.clearSecretarydialog()
     },
-    closeDialogAddServices () {
-      this.dialogAddServices.open = false
-      this.dialogAddServices.fieldIndex = null
-      this.dialogAddServices.action = 'add'
-      this.dialogAddServices.data = null
-    },
-    clkAddServicesPerWeek(fieldIndex) {
-      this.dialogAddServices.fieldIndex = fieldIndex
-      this.dialogAddServices.action = 'add'
+    // closeDialogAddServices () {
+    //   this.dialogAddServices.open = false
+    //   this.dialogAddServices.fieldIndex = null
+    //   this.dialogAddServices.action = 'add'
+    //   this.dialogAddServices.data = null
+    // },
+    clkAddServicesPerWeek() {
       this.dialogAddServices.open = true
     },
     clearSecretarydialog() {
@@ -2287,26 +2409,26 @@ export default defineComponent({
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
     },
-    confirmServicesData(freq, day, time) {
-      this.dialogAddServices.open = false
-      if (this.dialogAddServices.action === 'add') {
-        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
-          this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
-        }
-        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
-          frequency: freq, 
-          days: day,
-          time: time
-        })
-      } else if (this.dialogAddServices.action === 'edit') {
-        this.organismData.fields[this.dialogAddServices.fieldIndex]
-        .value[this.dialogAddServices.ivalue] = {
-          frequency: freq, 
-          days: day,
-          time: time
-        }
-      }
-    },
+    // confirmServicesData(freq, day, time) {
+    //   this.dialogAddServices.open = false
+    //   if (this.dialogAddServices.action === 'add') {
+    //     if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+    //       this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
+    //     }
+    //     this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
+    //       frequency: freq, 
+    //       days: day,
+    //       time: time
+    //     })
+    //   } else if (this.dialogAddServices.action === 'edit') {
+    //     this.organismData.fields[this.dialogAddServices.fieldIndex]
+    //     .value[this.dialogAddServices.ivalue] = {
+    //       frequency: freq, 
+    //       days: day,
+    //       time: time
+    //     }
+    //   }
+    // },
     clearDialogAddPhoneMobileEmail () {
       this.dialogAddPhoneMobileEmail = {
         type: null,
@@ -2333,14 +2455,14 @@ export default defineComponent({
     removeServicesData (fieldIndex, tabsIndex, field, value, iValue) {
       this.organismData.fields[fieldIndex].value.splice(iValue, 1)
     },
-    editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {
-      this.dialogAddServices.action = 'edit'
-      this.dialogAddServices.fieldIndex = fieldIndex
-      this.dialogAddServices.tabsIndex = tabsIndex
-      this.dialogAddServices.data = {...value}
-      this.dialogAddServices.ivalue = ivalue
-      this.dialogAddServices.open = true
-    },
+    // editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {
+    //   this.dialogAddServices.action = 'edit'
+    //   this.dialogAddServices.fieldIndex = fieldIndex
+    //   this.dialogAddServices.tabsIndex = tabsIndex
+    //   this.dialogAddServices.data = {...value}
+    //   this.dialogAddServices.ivalue = ivalue
+    //   this.dialogAddServices.open = true
+    // },
     editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {
         open: true,
@@ -2586,7 +2708,7 @@ export default defineComponent({
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
-          this.pastoralStatusData = r.data.pastoralStatus.data
+          // this.pastoralStatusData = r.data.pastoralStatus.data
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (this.organismConfigName === 'Paróquia') {
@@ -3017,7 +3139,10 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogInsertUserInFunction.selectedFunc !== null && this.dialogInsertUserInFunction.open === true && this.dialogInsertUserInFunction.functionType !== 'Pastor') {
+      if (this.dialogAddSecretary.open = true) {
+        route = "/desktop/adm/getUsers" 
+      }
+      else if (this.dialogInsertUserInFunction.selectedFunc !== null && this.dialogInsertUserInFunction.open === true && this.dialogInsertUserInFunction.functionType !== 'Pastor') {
         route = "/desktop/adm/getUsers"
       } else if (this.dialogSwapPastorFromFunction.open === true) {
         route = "/desktop/adm/getPastores"
@@ -3025,9 +3150,7 @@ export default defineComponent({
         route = "/desktop/adm/getPastores" 
       } else if (this.dialogInserPastorInParoquia.open = true && this.dialogInserPastorInParoquia.user === 'Pastor') {
         route = "/desktop/adm/getPastores" 
-      } else if (this.dialogAddSecretary.open = true) {
-        route = "/desktop/adm/getUsers" 
-      }
+      } 
       const opt = {
         route: route,
         body: {

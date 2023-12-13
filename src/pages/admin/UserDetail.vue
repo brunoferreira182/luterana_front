@@ -115,7 +115,7 @@
           </q-list>
         </div>
         <q-separator class="q-mx-md"/>
-        <div class="text-h6 q-ma-sm q-ml-md">
+        <!-- <div class="text-h6 q-ma-sm q-ml-md">
           Histórico pastoral:
           <q-btn
             icon="add"
@@ -201,7 +201,7 @@
               </q-item-section>
             </q-item>
           </q-list>
-        </div>
+        </div> -->
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
