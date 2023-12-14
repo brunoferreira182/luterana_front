@@ -11,50 +11,70 @@
       </div>
     </q-item-label>
     
-    <div
+    <q-item
       v-for="(value, iValue) in props.data"
-      :key="'multField' + iValue"
+      :key="iValue"
     >
-      <q-item
-        class="no-margin"
-      >
-        <q-item-section>
-          <q-item-label>
-            <strong>Frequência:</strong>
-            {{ value.frequency }}
-          </q-item-label>
-          <q-item-label>
-            <strong>
-              Dia: 
-            </strong>
-            {{value.days}}
-          </q-item-label>
-          <q-item-label>
-            <strong>Horário:</strong>  {{ value.time }}
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side v-if="props.user !== 'true'">
-          <q-item-label>
-          <q-btn
+      <q-item-section v-if="value.model === 'month'">
+        <q-item-label>
+          <strong class="q-mr-sm">Frequência:</strong> {{ value.label }}
+        </q-item-label>
+        <div
+          v-for="week in value.weeks"
+          :key="week"
+          class="q-ml-xs q-py-md row"
+        >
+          <div class="col-4">
+            {{ week.label }}:
+          </div>
+          <q-list class="col-8">
+            <q-item
+              class="no-padding"
+              v-for="val in week.value"
+              :key="val"
+            >
+              <q-item-label>
+                {{ val.day.label }} às {{ val.time }}
+              </q-item-label>
+            </q-item>
+          </q-list>
+        </div>
+      </q-item-section>
+      <q-item-section v-else-if="value.model === 'week'">
+        <q-item-label>
+          <strong class="q-mr-sm">Frequência:</strong> {{ value.label }}
+        </q-item-label>
+        <div
+          v-for="day in value.days"
+          :key="day"
+          class="q-ml-xs q-py-md row"
+        >
+          {{ day.value.label }} às {{ day.value.times.initial }}
+        </div>
+      </q-item-section>
+      <q-item-section side>
+        <q-item-label>
+          <q-btn 
             icon="edit"
-            flat
-            round
             color="primary"
-            @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
-            :disable="disableButtons"
-          />
-          <q-btn
-            icon="delete"
             flat
             round
-            color="red"
-            @click="remove(fieldIndex, tabsIndex, props.data, value, iValue)"
-            :disable="disableButtons"
+            size="md"
+            rounded
+            @click="edit(fieldIndex)"
           />
-          </q-item-label>
-        </q-item-section>
+          <q-btn 
+            icon="delete"
+            color="red"
+            round
+            flat
+            size="md"
+            rounded
+            @click="remove(fieldIndex, isecretary)"
+          />
+        </q-item-label>
+      </q-item-section>
     </q-item>
-    </div>
   </q-card>
 </template>
 
@@ -62,8 +82,8 @@
 const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'user'])
 const emits = defineEmits(['edit', 'remove'])
 
-function edit(fieldIndex, tabsIndex, field, value, iValue) {
-  emits('edit', fieldIndex, tabsIndex, field, value, iValue)
+function edit(fieldIndex) {
+  emits('edit', fieldIndex)
 }
 
 function remove(fieldIndex, tabsIndex, field, value, iValue) {

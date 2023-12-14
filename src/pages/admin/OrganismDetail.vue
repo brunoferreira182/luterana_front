@@ -1620,21 +1620,22 @@
             label="Selecione a Frequência"
             option-label="label"
             v-model="dialogAddServices.selectedEventOption"
-            :options="dialogAddServices.eventsOptions"
+            :options="dialogAddServices.eventsOptions.map(option => ({ ...option }))"
             :loading="false"
+            @update:model-value="resetDays"
           />
         </div>
         <div class=q-mt-md v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'week'">
           <strong>Dias:</strong>
           <div
             v-for="(day, iDay) in dialogAddServices.selectedEventOption.days"
-            :key="day"
+            :key="iDay"
           >
             <div
               class="row"
             >
               <q-select
-                class="q-pa-sm col-10"
+                class="q-pa-sm col-7"
                 filled
                 use-input
                 label="Selecione o dia"
@@ -1643,9 +1644,20 @@
                 :options="dialogAddServices.daysOfWeek"
                 :loading="false"
               />
+              <q-chip 
+                class="col-2 q-ml-sm"
+                v-if="day.value && day.value.times && day.value.times.initial"
+                color="white"
+                model-value=false
+                flat
+                text-color="primary"
+              >
+                {{ day.value.times.initial }}
+                <q-tooltip>Horário inicial</q-tooltip>
+              </q-chip>
               <q-btn
                 v-if="day.value && day.value.label"
-                class="col-2 q-pa-sm"
+                class="col-2"
                 color="primary"
                 flat
                 icon="schedule"
@@ -1655,14 +1667,6 @@
                 <q-tooltip>Selecione o horário</q-tooltip>
               </q-btn>
             </div>
-            <q-chip 
-              v-if="day.value && day.value.times && day.value.times.initial"
-              color="primary"
-              text-color="white"
-            >
-              {{ day.value.times.initial }}
-              <q-tooltip>Horário inicial</q-tooltip>
-            </q-chip>
           </div>
           <div
             align="center"
@@ -1698,12 +1702,12 @@
               </q-btn>
               <div v-if="week.value">
                 <div 
-                v-for="(value, iValue) in week.value"
-                :key="value"
+                  v-for="(value, iValue) in week.value"
+                  :key="value"
                 >
                   <div class="row">
                     <q-select
-                      class="col-8"
+                      class="col-5"
                       filled
                       use-input
                       label="Selecione o dia"
@@ -1712,6 +1716,14 @@
                       :options="dialogAddServices.daysOfWeek"
                       :loading="false"
                     />
+                    <q-chip
+                      class="col-2"
+                      v-if="value && value.time"
+                      color="white"
+                      text-color="primary"
+                    >
+                      {{ value.time }}
+                    </q-chip>
                     <q-btn
                       v-if="value.day"
                       class="col-2 q-pa-sm"
@@ -1734,13 +1746,6 @@
                       <q-tooltip>Excluir dia</q-tooltip>
                     </q-btn>
                   </div>
-                  <q-chip
-                    v-if="value && value.time"
-                    color="primary"
-                    text-color="white"
-                  >
-                    {{ value.time }}
-                  </q-chip>
                 </div>
               </div>
             </div>
@@ -2152,8 +2157,6 @@ export default defineComponent({
       },
       dialogAddTimeForDay: {
         open: false,
-        initial: null,
-        final: null
       },
       dialogAddDayInMonth: {
         open: false,
@@ -2197,6 +2200,20 @@ export default defineComponent({
     }
   },
   methods: {
+    resetDays() {
+      this.dialogAddDayInMonth.count = 0
+      if (this.dialogAddServices.selectedEventOption.model === 'week') {
+        console.log('entrou na semana')
+        this.dialogAddServices.selectedEventOption.days.forEach((d) => {
+          d.value = null
+        })
+      } else if (this.dialogAddServices.selectedEventOption.model === 'month') {
+        console.log('entrou no mes')
+        this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+          w.value = []
+        })
+      }
+    },
     confirmAddEventsWeek() {
       let allHaveTime = true
       this.dialogAddServices.selectedEventOption.days.forEach((d) => {
@@ -2237,7 +2254,6 @@ export default defineComponent({
           });
         }
       });
-      console.log(allHaveTime, 'agora eu vejo se ta tudo preto')
       if (allHaveTime) {
         if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
           this.organismData.fields[this.dialogAddServices.fieldIndex].value = [];
@@ -2272,6 +2288,7 @@ export default defineComponent({
     },
     confirmAddTimeForDayInMonth() {
       this.dialogAddServices.selectedEventOption.weeks[this.dialogAddDayInMonth.index].value.times.initial = this.dialogInsertTimeInMonth.initial
+
       this.dialogAddTimeForDay.initial = null
       this.dialogInsertTimeInMonth.open = false
     },
@@ -2288,6 +2305,7 @@ export default defineComponent({
     },
     confirmAddTimeForDay() {
       if (this.dialogAddServices.selectedEventOption.days) {
+        this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.id = this.dialogAddServices.selectedDay
         this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.times.initial = this.dialogAddTimeForDay.initial;
       } else if (this.dialogAddServices.selectedEventOption.weeks) {
         this.dialogAddServices.selectedEventOption.weeks[this.dialogAddServices.selectedDay].value[this.dialogAddServices.selectedValue].time = this.dialogAddTimeForDay.initial;
