@@ -1664,6 +1664,17 @@
               <q-tooltip>Horário inicial</q-tooltip>
             </q-chip>
           </div>
+          <div
+            align="center"
+          >
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              label="confirmar"
+              @click="confirmAddEventsWeek"
+            />
+          </div>
         </div>
         <div
           v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'month'"
@@ -1735,6 +1746,7 @@
             </div>
           </div>
         </div>
+        
       </q-card-section>
       <q-card-actions
         align="center"
@@ -1747,13 +1759,13 @@
           rounded
           unelevated
           label="confirmar"
-        >
-
-        </q-btn>
+          @click="confirmAddEventsMonth"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
   <q-dialog
+    @hide="clearTimeForDayDialog"
     v-model="dialogAddTimeForDay.open"
   >
     <q-card style="width: 300px;">
@@ -1841,6 +1853,7 @@
     </q-card>
   </q-dialog>
   <q-dialog
+    @hide="clearDialogInserTimeInMonth"
     v-model="dialogInsertTimeInMonth.open"
   >
     <q-card style="width: 300px;">
@@ -2134,7 +2147,8 @@ export default defineComponent({
         daysOfWeek: null,
         selectedEventOption: null,
         selectedDay: null,
-        selectedValue: null
+        selectedValue: null,
+        fieldIndex: null
       },
       dialogAddTimeForDay: {
         open: false,
@@ -2166,7 +2180,6 @@ export default defineComponent({
   },
   created(){
     this.getOrganismDetailById();
-    
   },
   beforeMount(){
     this.getOrganismsConfigs()
@@ -2184,6 +2197,71 @@ export default defineComponent({
     }
   },
   methods: {
+    confirmAddEventsWeek() {
+      let allHaveTime = true
+      this.dialogAddServices.selectedEventOption.days.forEach((d) => {
+        if (d.value) {
+          if (d.value.times && d.value.times.initial) {
+            allHaveTime = true
+          }
+          if (!d.value.times || !d.value.times.initial) {
+            allHaveTime = false
+            this.$q.notify('Preencha os horários')
+            return
+          }
+        }
+      })
+      if (allHaveTime) {
+        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+          this.organismData.fields[this.dialogAddServices.fieldIndex].value = [];
+        }
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push(this.dialogAddServices.selectedEventOption);
+        this.clearDialogAddServices()
+      }
+    },
+    confirmAddEventsMonth() {
+      let allHaveTime = true
+      this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+        if (w.value && w.value.length > 0) {
+          
+          w.value.forEach((v) => {
+            if (v.time) {
+              allHaveTime = true; 
+            }
+            else if (!v.time) {
+              console.log(v);
+              this.$q.notify('Preencha o horário');
+              allHaveTime = false; 
+              return;
+            }
+          });
+        }
+      });
+      console.log(allHaveTime, 'agora eu vejo se ta tudo preto')
+      if (allHaveTime) {
+        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+          this.organismData.fields[this.dialogAddServices.fieldIndex].value = [];
+        }
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push(this.dialogAddServices.selectedEventOption);
+        this.clearDialogAddServices()
+      }
+    },
+    clearDialogAddServices() {
+      this.dialogAddServices.open = false
+      this.dialogAddServices.selectedEventOption = null
+      this.dialogAddServices.selectedDay = null
+      this.dialogAddServices.selectedValue = null
+      this.dialogAddServices.fieldIndex = null
+    },
+    clearTimeForDayDialog() {
+      this.dialogAddTimeForDay.initial = null
+      this.dialogAddTimeForDay.open = false
+    },
+    clearDialogInserTimeInMonth() {
+      console.log('me chamou')
+      this.dialogInsertTimeInMonth.open = false
+      this.dialogInsertTimeInMonth.initial = null
+    },
     removeMonthDay(iWeek, iValue) {
       this.dialogAddServices.selectedEventOption.weeks[iWeek].value.splice(iValue, 1)
       this.dialogAddDayInMonth.count--
@@ -2194,6 +2272,7 @@ export default defineComponent({
     },
     confirmAddTimeForDayInMonth() {
       this.dialogAddServices.selectedEventOption.weeks[this.dialogAddDayInMonth.index].value.times.initial = this.dialogInsertTimeInMonth.initial
+      this.dialogAddTimeForDay.initial = null
       this.dialogInsertTimeInMonth.open = false
     },
     addTimeForDayInMonth() {
@@ -2214,9 +2293,6 @@ export default defineComponent({
         this.dialogAddServices.selectedEventOption.weeks[this.dialogAddServices.selectedDay].value[this.dialogAddServices.selectedValue].time = this.dialogAddTimeForDay.initial;
       }
       this.dialogAddTimeForDay.open = false
-    },
-    clearTimeForDayDialog() {
-      this.dialogAddTimeFor
     },
     addTimeForDay(iDay, iValue) {
       this.dialogAddServices.selectedDay = iDay
@@ -2586,8 +2662,9 @@ export default defineComponent({
     //   this.dialogAddServices.action = 'add'
     //   this.dialogAddServices.data = null
     // },
-    clkAddServicesPerWeek() {
+    clkAddServicesPerWeek(fieldIndex) {
       this.dialogAddServices.open = true
+      this.dialogAddServices.fieldIndex = fieldIndex
     },
     clearSecretarydialog() {
       this.dialogAddSecretary.open = false

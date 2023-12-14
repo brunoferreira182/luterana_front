@@ -10,47 +10,51 @@
         Dados sobre os cultos:
       </div>
     </q-item-label>
-    <q-item
-      class="no-margin"
+    
+    <div
       v-for="(value, iValue) in props.data"
       :key="'multField' + iValue"
     >
-      <q-item-section>
-        <q-item-label>
-          <strong>Frequência:</strong>
-          {{ value.frequency }}
-        </q-item-label>
-        <q-item-label>
-          <strong>
-            Dia: 
-          </strong>
-          {{value.days}}
-        </q-item-label>
-        <q-item-label>
-          <strong>Horário:</strong>  {{ value.time }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section side v-if="props.user !== 'true'">
-        <q-item-label>
-        <q-btn
-          icon="edit"
-          flat
-          round
-          color="primary"
-          @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
-          :disable="disableButtons"
-        />
-        <q-btn
-          icon="delete"
-          flat
-          round
-          color="red"
-          @click="remove(fieldIndex, tabsIndex, props.data, value, iValue)"
-          :disable="disableButtons"
-        />
-        </q-item-label>
-      </q-item-section>
+      <q-item
+        class="no-margin"
+      >
+        <q-item-section>
+          <q-item-label>
+            <strong>Frequência:</strong>
+            {{ value.frequency }}
+          </q-item-label>
+          <q-item-label>
+            <strong>
+              Dia: 
+            </strong>
+            {{value.days}}
+          </q-item-label>
+          <q-item-label>
+            <strong>Horário:</strong>  {{ value.time }}
+          </q-item-label>
+        </q-item-section>
+        <q-item-section side v-if="props.user !== 'true'">
+          <q-item-label>
+          <q-btn
+            icon="edit"
+            flat
+            round
+            color="primary"
+            @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
+            :disable="disableButtons"
+          />
+          <q-btn
+            icon="delete"
+            flat
+            round
+            color="red"
+            @click="remove(fieldIndex, tabsIndex, props.data, value, iValue)"
+            :disable="disableButtons"
+          />
+          </q-item-label>
+        </q-item-section>
     </q-item>
+    </div>
   </q-card>
 </template>
 
