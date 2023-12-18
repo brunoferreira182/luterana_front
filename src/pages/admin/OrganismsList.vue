@@ -166,8 +166,13 @@ export default defineComponent({
       return this.selectedChips.includes(index);
     },
     clkOpenOrganismDetail(e, r) {
+      console.log(r)
       const organismId = r.organismId;
-      this.$router.push("/admin/organismDetail?organismId=" + organismId);
+      if (r.organismConfigName === 'Distrito') {
+        this.$router.push("/admin/districtDetail?organismId=" + organismId)
+      } else {
+        this.$router.push("/admin/organismDetail?organismId=" + organismId);
+      }
     },
     nextPage(e) {
       this.pagination.page = e.pagination.page;

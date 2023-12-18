@@ -74,6 +74,10 @@ const routes = [
         path: "/admin/createNewAttach",
         component: () => import("src/pages/admin/CreateNewAttach.vue"),
       },
+      {
+        path: "/admin/districtDetail",
+        component: () => import("src/pages/admin/DistrictDetail.vue"),
+      },
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },
@@ -278,6 +282,10 @@ const routes = [
       {
         path: "/user/userSugestionsList",
         component: () => import("src/pages/user/UserSugestionsList.vue"),
+      },
+      {
+        path: "/user/statistic",
+        component: () => import("src/pages/user/Statistic.vue"),
       },
       // {
       //   path: "/user/createNewSugestion",

@@ -227,6 +227,11 @@ const useUtils = {
           route: "/user/userSugestionsList",
           icon: "assistant",
         },
+        {
+          label: "Estatística",
+          route: "/user/statistic",
+          icon: "equalizer",
+        },
         // {
         //   label: "Falar com admin",
         //   route: "/user/talkToAdmin",

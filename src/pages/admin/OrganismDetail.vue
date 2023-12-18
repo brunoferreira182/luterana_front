@@ -1901,6 +1901,7 @@
     :orgFunc="dialogShowOtherDetail.orgFunc"
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
+    @goToDetail="goToDetail"
   />
   <DialogAddPastoralStatus
     :pastoralStatusTypes="pastoralStatusTypes"
@@ -2200,15 +2201,16 @@ export default defineComponent({
     }
   },
   methods: {
-    resetDays() {
+      goToDetail() {
+        this.$router.push('/admin/organismDetail?organismId=' + this.dialogShowOtherDetail.orgId )
+      },
+      resetDays() {
       this.dialogAddDayInMonth.count = 0
       if (this.dialogAddServices.selectedEventOption.model === 'week') {
-        console.log('entrou na semana')
         this.dialogAddServices.selectedEventOption.days.forEach((d) => {
           d.value = null
         })
       } else if (this.dialogAddServices.selectedEventOption.model === 'month') {
-        console.log('entrou no mes')
         this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
           w.value = []
         })
@@ -2305,7 +2307,6 @@ export default defineComponent({
     },
     confirmAddTimeForDay() {
       if (this.dialogAddServices.selectedEventOption.days) {
-        this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.id = this.dialogAddServices.selectedDay
         this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.times.initial = this.dialogAddTimeForDay.initial;
       } else if (this.dialogAddServices.selectedEventOption.weeks) {
         this.dialogAddServices.selectedEventOption.weeks[this.dialogAddServices.selectedDay].value[this.dialogAddServices.selectedValue].time = this.dialogAddTimeForDay.initial;
