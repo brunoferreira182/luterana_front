@@ -287,6 +287,10 @@ const routes = [
         path: "/user/statistic",
         component: () => import("src/pages/user/Statistic.vue"),
       },
+      {
+        path: "/user/introductionStatistic",
+        component: () => import("src/pages/user/IntroductionStatistic.vue"),
+      },
       // {
       //   path: "/user/createNewSugestion",
       //   component: () => import("src/pages/user/CreateNewSugestion.vue"),

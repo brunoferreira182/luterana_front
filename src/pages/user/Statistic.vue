@@ -8,7 +8,7 @@
           </div>
           <q-tabs class="bg-primary text-white shadow-2" v-model="tab">
             <q-tab name="Dados iniciais" icon="diversity_2" label="Dados iniciais"/>
-            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais"/>
+            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais" :disable="isUser"/>
             <q-tab name="Atividades" icon="description" label="Atividades"/>
           </q-tabs>
         </div>
@@ -71,12 +71,65 @@
 </template>
 
 <script>
+import useFetch from "src/boot/useFetch";
+import utils from "../../boot/utils";
 import { defineComponent } from "vue";
 export default defineComponent({
   name:"Statistics",
   data() {
     return {
-      tab: null
+      tab: 'Dados iniciais',
+      userData: null,
+      filter: '',
+      pagination: {
+        page: 1,
+        rowsPerPage: 10
+      },
+      isUser: true
+    }
+  },
+  beforeMount() {
+    this.getUserData()
+    this.getPastorDataTabs()
+    this.verifyIfIsPastor()
+  },
+  methods: {
+    getUserData() {
+      const opt = {
+        route: "/desktop/commonUsers/getMyOrganisms",
+        body: {
+          searchString: this.filter,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          isActive: 1
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        this.userData = r.data.list
+      })
+    },
+    verifyIfIsPastor() {
+      const userInfo = utils.presentUserInfo()
+      if (userInfo.userType === 'pastor') {
+        this.isUser = false
+        this.getPastorDataTabs()
+      } else {
+        this.isUser = true
+      }
+    },
+    getPastorDataTabs() {
+      const opt = {
+        route: '/desktop/users/getPastorStatisticsData'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          console.log(r.data)
+        }
+      })
     }
   }
 })
