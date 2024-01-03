@@ -60,7 +60,7 @@
                   <q-item 
                     class="bg-grey-2"
                     style="border-radius: 1rem;"
-                    v-for="social in data.value"
+                    v-for="(social, iSocial) in data.value"
                     :key="social"
                   >
                     <q-item-section>
@@ -72,8 +72,27 @@
                         Tipo: {{ social.type }}
                       </q-item-label>
                     </q-item-section>
+                    <q-item-sectin side>
+                      <q-btn
+                        icon="edit"
+                        color="primary"
+                        flat
+                        rounded
+                        @click="editSocialNetwork(social, iSocial)"
+                      />
+                    </q-item-sectin>
                   </q-item>
                 </div>
+                <q-btn
+                  label="Rede social"
+                  icon="add"
+                  color="primary"
+                  flat
+                  rounded
+                  @click="clkAddNewSocialNetwork"
+                >
+                  <q-tooltip>Adicionar rede social</q-tooltip>
+                </q-btn>
               </div>
               <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg">
                 <div class="q-mx-sm">
@@ -86,11 +105,20 @@
                   >
                     <q-item-section>
                       <q-item-label>
-                        Nome: {{ data.partner.name }}
+                        Nome: {{ data.partner.userName }}
                       </q-item-label>
                       <q-item-label>
                         Data inicial: {{ data.partner.dates.initialDate }}
                       </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        icon="edit"
+                        color="primary"
+                        flat
+                        rounded
+                        @click="editMaritalStatus(data)"
+                      />
                     </q-item-section>
                   </q-item>
                 </div>
@@ -123,6 +151,16 @@
                     </q-item-section>
                   </q-item>
                 </div>
+                <q-btn
+                  label="Filho"
+                  icon="add"
+                  color="primary"
+                  flat
+                  rounded
+                >
+                  <q-tooltip>Adicionar Filho</q-tooltip>
+                </q-btn>
+                  
               </div>
             </div>
           </q-tab-panel>
@@ -175,6 +213,118 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogEditMaritalStatus.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div class="text-h6 q-pa-sm">
+              Alterar relação?
+            </div>
+            <q-select
+              class="q-pa-sm"
+              v-model="dialogEditMaritalStatus.status.userName"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <div class="q-pa-sm text-h6">
+              Datas:
+            </div>
+            <q-input
+              v-model="dialogEditMaritalStatus.status.dates.initialDate"
+              outlined
+              class="q-pa-sm"
+              label="Data inicial"
+            />
+            <q-input
+              v-model="dialogEditMaritalStatus.status.dates.finalDate"
+              outlined
+              class="q-pa-sm"
+              label="Data final"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Depois"
+              color="primary"
+              flat
+              unelevated
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              @click="confirmEditMaritalRelation"
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogEditSocialNetwork.open"
+      >
+        <q-card style="width: 300px;">
+          <q-card-section>
+            <q-select 
+              v-model="dialogEditSocialNetwork.socialType"
+              :options="socialNetworkTypes"
+              label="Qual a rede social?"
+              @update:model-value="verifySocialNetwork"
+              hint="Selecione a rede"
+            />
+          </q-card-section>
+          <q-card-section v-if="dialogEditSocialNetwork.socialType !== 'Site pessoal'">
+            <q-input 
+              v-model="dialogEditSocialNetwork.social.name"
+              label="Nome de perfil"
+              hint="Seu nome de perfil na rede social"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input 
+              v-model="dialogEditSocialNetwork.social.name"
+              label="Link da página"
+              :prefix="prefix"
+            >
+
+            </q-input>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              color="primary"
+              flat
+              unelevated
+              rounded
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              rounded
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddNewSocialNetwork.open"
+      >
+        <q-card style="width: 500px;">
+          Olá Marilene
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -201,7 +351,23 @@ export default defineComponent({
         iChild: null,
         newChild: null
       },
-      usersOptions: null
+      usersOptions: null,
+      dialogEditMaritalStatus: {
+        open: false,
+        status: null,
+      },
+      dialogEditSocialNetwork: {
+        open: false,
+        socialType: null,
+        social: null,
+        index: null
+      },
+      socialNetworkTypes: ['Instagram', 'Facebook', 'Youtube', 'Site pessoal'],
+      profileTypeOptions: ['Pessoal', 'Profissional'],
+      prefix: null,
+      dialogAddNewSocialNetwork: {
+        open: false
+      }
     }
   },
   beforeMount() {
@@ -210,6 +376,42 @@ export default defineComponent({
     this.verifyIfIsPastor()
   },
   methods: {
+    clkAddNewSocialNetwork() {
+      this.dialogAddNewSocialNetwork.open = true
+    },
+    verifySocialNetwork() {
+      if (this.dialogEditSocialNetwork.socialType === 'Instagram') {
+        this.prefix = 'https://www.instagram.com/'
+      } else if (this.dialogEditSocialNetwork.socialType === 'Facebook') {
+        this.prefix = 'https://www.facebook.com/'
+      } else if (this.dialogEditSocialNetwork.socialType === 'Youtube') {
+        this.prefix = 'https://youtube.com/'
+      } else if (this.dialogEditSocialNetwork.socialType === 'Site pessoal') {
+        this.prefix = null
+      } 
+    }, 
+    editSocialNetwork(social, iSocial) {
+      this.dialogEditSocialNetwork.open = true
+      this.dialogEditSocialNetwork.social = social,
+      this.dialogEditSocialNetwork.index = iSocial
+    },
+    confirmEditMaritalRelation() {
+      this.dialogEditMaritalStatus.status
+      this.pastorData.maritalRelation.partner = {
+        _id: this.dialogEditMaritalStatus.status.userName._id,
+        userName: this.dialogEditMaritalStatus.status.userName.userName,
+        dates: {
+          initialDate: this.dialogEditMaritalStatus.status.dates.initialDate,
+          finalDate: this.dialogEditMaritalStatus.status.dates.finalDate
+        }
+      },
+      this.dialogEditMaritalStatus.open = false,
+      this.dialogEditMaritalStatus.status = null
+    },
+    editMaritalStatus(data) {
+      this.dialogEditMaritalStatus.open = true,
+      this.dialogEditMaritalStatus.status = data.partner
+    },
     confirmChangeChild() {
       this.pastorData.parentalRelation.child[this.dialogEditChild.iChild] =  {
         _id: this.dialogEditChild.newChild._id,
@@ -222,6 +424,7 @@ export default defineComponent({
     openDialogEditChild(child, iChild) {
       this.dialogEditChild.open = true,
       this.dialogEditChild.child = child,
+      this.dialogEditChild.newChild = child
       this.dialogEditChild.iChild = iChild
     },
     getUsers(val, update, abort) {
