@@ -7,9 +7,9 @@
             Estatística 2023
           </div>
           <q-tabs class="bg-primary text-white shadow-2" v-model="tab">
-            <q-tab name="Dados iniciais" icon="diversity_2" label="Dados iniciais"/>
-            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais" :disable="isUser"/>
-            <q-tab name="Atividades" icon="description" label="Atividades"/>
+            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais"/>
+            <q-tab name="Dados congregacionais" icon="diversity_2" label="Dados congregacionais"/>
+            <q-tab name="Dados financeiros" icon="description" label="Dados financeiros"/>
           </q-tabs>
         </div>
       </div>
@@ -609,7 +609,7 @@ export default defineComponent({
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
-    this.verifyIfIsPastor()
+    // this.verifyIfIsPastor()
     this.getPastorDataTabs()
   },
   methods: {
