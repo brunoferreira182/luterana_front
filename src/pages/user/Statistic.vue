@@ -7,7 +7,8 @@
             Estatística 2023
           </div>
           <q-tabs 
-            class="bg-primary text-white shadow-2" 
+            class="bg-indigo-5 text-white shadow-2" 
+            style="border-radius: .5rem"
             v-model="tab"
           >
             <q-tab 
@@ -723,28 +724,28 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data.list
-        // r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
-        this.userOrganismList.forEach((item)=>{
-          item.color = this.getRandomColor()
-        })
+        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        // this.userOrganismList.forEach((item)=>{
+        //   item.color = this.getRandomColor()
+        // })
 
         this.mountTree(r.data.list)
         
       });
     },
-    getRandomColor() {
-      if (!this.assignedColors) {
-        this.assignedColors = new Set();
-      }
-      let randomIndex;
+    // getRandomColor() {
+    //   if (!this.assignedColors) {
+    //     this.assignedColors = new Set();
+    //   }
+    //   let randomIndex;
 
-      do {
-        randomIndex = Math.floor(Math.random() * this.colors.length);
-      } while (this.assignedColors.has(this.colors[randomIndex].name));
+    //   do {
+    //     randomIndex = Math.floor(Math.random() * this.colors.length);
+    //   } while (this.assignedColors.has(this.colors[randomIndex].name));
 
-      this.assignedColors.add(this.colors[randomIndex].name);
-      return this.colors[randomIndex].name;
-    },
+    //   this.assignedColors.add(this.colors[randomIndex].name);
+    //   return this.colors[randomIndex].name;
+    // },
     mountTree (list) {
       let tree = []
       list.forEach(org => {
