@@ -610,6 +610,7 @@ export default defineComponent({
     this.getUserData()
     this.getPastorDataTabs()
     this.verifyIfIsPastor()
+    this.getPastorDataTabs()
   },
   methods: {
     clkAddNewSocialNetwork() {
