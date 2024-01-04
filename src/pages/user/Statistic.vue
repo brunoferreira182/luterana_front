@@ -6,10 +6,25 @@
           <div class="text-center text-h5 q-mb-sm">
             Estatística 2023
           </div>
-          <q-tabs class="bg-primary text-white shadow-2" v-model="tab">
-            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais"/>
-            <q-tab name="Dados congregacionais" icon="diversity_2" label="Dados congregacionais"/>
-            <q-tab name="Dados financeiros" icon="description" label="Dados financeiros"/>
+          <q-tabs 
+            class="bg-primary text-white shadow-2" 
+            v-model="tab"
+          >
+            <q-tab 
+              name="Dados pastorais" 
+              icon="description" 
+              label="Dados pastorais" 
+            />
+            <q-tab 
+              name="Dados congregacionais" 
+              icon="diversity_2" 
+              label="Dados congregacionais"
+            />
+            <q-tab 
+              name="Dados financeiros" 
+              icon="description" 
+              label="Dados financeiros"
+            />
           </q-tabs>
         </div>
       </div>
