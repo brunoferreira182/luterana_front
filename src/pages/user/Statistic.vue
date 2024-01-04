@@ -30,7 +30,7 @@
       </div>
       <div>
         <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="Dados iniciais" class="q-ma-xm">
+          <q-tab-panel name="Dados congregacionais" class="q-ma-xm">
             <div class="text-h5">
               Este bloco é dedicado às congregações e paróquias.
             </div>
@@ -43,7 +43,64 @@
             <div>
               - Ao terminar a conferência, clique em 'Seguir' para prosseguir.
             </div>
-            
+            <div>
+              <q-tree
+                default-expand-all
+                :nodes="organismListTree"
+                node-key="label"
+                ref="tree"
+              >
+                <template v-slot:default-header="prop">
+                  <div class=" items-center" v-if="prop.node.header">
+                    <!-- <q-icon
+                      v-if="prop.node.type === 'Congregação'"
+                      name="church"
+                      color="blue"
+                      size="28px"
+                      class=""
+                    />
+                    <q-icon
+                      name="workspaces"
+                      color="orange"
+                      size="28px"
+                      class="q-mr-sm"
+                      v-if="prop.node.type === 'Paróquia'"
+                    /> -->
+                    <span class="text-weight-bold text-primary">{{ prop.node.label }}</span>
+                    <q-btn
+                      icon="navigate_next"
+                      round
+                      unelevated
+                      color="primary"
+                      flat
+                      v-on:click.stop="clkParent(prop.node.organismId)"
+                    >
+                      <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
+                    </q-btn>
+                  </div>
+                  <div class="items-center" v-else>
+                    <q-icon
+                      v-if="prop.node.type === 'Congregação'"
+                      name="church"
+                      color="blue"
+                      size="20px"
+                      class="q-mr-sm"
+                    />
+                    <q-icon
+                      v-if="prop.node.type === 'Paróquia'"
+                      name="workspaces"
+                      color="blue"
+                      size="20px"
+                      class="q-mr-sm"
+                    />
+                    <span
+                      class="cursor-pointer"
+                      @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
+                    >{{ prop.node.label }}</span>
+                  </div>
+                </template>
+              </q-tree>
+            </div>
           </q-tab-panel>
 
           <q-tab-panel name="Dados pastorais">
@@ -576,6 +633,7 @@ export default defineComponent({
       tab: 'Dados pastorais',
       pastorData: null,
       filter: '',
+      userOrganismList: [],
       pagination: {
         page: 1,
         rowsPerPage: 10
@@ -618,16 +676,97 @@ export default defineComponent({
           initialDate: '',
           finalDate: ''
         }
-      }
+      },
+      organismListTree: [],
+      colors:[
+        { name: 'red-8' },
+        { name: 'pink-8' },
+        { name: 'purple-8' },
+        { name: 'deep-purple-8' },
+        { name: 'indigo-8' },
+        { name: 'blue-8' },
+        { name: 'light-blue-8' },
+        { name: 'cyan-8' },
+        { name: 'teal-8' },
+        { name: 'green-8' },
+        { name: 'light-green-8' },
+        { name: 'lime-8' },
+        { name: 'yellow-8' },
+        { name: 'amber-8' },
+        { name: 'orange-8' },
+        { name: 'deep-orange-8' },
+        { name: 'brown-8' },
+        { name: 'grey-8' },
+        { name: 'blue-grey-8' }
+      ],
     }
   },
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
+    this.getMyOrganismsWithAllData()
     // this.verifyIfIsPastor()
     this.getPastorDataTabs()
   },
   methods: {
+    getMyOrganismsWithAllData() {
+      const opt = {
+        route: "/desktop/commonUsers/getMyOrganismsWithAllData",
+        body: {
+          searchString: this.filter,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          isActive: 1
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        this.userOrganismList = r.data.list
+        // r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        this.userOrganismList.forEach((item)=>{
+          item.color = this.getRandomColor()
+        })
+
+        this.mountTree(r.data.list)
+        
+      });
+    },
+    getRandomColor() {
+      if (!this.assignedColors) {
+        this.assignedColors = new Set();
+      }
+      let randomIndex;
+
+      do {
+        randomIndex = Math.floor(Math.random() * this.colors.length);
+      } while (this.assignedColors.has(this.colors[randomIndex].name));
+
+      this.assignedColors.add(this.colors[randomIndex].name);
+      return this.colors[randomIndex].name;
+    },
+    mountTree (list) {
+      let tree = []
+      list.forEach(org => {
+        tree = {
+          type: org.organismParentLocal,
+          label: org.organismParentLocal + ' ' + org.organismParentName,
+          header: 'generic',
+          organismId: org.organismParentId,
+          children: []
+        }
+        org.childrenData.forEach(child => {
+          tree.children.push({
+            type: child.organismChildConfig,
+            label: child.organismChildConfig + ' ' + child.organismChildName,
+            body: 'normal',
+            organismId: child.organismChildId
+          })
+        })
+        this.organismListTree.push(tree)
+        this.$refs.tree.expandAll()
+      })
+    },
     clkAddNewSocialNetwork() {
       this.dialogAddNewSocialNetwork.open = true
     },

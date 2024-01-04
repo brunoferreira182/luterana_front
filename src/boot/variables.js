@@ -1,5 +1,5 @@
 //////////// VARIAVEIS DA APLICACAO //////
-const MODE_MASTER_SERVER = "leo";
+const MODE_MASTER_SERVER = "bruno";
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 17
