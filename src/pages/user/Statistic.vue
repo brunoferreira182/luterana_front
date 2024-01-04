@@ -8,7 +8,11 @@
           </div>
           <q-tabs class="bg-primary text-white shadow-2" v-model="tab">
             <q-tab name="Dados iniciais" icon="diversity_2" label="Dados iniciais"/>
-            <q-tab name="Dados pastorais" icon="description" label="Dados pastorais" :disable="isUser"/>
+            <q-tab 
+              name="Dados pastorais" 
+              icon="description" 
+              label="Dados pastorais" 
+            />
             <q-tab name="Atividades" icon="description" label="Atividades"/>
           </q-tabs>
         </div>
