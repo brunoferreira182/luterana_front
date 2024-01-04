@@ -1,8 +1,8 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col text-capitalize"> 
+      <div class="q-pa-md">
+        <div class="text-capitalize"> 
           <div class="text-center text-h5 q-mb-sm">
             Estatística 2023
           </div>
@@ -32,7 +32,7 @@
       <div>
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="Dados congregacionais" class="q-ma-xm">
-            <div class="text-h5">
+            <div class="text-h5 ">
               Este bloco é dedicado às congregações e paróquias.
             </div>
             <div>
@@ -105,7 +105,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="Dados pastorais">
-            <div class="text-h5">Revise seus dados e altere-os se necessário</div>
+            <div class="text-h5 q-px-md">Revise seus dados e altere-os se necessário</div>
             <div
               v-for="data in pastorData"
               :key="data"
