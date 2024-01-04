@@ -613,7 +613,7 @@ export default defineComponent({
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
-    this.verifyIfIsPastor()
+    // this.verifyIfIsPastor()
     this.getPastorDataTabs()
   },
   methods: {
