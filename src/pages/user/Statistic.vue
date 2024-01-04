@@ -385,7 +385,6 @@
               v-model="dialogAddNewSocialNetwork.socialType"
               label="Qual a rede social?"
               outlined
-              @update:model-value="verifyNewSocialNetwork"
               hint="Selecione a rede"
             />
           </q-card-section>
@@ -613,6 +612,9 @@ export default defineComponent({
     this.verifyIfIsPastor()
   },
   methods: {
+    clkAddNewSocialNetwork() {
+      this.dialogAddNewSocialNetwork.open = true
+    },
     confirmChangeSocialNetwork() {
       this.dialogEditSocialNetwork.open = false
     },

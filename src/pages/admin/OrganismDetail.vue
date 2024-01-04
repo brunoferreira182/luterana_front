@@ -621,7 +621,7 @@
                     flat
                     color="primary"
                     icon="add"
-                    @click="clkAddServicesPerWeek(fieldIndex)"
+                    @click="clkAddServices(fieldIndex)"
                     class="q-mt-xs"
                   />
                   <CardServices
@@ -2681,7 +2681,7 @@ export default defineComponent({
     //   this.dialogAddServices.action = 'add'
     //   this.dialogAddServices.data = null
     // },
-    clkAddServicesPerWeek(fieldIndex) {
+    clkAddServices(fieldIndex) {
       this.dialogAddServices.open = true
       this.dialogAddServices.fieldIndex = fieldIndex
     },
