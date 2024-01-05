@@ -43,188 +43,240 @@
             <div>
               - Ao terminar a conferência, clique em 'Seguir' para prosseguir.
             </div>
-            
           </q-tab-panel>
 
           <q-tab-panel name="Dados pastorais">
-            <div class="text-h5">Revise seus dados e altere-os se necessário</div>
-            <div
-              v-for="data in pastorData"
-              :key="data"
-            >
-              <q-input 
-                v-if="data.label 
-                  && data.label !== 'Redes sociais'
-                  && data.label !== 'Relação conjugal' 
-                  && data.label !== 'Relação familiar'
-                  && data.label !== 'Filhos'"
-                outlined
-                class="q-pa-sm q-mx-md"
-                :label="data.label"
-                v-model="data.value"
+            <div>
+              <div class="text-h5">1° - Dados pessoais</div>
+              <div
+                v-for="data in pastorData"
+                :key="data"
               >
-              </q-input>
-              <div 
-                v-if="data.label === 'Redes sociais'"
-                class="q-mx-lg"
-              >
-                <div class="q-mx-sm">
-                  <div class="text-h6">
-                    {{data.label}}
+                <q-input 
+                  v-if="data.label 
+                    && data.label !== 'Redes sociais'
+                    && data.label !== 'Relação conjugal' 
+                    && data.label !== 'Relação familiar'
+                    && data.label !== 'Filhos'"
+                  outlined
+                  class="q-pa-sm q-mx-md"
+                  :label="data.label"
+                  v-model="data.value"
+                >
+                </q-input>
+                <div 
+                  v-if="data.label === 'Redes sociais'"
+                  class="q-mx-lg"
+                >
+                  <div class="q-mx-sm">
+                    <div class="text-h6">
+                      {{data.label}}
+                    </div>
+                    <q-item 
+                      class="bg-grey-2 q-my-md"
+                      style="border-radius: 1rem;"
+                      v-for="(social, iSocial) in data.value"
+                      :key="social"
+                    >
+                      <q-item-section>
+                        {{ social.selectedSocialType }}
+                        <q-item-label>
+                          Nome: {{ social.name }}
+                        </q-item-label>
+                        <q-item-label>
+                          Tipo: {{ social.type }}
+                        </q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-item-label>
+                          <q-btn
+                            icon="edit"
+                            color="primary"
+                            flat
+                            rounded
+                            @click="editSocialNetwork(social, iSocial)"
+                          />
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            flat
+                            rounded
+                            @click="removeSocialNetwork(iSocial)"
+                          >
+                            <q-tooltip>Remover rede social</q-tooltip>
+                          </q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
                   </div>
+                  <q-btn
+                    label="Rede social"
+                    icon="add"
+                    color="primary"
+                    flat
+                    rounded
+                    @click="clkAddNewSocialNetwork"
+                  >
+                    <q-tooltip>Adicionar rede social</q-tooltip>
+                  </q-btn>
+                </div>
+                <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg">
+                  <div class="q-mx-sm">
+                    <div class="text-h6">
+                      {{ data.label }}
+                    </div>
+                    <q-item
+                      v-if="data.partner"
+                      class="bg-grey-2"
+                      style="border-radius: 1rem;"
+                    >
+                      <q-item-section>
+                        <q-item-label>
+                          Nome: {{ data.partner.userName }}
+                        </q-item-label>
+                        <q-item-label>
+                          Data inicial: {{ data.partner.dates.initialDate }}
+                        </q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-item-label>
+                          <q-btn
+                            icon="edit"
+                            color="primary"
+                            flat
+                            rounded
+                            @click="editMaritalStatus(data)"
+                          >
+                            <q-tooltip>Alterar relação conjugal</q-tooltip>
+                          </q-btn>
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            rounded
+                            flat
+                            @click="removeMaritalRelation"
+                          >
+                            <q-tooltip>Remover relação conjugal</q-tooltip>
+                          </q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                  <q-btn
+                    v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner._id"
+                    color="primary"
+                    flat
+                    rounded
+                    icon="add"
+                    label="Adicionar relação"
+                    @click="addMaritalRelation"
+                  >
+                    <q-tooltip>Adicionar sua relação conjugal</q-tooltip>
+                  </q-btn>
+                </div>
+                <div v-if="data.label === 'Filhos'" class="q-mx-lg q-mt-md">
+                  <div class="q-mx-sm">
+                    <div class="text-h6">
+                      {{ data.label }}
+                    </div>
+                    <q-item
+                      class="bg-grey-2 q-my-sm"
+                      style="border-radius: 1rem;"
+                      v-for="(child, iChild) in data.child"
+                      :key="child"
+                    >
+                      <q-item-section >
+                        {{ child.userName }}
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-item-label>
+                          <q-btn
+                            icon="edit"
+                            color="primary"
+                            rounded
+                            unelevated
+                            flat
+                            @click="openDialogEditChild(child, iChild)"
+                          >
+                            <q-tooltip>Alterar filho</q-tooltip>
+                          </q-btn>
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            rounded
+                            unelevated
+                            flat
+                            @click="removeChild(iChild)"
+                          >
+                            <q-tooltip>Remover filho</q-tooltip>
+                          </q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                  <q-btn
+                    label="Filho"
+                    icon="add"
+                    color="primary"
+                    flat
+                    rounded
+                    @click="clkAddNewChild"
+                  >
+                    <q-tooltip>Adicionar Filho</q-tooltip>
+                  </q-btn>
+                    
+                </div>
+              </div>
+              <q-separator class="q-ma-sm q-my-md"/>
+            </div>
+            <div>
+              <div class="text-h5">2° - Vida pastoral</div>
+              <div>
+                <div class="text-h6 q-pa-sm q-pl-lg q-ml-sm">Formações</div>
+                <q-list>
+                  <q-item
+                    style="border-radius: 1rem;"
+                    class="q-pa-sm q-ma-sm bg-grey-2"
+                    v-for="formation in pastorFormations"
+                    :key="formation"
+                  >
+                    <q-item-section class="q-pa-sm">
+                      <q-item-label lines="1">
+                        {{ formation.formation.course }} - {{ formation.formation.conclusionYear }}
+                      </q-item-label>
+                      <q-item-label lines="2">
+                        {{ formation.formation.level }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <q-separator class="q-ma-sm"/>
+              </div>
+              <div>
+                <div class="text-h6 q-pa-sm q-pl-lg q-ml-sm">Histórico de vínculos</div>
+                <q-list>
                   <q-item 
-                    class="bg-grey-2 q-my-md"
                     style="border-radius: 1rem;"
-                    v-for="(social, iSocial) in data.value"
-                    :key="social"
+                    class="q-pa-sm q-ma-sm bg-grey-2"
+                    v-for="link in pastorLink"
+                    :key="link"
                   >
-                    <q-item-section>
-                      {{ social.selectedSocialType }}
-                      <q-item-label>
-                        Nome: {{ social.name }}
+                    <q-item-section class="q-pa-sm">
+                      <q-item-label lines="1">
+                        {{ link.linkData.label }} - {{ link.organismData.name }}
                       </q-item-label>
-                      <q-item-label>
-                        Tipo: {{ social.type }}
+                      <q-item-label lines="2">
+                        {{ link.organismData.city }}/{{ link.organismData.state }}
                       </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>
-                        <q-btn
-                          icon="edit"
-                          color="primary"
-                          flat
-                          rounded
-                          @click="editSocialNetwork(social, iSocial)"
-                        />
-                        <q-btn
-                          icon="delete"
-                          color="red"
-                          flat
-                          rounded
-                          @click="removeSocialNetwork(iSocial)"
-                        >
-                          <q-tooltip>Remover rede social</q-tooltip>
-                        </q-btn>
+                      <q-item-label lines="3">
+                        Data inínio: {{ link.linkData.dates.initialDate }}
+                      </q-item-label>
+                      <q-item-label lines="4">
+                        Data fim: {{ link.linkData.dates.finalDate }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
-                </div>
-                <q-btn
-                  label="Rede social"
-                  icon="add"
-                  color="primary"
-                  flat
-                  rounded
-                  @click="clkAddNewSocialNetwork"
-                >
-                  <q-tooltip>Adicionar rede social</q-tooltip>
-                </q-btn>
-              </div>
-              <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg">
-                <div class="q-mx-sm">
-                  <div class="text-h6">
-                    {{ data.label }}
-                  </div>
-                  <q-item
-                    v-if="data.partner"
-                    class="bg-grey-2"
-                    style="border-radius: 1rem;"
-                  >
-                    <q-item-section>
-                      <q-item-label>
-                        Nome: {{ data.partner.userName }}
-                      </q-item-label>
-                      <q-item-label>
-                        Data inicial: {{ data.partner.dates.initialDate }}
-                      </q-item-label>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>
-                        <q-btn
-                          icon="edit"
-                          color="primary"
-                          flat
-                          rounded
-                          @click="editMaritalStatus(data)"
-                        >
-                          <q-tooltip>Alterar relação conjugal</q-tooltip>
-                        </q-btn>
-                        <q-btn
-                          icon="delete"
-                          color="red"
-                          rounded
-                          flat
-                          @click="removeMaritalRelation"
-                        >
-                          <q-tooltip>Remover relação conjugal</q-tooltip>
-                        </q-btn>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </div>
-                <q-btn
-                  v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner._id"
-                  color="primary"
-                  flat
-                  rounded
-                  icon="add"
-                  label="Adicionar relação"
-                  @click="addMaritalRelation"
-                >
-                  <q-tooltip>Adicionar sua relação conjugal</q-tooltip>
-                </q-btn>
-              </div>
-              <div v-if="data.label === 'Filhos'" class="q-mx-lg q-mt-md">
-                <div class="q-mx-sm">
-                  <div class="text-h6">
-                    {{ data.label }}
-                  </div>
-                  <q-item
-                    class="bg-grey-2 q-my-sm"
-                    style="border-radius: 1rem;"
-                    v-for="(child, iChild) in data.child"
-                    :key="child"
-                  >
-                    <q-item-section >
-                      {{ child.userName }}
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-item-label>
-                        <q-btn
-                          icon="edit"
-                          color="primary"
-                          rounded
-                          unelevated
-                          flat
-                          @click="openDialogEditChild(child, iChild)"
-                        >
-                          <q-tooltip>Alterar filho</q-tooltip>
-                        </q-btn>
-                        <q-btn
-                          icon="delete"
-                          color="red"
-                          rounded
-                          unelevated
-                          flat
-                          @click="removeChild(iChild)"
-                        >
-                          <q-tooltip>Remover filho</q-tooltip>
-                        </q-btn>
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </div>
-                <q-btn
-                  label="Filho"
-                  icon="add"
-                  color="primary"
-                  flat
-                  rounded
-                  @click="clkAddNewChild"
-                >
-                  <q-tooltip>Adicionar Filho</q-tooltip>
-                </q-btn>
-                  
+                </q-list>
               </div>
             </div>
           </q-tab-panel>
@@ -618,16 +670,37 @@ export default defineComponent({
           initialDate: '',
           finalDate: ''
         }
-      }
+      },
+      pastorLink: null,
+      pastorFormations: null
     }
   },
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
     // this.verifyIfIsPastor()
+    this.getPastorFormations()
     this.getPastorDataTabs()
+    this.getPastorLinks()
   },
   methods: {
+    getPastorFormations() {
+      const opt = {
+        route: '/desktop/users/getPastorFormationStatistic'
+      }
+      useFetch(opt).then((r) => {
+        this.pastorFormations = r.data
+      })
+    },
+    getPastorLinks() {
+      const opt = {
+        route: '/desktop/users/getPastoralLink'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.pastorLink = r.data
+      })
+    },
     clkAddNewSocialNetwork() {
       this.dialogAddNewSocialNetwork.open = true
     },
@@ -686,6 +759,9 @@ export default defineComponent({
       this.dialogAddNewSocialNetwork.type = ''
     },
     confirmAddNewSocialNetwork() {
+      if (!this.pastorData.social.value) {
+        this.pastorData.social.value = []
+      }
       this.pastorData.social.value.push({
         name: this.dialogAddNewSocialNetwork.name,
         selectedSocialType: this.dialogAddNewSocialNetwork.socialType,
