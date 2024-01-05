@@ -737,7 +737,7 @@ export default defineComponent({
           finalDate: ''
         }
       },
-      organismListTree: [],,
+      organismListTree: [],
       pastorLink: null,
       pastorFormations: null
     }
