@@ -49,6 +49,9 @@
         <q-btn
           color="primary"
           unelevated
+          rounded
+          no-caps
+          style="width: 20%; font-size: large;"
           label="Prosseguir"
           @click="goToStatistics"
         />
