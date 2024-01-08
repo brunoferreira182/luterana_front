@@ -34,6 +34,11 @@
           <q-tab-panel name="Dados pastorais">
             <div>
               <div class="text-h5 q-px-md">1° - Dados pessoais</div>
+              <div 
+                class="text-h6 q-px-md"
+              >
+                Nesta seção revise cuidadosamente seus dados, se não tiver uma rede social pessoal, como o Instagram, deixe o campo em branco não insira o da congregação. 
+              </div>
               <div
                 v-for="data in pastorData"
                 :key="data"
@@ -217,6 +222,9 @@
             </div>
             <div>
               <div class="text-h5">2° - Vida pastoral</div>
+              <div class="text-h6 q-mb-sm">
+                Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
+              </div>
               <div>
                 <div class="text-h6 q-pa-sm q-pl-lg q-ml-sm">Formações</div>
                 <q-list>
@@ -745,7 +753,7 @@ export default defineComponent({
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
-    this.getMyOrganismsWithAllData()
+    // this.getMyOrganismsWithAllData()
     // this.verifyIfIsPastor()
     this.getPastorFormations()
     this.getPastorDataTabs()
@@ -806,7 +814,7 @@ export default defineComponent({
     },
     getPastorLinks() {
       const opt = {
-        route: '/desktop/users/getPastoralLink'
+        route: '/desktop/users/getPastorLinkStatistic'
       }
       useFetch(opt).then((r) => {
         if (r.error) return
