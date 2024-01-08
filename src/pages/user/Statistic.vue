@@ -251,11 +251,24 @@
                   <div v-if="prop.node.type === 'Congregação'">
                     Data de fundação: {{ prop.node.fundationDate ? prop.node.fundationDate : 'não informado' }}
                     <div>
-                      Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado'}}
+                      Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado' }}
                     </div>
                     <div>
                       É sede: {{ prop.node.isHeadOffice ? prop.node.isHeadOffice : 'não informado' }}
                     </div>
+                  </div>
+                  <div v-if="prop.node.type === 'Paróquia'">
+                    A paróquia tem secretário(a) contratado? 
+                    <q-checkbox
+                      class="q-pt-lg"
+                      v-model="hasSecretary"
+                      label="Sim"
+                    />
+                    <q-checkbox
+                      class="q-pt-lg"
+                      v-model="hasSecretary"
+                      label="Não"
+                    />
                   </div>
                 </div>
                 <div class="items-center" v-else>
@@ -646,6 +659,7 @@ export default defineComponent({
         rowsPerPage: 10
       },
       isUser: true,
+      hasSecretary: null,
       dialogEditChild: {
         open: false,
         child: null,
