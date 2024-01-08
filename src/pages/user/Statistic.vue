@@ -23,7 +23,7 @@
             />
             <q-tab 
               name="Dados financeiros" 
-              icon="description" 
+              icon="request_quote" 
               label="Dados financeiros"
             />
           </q-tabs>
@@ -358,23 +358,81 @@
             </q-tree>
           </q-tab-panel>
 
-         
-
-          <q-tab-panel name="Atividades">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam luctus eu lectus sit amet viverra. 
-            Sed faucibus lectus sed est accumsan, id interdum metus sagittis. Nullam viverra est at arcu 
-            fringilla, eu sollicitudin nisi condimentum. Vivamus at semper urna. Phasellus ante justo, 
-            tristique nec lacus non, volutpat euismod quam. Curabitur et diam eget magna fringilla 
-            sollicitudin. Praesent vulputate turpis sed enim mollis, ut euismod urna ultricies. 
-            Sed aliquet consequat tellus, nec congue purus consectetur ut. Nullam non fringilla odio. 
-            Proin ac massa lacinia, interdum felis vitae, luctus arcu. Morbi non malesuada magna. Morbi 
-            porta erat nec fermentum auctor. Praesent ac leo mollis, placerat turpis ut, consectetur mauris. 
-            Nullam venenatis augue eget ante pellentesque, eu viverra erat aliquam.
-            Mauris aliquam sed ipsum eget ornare. Nullam ornare, mauris eu finibus efficitur, tellus felis
-            malesuada est, 
-            at egestas leo libero eget neque. Nam sit amet gravida purus. Donec tempus augue nunc, quis vehicula 
-            diam tempus eu. Quisque sit amet arcu elit. Phasellus cursus elit quis porttitor mollis. Curabitur non
-            metus est. Morbi non risus molestie, tristique purus et, ultricies eros. Sed non bibendum ipsum, non 
+          <q-tab-panel name="Dados financeiros">
+            <q-card class="q-my-lg card-finance-table">
+              <q-table
+                flat
+                class="bg-accent"
+                title="Entradas totais anuais"
+                :columns="entryValueAnual"
+                virtual-scroll
+                row-key="_id"
+                rows-per-page-label="Registros por página"
+                no-data-label="Nenhum dado inserido até o momento"
+                no-results-label="A pesquisa não retornou nenhum resultado"
+                :rows-per-page-options="[10, 20, 30, 50]"
+                :selected-rows-label="getSelectedString"
+                @row-click="clkOpenSolicitation"
+                :filter="filter"
+                :v-model:pagination="pagination"
+                @request="nextPage"
+              >
+                <template #top-right>
+                  <div class="flex row q-gutter-sm items-center text-right">
+                    <div class="col">
+                      <q-input
+                        outlined
+                        dense
+                        debounce="300"
+                        v-model="filter"
+                        placeholder="Procurar"
+                      >
+                        <template #append>
+                          <q-icon name="search" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                </template>
+              </q-table>
+            </q-card>
+            <q-card class="card-finance-table">
+              <q-table
+                flat
+                class="bg-accent"
+                title="Saídas totais anuais"
+                :columns="exitValueAnual"
+                virtual-scroll
+                row-key="_id"
+                rows-per-page-label="Registros por página"
+                no-data-label="Nenhum dado inserido até o momento"
+                no-results-label="A pesquisa não retornou nenhum resultado"
+                :rows-per-page-options="[10, 20, 30, 50]"
+                :selected-rows-label="getSelectedString"
+                @row-click="clkOpenSolicitation"
+                :filter="filter"
+                :v-model:pagination="pagination"
+                @request="nextPage"
+              >
+                <template #top-right>
+                  <div class="">
+                    <div class="col">
+                      <q-input
+                        outlined
+                        dense
+                        debounce="300"
+                        v-model="filter"
+                        placeholder="Procurar"
+                      >
+                        <template #append>
+                          <q-icon name="search" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                </template>
+              </q-table>
+            </q-card>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -700,11 +758,14 @@
 import useFetch from "src/boot/useFetch";
 import utils from "../../boot/utils";
 import { defineComponent } from "vue";
+import { useTableColumns } from "stores/tableColumns";
 export default defineComponent({
   name:"Statistics",
   data() {
     return {
       tab: 'Dados pastorais',
+      entryValueAnual: useTableColumns().entryValueAnual,
+      exitValueAnual: useTableColumns().exitValueAnual,
       pastorData: null,
       filter: '',
       pagination: {
@@ -760,6 +821,7 @@ export default defineComponent({
     this.getUserData()
     this.getPastorDataTabs()
     this.getMyOrganismsWithAllData()
+    this.getFinanceStatisticByOrganismId()
     // this.verifyIfIsPastor()
     this.getPastorFormations()
     this.getPastorDataTabs()
@@ -769,9 +831,31 @@ export default defineComponent({
     clkParent (organismParentId) {
       this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
     },
+    nextPage(e) {
+      this.pagination.page = e.pagination.page;
+      this.pagination.sortBy = e.pagination.sortBy;
+      this.pagination.rowsPerPage = e.pagination.rowsPerPage;
+      this.getFinanceStatisticByOrganismId();
+    },
+    getFinanceStatisticByOrganismId() {
+      const opt = {
+        route: "/desktop/statistics/getFinanceStatisticByOrganismId",
+        body: {
+          searchString: this.filter,
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        console.log(r, 'POKPAOSKDOPSKDPOA')
+        // r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+      });
+    },
     getMyOrganismsWithAllData() {
       const opt = {
-        route: "/desktop/commonUsers/getMyOrganismsWithAllData",
+        route: "/desktop/statistics/getMyOrganismsWithAllData",
         body: {
           searchString: this.filter,
           page: this.pagination.page,
@@ -999,6 +1083,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.card-finance-table{
+  border-radius: .5rem;
+}
 .custom-border {
   border: 1px solid #027be3;
 }

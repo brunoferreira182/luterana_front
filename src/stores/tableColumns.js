@@ -1,6 +1,94 @@
 import { defineStore } from "pinia";
 export const useTableColumns = defineStore("tableColumns", {
   state: () => ({
+    entryValueAnual: [
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Saldo anterior",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Receitas regulares",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Ofertas especiais",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Campanhas específicas (promoções)",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Auxílio (outros)",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Empréstimos",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "subsídio IELB",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Todas as outras receitas",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+    ],
+    exitValueAnual: [
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Contribuição IELB",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Contribuição para o Distrito",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Devolução de empréstimos para a IELB",
+        field: "suggestionTitle",
+        sortable: true,
+      },
+      {
+        name: "suggestionTitle",
+        align: "left",
+        label: "Todas as outras saídas",
+        field: "suggestionTitle",
+        sortable: true,
+      }
+    ],
     suggestionList: [
       {
         name: "suggestionTitle",
