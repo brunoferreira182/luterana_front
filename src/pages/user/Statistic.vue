@@ -276,6 +276,11 @@
             </div>
             <div>
               <div class="text-h5">3° - Atividades pastoral</div>
+              <div class="text-h6 q-mb-md">
+                Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
+                insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
+                bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+              </div>
               <q-item-section v-for="item in pastorActivities" :key="item">
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
@@ -775,6 +780,11 @@ export default defineComponent({
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
       ],
+      lastOrganismPastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+      ]
     }
   },
 
