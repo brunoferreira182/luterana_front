@@ -263,7 +263,7 @@
                         {{ link.organismData.city }}/{{ link.organismData.state }}
                       </q-item-label>
                       <q-item-label lines="3">
-                        Data inínio: {{ link.linkData.dates.initialDate }}
+                        Data início: {{ link.linkData.dates.initialDate }}
                       </q-item-label>
                       <q-item-label lines="4">
                         Data fim: {{ link.linkData.dates.finalDate }}
@@ -272,6 +272,24 @@
                   </q-item>
                 </q-list>
               </div>
+              <q-separator class="q-ma-sm q-my-md"/>
+            </div>
+            <div>
+              <div class="text-h5">3° - Atividades pastoral</div>
+              <q-item-section v-for="item in pastorActivities" :key="item">
+                <p class=" q-pl-lg no-margin"> {{item.title}}</p>
+                <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
+                  <q-input filled v-model="item.quantity" label="Quantidade de visitas">
+                      <template v-slot:prepend>
+                      </template>
+                  </q-input>
+                  <q-input filled v-model="item.people" label="Pessoas de pessoas ">
+                      <template v-slot:prepend>
+                      </template>
+                  </q-input>
+                </div>
+                <q-separator class="q-ma-sm q-my-md"/>
+              </q-item-section>
             </div>
           </q-tab-panel>
           <q-tab-panel name="Dados congregacionais" class="q-ma-xm">
@@ -312,11 +330,24 @@
                   <div v-if="prop.node.type === 'Congregação'">
                     Data de fundação: {{ prop.node.fundationDate ? prop.node.fundationDate : 'não informado' }}
                     <div>
-                      Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado'}}
+                      Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado' }}
                     </div>
                     <div>
                       É sede: {{ prop.node.isHeadOffice ? prop.node.isHeadOffice : 'não informado' }}
                     </div>
+                  </div>
+                  <div v-if="prop.node.type === 'Paróquia'">
+                    A paróquia tem secretário(a) contratado? 
+                    <q-checkbox
+                      class="q-pt-lg"
+                      v-model="hasSecretary"
+                      label="Sim"
+                    />
+                    <q-checkbox
+                      class="q-pt-lg"
+                      v-model="hasSecretary"
+                      label="Não"
+                    />
                   </div>
                 </div>
                 <div class="items-center" v-else>
@@ -487,16 +518,6 @@
               hint="Seu nome de perfil na rede social"
             />
           </q-card-section>
-          <!-- <q-card-section>
-            <q-input 
-              outlined
-              v-model="dialogEditSocialNetwork.social.name"
-              label="Link da página"
-              :prefix="prefix"
-            >
-
-            </q-input>
-          </q-card-section> -->
           <q-card-actions align="center">
             <q-btn
               label="Cancelar"
@@ -707,6 +728,7 @@ export default defineComponent({
         rowsPerPage: 10
       },
       isUser: true,
+      hasSecretary: null,
       dialogEditChild: {
         open: false,
         child: null,
@@ -747,14 +769,19 @@ export default defineComponent({
       },
       organismListTree: [],
       pastorLink: null,
-      pastorFormations: null
+      pastorFormations: null,
+      pastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+      ],
     }
   },
+
   beforeMount() {
     this.getUserData()
     this.getPastorDataTabs()
-    // this.getMyOrganismsWithAllData()
-    // this.verifyIfIsPastor()
+    this.getMyOrganismsWithAllData()
     this.getPastorFormations()
     this.getPastorDataTabs()
     this.getPastorLinks()
