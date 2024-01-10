@@ -37,7 +37,9 @@
               <div 
                 class="text-h6 q-px-md"
               >
-                Nesta seção revise cuidadosamente seus dados, se não tiver uma rede social pessoal, como o Instagram, deixe o campo em branco não insira o da congregação. 
+                Nesta seção revise cuidadosamente seus dados, 
+                se não tiver uma rede social pessoal, como o Instagram, 
+                deixe o campo em branco não insira o da congregação. 
               </div>
               <div
                 v-for="data in pastorData"
@@ -48,13 +50,87 @@
                     && data.label !== 'Redes sociais'
                     && data.label !== 'Relação conjugal' 
                     && data.label !== 'Relação familiar'
-                    && data.label !== 'Filhos'"
+                    && data.label !== 'Filhos'
+                    && data.label !== 'Pai'
+                    && data.label !== 'Mãe'"
                   outlined
                   class="q-pa-sm q-mx-md"
                   :label="data.label"
                   v-model="data.value"
                 >
                 </q-input>
+                <div
+                  v-if="data.label === 'Pai'"
+                  class="q-mx-lg"
+                >
+                  <div class="text-h6">
+                      {{data.label}}
+                    </div>
+                  <q-item
+                    class="bg-grey-2"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      {{data.userName}}
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                            icon="edit"
+                            color="primary"
+                            flat
+                            rounded
+                            @click="editParentName(data, iSocial)"
+                          />
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            flat
+                            rounded
+                            @click="removeSocialNetwork(iSocial)"
+                          >
+                            <q-tooltip>Remover rede social</q-tooltip>
+                          </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </div>
+                <div
+                  v-if="data.label === 'Mãe'"
+                  class="q-mx-lg"
+                >
+                  <div class="text-h6">
+                      {{data.label}}
+                    </div>
+                  <q-item
+                    class="bg-grey-2"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      {{data.userName}}
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                            icon="edit"
+                            color="primary"
+                            flat
+                            rounded
+                            @click="editSocialNetwork(social, iSocial)"
+                          />
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            flat
+                            rounded
+                            @click="removeSocialNetwork(iSocial)"
+                          >
+                            <q-tooltip>Remover rede social</q-tooltip>
+                          </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </div>
                 <div 
                   v-if="data.label === 'Redes sociais'"
                   class="q-mx-lg"
