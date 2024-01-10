@@ -281,20 +281,51 @@
                 insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
                 bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
               </div>
-              <q-item-section v-for="item in pastorActivities" :key="item">
-                <p class=" q-pl-lg no-margin"> {{item.title}}</p>
-                <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input filled v-model="item.quantity" label="Quantidade de visitas">
-                      <template v-slot:prepend>
-                      </template>
-                  </q-input>
-                  <q-input filled v-model="item.people" label="Pessoas de pessoas ">
-                      <template v-slot:prepend>
-                      </template>
-                  </q-input>
+              <div>
+                <q-item 
+                  v-for="item in pastorActivities" 
+                  :key="item"
+                >
+                  <q-item-section>
+                    <p class=" q-pl-lg no-margin"> {{item.title}}</p>
+                    <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
+                      <q-input filled v-model="item.quantity" label="Quantidade de visitas">
+                          <template v-slot:prepend>
+                          </template>
+                      </q-input>
+                      <q-input filled v-model="item.people" label="Pessoas de pessoas ">
+                          <template v-slot:prepend>
+                          </template>
+                      </q-input>
+                    </div>
+                    <q-separator class="q-ma-sm q-my-md"/>
+                  </q-item-section>
+                </q-item>
+              </div>
+              <div>
+                <div class="text-h6 q-mb-md">
+                  Caso venha de outra congregação, preencha as informações das visitas que fizeste em 2023 no local anterior:
                 </div>
-                <q-separator class="q-ma-sm q-my-md"/>
-              </q-item-section>
+                <q-item 
+                  v-for="item in lastOrganismPastorActivities" 
+                  :key="item"
+                >
+                  <q-item-section>
+                    <p class=" q-pl-lg no-margin"> {{item.title}}</p>
+                    <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
+                      <q-input filled v-model="item.quantity" label="Quantidade de visitas">
+                          <template v-slot:prepend>
+                          </template>
+                      </q-input>
+                      <q-input filled v-model="item.people" label="Pessoas de pessoas ">
+                          <template v-slot:prepend>
+                          </template>
+                      </q-input>
+                    </div>
+                    <q-separator class="q-ma-sm q-my-md"/>
+                  </q-item-section>
+                </q-item>
+              </div>
             </div>
           </q-tab-panel>
           <q-tab-panel name="Dados congregacionais" class="q-ma-xm">
