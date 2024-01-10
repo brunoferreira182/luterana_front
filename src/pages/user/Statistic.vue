@@ -42,7 +42,7 @@
                 deixe o campo em branco não insira o da congregação. 
               </div>
               <div
-                v-for="data in pastorData"
+                v-for="(data) in pastorData"
                 :key="data"
               >
                 <q-input 
@@ -57,6 +57,7 @@
                   class="q-pa-sm q-mx-md"
                   :label="data.label"
                   v-model="data.value"
+                  :mask="data.mask"
                 >
                 </q-input>
                 <div
@@ -80,7 +81,7 @@
                             color="primary"
                             flat
                             rounded
-                            @click="editParentName(data, iSocial)"
+                            @click="editParentName"
                           />
                           <q-btn
                             icon="delete"
@@ -1016,7 +1017,11 @@ export default defineComponent({
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
-      ]
+      ],
+      dialogEditParentName: {
+        open: false,
+        user: null
+      }
     }
   },
 
@@ -1031,6 +1036,13 @@ export default defineComponent({
     this.getPastorLinks()
   },
   methods: {
+    editParentName() {
+      this.dialogEditParentName.open = true,
+      this.dialogEditParentName.user = {
+        userName: this.pastorData.father.userName,
+        _id: this.pastorData.father._id
+      }
+    },
     clkParent (organismParentId) {
       this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
     },
