@@ -1415,7 +1415,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-dialog
+      <!-- <q-dialog
         v-model="dialogAddSecretary.open"
         @hide="clearSecretarydialog"
       >
@@ -1540,7 +1540,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
       <q-dialog
         @hide="clearTimeDialog"
         v-model="dialogAddTime.open"

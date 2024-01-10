@@ -393,54 +393,117 @@
             <q-card class="q-my-lg card-finance-table">
               <q-table
                 flat
+                card-class="bg-grey-3 text-black"
                 class="bg-accent"
                 title="Entradas totais anuais"
                 :columns="entryValueAnual"
+                :rows="organismsFinancesStatistics"
+                dense
                 virtual-scroll
                 row-key="_id"
                 rows-per-page-label="Registros por página"
                 no-data-label="Nenhum dado inserido até o momento"
                 no-results-label="A pesquisa não retornou nenhum resultado"
                 :rows-per-page-options="[10, 20, 30, 50]"
-                :selected-rows-label="getSelectedString"
-                @row-click="clkOpenSolicitation"
                 :filter="filter"
                 :v-model:pagination="pagination"
                 @request="nextPage"
               >
-                <template #top-right>
-                  <div class="flex row q-gutter-sm items-center text-right">
-                    <div class="col">
-                      <q-input
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="filter"
-                        placeholder="Procurar"
-                      >
-                        <template #append>
-                          <q-icon name="search" />
-                        </template>
-                      </q-input>
-                    </div>
-                  </div>
+                <template v-slot:body-cell-saldoAnterior="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.saldoAnterior" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-receitasRegulares="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.receitasRegulares" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-ofertasEspeciais="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.ofertasEspeciais" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-campanhasEspecificas="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.campanhasEspecificas" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-auxilio="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.auxilio" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-emprestimos="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.emprestimos" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-todasOutrasReceitas="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      type="number" 
+                      v-model="props.row.todasOutrasReceitas" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:bottom>
+                  <q-btn 
+                    color="primary" 
+                    label="Salvar como rascunho" 
+                    rounded
+                    no-caps
+                    @click="save" 
+                  />
                 </template>
               </q-table>
             </q-card>
             <q-card class="card-finance-table">
               <q-table
+                card-class="bg-grey-3 text-black"
                 flat
                 class="bg-accent"
                 title="Saídas totais anuais"
-                :columns="exitValueAnual"
+                :columns="outputValueAnual"
                 virtual-scroll
                 row-key="_id"
+                dense
                 rows-per-page-label="Registros por página"
                 no-data-label="Nenhum dado inserido até o momento"
                 no-results-label="A pesquisa não retornou nenhum resultado"
                 :rows-per-page-options="[10, 20, 30, 50]"
-                :selected-rows-label="getSelectedString"
-                @row-click="clkOpenSolicitation"
                 :filter="filter"
                 :v-model:pagination="pagination"
                 @request="nextPage"
@@ -786,7 +849,8 @@ export default defineComponent({
     return {
       tab: 'Dados pastorais',
       entryValueAnual: useTableColumns().entryValueAnual,
-      exitValueAnual: useTableColumns().exitValueAnual,
+      outputValueAnual: useTableColumns().outputValueAnual,
+      organismsFinancesStatistics: [],
       pastorData: null,
       filter: '',
       pagination: {
@@ -882,7 +946,8 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         console.log(r, 'POKPAOSKDOPSKDPOA')
-        // r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        this.organismsFinancesStatistics = r.data.list
+        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
       });
     },
     getMyOrganismsWithAllData() {
@@ -928,7 +993,7 @@ export default defineComponent({
     },
     getPastorFormations() {
       const opt = {
-        route: '/desktop/users/getPastorFormationStatistic'
+        route: '/desktop/statistics/getPastorFormationStatistic'
       }
       useFetch(opt).then((r) => {
         this.pastorFormations = r.data
@@ -936,7 +1001,7 @@ export default defineComponent({
     },
     getPastorLinks() {
       const opt = {
-        route: '/desktop/users/getPastorLinkStatistic'
+        route: '/desktop/statistics/getPastorLinkStatistic'
       }
       useFetch(opt).then((r) => {
         if (r.error) return
@@ -1100,7 +1165,7 @@ export default defineComponent({
     },
     getPastorDataTabs() {
       const opt = {
-        route: '/desktop/users/getPastorStatisticsData'
+        route: '/desktop/statistics/getPastorStatisticsData'
       }
       useFetch(opt).then((r) => {
         if (r.error) {
@@ -1117,6 +1182,7 @@ export default defineComponent({
 <style scoped>
 .card-finance-table{
   border-radius: .5rem;
+  
 }
 .custom-border {
   border: 1px solid #027be3;
