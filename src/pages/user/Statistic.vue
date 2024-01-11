@@ -334,7 +334,7 @@
                   <q-item
                     style="border-radius: 1rem;"
                     class="q-pa-sm q-ma-sm bg-grey-2"
-                    v-for="formation in pastorFormations"
+                    v-for="(formation, i) in pastorFormations"
                     :key="formation"
                   >
                     <q-item-section class="q-pa-sm">
@@ -345,8 +345,40 @@
                         {{ formation.formation.level }}
                       </q-item-label>
                     </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                          color="primary"
+                          flat
+                          rounded
+                          @click="editFormation(formation, i)"
+                          icon="edit"
+                        >
+                          <q-tooltip>Editar formação</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          color="red"
+                          flat
+                          @click="removeFormation(i)"
+                          rounded
+                          icon="delete"
+                        >
+                          <q-tooltip>Remover formação</q-tooltip>
+                        </q-btn>
+                      </q-item-label>
+                    </q-item-section>
                   </q-item>
                 </q-list>
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  label="Adicionar formação"
+                  flat
+                  @click="addFormation"
+                  rounded
+                >
+                  <q-tooltip>Adicionar formação</q-tooltip>
+                </q-btn>
                 <q-separator class="q-ma-sm"/>
               </div>
               <div>
@@ -355,7 +387,7 @@
                   <q-item 
                     style="border-radius: 1rem;"
                     class="q-pa-sm q-ma-sm bg-grey-2"
-                    v-for="link in pastorLink"
+                    v-for="(link, i) in pastorLink"
                     :key="link"
                   >
                     <q-item-section class="q-pa-sm">
@@ -370,6 +402,26 @@
                       </q-item-label>
                       <q-item-label lines="4">
                         Data fim: {{ link.linkData.dates.finalDate }}
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                          icon="edit"
+                          color="primary"
+                          @click="editLink(link, i)"
+                          flat
+                          rounded
+                        />
+                        <q-btn
+                          icon="delete"
+                          @click="removeLink(i)"
+                          color="red"
+                          flat
+                          rounded
+                        >
+                          <q-tooltip>Remover rede social</q-tooltip>
+                        </q-btn>
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -668,6 +720,9 @@
         v-model="dialogEditChild.open"
       >
         <q-card style="width: 400px;">
+          <q-card-section class="text-h6">
+            Alterar usuário
+          </q-card-section>
           <q-card-section>
             <q-select
               v-model="dialogEditChild.newChild"
@@ -727,6 +782,7 @@
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.initialDate"
               outlined
+              mask="##/##/####"
               class="q-pa-sm"
               label="Data inicial"
             />
@@ -734,6 +790,7 @@
               v-model="dialogEditMaritalStatus.status.dates.finalDate"
               outlined
               class="q-pa-sm"
+              mask="##/##/####"
               label="Data final"
             />
           </q-card-section>
@@ -755,7 +812,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogEditSocialNetwork.open"
-        @hide="clearDialogAddMaritalRelation"
+        @hide="clearDialogEditSocialNetwork"
       >
         <q-card style="width: 300px;">
           <q-card-section>
@@ -781,7 +838,7 @@
           <q-card-section>
             <q-select
               outlined
-              v-model="dialogEditSocialNetwork.socialType"
+              v-model="dialogEditSocialNetwork.social.type"
               label="Tipo de rede"
               hint="Tipo de perfil"
               :options="profileTypeOptions"
@@ -793,6 +850,7 @@
               label="Cancelar"
               color="primary"
               flat
+              @click="clearDialogEditSocialNetwork"
               unelevated
               rounded
             />
@@ -1076,6 +1134,144 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogEditFormation.open"
+      >
+        <q-card style="width: 400px">
+          <q-card-section>
+            <div class="text-h6">
+              Selecione o curso
+            </div>
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              v-model="dialogEditFormation.formation"
+              label="Nome do curso"
+              option-label="label"
+              :options="formationTypes"
+              @filter="getFormationTypes"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6">
+              Selecione o ano de conclusão
+            </div>
+            <q-input
+              class="q-pa-sm"
+              filled
+              mask="##/##/####"
+              label="Ano de conclusão"
+              v-model="dialogEditLink.data"
+              >
+          </q-input>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6">Selecione o tipo de graduação</div>
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              v-model="dialogEditFormation.formation"
+              label="Nome do curso"
+              option-label="label"
+              :options="formationTypes"
+              @filter="getFormationTypes"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddFormation.open"
+      >
+        <q-card
+          style="width: 400px"
+        >
+          <q-card-section class="text-h6">
+            Selecione a formação
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              class="q-pa-sm"
+              filled
+              use-input
+              v-model="dialogEditFormation.formation"
+              label="Nome do curso"
+              option-label="label"
+              :options="formationTypes"
+              @filter="getFormationTypes"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              color="primary"
+              flat
+              unelevated
+              rounded
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              @click="confirmAddFormation"
+              rounded
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogEditLink.open"
+      >
+        <q-card style="width:400px">
+          <q-select
+            class="q-pa-sm"
+            filled
+            use-input
+            v-model="dialogEditLink.data" 
+            label="Tipo de vínculo"
+            option-label="label"
+            :options="formationTypes"
+            @filter="getFormationTypes"
+            :option-value="(item) => item"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Nenhum resultado
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1095,10 +1291,6 @@ export default defineComponent({
       organismsFinancesStatistics: [],
       pastorData: null,
       filter: '',
-      pagination: {
-        page: 1,
-        rowsPerPage: 10
-      },
       isUser: true,
       hasSecretary: null,
       dialogEditChild: {
@@ -1161,6 +1353,27 @@ export default defineComponent({
         open: false,
         user: null,
         parentType: null
+      },
+      dialogEditFormation: {
+        open: false,
+        formation: null,
+        date: null,
+        formationType: null,
+        index: null
+      },
+      formationTypes: null,
+      pagination: {
+        page: 1,
+        rowsPerPage: 10,
+        searchString: ''
+      },
+      dialogAddFormation: {
+        open: false
+      },
+      dialogEditLink: {
+        open: false,
+        data: null,
+        index: null
       }
     }
   },
@@ -1174,8 +1387,65 @@ export default defineComponent({
     this.getPastorFormations()
     this.getPastorDataTabs()
     this.getPastorLinks()
+    // this.getFormationTypes()
   },
   methods: {
+    editLink(link, i) {
+      console.log('chamou')
+      this.dialogEditLink.open = true,
+      this.dialogEditLink.data = {...link}
+      this.dialogEditLink.index = i
+    },
+    removeLink(i) {
+      this.pastorLink.splice(i, 1)
+    },
+    addFormation() {
+      this.dialogAddFormation.open = true
+    },
+    removeFormation(i) {
+      this.pastorFormations.splice(i, 1)
+    },
+    getFormationTypes(val, update, abort) {
+      console.log(val, 'chamou')
+      
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres');
+        abort();
+        return;
+      }
+
+      const opt = {
+        route: '/desktop/statistics/getFormationType',
+        body: {
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: val
+        },
+      };
+
+      this.$q.loading.show();
+
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+          return;
+        }
+
+        update(() => {
+          this.formationTypes = r.data.list;
+        });
+      });
+    },
+    editFormation(formation, i) {
+      let data = {...formation}
+      this.dialogEditFormation.formation = data.formation.course
+      this.dialogEditFormation.date = data.formation.conclusionYear
+      this.dialogEditFormation.formationType = data.formation.level
+      this.dialogEditFormation.index = i
+      this.dialogEditFormation.open = true
+    },
     clearDialogAddParent() {
       this.dialogAddParent = {
         open: false,
@@ -1319,12 +1589,22 @@ export default defineComponent({
     clkAddNewSocialNetwork() {
       this.dialogAddNewSocialNetwork.open = true
     },
+    clearDialogEditSocialNetwork() {
+      this.dialogEditSocialNetwork = {
+        open: false,
+        socialType: null,
+        social: null,
+        index: null
+      }
+    },
     confirmChangeSocialNetwork() {
       this.pastorData.social.value[this.dialogEditSocialNetwork.index].name = 
       this.dialogEditSocialNetwork.social.name
       this.pastorData.social.value[this.dialogEditSocialNetwork.index].selectedSocialType = 
-      this.dialogEditSocialNetwork.social.this.dialogEditSocialNetwork.social.selectedSocialType
-
+      this.dialogEditSocialNetwork.social.selectedSocialType
+      this.pastorData.social.value[this.dialogEditSocialNetwork.index].type = 
+      this.dialogEditSocialNetwork.social.type
+      this.clearDialogEditSocialNetwork()
     },
     removeSocialNetwork(iSocial) {
       this.pastorData.social.value.splice(iSocial, 1)
@@ -1407,8 +1687,9 @@ export default defineComponent({
       this.dialogEditMaritalStatus.status = null
     },
     editMaritalStatus(data) {
-      this.dialogEditMaritalStatus.open = true,
-      this.dialogEditMaritalStatus.status = {...data}
+      this.dialogEditMaritalStatus.open = true
+      let info = {...data}
+      this.dialogEditMaritalStatus.status = info
     },
     confirmChangeChild() {
       this.pastorData.parentalRelation.child[this.dialogEditChild.iChild] =  {
