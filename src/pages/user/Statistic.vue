@@ -37,10 +37,12 @@
               <div 
                 class="text-h6 q-px-md"
               >
-                Nesta seção revise cuidadosamente seus dados, se não tiver uma rede social pessoal, como o Instagram, deixe o campo em branco não insira o da congregação. 
+                Nesta seção revise cuidadosamente seus dados, 
+                se não tiver uma rede social pessoal, como o Instagram, 
+                deixe o campo em branco não insira o da congregação. 
               </div>
               <div
-                v-for="data in pastorData"
+                v-for="(data) in pastorData"
                 :key="data"
               >
                 <q-input 
@@ -48,13 +50,114 @@
                     && data.label !== 'Redes sociais'
                     && data.label !== 'Relação conjugal' 
                     && data.label !== 'Relação familiar'
-                    && data.label !== 'Filhos'"
+                    && data.label !== 'Filhos'
+                    && data.label !== 'Pai'
+                    && data.label !== 'Mãe'"
                   outlined
                   class="q-pa-sm q-mx-md"
                   :label="data.label"
                   v-model="data.value"
+                  :mask="data.mask"
                 >
                 </q-input>
+                <div
+                  v-if="data.label === 'Pai'"
+                  class="q-mx-lg"
+                >
+                  <div class="text-h6">
+                      {{data.label}}
+                    </div>
+                  <q-item
+                    class="bg-grey-2"
+                    v-if="data.userName"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      {{data.userName}}
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                            icon="edit"
+                            color="primary"
+                            flat
+                            rounded
+                            @click="editParentName(data.label)"
+                          />
+                          <q-btn
+                            icon="delete"
+                            color="red"
+                            flat
+                            rounded
+                            @click="removeParent(data.label)"
+                          >
+                            <q-tooltip>Remover {{data.label}}</q-tooltip>
+                          </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="!data.userName">
+                    <q-btn
+                      icon="add"
+                      rounded
+                      :label="data.label"
+                      flat
+                      color="primary"
+                      @click="addParent(data.label)"
+                    >
+
+                    </q-btn>
+                  </div>
+                </div>
+                <div
+                  v-if="data.label === 'Mãe'"
+                  class="q-mx-lg"
+                >
+                  <div class="text-h6">
+                      {{data.label}}
+                    </div>
+                  <q-item
+                    v-if="data.userName"
+                    class="bg-grey-2"
+                    style="border-radius: 1rem;"
+                  >
+                    <q-item-section>
+                      {{data.userName}}
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                          icon="edit"
+                          color="primary"
+                          flat
+                          rounded
+                          @click="editParentName(data.label)"
+                        />
+                        <q-btn
+                          icon="delete"
+                          color="red"
+                          flat
+                          rounded
+                          @click="removeParent(data.label)"
+                        >
+                          <q-tooltip>Remover {{ data.label }}</q-tooltip>
+                        </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <div v-if="!data.userName">
+                    <q-btn
+                      icon="add"
+                      :label="data.label"
+                      flat
+                      rounded
+                      @click="addParent(data.label)"
+                      color="primary"
+                    >
+
+                    </q-btn>
+                  </div>
+                </div>
                 <div 
                   v-if="data.label === 'Redes sociais'"
                   class="q-mx-lg"
@@ -136,7 +239,7 @@
                             color="primary"
                             flat
                             rounded
-                            @click="editMaritalStatus(data)"
+                            @click="editMaritalStatus(data.partner)"
                           >
                             <q-tooltip>Alterar relação conjugal</q-tooltip>
                           </q-btn>
@@ -794,6 +897,16 @@
               hint="Seu nome de perfil na rede social"
             />
           </q-card-section>
+          <q-card-section>
+            <q-select
+              outlined
+              v-model="dialogEditSocialNetwork.socialType"
+              label="Tipo de rede"
+              hint="Tipo de perfil"
+              :options="profileTypeOptions"
+            >
+            </q-select>
+          </q-card-section>
           <q-card-actions align="center">
             <q-btn
               label="Cancelar"
@@ -984,6 +1097,104 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogEditParentName.open"
+        @hide="clearDialogParent"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section class="text-h6">
+            Alterar usuário
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              class="q-pa-sm"
+              filled
+              v-model="dialogEditParentName.user"
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              @click="clearDialogParent"
+              color="primary"
+              flat
+              unelevated
+              rounded
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              @click="confirmEditParent"
+              rounded
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddParent.open"
+        @hide="clearDialogAddParent"
+      >
+        <q-card
+          style="width: 400px"
+        >
+          <q-card-section class="text-h6">
+            Selecione o usuário
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              class="q-pa-sm"
+              filled
+              v-model="dialogAddParent.user"
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              @click="clearDialogAddParent"
+              color="primary"
+              flat
+              unelevated
+              rounded
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              @click="confirmAddParent"
+              rounded
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1082,7 +1293,17 @@ export default defineComponent({
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
-      ]
+      ],
+      dialogEditParentName: {
+        open: false,
+        user: null,
+        parentType: null
+      },
+      dialogAddParent: {
+        open: false,
+        user: null,
+        parentType: null
+      }
     }
   },
 
@@ -1097,6 +1318,62 @@ export default defineComponent({
     this.getPastorLinks()
   },
   methods: {
+    clearDialogAddParent() {
+      this.dialogAddParent = {
+        open: false,
+        user: null,
+        parentType: null
+      }
+    },
+    confirmAddParent() {
+      if (this.dialogAddParent.parentType === 'Pai') {
+        this.pastorData.father.userName = this.dialogAddParent.user.userName
+        this.pastorData.father._id = this.dialogAddParent.user._id
+      } else if (this.dialogAddParent.parentType === 'Mãe') {
+        this.pastorData.mother.userName = this.dialogAddParent.user.userName
+        this.pastorData.mother._id = this.dialogAddParent.user._id
+      }
+      this.clearDialogAddParent()
+    },
+    addParent(type) {
+      this.dialogAddParent.parentType = type,
+      this.dialogAddParent.open = true
+    },
+    removeParent(type) {
+      // console.log(type)
+      if (type === 'Pai') {
+        this.pastorData.father._id = null,
+        this.pastorData.father.userName = null
+      } else if (type === 'Mãe') {
+        this.pastorData.mother._id = null,
+        this.pastorData.mother.userName = null
+      }
+    },
+    clearDialogParent() {
+      this.dialogEditParentName = {
+        open: false,
+        user: null,
+        parentType: null
+      }
+    },
+    confirmEditParent() {
+      if (this.dialogEditParentName.parentType === 'Pai') {
+        this.pastorData.father._id = this.dialogEditParentName.user._id,
+        this.pastorData.father.userName = this.dialogEditParentName.user.userName
+      } else if (this.dialogEditParentName.parentType === 'Mãe') {
+        this.pastorData.mother._id = this.dialogEditParentName.user._id,
+        this.pastorData.mother.userName = this.dialogEditParentName.user.userName
+      } 
+      this.clearDialogParent()
+    },
+    editParentName(parentType) {
+      this.dialogEditParentName.open = true,
+      this.dialogEditParentName.user = {
+        userName: this.pastorData.father.userName,
+        _id: this.pastorData.father._id
+      }
+      this.dialogEditParentName.parentType = parentType
+    },
     clkParent (organismParentId) {
       this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
     },
@@ -1190,7 +1467,11 @@ export default defineComponent({
       this.dialogAddNewSocialNetwork.open = true
     },
     confirmChangeSocialNetwork() {
-      this.dialogEditSocialNetwork.open = false
+      this.pastorData.social.value[this.dialogEditSocialNetwork.index].name = 
+      this.dialogEditSocialNetwork.social.name
+      this.pastorData.social.value[this.dialogEditSocialNetwork.index].selectedSocialType = 
+      this.dialogEditSocialNetwork.social.this.dialogEditSocialNetwork.social.selectedSocialType
+
     },
     removeSocialNetwork(iSocial) {
       this.pastorData.social.value.splice(iSocial, 1)
@@ -1256,7 +1537,7 @@ export default defineComponent({
     },
     editSocialNetwork(social, iSocial) {
       this.dialogEditSocialNetwork.open = true
-      this.dialogEditSocialNetwork.social = social,
+      this.dialogEditSocialNetwork.social = {...social},
       this.dialogEditSocialNetwork.index = iSocial
     },
     confirmEditMaritalRelation() {
@@ -1274,7 +1555,7 @@ export default defineComponent({
     },
     editMaritalStatus(data) {
       this.dialogEditMaritalStatus.open = true,
-      this.dialogEditMaritalStatus.status = data.partner
+      this.dialogEditMaritalStatus.status = {...data}
     },
     confirmChangeChild() {
       this.pastorData.parentalRelation.child[this.dialogEditChild.iChild] =  {
