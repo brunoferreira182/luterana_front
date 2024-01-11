@@ -428,7 +428,7 @@
                 class="bg-accent"
                 title="Entradas totais anuais"
                 :columns="entryValueAnual"
-                :rows="organismsFinancesStatistics"
+                :rows="entriesOrganismsFinancesStatistics"
                 dense
                 virtual-scroll
                 row-key="_id"
@@ -445,19 +445,48 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask
                       v-model="props.row.saldoAnterior" 
                     />
                   </q-td>
                 </template>
                 <template v-slot:body-cell-receitasRegulares="props">
-                  <q-td :props="props">
-                    <q-input 
-                      outlined 
-                      dense 
-                      type="number" 
-                      v-model="props.row.receitasRegulares" 
-                    />
+                  <q-td :props="props" class="q-gutter-y-md">
+                    <div class="no-margin">
+                      Ofertas dominicais
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.ofertasDominicais" 
+                      />
+                    </div>
+                    <div class="no-margin">
+                      Ofertas mensais
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.ofertasMensais" 
+                      />
+                    </div>
+                    <div class="no-margin">
+                      Receitas de aluguéis
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.receitasAlugueis" 
+                      />
+                    </div>
                   </q-td>
                 </template>
                 <template v-slot:body-cell-ofertasEspeciais="props">
@@ -465,7 +494,9 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
                       v-model="props.row.ofertasEspeciais" 
                     />
                   </q-td>
@@ -475,7 +506,9 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
                       v-model="props.row.campanhasEspecificas" 
                     />
                   </q-td>
@@ -485,7 +518,9 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
                       v-model="props.row.auxilio" 
                     />
                   </q-td>
@@ -495,7 +530,9 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
                       v-model="props.row.emprestimos" 
                     />
                   </q-td>
@@ -505,7 +542,9 @@
                     <q-input 
                       outlined 
                       dense 
-                      type="number" 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
                       v-model="props.row.todasOutrasReceitas" 
                     />
                   </q-td>
@@ -513,10 +552,11 @@
                 <template v-slot:bottom>
                   <q-btn 
                     color="primary" 
-                    label="Salvar como rascunho" 
+                    label="Salvar Todas as Entradas" 
                     rounded
+                    class="q-ma-md"
                     no-caps
-                    @click="save" 
+                    @click="saveAllEntries"
                   />
                 </template>
               </q-table>
@@ -528,6 +568,7 @@
                 class="bg-accent"
                 title="Saídas totais anuais"
                 :columns="outputValueAnual"
+                :rows="outputsOrganismsFinancesStatistics"
                 virtual-scroll
                 row-key="_id"
                 dense
@@ -539,22 +580,100 @@
                 :v-model:pagination="pagination"
                 @request="nextPage"
               >
-                <template #top-right>
-                  <div class="">
-                    <div class="col">
-                      <q-input
-                        outlined
-                        dense
-                        debounce="300"
-                        v-model="filter"
-                        placeholder="Procurar"
-                      >
-                        <template #append>
-                          <q-icon name="search" />
-                        </template>
-                      </q-input>
+                <!-- <template v-slot:body-cell-saldoAnterior="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask
+                      v-model="props.row.saldoAnterior" 
+                    />
+                  </q-td>
+                </template> -->
+                <template v-slot:body-cell-contribuicaoIelb="props">
+                  <q-td :props="props" class="q-gutter-y-md">
+                    <div class="no-margin">
+                      Ofertas dominicais
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.ofertasDominicais" 
+                      />
                     </div>
-                  </div>
+                    <div class="no-margin">
+                      Ofertas mensais
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.ofertasMensais" 
+                      />
+                    </div>
+                    <div class="no-margin">
+                      Receitas de aluguéis
+                      <q-input 
+                        outlined 
+                        dense 
+                        mask="#.##"
+                        fill-mask="0"
+                        reverse-fill-mask 
+                        v-model="props.row.receitasAlugueis" 
+                      />
+                    </div>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-contribuicaoDistrito="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
+                      v-model="props.row.contribuicaoDistrito" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-devolucaoEmprestimosIelb="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
+                      v-model="props.row.devolucaoEmprestimosIelb" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-todasSaidas="props">
+                  <q-td :props="props">
+                    <q-input 
+                      outlined 
+                      dense 
+                      mask="#.##"
+                      fill-mask="0"
+                      reverse-fill-mask 
+                      v-model="props.row.todasSaidas" 
+                    />
+                  </q-td>
+                </template>
+                <template v-slot:bottom>
+                  <q-btn 
+                    label="Salvar saída como rascunho" 
+                    rounded
+                    color="warning"
+                    class="q-ma-md"
+                    no-caps
+                    @click="saveAllEntries"
+                  />
                 </template>
               </q-table>
             </q-card>
@@ -879,14 +998,37 @@ export default defineComponent({
   data() {
     return {
       tab: 'Dados pastorais',
+      allEntries: [],
+      table: {
+        entry:{
+          saldoAnterior: '',
+          receitasRegulares: '',
+          ofertasEspeciais: '',
+          campanhasEspecificas: '',
+          auxilio: '',
+          emprestimos:'',
+          todasOutrasReceitas:'',
+        },
+        output:{
+          contribuicaoIELB: '',
+          contribuicaoDistrito: '',
+          devolucaoEmprestimoIELB: '',
+          todasOutrasSaidas: '',
+        },
+      },
       entryValueAnual: useTableColumns().entryValueAnual,
       outputValueAnual: useTableColumns().outputValueAnual,
-      organismsFinancesStatistics: [],
+      entriesOrganismsFinancesStatistics:[],
+      outputsOrganismsFinancesStatistics:[],
       pastorData: null,
       filter: '',
       pagination: {
+        sortBy: '',
         page: 1,
-        rowsPerPage: 10
+        rowsPerPage: 10,
+        rowsNumber: 0,
+        sortBy: 'desc',
+        descending: false,
       },
       isUser: true,
       hasSecretary: null,
@@ -964,11 +1106,16 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getFinanceStatisticByOrganismId();
     },
+    saveAllEntries() {
+      this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
+      console.log("Todas as Entradas Salvas:", this.allEntries);
+    },
+    
     getFinanceStatisticByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getFinanceStatisticByOrganismId",
         body: {
-          searchString: this.filter,
+          organismId: this.$route.query.organismId,
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
         },
@@ -977,8 +1124,8 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         console.log(r, 'POKPAOSKDOPSKDPOA')
-        this.organismsFinancesStatistics = r.data.list
-        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        this.outputsOrganismsFinancesStatistics = r.data.list[0].output
+        this.entriesOrganismsFinancesStatistics = r.data.list[0].entries
       });
     },
     getMyOrganismsWithAllData() {
