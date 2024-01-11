@@ -229,7 +229,7 @@ const useUtils = {
         },
         {
           label: "Estatística",
-          route: "/user/introductionStatistic",
+          route: "/user/selectOrganismToWriteStatisticData",
           icon: "equalizer",
         },
         // {

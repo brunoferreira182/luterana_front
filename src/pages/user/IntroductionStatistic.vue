@@ -62,15 +62,31 @@
 
 <script>
 import { defineComponent } from "vue";
+import useFetch from "src/boot/useFetch";
 export default defineComponent({
   name:"IntroStatistics",
   data() {
     return {}
   },
+  beforeMount(){
+    this.getMyOrganismsToChooseOne()
+  },
   methods: {
     goToStatistics() {
-      this.$router.push('/user/statistic')
-    }
+      const organismId = this.$route.query.organismId
+      this.$router.push('/user/statistic?organismId=' + organismId)
+    },
+    getMyOrganismsToChooseOne(){
+      const opt = {
+        route: "/desktop/statistics/getMyOrganismsToChooseOne",
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        console.log(r, 'CUZIZIZIZIZI')
+        // this.organismsFinancesStatistics = r.data.list
+      });
+    },
   }
 })
 </script>
