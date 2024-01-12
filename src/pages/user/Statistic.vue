@@ -536,7 +536,7 @@
                 virtual-scroll
                 row-key="_id"
                 rows-per-page-label="Registros por página"
-                no-data-label="Nenhum dado inserido até o momento"
+                no-data-label="Nenhum dado até o momento"
                 no-results-label="A pesquisa não retornou nenhum resultado"
                 :rows-per-page-options="[10, 20, 30, 50]"
                 :filter="filter"
@@ -549,7 +549,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask
                       v-model="props.row.saldoAnterior" 
                     />
@@ -563,7 +562,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.ofertasDominicais" 
                       />
@@ -574,7 +572,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.ofertasMensais" 
                       />
@@ -585,7 +582,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.receitasAlugueis" 
                       />
@@ -598,7 +594,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.ofertasEspeciais" 
                     />
@@ -610,7 +605,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.campanhasEspecificas" 
                     />
@@ -622,7 +616,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.auxilio" 
                     />
@@ -634,7 +627,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.emprestimos" 
                     />
@@ -646,21 +638,10 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.todasOutrasReceitas" 
                     />
                   </q-td>
-                </template>
-                <template v-slot:bottom>
-                  <q-btn 
-                    color="primary" 
-                    label="Salvar Todas as Entradas" 
-                    rounded
-                    class="q-ma-md"
-                    no-caps
-                    @click="saveAllEntries"
-                  />
                 </template>
               </q-table>
             </q-card>
@@ -676,25 +657,13 @@
                 row-key="_id"
                 dense
                 rows-per-page-label="Registros por página"
-                no-data-label="Nenhum dado inserido até o momento"
+                no-data-label="Nenhum dado até o momento"
                 no-results-label="A pesquisa não retornou nenhum resultado"
                 :rows-per-page-options="[10, 20, 30, 50]"
                 :filter="filter"
                 :v-model:pagination="pagination"
                 @request="nextPage"
               >
-                <!-- <template v-slot:body-cell-saldoAnterior="props">
-                  <q-td :props="props">
-                    <q-input 
-                      outlined 
-                      dense 
-                      mask="#.##"
-                      fill-mask="0"
-                      reverse-fill-mask
-                      v-model="props.row.saldoAnterior" 
-                    />
-                  </q-td>
-                </template> -->
                 <template v-slot:body-cell-contribuicaoIelb="props">
                   <q-td :props="props" class="q-gutter-y-md">
                     <div class="no-margin">
@@ -703,7 +672,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.ofertasDominicais" 
                       />
@@ -714,7 +682,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.ofertasMensais" 
                       />
@@ -725,7 +692,6 @@
                         outlined 
                         dense 
                         mask="#.##"
-                        fill-mask="0"
                         reverse-fill-mask 
                         v-model="props.row.receitasAlugueis" 
                       />
@@ -738,7 +704,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.contribuicaoDistrito" 
                     />
@@ -750,7 +715,6 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.devolucaoEmprestimosIelb" 
                     />
@@ -762,26 +726,32 @@
                       outlined 
                       dense 
                       mask="#.##"
-                      fill-mask="0"
                       reverse-fill-mask 
                       v-model="props.row.todasSaidas" 
                     />
                   </q-td>
                 </template>
-                <template v-slot:bottom>
-                  <q-btn 
-                    label="Salvar saída como rascunho" 
-                    rounded
-                    color="warning"
-                    class="q-ma-md"
-                    no-caps
-                    @click="saveAllEntries"
-                  />
-                </template>
               </q-table>
             </q-card>
           </q-tab-panel>
         </q-tab-panels>
+        <div class="text-right">
+          <q-btn 
+            label="Salvar como rascunho" 
+            rounded
+            color="warning"
+            class="q-ma-md"
+            no-caps
+            @click="saveAllEntriesAndOutputs"
+          />
+          <q-btn 
+            label="Enviar" 
+            rounded
+            color="green"
+            class="q-ma-md"
+            no-caps
+          />
+        </div>
       </div>
       <q-dialog
         v-model="dialogEditChild.open"
@@ -1383,7 +1353,7 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getFinanceStatisticByOrganismId();
     },
-    saveAllEntries() {
+    saveAllEntriesAndOutputs() {
       this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
       console.log("Todas as Entradas Salvas:", this.allEntries);
     },
