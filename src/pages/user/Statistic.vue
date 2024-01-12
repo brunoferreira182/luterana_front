@@ -1478,11 +1478,6 @@ export default defineComponent({
         index: null
       },
       formationTypes: null,
-      pagination: {
-        page: 1,
-        rowsPerPage: 10,
-        searchString: ''
-      },
       dialogAddFormation: {
         open: false
       },
