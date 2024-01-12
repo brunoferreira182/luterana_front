@@ -1268,8 +1268,8 @@
               v-model="dialogEditFormation.formation"
               label="Nome do curso"
               option-label="label"
-              :options="formationTypes"
-              @filter="getFormationTypes"
+              :options="coursesList"
+              @filter="getCoursesList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1290,7 +1290,7 @@
               filled
               mask="##/##/####"
               label="Ano de conclusão"
-              v-model="dialogEditLink.data"
+              v-model="dialogEditFormation.date"
               >
           </q-input>
           </q-card-section>
@@ -1300,11 +1300,11 @@
               class="q-pa-sm"
               filled
               use-input
-              v-model="dialogEditFormation.formation"
+              v-model="dialogEditFormation.course"
               label="Nome do curso"
               option-label="label"
-              :options="formationTypes"
-              @filter="getFormationTypes"
+              :options="formationLevelsList"
+              @filter="getFormationLevelsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1335,8 +1335,8 @@
               v-model="dialogEditFormation.formation"
               label="Nome do curso"
               option-label="label"
-              :options="formationTypes"
-              @filter="getFormationTypes"
+              :options="courses"
+              @filter="getCoursesList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1377,8 +1377,8 @@
             v-model="dialogEditLink.data" 
             label="Tipo de vínculo"
             option-label="label"
-            :options="formationTypes"
-            @filter="getFormationTypes"
+            :options="coursesList"
+            @filter="getCoursesList"
             :option-value="(item) => item"
           >
             <template v-slot:no-option>
@@ -1436,6 +1436,7 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: 'desc',
         descending: false,
+        searchString: ''
       },
       isUser: true,
       hasSecretary: null,
@@ -1504,15 +1505,10 @@ export default defineComponent({
         open: false,
         formation: null,
         date: null,
-        formationType: null,
+        course: null,
         index: null
       },
-      formationTypes: null,
-      pagination: {
-        page: 1,
-        rowsPerPage: 10,
-        searchString: ''
-      },
+      coursesList: null,
       dialogAddFormation: {
         open: false
       },
@@ -1520,7 +1516,8 @@ export default defineComponent({
         open: false,
         data: null,
         index: null
-      }
+      },
+      formationLevelsList: null
     }
   },
 
@@ -1533,7 +1530,7 @@ export default defineComponent({
     this.getPastorFormations()
     this.getPastorDataTabs()
     this.getPastorLinks()
-    // this.getFormationTypes()
+    // this.getCoursesList()
   },
   methods: {
     editLink(link, i) {
@@ -1551,7 +1548,38 @@ export default defineComponent({
     removeFormation(i) {
       this.pastorFormations.splice(i, 1)
     },
-    getFormationTypes(val, update, abort) {
+    getFormationLevelsList(val, update, abort) {
+
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres');
+        abort();
+        return;
+      }
+
+      const opt = {
+        route: '/desktop/statistics/getFormationLevel',
+        body: {
+          page: this.pagination.page,
+          rowsPerPage: this.pagination.rowsPerPage,
+          searchString: val
+        }
+      }
+      this.$q.loading.show();
+
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+
+        if (r.error) {
+          this.$q.notify(r.errorMessage);
+          return;
+        }
+
+        update(() => {
+          this.formationLevelsList = r.data.list;
+        });
+      });
+    },
+    getCoursesList(val, update, abort) {
       console.log(val, 'chamou')
       
       if (val.length < 3) {
@@ -1580,7 +1608,7 @@ export default defineComponent({
         }
 
         update(() => {
-          this.formationTypes = r.data.list;
+          this.coursesList = r.data.list;
         });
       });
     },
@@ -1588,7 +1616,7 @@ export default defineComponent({
       let data = {...formation}
       this.dialogEditFormation.formation = data.formation.course
       this.dialogEditFormation.date = data.formation.conclusionYear
-      this.dialogEditFormation.formationType = data.formation.level
+      this.dialogEditFormation.course = data.formation.level
       this.dialogEditFormation.index = i
       this.dialogEditFormation.open = true
     },
