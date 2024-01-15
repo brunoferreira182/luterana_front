@@ -1,7 +1,7 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="q-pa-md ">
+      <div class="q-pa-md">
         <div class="text-capitalize"> 
           <div class="text-h5 q-mb-sm text-center">
             Estatística 2023

@@ -32,7 +32,7 @@
 import { defineComponent } from "vue";
 import useFetch from "src/boot/useFetch";
 export default defineComponent({
-  name:"IntroStatistics",
+  name:"SelectOrganismToWriteStatisticData",
   data() {
     return {
       userOrganismList:[]
@@ -43,7 +43,7 @@ export default defineComponent({
   },
   methods: {
     goToIntroductionStatistic(organismId) {
-      this.$router.push('/user/introductionStatistic?organismId=' + organismId)
+      this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
     },
     getParoquiasByUserId(){
       const opt = {
