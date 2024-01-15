@@ -128,7 +128,7 @@ export default defineComponent({
       this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=c')
     },
     goToPastorTab() {
-      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=p')
+      this.$router.push('/statistic/PastorData?organismId=' + this.$route.query.organismId + '&t=p')
     },
     verifyStatusTypes() {
       this.statisticStatus.forEach((status) => {
