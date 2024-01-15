@@ -71,7 +71,7 @@
             label="Dados financeiros"    
             :color="financceData.color"
             rounded    
-            @click="goToFinancceTab"
+            @click="goToFinanceView"
             unelevated  
           >
             <q-tooltip>
@@ -121,8 +121,8 @@ export default defineComponent({
     this.getStatisticStatus()
   },
   methods: {
-    goToFinancceTab() {
-      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=f')
+    goToFinanceView() {
+      this.$router.push('/user/writeFinanceStatisticData?organismId=' + this.$route.query.organismId + '&t=f')
     },
     goToOrganismTab() {
       this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=c')

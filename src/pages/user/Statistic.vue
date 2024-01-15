@@ -25,12 +25,6 @@
               icon="diversity_2" 
               label="Dados congregacionais"
             />
-            <q-tab 
-              :disable="financceDisable"
-              name="Dados financeiros" 
-              icon="request_quote" 
-              label="Dados financeiros"
-            />
           </q-tabs>
         </div>
       </div>
@@ -587,176 +581,6 @@
                 </div>
               </template>
             </q-tree>
-          </q-tab-panel>
-
-          <q-tab-panel name="Dados financeiros">
-            <div class="row">
-              <div class="col q-gutter-y-md">
-                <div class="text-h5">
-                  Entradas
-                </div>
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  prefix="R$"
-                  type="number"
-                  label="Saldo anterior"
-                  reverse-fill-mask
-                  v-model.number="table.entries.saldoAnterior" 
-                />
-                <div class="no-margin">
-                  Receitas regulares
-                  <q-input 
-                    outlined 
-                    mask="#.##"
-                    prefix="R$"
-                    type="number"
-                    label="Ofertas dominicais"
-                    reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.ofertasDominicais" 
-                  />
-                </div>
-                <div class="no-margin">
-                  Receitas regulares
-                  <q-input 
-                    outlined 
-                    label="Ofertas mensais"
-                    mask="#.##"
-                    prefix="R$"
-                    type="number"
-                    reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.ofertasMensais" 
-                  />
-                </div>
-                <div class="no-margin">
-                  Receitas regulares
-                  <q-input 
-                    outlined 
-                    mask="#.##"
-                    prefix="R$"
-                    type="number"
-                    label="Receitas de aluguéis"
-                    reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.receitasAlugueis" 
-                  />
-                </div>
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  prefix="R$"
-                  type="number"
-                  label="Ofertas especiais"
-                  reverse-fill-mask 
-                  v-model="table.entries.ofertasEspeciais" 
-                />
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  prefix="R$"
-                  type="number"
-                  label="Campanhas específicas"
-                  reverse-fill-mask 
-                  v-model="table.entries.campanhasEspecificas" 
-                />
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  label="Auxílio"
-                  prefix="R$"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model="table.entries.auxilio" 
-                />
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  label="Empréstimos"
-                  prefix="R$"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model="table.entries.emprestimos" 
-                />
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  label="Todas as Outras receitas"
-                  prefix="R$"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model="table.entries.todasOutrasReceitas" 
-                />
-                <div class="text-h5">
-                  Saídas
-                </div>
-                <div class="no-margin">
-                  Contribuição IELB
-                  <q-input 
-                    outlined 
-                    label="Ofertas dominicais"
-                    prefix="R$"
-                     type="number"
-                    mask="#.##"
-                    v-model="table.output.contribuicaoIELB.ofertasDominicais" 
-                  />
-                </div>
-                <div class="no-margin">
-                  Contribuição IELB
-                  <q-input 
-                    outlined 
-                    label="Ofertas mensais"
-                    prefix="R$"
-                     type="number"
-                    mask="#.##"
-                    v-model="table.output.contribuicaoIELB.ofertasMensais" 
-                  />
-                </div>
-                <div class="no-margin">
-                  Contribuição IELB
-                  <q-input 
-                    outlined 
-                    label="Receitas de aluguéis"
-                    prefix="R$"
-                    type="number"
-                    reverse-fill-mask 
-                    v-model="table.output.contribuicaoIELB.receitasAlugueis" 
-                  />
-                </div>
-                <q-input 
-                  outlined 
-                  label="Contribuição Distrito"
-                  prefix="R$"
-                  type="number"
-                  mask="#.##"
-                  v-model="table.output.contribuicaoDistrito" 
-                />
-                <q-input 
-                  outlined 
-                  mask="#.##"
-                  label="Devolução de empréstimos IELB"
-                  type="number"
-                  prefix="R$"
-                  reverse-fill-mask 
-                  v-model="table.output.devolucaoEmprestimoIELB" 
-                />
-                <q-input 
-                  outlined 
-                  prefix="R$"
-                  mask="#.##"
-                  type="number"
-                  label="Todas as outras saídas"
-                  reverse-fill-mask 
-                  v-model="table.output.todasSaidas" 
-                />
-                <q-btn
-                  label="Salvar como rascunho"
-                  class="q-ma-md text-center"
-                  color="warning"
-                  rounded
-                  no-caps
-                  @click="insertFinanceStatistics"
-                />
-              </div>
-            </div>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -1527,32 +1351,6 @@ export default defineComponent({
       pastorDisable: false,
       organismDisable: false,
       financceDisable: false,
-      allEntries: [],
-      table: {
-        entries:{
-          saldoAnterior: '',
-          receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
-        },
-        output: {
-          contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
-        }
-      },
       pastorData: null,
       filter: '',
       pagination: {
@@ -1670,7 +1468,6 @@ export default defineComponent({
     this.getUserData()
     this.getPastorDataTabs()
     this.getMyOrganismsWithAllData()
-    this.getFinanceStatisticByOrganismId()
     this.verifyQuery()
     // this.verifyIfIsPastor()
     this.getPastorFormations()
@@ -1963,103 +1760,6 @@ export default defineComponent({
     saveAllEntriesAndOutputs() {
       this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
       console.log("Todas as Entradas Salvas:", this.allEntries);
-    },
-    // writeInTableEntriesVariables(entries){
-    //   console.log(entries, 'okdksdskdksk')
-    //   this.table = {
-    //     entries:{
-    //       saldoAnterior: +entries.saldoAnterior ? +entries.saldoAnterior : '',
-    //       receitasRegulares: {
-    //         ofertasDominicais: +entries.ofertasDominicais ? +entries.ofertasDominicais : '',
-    //         ofertasMensais: +entries.ofertasMensais ? +entries.ofertasMensais : '',
-    //         receitasAlugueis: +entries.receitasAlugueis ? +entries.receitasAlugueis : '',
-    //       },
-    //       ofertasEspeciais: +entries.ofertasEspeciais ? +entries.ofertasEspeciais : '',
-    //       campanhasEspecificas: +entries.campanhasEspecificas ? +entries.campanhasEspecificas : '',
-    //       auxilio: +entries.auxilio ? +entries.auxilio : '',
-    //       emprestimos: +entries.emprestimos ? +entries.emprestimos : '',
-    //       todasOutrasReceitas: +entries.todasOutrasReceitas ? +entries.todasOutrasReceitas : '',
-    //     }
-    //   };
-    // },
-    // writeInTableOutputVariables(outputs){
-    //   this.table = {
-    //     output: {
-    //       contribuicaoIELB: {
-    //         ofertasDominicais: +outputs.ofertasDominicais ? +outputs.ofertasDominicais : '',
-    //         ofertasMensais: +outputs.ofertasMensais ? +outputs.ofertasMensais : '',
-    //         receitasAlugueis: +outputs.receitasAlugueis ? +outputs.receitasAlugueis : '',
-    //       },
-    //       contribuicaoDistrito: +outputs.contribuicaoDistrito ? +outputs.contribuicaoDistrito : '',
-    //       devolucaoEmprestimoIELB: +outputs.devolucaoEmprestimoIELB ? +outputs.devolucaoEmprestimoIELB : '',
-    //       todasSaidas: +outputs.todasSaidas ? +outputs.todasSaidas : ''
-    //     }
-    //   };
-    // },
-    insertFinanceStatistics() {
-      console.log()
-      const opt = {
-        route: "/desktop/statistics/insertFinanceStatistics",
-        body: {
-          organismId: this.$route.query.organismId,
-          financeData: this.table
-        },
-      };
-      if (Object.keys(this.table.output).length > 0) {
-        opt.body.financeData = this.table;
-      } else if (Object.keys(this.table.entry).length > 0) {
-        opt.body.financeData = this.table;
-      }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-        opt.body.financeData = this.table
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.$q.notify('Dados salvos como rascunho')
-      });
-    },
-    getFinanceStatisticByOrganismId() {
-      const opt = {
-        route: "/desktop/statistics/getFinanceStatisticByOrganismId",
-        body: {
-          organismId: this.$route.query.organismId,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
-        this.table.output = {
-          contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
-        },
-        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
-        this.table.entries = {
-          saldoAnterior: '',
-          receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
-        }
-      });
     },
     getMyOrganismsWithAllData() {
       const opt = {
