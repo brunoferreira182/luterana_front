@@ -588,9 +588,8 @@
                 </div>
                 <q-input 
                   outlined 
-                  mask="#.##"
-                  prefix="R$"
                   type="number"
+                  prefix="R$"
                   label="Saldo anterior"
                   reverse-fill-mask
                   v-model.number="table.entries.saldoAnterior" 
@@ -599,12 +598,10 @@
                   Receitas regulares
                   <q-input 
                     outlined 
-                    mask="#.##"
                     prefix="R$"
-                    type="number"
                     label="Ofertas dominicais"
                     reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.ofertasDominicais" 
+                    v-model.number="table.entries.receitasRegulares.ofertasDominicais" 
                   />
                 </div>
                 <div class="no-margin">
@@ -612,69 +609,56 @@
                   <q-input 
                     outlined 
                     label="Ofertas mensais"
-                    mask="#.##"
                     prefix="R$"
                     type="number"
                     reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.ofertasMensais" 
+                    v-model.number="table.entries.receitasRegulares.ofertasMensais" 
                   />
                 </div>
                 <div class="no-margin">
                   Receitas regulares
                   <q-input 
                     outlined 
-                    mask="#.##"
                     prefix="R$"
-                    type="number"
                     label="Receitas de aluguéis"
                     reverse-fill-mask 
-                    v-model="table.entries.receitasRegulares.receitasAlugueis" 
+                    v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
                   />
                 </div>
                 <q-input 
                   outlined 
-                  mask="#.##"
                   prefix="R$"
-                  type="number"
                   label="Ofertas especiais"
                   reverse-fill-mask 
-                  v-model="table.entries.ofertasEspeciais" 
+                  v-model.number="table.entries.ofertasEspeciais" 
                 />
                 <q-input 
                   outlined 
-                  mask="#.##"
                   prefix="R$"
-                  type="number"
                   label="Campanhas específicas"
                   reverse-fill-mask 
-                  v-model="table.entries.campanhasEspecificas" 
+                  v-model.number="table.entries.campanhasEspecificas" 
                 />
                 <q-input 
                   outlined 
-                  mask="#.##"
                   label="Auxílio"
                   prefix="R$"
-                  type="number"
                   reverse-fill-mask 
-                  v-model="table.entries.auxilio" 
+                  v-model.number="table.entries.auxilio" 
                 />
                 <q-input 
                   outlined 
-                  mask="#.##"
                   label="Empréstimos"
                   prefix="R$"
-                  type="number"
                   reverse-fill-mask 
-                  v-model="table.entries.emprestimos" 
+                  v-model.number="table.entries.emprestimos" 
                 />
                 <q-input 
                   outlined 
-                  mask="#.##"
                   label="Todas as Outras receitas"
                   prefix="R$"
-                  type="number"
                   reverse-fill-mask 
-                  v-model="table.entries.todasOutrasReceitas" 
+                  v-model.number="table.entries.todasOutrasReceitas" 
                 />
                 <div class="text-h5">
                   Saídas
@@ -685,20 +669,16 @@
                     outlined 
                     label="Ofertas dominicais"
                     prefix="R$"
-                     type="number"
-                    mask="#.##"
-                    v-model="table.output.contribuicaoIELB.ofertasDominicais" 
+                    v-model.number="table.output.contribuicaoIELB.ofertasDominicais" 
                   />
                 </div>
                 <div class="no-margin">
                   Contribuição IELB
                   <q-input 
                     outlined 
-                    label="Ofertas mensais"
                     prefix="R$"
-                     type="number"
-                    mask="#.##"
-                    v-model="table.output.contribuicaoIELB.ofertasMensais" 
+                    label="Ofertas mensais"
+                    v-model.number="table.output.contribuicaoIELB.ofertasMensais" 
                   />
                 </div>
                 <div class="no-margin">
@@ -707,36 +687,29 @@
                     outlined 
                     label="Receitas de aluguéis"
                     prefix="R$"
-                    type="number"
                     reverse-fill-mask 
-                    v-model="table.output.contribuicaoIELB.receitasAlugueis" 
+                    v-model.number="table.output.contribuicaoIELB.receitasAlugueis" 
                   />
                 </div>
                 <q-input 
                   outlined 
                   label="Contribuição Distrito"
                   prefix="R$"
-                  type="number"
-                  mask="#.##"
-                  v-model="table.output.contribuicaoDistrito" 
+                  v-model.number="table.output.contribuicaoDistrito" 
                 />
                 <q-input 
                   outlined 
-                  mask="#.##"
                   label="Devolução de empréstimos IELB"
-                  type="number"
                   prefix="R$"
                   reverse-fill-mask 
-                  v-model="table.output.devolucaoEmprestimoIELB" 
+                  v-model.number="table.output.devolucaoEmprestimoIELB" 
                 />
                 <q-input 
                   outlined 
                   prefix="R$"
-                  mask="#.##"
-                  type="number"
                   label="Todas as outras saídas"
                   reverse-fill-mask 
-                  v-model="table.output.todasSaidas" 
+                  v-model.number="table.output.todasSaidas" 
                 />
                 <q-btn
                   label="Salvar como rascunho"
@@ -1454,7 +1427,7 @@ export default defineComponent({
         output: {
           contribuicaoIELB: {
             ofertasDominicais: '',
-            ofertasMensais: '',
+            ofertasMensais: null,
             receitasAlugueis: '',
           },
           contribuicaoDistrito: '',
@@ -1863,38 +1836,6 @@ export default defineComponent({
       this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
       console.log("Todas as Entradas Salvas:", this.allEntries);
     },
-    // writeInTableEntriesVariables(entries){
-    //   console.log(entries, 'okdksdskdksk')
-    //   this.table = {
-    //     entries:{
-    //       saldoAnterior: +entries.saldoAnterior ? +entries.saldoAnterior : '',
-    //       receitasRegulares: {
-    //         ofertasDominicais: +entries.ofertasDominicais ? +entries.ofertasDominicais : '',
-    //         ofertasMensais: +entries.ofertasMensais ? +entries.ofertasMensais : '',
-    //         receitasAlugueis: +entries.receitasAlugueis ? +entries.receitasAlugueis : '',
-    //       },
-    //       ofertasEspeciais: +entries.ofertasEspeciais ? +entries.ofertasEspeciais : '',
-    //       campanhasEspecificas: +entries.campanhasEspecificas ? +entries.campanhasEspecificas : '',
-    //       auxilio: +entries.auxilio ? +entries.auxilio : '',
-    //       emprestimos: +entries.emprestimos ? +entries.emprestimos : '',
-    //       todasOutrasReceitas: +entries.todasOutrasReceitas ? +entries.todasOutrasReceitas : '',
-    //     }
-    //   };
-    // },
-    // writeInTableOutputVariables(outputs){
-    //   this.table = {
-    //     output: {
-    //       contribuicaoIELB: {
-    //         ofertasDominicais: +outputs.ofertasDominicais ? +outputs.ofertasDominicais : '',
-    //         ofertasMensais: +outputs.ofertasMensais ? +outputs.ofertasMensais : '',
-    //         receitasAlugueis: +outputs.receitasAlugueis ? +outputs.receitasAlugueis : '',
-    //       },
-    //       contribuicaoDistrito: +outputs.contribuicaoDistrito ? +outputs.contribuicaoDistrito : '',
-    //       devolucaoEmprestimoIELB: +outputs.devolucaoEmprestimoIELB ? +outputs.devolucaoEmprestimoIELB : '',
-    //       todasSaidas: +outputs.todasSaidas ? +outputs.todasSaidas : ''
-    //     }
-    //   };
-    // },
     insertFinanceStatistics() {
       console.log()
       const opt = {
