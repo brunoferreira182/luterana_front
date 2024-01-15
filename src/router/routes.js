@@ -290,7 +290,7 @@ const routes = [
       
       {
         path: "/user/selectOrganismToWriteStatisticData",
-        component: () => import("src/pages/user/SelectOrganismToWriteStatisticData.vue"),
+        component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
       },
       {
         path: "/user/writeFinanceStatisticData",
