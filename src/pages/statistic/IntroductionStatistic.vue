@@ -122,7 +122,7 @@ export default defineComponent({
   },
   methods: {
     goToFinanceView() {
-      this.$router.push('/user/writeFinanceStatisticData?organismId=' + this.$route.query.organismId + '&t=f')
+      this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId + '&t=f')
     },
     goToOrganismTab() {
       this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=c')
