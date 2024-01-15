@@ -24,16 +24,6 @@
           </q-item-section>
         </q-item>
       </q-list>
-      <!-- <div class="q-mt-xl text-right q-mr-xl">
-        <q-btn
-          color="primary"
-          unelevated
-          rounded
-          no-caps
-          style="width: 20%; font-size: large;"
-          label="Prosseguir"
-        />
-      </div> -->
     </q-page>
   </q-page-container>
 </template>
