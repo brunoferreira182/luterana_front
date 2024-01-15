@@ -287,10 +287,7 @@ const routes = [
         path: "/user/statistic",
         component: () => import("src/pages/user/Statistic.vue"),
       },
-      {
-        path: "/user/introductionStatistic",
-        component: () => import("src/pages/user/IntroductionStatistic.vue"),
-      },
+      
       {
         path: "/user/selectOrganismToWriteStatisticData",
         component: () => import("src/pages/user/SelectOrganismToWriteStatisticData.vue"),
@@ -299,6 +296,16 @@ const routes = [
       //   path: "/user/createNewSugestion",
       //   component: () => import("src/pages/user/CreateNewSugestion.vue"),
       // },
+
+      //ESTATÍSTICA 2023 
+      {
+        path: "/statistic/pastorData",
+        component: () => import("src/pages/statistic/PastorData.vue"),
+      },
+      {
+        path: "/statistic/introductionStatistic",
+        component: () => import("src/pages/statistic/IntroductionStatistic.vue"),
+      },
     ],
   },
 
