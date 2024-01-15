@@ -431,6 +431,15 @@
                     </q-item-section>
                   </q-item>
                 </q-list>
+                <q-btn
+                  label="Histórico"
+                  icon="add"
+                  flat
+                  color="primary"
+                  @click="addNewLink"
+                >
+                  <q-tooltip>Adicionar novo vínculo</q-tooltip>
+                </q-btn>
               </div>
               <q-separator class="q-ma-sm q-my-md"/>
             </div>
@@ -1153,12 +1162,10 @@
             <q-select
               class="q-pa-sm"
               filled
-              use-input
               v-model="dialogEditFormation.formation"
               label="Nome do curso"
               option-label="label"
               :options="coursesList"
-              @filter="getCoursesList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1177,7 +1184,7 @@
             <q-input
               class="q-pa-sm"
               filled
-              mask="##/##/####"
+              mask="####"
               label="Ano de conclusão"
               v-model="dialogEditFormation.date"
               >
@@ -1188,12 +1195,10 @@
             <q-select
               class="q-pa-sm"
               filled
-              use-input
               v-model="dialogEditFormation.course"
-              label="Nome do curso"
+              label="Tipo de graduação"
               option-label="label"
               :options="formationLevelsList"
-              @filter="getFormationLevelsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1239,7 +1244,6 @@
               label="Nome do curso"
               option-label="label"
               :options="coursesList"
-              @filter="getCoursesList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1258,7 +1262,7 @@
             <q-input
               class="q-pa-sm"
               filled
-              mask="##/##/####"
+              mask="####"
               label="Ano de conclusão"
               v-model="dialogAddFormation.date"
               >
@@ -1269,12 +1273,10 @@
             <q-select
               class="q-pa-sm"
               filled
-              use-input
               v-model="dialogAddFormation.course"
-              label="Nome do curso"
+              label="Tipo de graduação"
               option-label="label"
               :options="formationLevelsList"
-              @filter="getFormationLevelsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1315,12 +1317,10 @@
             <q-select
               class="q-pa-sm"
               filled
-              use-input
-              v-model="dialogEditLink.data.linkData" 
+              v-model="dialogEditLink.linkData" 
               label="Tipo de vínculo"
               option-label="label"
               :options="statusList"
-              @filter="getStatusList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1339,7 +1339,7 @@
             <q-select
               class="q-pa-sm"
               filled
-              v-model="dialogEditLink.data.organismData" 
+              v-model="dialogEditLink.organismData" 
               label="Escolha a congregação"
               option-label="name"
               :options="myOrganismsList"
@@ -1359,16 +1359,18 @@
               Datas
             </div>
             <q-input
-              v-model="dialogEditLink.data.linkData.dates.initialDate"
+              v-model="dialogEditLink.dates.initialDate"
               filled
               label="Data início"
+              mask="##/##/####"
               class="q-pa-sm"
             >
 
             </q-input>
             <q-input
-              v-model="dialogEditLink.data.linkData.dates.initialDate"
+              v-model="dialogEditLink.dates.finalDate"
               filled
+              mask="##/##/####"
               label="Data fim"
               class="q-pa-sm"
             >
@@ -1388,6 +1390,95 @@
               color="primary"
               rounded
               @click="confirmEditLink"
+              unelevated
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddLink.open"
+      >
+        <q-card style="width:400px">
+          <q-card-section>
+            <div class="text-h6">
+              Vínculo
+            </div>
+            <q-select
+              class="q-pa-sm"
+              filled
+              v-model="dialogAddLink.linkData" 
+              label="Tipo de vínculo"
+              option-label="label"
+              :options="statusList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6">
+              Congregação
+            </div>
+            <q-select
+              class="q-pa-sm"
+              filled
+              v-model="dialogAddLink.organismData" 
+              label="Escolha a congregação"
+              option-label="name"
+              :options="myOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6"> 
+              Datas
+            </div>
+            <q-input
+              v-model="dialogAddLink.dates.initialDate"
+              filled
+              label="Data início"
+              mask="##/##/####"
+              class="q-pa-sm"
+            >
+
+            </q-input>
+            <q-input
+              v-model="dialogAddLink.dates.finalDate"
+              filled
+              mask="##/##/####"
+              label="Data fim"
+              class="q-pa-sm"
+            >
+
+            </q-input>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              color="primary"
+              flat
+              unelevated
+              rounded
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              rounded
+              @click="confirmAddLink"
               unelevated
             />
           </q-card-actions>
@@ -1525,8 +1616,22 @@ export default defineComponent({
       },
       dialogEditLink: { 
         open: false,
-        data: null,
+        linkData: null,
+        organismData: null,
+        organismFunctionId: null,
+        organismId: null,
+        dates: null,
         index: null
+      },
+      dialogAddLink: { 
+        open: false,
+        linkData: null,
+        organismData: null,
+        organismFunctionId: null,
+        dates: {
+          initialDate: null,
+          finalDate: null
+        }
       },
       formationLevelsList: null,
       statusList: null,
@@ -1545,9 +1650,39 @@ export default defineComponent({
     this.getPastorDataTabs()
     this.getPastorLinks()
     this.getMyOrganismsList()
-    // this.getCoursesList()
   },
   methods: {
+    clearDialogAddLink() {
+      this.dialogAddLink = {
+        open: false,
+        linkData: null,
+        organismData: null,
+        organismFunctionId: null,
+        dates: {
+          initialDate: null,
+          finalDate: null
+        }
+      }
+    },
+    confirmAddLink() {
+      this.pastorLink.push({
+        organismId: this.dialogAddLink.organismData._id,
+        organismData: {
+          city: this.dialogAddLink.organismData.city,
+          name: this.dialogAddLink.organismData.name,
+          state: this.dialogAddLink.organismData.state
+        },
+        linkData: {
+          _id: this.dialogAddLink.linkData._id,
+          label: this.dialogAddLink.linkData.label,
+          dates: {
+            initialDate: this.dialogAddLink.dates.initialDate,
+            finalDate: this.dialogAddLink.dates.finalDate
+          }
+        }
+      })
+      this.clearDialogAddLink()
+    },
     verifyQuery() {
       let qry = this.$route.query.t
       if (qry) {
@@ -1566,11 +1701,18 @@ export default defineComponent({
         }
       }
     },
-    
+    addNewLink() {
+      this.dialogAddLink.open = true
+      this.getStatusList()
+    },
     clearDialogEditLink() {
       this.dialogEditLink = { 
         open: false,
-        data: null,
+        linkData: null,
+        organismData: null,
+        organismFunctionId: null,
+        organismId: null,
+        dates: null,
         index: null
       }
     },
@@ -1578,10 +1720,10 @@ export default defineComponent({
       this.pastorLink[this.dialogEditLink.index]  = {
         linkData: {
           _id: this.dialogEditLink.linkData._id,
-          label: this.dialogEditLink.linkData.label,
+          label: this.dialogEditLink.label,
           dates: {
-            initialDate: this.dialogEditLink.linkData.dates.initialDate,
-            finalDate: this.dialogEditLink.linkData.dates.finalDate
+            initialDate: this.dialogEditLink.dates.initialDate,
+            finalDate: this.dialogEditLink.dates.finalDate
           }
         },
         organismData: {
@@ -1636,49 +1778,46 @@ export default defineComponent({
       this.clearDialogEditFormation()
     },
     editLink(link, i) {
-      console.log('chamou')
-      this.dialogEditLink.open = true,
-      this.dialogEditLink.data = {...link}
+      this.getStatusList()
+      this.dialogEditLink.linkData = {
+        label: link.linkData.label,
+        _id: link.linkData._id
+      },
+      this.dialogEditLink.organismData = {
+        city: link.organismData.city,
+        name: link.organismData.name,
+        state: link.organismData.state
+      },
+      this.dialogEditLink.organismFunctionId = link.organismFunctionId,
+      this.dialogEditLink.organismId = link.organismId,
+      this.dialogEditLink.dates = {
+        initialDate: link.linkData.dates.initialDate,
+        finalDate: link.linkData.dates.finalDate
+      },
       this.dialogEditLink.index = i
+      this.dialogEditLink.open = true
     },
     removeLink(i) {
       this.pastorLink.splice(i, 1)
     },
     addFormation() {
+      this.getCoursesList()
+      this.getFormationLevelsList()
       this.dialogAddFormation.open = true
     },
     removeFormation(i) {
       this.pastorFormations.splice(i, 1)
     },
-    getFormationLevelsList(val, update, abort) {
-
-      if (val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres');
-        abort();
-        return;
-      }
-
+    getFormationLevelsList() {
       const opt = {
         route: '/desktop/statistics/getFormationLevel',
-        body: {
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-          searchString: val
-        }
       }
-      this.$q.loading.show();
-
       useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-
         if (r.error) {
           this.$q.notify(r.errorMessage);
           return;
         }
-
-        update(() => {
-          this.formationLevelsList = r.data.list;
-        });
+          this.formationLevelsList = r.data
       });
     },
     getMyOrganismsList() {
@@ -1695,71 +1834,33 @@ export default defineComponent({
           this.myOrganismsList = r.data;
       });
     },
-    getStatusList(val, update, abort) {
-
-      if (val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres');
-        abort();
-        return;
-      }
-
+    getStatusList() {
       const opt = {
         route: '/desktop/statistics/getStatusList',
-        body: {
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-          searchString: val
-        }
       }
-      this.$q.loading.show();
-
       useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-
         if (r.error) {
           this.$q.notify(r.errorMessage);
           return;
         }
-
-        update(() => {
-          this.statusList = r.data.list;
-        });
+          this.statusList = r.data
       });
     },
-    getCoursesList(val, update, abort) {
-      console.log(val, 'chamou')
-      
-      if (val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres');
-        abort();
-        return;
-      }
-
+    getCoursesList() {
       const opt = {
         route: '/desktop/statistics/getFormationType',
-        body: {
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-          searchString: val
-        },
       };
-
-      this.$q.loading.show();
-
       useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-
         if (r.error) {
           this.$q.notify(r.errorMessage);
           return;
         }
-
-        update(() => {
-          this.coursesList = r.data.list;
-        });
+        this.coursesList = r.data
       });
     },
     editFormation(formation, i) {
+      this.getCoursesList()
+      this.getFormationLevelsList()
       let data = {...formation}
       this.dialogEditFormation.formation = data.formation.course
       this.dialogEditFormation.date = data.formation.conclusionYear
