@@ -67,6 +67,7 @@ export const useTableColumns = defineStore("tableColumns", {
       },
     ],
     outputValueAnual: [
+      
       {
         name: "organismParentConfig",
         align: "left",
@@ -99,7 +100,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "devolucaoEmprestimosIelb",
         align: "left",
         label: "Devolução de empréstimos para a IELB",
-        field: "devolucaoEmprestimosIelb",
+        field: (row) => row.transaction.value,
         sortable: true,
       },
       {

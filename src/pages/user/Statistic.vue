@@ -606,6 +606,7 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       reverse-fill-mask
                       v-model="props.row.saldoAnterior" 
                     />
@@ -618,6 +619,7 @@
                       <q-input 
                         outlined 
                         dense 
+                        @keyup="writeInTableEntriesVariables(props.row)"
                         mask="#.##"
                         reverse-fill-mask 
                         v-model="props.row.ofertasDominicais" 
@@ -629,6 +631,7 @@
                         outlined 
                         dense 
                         mask="#.##"
+                        @keyup="writeInTableEntriesVariables(props.row)"
                         reverse-fill-mask 
                         v-model="props.row.ofertasMensais" 
                       />
@@ -639,6 +642,7 @@
                         outlined 
                         dense 
                         mask="#.##"
+                        @keyup="writeInTableEntriesVariables(props.row)"
                         reverse-fill-mask 
                         v-model="props.row.receitasAlugueis" 
                       />
@@ -651,6 +655,7 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       reverse-fill-mask 
                       v-model="props.row.ofertasEspeciais" 
                     />
@@ -661,6 +666,7 @@
                     <q-input 
                       outlined 
                       dense 
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       mask="#.##"
                       reverse-fill-mask 
                       v-model="props.row.campanhasEspecificas" 
@@ -673,6 +679,7 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       reverse-fill-mask 
                       v-model="props.row.auxilio" 
                     />
@@ -683,6 +690,7 @@
                     <q-input 
                       outlined 
                       dense 
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       mask="#.##"
                       reverse-fill-mask 
                       v-model="props.row.emprestimos" 
@@ -695,6 +703,7 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableEntriesVariables(props.row)"
                       reverse-fill-mask 
                       v-model="props.row.todasOutrasReceitas" 
                     />
@@ -729,6 +738,7 @@
                         outlined 
                         dense 
                         mask="#.##"
+                        @keyup="writeInTableOutputVariables(props.row)"
                         reverse-fill-mask 
                         v-model="props.row.ofertasDominicais" 
                       />
@@ -739,6 +749,7 @@
                         outlined 
                         dense 
                         mask="#.##"
+                        @keyup="writeInTableOutputVariables(props.row)"
                         reverse-fill-mask 
                         v-model="props.row.ofertasMensais" 
                       />
@@ -748,6 +759,7 @@
                       <q-input 
                         outlined 
                         dense 
+                        @keyup="writeInTableOutputVariables(props.row)"
                         mask="#.##"
                         reverse-fill-mask 
                         v-model="props.row.receitasAlugueis" 
@@ -761,6 +773,7 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableOutputVariables(props.row)"
                       reverse-fill-mask 
                       v-model="props.row.contribuicaoDistrito" 
                     />
@@ -772,8 +785,9 @@
                       outlined 
                       dense 
                       mask="#.##"
+                      @keyup="writeInTableOutputVariables(props.row)"
                       reverse-fill-mask 
-                      v-model="props.row.devolucaoEmprestimosIelb" 
+                      v-model="props.row.devolucaoEmprestimoIELB" 
                     />
                   </q-td>
                 </template>
@@ -782,6 +796,7 @@
                     <q-input 
                       outlined 
                       dense 
+                      @keyup="writeInTableOutputVariables(props.row)"
                       mask="#.##"
                       reverse-fill-mask 
                       v-model="props.row.todasSaidas" 
@@ -790,25 +805,18 @@
                 </template>
               </q-table>
             </q-card>
+            <div class="text-right">
+              <q-btn 
+                label="Salvar como rascunho" 
+                rounded
+                color="warning"
+                class="q-ma-md"
+                no-caps
+                @click="insertFinanceStatistics"
+              />
+            </div>
           </q-tab-panel>
         </q-tab-panels>
-        <div class="text-right">
-          <q-btn 
-            label="Salvar como rascunho" 
-            rounded
-            color="warning"
-            class="q-ma-md"
-            no-caps
-            @click="saveAllEntriesAndOutputs"
-          />
-          <q-btn 
-            label="Enviar" 
-            rounded
-            color="green"
-            class="q-ma-md"
-            no-caps
-          />
-        </div>
       </div>
       <q-dialog
         v-model="dialogEditChild.open"
@@ -1497,23 +1505,7 @@ export default defineComponent({
       organismDisable: false,
       financceDisable: false,
       allEntries: [],
-      table: {
-        entry:{
-          saldoAnterior: '',
-          receitasRegulares: '',
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos:'',
-          todasOutrasReceitas:'',
-        },
-        output:{
-          contribuicaoIELB: '',
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasOutrasSaidas: '',
-        },
-      },
+      table: {},
       entryValueAnual: useTableColumns().entryValueAnual,
       outputValueAnual: useTableColumns().outputValueAnual,
       entriesOrganismsFinancesStatistics:[],
@@ -1649,6 +1641,7 @@ export default defineComponent({
         }
       }
     },
+    
     clearDialogEditLink() {
       this.dialogEditLink = { 
         open: false,
@@ -1918,7 +1911,60 @@ export default defineComponent({
       this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
       console.log("Todas as Entradas Salvas:", this.allEntries);
     },
-    
+    writeInTableEntriesVariables(props){
+      this.table = {
+        entries:{
+          saldoAnterior: '',
+          receitasRegulares: {
+            ofertasDominicais: +props.ofertasDominicais ? +props.ofertasDominicais : '',
+            ofertasMensais: +props.ofertasMensais ? +props.ofertasMensais : '',
+            receitasAlugueis: +props.receitasAlugueis ? +props.receitasAlugueis : '',
+          },
+          ofertasEspeciais: +props.ofertasEspeciais ? +props.ofertasEspeciais : '',
+          campanhasEspecificas: +props.campanhasEspecificas ? +props.campanhasEspecificas : '',
+          auxilio: +props.auxilio ? +props.auxilio : '',
+          emprestimos: +props.emprestimos ? +props.emprestimos : '',
+          todasOutrasReceitas: +props.todasOutrasReceitas ? +props.todasOutrasReceitas : '',
+        }
+      };
+    },
+    writeInTableOutputVariables(props){
+      this.table = {
+        output: {
+          contribuicaoIELB: {
+            ofertasDominicais: +props.ofertasDominicais ? +props.ofertasDominicais : '',
+            ofertasMensais: +props.ofertasMensais ? +props.ofertasMensais : '',
+            receitasAlugueis: +props.receitasAlugueis ? +props.receitasAlugueis : '',
+          },
+          contribuicaoDistrito: +props.contribuicaoDistrito ? +props.contribuicaoDistrito : '',
+          devolucaoEmprestimoIELB: +props.devolucaoEmprestimoIELB ? +props.devolucaoEmprestimoIELB : '',
+          todasSaidas: +props.todasSaidas ? +props.todasSaidas : ''
+        }
+      };
+    },
+    insertFinanceStatistics() {
+      const opt = {
+        route: "/desktop/statistics/insertFinanceStatistics",
+        body: {
+          organismId: this.$route.query.organismId,
+          financeData: null
+        },
+      };
+      if (Object.keys(this.table.output).length > 0) {
+        opt.body.financeData = this.table;
+      } else if (Object.keys(this.table.entry).length > 0) {
+        opt.body.financeData = this.table;
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.$q.notify('Dados salvos como rascunho')
+      });
+    },
     getFinanceStatisticByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getFinanceStatisticByOrganismId",
@@ -1931,7 +1977,6 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        console.log(r, 'POKPAOSKDOPSKDPOA')
         this.outputsOrganismsFinancesStatistics = r.data.list[0].output
         this.entriesOrganismsFinancesStatistics = r.data.list[0].entries
       });
