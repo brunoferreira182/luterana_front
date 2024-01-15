@@ -28,24 +28,59 @@
           Sobre as etapas:
         </div>
         <div class="text-h6">
-          A estatística será dividida em 4 etapas, sendo elas:
+          A estatística será dividida em 3 etapas, sendo elas:
         </div>
         <div class="q-mt-md text-h6 text-wrap">
           <div class="q-mt-md">
-            <strong>1. Etapa Paroquial/Congregação:</strong> Este bloco é dedicado às congregações e paróquias.
+            <strong>1. Etapa Pastoral:</strong> Este bloco será preenchido somente pelo pastor, dedicado aos dados pastorais.
           </div>
           <div class="q-mt-md">
-            <strong>2. Etapa Pastoral:</strong> Este bloco será preenchido somente pelo pastor, dedicado aos dados pastorais.
+            <strong>2. Etapa Congregacional:</strong> Este bloco é dedicado às congregações e paróquias.
           </div>
           <div class="q-mt-md">
-            <strong>3. Atividade/Movimento:</strong> Este bloco contém dados sobre os grupos e o movimento de membros.
-          </div>
-          <div class="q-mt-md">
-            <strong>4. Financeiro:</strong> Este bloco é dedicado para os dados financeiros.
+            <strong>3. Financeiro:</strong> Este bloco é dedicado para os dados financeiros.
           </div>
         </div>
       </div>
-      <div class="q-mt-xl text-right q-mr-xl">
+      <div class="q-ma-md q-mt-lg">
+        <div class="text-h5">
+          Status de envio:
+        </div>
+        <div class="row flex justify-evenly q-mt-md">
+          <q-btn
+            label="Dados pastorais"
+            :color="pastorStatus.color"
+            rounded
+            @click="goToPastorTab"
+            unelevated
+          >
+            <q-tooltip>{{ pastorStatus.tooltip }}</q-tooltip>
+          </q-btn>
+          <q-btn
+            label="Dados congregacionais"
+            :color="organismStatus.color"
+            @click="goToOrganismTab"
+            rounded
+            unelevated
+          >
+            <q-tooltip>
+              {{ organismStatus.tooltip }}
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            label="Dados financeiros"    
+            :color="financceData.color"
+            rounded    
+            @click="goToFinancceTab"
+            unelevated  
+          >
+            <q-tooltip>
+              {{ financceData.tooltip }}
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+      <!-- <div class="q-mt-xl text-right q-mr-xl">
         <q-btn
           color="primary"
           unelevated
@@ -54,7 +89,7 @@
           label="Prosseguir"
           @click="goToStatistics"
         />
-      </div>
+      </div> -->
     </q-page>
   </q-page-container>
 </template>
@@ -65,12 +100,62 @@ import useFetch from "src/boot/useFetch";
 export default defineComponent({
   name:"IntroStatistics",
   data() {
-    return {}
+    return {
+      pastorStatus: {
+        color: 'red',
+        tooltip: 'Bloco ainda não iniciado',
+      },
+      organismStatus: {
+        color:  'red',
+        tooltip: 'Bloco ainda não iniciado',
+      },
+      financceData: {
+        color: 'red',
+        tooltip: 'Bloco ainda não iniciado',
+      },
+      statisticStatus: null
+    }
   },
   beforeMount(){
     this.getMyOrganismsToChooseOne()
+    this.getStatisticStatus()
   },
   methods: {
+    goToFinancceTab() {
+      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=f')
+    },
+    goToOrganismTab() {
+      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=c')
+    },
+    goToPastorTab() {
+      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=p')
+    },
+    verifyStatusTypes() {
+      this.statisticStatus.forEach((status) => {
+        if (status.type === 'financceStatistics') {
+          if (status.status.value === 'draft') {
+            this.financceData.color = 'yellow'
+            this.financceData.tooltip = 'Rascunho imcompleto'
+          } else if (status.status.value === 'completeDraft') {
+            this.financceData.color = 'green'
+            this.financceData.tooltip = 'Rascunho completo'
+          }
+        }
+      })
+    },
+    getStatisticStatus() {
+      const opt = {
+        route: '/desktop/statistics/getStatisticStatusByOrganismId',
+        body: {
+          organismId: this.$route.query.organismId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.statisticStatus = r.data
+        this.verifyStatusTypes()
+      })
+    },
     goToStatistics() {
       const organismId = this.$route.query.organismId
       this.$router.push('/user/statistic?organismId=' + organismId)
