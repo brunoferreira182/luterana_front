@@ -14,17 +14,19 @@
             v-model="tab"
           >
             <q-tab 
-
+              :disable="pastorDisable"
               name="Dados pastorais" 
               icon="description" 
               label="Dados pastorais" 
             />
             <q-tab 
+              :disable="organismDisable"
               name="Dados congregacionais" 
               icon="diversity_2" 
               label="Dados congregacionais"
             />
             <q-tab 
+              :disable="financceDisable"
               name="Dados financeiros" 
               icon="request_quote" 
               label="Dados financeiros"
@@ -1491,6 +1493,9 @@ export default defineComponent({
   data() {
     return {
       tab: 'Dados pastorais',
+      pastorDisable: false,
+      organismDisable: false,
+      financceDisable: false,
       allEntries: [],
       table: {
         entry:{
@@ -1617,6 +1622,7 @@ export default defineComponent({
     this.getPastorDataTabs()
     this.getMyOrganismsWithAllData()
     this.getFinanceStatisticByOrganismId()
+    this.verifyQuery()
     // this.verifyIfIsPastor()
     this.getPastorFormations()
     this.getPastorDataTabs()
@@ -1625,6 +1631,24 @@ export default defineComponent({
     // this.getCoursesList()
   },
   methods: {
+    verifyQuery() {
+      let qry = this.$route.query.t
+      if (qry) {
+        if (qry === 'p') {
+          this.tab = 'Dados pastorais'
+          this.organismDisable = true,
+          this.financceDisable = true
+        } else if (qry === 'c') {
+          this.tab = 'Dados congregacionais'
+          this.financceDisable = true
+          this.pastorDisable = true
+        }  else if (qry === 'f') {
+          this.tab = 'Dados financeiros'
+          this.pastorDisable = true
+          this.organismDisable = true
+        }
+      }
+    },
     clearDialogEditLink() {
       this.dialogEditLink = { 
         open: false,
