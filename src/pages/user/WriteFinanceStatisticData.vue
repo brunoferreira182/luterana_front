@@ -25,6 +25,7 @@
                 <q-input 
                   outlined 
                   prefix="R$"
+                  type="number"
                   label="Ofertas dominicais"
                   reverse-fill-mask 
                   v-model.number="table.entries.receitasRegulares.ofertasDominicais" 
@@ -56,18 +57,21 @@
                 prefix="R$"
                 label="Ofertas especiais"
                 reverse-fill-mask 
+                type="number"
                 v-model.number="table.entries.ofertasEspeciais" 
               />
               <q-input 
                 outlined 
                 prefix="R$"
                 label="Campanhas específicas"
+                type="number"
                 reverse-fill-mask 
                 v-model.number="table.entries.campanhasEspecificas" 
               />
               <q-input 
                 outlined 
                 label="Auxílio"
+                type="number"
                 prefix="R$"
                 reverse-fill-mask 
                 v-model.number="table.entries.auxilio" 
@@ -77,12 +81,14 @@
                 label="Empréstimos"
                 prefix="R$"
                 reverse-fill-mask 
+                type="number"
                 v-model.number="table.entries.emprestimos" 
               />
               <q-input 
                 outlined 
                 label="Todas as Outras receitas"
                 prefix="R$"
+                type="number"
                 reverse-fill-mask 
                 v-model.number="table.entries.todasOutrasReceitas" 
               />
@@ -93,6 +99,7 @@
                 Contribuição IELB
                 <q-input 
                   outlined 
+                  type="number"
                   label="Ofertas dominicais"
                   prefix="R$"
                   v-model.number="table.output.contribuicaoIELB.ofertasDominicais" 
@@ -102,6 +109,7 @@
                 Contribuição IELB
                 <q-input 
                   outlined 
+                  type="number"
                   prefix="R$"
                   label="Ofertas mensais"
                   v-model.number="table.output.contribuicaoIELB.ofertasMensais" 
@@ -112,6 +120,7 @@
                 <q-input 
                   outlined 
                   label="Receitas de aluguéis"
+                  type="number"
                   prefix="R$"
                   reverse-fill-mask 
                   v-model.number="table.output.contribuicaoIELB.receitasAlugueis" 
@@ -121,18 +130,21 @@
                 outlined 
                 label="Contribuição Distrito"
                 prefix="R$"
+                type="number"
                 v-model.number="table.output.contribuicaoDistrito" 
               />
               <q-input 
                 outlined 
                 label="Devolução de empréstimos IELB"
                 prefix="R$"
+                type="number"
                 reverse-fill-mask 
                 v-model.number="table.output.devolucaoEmprestimoIELB" 
               />
               <q-input 
                 outlined 
                 prefix="R$"
+                type="number"
                 label="Todas as outras saídas"
                 reverse-fill-mask 
                 v-model.number="table.output.todasSaidas" 
@@ -224,6 +236,7 @@ export default defineComponent({
           return
         }
         this.$q.notify('Dados salvos como rascunho')
+        this.$router.back()
       });
     },
     getFinanceStatisticByOrganismId() {
