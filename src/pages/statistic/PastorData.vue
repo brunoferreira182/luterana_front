@@ -1273,7 +1273,6 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
-      isUser: true,
       dialogEditChild: {
         open: false,
         child: null,
@@ -1293,7 +1292,6 @@ export default defineComponent({
       },
       socialNetworkTypes: ['Instagram', 'Facebook', 'Youtube', 'Site pessoal'],
       profileTypeOptions: ['Pessoal', 'Profissional'],
-      prefix: null,
       dialogAddNewSocialNetwork: {
         open: false,
         socialType: '',
@@ -1375,10 +1373,7 @@ export default defineComponent({
 
   beforeMount() {
     this.getPastorDataTabs()
-    this.getPastorFormations()
-    this.getPastorDataTabs()
     this.getMyOrganismsList()
-    this.getPastorLinks()
   },
   methods: {
     saveDraft() {
@@ -1831,13 +1826,28 @@ export default defineComponent({
     },
     getPastorDataTabs() {
       const opt = {
-        route: '/desktop/statistics/getPastorStatisticsData'
+        route: '/desktop/statistics/getPastorStatisticsData',
+        body: {
+          organismId: this.$route.query.organismId
+        }
       }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
         } else {
-          this.pastorData = r.data
+          console.log(r.data, 'macacos agudos com ferroes de abelha')
+          this.pastorData = r.data.pastorData
+          if (r.data.pastorFormations) {
+            this.pastorFormations = r.data.pastorFormations
+          }
+          if (r.data.pastorActivities){
+            this.pastorActivities = r.data.pastorActivities
+          }
+          if (r.data.lastPastorActivities) {
+            this.lastOrganismPastorActivities = r.data.lastPastorActivities
+          } if (r.data.pastorLinks) {
+            this.pastorLink = r.data.pastorLinks
+          }
         }
       })
     }

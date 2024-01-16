@@ -131,6 +131,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
+        console.log(r.data, 'vamos ver como que esta isso aqui')
         this.mountTree(r.data.list)
       });
     },
