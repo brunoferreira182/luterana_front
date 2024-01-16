@@ -315,6 +315,10 @@ const routes = [
         component: () => import("src/pages/statistic/WriteFinanceStatisticData.vue"),
       },
       {
+        path: "/statistic/writeCongregationalStatisticData",
+        component: () => import("src/pages/statistic/WriteCongregationalStatisticData.vue"),
+      },
+      {
         path: "/statistic/selectOrganismToWriteStatisticData",
         component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
       },

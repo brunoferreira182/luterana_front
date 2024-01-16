@@ -52,7 +52,6 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        console.log(r, 'CUZIZIZIZIZI')
         this.userOrganismList = r.data.list
       });
     },

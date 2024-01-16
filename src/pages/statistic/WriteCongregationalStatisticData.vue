@@ -31,7 +31,7 @@
               unelevated
               color="primary"
               flat
-              v-on:click.stop="clkParent(prop.node.organismId)"
+              @click.stop="clkParent(prop.node.organismId)"
             >
               <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
             </q-btn>
@@ -123,16 +123,14 @@ export default defineComponent({
       const opt = {
         route: "/desktop/statistics/getMyOrganismsWithAllData",
         body: {
-          searchString: this.filter,
+          organismId: this.$route.query.organismId,
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
-          isActive: 1
         },
       };
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
         this.mountTree(r.data.list)
       });
     },
