@@ -472,6 +472,18 @@
             </q-item>
           </div>
         </div>
+        <div class="q-my-lg text-right q-ma-lg">
+          <q-btn
+            class="q-mb-md"
+            color="primary"
+            label="Salvar"
+            @click="saveDraft"
+          >
+            <q-tooltip>
+              Salvar rascunho
+            </q-tooltip>
+          </q-btn>
+        </div>
       </div>
       <q-dialog
         v-model="dialogEditChild.open"
@@ -1351,6 +1363,7 @@ export default defineComponent({
     this.getPastorDataTabs()
     this.getPastorFormations()
     this.getPastorDataTabs()
+    this.getMyOrganismsList()
     this.getPastorLinks()
   },
   methods: {
@@ -1387,6 +1400,9 @@ export default defineComponent({
       }
     },
     confirmAddLink() {
+      if (!this.pastorLink) {
+        this.pastorLink = []
+      }
       this.pastorLink.push({
         organismId: this.dialogAddLink.organismData._id,
         organismData: {

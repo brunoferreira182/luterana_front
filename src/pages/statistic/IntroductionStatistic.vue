@@ -46,8 +46,9 @@
         <div class="text-h5">
           Status de envio:
         </div>
-        <div class="row flex justify-evenly q-mt-md">
+        <div class="fit column content-center">
           <q-btn
+            class="q-ma-sm"
             label="Dados pastorais"
             :color="pastorStatus.color"
             rounded
@@ -57,6 +58,7 @@
             <q-tooltip>{{ pastorStatus.tooltip }}</q-tooltip>
           </q-btn>
           <q-btn
+            class="q-ma-sm"
             label="Dados congregacionais"
             :color="organismStatus.color"
             @click="goToOrganismTab"
@@ -68,6 +70,7 @@
             </q-tooltip>
           </q-btn>
           <q-btn
+            class="q-ma-sm"
             label="Dados financeiros"    
             :color="financceData.color"
             rounded    
@@ -131,6 +134,7 @@ export default defineComponent({
       this.$router.push('/statistic/PastorData?organismId=' + this.$route.query.organismId + '&t=p')
     },
     verifyStatusTypes() {
+      console.log('me chamaram')
       this.statisticStatus.forEach((status) => {
         if (status.type === 'financceStatistics') {
           if (status.status.value === 'draft') {
@@ -139,6 +143,17 @@ export default defineComponent({
           } else if (status.status.value === 'completeDraft') {
             this.financceData.color = 'green'
             this.financceData.tooltip = 'Rascunho completo'
+          }
+        }
+        if (status.type === 'pastoralStatistics') {
+          if (status.status.value === 'draft') {
+            this.pastorStatus.color = 'yellow'
+            this.pastorStatus.tooltip = 'Rascunho imcompleto'
+          }
+        } else if (status.status.type === 'pastoralStatistics') {
+          if (status.status.value === 'completeDraft') {
+            this.pastorStatus.color = 'green'
+            this.pastorStatus.tooltip = 'Rascunho completo'
           }
         }
       })
