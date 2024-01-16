@@ -436,13 +436,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input filled v-model="item.quantity" label="Quantidade de visitas">
-                      <template v-slot:prepend>
-                      </template>
+                  <q-input outlined v-model="item.quantity" label="Quantidade de visitas">
                   </q-input>
-                  <q-input filled v-model="item.people" label="Pessoas de pessoas ">
-                      <template v-slot:prepend>
-                      </template>
+                  <q-input outlined v-model="item.people" label="Pessoas de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -459,13 +455,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input filled v-model="item.quantity" label="Quantidade de visitas">
-                      <template v-slot:prepend>
-                      </template>
+                  <q-input outlined v-model="item.quantity" label="Quantidade de visitas">
                   </q-input>
-                  <q-input filled v-model="item.people" label="Pessoas de pessoas ">
-                      <template v-slot:prepend>
-                      </template>
+                  <q-input outlined v-model="item.people" label="Pessoas de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -488,14 +480,14 @@
       <q-dialog
         v-model="dialogEditChild.open"
       >
-        <q-card style="width: 400px;">
-          <q-card-section class="text-h6">
+        <q-card style="width: 300px;border-radius:1rem">
+          <q-card-section class="text-h6 text-center">
             Alterar usuário
           </q-card-section>
           <q-card-section>
             <q-select
               v-model="dialogEditChild.newChild"
-              filled
+              outlined
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -513,23 +505,37 @@
             </q-select>
           </q-card-section>
           <q-card-actions align="center">
-            <q-btn label="Sair" color="primary" unelevated flat @click="cancelChangeChild"/>
-            <q-btn label="Confirmar" color="primary" unelevated @click="confirmChangeChild"/>
+            <q-btn 
+              label="Sair" 
+              color="primary" 
+              no-caps
+              unelevated 
+              flat 
+              rounded
+              @click="cancelChangeChild"
+            />
+            <q-btn 
+              label="Confirmar" 
+              color="primary" 
+              no-caps
+              unelevated 
+              rounded
+              @click="confirmChangeChild"
+            />
           </q-card-actions>
         </q-card>
       </q-dialog>
       <q-dialog
         v-model="dialogEditMaritalStatus.open"
       >
-        <q-card style="width: 400px;">
-          <q-card-section>
-            <div class="text-h6 q-pa-sm">
-              Alterar relação?
-            </div>
+        <q-card style="width: 300px;border-radius:1rem">
+          <q-card-section class="text-h6 text-center">
+            Alterar relação
+          </q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
-              class="q-pa-sm"
               v-model="dialogEditMaritalStatus.status.userName"
-              filled
+              outlined
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -545,21 +551,21 @@
                 </q-item>
               </template>
             </q-select>
-            <div class="q-pa-sm text-h6">
+            <div class="text-h6 q-ma-sm">
               Datas:
             </div>
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.initialDate"
               outlined
               mask="##/##/####"
-              class="q-pa-sm"
+              class="q-mb-sm"
               label="Data inicial"
             />
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.finalDate"
               outlined
-              class="q-pa-sm"
               mask="##/##/####"
+              class="q-mb-sm"
               label="Data final"
             />
           </q-card-section>
@@ -568,12 +574,16 @@
               label="Depois"
               color="primary"
               flat
+              no-caps
+              rounded
               unelevated
             />
             <q-btn
               label="Confirmar"
               color="primary"
               @click="confirmEditMaritalRelation"
+              no-caps
+              rounded
               unelevated
             />
           </q-card-actions>
@@ -585,7 +595,7 @@
       >
         <q-card style="width: 300px; border-radius: 1rem;">
           <q-card-section class="text-center text-h6">
-            <strong>Alterar rede social</strong>
+            Alterar rede social
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select 
@@ -644,7 +654,7 @@
       >
         <q-card style="width: 300px;border-radius:1rem ;">
           <q-card-section class="text-center text-h6">
-            <strong>Adicionar rede social</strong>
+            Adicionar rede social
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select 
@@ -673,15 +683,6 @@
             >
             </q-select>
           </q-card-section>
-          <!-- <q-card-section>
-            <q-input 
-              outlined
-              v-model="dialogAddNewSocialNetwork.name"
-              label="Link da página"
-              :prefix="prefix"
-            >
-            </q-input>
-          </q-card-section> -->
           <q-card-actions align="center">
             <q-btn
               label="Sair"
@@ -706,16 +707,14 @@
       <q-dialog
         v-model="dialogAddNewChild.open"
       >
-        <q-card style="width: 500px;">
-          <q-card-section>
-            <strong>
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section class="text-h6 text-center">
               Selecione o usuário
-            </strong>
           </q-card-section>
           <q-card-section>
             <q-select
               v-model="dialogAddNewChild.child"
-              filled
+              outlined
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -737,11 +736,13 @@
               label="Sair"
               color="primary"
               flat
+              no-caps
               unelevated
               rounded
             />
             <q-btn
               label="Confirmar"
+              no-caps
               color="primary"
               @click="confirmAddNewChild"
               rounded
@@ -754,14 +755,13 @@
         v-model="dialogAddMaritalRelation.open"
         @hide="clearDialogAddMaritalRelation"
       >
-        <q-card style="width: 400px;">
-          <q-card-section class="text-h6">
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section class="text-h6 text-center">
             Adicionar relação conjugal
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
-              class="q-px-sm"
-              filled
+              outlined
               v-model="dialogAddMaritalRelation.partner"
               use-input
               label="Nome do usuário"
@@ -778,21 +778,21 @@
                 </q-item>
               </template>
             </q-select>
-            <div class="q-pa-sm text-h6">
+            <div class="text-h6 q-pa-md">
               Datas:
             </div>
             <q-input
               outlined
               mask="##/##/####"
+              class="q-mb-sm"
               v-model="dialogAddMaritalRelation.dates.initialDate"
-              class="q-pa-sm"
               label="Data inicial"
             />
             <q-input
               v-model="dialogAddMaritalRelation.dates.finalDate"
               outlined
+              class="q-mb-sm"
               mask="##/##/####"
-              class="q-pa-sm"
               label="Data final"
             />
           </q-card-section>
@@ -802,12 +802,14 @@
               @click="clearDialogAddMaritalRelation"
               color="primary"
               flat
+              no-caps
               unelevated
               rounded
             />
             <q-btn
               label="Confirmar"
               color="primary"
+              no-caps
               @click="confirmAddMaritalRelation"
               rounded
               unelevated
@@ -819,14 +821,13 @@
         v-model="dialogEditParentName.open"
         @hide="clearDialogParent"
       >
-        <q-card style="width: 400px;">
-          <q-card-section class="text-h6">
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section class="text-h6 text-center">
             Alterar usuário
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
-              class="q-pa-sm"
-              filled
+              outlined
               v-model="dialogEditParentName.user"
               use-input
               label="Nome do usuário"
@@ -847,6 +848,7 @@
           <q-card-actions align="center">
             <q-btn
               label="Sair"
+              no-caps
               @click="clearDialogParent"
               color="primary"
               flat
@@ -855,6 +857,7 @@
             />
             <q-btn
               label="Confirmar"
+              no-caps
               color="primary"
               @click="confirmEditParent"
               rounded
@@ -868,15 +871,14 @@
         @hide="clearDialogAddParent"
       >
         <q-card
-          style="width: 400px"
+          style="width: 300px;border-radius: 1rem;"
         >
-          <q-card-section class="text-h6">
+          <q-card-section class="text-h6 text-center">
             Selecione o usuário
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
-              class="q-pa-sm"
-              filled
+              outlined
               v-model="dialogAddParent.user"
               use-input
               label="Nome do usuário"
@@ -896,6 +898,7 @@
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
+              no-caps
               label="Sair"
               @click="clearDialogAddParent"
               color="primary"
@@ -905,6 +908,7 @@
             />
             <q-btn
               label="Confirmar"
+              no-caps
               color="primary"
               @click="confirmAddParent"
               rounded
