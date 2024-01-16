@@ -61,7 +61,7 @@
             class="q-ma-sm"
             label="Dados congregacionais"
             :color="organismStatus.color"
-            @click="goToOrganismTab"
+            @click="goToCongregationalView"
             rounded
             unelevated
           >
@@ -127,8 +127,8 @@ export default defineComponent({
     goToFinanceView() {
       this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId + '&t=f')
     },
-    goToOrganismTab() {
-      this.$router.push('/user/statistic?organismId=' + this.$route.query.organismId + '&t=c')
+    goToCongregationalView() {
+      this.$router.push('/statistic/WriteCongregationalStatisticData?organismId=' + this.$route.query.organismId + '&t=c')
     },
     goToPastorTab() {
       this.$router.push('/statistic/PastorData?organismId=' + this.$route.query.organismId + '&t=p')
@@ -147,12 +147,12 @@ export default defineComponent({
         }
         if (status.type === 'pastoralStatistics') {
           if (status.status.value === 'draft') {
-            this.pastorStatus.color = 'yellow'
+            this.pastorStatus.color = 'yellow-8'
             this.pastorStatus.tooltip = 'Rascunho imcompleto'
           }
         } else if (status.status.type === 'pastoralStatistics') {
           if (status.status.value === 'completeDraft') {
-            this.pastorStatus.color = 'green'
+            this.pastorStatus.color = 'green-8'
             this.pastorStatus.tooltip = 'Rascunho completo'
           }
         }
