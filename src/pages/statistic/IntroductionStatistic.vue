@@ -102,15 +102,15 @@ export default defineComponent({
   data() {
     return {
       pastorStatus: {
-        color: 'red',
+        color: 'red-8',
         tooltip: 'Bloco ainda não iniciado',
       },
       organismStatus: {
-        color:  'red',
+        color:  'red-8',
         tooltip: 'Bloco ainda não iniciado',
       },
       financceData: {
-        color: 'red',
+        color: 'red-8',
         tooltip: 'Bloco ainda não iniciado',
       },
       statisticStatus: null
@@ -134,10 +134,10 @@ export default defineComponent({
       this.statisticStatus.forEach((status) => {
         if (status.type === 'financceStatistics') {
           if (status.status.value === 'draft') {
-            this.financceData.color = 'yellow'
+            this.financceData.color = 'yellow-8'
             this.financceData.tooltip = 'Rascunho imcompleto'
           } else if (status.status.value === 'completeDraft') {
-            this.financceData.color = 'green'
+            this.financceData.color = 'green-8'
             this.financceData.tooltip = 'Rascunho completo'
           }
         }

@@ -3,9 +3,25 @@
     <q-page>
       <div class="q-pa-md">
         <div class="text-capitalize"> 
-          <div class="text-h5 q-mb-sm text-center">
-            Estatística 2023
-            <div class="text-h6">Dados Financeiros</div>
+          <div class="row justify-between">
+            <div class="col">
+              <q-btn 
+                unelevated
+                icon="arrow_back"
+                size="large"
+                @click="$router.back()"
+              >
+                <q-tooltip>
+                  Voltar para introdução
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div class="col-12">
+              <div class="text-h5 q-mb-sm text-center">
+                Estatística 2023
+                <div class="text-h6">Dados Financeiros</div>
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -47,6 +63,7 @@
                 <q-input 
                   outlined 
                   prefix="R$"
+                  type="number"
                   label="Receitas de aluguéis"
                   reverse-fill-mask 
                   v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
