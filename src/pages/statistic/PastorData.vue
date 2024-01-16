@@ -583,11 +583,11 @@
         v-model="dialogEditSocialNetwork.open"
         @hide="clearDialogEditSocialNetwork"
       >
-        <q-card style="width: 300px;">
-          <q-card-section>
+        <q-card style="width: 300px; border-radius: 1rem;">
+          <q-card-section class="text-center text-h6">
             <strong>Alterar rede social</strong>
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select 
               v-model="dialogEditSocialNetwork.social.selectedSocialType"
               :options="socialNetworkTypes"
@@ -596,7 +596,10 @@
               hint="Selecione a rede"
             />
           </q-card-section>
-          <q-card-section v-if="dialogEditSocialNetwork.socialType !== 'Site pessoal'">
+          <q-card-section 
+            v-if="dialogEditSocialNetwork.socialType !== 'Site pessoal'"
+            class="q-pa-sm"
+          >
             <q-input 
               outlined
               v-model="dialogEditSocialNetwork.social.name"
@@ -604,7 +607,7 @@
               hint="Seu nome de perfil na rede social"
             />
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
               outlined
               v-model="dialogEditSocialNetwork.social.type"
@@ -618,6 +621,7 @@
             <q-btn
               label="Cancelar"
               color="primary"
+              no-caps
               flat
               @click="clearDialogEditSocialNetwork"
               unelevated
@@ -625,6 +629,7 @@
             />
             <q-btn
               label="Confirmar"
+              no-caps
               color="primary"
               @click="confirmChangeSocialNetwork"
               rounded
@@ -637,8 +642,11 @@
         v-model="dialogAddNewSocialNetwork.open"
         @hide="clearDialogAddNewSocialNetwork()"
       >
-        <q-card style="width: 500px;">
-          <q-card-section>
+        <q-card style="width: 300px;border-radius:1rem ;">
+          <q-card-section class="text-center text-h6">
+            <strong>Adicionar rede social</strong>
+          </q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select 
               :options="socialNetworkTypes"
               v-model="dialogAddNewSocialNetwork.socialType"
@@ -647,7 +655,7 @@
               hint="Selecione a rede"
             />
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-input 
               v-model="dialogAddNewSocialNetwork.name"
               label="Nome de perfil"
@@ -655,7 +663,7 @@
               outlined
             />
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-pa-sm">
             <q-select
               outlined
               v-model="dialogAddNewSocialNetwork.type"
@@ -678,6 +686,7 @@
             <q-btn
               label="Sair"
               color="primary"
+              no-caps
               flat
               unelevated
               rounded
@@ -686,6 +695,7 @@
             <q-btn
               label="Confirmar"
               color="primary"
+              no-caps
               @click="confirmAddNewSocialNetwork"
               rounded
               unelevated
