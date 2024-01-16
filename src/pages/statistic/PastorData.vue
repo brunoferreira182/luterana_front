@@ -472,6 +472,18 @@
             </q-item>
           </div>
         </div>
+        <div class="q-my-lg text-right q-ma-lg">
+          <q-btn
+            class="q-mb-md"
+            color="primary"
+            label="Salvar"
+            @click="saveDraft"
+          >
+            <q-tooltip>
+              Salvar rascunho
+            </q-tooltip>
+          </q-btn>
+        </div>
       </div>
       <q-dialog
         v-model="dialogEditChild.open"
@@ -1233,7 +1245,7 @@ import useFetch from "src/boot/useFetch";
 // import utils from "../../boot/utils";
 import { defineComponent } from "vue";
 export default defineComponent({
-  name:"Statistics",
+  name:"PastorData",
   data() {
     return {
       pastorData: null,
@@ -1351,9 +1363,30 @@ export default defineComponent({
     this.getPastorDataTabs()
     this.getPastorFormations()
     this.getPastorDataTabs()
+    this.getMyOrganismsList()
     this.getPastorLinks()
   },
   methods: {
+    saveDraft() {
+      let pastoralData = {
+        pastorData: this.pastorData,
+        pastorFormations: this.pastorFormations,
+        pastorLinks: this.pastorLink,
+        pastorActivities: this.pastorActivities,
+        lastPastorActivities: this.lastOrganismPastorActivities
+      }
+      const opt = {
+        route: '/desktop/statistics/insertPastoralStatistics',
+        body: {
+          organismId: this.$route.query.organismId,
+          pastoralData
+        }
+      }
+      useFetch(opt).then((r) => {
+        if  (r.error) return
+        else this.$q.notify('Rascunho salvo com sucesso')
+      })
+    },
     clearDialogAddLink() {
       this.dialogAddLink = {
         open: false,
@@ -1367,6 +1400,9 @@ export default defineComponent({
       }
     },
     confirmAddLink() {
+      if (!this.pastorLink) {
+        this.pastorLink = []
+      }
       this.pastorLink.push({
         organismId: this.dialogAddLink.organismData._id,
         organismData: {
@@ -1385,7 +1421,7 @@ export default defineComponent({
       })
       this.clearDialogAddLink()
     },
-     addNewLink() {
+    addNewLink() {
       this.dialogAddLink.open = true
       this.getStatusList()
     },

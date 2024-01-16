@@ -288,8 +288,14 @@ const routes = [
         component: () => import("src/pages/user/Statistic.vue"),
       },
       
-    
-    
+      {
+        path: "/user/selectOrganismToWriteStatisticData",
+        component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
+      },
+      {
+        path: "/user/writeFinanceStatisticData",
+        component: () => import("src/pages/user/WriteFinanceStatisticData.vue"),
+      },
       // {
       //   path: "/user/createNewSugestion",
       //   component: () => import("src/pages/user/CreateNewSugestion.vue"),
