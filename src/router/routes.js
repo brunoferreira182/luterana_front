@@ -319,7 +319,7 @@ const routes = [
         component: () => import("src/pages/statistic/IntroWriteStatisticData.vue"),
       },
       {
-        path: "/statistic/CompleteStatistic",
+        path: "/statistic/completeStatistic",
         component: () => import("src/pages/statistic/CompleteStatistic.vue"),
       }
     ],
