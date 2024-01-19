@@ -318,6 +318,10 @@ const routes = [
         path: "/statistic/selectOrganismToWriteStatisticData",
         component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
       },
+      {
+        path: "/statistic/CompleteStatistic",
+        component: () => import("src/pages/statistic/CompleteStatistic.vue"),
+      }
     ],
   },
 
