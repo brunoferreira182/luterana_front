@@ -8,26 +8,26 @@
         Selecione a etapa para iniciar
       </div>
       <div class="q-pa-sm">
-        <q-card class="card" @click="$router.push('/statistic/pastorData')">
-          <q-card-section>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/pastorData')">
+          <q-item-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
-          </q-card-section>
-        </q-card>
-        <q-card class="card">
-          <q-card-section>
+          </q-item-section>
+        </q-item>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/writeCongregationalStatisticData')">
+          <q-item-section>
             <q-item-label class="text-h5">Composição</q-item-label>
-          </q-card-section>
-        </q-card>
-        <q-card class="card">
-          <q-card-section>
+          </q-item-section>
+        </q-item>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true">
+          <q-item-section>
             <q-item-label class="text-h5">Estatística</q-item-label>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="text-center">
-        <q-checkbox size="lg" v-model="isSIPAR" class="text-h5">
-          SIPAR
-        </q-checkbox>
+          </q-item-section>
+        </q-item>
+        <div class="text-center">
+          <q-checkbox size="lg" v-model="isSIPAR" class="text-h5">
+            SIPAR
+          </q-checkbox>
+        </div>
       </div>
       <q-list> 
 
