@@ -1,10 +1,23 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page>
+    <q-page class="q-pa-lg"> 
       <div class="q-pa-md text-center">
         <div class="text-capitalize"> 
-          <div class="text-h5 q-mb-sm">
-            Dados Pastorais
+          <div class="row">
+            <q-btn 
+              class="text-left col-2"
+              unelevated
+              icon="arrow_back"
+              size="large"
+              @click="$router.back()"
+            >
+              <q-tooltip>
+                Voltar para introdução
+              </q-tooltip>
+            </q-btn>
+            <div class="text-h5 col-6">
+              Dados Pastorais
+            </div>
           </div>
         </div>
       </div>
@@ -436,9 +449,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Quantidade de visitas">
+                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Pessoas de pessoas ">
+                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -455,9 +468,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Quantidade de visitas">
+                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Pessoas de pessoas ">
+                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -466,9 +479,11 @@
         </div>
         <div class="q-my-lg text-right q-ma-lg">
           <q-btn
-            class="q-mb-md"
-            color="primary"
-            label="Salvar"
+            label="Salvar como rascunho"
+            class="q-ma-md text-center"
+            color="warning"
+            rounded
+            no-caps
             @click="saveDraft"
           >
             <q-tooltip>
