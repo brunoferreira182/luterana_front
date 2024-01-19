@@ -3,14 +3,26 @@
         <q-page>
 
             <div class="fit column q-mt-lg content-center">
-                <q-btn class="q-ma-sm" label="Dados pastorais"  rounded unelevated>
-                </q-btn>
-                <q-btn class="q-ma-sm" label="Dados congregacionais" 
-                    rounded unelevated>
-                </q-btn>
-                <q-btn class="q-ma-sm" label="Dados financeiros" rounded
-                    unelevated>
-                </q-btn>
+                <q-item class="card">
+                    <q-item-section>
+                        <q-item-label class="text-h5" />Atividades cúlticas
+                    </q-item-section>
+                </q-item>
+                <q-item class="card">
+                    <q-item-section>
+                        <q-item-label class="text-h5" />Atividades de grupos
+                    </q-item-section>
+                </q-item>
+                <q-item class="card">
+                    <q-item-section>
+                        <q-item-label class="text-h5" />Movimento de membros
+                    </q-item-section>
+                </q-item>
+                <q-item class="card">
+                    <q-item-section>
+                        <q-item-label class="text-h5" />Financeiro
+                    </q-item-section>
+                </q-item>
             </div>
         </q-page>
     </q-page-container>
@@ -40,7 +52,7 @@ export default defineComponent({
         goToPastorTab() {
             this.$router.push('')
         },
-        
+
         getStatisticStatus() {
             const opt = {
                 route: '/desktop/statistics/getStatisticStatusByOrganismId',
@@ -72,3 +84,15 @@ export default defineComponent({
     }
 })
 </script>
+<style>
+.card {
+    border-radius: 1rem;
+    height: 9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    box-shadow: 0px 0px 6px -3px;
+}
+</style>
