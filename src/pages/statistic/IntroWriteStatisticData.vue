@@ -8,26 +8,26 @@
         Selecione a etapa para iniciar
       </div>
       <div class="q-pa-sm">
-        <q-card class="card">
-          <q-card-section>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/pastorData')">
+          <q-item-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
-          </q-card-section>
-        </q-card>
-        <q-card class="card">
-          <q-card-section>
+          </q-item-section>
+        </q-item>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/writeCongregationalStatisticData')">
+          <q-item-section>
             <q-item-label class="text-h5">Composição</q-item-label>
-          </q-card-section>
-        </q-card>
-        <q-card class="card">
-          <q-card-section>
+          </q-item-section>
+        </q-item>
+        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true">
+          <q-item-section>
             <q-item-label class="text-h5">Estatística</q-item-label>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="text-center">
-        <q-checkbox size="lg" v-model="isSIPAR" class="text-h5">
-          SIPAR
-        </q-checkbox>
+          </q-item-section>
+        </q-item>
+        <div class="text-center">
+          <q-checkbox size="lg" v-model="isSIPAR" class="text-h5">
+            SIPAR
+          </q-checkbox>
+        </div>
       </div>
       <q-list> 
 
@@ -53,32 +53,43 @@
 
 <script>
 import { defineComponent } from "vue";
-import useFetch from "src/boot/useFetch";
+// import useFetch from "src/boot/useFetch";
+import utils from "../../boot/utils";
 export default defineComponent({
   name:"IntroWriteStatisticData",
   data() {
     return {
       userOrganismList:[],
       isSIPAR: false,
+      isPastor: null,
     }
   },
   beforeMount(){
-    this.getParoquiasByUserId()
+    this.verifyIfIsPastor()
+    // this.getParoquiasByUserId()
   },
   methods: {
+    verifyIfIsPastor() {
+      const userInfo = utils.presentUserInfo()
+      if (userInfo.userType === 'pastor') {
+        this.isPastor = false
+        // this.getPastorDataTabs()} else {
+        this.isPastor = true
+      }
+    },
     goToIntroductionStatistic(organismId) {
       this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
     },
-    getParoquiasByUserId(){
-      const opt = {
-        route: "/desktop/statistics/getParoquiasByUserId",
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.userOrganismList = r.data.list
-      });
-    },
+    // getParoquiasByUserId(){
+    //   const opt = {
+    //     route: "/desktop/statistics/getParoquiasByUserId",
+    //   };
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     this.userOrganismList = r.data.list
+    //   });
+    // },
   }
 })
 </script>
