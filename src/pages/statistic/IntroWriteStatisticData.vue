@@ -5,10 +5,33 @@
         Bem-vindo(a) a Estatística 2023!
       </div>
       <div class="q-ma-md text-h6">
-        Selecione o organismo que deseja escrever os dados da estatística.
+        Selecione a etapa para iniciar
       </div>
-      <q-list>
-        <q-item
+      <div class="q-pa-sm">
+        <q-card class="card">
+          <q-card-section>
+            <q-item-label class="text-h5">Dados pastorais</q-item-label>
+          </q-card-section>
+        </q-card>
+        <q-card class="card">
+          <q-card-section>
+            <q-item-label class="text-h5">Composição</q-item-label>
+          </q-card-section>
+        </q-card>
+        <q-card class="card">
+          <q-card-section>
+            <q-item-label class="text-h5">Estatística</q-item-label>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="text-center">
+        <q-checkbox size="lg" v-model="isSIPAR" class="text-h5">
+          SIPAR
+        </q-checkbox>
+      </div>
+      <q-list> 
+
+        <!-- <q-item
           v-for="organism in userOrganismList"
           style="border-radius: .5em"
           class="bg-grey-3 q-ma-md"
@@ -22,7 +45,7 @@
               {{ organism.organismConfigName }}
             </q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
       </q-list>
     </q-page>
   </q-page-container>
@@ -32,10 +55,11 @@
 import { defineComponent } from "vue";
 import useFetch from "src/boot/useFetch";
 export default defineComponent({
-  name:"SelectOrganismToWriteStatisticData",
+  name:"IntroWriteStatisticData",
   data() {
     return {
-      userOrganismList:[]
+      userOrganismList:[],
+      isSIPAR: false,
     }
   },
   beforeMount(){
@@ -58,3 +82,15 @@ export default defineComponent({
   }
 })
 </script>
+<style scoped>
+.card{
+  border-radius: 1rem; 
+  height: 9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  box-shadow: 0px 0px 6px -3px;
+}
+</style>

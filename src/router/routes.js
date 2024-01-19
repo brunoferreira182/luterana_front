@@ -289,8 +289,8 @@ const routes = [
       },
       
       {
-        path: "/user/selectOrganismToWriteStatisticData",
-        component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
+        path: "/user/introWriteStatisticData",
+        component: () => import("src/pages/statistic/IntroWriteStatisticData.vue"),
       },
       // {
       //   path: "/user/createNewSugestion",
@@ -315,8 +315,8 @@ const routes = [
         component: () => import("src/pages/statistic/WriteCongregationalStatisticData.vue"),
       },
       {
-        path: "/statistic/selectOrganismToWriteStatisticData",
-        component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
+        path: "/statistic/introWriteStatisticData",
+        component: () => import("src/pages/statistic/IntroWriteStatisticData.vue"),
       },
       {
         path: "/statistic/CompleteStatistic",
