@@ -8,7 +8,7 @@
         Selecione a etapa para iniciar
       </div>
       <div class="q-pa-sm">
-        <q-card class="card">
+        <q-card class="card" @click="$router.push('/statistic/pastorData')">
           <q-card-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
           </q-card-section>
@@ -53,32 +53,43 @@
 
 <script>
 import { defineComponent } from "vue";
-import useFetch from "src/boot/useFetch";
+// import useFetch from "src/boot/useFetch";
+import utils from "../../boot/utils";
 export default defineComponent({
   name:"IntroWriteStatisticData",
   data() {
     return {
       userOrganismList:[],
       isSIPAR: false,
+      isPastor: null,
     }
   },
   beforeMount(){
-    this.getParoquiasByUserId()
+    this.verifyIfIsPastor()
+    // this.getParoquiasByUserId()
   },
   methods: {
+    verifyIfIsPastor() {
+      const userInfo = utils.presentUserInfo()
+      if (userInfo.userType === 'pastor') {
+        this.isPastor = false
+        // this.getPastorDataTabs()} else {
+        this.isPastor = true
+      }
+    },
     goToIntroductionStatistic(organismId) {
       this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
     },
-    getParoquiasByUserId(){
-      const opt = {
-        route: "/desktop/statistics/getParoquiasByUserId",
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.userOrganismList = r.data.list
-      });
-    },
+    // getParoquiasByUserId(){
+    //   const opt = {
+    //     route: "/desktop/statistics/getParoquiasByUserId",
+    //   };
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     this.userOrganismList = r.data.list
+    //   });
+    // },
   }
 })
 </script>
