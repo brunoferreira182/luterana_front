@@ -16,6 +16,7 @@ function masterServerRoute () {
   else if (MODE_MASTER_SERVER === 'dev') ret = 'https://api6.b3dev.dev:' + port
   
   else if (MODE_MASTER_SERVER === 'prod') ret = 'https://api2.b3dev.dev:' + port
+  else if (MODE_MASTER_SERVER === 'vpn') ret = "http://192.168.0.120/:" + port
   return ret
 }
 
