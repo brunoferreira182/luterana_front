@@ -11,12 +11,12 @@ function masterServerRoute () {
   else if (MODE_MASTER_SERVER === 'brunovpn') ret = 'http://192.168.0.166:' + port
 
   else if (MODE_MASTER_SERVER === 'leo') ret = 'http://192.168.1.24:' + port
-  else if (MODE_MASTER_SERVER === 'vpn') ret = "http://192.168.100.8:" + port
+  // else if (MODE_MASTER_SERVER === 'vpn') ret = "http://192.168.100.8:" + port
 
   else if (MODE_MASTER_SERVER === 'dev') ret = 'https://api6.b3dev.dev:' + port
   
   else if (MODE_MASTER_SERVER === 'prod') ret = 'https://api2.b3dev.dev:' + port
-  else if (MODE_MASTER_SERVER === 'vpn') ret = "http://192.168.0.120/:" + port
+  else if (MODE_MASTER_SERVER === 'vpn') ret = "http://10.100.104.8:" + port
   return ret
 }
 

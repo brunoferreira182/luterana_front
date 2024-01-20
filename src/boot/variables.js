@@ -1,5 +1,9 @@
 //////////// VARIAVEIS DA APLICACAO //////
+<<<<<<< HEAD
 const MODE_MASTER_SERVER = "brunovpn";
+=======
+const MODE_MASTER_SERVER = "vpn";
+>>>>>>> ca9ee94525284be7a08dd13b43431806f8909ba9
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 17
