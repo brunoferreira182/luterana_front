@@ -321,6 +321,10 @@ const routes = [
       {
         path: "/statistic/completeStatistic",
         component: () => import("src/pages/statistic/CompleteStatistic.vue"),
+      },
+      {
+        path: "/statistic/groupActivity",
+        component: () => import("src/pages/statistic/GroupActivity.vue"),
       }
     ],
   },
