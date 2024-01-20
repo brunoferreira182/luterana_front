@@ -8,17 +8,29 @@
         Selecione a etapa para iniciar
       </div>
       <div class="q-pa-sm">
-        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/pastorData')">
+        <q-item class="card" 
+          :clickable="isPastor ? true : false" 
+          :disable="isPastor ? false : true" 
+          @click="$router.push('/statistic/pastorData')"  
+        >
           <q-item-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/writeCongregationalStatisticData')">
+        <q-item class="card" 
+          :clickable="isPastor ? true : false" 
+          :disable="isPastor ? false : true" 
+          @click="$router.push('/statistic/writeCongregationalStatisticData')"  
+        >
           <q-item-section>
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item class="card" :clickable="isPastor ? true : false" :disable="isPastor ? false : true" @click="$router.push('/statistic/completeStatistic')">
+        <q-item class="card" 
+          :clickable="isPastor ? true : false" 
+          :disable="isPastor ? false : true" 
+          @click="$router.push('/statistic/selectOrganismToWriteStatisticData')" 
+        >
           <q-item-section>
             <q-item-label class="text-h5">Estatística</q-item-label>
           </q-item-section>

@@ -288,10 +288,7 @@ const routes = [
         component: () => import("src/pages/user/Statistic.vue"),
       },
       
-      {
-        path: "/user/introWriteStatisticData",
-        component: () => import("src/pages/statistic/IntroWriteStatisticData.vue"),
-      },
+  
       // {
       //   path: "/user/createNewSugestion",
       //   component: () => import("src/pages/user/CreateNewSugestion.vue"),
@@ -317,6 +314,10 @@ const routes = [
       {
         path: "/statistic/introWriteStatisticData",
         component: () => import("src/pages/statistic/IntroWriteStatisticData.vue"),
+      },
+      {
+        path: "/statistic/selectOrganismToWriteStatisticData",
+        component: () => import("src/pages/statistic/SelectOrganismToWriteStatisticData.vue"),
       },
       {
         path: "/statistic/completeStatistic",
