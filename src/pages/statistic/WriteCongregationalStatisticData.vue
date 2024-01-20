@@ -20,7 +20,7 @@
       >
         <q-item-section>
           <div class="text-h6 text-left">
-            Paróquia: <strong>{{ composition.parentOrganismName }}</strong>
+            Paróquia: <strong>{{ composition.organismParentName }}</strong>
           </div>
           <div class="q-mt-sm text-left">
             Congregações:
@@ -28,11 +28,11 @@
           <q-item-label 
             class="bg-white q-mt-sm text-center"
             style="border-radius: .7rem;"
-            v-for="org in composition.childrenData"
+            v-for="org in composition.congregations"
             :key="org"
           > 
             <div>
-              <strong>{{ org.organismName }}</strong>
+              <strong>{{ org.organismChildName }}</strong>
             </div>
             <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
               <div class="text-left q-ma-sm">
@@ -40,7 +40,7 @@
               </div>
               <div 
                 class="text-left q-ml-lg"
-                v-for="func in org.organismFunctionsUsers" 
+                v-for="func in org.organismFunctions" 
                 :key="func"
               >
                 <strong>{{ func.functionName }}</strong>
@@ -60,10 +60,10 @@
               <div
                 class="text-left q-ma-sm q-pa-sm q-ml-md bg-white"
                 style="border-radius: .3rem;"
-                v-for="dep in org.secondChildData"
+                v-for="dep in org.departaments"
                 :key="dep"
               >
-                {{ dep.organismConfigName }}
+                {{ dep.departamentName }}
                 <div>
                   <div class="q-ml-sm">
                     Funções:
@@ -73,7 +73,7 @@
                     :key="func"
                   >
                     <div class="q-ml-lg">
-                      -{{ func.functionName }}:
+                      {{ func.functionName }}:
                       <div 
                         class="q-ml-lg"
                         v-for="user in func.functionUsers"
@@ -192,10 +192,20 @@ export default defineComponent({
   },
 
   beforeMount() {
-    this.getMyOrganismsWithAllData()
+    // this.getMyOrganismsWithAllData()
+    this.getCompositionByUserId()
     // this.verifyIfIsPastor()
   },
   methods: {
+    getCompositionByUserId() {
+      const opt = {
+        route: '/desktop/statistics/getCompositionByUserId'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return 
+        this.composition = r.data
+      })
+    },
     getMyOrganismsWithAllData() {
       const opt = {
         route: "/desktop/statistics/getMyOrganismsWithAllData",
