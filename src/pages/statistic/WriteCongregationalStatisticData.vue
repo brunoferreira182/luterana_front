@@ -2,7 +2,7 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="text-h5 ">
-        Este bloco é dedicado às congregações e paróquias.
+        Composição
       </div>
       <div>
         - Para correções, clique na canetinha ao lado da informação;
@@ -13,7 +13,83 @@
       <div>
         - Ao terminar a conferência, clique em 'Seguir' para prosseguir.
       </div>
-      <q-tree
+      <q-item
+        v-if="composition"
+        style="border-radius: 1rem;"
+        class="bg-grey-2 q-ma-sm"
+      >
+        <q-item-section>
+          <div class="text-h6 text-left">
+            Paróquia: <strong>{{ composition.parentOrganismName }}</strong>
+          </div>
+          <div class="q-mt-sm text-left">
+            Congregações:
+          </div>
+          <q-item-label 
+            class="bg-white q-mt-sm text-center"
+            style="border-radius: .7rem;"
+            v-for="org in composition.childrenData"
+            :key="org"
+          > 
+            <div>
+              <strong>{{ org.organismName }}</strong>
+            </div>
+            <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
+              <div class="text-left q-ma-sm">
+                Funções:
+              </div>
+              <div 
+                class="text-left q-ml-lg"
+                v-for="func in org.organismFunctionsUsers" 
+                :key="func"
+              >
+                <strong>{{ func.functionName }}</strong>
+                <div
+                  v-for="user in func.functionUsers"
+                  :key="user"
+                  class="q-ml-sm q-pa-sm"
+                >
+                  {{ user.userName }}
+                </div>
+              </div>
+            </div>
+            <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
+              <div class="text-left q-ma-sm">
+                <strong>Departamentos:</strong>
+              </div>
+              <div
+                class="text-left q-ma-sm q-pa-sm q-ml-md bg-white"
+                style="border-radius: .3rem;"
+                v-for="dep in org.secondChildData"
+                :key="dep"
+              >
+                {{ dep.organismConfigName }}
+                <div>
+                  <div class="q-ml-sm">
+                    Funções:
+                  </div>
+                  <div 
+                    v-for="func in dep.organismFunctions"
+                    :key="func"
+                  >
+                    <div class="q-ml-lg">
+                      -{{ func.functionName }}:
+                      <div 
+                        class="q-ml-lg"
+                        v-for="user in func.functionUsers"
+                        :key="user"
+                      >
+                        {{ user.userName }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+      <!-- <q-tree
         default-expand-all
         :nodes="organismListTree"
         node-key="label"
@@ -89,7 +165,7 @@
             </div>
           </div>
         </template>
-      </q-tree>
+      </q-tree> -->
     </q-page>
   </q-page-container>
 </template>
@@ -111,6 +187,7 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
+      composition: null
     }
   },
 
@@ -131,8 +208,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        console.log(r.data, 'vamos ver como que esta isso aqui')
-        this.mountTree(r.data.list)
+        this.composition = r.data[0]
       });
     },
     mountTree (list) {
