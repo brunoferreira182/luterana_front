@@ -8,7 +8,6 @@ function masterServerRoute () {
   else if (MODE_MASTER_SERVER === 'darta') ret = 'http://192.168.1.3:' + port
   else if (MODE_MASTER_SERVER === 'tiago') ret = 'http://192.168.1.7:' + port
   else if (MODE_MASTER_SERVER === 'bruno') ret = 'http://192.168.1.99:' + port
-  else if (MODE_MASTER_SERVER === 'brunovpn') ret = 'http://192.168.0.166:' + port
 
   else if (MODE_MASTER_SERVER === 'leo') ret = 'http://192.168.1.24:' + port
   // else if (MODE_MASTER_SERVER === 'vpn') ret = "http://192.168.100.8:" + port
