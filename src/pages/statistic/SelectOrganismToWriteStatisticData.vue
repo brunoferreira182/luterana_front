@@ -1,14 +1,17 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page>
-      <div class="q-ma-md text-h6">
-        Selecione o organismo que irá escrever os dados de estatística
+    <q-page class="q-ma-md">
+      <div class="text-h5">
+        Você está em Paróquia {{ userOrganismList.organismName }}
+      </div>
+      <div class="text-h6">
+        Selecione o organismo que deseja escrever os dados de estatística
       </div>
       <q-list> 
         <q-item
-          v-for="organism in userOrganismList"
+          v-for="organism in userOrganismList.childData"
           style="border-radius: .5em"
-          class="bg-grey-3 q-ma-md"
+          class="bg-grey-3 q-my-md"
           :key="organism"
           clickable
           @click="goToIntroductionStatistic(organism.organismId)"
@@ -32,7 +35,7 @@ export default defineComponent({
   name:"SelectOrganismToWriteStatisticData",
   data() {
     return {
-      userOrganismList:[],
+      userOrganismList:{}
     }
   },
   beforeMount(){
@@ -49,7 +52,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.userOrganismList = r.data.list
+        this.userOrganismList = r.data
       });
     },
   }
