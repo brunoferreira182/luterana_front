@@ -42,8 +42,8 @@ export default defineComponent({
     this.getParoquiasByUserId()
   },
   methods: {
-    goToIntroductionStatistic(organismId) {
-      this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
+    goToCompleteStatistic(organismId) {
+      this.$router.push('/statistic/completeStatistic?organismId=' + organismId)
     },
     getParoquiasByUserId(){
       const opt = {
