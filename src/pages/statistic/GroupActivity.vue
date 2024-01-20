@@ -1,30 +1,30 @@
 <template>
-    <q-page-container class="no-padding">
-        <q-page>
-            <div class="fit column q-mt-lg content-center">
-                <q-item class="card">
-                    <q-item-section>
-                        <q-item-label class="text-h5" @click="$route.push('/statistic/cultActivity')"/>Atividades cúlticas
-                    </q-item-section>
-                </q-item>
-                <q-item class="card">
-                    <q-item-section>
-                        <q-item-label class="text-h5" />Atividades de grupos
-                    </q-item-section>
-                </q-item>
-                <q-item class="card">
-                    <q-item-section>
-                        <q-item-label class="text-h5" />Movimento de membros
-                    </q-item-section>
-                </q-item>
-                <q-item class="card">
-                    <q-item-section>
-                        <q-item-label class="text-h5" />Financeiro
-                    </q-item-section>
-                </q-item>
-            </div>
-        </q-page>
-    </q-page-container>
+  <q-page-container class="no-padding">
+    <q-page>
+      <div class="fit column q-mt-lg content-center">
+        <q-item class="card">
+          <q-item-section>
+            <q-item-label class="text-h5" @click="$route.push('/statistic/cultActivity')"/>Atividades cúlticas
+          </q-item-section>
+        </q-item>
+        <q-item class="card">
+          <q-item-section>
+            <q-item-label class="text-h5" />Atividades de grupos
+          </q-item-section>
+        </q-item>
+        <q-item class="card">
+          <q-item-section>
+            <q-item-label class="text-h5" />Movimento de membros
+          </q-item-section>
+        </q-item>
+        <q-item class="card">
+          <q-item-section>
+            <q-item-label class="text-h5" />Financeiro
+          </q-item-section>
+        </q-item>
+      </div>
+    </q-page>
+  </q-page-container>
 </template>
 
 <script>
