@@ -3,19 +3,20 @@
     <q-page>
       <div class="q-pt-md q-ma-md">{{ groupData.name }} Nome do grupo
         <q-item class="card q-gutter-md">
-          <q-input outlined label="Padrinhos">
-            
+          <q-input :disabled="showInput" v-if="typeOfGroup === 'Jovens' || typeOfGroup === 'Juventude Mirim'" outlined
+            label="Padrinhos">
+
           </q-input>
           <q-input outlined label="Frequência total">
-            
+
           </q-input>
           <q-input outlined label="Número de encontros">
-            
+
           </q-input>
         </q-item>
       </div>
-        <q-separator></q-separator>
-      </q-page>
+      <q-separator></q-separator>
+    </q-page>
   </q-page-container>
 </template>
 
@@ -26,7 +27,8 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
-      typeOfGroup: null,
+      showInput: false,
+      typeOfGroup: '',
       groupData: {},
       statisticStatus: null
     }
@@ -36,11 +38,20 @@ export default defineComponent({
     this.getStatisticStatus()
   },
   methods: {
-    getTypeOfGroup() { 
+    getTypeOfGroup() {
       this.typeOfGroup = this.groupData.type
     },
-    goToCongregationalView() {
-      this.$router.push('')
+    getCongrecation() {
+      const opt = {
+        route: '/desktop/statistics/getCongregacaoByOrganismId',
+        body: {
+          organismId: this
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.groupData = r.data
+      })
     },
     goToPastorTab() {
       this.$router.push('')
