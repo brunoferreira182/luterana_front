@@ -1,9 +1,5 @@
 //////////// VARIAVEIS DA APLICACAO //////
-<<<<<<< HEAD
-const MODE_MASTER_SERVER = "local";
-=======
 const MODE_MASTER_SERVER = "brunovpn";
->>>>>>> f46b5733094f2c471602ceec2cca56f3b9d1c72f
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 17
