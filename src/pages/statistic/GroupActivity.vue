@@ -1,41 +1,21 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-<<<<<<< HEAD
-      <div class= "row q-ma-md">{{ groupData.name }} Nome do grupo
-        <q-item class="row q-pa-lg" >
-          <q-input outlined class="row" label="Frequência total ">
+      <div class="q-pt-md q-ma-md">{{ groupData.name }} Nome do grupo
+        <q-item class="card q-gutter-md">
+          <q-input outlined label="Padrinhos">
+            
+          </q-input>
+          <q-input outlined label="Frequência total">
+            
+          </q-input>
+          <q-input outlined label="Número de encontros">
             
           </q-input>
         </q-item>
       </div>
         <q-separator></q-separator>
       </q-page>
-=======
-      <div class="fit column q-mt-lg content-center">
-        <q-item class="card">
-          <q-item-section>
-            <q-item-label class="text-h5" @click="$route.push('/statistic/cultActivity')"/>Atividades cúlticas
-          </q-item-section>
-        </q-item>
-        <q-item class="card">
-          <q-item-section>
-            <q-item-label class="text-h5" />Atividades de grupos
-          </q-item-section>
-        </q-item>
-        <q-item class="card">
-          <q-item-section>
-            <q-item-label class="text-h5" />Movimento de membros
-          </q-item-section>
-        </q-item>
-        <q-item class="card">
-          <q-item-section>
-            <q-item-label class="text-h5" />Financeiro
-          </q-item-section>
-        </q-item>
-      </div>
-    </q-page>
->>>>>>> 27565ec2bd466c03c43ab4d34a575b9f2174c295
   </q-page-container>
 </template>
 
@@ -99,13 +79,9 @@ export default defineComponent({
 </script>
 <style>
 .card {
-  border-radius: 1rem;
-  height: 9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 10px;
-  box-shadow: 0px 0px 6px -3px;
 }
 </style>
