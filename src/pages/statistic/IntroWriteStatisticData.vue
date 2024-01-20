@@ -32,7 +32,7 @@
           class="card" 
           :clickable="isPastor ? true : false" 
           :disable="isPastor ? false : true" 
-          @click="$router.push('/statistic/completeStatistic')"
+          @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
         >
           <q-item-section>
             <q-item-label class="text-h5">Estatística</q-item-label>
