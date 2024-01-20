@@ -548,24 +548,11 @@
             Alterar relação
           </q-card-section>
           <q-card-section class="q-pa-sm">
-            <q-select
+            <q-input
               v-model="dialogEditMaritalStatus.status.userName"
               outlined
-              use-input
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
             <div class="text-h6 q-ma-sm">
               Datas:
             </div>
@@ -841,24 +828,12 @@
             Alterar usuário
           </q-card-section>
           <q-card-section class="q-pa-sm">
-            <q-select
+            <q-input
               outlined
-              v-model="dialogEditParentName.user"
-              use-input
+              v-model="dialogEditParentName.user.userName"
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
             >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            </q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -889,27 +864,14 @@
           style="width: 300px;border-radius: 1rem;"
         >
           <q-card-section class="text-h6 text-center">
-            Selecione o usuário
+            Digite o nome
           </q-card-section>
           <q-card-section class="q-pa-sm">
-            <q-select
+            <q-input
               outlined
               v-model="dialogAddParent.user"
-              use-input
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1621,11 +1583,9 @@ export default defineComponent({
     },
     confirmAddParent() {
       if (this.dialogAddParent.parentType === 'Pai') {
-        this.pastorData.father.userName = this.dialogAddParent.user.userName
-        this.pastorData.father._id = this.dialogAddParent.user._id
+        this.pastorData.father.userName = this.dialogAddParent.user
       } else if (this.dialogAddParent.parentType === 'Mãe') {
-        this.pastorData.mother.userName = this.dialogAddParent.user.userName
-        this.pastorData.mother._id = this.dialogAddParent.user._id
+        this.pastorData.mother.userName = this.dialogAddParent.user
       }
       this.clearDialogAddParent()
     },
@@ -1652,21 +1612,24 @@ export default defineComponent({
     },
     confirmEditParent() {
       if (this.dialogEditParentName.parentType === 'Pai') {
-        this.pastorData.father._id = this.dialogEditParentName.user._id,
         this.pastorData.father.userName = this.dialogEditParentName.user.userName
       } else if (this.dialogEditParentName.parentType === 'Mãe') {
-        this.pastorData.mother._id = this.dialogEditParentName.user._id,
         this.pastorData.mother.userName = this.dialogEditParentName.user.userName
       } 
       this.clearDialogParent()
     },
     editParentName(parentType) {
-      this.dialogEditParentName.open = true,
-      this.dialogEditParentName.user = {
-        userName: this.pastorData.father.userName,
-        _id: this.pastorData.father._id
-      }
       this.dialogEditParentName.parentType = parentType
+      if (parentType === 'Pai') {
+        this.dialogEditParentName.user = {
+          userName: this.pastorData.father.userName
+        }
+      } else if (parentType === 'Mãe') {
+        this.dialogEditParentName.user = {
+          userName: this.pastorData.mother.userName
+        }
+      }
+      this.dialogEditParentName.open = true
     },
     clkParent (organismParentId) {
       this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
@@ -1782,10 +1745,8 @@ export default defineComponent({
       this.dialogEditSocialNetwork.index = iSocial
     },
     confirmEditMaritalRelation() {
-      this.dialogEditMaritalStatus.status
       this.pastorData.maritalRelation.partner = {
-        _id: this.dialogEditMaritalStatus.status.userName._id,
-        userName: this.dialogEditMaritalStatus.status.userName.userName,
+        userName: this.dialogEditMaritalStatus.status.userName,
         dates: {
           initialDate: this.dialogEditMaritalStatus.status.dates.initialDate,
           finalDate: this.dialogEditMaritalStatus.status.dates.finalDate
