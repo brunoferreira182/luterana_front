@@ -10,7 +10,7 @@
         </q-item>
         <q-item class="card">
           <q-item-section>
-            <q-item-label class="text-h5" @click="$route.push('/statistic/groupActivity')" /> Atividades de grupos
+            <q-item-label class="text-h5" @click="$router.push('/statistic/groupActivity')" /> Atividades de grupos
           </q-item-section>
         </q-item>
         <q-item class="card">
@@ -18,7 +18,7 @@
             <q-item-label class="text-h5" />Movimento de membros
           </q-item-section>
         </q-item>
-        <q-item class="card">
+        <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData')">
           <q-item-section>
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>

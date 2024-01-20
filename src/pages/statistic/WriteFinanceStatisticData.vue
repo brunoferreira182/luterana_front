@@ -2,26 +2,17 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md">
+        <div class="q-pa-md q-gutter-sm">
+          <q-breadcrumbs>
+            <q-breadcrumbs-el icon="home" label="Introdução" @click="$router.push('/statistic/introWriteStatisticData')"/>
+            <q-breadcrumbs-el label="Completar estatística" />
+            <q-breadcrumbs-el label="Financeiro"/>
+          </q-breadcrumbs>
+        </div>
         <div class="text-capitalize"> 
-          <div class="row justify-between">
-            <div class="col">
-              <q-btn 
-                unelevated
-                icon="arrow_back"
-                size="large"
-                @click="$router.back()"
-              >
-                <q-tooltip>
-                  Voltar para introdução
-                </q-tooltip>
-              </q-btn>
-            </div>
-            <div class="col-12">
-              <div class="text-h5 q-mb-sm text-center">
-                Estatística 2023
-                <div class="text-h6">Dados Financeiros</div>
-              </div>
-            </div>
+          <div class="text-h5 q-mb-sm text-center">
+            Estatística 2023
+            <div class="text-h6">Dados Financeiros</div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -169,7 +160,8 @@
               <q-btn
                 label="Salvar como rascunho"
                 class="q-ma-md text-center"
-                color="warning"
+                color="yellow-8"
+                unelevated
                 rounded
                 no-caps
                 @click="insertFinanceStatistics"
