@@ -56,11 +56,6 @@ export default defineComponent({
         this.verifyStatusTypes()
       })
     },
-    goToStatistics() {
-      this.$router.push(back)
-      const organismId = this.$route.query.organismId
-      this.$router.push('/user/statistic?organismId=' + organismId)
-    },
     getMyOrganismsToChooseOne() {
       const opt = {
         route: "/desktop/statistics/getMyOrganismsToChooseOne",
