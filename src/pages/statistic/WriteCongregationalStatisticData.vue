@@ -28,7 +28,7 @@
           <q-item-label 
             class="bg-white q-mt-sm text-center"
             style="border-radius: .7rem;"
-            v-for="org in composition.congregations"
+            v-for="(org, iOrg) in composition.congregations"
             :key="org"
           > 
             <div>
@@ -40,16 +40,42 @@
               </div>
               <div 
                 class="text-left q-ml-lg"
-                v-for="func in org.organismFunctions" 
+                v-for="(func, iFunc) in org.organismFunctions" 
                 :key="func"
               >
-                <strong>{{ func.functionName }}</strong>
+                <strong>{{ func.functionName }}:</strong>
+                <q-btn
+                  color="primary"
+                  flat
+                  rounded
+                  icon="add"
+                  @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                  size="12px"
+                >
+
+                </q-btn>
                 <div
-                  v-for="user in func.functionUsers"
-                  :key="user"
                   class="q-ml-sm q-pa-sm"
                 >
-                  {{ user.userName }}
+                  <q-item
+                    class="no-padding"
+                    v-for="(user, iUser) in func.functionUsers"
+                    :key="user"
+                  >
+                    <q-item-section class="no-padding">
+                      <q-item-label>
+                        {{ user.userName }}
+                        <q-btn
+                          color="red"
+                          flat
+                          rounded
+                          unelevated
+                          icon="delete"
+                          @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                        ></q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </div>
               </div>
             </div>
@@ -89,6 +115,57 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-dialog
+        v-model="dialogAddFunction.open"
+      >
+        <q-card
+          style="width: 400px;"
+          @hide="clearDialogAddFunction"
+        >
+          <q-card-section class="text-h6 text-center">
+            Selecione o usuário que irá ocupar a função:
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogAddFunction.pastorSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogAddFunction"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated  
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddUserToFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -110,7 +187,15 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
-      composition: null
+      composition: null,
+      dialogAddFunction: {
+        open: false,
+        iFunc: null,
+        iOrg: null,
+        functionName: null,
+        pastorSelected: null
+      },
+      usersOptions: null
     }
   },
 
@@ -120,6 +205,63 @@ export default defineComponent({
     // this.verifyIfIsPastor()
   },
   methods: {
+    deleteUserFromFunction(iOrg, iFunc, iUser) {
+      this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers.splice(iUser, 1)
+    },
+    clearDialogAddFunction() {
+      this.dialogAddFunction= {
+        open: false,
+        iFunc: null,
+        iOrg: null,
+        functionName: null,
+        pastorSelected: null
+      }
+    },
+    confirmAddUserToFunction() {
+      this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc].functionUsers.push({
+        userId:  this.dialogAddFunction.pastorSelected._id,
+        userName: this.dialogAddFunction.pastorSelected.userName
+      })
+      this.clearDialogAddFunction()
+    },
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      let route
+      if (this.dialogAddFunction.functionName === 'Pastor') {
+        route = "/desktop/adm/getPastores" 
+      } else {
+        route = '/desktop/adm/getUsers'
+      }
+      
+      const opt = {
+        route: route,
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+
+        update(() => {
+          this.usersOptions = r.data.list;
+        })
+      });
+    },
+    addFunctionUser(iFunc, iOrg, functionName) {
+      this.dialogAddFunction.iFunc = iFunc,
+      this.dialogAddFunction.iOrg = iOrg,
+      this.dialogAddFunction.functionName = functionName
+      this.dialogAddFunction.open = true
+    },
     getCompositionByUserId() {
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
