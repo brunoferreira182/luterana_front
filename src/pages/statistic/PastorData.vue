@@ -340,10 +340,10 @@
             <div >
               <q-btn
               color="primary"
-              icon="add"
+              icon="sync_problem"
               label="Solicitar alteração"
               flat
-              @click="changeFormations"
+              @click="changeFormations('f')"
               rounded
             >
               <q-tooltip>Solicitar alteração</q-tooltip>
@@ -1262,7 +1262,12 @@ export default defineComponent({
       },
       formationLevelsList: null,
       statusList: null,
-      myOrganismsList: null
+      myOrganismsList: null,
+      dialogReportError: {
+        open: false,
+        type: null,
+        text: ''
+      }
     }
   },
 
@@ -1271,15 +1276,9 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
-    changeFormations(label) {
-      let type = ''
-      if (label === 'Formações') {
-        type = 'formation'
-      } else if (label === 'Histórico de vínculos') {
-        type = 'link'
-      }
-      console.log(type)
-      this.dialogChangePastorLife.open = true
+    changeFormations(type) {
+        this.dialogReportError.open = true,
+        this.dialogReportError.type = type
     },
     saveDraft() {
       let pastoralData = {

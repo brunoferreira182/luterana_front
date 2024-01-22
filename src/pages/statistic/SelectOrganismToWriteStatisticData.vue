@@ -14,7 +14,7 @@
           class="bg-grey-3 q-my-md"
           :key="organism"
           clickable
-          @click="goToIntroductionStatistic(organism.organismId)"
+          @click="goToCompleteStatistic(organism)"
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
@@ -42,8 +42,8 @@ export default defineComponent({
     this.getParoquiasByUserId()
   },
   methods: {
-    goToCompleteStatistic(organismId) {
-      this.$router.push('/statistic/completeStatistic?organismId=' + organismId)
+    goToCompleteStatistic(organism) {
+      this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
     getParoquiasByUserId(){
       const opt = {

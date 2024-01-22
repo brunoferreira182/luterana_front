@@ -18,7 +18,7 @@
             <q-item-label class="text-h5" />Movimento de membros
           </q-item-section>
         </q-item>
-        <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData')">
+        <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>
