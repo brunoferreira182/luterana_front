@@ -24,6 +24,15 @@
           </div>
           <div class="q-mt-sm text-left text-h6">
             Congregações:
+            <q-btn
+              icon="add"
+              color="primary"
+              flat
+              rounded
+              @click="addCongregation"
+            >
+
+            </q-btn>
           </div>
           <q-item-label 
             class="bg-white q-mt-sm text-center"
@@ -83,47 +92,97 @@
               <div class="text-left q-ma-md text-h6">
                 <strong>Departamentos:</strong>
               </div>
-              <q-list
-                class="text-left q-ma-md q-pa-sm q-ml-md bg-white"
-                style="border-radius: .3rem;"
-                v-for="dep in org.depts"
+              <div  
+                v-for="(dep, iDep) in org.depts"
                 :key="dep"
               >
-              <q-item v-if="dep.existingDepartaments.length > 0">
-                <q-item-section>
-                  <q-item-label>
-                    {{ dep.organismConfigName }}
-                  </q-item-label>
-                  <q-item-label>
-                    Nome: {{ dep.departamentName }}
-                  </q-item-label>
-
-                </q-item-section>
-              </q-item>
-                <!-- <div v-if="dep.existingDepartaments.length > 0">
-                {{ dep.departamentName }}
-                  <div>
-                    <div class="q-ml-sm">
-                      Funções:
-                    </div>
-                    <div 
-                      v-for="func in dep.organismFunctions"
-                      :key="func"
-                    >
-                      <div class="q-ml-lg">
-                        {{ func.functionName }}:
+                <div v-if="dep.existingDepartaments.length > 0">
+                  <q-list
+                    class="text-left q-ma-md q-pa-sm q-ml-md bg-white"
+                    style="border-radius: .3rem;"
+                    v-for="(departament, iExistsDept) in dep.existingDepartaments"
+                    :key="departament"
+                  >
+                  <q-item >
+                    <q-item-section>
+                      <q-item-label>
+                        {{ dep.organismConfigName }}
+                      </q-item-label>
+                      <q-item-label>
+                        Nome: {{ departament.departamentName }}
+                      </q-item-label>
+                        <q-item-label>
+                          <div class="text-h6">
+                            <strong>Funções:</strong>
+                          </div>
+                            <q-list>
+                              <q-item
+                                v-for="(func, iFunc) in departament.organismFunctions"
+                                :key="func"
+                              >
+                                <q-item-section>
+                                  <q-item-label>
+                                    <strong>{{ func.functionName }}:</strong>
+                                    <q-btn
+                                      color="primary"
+                                      flat
+                                      rounded
+                                      icon="add"
+                                      @click="addFuncToDept(iOrg, iDep, iExistsDept, iFunc )"
+                                    >
+                                      <q-tooltip>
+                                        Adicionar usuário a função
+                                      </q-tooltip>
+                                    </q-btn>
+                                  </q-item-label>
+                                  <q-item-label  
+                                    v-for="(user, iUser) in func.functionUsers"
+                                    :key="user"
+                                  >
+                                    {{ user.userName }}
+                                    <q-btn
+                                      color='red'
+                                      flat
+                                      rounded
+                                      icon="delete"
+                                      @click="removeUserFromFunctionDept(iOrg, iDep, iExistsDept, iFunc, iUser)"
+                                    > 
+                                      <q-tooltip>Excluir usuário da função</q-tooltip>
+                                    </q-btn>
+                                  </q-item-label>
+                                </q-item-section>
+                                <!-- {{ func }} -->
+                              </q-item>
+                            </q-list>
+                        </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                    <!-- <div v-if="dep.existingDepartaments.length > 0">
+                    {{ dep.departamentName }}
+                      <div>
+                        <div class="q-ml-sm">
+                          Funções:
+                        </div>
                         <div 
-                          class="q-ml-lg"
-                          v-for="user in func.functionUsers"
-                          :key="user"
+                          v-for="func in dep.organismFunctions"
+                          :key="func"
                         >
-                          {{ user.userName }}
+                          <div class="q-ml-lg">
+                            {{ func.functionName }}:
+                            <div 
+                              class="q-ml-lg"
+                              v-for="user in func.functionUsers"
+                              :key="user"
+                            >
+                              {{ user.userName }}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>-->
-              </q-list> 
+                    </div>-->
+                  </q-list> 
+                </div>
+              </div>
             </div>
           </q-item-label>
         </q-item-section>
@@ -140,7 +199,7 @@
           </q-card-section>
           <q-card-section>
             <q-select
-              v-model="dialogAddFunction.pastorSelected"
+              v-model="dialogAddFunction.userSelected"
               filled
               use-input
               label="Nome do usuário"
@@ -179,6 +238,58 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddFunctionToDept.open"
+        @hide="clearDialogAddUserToFunctionInDept"
+      >
+        <q-card
+          style="width: 400px;"
+          @hide="clearDialogAddFunction"
+        >
+          <q-card-section class="text-h6 text-center">
+            Selecione o usuário que irá ocupar a função:
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogAddFunctionToDept.userSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogAddUserToFunctionInDept"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated  
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddUserToFunctionInDept"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <q-btn
         @click="saveDraft"
       ></q-btn>
@@ -187,7 +298,7 @@
 </template>
 <script>
 import useFetch from "src/boot/useFetch";
-import utils from "../../boot/utils";
+// import utils from "../../boot/utils";s
 import { defineComponent } from "vue";
 export default defineComponent({
   name:"WriteCongregationalStatisticData",
@@ -209,18 +320,85 @@ export default defineComponent({
         iFunc: null,
         iOrg: null,
         functionName: null,
-        pastorSelected: null
+        userSelected: null
       },
-      usersOptions: null
+      usersOptions: null,
+      dialogAddFunctionToDept: {
+        open: false,
+        iFunc: null,
+        iExistsDept: null,
+        iDep: null,
+        iOrg: null,
+        userSelected: null
+      },
+      dialogAddCongregation: {
+        open: false,
+        name: '', 
+        functions: [],
+        address: {
+          city: '',
+          cep: '',
+          steet: '',
+          number: '',
+          state: '',
+          district: '',
+          complement: ''
+        },
+        configId: '6525360fd7cd5c09a8d759be'
+      },
+      congregationConfig: null,
+      presidentFunctionConfigId: '6525360fd7cd5c09a8d759bf',
+      treasurerFunctionConfigId: '6526cc6c8c23183a40ace584',
+      secretaryFunctionConfigId: '6527f72131e6d7501490ec76'
     }
-  },
-
+  }, 
   beforeMount() {
-    // this.getMyOrganismsWithAllData()
     this.getCompositionByUserId()
-    // this.verifyIfIsPastor()
   },
   methods: {
+    // getCongregationConfig() {
+    //   const opt = {
+    //     route: '/desktop/statistics/getCongregationFunctions'
+    //     body:
+    //   }
+    // },
+    addCongregation() {
+      this.getCongregationConfig()
+      this.dialogAddCongregation.open = true
+    },
+    clearDialogAddUserToFunctionInDept() {
+      this.dialogAddFunctionToDept = {
+        open: false,
+        iFunc: null,
+        iExistsDept: null,
+        iDep: null,
+        iOrg: null,
+        userSelected: null
+      }
+    },
+    confirmAddUserToFunctionInDept() {
+      console.log(this.dialogAddFunctionToDept.iOrg, this.dialogAddFunctionToDept.iDep, this.dialogAddFunctionToDept.iExistsDept, this.dialogAddFunctionToDept.iFunc)
+      this.composition.
+      congregations[this.dialogAddFunctionToDept.iOrg].
+      depts[this.dialogAddFunctionToDept.iDep].
+      existingDepartaments[this.dialogAddFunctionToDept.iExistsDept].
+      organismFunctions[this.dialogAddFunctionToDept.iFunc].
+      functionUsers.push({
+        userName: this.dialogAddFunctionToDept.userSelected.userName,
+        _id: this.dialogAddFunctionToDept.userSelected.userIdString
+      })
+      this.clearDialogAddUserToFunctionInDept()
+    },
+    removeUserFromFunctionDept(iOrg, iDep, iExistsDept, iFunc, iUser) {
+      this.composition.congregations[iOrg].depts[iDep].existingDepartaments[iExistsDept].organismFunctions[iFunc].functionUsers.splice(iUser, 1)
+    },
+    addFuncToDept(iOrg, iDep, iExistsDept, iFunc) {
+      this.dialogAddFunctionToDept.iExistsDept = iExistsDept
+      this.dialogAddFunctionToDept.iDep = iDep
+      this.dialogAddFunctionToDept.iOrg = iOrg
+      this.dialogAddFunctionToDept.iFunc = iFunc
+      this.dialogAddFunctionToDept.open = true
+    },
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
@@ -240,13 +418,13 @@ export default defineComponent({
         iFunc: null,
         iOrg: null,
         functionName: null,
-        pastorSelected: null
+        userSelected: null
       }
     },
     confirmAddUserToFunction() {
       this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc].functionUsers.push({
-        userId:  this.dialogAddFunction.pastorSelected._id,
-        userName: this.dialogAddFunction.pastorSelected.userName
+        userId:  this.dialogAddFunction.userSelected._id,
+        userName: this.dialogAddFunction.userSelected.userName
       })
       this.clearDialogAddFunction()
     },
@@ -296,55 +474,7 @@ export default defineComponent({
         if (r.error) return 
         this.composition = r.data
       })
-    },
-    getMyOrganismsWithAllData() {
-      const opt = {
-        route: "/desktop/statistics/getMyOrganismsWithAllData",
-        body: {
-          organismId: this.$route.query.organismId,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.composition = r.data[0]
-      });
-    },
-    mountTree (list) {
-      let tree = []
-      list.forEach(org => {
-        tree = {
-          type: org.organismParentLocal,
-          label: org.organismParentLocal + ' ' + org.organismParentName,
-          fundationDate: org.parentData.organismParentFundationDate,
-          isFiliated: org.parentData.isFiliated,
-          isHeadOffice: org.parentData.isHeadOffice,
-          header: 'generic',
-          organismId: org.organismParentId,
-          children: []
-        }
-        org.childrenData.forEach(child => {
-          tree.children.push({
-            type: child.organismChildConfig,
-            label: child.organismChildConfig + ' ' + child.organismChildName,
-            body: 'normal',
-            organismId: child.organismChildId
-          })
-        })
-        this.organismListTree.push(tree)
-      })
-    },
-    verifyIfIsPastor() {
-      const userInfo = utils.presentUserInfo()
-      if (userInfo.userType === 'pastor') {
-        this.isUser = false
-        this.getPastorDataTabs()
-      } else {
-        this.isUser = true
-      }
-    },
+    }
   }
 })
 </script>

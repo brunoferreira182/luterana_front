@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { Notify } from "quasar";
+import { Notify } from 'quasar';
+
 export const useAutoLogoutStore = defineStore({
   id: 'autoLogout',
   state: () => ({
@@ -8,6 +9,9 @@ export const useAutoLogoutStore = defineStore({
   actions: {
     init(router) {
       this.router = router;
+      window.addEventListener('mousemove', this.resetAutoLogoutTimer);
+      window.addEventListener('touchmove', this.resetAutoLogoutTimer);
+      window.addEventListener('touchend', this.resetAutoLogoutTimer);
       this.startAutoLogoutTimer();
     },
     startAutoLogoutTimer() {

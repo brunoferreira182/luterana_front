@@ -8,14 +8,14 @@
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
         </q-item>
-        <q-item class="card">
+        <q-item class="card" clickable>
           <q-item-section>
             <q-item-label class="text-h5" @click="$router.push('/statistic/groupActivity')" /> Atividades de grupos
           </q-item-section>
         </q-item>
-        <q-item class="card">
+        <q-item class="card" clickable @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)">
           <q-item-section>
-            <q-item-label class="text-h5" />Movimento de membros
+            <q-item-label class="text-h5"  />Movimento de membros
           </q-item-section>
         </q-item>
         <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)">
@@ -53,7 +53,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
-        this.verifyStatusTypes()
+        // this.verifyStatusTypes()
       })
     },
     getMyOrganismsToChooseOne() {
@@ -61,9 +61,8 @@ export default defineComponent({
         route: "/desktop/statistics/getMyOrganismsToChooseOne",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(() => {
         this.$q.loading.hide()
-        console.log(r, 'CUZIZIZIZIZI')
         // this.organismsFinancesStatistics = r.data.list
       });
     },
