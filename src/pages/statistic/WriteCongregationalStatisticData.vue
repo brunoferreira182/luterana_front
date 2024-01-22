@@ -1,10 +1,10 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <div class="text-h5 ">
+      <div class="text-h5  text-center">
         Composição
       </div>
-      <div>
+      <!-- <div>
         - Para correções, clique na canetinha ao lado da informação;
       </div>
       <div>
@@ -12,7 +12,7 @@
       </div>
       <div>
         - Ao terminar a conferência, clique em 'Seguir' para prosseguir.
-      </div>
+      </div> -->
       <q-item
         v-if="composition"
         style="border-radius: 1rem;"
@@ -89,83 +89,6 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-      <!-- <q-tree
-        default-expand-all
-        :nodes="organismListTree"
-        node-key="label"
-        ref="tree"
-        no-transition
-      >
-        <template v-slot:default-header="prop">
-          <div class=" items-center" v-if="prop.node.header">
-            <span class="text-weight-bold text-primary">
-              {{ prop.node.label }}
-            </span>
-            <q-btn
-              icon="navigate_next"
-              round
-              unelevated
-              color="primary"
-              flat
-              @click.stop="clkParent(prop.node.organismId)"
-            >
-              <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
-            </q-btn>
-            <div v-if="prop.node.type === 'Congregação'">
-              Data de fundação: {{ prop.node.fundationDate ? prop.node.fundationDate : 'não informado' }}
-              <div>
-                Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado' }}
-              </div>
-              <div>
-                É sede: {{ prop.node.isHeadOffice ? prop.node.isHeadOffice : 'não informado' }}
-              </div>
-            </div>
-            <div v-if="prop.node.type === 'Paróquia'">
-              A paróquia tem secretário(a) contratado? 
-              <q-checkbox
-                class="q-pt-lg"
-                v-model="hasSecretary"
-                label="Sim"
-              />
-              <q-checkbox
-                class="q-pt-lg"
-                v-model="hasSecretary"
-                label="Não"
-              />
-            </div>
-          </div>
-          <div class="items-center" v-else>
-            <q-icon
-              v-if="prop.node.type === 'Congregação'"
-              name="church"
-              color="blue"
-              size="20px"
-              class="q-mr-sm"
-            />
-            <q-icon
-              v-if="prop.node.type === 'Paróquia'"
-              name="workspaces"
-              color="blue"
-              size="20px"
-              class="q-mr-sm"
-            />
-            <span
-              class="cursor-pointer"
-              @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
-            >{{ prop.node.label }}
-            </span>
-            <div v-if="prop.node.type === 'Congregação'">
-              Data de fundação: {{ prop.node.fundationDate ? prop.node.fundationDate : 'não informado' }}
-              <div>
-                Filiada: {{ prop.node.isFiliated ? prop.node.isFiliated : 'não informado' }}
-              </div>
-              <div>
-                É sede: {{ prop.node.isHeadOffice ? prop.node.isHeadOffice : 'não informado' }}
-              </div>
-            </div>
-          </div>
-        </template>
-      </q-tree> -->
     </q-page>
   </q-page-container>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page class="q-pa-lg"> 
+    <q-page> 
       <div class="q-pa-md text-center">
         <div class="text-capitalize"> 
           <div class="row">
@@ -25,7 +25,7 @@
         <div>
           <div class="text-h5 q-px-md">1° - Dados pessoais</div>
           <div 
-            class="text-h6 q-px-md"
+            class="text-h6 q-px-md text-wrap"
           >
             Nesta seção revise cuidadosamente seus dados, 
             se não tiver uma rede social pessoal, como o Instagram, 
@@ -44,7 +44,7 @@
                 && data.label !== 'Pai'
                 && data.label !== 'Mãe'"
               outlined
-              class="q-pa-md q-mx-md"
+              class="q-pa-sm"
               :label="data.label"
               v-model="data.value"
               :mask="data.mask"
@@ -247,7 +247,7 @@
                 </q-item>
               </div>
               <q-btn
-                v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner._id"
+                v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner.userName"
                 color="primary"
                 flat
                 rounded
@@ -315,16 +315,16 @@
         </div>
         <div>
           <div class="text-h5 q-px-md">2° - Vida pastoral</div>
-          <div class="text-h6 q-px-md">
+          <div class="text-h6 q-px-md text-wrap">
             Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
           </div>
           <div>
             <div class="q-mx-lg q-mt-md q-px-sm text-h6">Formações</div>
-            <q-list class="q-px-md">
+            <q-list>
               <q-item
                 style="border-radius: 1rem;"
-                class="q-mx-lg q-px-sm bg-grey-2"
-                v-for="(formation, i) in pastorFormations"
+                class="q-ma-md bg-grey-2"
+                v-for="(formation) in pastorFormations"
                 :key="formation"
               >
                 <q-item-section class="q-pa-sm">
@@ -335,41 +335,18 @@
                     {{ formation.formation.level }}
                   </q-item-label>
                 </q-item-section>
-                <q-item-section side>
-                  <q-item-label>
-                    <q-btn
-                      color="primary"
-                      flat
-                      rounded
-                      @click="editFormation(formation, i)"
-                      icon="edit"
-                    >
-                      <q-tooltip>Editar formação</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      color="red"
-                      flat
-                      @click="removeFormation(i)"
-                      rounded
-                      icon="delete"
-                    >
-                      <q-tooltip>Remover formação</q-tooltip>
-                    </q-btn>
-                  </q-item-label>
-                </q-item-section>
               </q-item>
             </q-list>
-            <div class=q-mx-sm>
+            <div >
               <q-btn
-              class="q-mx-lg  q-my-sm"
               color="primary"
               icon="add"
-              label="Adicionar formação"
+              label="Solicitar alteração"
               flat
-              @click="addFormation"
+              @click="changeFormations"
               rounded
             >
-              <q-tooltip>Adicionar formação</q-tooltip>
+              <q-tooltip>Solicitar alteração</q-tooltip>
             </q-btn>
             </div>
           </div>
@@ -379,7 +356,7 @@
               <q-item 
                 style="border-radius: 1rem;"
                 class="q-mx-lg q-px-md  bg-grey-2"
-                v-for="(link, i) in pastorLink"
+                v-for="(link) in pastorLink"
                 :key="link"
               >
                 <q-item-section class="q-pa-sm">
@@ -396,39 +373,19 @@
                     Data fim: {{ link.linkData.dates.finalDate }}
                   </q-item-label>
                 </q-item-section>
-                <q-item-section side>
-                  <q-item-label>
-                    <q-btn
-                      icon="edit"
-                      color="primary"
-                      @click="editLink(link, i)"
-                      flat
-                      rounded
-                    />
-                    <q-btn
-                      icon="delete"
-                      @click="removeLink(i)"
-                      color="red"
-                      flat
-                      rounded
-                    >
-                      <q-tooltip>Remover rede social</q-tooltip>
-                    </q-btn>
-                  </q-item-label>
-                </q-item-section>
               </q-item>
             </q-list>
             <div class="q-mx-sm">
               <q-btn
               class="q-mx-lg q-my-sm"
-              label="Histórico"
+              label="Solicitar alteração"
               icon="add"
               flat
               rounded
               color="primary"
-              @click="addNewLink"
+              @click="changeLinks"
             >
-              <q-tooltip>Adicionar novo vínculo</q-tooltip>
+              <q-tooltip>Solicitar alteração</q-tooltip>
             </q-btn>
             </div>
           </div>
@@ -436,7 +393,7 @@
         </div>
         <div>
           <div class="text-h5 q-mx-md">3° - Atividade pastoral</div>
-          <div class="text-h6 q-mb-md q-mx-md">
+          <div class="text-h6 q-mb-md  text-wrap">
             Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
             insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
             bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
@@ -500,24 +457,11 @@
             Alterar usuário
           </q-card-section>
           <q-card-section>
-            <q-select
+            <q-input
               v-model="dialogEditChild.newChild"
               outlined
-              use-input
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn 
@@ -714,24 +658,11 @@
               Selecione o usuário
           </q-card-section>
           <q-card-section>
-            <q-select
+            <q-input
               v-model="dialogAddNewChild.child"
               outlined
-              use-input
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -762,24 +693,11 @@
             Adicionar relação conjugal
           </q-card-section>
           <q-card-section class="q-pa-sm">
-            <q-select
+            <q-input
               outlined
               v-model="dialogAddMaritalRelation.partner"
-              use-input
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            />
             <div class="text-h6 q-pa-md">
               Datas:
             </div>
@@ -1353,6 +1271,16 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
+    changeFormations(label) {
+      let type = ''
+      if (label === 'Formações') {
+        type = 'formation'
+      } else if (label === 'Histórico de vínculos') {
+        type = 'link'
+      }
+      console.log(type)
+      this.dialogChangePastorLife.open = true
+    },
     saveDraft() {
       let pastoralData = {
         pastorData: this.pastorData,
@@ -1691,7 +1619,7 @@ export default defineComponent({
     confirmAddMaritalRelation() {
       this.pastorData.maritalRelation.partner = {
         _id: this.dialogAddMaritalRelation.partner._id,
-        userName: this.dialogAddMaritalRelation.partner.userName,
+        userName: this.dialogAddMaritalRelation.partner,
         dates: {
           initialDate: this.dialogAddMaritalRelation.dates.initialDate,
           finalDate:  this.dialogAddMaritalRelation.dates.finalDate
@@ -1714,8 +1642,7 @@ export default defineComponent({
     },
     confirmAddNewChild() {
       this.pastorData.parentalRelation.child.push({
-        _id: this.dialogAddNewChild.child._id,
-        userName: this.dialogAddNewChild.child.userName
+        userName: this.dialogAddNewChild.child
       })
       this.clearDialogAddNewChild()
     },
@@ -1762,17 +1689,17 @@ export default defineComponent({
     },
     confirmChangeChild() {
       this.pastorData.parentalRelation.child[this.dialogEditChild.iChild] =  {
-        _id: this.dialogEditChild.newChild._id,
-        userName: this.dialogEditChild.newChild.userName
+        userName: this.dialogEditChild.newChild
       }
       this.dialogEditChild.open = false
       this.dialogEditChild.newChild = null,
       this.dialogEditChild.child = null
     },
     openDialogEditChild(child, iChild) {
+      console.log(child, 'cade esses macaquinhos')
       this.dialogEditChild.open = true,
-      this.dialogEditChild.child = child,
-      this.dialogEditChild.newChild = child
+      this.dialogEditChild.child = child.userName,
+      this.dialogEditChild.newChild = child.userName
       this.dialogEditChild.iChild = iChild
     },
     getUsers(val, update, abort) {
