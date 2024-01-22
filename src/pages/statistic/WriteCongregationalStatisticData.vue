@@ -20,9 +20,9 @@
       >
         <q-item-section>
           <div class="text-h6 text-left">
-            Paróquia: <strong>{{ composition.organismParentName }}</strong>
+            Paróquia: {{ composition.organismParentName }}
           </div>
-          <div class="q-mt-sm text-left">
+          <div class="q-mt-sm text-left text-h6">
             Congregações:
           </div>
           <q-item-label 
@@ -31,12 +31,12 @@
             v-for="(org, iOrg) in composition.congregations"
             :key="org"
           > 
-            <div>
+            <div class="text-center text-h6 q-ma-md">
               <strong>{{ org.organismChildName }}</strong>
             </div>
             <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
-              <div class="text-left q-ma-sm">
-                Funções:
+              <div class="text-left q-ma-md text-h6">
+                <strong>Funções:</strong>
               </div>
               <div 
                 class="text-left q-ml-lg"
@@ -80,37 +80,50 @@
               </div>
             </div>
             <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
-              <div class="text-left q-ma-sm">
+              <div class="text-left q-ma-md text-h6">
                 <strong>Departamentos:</strong>
               </div>
-              <div
-                class="text-left q-ma-sm q-pa-sm q-ml-md bg-white"
+              <q-list
+                class="text-left q-ma-md q-pa-sm q-ml-md bg-white"
                 style="border-radius: .3rem;"
-                v-for="dep in org.departaments"
+                v-for="dep in org.depts"
                 :key="dep"
               >
+              <q-item v-if="dep.existingDepartaments.length > 0">
+                <q-item-section>
+                  <q-item-label>
+                    {{ dep.organismConfigName }}
+                  </q-item-label>
+                  <q-item-label>
+                    Nome: {{ dep.departamentName }}
+                  </q-item-label>
+
+                </q-item-section>
+              </q-item>
+                <!-- <div v-if="dep.existingDepartaments.length > 0">
                 {{ dep.departamentName }}
-                <div>
-                  <div class="q-ml-sm">
-                    Funções:
-                  </div>
-                  <div 
-                    v-for="func in dep.organismFunctions"
-                    :key="func"
-                  >
-                    <div class="q-ml-lg">
-                      {{ func.functionName }}:
-                      <div 
-                        class="q-ml-lg"
-                        v-for="user in func.functionUsers"
-                        :key="user"
-                      >
-                        {{ user.userName }}
+                  <div>
+                    <div class="q-ml-sm">
+                      Funções:
+                    </div>
+                    <div 
+                      v-for="func in dep.organismFunctions"
+                      :key="func"
+                    >
+                      <div class="q-ml-lg">
+                        {{ func.functionName }}:
+                        <div 
+                          class="q-ml-lg"
+                          v-for="user in func.functionUsers"
+                          :key="user"
+                        >
+                          {{ user.userName }}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </div>-->
+              </q-list> 
             </div>
           </q-item-label>
         </q-item-section>
@@ -166,6 +179,9 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-btn
+        @click="saveDraft"
+      ></q-btn>
     </q-page>
   </q-page-container>
 </template>
@@ -205,6 +221,16 @@ export default defineComponent({
     // this.verifyIfIsPastor()
   },
   methods: {
+    saveDraft() {
+      const opt = {
+        route: '/desktop/statistics/saveCompositionDraft',
+        body: this.composition
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Rascunho salvo com sucesso')
+      })
+    },
     deleteUserFromFunction(iOrg, iFunc, iUser) {
       this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers.splice(iUser, 1)
     },
