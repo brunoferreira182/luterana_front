@@ -19,6 +19,15 @@
               <div class="text-h5">
                 Entradas
               </div>
+                <div class="text-h6">
+                  Total de contribuições R$ {{ contributionEntriesSum }}
+                </div>
+                <q-btn 
+                  no-caps
+                  flat
+                  color="primary"
+                  label="Clique aqui informar o valor correto"
+                />
               <q-input 
                 outlined 
                 type="number"
@@ -102,6 +111,17 @@
               />
               <div class="text-h5">
                 Saídas
+              </div>
+              <div class="">
+                <div class="text-h6">
+                  Total de contribuições R$ {{ contributionOutputSum }}
+                </div>
+                <q-btn 
+                  no-caps
+                  flat
+                  color="primary"
+                  label="Clique aqui informar o valor correto"
+                />
               </div>
               <div class="no-margin">
                 Contribuição IELB
@@ -190,6 +210,8 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
+      contributionOutputSum: null,
+      contributionEntriesSum: null,
       table: {
         entries:{
           saldoAnterior: '',
@@ -260,31 +282,33 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
-        this.table.output = {
-          contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
-        },
-        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
-        this.table.entries = {
-          saldoAnterior: '',
-          receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
-        }
+        this.contributionOutputSum = r.data.list[0].contributionOutput
+        this.contributionEntriesSum = r.data.list[0].contributionEntries
+        // this.table.output = r.data.financeData.output ? r.data.financeData.output : 
+        // this.table.output = {
+        //   contribuicaoIELB: {
+        //     ofertasDominicais: '',
+        //     ofertasMensais: '',
+        //     receitasAlugueis: '',
+        //   },
+        //   contribuicaoDistrito: '',
+        //   devolucaoEmprestimoIELB: '',
+        //   todasSaidas: ''
+        // },
+        // this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
+        // this.table.entries = {
+        //   saldoAnterior: '',
+        //   receitasRegulares: {
+        //     ofertasDominicais: '',
+        //     ofertasMensais: '',
+        //     receitasAlugueis: '',
+        //   },
+        //   ofertasEspeciais: '',
+        //   campanhasEspecificas: '',
+        //   auxilio: '',
+        //   emprestimos: '',
+        //   todasOutrasReceitas: '',
+        // }
       });
     },
   }
