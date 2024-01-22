@@ -8,7 +8,7 @@
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
         </q-item>
-        <q-item class="card">
+        <q-item class="card" clickable>
           <q-item-section>
             <q-item-label class="text-h5" @click="$router.push('/statistic/groupActivity')" /> Atividades de grupos
           </q-item-section>

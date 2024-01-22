@@ -1,10 +1,18 @@
 <template>
   <q-page-container class="no-padding">
     <q-page class="q-ma-md">
-      <div class="text-h5">
+      <div class="text-h6">
         Você está em Paróquia {{ userOrganismList.organismName }}
       </div>
-      <div class="text-h6">
+      <div>
+        Soma das entradas: R$
+        {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
+      </div>
+      <div>
+        Soma das saídas: R$
+        {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
+      </div>
+      <div class="text-subtitle1">
         Selecione o organismo que deseja escrever os dados de estatística
       </div>
       <q-list> 
@@ -35,13 +43,29 @@ export default defineComponent({
   name:"SelectOrganismToWriteStatisticData",
   data() {
     return {
-      userOrganismList:{}
+      userOrganismList:{},
+      paroquiaData: {
+        contributionOutput: '',
+        contributionEntries: '',
+      },
     }
   },
   beforeMount(){
     this.getParoquiasByUserId()
+    this.getFinanceTotalValueFromParoquia()
   },
   methods: {
+    
+    getFinanceTotalValueFromParoquia(){
+      const opt = {
+        route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        this.paroquiaData = r.data
+      });
+    },
     goToCompleteStatistic(organism) {
       this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
