@@ -3,10 +3,10 @@
     <q-page>
       <div class="q-pa-md">
         <div class="q-pa-md q-gutter-sm">
-          <q-breadcrumbs>
+          <q-breadcrumbs align="center">
             <q-breadcrumbs-el icon="home" label="Introdução" @click="$router.push('/statistic/introWriteStatisticData')"/>
-            <q-breadcrumbs-el label="Completar estatística" />
-            <q-breadcrumbs-el label="Financeiro"/>
+            <q-breadcrumbs-el label="Completar estatística" @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"/>
+            <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
         </div>
         <div class="text-capitalize"> 
@@ -19,15 +19,9 @@
               <div class="text-h5">
                 Entradas
               </div>
-                <div class="text-h6">
-                  Total de contribuições R$ {{ contributionEntriesSum }}
-                </div>
-                <q-btn 
-                  no-caps
-                  flat
-                  color="primary"
-                  label="Clique aqui informar o valor correto"
-                />
+              <!-- <div class="text-h6">
+                Total de contribuições R$ {{ contributionEntriesSum ? contributionEntriesSum : '0' }}
+              </div> -->
               <q-input 
                 outlined 
                 type="number"
@@ -64,6 +58,7 @@
                   outlined 
                   prefix="R$"
                   type="number"
+                  @keyup="calculateOfferPercents()"
                   label="Receitas de aluguéis"
                   reverse-fill-mask 
                   v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
@@ -114,45 +109,26 @@
               </div>
               <div class="">
                 <div class="text-h6">
-                  Total de contribuições R$ {{ contributionOutputSum }}
+                  Total de contribuições R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}
                 </div>
-                <q-btn 
-                  no-caps
-                  flat
-                  color="primary"
-                  label="Clique aqui informar o valor correto"
-                />
               </div>
               <div class="no-margin">
-                Contribuição IELB
-                <q-input 
-                  outlined 
-                  type="number"
-                  label="Ofertas dominicais"
-                  prefix="R$"
-                  v-model.number="table.output.contribuicaoIELB.ofertasDominicais" 
-                />
+                Ofertas dominicais
+                {{ 
+                  table.output.contribuicaoIELB.ofertasDominicais ? table.output.contribuicaoIELB.ofertasDominicais : ''
+                }}
               </div>
               <div class="no-margin">
-                Contribuição IELB
-                <q-input 
-                  outlined 
-                  type="number"
-                  prefix="R$"
-                  label="Ofertas mensais"
-                  v-model.number="table.output.contribuicaoIELB.ofertasMensais" 
-                />
+                Ofertas mensais
+                {{ 
+                  table.output.contribuicaoIELB.ofertasMensais ? table.output.contribuicaoIELB.ofertasMensais : ''
+                }}
               </div>
               <div class="no-margin">
-                Contribuição IELB
-                <q-input 
-                  outlined 
-                  label="Receitas de aluguéis"
-                  type="number"
-                  prefix="R$"
-                  reverse-fill-mask 
-                  v-model.number="table.output.contribuicaoIELB.receitasAlugueis" 
-                />
+                Receitas de alugueis 
+                {{ 
+                  table.output.contribuicaoIELB.receitasAlugueis ? table.output.contribuicaoIELB.receitasAlugueis : ''
+                }}
               </div>
               <q-input 
                 outlined 
@@ -243,8 +219,16 @@ export default defineComponent({
     this.getFinanceStatisticByOrganismId()
   },
   methods: {
+    calculateOfferPercents(){
+      let total = null
+      let result = null
+      total = this.table.entries.receitasRegulares.ofertasDominicais + 
+      this.table.entries.receitasRegulares.ofertasMensais + 
+      this.table.entries.receitasRegulares.receitasAlugueis
+      result = total * 0.11
+      console.log(result, 'OKDPOKOSPDKASO')
+    },
     insertFinanceStatistics() {
-      console.log()
       const opt = {
         route: "/desktop/statistics/insertFinanceStatistics",
         body: {
