@@ -34,29 +34,24 @@ export default defineComponent({
     }
   },
   beforeMount() {
-    this.getMyOrganismsToChooseOne()
     this.getStatisticStatus()
+    this.getCongregation()
   },
   methods: {
-    getTypeOfGroup() {
-      this.typeOfGroup = this.groupData.type
-    },
-    getCongrecation() {
+    getCongregation() {
       const opt = {
         route: '/desktop/statistics/getCongregacaoByOrganismId',
         body: {
-          organismId: this
+          organismId: '6530487ab2980d56e0985464',
+         // organismId: this.$route.query.organismId
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) return
         this.groupData = r.data
+        //this.typeOfGroup = this.groupData.type
       })
     },
-    goToPastorTab() {
-      this.$router.push('')
-    },
-
     getStatisticStatus() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
@@ -74,17 +69,7 @@ export default defineComponent({
       const organismId = this.$route.query.organismId
       this.$router.push('/user/statistic?organismId=' + organismId)
     },
-    getMyOrganismsToChooseOne() {
-      const opt = {
-        route: "/desktop/statistics/getMyOrganismsToChooseOne",
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        console.log(r, 'CUZIZIZIZIZI')
-        // this.organismsFinancesStatistics = r.data.list
-      });
-    },
+    
   }
 })
 </script>
