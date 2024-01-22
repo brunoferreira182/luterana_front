@@ -19,9 +19,6 @@
               <div class="text-h5">
                 Entradas
               </div>
-              <!-- <div class="text-h6">
-                Total de contribuições R$ {{ contributionEntriesSum ? contributionEntriesSum : '0' }}
-              </div> -->
               <q-input 
                 outlined 
                 type="number"
@@ -58,7 +55,6 @@
                   outlined 
                   prefix="R$"
                   type="number"
-                  @keyup="calculateOfferPercents()"
                   label="Receitas de aluguéis"
                   reverse-fill-mask 
                   v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
@@ -107,12 +103,16 @@
               <div class="text-h5">
                 Saídas
               </div>
-              <div class="">
-                <div class="text-h6">
-                  Total de contribuições R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}
-                </div>
+              <div class="text-h6">
+                Total de contribuições R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}
               </div>
-              <div class="no-margin">
+              <div class="text-green" v-if="contributionCalculatedMore > 0">
+                Total de contribuições calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
+              </div>
+              <div class="text-red" v-else-if="contributionCalculatedLess > 0">
+                Total de contribuições calculado 11% R$ {{ contributionCalculatedLess }} <q-icon name="south"/>
+              </div>
+              <!-- <div class="no-margin">
                 Ofertas dominicais
                 {{ 
                   table.output.contribuicaoIELB.ofertasDominicais ? table.output.contribuicaoIELB.ofertasDominicais : ''
@@ -129,7 +129,7 @@
                 {{ 
                   table.output.contribuicaoIELB.receitasAlugueis ? table.output.contribuicaoIELB.receitasAlugueis : ''
                 }}
-              </div>
+              </div> -->
               <q-input 
                 outlined 
                 label="Contribuição Distrito"
@@ -160,7 +160,7 @@
                 unelevated
                 rounded
                 no-caps
-                @click="insertFinanceStatistics"
+                @click="insertFinanceStatisticsDraft"
               />
             </div>
           </div>
@@ -186,15 +186,17 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
+      contributionCalculatedMore: 0,
+      contributionCalculatedLess: 0,
       contributionOutputSum: null,
       contributionEntriesSum: null,
       table: {
         entries:{
           saldoAnterior: '',
           receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
+            ofertasDominicais: null,
+            ofertasMensais: null,
+            receitasAlugueis: null,
           },
           ofertasEspeciais: '',
           campanhasEspecificas: '',
@@ -211,7 +213,8 @@ export default defineComponent({
           contribuicaoDistrito: '',
           devolucaoEmprestimoIELB: '',
           todasSaidas: ''
-        }
+        },
+  
       },
     }
   },
@@ -221,16 +224,25 @@ export default defineComponent({
   methods: {
     calculateOfferPercents(){
       let total = null
-      let result = null
-      total = this.table.entries.receitasRegulares.ofertasDominicais + 
-      this.table.entries.receitasRegulares.ofertasMensais + 
-      this.table.entries.receitasRegulares.receitasAlugueis
-      result = total * 0.11
-      console.log(result, 'OKDPOKOSPDKASO')
+      
+      let outPutTotalPercents = null
+      let ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
+      let ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
+      let receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
+      total = ofertasDominicais + ofertasMensais + receitasAlugueis
+      outPutTotalPercents = this.contributionOutputSum - this.contributionOutputSum * 0.11
+      if(total * 0.11 >= outPutTotalPercents){
+        this.contributionCalculatedMore = total * 0.11
+        console.log('mais', this.contributionCalculatedMore)
+      }else if(total * 0.11 < outPutTotalPercents){
+        console.log('menos', this.contributionCalculatedLess)
+        this.contributionCalculatedLess = total * 0.11
+      }
     },
-    insertFinanceStatistics() {
+    insertFinanceStatisticsDraft() {
+      this.calculateOfferPercents()
       const opt = {
-        route: "/desktop/statistics/insertFinanceStatistics",
+        route: "/desktop/statistics/insertFinanceStatisticsDraft",
         body: {
           organismId: this.$route.query.organismId,
           financeData: this.table
