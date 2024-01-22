@@ -24,6 +24,15 @@
           </div>
           <div class="q-mt-sm text-left text-h6">
             Congregações:
+            <q-btn
+              icon="add"
+              color="primary"
+              flat
+              rounded
+              @click="addCongregation"
+            >
+
+            </q-btn>
           </div>
           <q-item-label 
             class="bg-white q-mt-sm text-center"
@@ -321,14 +330,42 @@ export default defineComponent({
         iDep: null,
         iOrg: null,
         userSelected: null
-      }
+      },
+      dialogAddCongregation: {
+        open: false,
+        name: '', 
+        functions: [],
+        address: {
+          city: '',
+          cep: '',
+          steet: '',
+          number: '',
+          state: '',
+          district: '',
+          complement: ''
+        },
+        configId: '6525360fd7cd5c09a8d759be'
+      },
+      congregationConfig: null,
+      presidentFunctionConfigId: '6525360fd7cd5c09a8d759bf',
+      treasurerFunctionConfigId: '6526cc6c8c23183a40ace584',
+      secretaryFunctionConfigId: '6527f72131e6d7501490ec76'
     }
-  },
-
+  }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
+    // getCongregationConfig() {
+    //   const opt = {
+    //     route: '/desktop/statistics/getCongregationFunctions'
+    //     body:
+    //   }
+    // },
+    addCongregation() {
+      this.getCongregationConfig()
+      this.dialogAddCongregation.open = true
+    },
     clearDialogAddUserToFunctionInDept() {
       this.dialogAddFunctionToDept = {
         open: false,
