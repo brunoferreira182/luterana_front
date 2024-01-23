@@ -82,17 +82,65 @@
                 <q-space></q-space>
                   <q-input  v-if="item.organismConfigName === 'Departamento da Música'" class="q-my-sm" label="Cantores envolvidos ao total" ></q-input>
                   <q-item-section  v-if="item.organismConfigName === 'Departamento da Música'">
-                    <q-item-label class="space-between">Grupo formal:
-                      <q-checkbox v-model="formalGroupYes"
+                    <q-item-label> Grupo formal:
+                      <q-checkbox v-model="formalGroupYes" v-if="formalGroupNo? disable: !disable "
                         label ="Sim"
                       />
-                      <q-checkbox v-model="formalGroupNo"
+                      <q-checkbox v-model="formalGroupNo" v-if="formalGroupYes? disable: !disable "
                         label ="Não"
                       />
                     </q-item-label>
                   </q-item-section>
-                  
+                  <q-item-section v-if="item.organismConfigName === 'Departamento da Música' && formalGroupYes===true" label="sdasd">
+                    <q-input label="Frequência Total"></q-input>
+                    <q-input label="Número de encontros"></q-input>
+                  </q-item-section>
                 <!-- ainda sobre musicas -->
+                <!-- Sobre visitação -->
+                <q-item-section >
+                  <q-item-label class="q-mt-md"> Departamento de Visitação
+                      <q-checkbox v-model="visitationGroup.exist" label ="Sim"
+                      />
+                      <q-checkbox v-model="visitationGroup.noExist" label ="Não"
+                      />
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section v-if="visitationGroup.exist">
+                    <q-input class="q-pl-sm" label="Total de visitantes do grupo"></q-input>
+                  <q-item-label class="q-mt-md"/> Visitas Missionárias
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de pessoas"></q-input>
+                  <q-item-label class="q-mt-md"/> Visitas à Membros
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de pessoas"></q-input>
+                  <q-item-label class="q-mt-md"/> Enfermos
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de enfermos"></q-input>
+                </q-item-section>
+                <!-- ainda sobre visitação -->
+                <!-- Sobre ação social  -->
+                <q-item-section >
+                  <q-item-label class="q-ml-xs"> Ação Social
+                      <q-checkbox v-model="socialAction.exist" label ="Sim"
+                      />
+                      <q-checkbox v-model="socialAction.noExist" label ="Não"
+                      />
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section v-if="socialAction.exist">
+                    <q-input class="q-pl-sm" label="Total de visitantes do grupo"></q-input>
+                  <q-item-label class="q-mt-md"/> Visitas Missionárias
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de pessoas"></q-input>
+                  <q-item-label class="q-mt-md"/> Visitas à Membros
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de pessoas"></q-input>
+                  <q-item-label class="q-mt-md"/> Enfermos
+                    <q-input class="q-pl-sm" label="Número de visitas"></q-input>
+                    <q-input class="q-pl-sm" label="Total de enfermos"></q-input>
+                </q-item-section>
+                <!-- ainda sobre ação social -->
+
                 <q-btn
                   class="q-mt-md"
                   label="Salvar"
@@ -117,6 +165,9 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
+      socialAction: {exist:false, noExist:false},
+      visitationGroup: {exist:false, noExist:false},
+      subExpanded: false,
       formalGroupYes: false,
       formalGroupNo: false,
       groupData: {},
