@@ -90,6 +90,15 @@
             <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
               <div class="text-left q-ma-md text-h6">
                 <strong>Departamentos:</strong>
+                <q-btn
+                  color="primary"
+                  flat
+                  rounded
+                  icon="add"
+                  @click="addNewDepartament(iOrg)"
+                >
+                  <q-tooltip>Adicionar Departamento</q-tooltip>
+                </q-btn>
               </div>
               <div  
                 v-for="(dep, iDep) in org.depts"
@@ -536,10 +545,11 @@ export default defineComponent({
         functionName: null,
         selectedUser: null
       },
-      congregationConfig: null,
-      presidentFunctionConfigId: '6525360fd7cd5c09a8d759bf',
-      treasurerFunctionConfigId: '6526cc6c8c23183a40ace584',
-      secretaryFunctionConfigId: '6527f72131e6d7501490ec76'
+      dialogAddNewDepartament: {
+        open: false,
+        iOrg: null,
+        data: null
+      }
     }
   }, 
   beforeMount() {
@@ -592,7 +602,7 @@ export default defineComponent({
         organismFunctions: this.dialogAddCongregation.functions,
         additionalData: {
           email: this.dialogAddCongregation.data.email,
-          phone: this.dialogAddCongregation.data.email,
+          phone: this.dialogAddCongregation.data.phone,
           address: this.dialogAddCongregation.data.address
         }
       })
