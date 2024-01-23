@@ -5,6 +5,9 @@
         Bem-vindo(a) a Estatística 2023!
       </div>
       <div class="q-pa-sm">
+        <q-checkbox>
+          dapskdpo
+        </q-checkbox>
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
@@ -76,7 +79,6 @@ export default defineComponent({
   name:"IntroWriteStatisticData",
   data() {
     return {
-      userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
     }
