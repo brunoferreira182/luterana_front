@@ -1,27 +1,19 @@
 <template>
   <q-page-container class="no-padding">
     <q-page >
-      <div class="q-pa-md q-gutter-sm">
-        <q-breadcrumbs align="center">
-          <q-breadcrumbs-el 
-            style="cursor: pointer;" 
-            icon="home" 
-            label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"
-          />
-          <q-breadcrumbs-el 
-            style="cursor: pointer;" 
-            label="Completar estatística" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-          />
-          <q-breadcrumbs-el label="Atividades cúlticas" />
-        </q-breadcrumbs>
+      <div class="q-ma-lg q-gutter-sm text-h6">
+        Atividades culicas
       </div>
       <div class="row justify-center q-pa-md">
         <div class="col q-gutter-y-md">
-          <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-pa-md">
+          <div 
+            v-for="item in congregationData.organismList"
+            :key="item"
+            style="border-radius: 1rem; background-color: rgb(245, 245, 245);" 
+            class="q-pa-md"
+          >
             <div class="text-h5">
-              Culto
+              Culto  {{ item.organismName }}
             </div>
             <q-input 
               type="number"
@@ -94,6 +86,7 @@ export default defineComponent({
   data() {
     return {
       validated: false,
+      congregationData:{},
       activitiesData:{
         cultoData: {
           qtyDadosPastor: 0,
@@ -110,8 +103,26 @@ export default defineComponent({
   },
   beforeMount() {
     this.getAtividadesCulticas()
+    this.getPontosDeMissaoByOrganismId()
   },
   methods: {
+    getPontosDeMissaoByOrganismId() {
+      const opt = {
+        route: "/desktop/statistics/getPontosDeMissaoByOrganismId",
+        body: {
+          organismId: this.$route.query.organismId,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.congregationData = r.data
+      });
+    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
@@ -126,7 +137,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        console.log(r)
         this.validated = r.data.validated
         this.activitiesData = r.data.activitiesData
       });
