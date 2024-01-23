@@ -392,6 +392,28 @@
                   </q-item-label>
                 </q-item-section>
               </q-item>
+              <q-item class="text-center">
+                <q-item-section>
+                  <q-item-label>
+                    <q-btn
+                      flat
+                      label="Voltar"
+                      no-caps
+                      rounded
+                      color="primary"
+                      @click="clearDialogAddUserToFunctionInDept"
+                    />
+                    <q-btn
+                      label="Confirmar"
+                      unelevated  
+                      no-caps
+                      rounded
+                      color="primary"
+                      @click="confirmAddNewOrganism()"
+                    />
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-card-section>
         </q-card>
@@ -490,7 +512,6 @@ export default defineComponent({
       },
       dialogAddCongregation: {
         open: false,
-        name: '', 
         data: {
           name: '',
           email: '',
@@ -525,6 +546,80 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
+    clearDialogAddNewCongrgation() {
+      this.dialogAddCongregation= {
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          address: {
+            city: '',
+            cep: '',
+            addressType: '',
+            street: '',
+            number: '',
+            state: '',
+            district: '',
+            complement: ''
+          }
+        },
+        functions: null,
+        organismConfigId: '6525360fd7cd5c09a8d759be'
+      }
+    },
+    confirmAddNewOrganism() {
+      this.dialogAddCongregation.functions.forEach((func, iFunc) => {
+        let funcData = func
+
+        if (funcData.users) {
+          this.dialogAddCongregation.functions[iFunc] = {
+            functionName: funcData.description,
+            functionUsers: funcData.users
+          }
+        }
+        else {
+          this.dialogAddCongregation.functions[iFunc] = {
+            functionName: funcData.description,
+            functionUsers: []
+          }
+        }
+      })
+
+      this.composition.congregations.push({
+        organismChildConfig: 'Congregação',
+        organismChildName: this.dialogAddCongregation.data.name,
+        organismFunctions: this.dialogAddCongregation.functions,
+        additionalData: {
+          email: this.dialogAddCongregation.data.email,
+          phone: this.dialogAddCongregation.data.email,
+          address: this.dialogAddCongregation.data.address
+        }
+      })
+      this.clearDialogAddNewCongrgation()
+    },
+    checkCEP(ev) {
+      this.dialogAddCongregation.data.address.cep = ev.target.value;
+      if (this.dialogAddCongregation.data.address.cep.length === 9) {
+        const opt = {
+          route: "/utils/consultZipCode",
+          body: {
+            zipCode: this.dialogAddCongregation.data.address.cep.replace('-', ''),
+          },
+        };
+        this.$q.loading.show();
+        useFetch(opt).then((r) => {
+          this.$q.loading.hide
+          this.dialogAddCongregation.data.address = {
+            cep: ev.target.value,
+            city: r.data.localidade,
+            state: r.data.uf,
+            street: r.data.logradouro,
+            district: r.data.bairro
+          }
+        });
+      }
+    },
     removeFunctionUserFromNewCongregation(iFunc, iUser) {
       this.dialogAddCongregation.functions[iFunc].users.splice(iUser, 1)
     },
