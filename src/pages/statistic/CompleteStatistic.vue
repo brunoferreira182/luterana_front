@@ -3,25 +3,74 @@
     <q-page>
 
       <div class="fit column q-mt-lg content-center">
-        <q-item class="card">
+        <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
+          <q-chip
+            v-if="validationResume.atividadesCulticasStatistics"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-else-if="!validationResume.atividadesCulticasStatistics"
+            label="Não validado"
+            color="red"
+            text-color="white"
+          />
         </q-item>
-        <q-item class="card" clickable>
+        <q-item class="card" clickable @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)" >
           <q-item-section>
-            <q-item-label class="text-h5" @click="$router.push('/statistic/groupActivity')" /> Atividades de grupos
+            Atividades de grupos
           </q-item-section>
+          <q-chip
+            v-if="validationResume.groupsActivities"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-else-if="!validationResume.groupsActivities"
+            label="Não validado"
+            color="red"
+            text-color="white"
+          />
         </q-item>
-        <q-item class="card">
+        <q-item class="card" clickable @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)">
           <q-item-section>
-            <q-item-label class="text-h5" />Movimento de membros
+            <q-item-label class="text-h5"  />Movimento de membros
+            
           </q-item-section>
+          <q-chip
+            v-if="validationResume.membersMovement"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-else-if="!validationResume.membersMovement"
+            label="Não validado"
+            color="red"
+            text-color="white"
+          />
         </q-item>
         <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>
+          <q-chip
+            v-if="validationResume.financeStatistics"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-else-if="!validationResume.financeStatistics"
+            label="Não validado"
+            color="red"
+            text-color="white"
+          />
         </q-item>
       </div>
     </q-page>
@@ -35,14 +84,28 @@ export default defineComponent({
   name: "CompleteStatistic",
   data() {
     return {
-      statisticStatus: null
+      statisticStatus: null,
+      validationResume: {}
     }
   },
   beforeMount() {
     this.getMyOrganismsToChooseOne()
     this.getStatisticStatus()
+    this.getValidationResumeByOrganism()
   },
   methods: {
+    getValidationResumeByOrganism () {
+      const opt = {
+        route: '/desktop/statistics/getValidationResumeByOrganism',
+        body: {
+          organismId: this.$route.query.organismId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.validationResume = r.data
+      })
+    },
     getStatisticStatus() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
@@ -53,7 +116,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
-        this.verifyStatusTypes()
+        // this.verifyStatusTypes()
       })
     },
     getMyOrganismsToChooseOne() {
@@ -61,9 +124,8 @@ export default defineComponent({
         route: "/desktop/statistics/getMyOrganismsToChooseOne",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(() => {
         this.$q.loading.hide()
-        console.log(r, 'CUZIZIZIZIZI')
         // this.organismsFinancesStatistics = r.data.list
       });
     },
