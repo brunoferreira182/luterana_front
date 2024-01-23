@@ -204,12 +204,12 @@ export default defineComponent({
   },
   methods: {
     calculateOfferPercents(){
-      const total = null
+      let total = null
       
-      const outPutTotalPercents = null
-      const ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
-      const ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais
-      const receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis
+      let outPutTotalPercents = null
+      let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
+      let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais
+      let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis
       total = ofertasDominicais + ofertasMensais + receitasAlugueis
       outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
