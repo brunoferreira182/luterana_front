@@ -41,13 +41,14 @@
           > 
             <q-expansion-item
               :label="org.organismChildName"
-              class="bg-grey-2 q-pb-sm"
+              class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
             >
-              <div class="q-mt-sm bg-white q-ma-sm" style="border-radius: .5rem;">
-                <div class="text-left q-ma-md text-h6">
-                  <strong>Funções:</strong>
-                </div>
+              <q-expansion-item
+                class="q-mt-sm q-mx-sm bg-grey-3"
+                label="Funções"
+                style="border-radius: .7rem;"
+              >
                 <div 
                   class="text-left q-ml-lg"
                   v-for="(func, iFunc) in org.organismFunctions" 
@@ -62,7 +63,6 @@
                     @click="addFunctionUser(iFunc, iOrg, func.functionName)"
                     size="12px"
                   >
-  
                   </q-btn>
                   <div
                     class="q-ml-sm q-pa-sm"
@@ -88,21 +88,19 @@
                     </q-item>
                   </div>
                 </div>
-              </div>
+              </q-expansion-item>
               <q-expansion-item
                 label="Departamentos"
-                class="bg-grey-2 q-ma-sm"
+                class="q-mt-sm q-mx-sm bg-grey-3 text-left"
                 style="border-radius: .7rem;"
               >
-
-                <div class="q-mt-sm bg-white q-ma-sm q-pb-sm text-left" style="border-radius: .5rem;">
                   <div class="text-left q-ma-md text-h6">
-                    <strong>Departamentos:</strong>
                     <q-btn
                       color="primary"
                       flat
                       rounded
                       icon="add"
+                      label="Adicionar novo departamento"
                       @click="addNewDepartament(iOrg)"
                     >
                       <q-tooltip>Adicionar Departamento</q-tooltip>
@@ -115,17 +113,16 @@
                   >
                     <div v-if="dep.existingDepartaments.length > 0">
                       <q-list
-                        class="text-left q-pa-sm q-ma-sm bg-white"
+                        class="text-left q-pa-sm q-ma-sm"
                         style="border-radius: .3rem;"
                         v-for="(departament, iExistsDept) in dep.existingDepartaments"
                         :key="departament"
                       >
                         <q-expansion-item 
                           :label="dep.organismConfigName"
-                          class="bg-grey-2"
+                          class="bg-grey-4"
                           style="border-radius: .5rem;"
                         >
-
                           <q-item class="no-padding">
                             <q-item-section>
                               <!-- <q-item-label class="text-h6">
@@ -207,7 +204,6 @@
                       </q-list> 
                     </div>
                   </div>
-                </div>
               </q-expansion-item>
             </q-expansion-item>
           </q-item-label>
