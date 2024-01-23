@@ -207,11 +207,11 @@ export default defineComponent({
       const total = null
       
       const outPutTotalPercents = null
-      const ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
-      const ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
-      const receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
+      const ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
+      const ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais
+      const receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis
       total = ofertasDominicais + ofertasMensais + receitasAlugueis
-      outPutTotalPercents = this.contributionOutputSum - this.contributionOutputSum * 0.11
+      outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
         this.contributionCalculatedMore = total * 0.11
         console.log('mais', this.contributionCalculatedMore)
