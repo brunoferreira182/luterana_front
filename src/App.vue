@@ -13,6 +13,12 @@ export default defineComponent({
     const autoLogoutStore = useAutoLogoutStore();
     autoLogoutStore.startAutoLogoutTimer();
     
+    window.addEventListener('touchmove', () => {
+      autoLogoutStore.resetAutoLogoutTimer();
+    });
+    window.addEventListener('touchend', () => {
+      autoLogoutStore.resetAutoLogoutTimer();
+    });
     window.addEventListener('mousemove', () => {
       autoLogoutStore.resetAutoLogoutTimer();
     });
