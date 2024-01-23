@@ -45,7 +45,7 @@
               style="border-radius: 1rem;"
             >
               <q-expansion-item
-                class="q-mt-sm q-mx-sm bg-grey-3"
+                class="q-mt-sm q-mx-sm bg-grey-2"
                 label="Funções"
                 style="border-radius: .7rem;"
               >
@@ -90,120 +90,144 @@
                 </div>
               </q-expansion-item>
               <q-expansion-item
+                default-opened
                 label="Departamentos"
-                class="q-mt-sm q-mx-sm bg-grey-3 text-left"
+                class="q-mt-sm q-mx-sm bg-grey-2 text-left"
                 style="border-radius: .7rem;"
-              >
-                  <div class="text-left q-ma-md text-h6">
-                    <q-btn
-                      color="primary"
-                      flat
-                      rounded
-                      icon="add"
-                      label="Adicionar novo departamento"
-                      @click="addNewDepartament(iOrg)"
-                    >
-                      <q-tooltip>Adicionar Departamento</q-tooltip>
-                    </q-btn>
-                  </div>
-                  <div  
-                    class="text-left"
+              > 
+                <q-list>
+                  <div 
                     v-for="(dep, iDep) in org.depts"
                     :key="dep"
                   >
-                    <div v-if="dep.existingDepartaments.length > 0">
-                      <q-list
-                        class="text-left q-pa-sm q-ma-sm"
-                        style="border-radius: .3rem;"
-                        v-for="(departament, iExistsDept) in dep.existingDepartaments"
-                        :key="departament"
+
+                    <q-item 
+                      clickable 
+                      v-ripple 
+                      v-for="(departament, iExistsDept) in dep.existingDepartaments"
+                      :key="departament"
+                      @click="openDepartamentDetail(iOrg, iDep, iExistsDept)"
+                    >
+
+                      <q-item-section>
+                        {{dep.organismConfigName}}
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-icon name="expand_more" color="grey" />
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                </q-list>
+                <div class="text-left q-ma-md text-h6">
+                  <q-btn
+                    color="primary"
+                    flat
+                    rounded
+                    icon="add"
+                    label="Adicionar novo departamento"
+                    @click="addNewDepartament(iOrg)"
+                  >
+                    <q-tooltip>Adicionar Departamento</q-tooltip>
+                  </q-btn>
+                </div>
+                <!-- <div  
+                  class="text-left"
+                  v-for="(dep, iDep) in org.depts"
+                  :key="dep"
+                >
+                  <div v-if="dep.existingDepartaments.length > 0">
+                    <q-list
+                      class="text-left q-pa-sm q-ma-sm"
+                      style="border-radius: .3rem;"
+                      v-for="(departament, iExistsDept) in dep.existingDepartaments"
+                      :key="departament"
+                    >
+                      <q-expansion-item 
+                        :label="dep.organismConfigName"
+                        class="bg-grey-4"
+                        style="border-radius: .5rem;"
                       >
-                        <q-expansion-item 
-                          :label="dep.organismConfigName"
-                          class="bg-grey-4"
-                          style="border-radius: .5rem;"
-                        >
-                          <q-item class="no-padding">
-                            <q-item-section>
-                              <!-- <q-item-label class="text-h6">
-                                <strong>{{ dep.organismConfigName }}</strong>
-                              </q-item-label> -->
+                        <q-item class="no-padding">
+                          <q-item-section>
+                            <q-item-label class="text-h6">
+                              <strong>{{ dep.organismConfigName }}</strong>
+                            </q-item-label> 
+                            <q-item-label>
+                              Nome: {{ departament.departamentName }}
+                            </q-item-label>
                               <q-item-label>
-                                Nome: {{ departament.departamentName }}
-                              </q-item-label>
-                                <q-item-label>
-                                  <div>
-                                    <strong>Funções:</strong>
-                                  </div>
-                                    <q-list>
-                                      <q-item
-                                        v-for="(func, iFunc) in departament.organismFunctions"
-                                        :key="func"
-                                      >
-                                        <q-item-section>
-                                          <q-item-label>
-                                            <strong>{{ func.functionName }}:</strong>
-                                            <q-btn
-                                              color="primary"
-                                              flat
-                                              rounded
-                                              icon="add"
-                                              @click="addFuncToDept(iOrg, iDep, iExistsDept, iFunc )"
-                                            >
-                                              <q-tooltip>
-                                                Adicionar usuário a função
-                                              </q-tooltip>
-                                            </q-btn>
-                                          </q-item-label>
-                                          <q-item-label  
-                                            v-for="(user, iUser) in func.functionUsers"
-                                            :key="user"
-                                          >
-                                            {{ user.userName }}
-                                            <q-btn
-                                              color='red'
-                                              flat
-                                              rounded
-                                              icon="delete"
-                                              @click="removeUserFromFunctionDept(iOrg, iDep, iExistsDept, iFunc, iUser)"
-                                            > 
-                                              <q-tooltip>Excluir usuário da função</q-tooltip>
-                                            </q-btn>
-                                          </q-item-label>
-                                        </q-item-section>
-                                        <!-- {{ func }} -->
-                                      </q-item>
-                                    </q-list>
-                                </q-item-label>
-                            </q-item-section>
-                          </q-item>
-                        </q-expansion-item>
-                        <!-- <div v-if="dep.existingDepartaments.length > 0">
-                        {{ dep.departamentName }}
-                          <div>
-                            <div class="q-ml-sm">
-                              Funções:
-                            </div>
-                            <div 
-                              v-for="func in dep.organismFunctions"
-                              :key="func"
-                            >
-                              <div class="q-ml-lg">
-                                {{ func.functionName }}:
-                                <div 
-                                  class="q-ml-lg"
-                                  v-for="user in func.functionUsers"
-                                  :key="user"
-                                >
-                                  {{ user.userName }}
+                                <div>
+                                  <strong>Funções:</strong>
                                 </div>
+                                  <q-list>
+                                    <q-item
+                                      v-for="(func, iFunc) in departament.organismFunctions"
+                                      :key="func"
+                                    >
+                                      <q-item-section>
+                                        <q-item-label>
+                                          <strong>{{ func.functionName }}:</strong>
+                                          <q-btn
+                                            color="primary"
+                                            flat
+                                            rounded
+                                            icon="add"
+                                            @click="addFuncToDept(iOrg, iDep, iExistsDept, iFunc )"
+                                          >
+                                            <q-tooltip>
+                                              Adicionar usuário a função
+                                            </q-tooltip>
+                                          </q-btn>
+                                        </q-item-label>
+                                        <q-item-label  
+                                          v-for="(user, iUser) in func.functionUsers"
+                                          :key="user"
+                                        >
+                                          {{ user.userName }}
+                                          <q-btn
+                                            color='red'
+                                            flat
+                                            rounded
+                                            icon="delete"
+                                            @click="removeUserFromFunctionDept(iOrg, iDep, iExistsDept, iFunc, iUser)"
+                                          > 
+                                            <q-tooltip>Excluir usuário da função</q-tooltip>
+                                          </q-btn>
+                                        </q-item-label>
+                                      </q-item-section>
+                                      {{ func }} 
+                                    </q-item>
+                                  </q-list>
+                              </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </q-expansion-item>
+                      <div v-if="dep.existingDepartaments.length > 0">
+                      {{ dep.departamentName }}
+                        <div>
+                          <div class="q-ml-sm">
+                            Funções:
+                          </div>
+                          <div 
+                            v-for="func in dep.organismFunctions"
+                            :key="func"
+                          >
+                            <div class="q-ml-lg">
+                              {{ func.functionName }}:
+                              <div 
+                                class="q-ml-lg"
+                                v-for="user in func.functionUsers"
+                                :key="user"
+                              >
+                                {{ user.userName }}
                               </div>
                             </div>
                           </div>
-                        </div>-->
-                      </q-list> 
-                    </div>
+                        </div>
+                      </div>
+                    </q-list> 
                   </div>
+                </div> -->
               </q-expansion-item>
             </q-expansion-item>
           </q-item-label>
@@ -510,6 +534,76 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogDepartamentDetail.open"
+      >
+        <q-card
+          style="width:400px;"
+        >
+          <q-card-section class="text-center text-h6">
+            {{ dialogDepartamentDetail.data.departamentName }}
+          </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Funções:</strong>
+            </div>
+            <q-item
+              v-for="(func, iFunc) in dialogDepartamentDetail.data.organismFunctions"
+              :key="func"
+            >
+              <q-item-section>
+                <q-item-label>
+                  <strong>{{ func.functionName }}:</strong>
+                  <q-btn
+                    color="primary"
+                    flat
+                    rounded
+                    icon="add"
+                    @click="addFuncToDept(iFunc )"
+                  >
+                    <q-tooltip>
+                      Adicionar usuário a função
+                    </q-tooltip>
+                  </q-btn>
+                </q-item-label>
+                <q-item-label  
+                  v-for="(user, iUser) in func.functionUsers"
+                  :key="user"
+                >
+                  {{ user.userName }}
+                  <q-btn
+                    color='red'
+                    flat
+                    rounded
+                    icon="delete"
+                    @click="removeUserFromFunctionDept(iFunc, iUser)"
+                  > 
+                    <q-tooltip>Excluir usuário da função</q-tooltip>
+                  </q-btn>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <div class="text-center q-mt-sm">
+              <q-btn
+                flat
+                label="Voltar"
+                no-caps
+                rounded
+                color="primary"
+                @click="clearDialogDepartaments"
+              />
+              <q-btn
+                label="Excluir departamento"
+                unelevated  
+                no-caps
+                rounded
+                color="red"
+                @click="deleteDepartament()"
+              />
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
       <q-btn
         @click="saveDraft"
       ></q-btn>
@@ -581,6 +675,13 @@ export default defineComponent({
         open: false,
         iOrg: null,
         data: null
+      },
+      dialogDepartamentDetail: {
+        open: false,
+        data: null,
+        iOrg: null,
+        iDep: null,
+        iExistsDept: null
       }
     }
   }, 
@@ -588,6 +689,30 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
+    clearDialogDepartaments() {
+      this.dialogDepartamentDetail = {
+        open: false,
+        data: null,
+        iOrg: null,
+        iDep: null,
+        iExistsDept: null
+      }
+    },
+    deleteDepartament() {
+      this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments.splice(this.dialogDepartamentDetail.iExistsDept, 1)
+      this.clearDialogDepartaments()
+    },
+    openDepartamentDetail(iOrg, iDep, iExistsDept) {
+      console.log(iOrg, iDep, iExistsDept)
+      this.dialogDepartamentDetail.data = 
+        this.composition.congregations[iOrg]
+        .depts[iDep]
+        .existingDepartaments[iExistsDept]
+      this.dialogDepartamentDetail.open = true
+      this.dialogDepartamentDetail.iOrg = iOrg
+      this.dialogDepartamentDetail.iDep = iDep
+      this.dialogDepartamentDetail.iExistsDept = iExistsDept
+    },
     addNewDepartament(iOrg) {
       this.dialogAddNewDepartament.iOrg = iOrg
       this.dialogAddNewDepartament.open = true
@@ -719,11 +844,11 @@ export default defineComponent({
       }
     },
     confirmAddUserToFunctionInDept() {
-      console.log(this.dialogAddFunctionToDept.iOrg, this.dialogAddFunctionToDept.iDep, this.dialogAddFunctionToDept.iExistsDept, this.dialogAddFunctionToDept.iFunc)
+      console.log(this.dialogDepartamentDetail.iOrg, this.dialogDepartamentDetail.iDep, this.dialogDepartamentDetail.iExistsDept, this.dialogAddFunctionToDept.iFunc)
       this.composition.
-      congregations[this.dialogAddFunctionToDept.iOrg].
-      depts[this.dialogAddFunctionToDept.iDep].
-      existingDepartaments[this.dialogAddFunctionToDept.iExistsDept].
+      congregations[this.dialogDepartamentDetail.iOrg].
+      depts[this.dialogDepartamentDetail.iDep].
+      existingDepartaments[this.dialogDepartamentDetail.iExistsDept].
       organismFunctions[this.dialogAddFunctionToDept.iFunc].
       functionUsers.push({
         userName: this.dialogAddFunctionToDept.userSelected.userName,
@@ -731,13 +856,11 @@ export default defineComponent({
       })
       this.clearDialogAddUserToFunctionInDept()
     },
-    removeUserFromFunctionDept(iOrg, iDep, iExistsDept, iFunc, iUser) {
-      this.composition.congregations[iOrg].depts[iDep].existingDepartaments[iExistsDept].organismFunctions[iFunc].functionUsers.splice(iUser, 1)
+    removeUserFromFunctionDept(iFunc, iUser) {
+      this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].organismFunctions[iFunc].functionUsers.splice(iUser, 1)
     },
-    addFuncToDept(iOrg, iDep, iExistsDept, iFunc) {
-      this.dialogAddFunctionToDept.iExistsDept = iExistsDept
-      this.dialogAddFunctionToDept.iDep = iDep
-      this.dialogAddFunctionToDept.iOrg = iOrg
+    addFuncToDept(iFunc) {
+      console.log(iFunc)
       this.dialogAddFunctionToDept.iFunc = iFunc
       this.dialogAddFunctionToDept.open = true
     },
