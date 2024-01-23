@@ -23,7 +23,7 @@
       </div>
       <div>
         <div>
-          <div class="text-h5 q-px-md">1° - Dados pessoais</div>
+          <div class="text-h5 q-px-md">Dados pessoais</div>
           <div 
             class="text-h6 q-px-md text-wrap"
           >
@@ -314,7 +314,7 @@
           <q-separator class="q-ma-sm q-my-md"/>
         </div>
         <div>
-          <div class="text-h5 q-px-md">2° - Vida pastoral</div>
+          <div class="text-h5 q-px-md">Vida pastoral</div>
           <div class="text-h6 q-px-md text-wrap">
             Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
           </div>
@@ -392,7 +392,7 @@
           <q-separator class="q-ma-sm q-my-md"/>
         </div>
         <div>
-          <div class="text-h5 q-mx-md">3° - Atividade pastoral</div>
+          <div class="text-h5 q-mx-md">Atividade pastoral</div>
           <div class="text-h6 q-mb-md  text-wrap">
             Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
             insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
