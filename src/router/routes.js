@@ -288,12 +288,6 @@ const routes = [
         component: () => import("src/pages/user/Statistic.vue"),
       },
       
-  
-      // {
-      //   path: "/user/createNewSugestion",
-      //   component: () => import("src/pages/user/CreateNewSugestion.vue"),
-      // },
-
       //ESTATÍSTICA 2023 
       {
         path: "/statistic/pastorData",
@@ -334,7 +328,12 @@ const routes = [
       {
         path: "/statistic/membersMovement",
         component: () => import("src/pages/statistic/MembersMovement.vue"),
+      },
+      {
+        path: "/statistic/paroquialManagement",
+        component: () => import("src/pages/statistic/ParoquialManagement.vue"),
       }
+      
     ],
   },
 

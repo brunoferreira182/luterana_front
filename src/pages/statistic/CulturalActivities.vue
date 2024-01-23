@@ -93,6 +93,7 @@ export default defineComponent({
   name: "CulturalActivities",
   data() {
     return {
+      validated: false,
       activitiesData:{
         cultoData: {
           qtyDadosPastor: 0,
@@ -125,6 +126,8 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
+        console.log(r)
+        this.validated = r.data.validated
         this.activitiesData = r.data.activitiesData
       });
     },

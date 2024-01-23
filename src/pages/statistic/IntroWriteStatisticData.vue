@@ -29,10 +29,10 @@
           class="card" 
           :clickable="isPastor ? true : false" 
           :disable="isPastor ? false : true" 
-          @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+          @click="$router.push('/statistic/paroquialManagement')"
         >
           <q-item-section>
-            <q-item-label class="text-h5">SIPAR</q-item-label>
+            <q-item-label class="text-h5">Gestão Paroquial</q-item-label>
           </q-item-section>
         </q-item>
         <q-item 
