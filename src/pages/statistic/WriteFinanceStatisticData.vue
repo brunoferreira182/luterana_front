@@ -4,155 +4,136 @@
       <div class="q-pa-md">
         <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs align="center">
-            <q-breadcrumbs-el icon="home" label="Introdução" @click="$router.push('/statistic/introWriteStatisticData')"/>
-            <q-breadcrumbs-el label="Completar estatística" @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"/>
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              icon="home" 
+              label="Introdução" 
+              @click="$router.push('/statistic/introWriteStatisticData')"
+            />
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              label="Completar estatística" 
+              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
         </div>
-        <div class="text-capitalize"> 
+        <div > 
           <div class="text-h5 q-mb-sm text-center">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
-              <div class="text-h5">
-                Entradas
-              </div>
-              <q-input 
-                outlined 
-                type="number"
-                prefix="R$"
-                label="Saldo anterior"
-                reverse-fill-mask
-                v-model.number="table.entries.saldoAnterior" 
-              />
-              <div class="no-margin">
-                Receitas regulares
+              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+              
+                <div class="text-h5">
+                  Entradas
+                </div>
                 <q-input 
-                  outlined 
+                  type="number"
+                  prefix="R$"
+                  label="Saldo anterior"
+                  reverse-fill-mask
+                  v-model.number="table.entries.saldoAnterior" 
+                />
+                <div class="no-margin">
+                  <q-input 
+                    prefix="R$"
+                    type="number"
+                    label="Ofertas dominicais"
+                    reverse-fill-mask 
+                    v-model.number="table.entries.receitasRegulares.ofertasDominicais" 
+                  />
+                </div>
+                <div class="no-margin">
+                  <q-input 
+                    label="Ofertas mensais"
+                    prefix="R$"
+                    type="number"
+                    reverse-fill-mask 
+                    v-model.number="table.entries.receitasRegulares.ofertasMensais" 
+                  />
+                </div>
+                <div class="no-margin">
+                  <q-input 
+                    prefix="R$"
+                    type="number"
+                    label="Receitas de aluguéis"
+                    reverse-fill-mask 
+                    v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
+                  />
+                </div>
+                <q-input 
+                  prefix="R$"
+                  label="Ofertas especiais"
+                  reverse-fill-mask 
+                  type="number"
+                  v-model.number="table.entries.ofertasEspeciais" 
+                />
+                <q-input 
+                  prefix="R$"
+                  label="Campanhas específicas"
+                  type="number"
+                  reverse-fill-mask 
+                  v-model.number="table.entries.campanhasEspecificas" 
+                />
+                <q-input 
+                  label="Auxílio"
+                  type="number"
+                  prefix="R$"
+                  reverse-fill-mask 
+                  v-model.number="table.entries.auxilio" 
+                />
+                <q-input 
+                  label="Empréstimos"
+                  prefix="R$"
+                  reverse-fill-mask 
+                  type="number"
+                  v-model.number="table.entries.emprestimos" 
+                />
+                <q-input 
+                  label="Todas as Outras receitas"
                   prefix="R$"
                   type="number"
-                  label="Ofertas dominicais"
                   reverse-fill-mask 
-                  v-model.number="table.entries.receitasRegulares.ofertasDominicais" 
+                  v-model.number="table.entries.todasOutrasReceitas" 
                 />
               </div>
-              <div class="no-margin">
-                Receitas regulares
+              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+                <div class="text-h5">
+                  Saídas
+                </div>
+                <div class="text-h6">
+                  Contribuição registrada no SGA <q-chip color="blue text-white">R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}</q-chip>
+                </div>
+                <div class="text-green" v-if="contributionCalculatedMore > 0">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
+                </div>
+                <div class="text-red" v-else-if="contributionCalculatedLess > 0">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess }} <q-icon name="south"/>
+                </div>
                 <q-input 
-                  outlined 
-                  label="Ofertas mensais"
+                  label="Contribuição Distrito"
+                  prefix="R$"
+                  type="number"
+                  v-model.number="table.output.contribuicaoDistrito" 
+                />
+                <q-input 
+                  label="Devolução de empréstimos IELB"
                   prefix="R$"
                   type="number"
                   reverse-fill-mask 
-                  v-model.number="table.entries.receitasRegulares.ofertasMensais" 
+                  v-model.number="table.output.devolucaoEmprestimoIELB" 
                 />
-              </div>
-              <div class="no-margin">
-                Receitas regulares
                 <q-input 
-                  outlined 
                   prefix="R$"
                   type="number"
-                  label="Receitas de aluguéis"
+                  label="Todas as outras saídas"
                   reverse-fill-mask 
-                  v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
+                  v-model.number="table.output.todasSaidas" 
                 />
               </div>
-              <q-input 
-                outlined 
-                prefix="R$"
-                label="Ofertas especiais"
-                reverse-fill-mask 
-                type="number"
-                v-model.number="table.entries.ofertasEspeciais" 
-              />
-              <q-input 
-                outlined 
-                prefix="R$"
-                label="Campanhas específicas"
-                type="number"
-                reverse-fill-mask 
-                v-model.number="table.entries.campanhasEspecificas" 
-              />
-              <q-input 
-                outlined 
-                label="Auxílio"
-                type="number"
-                prefix="R$"
-                reverse-fill-mask 
-                v-model.number="table.entries.auxilio" 
-              />
-              <q-input 
-                outlined 
-                label="Empréstimos"
-                prefix="R$"
-                reverse-fill-mask 
-                type="number"
-                v-model.number="table.entries.emprestimos" 
-              />
-              <q-input 
-                outlined 
-                label="Todas as Outras receitas"
-                prefix="R$"
-                type="number"
-                reverse-fill-mask 
-                v-model.number="table.entries.todasOutrasReceitas" 
-              />
-              <div class="text-h5">
-                Saídas
-              </div>
-              <div class="text-h6">
-                Total de contribuições R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}
-              </div>
-              <div class="text-green" v-if="contributionCalculatedMore > 0">
-                Total de contribuições calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
-              </div>
-              <div class="text-red" v-else-if="contributionCalculatedLess > 0">
-                Total de contribuições calculado 11% R$ {{ contributionCalculatedLess }} <q-icon name="south"/>
-              </div>
-              <!-- <div class="no-margin">
-                Ofertas dominicais
-                {{ 
-                  table.output.contribuicaoIELB.ofertasDominicais ? table.output.contribuicaoIELB.ofertasDominicais : ''
-                }}
-              </div>
-              <div class="no-margin">
-                Ofertas mensais
-                {{ 
-                  table.output.contribuicaoIELB.ofertasMensais ? table.output.contribuicaoIELB.ofertasMensais : ''
-                }}
-              </div>
-              <div class="no-margin">
-                Receitas de alugueis 
-                {{ 
-                  table.output.contribuicaoIELB.receitasAlugueis ? table.output.contribuicaoIELB.receitasAlugueis : ''
-                }}
-              </div> -->
-              <q-input 
-                outlined 
-                label="Contribuição Distrito"
-                prefix="R$"
-                type="number"
-                v-model.number="table.output.contribuicaoDistrito" 
-              />
-              <q-input 
-                outlined 
-                label="Devolução de empréstimos IELB"
-                prefix="R$"
-                type="number"
-                reverse-fill-mask 
-                v-model.number="table.output.devolucaoEmprestimoIELB" 
-              />
-              <q-input 
-                outlined 
-                prefix="R$"
-                type="number"
-                label="Todas as outras saídas"
-                reverse-fill-mask 
-                v-model.number="table.output.todasSaidas" 
-              />
               <q-btn
                 label="Salvar como rascunho"
                 class="q-ma-md text-center"
@@ -192,27 +173,27 @@ export default defineComponent({
       contributionEntriesSum: null,
       table: {
         entries:{
-          saldoAnterior: '',
+          saldoAnterior: 0,
           receitasRegulares: {
-            ofertasDominicais: null,
-            ofertasMensais: null,
-            receitasAlugueis: null,
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
           },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
+          ofertasEspeciais: 0,
+          campanhasEspecificas: 0,
+          auxilio: 0,
+          emprestimos: 0,
+          todasOutrasReceitas: 0,
         },
         output: {
           contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: null,
-            receitasAlugueis: '',
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
           },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
+          contribuicaoDistrito: 0,
+          devolucaoEmprestimoIELB: 0,
+          todasSaidas: 0
         },
   
       },
@@ -223,12 +204,12 @@ export default defineComponent({
   },
   methods: {
     calculateOfferPercents(){
-      let total = null
+      const total = null
       
-      let outPutTotalPercents = null
-      let ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
-      let ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
-      let receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
+      const outPutTotalPercents = null
+      const ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
+      const ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
+      const receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
       total = ofertasDominicais + ofertasMensais + receitasAlugueis
       outPutTotalPercents = this.contributionOutputSum - this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
@@ -263,7 +244,6 @@ export default defineComponent({
           return
         }
         this.$q.notify('Dados salvos como rascunho')
-        this.$router.back()
       });
     },
     getFinanceStatisticByOrganismId() {

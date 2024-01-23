@@ -328,6 +328,10 @@ const routes = [
         component: () => import("src/pages/statistic/GroupActivity.vue"),
       },
       {
+        path: "/statistic/culturalActivities",
+        component: () => import("src/pages/statistic/CulturalActivities.vue"),
+      },
+      {
         path: "/statistic/membersMovement",
         component: () => import("src/pages/statistic/MembersMovement.vue"),
       }
