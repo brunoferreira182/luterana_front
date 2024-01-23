@@ -31,74 +31,74 @@
                   Entradas
                 </div>
                 <q-input 
-                  type="number"
                   prefix="R$"
                   label="Saldo anterior"
                   reverse-fill-mask
-                  v-model.number="table.entries.saldoAnterior" 
+                  mask="###.###.###,##"
+                  v-model="table.entries.saldoAnterior" 
                 />
                 <div class="no-margin">
                   <q-input 
                     prefix="R$"
-                    type="number"
                     label="Ofertas dominicais"
-                    reverse-fill-mask 
-                    v-model.number="table.entries.receitasRegulares.ofertasDominicais" 
+                    reverse-fill-mask
+                    mask="###.###.###,##" 
+                    v-model="table.entries.receitasRegulares.ofertasDominicais" 
                   />
                 </div>
                 <div class="no-margin">
                   <q-input 
                     label="Ofertas mensais"
                     prefix="R$"
-                    type="number"
-                    reverse-fill-mask 
-                    v-model.number="table.entries.receitasRegulares.ofertasMensais" 
+                    reverse-fill-mask
+                    mask="###.###.###,##" 
+                    v-model="table.entries.receitasRegulares.ofertasMensais" 
                   />
                 </div>
                 <div class="no-margin">
                   <q-input 
                     prefix="R$"
-                    type="number"
                     label="Receitas de aluguéis"
                     @blur="calculateOfferPercents()"
-                    reverse-fill-mask 
-                    v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
+                    reverse-fill-mask
+                    mask="###.###.###,##" 
+                    v-model="table.entries.receitasRegulares.receitasAlugueis" 
                   />
                 </div>
                 <q-input 
                   prefix="R$"
                   label="Ofertas especiais"
-                  reverse-fill-mask 
-                  type="number"
-                  v-model.number="table.entries.ofertasEspeciais" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.entries.ofertasEspeciais" 
                 />
                 <q-input 
                   prefix="R$"
                   label="Campanhas específicas"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model.number="table.entries.campanhasEspecificas" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.entries.campanhasEspecificas" 
                 />
                 <q-input 
                   label="Auxílio"
-                  type="number"
                   prefix="R$"
-                  reverse-fill-mask 
-                  v-model.number="table.entries.auxilio" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.entries.auxilio" 
                 />
                 <q-input 
                   label="Empréstimos"
                   prefix="R$"
-                  reverse-fill-mask 
-                  type="number"
-                  v-model.number="table.entries.emprestimos" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.entries.emprestimos" 
                 />
                 <q-input 
                   label="Todas as Outras receitas"
                   prefix="R$"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model.number="table.entries.todasOutrasReceitas" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.entries.todasOutrasReceitas" 
                 />
               </div>
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
@@ -117,22 +117,21 @@
                 <q-input 
                   label="Contribuição Distrito"
                   prefix="R$"
-                  type="number"
-                  v-model.number="table.output.contribuicaoDistrito" 
+                  v-model="table.output.contribuicaoDistrito" 
                 />
                 <q-input 
                   label="Devolução de empréstimos IELB"
                   prefix="R$"
-                  type="number"
-                  reverse-fill-mask 
-                  v-model.number="table.output.devolucaoEmprestimoIELB" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.output.devolucaoEmprestimoIELB" 
                 />
                 <q-input 
                   prefix="R$"
-                  type="number"
                   label="Todas as outras saídas"
-                  reverse-fill-mask 
-                  v-model.number="table.output.todasSaidas" 
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
+                  v-model="table.output.todasSaidas" 
                 />
               </div>
               <div class="text-center">
