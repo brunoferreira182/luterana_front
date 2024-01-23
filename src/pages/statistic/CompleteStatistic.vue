@@ -1,7 +1,21 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Completar estatística" 
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+          />
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+          > {{ }} SADAS
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el label="Atividades de Grupos" />
+        </q-breadcrumbs>
+      </div>
       <div class="fit column q-mt-lg content-center">
         <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)">
           <q-item-section>
@@ -98,7 +112,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
         body: {
-          organismId: this.$route.query.organismId
+          organismId: this.$route.query.organismId,
         }
       }
       useFetch(opt).then((r) => {
@@ -110,7 +124,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
         body: {
-          organismId: this.$route.query.organismId
+          organismId: this.$route.query.organismId,
         }
       }
       useFetch(opt).then((r) => {

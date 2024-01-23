@@ -6,14 +6,13 @@
           <q-breadcrumbs-el 
             style="cursor: pointer;" 
             icon="home" 
-            label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"
-          />
-          <q-breadcrumbs-el 
-            style="cursor: pointer;" 
             label="Completar estatística" 
             @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           />
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+          > {{  }}  ASdasd
+          </q-breadcrumbs-el> 
           <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
       </div>
@@ -39,14 +38,20 @@
                   <q-input label="Frequência total" > </q-input>
                   <q-input label="Número de encontros" > </q-input>
                 </q-item-section>
-                <q-input
+
+                <q-item-label
                   v-if="
                     item.organismConfigName === 'Juventude Mirim (JELB)' ||
                     item.organismConfigName === 'Departamento de Jovens (JELB)'
                   "
-                  label="Existem padrinhos" hint="Se não houverem, completar com zero numeral (0)"
-                >
-                </q-input>
+                  class="q-py-xs"
+                > Há padrinhos:
+                  <q-radio v-model="padrinhos" val="exist" label ="Sim"
+                  />
+                  <q-radio v-model="padrinhos" val="noExist" label ="Não"
+                  />
+                  <q-input v-if="padrinhos==='exist'" dense class="q-mx-sm" label="Quantidade Padrinhos"></q-input>
+                </q-item-label>
                 <!--  Sobre escolas dominicais ---->
                 <q-input
                   v-if="item.organismConfigName === 'Departamento de Escola Dominical'"
@@ -181,7 +186,7 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
-      socialAction: '', visitationGroup: '', outroGrupo: '', musicGroup: '',
+      padrinhos: '', 
       banda: '', grupoLouvor:'', quarteto:'', vocal:'',
       departamentos: [],
       statisticStatus: null,
