@@ -9,9 +9,6 @@ export const useAutoLogoutStore = defineStore({
   actions: {
     init(router) {
       this.router = router;
-      window.addEventListener('mousemove', this.resetAutoLogoutTimer);
-      window.addEventListener('touchmove', this.resetAutoLogoutTimer);
-      window.addEventListener('touchend', this.resetAutoLogoutTimer);
       this.startAutoLogoutTimer();
     },
     startAutoLogoutTimer() {
