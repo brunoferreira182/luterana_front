@@ -32,7 +32,7 @@
           @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
         >
           <q-item-section>
-            <q-item-label class="text-h5">SIPAR</q-item-label>
+            <q-item-label class="text-h5">Gestão Paroquial</q-item-label>
           </q-item-section>
         </q-item>
         <q-item 
