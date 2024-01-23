@@ -4,8 +4,17 @@
       <div class="q-pa-md">
         <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs align="center">
-            <q-breadcrumbs-el icon="home" label="Introdução" @click="$router.push('/statistic/introWriteStatisticData')"/>
-            <q-breadcrumbs-el label="Completar estatística" @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"/>
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              icon="home" 
+              label="Introdução" 
+              @click="$router.push('/statistic/introWriteStatisticData')"
+            />
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              label="Completar estatística" 
+              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
         </div>
@@ -164,27 +173,27 @@ export default defineComponent({
       contributionEntriesSum: null,
       table: {
         entries:{
-          saldoAnterior: '',
+          saldoAnterior: 0,
           receitasRegulares: {
-            ofertasDominicais: null,
-            ofertasMensais: null,
-            receitasAlugueis: null,
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
           },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
+          ofertasEspeciais: 0,
+          campanhasEspecificas: 0,
+          auxilio: 0,
+          emprestimos: 0,
+          todasOutrasReceitas: 0,
         },
         output: {
           contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: null,
-            receitasAlugueis: '',
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
           },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
+          contribuicaoDistrito: 0,
+          devolucaoEmprestimoIELB: 0,
+          todasSaidas: 0
         },
   
       },
@@ -195,12 +204,12 @@ export default defineComponent({
   },
   methods: {
     calculateOfferPercents(){
-      let total = null
+      const total = null
       
-      let outPutTotalPercents = null
-      let ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
-      let ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
-      let receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
+      const outPutTotalPercents = null
+      const ofertasDominicais = this.table.entries.receitasRegulares.ofertasDominicais
+      const ofertasMensais = this.table.entries.receitasRegulares.ofertasMensais
+      const receitasAlugueis = this.table.entries.receitasRegulares.receitasAlugueis
       total = ofertasDominicais + ofertasMensais + receitasAlugueis
       outPutTotalPercents = this.contributionOutputSum - this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
