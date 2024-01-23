@@ -31,7 +31,6 @@
               rounded
               @click="addCongregation"
             >
-
             </q-btn>
           </div>
           <q-item-label 
@@ -91,6 +90,15 @@
             <div class="q-mt-sm bg-grey-2 q-ma-sm" style="border-radius: .5rem;">
               <div class="text-left q-ma-md text-h6">
                 <strong>Departamentos:</strong>
+                <q-btn
+                  color="primary"
+                  flat
+                  rounded
+                  icon="add"
+                  @click="addNewDepartament(iOrg)"
+                >
+                  <q-tooltip>Adicionar Departamento</q-tooltip>
+                </q-btn>
               </div>
               <div  
                 v-for="(dep, iDep) in org.depts"
@@ -290,6 +298,186 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddCongregation.open"
+      > 
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div class="text-center text-h6">
+              Preencha os dados necessários
+            </div>  
+            <q-input
+              class="q-pa-sm"
+              label="Nome" 
+              hint="Informe o nome"
+              v-model="dialogAddCongregation.data.name"
+            />
+            <q-input
+              class="q-pa-sm"
+              label="E-mail" 
+              hint="Informe o e-mail"
+              v-model="dialogAddCongregation.data.email"
+            />
+            <q-input
+              class="q-pa-sm"
+              label="Celular" 
+              hint="Informe o número de celular"
+              mask="(##) #####-####"
+              v-model="dialogAddCongregation.data.phone"
+            />
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <div class="text-h6">
+              Endereço
+            </div>
+            <q-input
+              mask="#####-###"
+              class="q-pa-sm"
+              label="CEP"
+              @keyup="checkCEP"
+              v-model="dialogAddCongregation.data.address.cep"
+            />
+            <q-input
+              v-model="dialogAddCongregation.data.address.addressType"
+              class="q-pa-sm"
+              label="Informe o tipo de endereço (obrigatório)"
+              hint="Exemplo: Casa, trabalho, etc..."
+            />
+            <q-input  label="Logradouro" class="q-pa-sm" v-model="dialogAddCongregation.data.address.street"/>
+            <q-input  label="Número" type="number" class="q-pa-sm" v-model="dialogAddCongregation.data.address.number"/>
+            <q-input  label="Bairro" class="q-pa-sm" v-model="dialogAddCongregation.data.address.district"/>
+            <q-input  label="Complemento" class="q-pa-sm" v-model="dialogAddCongregation.data.address.complement"/>
+            <div class="row">
+              <div class="col">
+                <q-input  label="Cidade" class="q-pa-sm" v-model="dialogAddCongregation.data.address.city"/>
+              </div>
+              <div class="col q-pl-md">
+                <q-input  mask="AA" label="Estado" class="q-pa-sm" v-model="dialogAddCongregation.data.address.state"/>
+              </div>
+            </div>
+          </q-card-section>
+          <q-separator class="q-ma-sm"/>
+          <q-card-section>
+            <div class="text-center text-h6">
+              Preencha ao menos uma função para esta congregação
+            </div>
+            <q-list>
+              <q-item
+                v-for="(func, iFunc) in dialogAddCongregation.functions"
+                :key="func"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    <strong>{{ func.description }}</strong>
+                    <q-btn
+                      color="primary"
+                      icon="add"
+                      flat
+                      rounded
+                      @click="addFunctionUserInNewCongregationFunc(func, iFunc)"
+                    >
+                      <q-tooltip>Adicionar pessoa nesta função</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
+                  <q-item-label
+                    v-if="func.users"
+                  >
+                  <div
+                    v-for="(user, iUser) in func.users"
+                    :key="user"
+                    class="q-ml-sm"
+                  >
+                    {{ user.userName }}
+                    <q-btn
+                      color="red"
+                      flat
+                      rounded
+                      icon="delete"
+                      @click="removeFunctionUserFromNewCongregation(iFunc, iUser)"
+                    >
+
+                    </q-btn>
+                  </div>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item class="text-center">
+                <q-item-section>
+                  <q-item-label>
+                    <q-btn
+                      flat
+                      label="Voltar"
+                      no-caps
+                      rounded
+                      color="primary"
+                      @click="clearDialogAddUserToFunctionInDept"
+                    />
+                    <q-btn
+                      label="Confirmar"
+                      unelevated  
+                      no-caps
+                      rounded
+                      color="primary"
+                      @click="confirmAddNewOrganism()"
+                    />
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogInsertUserFunctionInNewCongregation.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div class="text-center text-h6">
+              Selecione o usuário que irá ocupar a função
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              class="q-pa-sm"
+              v-model="dialogInsertUserFunctionInNewCongregation.userSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogAddUserToFunctionInDept"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated  
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddUserFunctionInNewCongregation"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <q-btn
         @click="saveDraft"
       ></q-btn>
@@ -333,35 +521,153 @@ export default defineComponent({
       },
       dialogAddCongregation: {
         open: false,
-        name: '', 
-        functions: [],
-        address: {
-          city: '',
-          cep: '',
-          steet: '',
-          number: '',
-          state: '',
-          district: '',
-          complement: ''
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          address: {
+            city: '',
+            cep: '',
+            addressType: '',
+            street: '',
+            number: '',
+            state: '',
+            district: '',
+            complement: ''
+          }
         },
-        configId: '6525360fd7cd5c09a8d759be'
+        functions: null,
+        organismConfigId: '6525360fd7cd5c09a8d759be'
       },
-      congregationConfig: null,
-      presidentFunctionConfigId: '6525360fd7cd5c09a8d759bf',
-      treasurerFunctionConfigId: '6526cc6c8c23183a40ace584',
-      secretaryFunctionConfigId: '6527f72131e6d7501490ec76'
+      dialogInsertUserFunctionInNewCongregation: {
+        open: false,
+        iFunc: null,
+        functionName: null,
+        selectedUser: null
+      },
+      dialogAddNewDepartament: {
+        open: false,
+        iOrg: null,
+        data: null
+      }
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
-    // getCongregationConfig() {
-    //   const opt = {
-    //     route: '/desktop/statistics/getCongregationFunctions'
-    //     body:
-    //   }
-    // },
+    clearDialogAddNewCongrgation() {
+      this.dialogAddCongregation= {
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          address: {
+            city: '',
+            cep: '',
+            addressType: '',
+            street: '',
+            number: '',
+            state: '',
+            district: '',
+            complement: ''
+          }
+        },
+        functions: null,
+        organismConfigId: '6525360fd7cd5c09a8d759be'
+      }
+    },
+    confirmAddNewOrganism() {
+      this.dialogAddCongregation.functions.forEach((func, iFunc) => {
+        let funcData = func
+
+        if (funcData.users) {
+          this.dialogAddCongregation.functions[iFunc] = {
+            functionName: funcData.description,
+            functionUsers: funcData.users
+          }
+        }
+        else {
+          this.dialogAddCongregation.functions[iFunc] = {
+            functionName: funcData.description,
+            functionUsers: []
+          }
+        }
+      })
+
+      this.composition.congregations.push({
+        organismChildConfig: 'Congregação',
+        organismChildName: this.dialogAddCongregation.data.name,
+        organismFunctions: this.dialogAddCongregation.functions,
+        additionalData: {
+          email: this.dialogAddCongregation.data.email,
+          phone: this.dialogAddCongregation.data.phone,
+          address: this.dialogAddCongregation.data.address
+        }
+      })
+      this.clearDialogAddNewCongrgation()
+    },
+    checkCEP(ev) {
+      this.dialogAddCongregation.data.address.cep = ev.target.value;
+      if (this.dialogAddCongregation.data.address.cep.length === 9) {
+        const opt = {
+          route: "/utils/consultZipCode",
+          body: {
+            zipCode: this.dialogAddCongregation.data.address.cep.replace('-', ''),
+          },
+        };
+        this.$q.loading.show();
+        useFetch(opt).then((r) => {
+          this.$q.loading.hide
+          this.dialogAddCongregation.data.address = {
+            cep: ev.target.value,
+            city: r.data.localidade,
+            state: r.data.uf,
+            street: r.data.logradouro,
+            district: r.data.bairro
+          }
+        });
+      }
+    },
+    removeFunctionUserFromNewCongregation(iFunc, iUser) {
+      this.dialogAddCongregation.functions[iFunc].users.splice(iUser, 1)
+    },
+    clearDialogAddUserFunctionInNewCongregation() {
+      this.dialogInsertUserFunctionInNewCongregation = {
+        open: false,
+        iFunc: null,
+        functionName: null,
+        selectedUser: null
+      }
+    },
+    confirmAddUserFunctionInNewCongregation() {
+      if (!this.dialogAddCongregation.functions[this.dialogInsertUserFunctionInNewCongregation.iFunc].users) {
+        this.dialogAddCongregation.functions[this.dialogInsertUserFunctionInNewCongregation.iFunc].users = []
+      }
+      this.dialogAddCongregation.functions[this.dialogInsertUserFunctionInNewCongregation.iFunc].users.push({
+        _id: this.dialogInsertUserFunctionInNewCongregation.userSelected._id,
+        userName: this.dialogInsertUserFunctionInNewCongregation.userSelected.userName
+      })
+      this.clearDialogAddUserFunctionInNewCongregation()
+    },
+    addFunctionUserInNewCongregationFunc(func, iFunc) {
+      this.dialogInsertUserFunctionInNewCongregation.open = true
+      this.dialogInsertUserFunctionInNewCongregation.functionName = func.description
+      this.dialogInsertUserFunctionInNewCongregation.iFunc = iFunc
+    },
+    getCongregationConfig() {
+      const opt = {
+        route: '/desktop/statistics/getNewOrganismConfig',
+        body: {
+          _id: this.dialogAddCongregation.organismConfigId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.dialogAddCongregation.functions = r.data.organismConfigData.functions
+      })
+    },
     addCongregation() {
       this.getCongregationConfig()
       this.dialogAddCongregation.open = true
@@ -435,12 +741,13 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogAddFunction.functionName === 'Pastor') {
+      if ((this.dialogAddFunction && this.dialogAddFunction.functionName === 'Pastor') || (this.dialogInsertUserFunctionInNewCongregation && this.dialogInsertUserFunctionInNewCongregation.functionName === 'Pastor')) {
         route = "/desktop/adm/getPastores" 
       } else {
         route = '/desktop/adm/getUsers'
       }
-      
+      console.log(this.dialogInsertUserFunctionInNewCongregation.functionName, 'essa é a função que estou pedinddo')
+      console.log(route, 'é essa rota que esta sendo chamada')
       const opt = {
         route: route,
         body: {

@@ -1,10 +1,27 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <q-list class="q-pa-sm">
-        <q-item v-for="item in groupData.childData" :key="item">
-          <q-item-section class="item-section" @click="toggleForm(item)">
-            <q-item-label>
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/introWriteStatisticData')"
+          />
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            label="Completar estatística" 
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+          />
+          <q-breadcrumbs-el label="Atividades de Grupos" />
+        </q-breadcrumbs>
+      </div>
+      <q-list >
+        <q-item v-for="(item, i) in departamentos" :key="item" >
+          <div style="border-radius: 1rem; background-color: rgb(245, 245, 245); " >
+          <q-item-section class="item-section q-pa-sm" @click="toggleForm(item)">
+            <q-item-label class="text-h6">
               {{ item.organismName }}
               <q-btn
                 round
@@ -20,7 +37,7 @@
             <q-slide-transition>
               <div v-show="item.expanded">
                 <q-item-section v-if="!arrayIgnore.includes(item.organismConfigName) ">
-                  <q-input label="Frequência total" > </q-input>
+                  <q-input label="Frequência total" v-model="i.departamentosFormData" > </q-input>
                   <q-input label="Número de encontros"> </q-input>
                 </q-item-section>
                 <q-input
@@ -64,48 +81,65 @@
                 </q-item-section>
                 <!-- ainda sobre escolas dominicais -->
                 <!-- Sobre Musicas -->
-                <q-item-section
-                  v-if="item.organismConfigName === 'Departamento da Música'"
-                  >
-                  <q-item-label class="q-pt-xs q-pl-xs"/> Banda /Grupo de Louvor/ Quarteto/ Vocal
-                  <q-input class="q-ml-md" label="Quantidade" hint="Se não houverem, preencher zero numeral (0)"> </q-input>
+                <q-item-section >
+                  <q-item-label class="q-mt-md"> Departamento de Música
+                    <q-radio v-model="musicGroup" val="exist" label ="Sim"
+                    />
+                    <q-radio v-model="musicGroup" val="noExist" label ="Não"
+                    />
+                  </q-item-label>
                 </q-item-section>
-                <q-space></q-space>
+                <q-item-section v-if="musicGroup==='exist'">
+                  <q-item-label class="q-pt-xs q-pl-xs"> Banda 
+                    <q-radio v-model="banda" val="exist" label ="Sim"
+                    />
+                    <q-radio v-model="banda" val="noExist" label ="Não"
+                    />
+                  </q-item-label>
+                  <q-item-label class="q-pt-xs q-pl-xs"> Grupo de Louvor
+                    <q-radio v-model="grupoLouvor" val="exist" label ="Sim"
+                    />
+                    <q-radio v-model="grupoLouvor" val="noExist" label ="Não"
+                    /> </q-item-label>
+                  <q-item-label class="q-pt-xs q-pl-xs"> Quarteto 
+                    <q-radio v-model="quarteto" val="exist" label ="Sim"
+                    />
+                    <q-radio v-model="quarteto" val="noExist" label ="Não"
+                    />
+                  </q-item-label>
+                  <q-item-label class="q-pt-xs q-pl-xs"> Vocal
+                    <q-radio v-model="vocal" val="exist" label ="Sim"
+                    />
+                    <q-radio v-model="vocal" val="noExist" label ="Não"
+                    />
+                  </q-item-label>
+                  <q-input class="q-ml-md" label="Quantidade total" v-if ="musicGroup==='exist'"> </q-input>
+                </q-item-section>
                 <q-item-section
-                  v-if="item.organismConfigName === 'Departamento da Música'"
+                  v-if="musicGroup==='exist'"
                 >
                   <q-item-label class="q-pt-lg q-pl-xs">
                     Coro</q-item-label
                   >
                   <q-input class="q-ml-md" label="Quantidade" hint="Se não houverem, preencher zero numeral (0)"></q-input>
                 </q-item-section>
-                <q-space></q-space>
-                  <q-input  v-if="item.organismConfigName === 'Departamento da Música'" class="q-my-sm" label="Cantores envolvidos ao total" ></q-input>
-                  <q-item-section  v-if="item.organismConfigName === 'Departamento da Música'">
-                    <q-item-label> Grupo formal:
-                      <q-checkbox v-model="formalGroupYes" v-if="formalGroupNo? disable: !disable "
-                        label ="Sim"
-                      />
-                      <q-checkbox v-model="formalGroupNo" v-if="formalGroupYes? disable: !disable "
-                        label ="Não"
-                      />
-                    </q-item-label>
-                  </q-item-section>
-                  <q-item-section v-if="item.organismConfigName === 'Departamento da Música' && formalGroupYes===true" label="sdasd">
-                    <q-input label="Frequência Total"></q-input>
-                    <q-input label="Número de encontros"></q-input>
-                  </q-item-section>
+                <q-input  v-if="musicGroup==='exist'" class="q-my-sm" label="Cantores envolvidos ao total" ></q-input>
+                
+                <q-item-section v-if="musicGroup==='exist'">
+                  <q-input label="Frequência Total"></q-input>
+                  <q-input label="Número de encontros"></q-input>
+                </q-item-section>
                 <!-- ainda sobre musicas -->
                 <!-- Sobre visitação -->
-                <q-item-section >
-                  <q-item-label class="q-mt-md"> Departamento de Visitação
-                      <q-checkbox v-model="visitationGroup.exist" label ="Sim"
+                <q-item-section class="no-margin" >
+                  <q-item-label > Departamento de Visitação
+                      <q-radio val='exist' v-model="visitationGroup" label ="Sim"
                       />
-                      <q-checkbox v-model="visitationGroup.noExist" label ="Não"
+                      <q-radio val='noExist' v-model="visitationGroup" label ="Não"
                       />
                   </q-item-label>
                 </q-item-section>
-                <q-item-section v-if="visitationGroup.exist">
+                <q-item-section v-if="visitationGroup==='exist'">
                     <q-input class="q-pl-sm" label="Total de visitantes do grupo"></q-input>
                   <q-item-label class="q-mt-md"/> Visitas Missionárias
                     <q-input class="q-pl-sm" label="Número de visitas"></q-input>
@@ -119,15 +153,15 @@
                 </q-item-section>
                 <!-- ainda sobre visitação -->
                 <!-- Sobre ação social  -->
-                <q-item-section >
-                  <q-item-label class="q-ml-xs"> Ação Social
-                      <q-checkbox v-model="socialAction.exist" label ="Sim"
+                <q-item-section class="no-margin">
+                  <q-item-label> Departamento de Ação Social
+                      <q-radio val='exist' v-model="socialAction" label ="Sim"
                       />
-                      <q-checkbox v-model="socialAction.noExist" label ="Não"
+                      <q-radio val='noExist' v-model="socialAction" label ="Não"
                       />
                   </q-item-label>
                 </q-item-section>
-                <q-item-section v-if="socialAction.exist">
+                <q-item-section v-if="socialAction==='exist'">
                     <q-input class="q-pl-sm" label="Total de visitantes do grupo"></q-input>
                   <q-item-label class="q-mt-md"/> Visitas Missionárias
                     <q-input class="q-pl-sm" label="Número de visitas"></q-input>
@@ -140,7 +174,22 @@
                     <q-input class="q-pl-sm" label="Total de enfermos"></q-input>
                 </q-item-section>
                 <!-- ainda sobre ação social -->
-
+                <!-- Sobre outros  -->
+                <q-item-section class="no-margin">
+                  <q-item-label> Outro tipo de grupo
+                      <q-radio val='exist' v-model="outroGrupo" label ="Sim"
+                      />
+                      <q-radio val='noExist' v-model="outroGrupo" label ="Não"
+                      />
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section v-if="outroGrupo==='exist'">
+                    <q-input class="q-pl-sm" label="Finalidade do grupo"></q-input>
+                    <q-input class="q-pl-sm" label="Organização do grupo"></q-input>
+                    <q-input class="q-pl-sm" label="Número de encontros"></q-input>
+                    <q-input class="q-pl-sm" label="Frequência total "></q-input>
+                </q-item-section>
+                <!-- ainda sobre outros -->
                 <q-btn
                   class="q-mt-md"
                   label="Salvar"
@@ -152,6 +201,7 @@
               </div>
             </q-slide-transition>
           </q-item-section>
+          </div>
         </q-item>
       </q-list>
     </q-page>
@@ -165,12 +215,9 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
-      socialAction: {exist:false, noExist:false},
-      visitationGroup: {exist:false, noExist:false},
-      subExpanded: false,
-      formalGroupYes: false,
-      formalGroupNo: false,
-      groupData: {},
+      socialAction: '', visitationGroup: '', outroGrupo: '', musicGroup: '',
+      banda: '', grupoLouvor:'', quarteto:'', vocal:'',
+      departamentos: [],
       statisticStatus: null,
       arrayIgnore:['Departamento de Escola Dominical', 'Departamento da Música', 'Departamento de Visitação', 'Departamento de Ação social'],
     };
@@ -189,8 +236,13 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (r.error) return;
-        this.groupData = r.data;
-        console.log("grupos", this.groupData);
+        this.departamentos = r.data.childData;
+        this.departamentos.forEach((depart)=>{
+          depart.departamentoFormData = {
+
+            }
+        })
+        console.log("grupos", this.departamentos);
       });
     },
     toggleForm(item) {
@@ -200,7 +252,17 @@ export default defineComponent({
       }
     },
     submitForm(item) {
-      // body:this.groupData.childData.organismConfigName
+      const opt = {
+        route:'/desktop/statistics/insertGroupsActivitiesStatisticsDraft',
+        body: {
+          organismId : this.$route.query.organismId,
+          groupActivitiesData: this.departamentos.departamentoFormData,
+        }
+      }
+      useFetch(opt).then((r)=>{
+        if (r.error) return;
+        alert('Salvo com sucesso!')
+      })
       // Lógica para lidar com o envio do formulário
       console.log("Formulário enviado para", item.organismConfigName, "/");
       // Você pode adicionar lógica adicional aqui, por exemplo, enviar dados para o servidor

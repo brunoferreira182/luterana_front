@@ -60,6 +60,7 @@
                     prefix="R$"
                     type="number"
                     label="Receitas de aluguéis"
+                    @blur="calculateOfferPercents()"
                     reverse-fill-mask 
                     v-model.number="table.entries.receitasRegulares.receitasAlugueis" 
                   />
@@ -105,7 +106,7 @@
                   Saídas
                 </div>
                 <div class="text-h6">
-                  Contribuição registrada no SGA <q-chip color="blue text-white">R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}</q-chip>
+                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}</q-chip>
                 </div>
                 <div class="text-green" v-if="contributionCalculatedMore > 0">
                   Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
@@ -134,15 +135,32 @@
                   v-model.number="table.output.todasSaidas" 
                 />
               </div>
-              <q-btn
-                label="Salvar como rascunho"
-                class="q-ma-md text-center"
-                color="yellow-8"
-                unelevated
-                rounded
-                no-caps
-                @click="insertFinanceStatisticsDraft"
-              />
+              <div class="text-center">
+                
+                <q-chip
+                  v-if="validated"
+                  color="green"
+                  label="Validado"
+                  text-color="white"
+                  icon="done"
+                />
+  
+                <q-chip
+                  v-if="!validated"
+                  color="red"
+                  label="Não Validado"
+                  text-color="white"
+                  icon="warning"
+                /><br>
+  
+                <q-btn
+                  label="Salvar rascunho"
+                  color="primary"
+                  class="q-my-lg"
+                  no-caps
+                  @click="insertFinanceStatisticsDraft"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -167,6 +185,7 @@ export default defineComponent({
         descending: false,
         searchString: ''
       },
+      validated: false,
       contributionCalculatedMore: 0,
       contributionCalculatedLess: 0,
       contributionOutputSum: null,
@@ -214,14 +233,11 @@ export default defineComponent({
       outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
         this.contributionCalculatedMore = total * 0.11
-        console.log('mais', this.contributionCalculatedMore)
       }else if(total * 0.11 < outPutTotalPercents){
-        console.log('menos', this.contributionCalculatedLess)
         this.contributionCalculatedLess = total * 0.11
       }
     },
     insertFinanceStatisticsDraft() {
-      this.calculateOfferPercents()
       const opt = {
         route: "/desktop/statistics/insertFinanceStatisticsDraft",
         body: {
@@ -258,33 +274,31 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.contributionOutputSum = r.data.list[0].contributionOutput
-        this.contributionEntriesSum = r.data.list[0].contributionEntries
-        // this.table.output = r.data.financeData.output ? r.data.financeData.output : 
-        // this.table.output = {
-        //   contribuicaoIELB: {
-        //     ofertasDominicais: '',
-        //     ofertasMensais: '',
-        //     receitasAlugueis: '',
-        //   },
-        //   contribuicaoDistrito: '',
-        //   devolucaoEmprestimoIELB: '',
-        //   todasSaidas: ''
-        // },
-        // this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
-        // this.table.entries = {
-        //   saldoAnterior: '',
-        //   receitasRegulares: {
-        //     ofertasDominicais: '',
-        //     ofertasMensais: '',
-        //     receitasAlugueis: '',
-        //   },
-        //   ofertasEspeciais: '',
-        //   campanhasEspecificas: '',
-        //   auxilio: '',
-        //   emprestimos: '',
-        //   todasOutrasReceitas: '',
-        // }
+        if (r.error || !r.data) return
+        this.validated = r.data.validated
+        console.log(r)
+        this.contributionOutputSum = r.data.contributionOutput
+        this.contributionEntriesSum = r.data.contributionEntries
+        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
+        this.table.output = {
+          contribuicaoDistrito: '',
+          devolucaoEmprestimoIELB: '',
+          todasSaidas: ''
+        },
+        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
+        this.table.entries = {
+          saldoAnterior: '',
+          receitasRegulares: {
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
+          },
+          ofertasEspeciais: '',
+          campanhasEspecificas: '',
+          auxilio: '',
+          emprestimos: '',
+          todasOutrasReceitas: '',
+        }
       });
     },
   }
