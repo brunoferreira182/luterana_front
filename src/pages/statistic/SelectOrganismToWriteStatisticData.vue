@@ -29,7 +29,14 @@
             <q-item-label class="text-subtitle1" lines="2">
               {{ organism.organismConfigName }}
             </q-item-label>
+            <div class="q-mt-md">Progresso:</div>
+            <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
+            <div class="absolute-full flex flex-center">
+              <q-badge color="white" :text-color="organism.percentualEstatistica.color" :label="organism.percentualEstatistica.label" />
+            </div>
+          </q-linear-progress>
           </q-item-section>
+          
         </q-item>
       </q-list>
     </q-page>
@@ -48,18 +55,30 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
+      validationResume: null,
+      stepsNum: 4
     }
   },
   beforeMount(){
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
+    // this.getValidationResumeAllOrganisms()
   },
   methods: {
-    
+    // getValidationResumeAllOrganisms () {
+    //   const opt = {
+    //     route: "/desktop/statistics/getValidationResumeAllOrganisms",
+    //   }
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     this.validationResume = r.data
+    //   });
+    // },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
-      };
+      }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -77,6 +96,19 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
+        let value, color
+        this.userOrganismList.childData.forEach((org, i) => {
+          value = org.statusEstatistica.length / this.stepsNum
+          if (value <= .25) color = 'red'
+          else if (value <= .5) color = 'orange-7'
+          else if (value <= .75) color = 'yellow-8'
+          else color = 'green'
+          this.userOrganismList.childData[i].percentualEstatistica = {
+            value,
+            label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100) + '%',
+            color
+          }
+        })
       });
     },
   }
