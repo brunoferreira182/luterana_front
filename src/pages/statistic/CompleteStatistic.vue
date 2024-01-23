@@ -3,7 +3,7 @@
     <q-page>
 
       <div class="fit column q-mt-lg content-center">
-        <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities')">
+        <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
