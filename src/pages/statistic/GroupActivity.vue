@@ -18,10 +18,10 @@
         </q-breadcrumbs>
       </div>
       <q-list >
-        <q-item v-for="(item) in departamentos" :key="item" >
+        <q-item v-for="(item, i) in departamentos" :key="item" >
           <div style="border-radius: 1rem; background-color: rgb(245, 245, 245); " >
           <q-item-section class="item-section q-pa-sm" @click="toggleForm(item)">
-            <q-item-label>
+            <q-item-label class="text-h6">
               {{ item.organismName }}
               <q-btn
                 round
@@ -37,7 +37,7 @@
             <q-slide-transition>
               <div v-show="item.expanded">
                 <q-item-section v-if="!arrayIgnore.includes(item.organismConfigName) ">
-                  <q-input label="Frequência total" > </q-input>
+                  <q-input label="Frequência total" v-model="i.departamentosFormData" > </q-input>
                   <q-input label="Número de encontros"> </q-input>
                 </q-item-section>
                 <q-input
@@ -218,9 +218,6 @@ export default defineComponent({
       socialAction: '', visitationGroup: '', outroGrupo: '', musicGroup: '',
       banda: '', grupoLouvor:'', quarteto:'', vocal:'',
       departamentos: [],
-      departamentoFormData: {
-        
-      },
       statisticStatus: null,
       arrayIgnore:['Departamento de Escola Dominical', 'Departamento da Música', 'Departamento de Visitação', 'Departamento de Ação social'],
     };
@@ -240,6 +237,11 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return;
         this.departamentos = r.data.childData;
+        this.departamentos.forEach((depart)=>{
+          depart.departamentoFormData = {
+
+            }
+        })
         console.log("grupos", this.departamentos);
       });
     },
@@ -250,6 +252,17 @@ export default defineComponent({
       }
     },
     submitForm(item) {
+      const opt = {
+        route:'/desktop/statistics/insertGroupsActivitiesStatisticsDraft',
+        body: {
+          organismId : this.$route.query.organismId,
+          groupActivitiesData: this.departamentos.departamentoFormData,
+        }
+      }
+      useFetch(opt).then((r)=>{
+        if (r.error) return;
+        alert('Salvo com sucesso!')
+      })
       // Lógica para lidar com o envio do formulário
       console.log("Formulário enviado para", item.organismConfigName, "/");
       // Você pode adicionar lógica adicional aqui, por exemplo, enviar dados para o servidor
