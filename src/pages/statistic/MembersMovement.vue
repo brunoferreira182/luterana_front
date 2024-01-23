@@ -8,12 +8,40 @@
       </div>
 
       <div class="q-ma-sm">
+        
+        
+        <div class="q-mt-md">Instrução de confirmados</div>
+        <div class="row q-ma-sm">
+          <div class="col q-gutter-y-md">
+            <q-select 
+              label="Anos de estudo"
+              v-model="membersMovement.instrucaoDeConfirmados.anosEstudo"
+              @update:model-value="(ev) => calculaAnosEstudo(ev)"
+              :options="[1, 2, 3, 4]"
+            />
+          </div>
+        </div>
+        <div
+          class="row q-ma-sm"
+          v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
+          :key="index"
+        >
+          <div class="col q-gutter-y-md">
+            <q-input 
+              type="number"
+              :label="`Confirmados em ${confirmado.ano}`"
+              v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
+            />
+          </div>
+        </div>
+
+        <div class="q-mt-lg">Movimento de membros</div>
         <div class="row q-ma-sm">
           <div class="col q-gutter-y-md">
             <q-input 
               type="number"
               label="Total de membros comungantes 2022"
-              v-model="membersMoviment.totalMambrosComungantes2022"
+              v-model="membersMovement.totalMambrosComungantes2022"
               @blur="calculateTotal()"
             />
           </div>
@@ -23,7 +51,7 @@
             <q-input 
               type="number"
               label="Total de membros não comungantes 2022"
-              v-model="membersMoviment.totalMembrosNaoComungantes2022"
+              v-model="membersMovement.totalMembrosNaoComungantes2022"
               @blur="calculateTotal()"
             />
           </div>
@@ -33,7 +61,7 @@
             <q-input 
               type="number"
               label="Qtde crianças batizadas familias IELB"
-              v-model="membersMoviment.criancasBatizadasFamiliasIelb"
+              v-model="membersMovement.criancasBatizadasFamiliasIelb"
               @blur="calculateTotal()"
             />
           </div>
@@ -43,7 +71,7 @@
             <q-input 
               type="number"
               label="Qtde tranferências recebidas de comunganates"
-              v-model="membersMoviment.transferenciasRecebidasComungantes"
+              v-model="membersMovement.transferenciasRecebidasComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -54,7 +82,7 @@
             <q-input 
               type="number"
               label="Qtde tranferências recebidas de não comunganates"
-              v-model="membersMoviment.transferenciasRecebidasNaoComungantes"
+              v-model="membersMovement.transferenciasRecebidasNaoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -64,7 +92,7 @@
             <q-input 
               type="number"
               label="Qtde de profissão de fé com batismo adultos comungantes"
-              v-model="membersMoviment.profissaoFeBatismoAdultos"
+              v-model="membersMovement.profissaoFeBatismoAdultos"
               @blur="calculateTotal()"
             />
           </div>
@@ -74,7 +102,7 @@
             <q-input 
               type="number"
               label="Qtde de profissão de fé comungantes"
-              v-model="membersMoviment.profissaoFe"
+              v-model="membersMovement.profissaoFe"
               @blur="calculateTotal()"
             />
           </div>
@@ -84,7 +112,7 @@
             <q-input 
               type="number"
               label="Qtde de crianças batizadas de famílias que entraram por profissão de fé"
-              v-model="membersMoviment.criancasBatizadasFamiliasEntraramPorProfissaoFe"
+              v-model="membersMovement.criancasBatizadasFamiliasEntraramPorProfissaoFe"
               @blur="calculateTotal()"
             />
           </div>
@@ -95,7 +123,7 @@
             <q-input 
               type="number"
               label="Qtde de reconhecimento de batismos não comungantes de famílias que entraram por profissão de fé"
-              v-model="membersMoviment.reconhecimentoDeBatismos"
+              v-model="membersMovement.reconhecimentoDeBatismos"
               @blur="calculateTotal()"
             />
           </div>
@@ -105,7 +133,7 @@
             <q-input 
               type="number"
               label="Qtde de óbitos de comungantes"
-              v-model="membersMoviment.obitoComungantes"
+              v-model="membersMovement.obitoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -115,7 +143,7 @@
             <q-input 
               type="number"
               label="Qtde de óbitos de não comungantes"
-              v-model="membersMoviment.obitoNaoComungantes"
+              v-model="membersMovement.obitoNaoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -125,7 +153,7 @@
             <q-input 
               type="number"
               label="Transferências enviadas de comungantes"
-              v-model="membersMoviment.transferenciasComungantes"
+              v-model="membersMovement.transferenciasComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -136,7 +164,7 @@
             <q-input 
               type="number"
               label="Transferências enviadas de não comungantes"
-              v-model="membersMoviment.transferenciasNaoComungantes"
+              v-model="membersMovement.transferenciasNaoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -146,7 +174,7 @@
             <q-input 
               type="number"
               label="Qtde de abandono de comungantes"
-              v-model="membersMoviment.abandonoComungantes"
+              v-model="membersMovement.abandonoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -156,7 +184,7 @@
             <q-input 
               type="number"
               label="Qtde de abandono de não comungantes"
-              v-model="membersMoviment.abandonoNaoComungantes"
+              v-model="membersMovement.abandonoNaoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -166,7 +194,7 @@
             <q-input 
               type="number"
               label="Qtde de exclusão de comungantes"
-              v-model="membersMoviment.exclusoesComungantes"
+              v-model="membersMovement.exclusoesComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -177,7 +205,7 @@
             <q-input 
               type="number"
               label="Qtde de exclusão de não comungantes"
-              v-model="membersMoviment.exclusoesNaoComungantes"
+              v-model="membersMovement.exclusoesNaoComungantes"
               @blur="calculateTotal()"
             />
           </div>
@@ -188,7 +216,7 @@
             <q-input 
               type="number"
               label="Familias"
-              v-model="membersMoviment.familias"
+              v-model="membersMovement.familias"
               @blur="calculateTotal()"
             />
           </div>
@@ -198,17 +226,33 @@
             <q-input 
               type="number"
               label="Casamentos"
-              v-model="membersMoviment.casamentos"
+              v-model="membersMovement.casamentos"
               @blur="calculateTotal()"
             />
           </div>
         </div>
       </div>
 
-      <div class="q-ma-sm q-mt-lg">
+      <div class="q-ma-sm q-mt-lg text-center">
         <div class="text-h6">Comungantes: {{ totalComungantes }}</div>
         <div class="text-h6">Não comungantes: {{ totalNaoComungantes }}</div>
         <div class="text-h5">Total: {{ total }}</div>
+
+        <q-chip
+          v-if="validated"
+          color="green"
+          label="Validado"
+          text-color="white"
+          icon="done"
+        />
+
+        <q-chip
+          v-if="!validated"
+          color="red"
+          label="Não Validado"
+          text-color="white"
+          icon="warning"
+        /><br>
 
         <q-btn
           label="Salvar rascunho"
@@ -229,7 +273,7 @@ export default defineComponent({
   name: "MembersMovement",
   data() {
     return {
-      membersMoviment: {
+      membersMovement: {
         totalMambrosComungantes2022: 0,
         totalMembrosNaoComungantes2022: 0,
         criancasBatizadasFamiliasIelb: 0,
@@ -248,8 +292,13 @@ export default defineComponent({
         exclusoesComungantes: 0,
         exclusoesNaoComungantes: 0,
         familias: 0,
-        casamentos: 0
+        casamentos: 0,
+        instrucaoDeConfirmados: {
+          anosEstudo: '',
+          confirmados: []
+        }
       },
+      validated: false,
       totalComungantes: 0,
       totalNaoComungantes: 0,
       total: 0
@@ -259,6 +308,35 @@ export default defineComponent({
     this.getMovimentoMembrosPorCongregacao()
   },
   methods: {
+    calculaAnosEstudo (ev) {
+      this.membersMovement.instrucaoDeConfirmados.confirmados = []
+      for (let i = 1; i <= ev; i++) {
+        this.membersMovement.instrucaoDeConfirmados.confirmados.push(
+          {
+            ano: 2023 - i + 1,
+            qtde: 0
+          }
+        )
+      }
+    },
+    saveDraft () {
+      const opt = {
+        route: '/desktop/statistics/saveDraftMembersMovement',
+        body: {
+          organismId: this.$route.query.organismId,
+          membersMovement: this.membersMovement
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) return
+        this.$q.notify({
+          message: 'Rascunho salvo com sucesso',
+        })
+        this.getMovimentoMembrosPorCongregacao()
+      })
+    },
     getMovimentoMembrosPorCongregacao () {
       const opt = {
         route: '/desktop/statistics/getMovimentoMembrosPorCongregacao',
@@ -266,40 +344,47 @@ export default defineComponent({
           organismId: this.$route.query.organismId
         }
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error || !r.data) return
-        this.membersMoviment.totalMambrosComungantes2022 = r.data.total_comungantes
-        this.membersMoviment.totalMembrosNaoComungantes2022 = r.data.total_nao_comungantes
+        // this.membersMovement.totalMambrosComungantes2022 = r.data.total_comungantes
+        // this.membersMovement.totalMembrosNaoComungantes2022 = r.data.total_nao_comungantes
+        const keys = Object.keys(r.data.membersMovement)
+        keys.forEach((key) => {
+          this.membersMovement[key] = r.data.membersMovement[key]
+        })
+        this.validated = r.data.validated
         this.calculateTotal()
       })
     },
     calculateTotal() {
-      this.totalComungantes = +this.membersMoviment.totalMambrosComungantes2022 + this.getAcrescimosComungantes() - this.getDecrescimoComungantes()
-      this.totalNaoComungantes = +this.membersMoviment.totalMembrosNaoComungantes2022 + this.getAcrescimosNaoComungantes() - this.getDecrescimoNaoComungantes()
+      this.totalComungantes = +this.membersMovement.totalMambrosComungantes2022 + this.getAcrescimosComungantes() - this.getDecrescimoComungantes()
+      this.totalNaoComungantes = +this.membersMovement.totalMembrosNaoComungantes2022 + this.getAcrescimosNaoComungantes() - this.getDecrescimoNaoComungantes()
       this.total = this.totalComungantes + this.totalNaoComungantes
     },
     getAcrescimosComungantes () {
-      return +this.membersMoviment.transferenciasRecebidasComungantes
-        + +this.membersMoviment.profissaoFeBatismoAdultos
-        + +this.membersMoviment.profissaoFe
+      return +this.membersMovement.transferenciasRecebidasComungantes
+        + +this.membersMovement.profissaoFeBatismoAdultos
+        + +this.membersMovement.profissaoFe
     },
     getAcrescimosNaoComungantes () {
-      return +this.membersMoviment.criancasBatizadasFamiliasIelb
-        + +this.membersMoviment.transferenciasRecebidasNaoComungantes
-        + +this.membersMoviment.criancasBatizadasFamiliasEntraramPorProfissaoFe
-        + +this.membersMoviment.reconhecimentoDeBatismos
+      return +this.membersMovement.criancasBatizadasFamiliasIelb
+        + +this.membersMovement.transferenciasRecebidasNaoComungantes
+        + +this.membersMovement.criancasBatizadasFamiliasEntraramPorProfissaoFe
+        + +this.membersMovement.reconhecimentoDeBatismos
     },
     getDecrescimoComungantes () {
-      return +this.membersMoviment.obitoComungantes
-        + +this.membersMoviment.transferenciasComungantes
-        + +this.membersMoviment.abandonoComungantes
-        + +this.membersMoviment.exclusoesComungantes
+      return +this.membersMovement.obitoComungantes
+        + +this.membersMovement.transferenciasComungantes
+        + +this.membersMovement.abandonoComungantes
+        + +this.membersMovement.exclusoesComungantes
     },
     getDecrescimoNaoComungantes () {
-      return +this.membersMoviment.obitoNaoComungantes
-        + +this.membersMoviment.transferenciasNaoComungantes
-        + +this.membersMoviment.abandonoNaoComungantes
-        + +this.membersMoviment.exclusoesNaoComungantes
+      return +this.membersMovement.obitoNaoComungantes
+        + +this.membersMovement.transferenciasNaoComungantes
+        + +this.membersMovement.abandonoNaoComungantes
+        + +this.membersMovement.exclusoesNaoComungantes
     },
   }
 })
