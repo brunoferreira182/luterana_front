@@ -8,9 +8,9 @@
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
         </q-item>
-        <q-item class="card" clickable>
+        <q-item class="card" clickable @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)" >
           <q-item-section>
-            <q-item-label class="text-h5" @click="$router.push('/statistic/groupActivity')" /> Atividades de grupos
+            <q-item-label class="text-h5" /> Atividades de grupos
           </q-item-section>
         </q-item>
         <q-item class="card" clickable @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)">
