@@ -26,17 +26,17 @@
             <q-input 
               type="number"
               label="Quantos dados por pastor"
-              v-model.number="cultoData.qtyDadosPastor" 
+              v-model.number="activitiesData.cultoData.qtyDadosPastor" 
             />
             <q-input 
               type="number"
               label="Quantos cultos de leitura"
-              v-model.number="cultoData.qtyCultoLeitura" 
+              v-model.number="activitiesData.cultoData.qtyCultoLeitura" 
             />
             <q-input 
               type="number"
               label="Soma total de frequência no ano"
-              v-model.number="cultoData.somaFrequenciaAnual" 
+              v-model.number="activitiesData.cultoData.somaFrequenciaAnual" 
             />
           </div>
           <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-pa-md">
@@ -46,12 +46,12 @@
             <q-input 
               type="number"
               label="Quantidade oferecida no ano"
-              v-model.number="santaCeiaData.qtyOferecidaAnual" 
+              v-model.number="activitiesData.santaCeiaData.qtyOferecidaAnual" 
             />
             <q-input 
               type="number"
               label="Soma total de comungantes"
-              v-model.number="santaCeiaData.somaTotalComungantes" 
+              v-model.number="activitiesData.santaCeiaData.somaTotalComungantes" 
             />
           </div>
         </div>
@@ -63,6 +63,7 @@
         unelevated
         rounded
         no-caps
+        @click="insertAtividadesCulticasStatisticDraft"
       />
     </q-page>
   </q-page-container>
@@ -70,26 +71,65 @@
 
 <script>
 import { defineComponent } from "vue";
-// import useFetch from "src/boot/useFetch";
+import useFetch from "src/boot/useFetch";
 export default defineComponent({
   name: "CulturalActivities",
   data() {
     return {
-      cultoData: {
-        qtyDadosPastor: 0,
-        qtyCultoLeitura: 0,
-        somaFrequenciaAnual: 0,
-      },
-      santaCeiaData: {
-        qtyOferecidaAnual: 0,
-        somaTotalComungantes: 0,
+      activitiesData:{
+        cultoData: {
+          qtyDadosPastor: 0,
+          qtyCultoLeitura: 0,
+          somaFrequenciaAnual: 0,
+        },
+        santaCeiaData: {
+          qtyOferecidaAnual: 0,
+          somaTotalComungantes: 0,
+        },
       },
     
     }
   },
   beforeMount() {
+    this.getAtividadesCulticas()
   },
   methods: {
+    getAtividadesCulticas() {
+      const opt = {
+        route: "/desktop/statistics/getAtividadesCulticas",
+        body: {
+          organismId: this.$route.query.organismId,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.activitiesData - r.data.activitiesData
+        console.log(r)
+      });
+    },
+    insertAtividadesCulticasStatisticDraft() {
+      const opt = {
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          activitiesData: this.activitiesData
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.$q.notify('Dados salvos como rascunho')
+      });
+    },
   }
 })
 </script>
