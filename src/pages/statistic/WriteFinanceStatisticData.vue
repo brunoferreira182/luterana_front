@@ -135,29 +135,32 @@
                   v-model.number="table.output.todasSaidas" 
                 />
               </div>
-              <q-chip
-                v-if="validated"
-                color="green"
-                label="Validado"
-                text-color="white"
-                icon="done"
-              />
-
-              <q-chip
-                v-if="!validated"
-                color="red"
-                label="Não Validado"
-                text-color="white"
-                icon="warning"
-              /><br>
-
-              <q-btn
-                label="Salvar rascunho"
-                color="primary"
-                class="q-my-lg"
-                no-caps
-                @click="insertFinanceStatisticsDraft"
-              />
+              <div class="text-center">
+                
+                <q-chip
+                  v-if="validated"
+                  color="green"
+                  label="Validado"
+                  text-color="white"
+                  icon="done"
+                />
+  
+                <q-chip
+                  v-if="!validated"
+                  color="red"
+                  label="Não Validado"
+                  text-color="white"
+                  icon="warning"
+                /><br>
+  
+                <q-btn
+                  label="Salvar rascunho"
+                  color="primary"
+                  class="q-my-lg"
+                  no-caps
+                  @click="insertFinanceStatisticsDraft"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -230,9 +233,7 @@ export default defineComponent({
       outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
       if(total * 0.11 >= outPutTotalPercents){
         this.contributionCalculatedMore = total * 0.11
-        console.log('mais', this.contributionCalculatedMore)
       }else if(total * 0.11 < outPutTotalPercents){
-        console.log('menos', this.contributionCalculatedLess)
         this.contributionCalculatedLess = total * 0.11
       }
     },
@@ -275,33 +276,29 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error || !r.data) return
         this.validated = r.data.validated
-        this.contributionOutputSum = r.data.list[0].contributionOutput
-        this.contributionEntriesSum = r.data.list[0].contributionEntries
-        // this.table.output = r.data.financeData.output ? r.data.financeData.output : 
-        // this.table.output = {
-        //   contribuicaoIELB: {
-        //     ofertasDominicais: '',
-        //     ofertasMensais: '',
-        //     receitasAlugueis: '',
-        //   },
-        //   contribuicaoDistrito: '',
-        //   devolucaoEmprestimoIELB: '',
-        //   todasSaidas: ''
-        // },
-        // this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
-        // this.table.entries = {
-        //   saldoAnterior: '',
-        //   receitasRegulares: {
-        //     ofertasDominicais: '',
-        //     ofertasMensais: '',
-        //     receitasAlugueis: '',
-        //   },
-        //   ofertasEspeciais: '',
-        //   campanhasEspecificas: '',
-        //   auxilio: '',
-        //   emprestimos: '',
-        //   todasOutrasReceitas: '',
-        // }
+        console.log(r)
+        this.contributionOutputSum = r.data.contributionOutput
+        this.contributionEntriesSum = r.data.contributionEntries
+        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
+        this.table.output = {
+          contribuicaoDistrito: '',
+          devolucaoEmprestimoIELB: '',
+          todasSaidas: ''
+        },
+        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
+        this.table.entries = {
+          saldoAnterior: '',
+          receitasRegulares: {
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
+          },
+          ofertasEspeciais: '',
+          campanhasEspecificas: '',
+          auxilio: '',
+          emprestimos: '',
+          todasOutrasReceitas: '',
+        }
       });
     },
   }

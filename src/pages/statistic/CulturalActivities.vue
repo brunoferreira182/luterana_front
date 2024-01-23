@@ -56,15 +56,32 @@
           </div>
         </div>
       </div>
-      <q-btn
-        label="Salvar como rascunho"
-        class="q-ma-md text-center"
-        color="yellow-8"
-        unelevated
-        rounded
-        no-caps
-        @click="insertAtividadesCulticasStatisticDraft"
-      />
+      <div class="text-center">
+        
+        <q-chip
+          v-if="validated"
+          color="green"
+          label="Validado"
+          text-color="white"
+          icon="done"
+        />
+  
+        <q-chip
+          v-if="!validated"
+          color="red"
+          label="Não Validado"
+          text-color="white"
+          icon="warning"
+        /><br>
+  
+        <q-btn
+          label="Salvar rascunho"
+          color="primary"
+          class="q-my-lg"
+          no-caps
+          @click="insertAtividadesCulticasStatisticDraft"
+        />
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -108,8 +125,7 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        this.activitiesData - r.data.activitiesData
-        console.log(r)
+        this.activitiesData = r.data.activitiesData
       });
     },
     insertAtividadesCulticasStatisticDraft() {
