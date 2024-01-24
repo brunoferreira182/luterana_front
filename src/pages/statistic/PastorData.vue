@@ -337,13 +337,13 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <div >
+            <div class="q-ml-lg">
               <q-btn
               color="primary"
               icon="sync_problem"
               label="Solicitar alteração"
               flat
-              @click="changeFormations('f')"
+              @click="reportError('formations')"
               rounded
             >
               <q-tooltip>Solicitar alteração</q-tooltip>
@@ -351,11 +351,11 @@
             </div>
           </div>
           <div>
-            <div class="text-h6 q-pa-sm q-pl-lg q-ml-sm">Histórico de vínculos</div>
-            <q-list class="q-pa-sm">
+            <div class="q-mx-lg q-mt-md q-px-sm text-h6">Histórico de vínculos</div>
+            <q-list>
               <q-item 
                 style="border-radius: 1rem;"
-                class="q-mx-lg q-px-md  bg-grey-2"
+                class="q-ma-md bg-grey-2"
                 v-for="(link) in pastorLink"
                 :key="link"
               >
@@ -375,15 +375,15 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <div class="q-mx-sm">
+            <div>
               <q-btn
               class="q-mx-lg q-my-sm"
               label="Solicitar alteração"
-              icon="add"
+              icon="sync_problem"
               flat
               rounded
               color="primary"
-              @click="changeLinks"
+              @click="reportError('historic')"
             >
               <q-tooltip>Solicitar alteração</q-tooltip>
             </q-btn>
@@ -1145,6 +1145,41 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogReportError.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section class="text-h6 text-center">
+            Informe o problema:
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              type="textarea"
+              label="Informe o problema"
+              v-model="dialogReportError.text"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              rounded
+              color="primary"
+              label="Sair"
+              no-caps
+              unelevated
+              @click="clearDialogReportError"
+            />
+            <q-btn
+              rounded
+              color="primary"
+              unelevated
+              label="Confirmar"
+              no-caps
+              @click="confirmReportError"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1267,7 +1302,8 @@ export default defineComponent({
         open: false,
         type: null,
         text: ''
-      }
+      },
+      reportedErrors: []
     }
   },
 
@@ -1276,7 +1312,29 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
-    changeFormations(type) {
+    confirmReportError() {
+      console.log(this.dialogReportError.type)
+      if (this.dialogReportError.type === 'historic') {
+        this.reportedErrors.push ({
+          errorText: this.dialogReportError.text,
+          type: this.dialogReportError.type
+        }) 
+      } else if (this.dialogReportError.type === 'forations') {
+        this.reportedErrors.push ({
+          errorText: this.dialogReportError.text,
+          type: this.dialogReportError.type
+        }) 
+      }
+      this.clearDialogReportError()
+    },
+    clearDialogReportError() {
+      this.clearDialogReportError= {
+        open: false,
+        type: null,
+        text: ''
+      }
+    },
+    reportError(type) {
         this.dialogReportError.open = true,
         this.dialogReportError.type = type
     },
