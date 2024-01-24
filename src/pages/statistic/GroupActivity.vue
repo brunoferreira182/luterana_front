@@ -139,7 +139,7 @@
               </q-item-section>
               <!-- visitação -->
               <q-item-section v-if="item.organismConfigName==='Departamento de Visitação'">
-                      <q-input v-model="item.departamentoData" class="q-pl-sm q-mr-md" label="Total de visitantes do grupo"/>
+                      <q-input v-model="item.departamentoData.visitadoresTotal" class="q-pl-sm q-mr-md" label="Total de visitantes do grupo"/>
                     <q-item-label class="q-mt-sm"/> Visitas Missionárias
                       <q-input v-model="item.departamentoData.visitasMissionarias.qtnVisitas" class="q-pl-sm q-mr-md" label="Número de visitas"/>
                       <q-input v-model="item.departamentoData.visitasMissionarias.pessoas" class="q-pl-sm q-mr-md" label="Total de pessoas"/>
@@ -190,6 +190,7 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
+      musicGroup:'',
       banda: '', grupoLouvor:'', quarteto:'', vocal:'',
       departamentos: [],
       congregationName:'',
@@ -199,6 +200,9 @@ export default defineComponent({
   },
   beforeMount() {
     this.getCongregationGroups();
+  },
+  beforeUnmount(){
+    this.submitForm()
   },
   methods: {
   getCongregationGroups() {
@@ -213,8 +217,6 @@ export default defineComponent({
       if (r.error) return;
       this.departamentos = r.data.childData;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.departamentos);
-      console.log("grupos", this.congregationName);
     });
   },
   toggleForm(item) {
@@ -228,7 +230,7 @@ export default defineComponent({
       route:'/desktop/statistics/insertGroupsActivitiesStatisticsDraft',
       body: {
         organismId : this.$route.query.organismId,
-        groupActivitiesData: this.departamentos.departamentoFormData,
+        groupActivitiesData: this.departamentos,
       }
     }
     useFetch(opt).then((r)=>{
@@ -239,10 +241,10 @@ export default defineComponent({
     console.log("Formulário enviado para", item.organismConfigName, "/");
     // Você pode adicionar lógica adicional aqui, por exemplo, enviar dados para o servidor
     },
-    goToStatistics() {
-      const organismId = this.$route.query.organismId;
-      this.$router.push("/user/statistic?organismId=" + organismId);
-    },
+  goToStatistics() {
+    const organismId = this.$route.query.organismId;
+    this.$router.push("/user/statistic?organismId=" + organismId);
+  },
   },
 });
 </script>
