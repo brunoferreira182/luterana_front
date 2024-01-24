@@ -6,14 +6,14 @@
           <q-breadcrumbs-el 
             style="cursor: pointer;" 
             icon="home" 
-            label="Completar estatística" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            label="Escolher Congregação" 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
           />
           <q-breadcrumbs-el 
+            :label="congregationName"
             style="cursor: pointer;" 
-          > {{ }} SADAS
+          >
           </q-breadcrumbs-el>
-          <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
       </div>
       <div class="fit column q-mt-lg content-center">
@@ -99,6 +99,7 @@ export default defineComponent({
   data() {
     return {
       statisticStatus: null,
+      congregationName:'',
       validationResume: {}
     }
   },
@@ -106,6 +107,7 @@ export default defineComponent({
     this.getMyOrganismsToChooseOne()
     this.getStatisticStatus()
     this.getValidationResumeByOrganism()
+    this.getOrganismNameForBreadCrumbs()
   },
   methods: {
     getValidationResumeByOrganism () {
@@ -120,6 +122,19 @@ export default defineComponent({
         this.validationResume = r.data
       })
     },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+      console.log("grupos", this.congregationName);
+    });
+  },
     getStatisticStatus() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
@@ -130,6 +145,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
+        console.log(this.statisticStatus);
         // this.verifyStatusTypes()
       })
     },
