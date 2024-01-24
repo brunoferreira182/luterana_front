@@ -106,8 +106,8 @@ export default defineComponent({
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
       body: {
-        organismId: "6530487ab2980d56e0985464",
-        // organismId: this.$route.query.organismId
+        // organismId: "6530487ab2980d56e0985464",
+        organismId: this.$route.query.organismId
       },
     };
     useFetch(opt).then((r) => {
