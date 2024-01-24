@@ -10,8 +10,9 @@
             @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           />
           <q-breadcrumbs-el 
+            :label="congregationName"
             style="cursor: pointer;" 
-          > {{ }} SADAS
+          >
           </q-breadcrumbs-el>
           <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
@@ -99,6 +100,7 @@ export default defineComponent({
   data() {
     return {
       statisticStatus: null,
+      congregationName:'',
       validationResume: {}
     }
   },
@@ -106,6 +108,7 @@ export default defineComponent({
     this.getMyOrganismsToChooseOne()
     this.getStatisticStatus()
     this.getValidationResumeByOrganism()
+    this.getOrganismNameForBreadCrumbs()
   },
   methods: {
     getValidationResumeByOrganism () {
@@ -120,6 +123,20 @@ export default defineComponent({
         this.validationResume = r.data
       })
     },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        organismId: "6530487ab2980d56e0985464",
+        // organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+      console.log("grupos", this.congregationName);
+    });
+  },
     getStatisticStatus() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
@@ -130,6 +147,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
+        console.log(this.statisticStatus);
         // this.verifyStatusTypes()
       })
     },

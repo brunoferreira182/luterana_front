@@ -8,12 +8,11 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           />
           <q-breadcrumbs-el 
             style="cursor: pointer;" 
-            label="Completar estatística"
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            :label="congregationName"
           />
           <q-breadcrumbs-el label="Movimento de membros" />
         </q-breadcrumbs>
@@ -293,6 +292,7 @@ export default defineComponent({
   name: "MembersMovement",
   data() {
     return {
+      congregationName:'',
       membersMovement: {
         totalMambrosComungantes2022: 0,
         totalMembrosNaoComungantes2022: 0,
@@ -326,6 +326,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
+    this.getOrganismNameForBreadCrumbs()
   },
   methods: {
     calculaAnosEstudo (ev) {
@@ -405,6 +406,20 @@ export default defineComponent({
         + +this.membersMovement.abandonoNaoComungantes
         + +this.membersMovement.exclusoesNaoComungantes
     },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        organismId: "6530487ab2980d56e0985464",
+        // organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+      console.log("grupos", this.congregationName);
+    });
+  },
   }
 })
 </script>

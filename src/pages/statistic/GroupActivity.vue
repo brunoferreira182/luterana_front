@@ -10,7 +10,7 @@
             @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           />
           <q-breadcrumbs-el 
-            :label="organismName"
+            :label="congregationName"
             style="cursor: pointer;" 
           > 
           </q-breadcrumbs-el> 
@@ -191,6 +191,7 @@ export default defineComponent({
     return {
       banda: '', grupoLouvor:'', quarteto:'', vocal:'',
       departamentos: [],
+      congregationName:'',
       statisticStatus: null,
       arrayIgnore:['Departamento de Escola Dominical', 'Departamento da Música', 'Departamento de Visitação', 'Departamento de Ação social', 'Outros'],
     };
@@ -210,7 +211,9 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.departamentos = r.data.childData;
+      this.congregationName = r.data.organismName 
       console.log("grupos", this.departamentos);
+      console.log("grupos", this.congregationName);
     });
   },
   toggleForm(item) {
