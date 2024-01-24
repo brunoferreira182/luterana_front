@@ -522,7 +522,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogAddUserToFunctionInDept"
+              @click="clearDialogConfirmAddFunctionUserInNewDept"
             />
             <q-btn
               label="Adicionar"
@@ -537,6 +537,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogAddNewDepartament.open"
+        @hide="cleanDialogAddNewDepartament"
       >
         <q-card style="width: 400px;">
           <q-card-section class="text-h6 text-center">
@@ -553,6 +554,59 @@
             >
             </q-select>
           </q-card-section>
+          <q-card-section v-if="dialogAddNewDepartament.functions">
+            <div class="text-center text-h6 q-my-sm">
+              Preencha ao menos uma função
+            </div>
+            <div
+              v-for="(func, iFunc) in dialogAddNewDepartament.functions" 
+              :key="func"
+            >
+              <strong>{{ func.functionName }}</strong>
+              <q-btn
+                color="primary"
+                icon="add"
+                flat
+                rounded
+                @click="addFunctionUserInNewDepartament(func, iFunc)"
+              >
+                <q-tooltip>Adicionar pessoa para esta função</q-tooltip>
+              </q-btn>
+              <div 
+                class="q-ml-sm"
+                v-for="(user, iUser) in func.functionUsers"
+                :key="user"
+              >
+                {{ user.userName }}
+                <q-btn
+                  icon="delete"
+                  color="red"
+                  flat
+                  rounded
+                  @click="removeUserFromNewDept(iFunc, iUser)"
+                >
+                </q-btn>
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogAddUserToFunctionInDept"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated  
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddNewDepartament"
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <q-dialog
@@ -675,7 +729,55 @@
           </q-card-section>
         </q-card>
       </q-dialog>
-      
+      <q-dialog
+        v-model="dialogInserFunctionUserInNewDept.open"
+        @hide="clearDialogConfirmAddFunctionUserInNewDept"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section class="text-center text-h6">
+            Selecione o usuário que irá ocupar a função
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogInserFunctionUserInNewDept.userSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogAddUserToFunctionInDept"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated  
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddFunctionUserInNewDept"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -743,9 +845,10 @@ export default defineComponent({
       dialogAddNewDepartament: {
         open: false,
         iOrg: null,
+        iExistsDept: null,
         data: null,
         departamentSelected: null,
-        configSelected: null
+        functions: null
       },
       dialogDepartamentDetail: {
         open: false,
@@ -754,23 +857,85 @@ export default defineComponent({
         iDep: null,
         iExistsDept: null
       },
-      deptConfigs: null
+      deptConfigs: null,
+      dialogInserFunctionUserInNewDept: {
+        open: false,
+        iFunc: null,
+        selectedUser: null,
+        functionName: null
+      }
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
+    cleanDialogAddNewDepartament() {
+      this.dialogAddNewDepartament= {
+        open: false,
+        iOrg: null,
+        iExistsDept: null,
+        data: null,
+        departamentSelected: null,
+        functions: null
+      }
+    },
+    confirmAddNewDepartament() {
+      this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts.forEach((departament, iDep) => {
+        console.log(departament)
+        if (departament.organismConfigId === this.dialogAddNewDepartament.departamentSelected.organismConfigId ) {
+          let functions = []
+          this.dialogAddNewDepartament.functions.forEach((func) => {
+            functions.push(func)
+          })
+    
+    
+          this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[iDep].existingDepartaments.push({
+            departamentConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId,
+            departamentName: this.dialogAddNewDepartament.departamentSelected.organismConfigName,
+            organismFunctions: functions
+          })
+        }
+      })
+      this.cleanDialogAddNewDepartament()
+    },
+    removeUserFromNewDept(iFunc, iUser) {
+      this.dialogAddNewDepartament.functions[iFunc].functionUsers.splice(iUser, 1)
+    },
+    clearDialogConfirmAddFunctionUserInNewDept() {
+      this.dialogInserFunctionUserInNewDept = {
+        open: false,
+        iFunc: null,
+        selectedUser: null,
+        functionName: null
+      }
+    },
+    confirmAddFunctionUserInNewDept() {
+      if (!this.dialogAddNewDepartament.functions[this.dialogInserFunctionUserInNewDept.iFunc].functionUsers) {
+        this.dialogAddNewDepartament.functions[this.dialogInserFunctionUserInNewDept.iFunc].functionUsers = []
+      }
+      this.dialogAddNewDepartament.functions[this.dialogInserFunctionUserInNewDept.iFunc].functionUsers.push({
+        userName: this.dialogInserFunctionUserInNewDept.userSelected.userName,
+        userId: this.dialogInserFunctionUserInNewDept.userSelected._id
+      })
+      this.clearDialogConfirmAddFunctionUserInNewDept()
+    },
+    addFunctionUserInNewDepartament(func, iFunc) {
+      this.dialogInserFunctionUserInNewDept.open = true
+      this.dialogInserFunctionUserInNewDept.iFunc = iFunc
+      this.dialogInserFunctionUserInNewDept.functionName = func.functionName
+    },
     getFunctionsByDepartamentId() {
       const opt = {
-        route: 'vamos ver com o darta',
+        route: '/desktop/statistics/getFunctionsByDepartamentId',
         body: {
-          departamentConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId
+          organismConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) return
-        this.dialogAddNewDepartament.configSelected = r.data
+        this.dialogAddNewDepartament.functions = r.data
+        console.log(r.data)
       })
     },
     addUserFunctioninDept(iExistsDept, iFunc) {
@@ -982,13 +1147,11 @@ export default defineComponent({
         return
       }
       let route
-      if ((this.dialogAddFunction && this.dialogAddFunction.functionName === 'Pastor') || (this.dialogInsertUserFunctionInNewCongregation && this.dialogInsertUserFunctionInNewCongregation.functionName === 'Pastor')) {
+      if ((this.dialogAddFunction && this.dialogAddFunction.functionName === 'Pastor') || (this.dialogInsertUserFunctionInNewCongregation && this.dialogInsertUserFunctionInNewCongregation.functionName === 'Pastor') || (this.dialogInserFunctionUserInNewDept && this.dialogInserFunctionUserInNewDept.functionName === 'Pastor')) {
         route = "/desktop/adm/getPastores" 
       } else {
         route = '/desktop/adm/getUsers'
       }
-      console.log(this.dialogInsertUserFunctionInNewCongregation.functionName, 'essa é a função que estou pedinddo')
-      console.log(route, 'é essa rota que esta sendo chamada')
       const opt = {
         route: route,
         body: {
