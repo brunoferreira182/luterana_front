@@ -8,11 +8,12 @@
               style="cursor: pointer;" 
               icon="home" 
               label="Introdução" 
-              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-            />
-            <q-breadcrumbs-el 
-              style="cursor: pointer;" 
+              @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+              />
+              <q-breadcrumbs-el 
               :label="congregationName" 
+              style="cursor: pointer;" 
+              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
@@ -273,7 +274,6 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.congregationName);
     });
   },
     getFinanceStatisticByOrganismId() {

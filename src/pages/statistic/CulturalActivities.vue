@@ -1,8 +1,24 @@
 <template>
   <q-page-container class="no-padding">
     <q-page >
+      <div class="q-pa-md q-gutter-sm">
+          <q-breadcrumbs align="center">
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              icon="home" 
+              label="Introdução" 
+              @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+              />
+              <q-breadcrumbs-el 
+              :label="congregationName" 
+              style="cursor: pointer;" 
+              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            />
+            <q-breadcrumbs-el label="Financeiro" />
+          </q-breadcrumbs>
+        </div>
       <div class="q-ma-lg q-gutter-sm text-h6">
-        Atividades culicas
+        Atividades Cúlticas
       </div>
       <div class="row justify-center q-pa-md">
         <div class="col q-gutter-y-md">
@@ -86,6 +102,7 @@ export default defineComponent({
   data() {
     return {
       validated: false,
+      congregationName:'',
       congregationData:{},
       activitiesData:{
         cultoData: {
@@ -104,6 +121,7 @@ export default defineComponent({
   beforeMount() {
     this.getAtividadesCulticas()
     this.getPontosDeMissaoByOrganismId()
+    this.getOrganismNameForBreadCrumbs()
   },
   methods: {
     getPontosDeMissaoByOrganismId() {
@@ -139,6 +157,19 @@ export default defineComponent({
         }
         this.validated = r.data.validated
         this.activitiesData = r.data.activitiesData
+      });
+    },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        // organismId: "6530487ab2980d56e0985464",
+        organismId: this.$route.query.organismId
+      },
+    };
+      useFetch(opt).then((r) => {
+        if (r.error) return;
+        this.congregationName = r.data.organismName 
       });
     },
     insertAtividadesCulticasStatisticDraft() {

@@ -7,11 +7,12 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Completar estatística" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-          />
-          <q-breadcrumbs-el 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+            />
+            <q-breadcrumbs-el 
             :label="congregationName"
             style="cursor: pointer;" 
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           > 
           </q-breadcrumbs-el> 
           <q-breadcrumbs-el label="Atividades de Grupos" />

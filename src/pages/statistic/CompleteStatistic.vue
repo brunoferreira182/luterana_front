@@ -6,15 +6,14 @@
           <q-breadcrumbs-el 
             style="cursor: pointer;" 
             icon="home" 
-            label="Completar estatística" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+            label="Escolher Congregação" 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
           />
           <q-breadcrumbs-el 
             :label="congregationName"
             style="cursor: pointer;" 
           >
           </q-breadcrumbs-el>
-          <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
       </div>
       <div class="fit column q-mt-lg content-center">
@@ -127,8 +126,7 @@ export default defineComponent({
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
       body: {
-        organismId: "6530487ab2980d56e0985464",
-        // organismId: this.$route.query.organismId
+        organismId: this.$route.query.organismId
       },
     };
     useFetch(opt).then((r) => {
