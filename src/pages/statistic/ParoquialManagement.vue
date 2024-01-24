@@ -7,9 +7,12 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.back()"
-          />
-          <q-breadcrumbs-el label="Gestão paroquial" />
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"          />
+            <q-breadcrumbs-el 
+              style="cursor: pointer;" 
+              :label="congregationName" 
+            />
+            <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
       </div>
       <div class="row justify-center q-pa-md">
@@ -65,6 +68,7 @@ export default defineComponent({
   name: "ParoquialManagement",
   data() {
     return {
+      congregationName:'',
       validated: false,
       other: '',
       group: null,
@@ -78,9 +82,9 @@ export default defineComponent({
       ],
     }
   },
-  // beforeMount() {
-  //   this.getAtividadesCulticas()
-  // },
+  beforeMount() {
+    this.getOrganismNameForBreadCrumbs()
+  },
   methods: {
     insertParoquialManagementType(){
       const opt = {
@@ -98,6 +102,20 @@ export default defineComponent({
         this.$q.notify('Dados salvos com sucesso')
       });
     },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        // organismId: "6530487ab2980d56e0985464",
+        organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+      console.log("grupos", this.congregationName);
+    });
+  },
   }
 })
 </script>

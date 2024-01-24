@@ -8,12 +8,11 @@
               style="cursor: pointer;" 
               icon="home" 
               label="Introdução" 
-              @click="$router.push('/statistic/introWriteStatisticData')"
+              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
             <q-breadcrumbs-el 
               style="cursor: pointer;" 
-              label="Completar estatística" 
-              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+              :label="congregationName" 
             />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
@@ -175,6 +174,7 @@ export default defineComponent({
   name:"WriteFinanceStatisticData",
   data() {
     return {
+      congregationName:'',
       pagination: {
         sortBy: '',
         page: 1,
@@ -219,6 +219,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
+    this.getOrganismNameForBreadCrumbs()
   },
   methods: {
     calculateOfferPercents(){
@@ -261,6 +262,20 @@ export default defineComponent({
         this.$q.notify('Dados salvos como rascunho')
       });
     },
+    getOrganismNameForBreadCrumbs() {
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        // organismId: "6530487ab2980d56e0985464",
+        organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+      console.log("grupos", this.congregationName);
+    });
+  },
     getFinanceStatisticByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getFinanceStatisticByOrganismId",
