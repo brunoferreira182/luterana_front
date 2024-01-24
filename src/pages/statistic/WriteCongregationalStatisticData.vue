@@ -44,7 +44,7 @@
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
             >
-              <q-list bordered>
+              <q-list bordered class="q-mb-sm">
                 <q-expansion-item
                   class="q-mt-sm q-mx-sm bg-grey-2"
                   label="Funções"
@@ -91,7 +91,7 @@
                   </div>
                 </q-expansion-item>
               </q-list>
-              <q-list bordered>
+              <q-list bordered class="q-mb-sm">
                 <q-expansion-item
                   default-opened
                   label="Departamentos"
@@ -100,30 +100,26 @@
                 > 
                   <q-list>
                     <div 
-                      v-for="(dep) in org.depts"
+                      v-for="(dep, iDep) in org.depts"
                       :key="dep"
                     >
-                    <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
-                      <q-item>
-                        <q-item-section>
-                          {{ dep.organismConfigName }}
-                        </q-item-section>
-                      </q-item>
-                      <!-- <q-item 
+                      <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
+                      <q-item 
                         clickable 
-                        v-ripple 
-                        v-for="(departament, iExistsDept) in dep.existingDepartaments"
-                        :key="departament"
-                        @click="openDepartamentDetail(iOrg, iDep, iExistsDept)"
+                        v-ripple
+                        @click="openDepartamentDetail(iOrg, iDep)"
                       >
-  
-                        <q-item-section>
-                          {{dep.organismConfigName}}
+                        <q-item-section avatar>
+                          <q-avatar
+                            :color="dep.existingDepartaments.length === 0 ? 'grey' : 'primary'" 
+                            text-color="white"
+                          >
+                            {{ dep.existingDepartaments.length }}
+                          </q-avatar>
                         </q-item-section>
-                        <q-item-section side>
-                          <q-icon name="expand_more" color="grey" />
-                        </q-item-section>
-                      </q-item> -->
+                        <q-item-section>{{dep.organismConfigName}}</q-item-section>
+                      </q-item>
+
                     </div>
                   </q-list>
                   <div class="text-left q-ma-md text-h6">
@@ -549,13 +545,48 @@
         <q-card
           style="width:400px;"
         >
-          <q-card-section class="text-center text-h6">
-            {{ dialogDepartamentDetail.data.departamentName }}
-          </q-card-section>
-          <q-card-section>
-            <div>
+          <q-card-section 
+            class="text-center"
+            v-for="dep in dialogDepartamentDetail.data"
+            :key="dep"
+          >
+            <div class="text-h6">
+              {{ dep.departamentName }}
+            </div>
+            <div class="text-left q-ml-sm">
               <strong>Funções:</strong>
             </div>
+            <div
+              v-for="func in dep.organismFunctions"
+              :key="func"
+              class="q-my-md text-left q-ml-md"
+            >
+              {{ func.functionName }}
+              <q-btn
+                color="primary"
+                flat
+                rounded
+                icon="add"
+              >
+                <q-tooltip>Adicionar pessoa na função</q-tooltip>
+              </q-btn>
+              <div
+                v-for="user in func.functionUsers"
+                :key="user"
+                class="q-ml-sm"
+              >
+                {{ user.userName }}
+                <q-btn
+                  color="red"
+                  flat
+                  rounded
+                  icon="delete"
+                ></q-btn>
+              </div>
+            </div>
+            <q-separator/>
+          </q-card-section>
+          <q-card-section>
             <q-item
               v-for="(func, iFunc) in dialogDepartamentDetail.data.organismFunctions"
               :key="func"
@@ -711,16 +742,14 @@ export default defineComponent({
       this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments.splice(this.dialogDepartamentDetail.iExistsDept, 1)
       this.clearDialogDepartaments()
     },
-    openDepartamentDetail(iOrg, iDep, iExistsDept) {
-      console.log(iOrg, iDep, iExistsDept)
+    openDepartamentDetail(iOrg, iDep) {
       this.dialogDepartamentDetail.data = 
         this.composition.congregations[iOrg]
         .depts[iDep]
-        .existingDepartaments[iExistsDept]
+        .existingDepartaments
       this.dialogDepartamentDetail.open = true
       this.dialogDepartamentDetail.iOrg = iOrg
       this.dialogDepartamentDetail.iDep = iDep
-      this.dialogDepartamentDetail.iExistsDept = iExistsDept
     },
     addNewDepartament(iOrg) {
       this.dialogAddNewDepartament.iOrg = iOrg
