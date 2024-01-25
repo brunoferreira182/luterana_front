@@ -228,10 +228,10 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.rascunho = r.data;
-      console.log(this.rascunho, 'rascunhoooo');
       if(this.rascunho.departamentoData.organismConfigName===this.departamentos.departamentoData.organismConfigName){
-        
+        this.departamentos.departamentoData = this.rascunho.departamentoData
       }
+      console.log(this.departamentos, 'rascunhoooo');
     });
   },
   expandItem(item){
