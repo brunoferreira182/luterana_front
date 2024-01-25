@@ -43,8 +43,7 @@
                 && data.label !== 'Filhos'
                 && data.label !== 'Pai'
                 && data.label !== 'Mãe'"
-              outlined
-              class="q-pa-sm"
+              class="q-px-md q-mx-md"
               :label="data.label"
               v-model="data.value"
               :mask="data.mask"
@@ -101,7 +100,7 @@
             </div>
             <div
               v-if="data.label === 'Mãe'"
-              class="q-mx-lg q-px-md q-py-sm"
+              class="q-mx-lg q-px-md"
             >
               <div class="text-h6">
                   {{data.label}}
@@ -157,7 +156,7 @@
                   {{data.label}}
                 </div>
                 <q-item 
-                  class="bg-grey-2 q-my-md"
+                  class="bg-grey-2"
                   style="border-radius: 1rem;"
                   v-for="(social, iSocial) in data.value"
                   :key="social"
@@ -204,7 +203,7 @@
                 <q-tooltip>Adicionar rede social</q-tooltip>
               </q-btn>
             </div>
-            <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg q-px-sm">
+            <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg q-px-sm q-py-sm">
               <div class="q-mx-sm">
                 <div class="text-h6">
                   {{ data.label }}
@@ -393,14 +392,12 @@
         </div>
         <div>
           <div class="text-h5 q-mx-md">Atividade pastoral</div>
-<<<<<<< HEAD
           <div class="text-h6 q-mb-md  text-wrap q-pa-md">
-=======
-          <div class="text-h6 q-mb-md q-pa-md text-wrap">
->>>>>>> 2aa38feb1be44889728521a65554f4b32bc6eeb4
-            Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
-            insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
-            bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+            <div class="text-h6 q-mb-md q-pa-md text-wrap">
+              Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
+              insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
+              bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+            </div>
           </div>
           <div>
             <q-item 
@@ -410,9 +407,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
+                  <q-input  v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -450,9 +447,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
+                  <q-input  v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -484,7 +481,6 @@
           <q-card-section>
             <q-input
               v-model="dialogEditChild.newChild"
-              outlined
               label="Nome do usuário"
             />
           </q-card-section>
@@ -519,7 +515,6 @@
           <q-card-section class="q-pa-sm">
             <q-input
               v-model="dialogEditMaritalStatus.status.userName"
-              outlined
               label="Nome do usuário"
             />
             <div class="text-h6 q-ma-sm">
@@ -527,14 +522,12 @@
             </div>
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.initialDate"
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               label="Data inicial"
             />
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.finalDate"
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               label="Data final"
@@ -572,7 +565,6 @@
             <q-select 
               v-model="dialogEditSocialNetwork.social.selectedSocialType"
               :options="socialNetworkTypes"
-              outlined
               label="Qual a rede social?"
               hint="Selecione a rede"
             />
@@ -582,7 +574,6 @@
             class="q-pa-sm"
           >
             <q-input 
-              outlined
               v-model="dialogEditSocialNetwork.social.name"
               label="Nome de perfil"
               hint="Seu nome de perfil na rede social"
@@ -590,7 +581,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select
-              outlined
               v-model="dialogEditSocialNetwork.social.type"
               label="Tipo de rede"
               hint="Tipo de perfil"
@@ -632,7 +622,6 @@
               :options="socialNetworkTypes"
               v-model="dialogAddNewSocialNetwork.socialType"
               label="Qual a rede social?"
-              outlined
               hint="Selecione a rede"
             />
           </q-card-section>
@@ -641,12 +630,10 @@
               v-model="dialogAddNewSocialNetwork.name"
               label="Nome de perfil"
               hint="Seu nome de perfil na rede social"
-              outlined
             />
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select
-              outlined
               v-model="dialogAddNewSocialNetwork.type"
               label="Tipo de rede"
               hint="Tipo de perfil"
@@ -685,7 +672,6 @@
           <q-card-section>
             <q-input
               v-model="dialogAddNewChild.child"
-              outlined
               label="Nome do usuário"
             />
           </q-card-section>
@@ -719,7 +705,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogAddMaritalRelation.partner"
               label="Nome do usuário"
             />
@@ -727,7 +712,6 @@
               Datas:
             </div>
             <q-input
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               v-model="dialogAddMaritalRelation.dates.initialDate"
@@ -735,7 +719,6 @@
             />
             <q-input
               v-model="dialogAddMaritalRelation.dates.finalDate"
-              outlined
               class="q-mb-sm"
               mask="##/##/####"
               label="Data final"
@@ -772,7 +755,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogEditParentName.user.userName"
               label="Nome do usuário"
             >
@@ -811,7 +793,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogAddParent.user"
               label="Nome do usuário"
             />
@@ -1409,7 +1390,7 @@ export default defineComponent({
       this.clearDialogReportError()
     },
     clearDialogReportError() {
-      this.clearDialogReportError= {
+      this.dialogReportError= {
         open: false,
         type: null,
         text: ''
