@@ -966,7 +966,6 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
-<<<<<<< HEAD
     activateCongregation(iOrg) {
       console.log(iOrg, 'mas que macaquisse é essa?')
       this.composition.congregations[iOrg].action = ''
@@ -988,7 +987,7 @@ export default defineComponent({
     openDialogRemoveCongregation(iOrg) {
       this.dialogRemoveCongregation.open = true,
       this.dialogRemoveCongregation.iOrg = iOrg
-=======
+    },
     async saveFinal () {
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
