@@ -25,7 +25,7 @@
         <div>
           <div class="text-h5 q-px-md">Dados pessoais</div>
           <div 
-            class="text-h6 q-px-md text-wrap"
+            class="text-h6 q-pa-md text-wrap"
           >
             Nesta seção revise cuidadosamente seus dados, 
             se não tiver uma rede social pessoal, como o Instagram, 
@@ -315,7 +315,7 @@
         </div>
         <div>
           <div class="text-h5 q-px-md">Vida pastoral</div>
-          <div class="text-h6 q-px-md text-wrap">
+          <div class="text-h6 q-pa-md text-wrap">
             Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
           </div>
           <div>
@@ -393,7 +393,7 @@
         </div>
         <div>
           <div class="text-h5 q-mx-md">Atividade pastoral</div>
-          <div class="text-h6 q-mb-md  text-wrap">
+          <div class="text-h6 q-mb-md  text-wrap q-pa-md">
             Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
             insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
             bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
@@ -1344,13 +1344,13 @@ export default defineComponent({
         pastorFormations: this.pastorFormations,
         pastorLinks: this.pastorLink,
         pastorActivities: this.pastorActivities,
-        lastPastorActivities: this.lastOrganismPastorActivities
+        lastPastorActivities: this.lastOrganismPastorActivities,
+        reportedErrors: this.reportedErrors
       }
       const opt = {
-        route: '/desktop/statistics/insertPastoralStatistics',
+        route: '/desktop/statistics/savePastoralData',
         body: {
-          organismId: this.$route.query.organismId,
-          pastoralData
+          userDataTabs: pastoralData
         }
       }
       useFetch(opt).then((r) => {
