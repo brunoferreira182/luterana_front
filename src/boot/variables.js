@@ -1,5 +1,9 @@
 //////////// VARIAVEIS DA APLICACAO //////
-const MODE_MASTER_SERVER = "local";
+<<<<<<< HEAD
+const MODE_MASTER_SERVER = "tiago";
+=======
+const MODE_MASTER_SERVER = "tiago";
+>>>>>>> e8ed466acb277e34b6a87872f68d58e275b63804
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 17
