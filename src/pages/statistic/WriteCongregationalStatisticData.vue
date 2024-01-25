@@ -282,15 +282,34 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-      <div class="text-right">
+      <div class="q-ma-lg">
         <q-btn
-          class="q-pa-sm q-ma-sm"
+          class="full-width"
+          rounded
+          unelevated
+          no-caps
+          label="Descartar Rascunho"
+          color="orange"
+          @click="discardDraft"
+          outline
+        ></q-btn>
+        <q-btn
+          class="full-width q-mt-md"
           rounded
           unelevated
           no-caps
           label="Salvar Rascunho"
           color="primary"
           @click="saveDraft"
+        ></q-btn>
+        <q-btn
+          class="full-width q-mt-md"
+          rounded
+          unelevated
+          no-caps
+          label="Salvar oficial"
+          color="green"
+          @click="saveFinal"
         ></q-btn>
       </div>
       <q-dialog
@@ -947,6 +966,7 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
+<<<<<<< HEAD
     activateCongregation(iOrg) {
       console.log(iOrg, 'mas que macaquisse é essa?')
       this.composition.congregations[iOrg].action = ''
@@ -968,6 +988,36 @@ export default defineComponent({
     openDialogRemoveCongregation(iOrg) {
       this.dialogRemoveCongregation.open = true,
       this.dialogRemoveCongregation.iOrg = iOrg
+=======
+    async saveFinal () {
+      let opt = {
+        route: '/desktop/statistics/saveCompositionDraft',
+        body: this.composition
+      }
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro. Tente novamente')
+        return
+      }
+      opt = {
+        route: '/desktop/statistics/saveCompositionFinal',
+      }
+      r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro. Tente novamente')
+        return
+      }
+    },
+    discardDraft () {
+      const opt = {
+        route: '/desktop/statistics/discardCompositionDraft',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Rascunho descartado com sucesso')
+        this.getCompositionByUserId()
+      })
+>>>>>>> 5b95baea0a405b3c352f3200993b0c317a58a3d5
     },
     cleanDialogAddNewDepartament() {
       this.dialogAddNewDepartament= {
