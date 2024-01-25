@@ -436,7 +436,7 @@
               @click="openDialogLastPastoralActivity"
             />
           </div>
-          <div v-if="checkbox">
+          <!-- <div v-if="checkbox">
             <div class="text-h6 q-mb-md q-mx-md q-pa-sm">
               Preencha as informações das visitas que fizeste em 2023 no local anterior:
             </div>
@@ -454,7 +454,7 @@
                 </div>
               </q-item-section>
             </q-item>
-          </div>
+          </div> -->
         </div>
         <div class="q-my-lg text-right q-ma-lg">
           <q-btn
@@ -1194,7 +1194,16 @@
             <div class="text-center text-h6">
               Selecione a congregação
             </div>
-            <q-select label="selecione a congregação"></q-select>
+            <q-select 
+              label="selecione a congregação"
+              v-model="dialogLastPastoralActivity.selectedOrganism"
+              hint="Busque pela cidade ou nome"
+              option-label="organismName"
+              use-input
+              @filter="getCongregatiionsByString"
+              :options="organismList"
+            >
+          </q-select>
           </q-card-section>
           <q-card-section>
             <div class="text-h6">
@@ -1231,6 +1240,7 @@
               unelevated
               no-caps
               label="Confirmar"
+              @click="addLastPastoralActivity"
             />
           </q-card-actions>
         </q-card>
@@ -1356,13 +1366,16 @@ export default defineComponent({
       reportedErrors: [],
       dialogLastPastoralActivity: {
         open: false,
+        selectedOrganism: null,
         lastOrganismPastorActivities: [
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
         ],
-        selectedOrganism: null
-      }
+      },
+      filterValue: '',
+      organismList: null,
+      lastOrganismPastorActivities: null
     }
   },
 
@@ -1371,6 +1384,35 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
+    addLastPastoralActivity() {
+      this.lastOrganismPastorActivities = {
+        selectedOrganism: this.dialogLastPastoralActivity.selectedOrganism._id,
+        lastOrganismPastorActivities: this.dialogLastPastoralActivity.lastOrganismPastorActivities
+      }
+      this.dialogLastPastoralActivity.open = false
+    },
+    getCongregatiionsByString(val, update, abort) {
+      console.log('Me chamou')
+      console.log(val, 'teste')
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: '/desktop/statistics/getCongregacoesByString',
+        body:{
+          filterValue: val
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        update(() => {
+          this.organismList = r.data
+        })
+      })
+    },
     openDialogLastPastoralActivity() {
       this.dialogLastPastoralActivity.open = true
     },
