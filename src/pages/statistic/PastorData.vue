@@ -393,7 +393,11 @@
         </div>
         <div>
           <div class="text-h5 q-mx-md">Atividade pastoral</div>
+<<<<<<< HEAD
           <div class="text-h6 q-mb-md  text-wrap q-pa-md">
+=======
+          <div class="text-h6 q-mb-md q-pa-md text-wrap">
+>>>>>>> 2aa38feb1be44889728521a65554f4b32bc6eeb4
             Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
             insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
             bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
@@ -414,9 +418,30 @@
               </q-item-section>
             </q-item>
           </div>
+          <!-- <div class="q-ml-md">
+            <q-checkbox v-model="checkbox">
+              Trocou de congregação em 2023?
+            </q-checkbox>
+          </div> -->
+          <div class="q-ml-md text-h6 q-pa-md">
+            Caso venha de outra congregação, clique no botão abaixo para preencher os dados de visitação
+          </div>
           <div>
+            <q-btn
+              label="Preencher dados da  congregação anterior"
+              unelevated
+              icon="description"
+              no-caps
+              flat
+              rounded
+              class="q-pa-sm q-ma-md"
+              color="primary"
+              @click="openDialogLastPastoralActivity"
+            />
+          </div>
+          <div v-if="checkbox">
             <div class="text-h6 q-mb-md q-mx-md q-pa-sm">
-              Caso venha de outra congregação, preencha as informações das visitas que fizeste em 2023 no local anterior:
+              Preencha as informações das visitas que fizeste em 2023 no local anterior:
             </div>
             <q-item 
               v-for="item in lastOrganismPastorActivities" 
@@ -1180,6 +1205,55 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogLastPastoralActivity.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div class="text-center text-h6">
+              Selecione a congregação
+            </div>
+            <q-select label="selecione a congregação"></q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6">
+              Preencha os dados de visitação:
+            </div>
+            <q-item 
+              v-for="item in dialogLastPastoralActivity.lastOrganismPastorActivities" 
+              :key="item"
+              class="q-mt-md"
+            >
+              <q-item-section>
+                <p class="text-left q-pl-lg no-margin"> <strong>{{item.title}}</strong></p>
+                <q-item-label class="row q-pa-sm q-pl-lg q-gutter-md" > 
+                  <q-input v-model="item.quantity" label="Qtde de visitas">
+                  </q-input>
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
+                  </q-input>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              flat
+              rounded
+              unelevated
+              no-caps
+              label="Sair"
+            />
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="Confirmar"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1247,11 +1321,6 @@ export default defineComponent({
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
       ],
-      lastOrganismPastorActivities: [
-        { title:'Visitas Missionárias', quantity:'', people:'' },
-        { title:'Visitas Pastorais', quantity:'', people:'' },
-        { title:'Visitas Enfermos', quantity:'', people:'' }
-      ],
       dialogEditParentName: {
         open: false,
         user: null,
@@ -1303,7 +1372,16 @@ export default defineComponent({
         type: null,
         text: ''
       },
-      reportedErrors: []
+      reportedErrors: [],
+      dialogLastPastoralActivity: {
+        open: false,
+        lastOrganismPastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+        ],
+        selectedOrganism: null
+      }
     }
   },
 
@@ -1312,6 +1390,9 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
+    openDialogLastPastoralActivity() {
+      this.dialogLastPastoralActivity.open = true
+    },
     confirmReportError() {
       console.log(this.dialogReportError.type)
       if (this.dialogReportError.type === 'historic') {
