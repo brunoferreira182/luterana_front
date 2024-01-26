@@ -456,14 +456,28 @@
             </q-item>
           </div> -->
         </div>
-        <div class="q-my-lg text-right q-ma-lg">
+        <div class="q-ma-lg">
           <q-btn
-            label="Salvar como rascunho"
-            class="q-ma-md text-center"
-            color="warning"
+            label="Salvar rascunho"
+            class="full-width"
+            color="primary"
+            outline
             rounded
             no-caps
             @click="saveDraft"
+          >
+            <q-tooltip>
+              Salvar rascunho
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            v-if="validated"
+            label="Salvar oficial"
+            class="full-width q-mt-md"
+            color="green"
+            rounded
+            no-caps
+            @click="saveOficial"
           >
             <q-tooltip>
               Salvar rascunho
@@ -1376,14 +1390,40 @@ export default defineComponent({
       filterValue: '',
       organismList: null,
       lastOrganismPastorActivities: null,
+      paroquiaId: null,
+      validated: false,
+      status: null
     }
   },
 
   beforeMount() {
-    this.getPastorDataTabs()
+    // this.getPastorDataTabs()
     this.getMyOrganismsList()
+    this.getParoquiaId()
   },
   methods: {
+    async getParoquiaId() {
+      const opt = {
+        route: '/desktop/statistics/getParoquiaIdByUserId',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.paroquiaId = r.data.organismId
+        this.getPastorDataTabs()
+      })
+    },
+    saveOficial() {
+      const opt = {
+        route: '/desktop/statistics/insertPastoralStatisticsDone',
+        body: {
+          organismId: this.paroquiaId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.getPastorDataTabs()
+      })
+    },
     addLastPastoralActivity() {
       this.lastOrganismPastorActivities = {
         selectedOrganism: this.dialogLastPastoralActivity.selectedOrganism._id,
@@ -1496,7 +1536,8 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/insertPastoralStatisticsDraft',
         body: {
-          pastoralData: pastoralData
+          pastoralData: pastoralData,
+          organismId: this.paroquiaId
         }
       }
       useFetch(opt).then((r) => {
@@ -1934,25 +1975,27 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getPastorStatisticsData',
         body: {
-          organismId: this.$route.query.organismId
+          organismId: this.paroquiaId
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
         } else {
-          console.log(r.data, 'macacos agudos com ferroes de abelha')
-          this.pastorData = r.data.pastorData
-          if (r.data.pastorFormations) {
-            this.pastorFormations = r.data.pastorFormations
+          console.log(r.data, 'retorno fetch')
+          this.validated = r.data.validated
+          this.status = r.data.status
+          this.pastorData = r.data.pastoralData.pastorData
+          if (r.data.pastoralData.pastorFormations) {
+            this.pastorFormations = r.data.pastoralData.pastorFormations
           }
-          if (r.data.pastorActivities){
-            this.pastorActivities = r.data.pastorActivities
+          if (r.data.pastoralData.pastorActivities){
+            this.pastorActivities = r.data.pastoralData.pastorActivities
           }
-          if (r.data.lastPastorActivities) {
-            this.lastOrganismPastorActivities = r.data.lastPastorActivities
-          } if (r.data.pastorLinks) {
-            this.pastorLink = r.data.pastorLinks
+          if (r.data.pastoralData.lastPastorActivities) {
+            this.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities
+          } if (r.data.pastoralData.pastorLinks) {
+            this.pastorLink = r.data.pastoralData.pastorLinks
           }
         }
       })
