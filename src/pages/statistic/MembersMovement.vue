@@ -8,11 +8,12 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-          />
-          <q-breadcrumbs-el 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+            />
+            <q-breadcrumbs-el 
             style="cursor: pointer;" 
             :label="congregationName"
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           />
           <q-breadcrumbs-el label="Movimento de membros" />
         </q-breadcrumbs>

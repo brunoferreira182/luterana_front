@@ -7,11 +7,12 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Completar estatística" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-          />
-          <q-breadcrumbs-el 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+            />
+            <q-breadcrumbs-el 
             :label="congregationName"
             style="cursor: pointer;" 
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
           > 
           </q-breadcrumbs-el> 
           <q-breadcrumbs-el label="Atividades de Grupos" />
@@ -20,8 +21,8 @@
       <q-list >
         <q-item v-for="(item) in departamentos" :key="item" >
           <div style="border-radius: 1rem; background-color: rgb(245, 245, 245); width: 94%; " >
-          <q-item-section class="item-section q-pa-md" @click="toggleForm(item)">
-            <q-item-label class="text-h5" style="white-space: nowrap;">
+          <q-item-section class="item-section q-pa-md" >
+            <q-item-label @click="expandItem(item)" class="text-h5" style="white-space: nowrap;">
               {{ item.organismName }}
               <q-btn
                 round
@@ -29,7 +30,6 @@
                 :icon="
                   item.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
                 "
-                @click="item.expanded = !item.expanded"
               />
             </q-item-label>
 
@@ -91,54 +91,53 @@
                 <!-- Musica -->
                 <q-item-section  class="justify-around" v-if= "item.organismConfigName==='Departamento da Música'">
                   <q-item-label > Grupo Músical
-                    <q-radio v-model="musicGroup" val="exist" label ="Sim"
+                    <q-radio v-model="item.departamentoData.musicGroup.exist" val="banda" label ="Sim"
                     />
-                    <q-radio v-model="musicGroup" val="noExist" label ="Não"
+                    <q-radio v-model="item.departamentoData.musicGroup.exist" val="noExist" label ="Não"
                     />
-                    <q-input dense class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
+                    <q-input dense v-if="item.departamentoData.musicGroup.exist==='banda'" v-model="item.departamentoData.musicGroup.qtn"  class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
                   </q-item-label>
                   <q-item-label > Banda 
-                    <q-radio v-model="banda" val="exist" label ="Sim"
+                    <q-radio v-model="item.departamentoData.banda.exist" val="exist" label ="Sim"
                     />
-                    <q-radio v-model="banda" val="noExist" label ="Não"
+                    <q-radio v-model="item.departamentoData.banda.exist" val="noExist" label ="Não"
                     />
-                    <q-input dense class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
+                    <q-input dense v-if="item.departamentoData.banda.exist==='exist'" v-model="item.departamentoData.banda.qtn" class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
                   </q-item-label>
                   <q-item-label > Grupo de Louvor
-                    <q-radio v-model="grupoLouvor" val="exist" label ="Sim"
+                    <q-radio v-model="item.departamentoData.grupoLouvor.exist" val="exist" label ="Sim"
                     />
-                    <q-radio v-model="grupoLouvor" val="noExist" label ="Não"
+                    <q-radio v-model="item.departamentoData.grupoLouvor.exist" val="noExist" label ="Não"
                     /> 
-                    <q-input dense class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
+                    <q-input dense v-if="item.departamentoData.grupoLouvor.exist==='exist'" v-model="item.departamentoData.grupoLouvor.qtn" class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
                   </q-item-label>
                   <q-item-label > Quarteto 
-                    <q-radio v-model="quarteto" val="exist" label ="Sim"
+                    <q-radio v-model="item.departamentoData.quarteto.exist" val="exist" label ="Sim"
                     />
-                    <q-radio v-model="quarteto" val="noExist" label ="Não"
+                    <q-radio v-model="item.departamentoData.quarteto.exist" val="noExist" label ="Não"
                     />
-                    <q-input dense class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
+                    <q-input dense v-if="item.departamentoData.quarteto.exist==='exist'" v-model="item.departamentoData.quarteto.qtn" class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
                   </q-item-label>
                   <q-item-label > Vocal
-                    <q-radio v-model="vocal" val="exist" label ="Sim"
+                    <q-radio v-model="item.departamentoData.vocal.exist" val="exist" label ="Sim"
                     />
-                    <q-radio v-model="vocal" val="noExist" label ="Não"
+                    <q-radio v-model="item.departamentoData.vocal.exist" val="noExist" label ="Não"
                     />
-                    <q-input dense class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
+                    <q-input dense v-if="item.departamentoData.vocal.exist==='exist'" v-model="item.departamentoData.vocal.qtn" class="q-mx-xs q-mr-md" label="Quantidade"></q-input>
                   </q-item-label >
                 <q-item-section>
-                  <q-item-label class="q-mt-sm"> Coro </q-item-label>
-                  <q-input class="q-mr-md q-ml-sm" v-model="item.departamentoData.coro"  label="Quantidade"></q-input>
+                  <q-input class="q-mr-md" v-model="item.departamentoData.coro"  label="Total no Coro"></q-input>
                 </q-item-section>
                 <q-input class="q-mr-md" v-model="item.departamentoData.musicosTotal" label="Músicos envolvidos ao total" ></q-input>
                 
                 <q-item-section >
                   <q-input class="q-mr-md" v-model="item.departamentoData.formalGroup.freqTotal" label="Frequência Total"></q-input>
-                  <q-input class="q-mr-md" v-model="item.departamentoData.formalGroup.freqTotal" label="Número de encontros"></q-input>
+                  <q-input class="q-mr-md" v-model="item.departamentoData.formalGroup.qtnEncontros" label="Número de encontros"></q-input>
                 </q-item-section>
               </q-item-section>
               <!-- visitação -->
               <q-item-section v-if="item.organismConfigName==='Departamento de Visitação'">
-                      <q-input v-model="item.departamentoData" class="q-pl-sm q-mr-md" label="Total de visitantes do grupo"/>
+                      <q-input v-model="item.departamentoData.visitadoresTotal" class="q-pl-sm q-mr-md" label="Total de visitantes do grupo"/>
                     <q-item-label class="q-mt-sm"/> Visitas Missionárias
                       <q-input v-model="item.departamentoData.visitasMissionarias.qtnVisitas" class="q-pl-sm q-mr-md" label="Número de visitas"/>
                       <q-input v-model="item.departamentoData.visitasMissionarias.pessoas" class="q-pl-sm q-mr-md" label="Total de pessoas"/>
@@ -164,14 +163,14 @@
                     <q-input v-model="item.departamentoData.qtnEncontros" class="q-pl-sm q-mr-md" label="Frequência total "></q-input>
                 </q-item-section>
               <!-- ainda sobre outros -->
-                <q-btn
+                <!-- <q-btn
                   class="q-mt-md"
                   label="Salvar"
                   rounded
                   color="grey"
                   @click="submitForm(item)"
                 >
-                </q-btn>
+                </q-btn> -->
               </div>
             </q-slide-transition>
           </q-item-section>
@@ -189,7 +188,6 @@ export default defineComponent({
   name: "GroupActivity",
   data() {
     return {
-      banda: '', grupoLouvor:'', quarteto:'', vocal:'',
       departamentos: [],
       congregationName:'',
       statisticStatus: null,
@@ -198,7 +196,11 @@ export default defineComponent({
   },
   beforeMount() {
     this.getCongregationGroups();
+    this.getSketchGroup()
   },
+  // beforeUnmount(){
+  //   this.submitVariosforms()
+  // },
   methods: {
   getCongregationGroups() {
     const opt = {
@@ -212,36 +214,57 @@ export default defineComponent({
       if (r.error) return;
       this.departamentos = r.data.childData;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.departamentos);
-      console.log("grupos", this.congregationName);
+      console.log('dmasndkjnas', this.departamentos);
     });
   },
-  toggleForm(item) {
-    item.formVisible = !item.formVisible;
-    if (!item.formData) {
-      item.formData = {};
+  getSketchGroup() {
+    const opt = {
+      route: "/desktop/statistics/getSketchByGroupActivity",
+      body: {
+        // organismId: "6530487ab2980d56e0985464",
+        organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.rascunho = r.data;
+      if(this.rascunho.departamentoData.organismConfigName===this.departamentos.departamentoData.organismConfigName){
+        this.departamentos.departamentoData = this.rascunho.departamentoData
+      }
+      console.log(this.departamentos, 'rascunhoooo');
+    });
+  },
+  expandItem(item){
+    item.expanded = !item.expanded 
+    if(!item.expanded) {
+      this.submitForm(item)
     }
   },
+  // submitForm(item){
+  //   const forms = []
+  //   forms.push(item)
+  //   console.log(forms);
+  //   const listForms = forms
+  //   console.log(forms);
+  // },
   submitForm(item) {
+    console.log('item:', item)
     const opt = {
       route:'/desktop/statistics/insertGroupsActivitiesStatisticsDraft',
       body: {
         organismId : this.$route.query.organismId,
-        groupActivitiesData: this.departamentos.departamentoFormData,
+        departamentoData: item.departamentoData,
       }
     }
     useFetch(opt).then((r)=>{
       if (r.error) return;
-      console.log('departamentos', this.departamentos)
-    })
-    // Lógica para lidar com o envio do formulário
-    console.log("Formulário enviado para", item.organismConfigName, "/");
-    // Você pode adicionar lógica adicional aqui, por exemplo, enviar dados para o servidor
+      this.$q.notify('Salvo com sucesso!')
+      })
     },
-    goToStatistics() {
-      const organismId = this.$route.query.organismId;
-      this.$router.push("/user/statistic?organismId=" + organismId);
-    },
+  goToStatistics() {
+    const organismId = this.$route.query.organismId;
+    this.$router.push("/user/statistic?organismId=" + organismId);
+  },
   },
 });
 </script>

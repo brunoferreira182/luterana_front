@@ -25,7 +25,7 @@
         <div>
           <div class="text-h5 q-px-md">Dados pessoais</div>
           <div 
-            class="text-h6 q-px-md text-wrap"
+            class="text-h6 q-pa-md text-wrap"
           >
             Nesta seção revise cuidadosamente seus dados, 
             se não tiver uma rede social pessoal, como o Instagram, 
@@ -43,8 +43,7 @@
                 && data.label !== 'Filhos'
                 && data.label !== 'Pai'
                 && data.label !== 'Mãe'"
-              outlined
-              class="q-pa-sm"
+              class="q-px-md q-mx-md"
               :label="data.label"
               v-model="data.value"
               :mask="data.mask"
@@ -101,7 +100,7 @@
             </div>
             <div
               v-if="data.label === 'Mãe'"
-              class="q-mx-lg q-px-md q-py-sm"
+              class="q-mx-lg q-px-md"
             >
               <div class="text-h6">
                   {{data.label}}
@@ -157,7 +156,7 @@
                   {{data.label}}
                 </div>
                 <q-item 
-                  class="bg-grey-2 q-my-md"
+                  class="bg-grey-2"
                   style="border-radius: 1rem;"
                   v-for="(social, iSocial) in data.value"
                   :key="social"
@@ -204,7 +203,7 @@
                 <q-tooltip>Adicionar rede social</q-tooltip>
               </q-btn>
             </div>
-            <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg q-px-sm">
+            <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg q-px-sm q-py-sm">
               <div class="q-mx-sm">
                 <div class="text-h6">
                   {{ data.label }}
@@ -315,7 +314,7 @@
         </div>
         <div>
           <div class="text-h5 q-px-md">Vida pastoral</div>
-          <div class="text-h6 q-px-md text-wrap">
+          <div class="text-h6 q-pa-md text-wrap">
             Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
           </div>
           <div>
@@ -337,13 +336,13 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <div >
+            <div class="q-ml-lg">
               <q-btn
               color="primary"
               icon="sync_problem"
               label="Solicitar alteração"
               flat
-              @click="changeFormations('f')"
+              @click="reportError('formations')"
               rounded
             >
               <q-tooltip>Solicitar alteração</q-tooltip>
@@ -351,11 +350,11 @@
             </div>
           </div>
           <div>
-            <div class="text-h6 q-pa-sm q-pl-lg q-ml-sm">Histórico de vínculos</div>
-            <q-list class="q-pa-sm">
+            <div class="q-mx-lg q-mt-md q-px-sm text-h6">Histórico de vínculos</div>
+            <q-list>
               <q-item 
                 style="border-radius: 1rem;"
-                class="q-mx-lg q-px-md  bg-grey-2"
+                class="q-ma-md bg-grey-2"
                 v-for="(link) in pastorLink"
                 :key="link"
               >
@@ -375,15 +374,15 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <div class="q-mx-sm">
+            <div>
               <q-btn
               class="q-mx-lg q-my-sm"
               label="Solicitar alteração"
-              icon="add"
+              icon="sync_problem"
               flat
               rounded
               color="primary"
-              @click="changeLinks"
+              @click="reportError('historic')"
             >
               <q-tooltip>Solicitar alteração</q-tooltip>
             </q-btn>
@@ -393,10 +392,12 @@
         </div>
         <div>
           <div class="text-h5 q-mx-md">Atividade pastoral</div>
-          <div class="text-h6 q-mb-md  text-wrap">
-            Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
-            insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
-            bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+          <div class="text-h6 q-mb-md  text-wrap q-pa-md">
+            <div class="text-h6 q-mb-md q-pa-md text-wrap">
+              Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
+              insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
+              bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+            </div>
           </div>
           <div>
             <q-item 
@@ -406,17 +407,38 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
+                  <q-input  v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
             </q-item>
           </div>
+          <!-- <div class="q-ml-md">
+            <q-checkbox v-model="checkbox">
+              Trocou de congregação em 2023?
+            </q-checkbox>
+          </div> -->
+          <div class="q-ml-md text-h6 q-pa-md">
+            Caso venha de outra congregação, clique no botão abaixo para preencher os dados de visitação
+          </div>
           <div>
+            <q-btn
+              label="Preencher dados da  congregação anterior"
+              unelevated
+              icon="description"
+              no-caps
+              flat
+              rounded
+              class="q-pa-sm q-ma-md"
+              color="primary"
+              @click="openDialogLastPastoralActivity"
+            />
+          </div>
+          <!-- <div v-if="checkbox">
             <div class="text-h6 q-mb-md q-mx-md q-pa-sm">
-              Caso venha de outra congregação, preencha as informações das visitas que fizeste em 2023 no local anterior:
+              Preencha as informações das visitas que fizeste em 2023 no local anterior:
             </div>
             <q-item 
               v-for="item in lastOrganismPastorActivities" 
@@ -425,14 +447,14 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input outlined v-model="item.quantity" label="Qtde de visitas">
+                  <q-input  v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input outlined v-model="item.people" label="Qtde de pessoas ">
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
             </q-item>
-          </div>
+          </div> -->
         </div>
         <div class="q-my-lg text-right q-ma-lg">
           <q-btn
@@ -459,7 +481,6 @@
           <q-card-section>
             <q-input
               v-model="dialogEditChild.newChild"
-              outlined
               label="Nome do usuário"
             />
           </q-card-section>
@@ -494,7 +515,6 @@
           <q-card-section class="q-pa-sm">
             <q-input
               v-model="dialogEditMaritalStatus.status.userName"
-              outlined
               label="Nome do usuário"
             />
             <div class="text-h6 q-ma-sm">
@@ -502,14 +522,12 @@
             </div>
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.initialDate"
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               label="Data inicial"
             />
             <q-input
               v-model="dialogEditMaritalStatus.status.dates.finalDate"
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               label="Data final"
@@ -547,7 +565,6 @@
             <q-select 
               v-model="dialogEditSocialNetwork.social.selectedSocialType"
               :options="socialNetworkTypes"
-              outlined
               label="Qual a rede social?"
               hint="Selecione a rede"
             />
@@ -557,7 +574,6 @@
             class="q-pa-sm"
           >
             <q-input 
-              outlined
               v-model="dialogEditSocialNetwork.social.name"
               label="Nome de perfil"
               hint="Seu nome de perfil na rede social"
@@ -565,7 +581,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select
-              outlined
               v-model="dialogEditSocialNetwork.social.type"
               label="Tipo de rede"
               hint="Tipo de perfil"
@@ -607,7 +622,6 @@
               :options="socialNetworkTypes"
               v-model="dialogAddNewSocialNetwork.socialType"
               label="Qual a rede social?"
-              outlined
               hint="Selecione a rede"
             />
           </q-card-section>
@@ -616,12 +630,10 @@
               v-model="dialogAddNewSocialNetwork.name"
               label="Nome de perfil"
               hint="Seu nome de perfil na rede social"
-              outlined
             />
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-select
-              outlined
               v-model="dialogAddNewSocialNetwork.type"
               label="Tipo de rede"
               hint="Tipo de perfil"
@@ -660,7 +672,6 @@
           <q-card-section>
             <q-input
               v-model="dialogAddNewChild.child"
-              outlined
               label="Nome do usuário"
             />
           </q-card-section>
@@ -694,7 +705,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogAddMaritalRelation.partner"
               label="Nome do usuário"
             />
@@ -702,7 +712,6 @@
               Datas:
             </div>
             <q-input
-              outlined
               mask="##/##/####"
               class="q-mb-sm"
               v-model="dialogAddMaritalRelation.dates.initialDate"
@@ -710,7 +719,6 @@
             />
             <q-input
               v-model="dialogAddMaritalRelation.dates.finalDate"
-              outlined
               class="q-mb-sm"
               mask="##/##/####"
               label="Data final"
@@ -747,7 +755,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogEditParentName.user.userName"
               label="Nome do usuário"
             >
@@ -786,7 +793,6 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
-              outlined
               v-model="dialogAddParent.user"
               label="Nome do usuário"
             />
@@ -1145,6 +1151,100 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogReportError.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section class="text-h6 text-center">
+            Informe o problema:
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              type="textarea"
+              label="Informe o problema"
+              v-model="dialogReportError.text"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              rounded
+              color="primary"
+              label="Sair"
+              no-caps
+              unelevated
+              @click="clearDialogReportError"
+            />
+            <q-btn
+              rounded
+              color="primary"
+              unelevated
+              label="Confirmar"
+              no-caps
+              @click="confirmReportError"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogLastPastoralActivity.open"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div class="text-center text-h6">
+              Selecione a congregação
+            </div>
+            <q-select 
+              label="selecione a congregação"
+              v-model="dialogLastPastoralActivity.selectedOrganism"
+              hint="Busque pela cidade ou nome"
+              option-label="organismName"
+              use-input
+              @filter="getCongregatiionsByString"
+              :options="organismList"
+            >
+          </q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6">
+              Preencha os dados de visitação:
+            </div>
+            <q-item 
+              v-for="item in dialogLastPastoralActivity.lastOrganismPastorActivities" 
+              :key="item"
+              class="q-mt-md"
+            >
+              <q-item-section>
+                <p class="text-left q-pl-lg no-margin"> <strong>{{item.title}}</strong></p>
+                <q-item-label class="row q-pa-sm q-pl-lg q-gutter-md" > 
+                  <q-input v-model="item.quantity" label="Qtde de visitas">
+                  </q-input>
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
+                  </q-input>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              flat
+              rounded
+              unelevated
+              no-caps
+              label="Sair"
+            />
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="Confirmar"
+              @click="addLastPastoralActivity"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1212,11 +1312,6 @@ export default defineComponent({
         { title:'Visitas Pastorais', quantity:'', people:'' },
         { title:'Visitas Enfermos', quantity:'', people:'' }
       ],
-      lastOrganismPastorActivities: [
-        { title:'Visitas Missionárias', quantity:'', people:'' },
-        { title:'Visitas Pastorais', quantity:'', people:'' },
-        { title:'Visitas Enfermos', quantity:'', people:'' }
-      ],
       dialogEditParentName: {
         open: false,
         user: null,
@@ -1267,7 +1362,20 @@ export default defineComponent({
         open: false,
         type: null,
         text: ''
-      }
+      },
+      reportedErrors: [],
+      dialogLastPastoralActivity: {
+        open: false,
+        selectedOrganism: null,
+        lastOrganismPastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+        ],
+      },
+      filterValue: '',
+      organismList: null,
+      lastOrganismPastorActivities: null,
     }
   },
 
@@ -1276,23 +1384,119 @@ export default defineComponent({
     this.getMyOrganismsList()
   },
   methods: {
-    changeFormations(type) {
+    addLastPastoralActivity() {
+      this.lastOrganismPastorActivities = {
+        selectedOrganism: this.dialogLastPastoralActivity.selectedOrganism._id,
+        lastOrganismPastorActivities: this.dialogLastPastoralActivity.lastOrganismPastorActivities
+      }
+      this.dialogLastPastoralActivity.open = false
+    },
+    getCongregatiionsByString(val, update, abort) {
+      console.log('Me chamou')
+      console.log(val, 'teste')
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: '/desktop/statistics/getCongregacoesByString',
+        body:{
+          filterValue: val
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        update(() => {
+          this.organismList = r.data
+        })
+      })
+    },
+    openDialogLastPastoralActivity() {
+      this.dialogLastPastoralActivity.open = true
+    },
+    confirmReportError() {
+      console.log(this.dialogReportError.type)
+      if (this.dialogReportError.type === 'historic') {
+        this.reportedErrors.push ({
+          errorText: this.dialogReportError.text,
+          type: this.dialogReportError.type
+        }) 
+      } else if (this.dialogReportError.type === 'forations') {
+        this.reportedErrors.push ({
+          errorText: this.dialogReportError.text,
+          type: this.dialogReportError.type
+        }) 
+      }
+      this.clearDialogReportError()
+    },
+    clearDialogReportError() {
+      this.dialogReportError= {
+        open: false,
+        type: null,
+        text: ''
+      }
+    },
+    reportError(type) {
         this.dialogReportError.open = true,
         this.dialogReportError.type = type
     },
     saveDraft() {
+      let regex = '/^\S+ \S+$/'
+      let pastorName = this.pastorData.name.value
+      let fatherName = this.pastorData.father.userName
+      let motherName = this.pastorData.mother.userName
+      let partnerName
+      if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+        partnerName = this.pastorData.maritalRelation.partner.userName
+      }
+      console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
+      this.pastorData.parentalRelation.child.forEach((child) => {
+        if (child && (!child.userName.match(regex))) {
+          console.log(child)
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+          return
+        }
+      })
+
+      if (partnerName && (!partnerName.match(regex))) {
+        console.log(partnerName)
+        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+        console.log('1')
+        return
+      } 
+      if (motherName && (!motherName.match(regex))) {
+        console.log(motherName)
+        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+        console.log('2')
+        return
+      } 
+      if (fatherName && (!fatherName.match(regex))) {
+        console.log(fatherName)
+        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+        console.log('3')
+        return
+      } 
+      if (!pastorName.match(regex)) {
+        console.log(pastorName)
+        this.$q.notify('Coloque ao menos um sobrenome em seu nome')
+        console.log('4')
+        return
+      }
+
       let pastoralData = {
         pastorData: this.pastorData,
         pastorFormations: this.pastorFormations,
         pastorLinks: this.pastorLink,
         pastorActivities: this.pastorActivities,
-        lastPastorActivities: this.lastOrganismPastorActivities
+        lastPastorActivities: this.lastOrganismPastorActivities,
+        reportedErrors: this.reportedErrors
       }
       const opt = {
-        route: '/desktop/statistics/insertPastoralStatistics',
+        route: '/desktop/statistics/savePastoralData',
         body: {
-          organismId: this.$route.query.organismId,
-          pastoralData
+          userDataTabs: pastoralData
         }
       }
       useFetch(opt).then((r) => {
