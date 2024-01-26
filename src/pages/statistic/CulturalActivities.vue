@@ -17,7 +17,7 @@
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
         </div>
-      <div class="q-ma-lg q-gutter-sm text-h6">
+      <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
       </div>
       <div class="row justify-center q-pa-md">
@@ -28,7 +28,7 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-subtitle1">
+            <div class="text-h6">
               Culto {{ item.organismName }}
             </div>
             <q-input
@@ -47,7 +47,7 @@
               v-model.number="item.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-xl">
-              <div class="text-subtitle1">
+              <div class="text-h6">
                 Santa-ceia
               </div>
               <q-input
