@@ -76,10 +76,10 @@
                     class="q-py-xs"
                   >
                     Há padrinhos:
-                    <q-radio v-model="padrinhos" val="exist" label="Sim" />
-                    <q-radio v-model="padrinhos" val="noExist" label="Não" />
+                    <q-radio v-model="item.departamentoData.padrinhos.exist" val="exist" label="Sim" />
+                    <q-radio v-model="item.departamentoData.padrinhos.exist" val="noExist" label="Não" />
                     <q-input
-                      v-model="item.departamentoData.padrinhos"
+                      v-model="item.departamentoData.padrinhos.qtn"
                       v-if="padrinhos === 'exist'"
                       dense
                       class="q-mx-sm"
@@ -381,6 +381,7 @@
           </div>
         </q-item>
       </q-list>
+      <q-btn>lldnaksjn</q-btn>
     </q-page>
   </q-page-container>
 </template>
@@ -393,6 +394,7 @@ export default defineComponent({
   data() {
     return {
       departamentos: [],
+      formDepart:[],
       congregationName: "",
       statisticStatus: null,
       arrayIgnore: [
@@ -403,6 +405,10 @@ export default defineComponent({
         "Outros",
       ],
     };
+  },
+  beforeUnmount() {
+    this.submitForm();
+    this.submitAllItens();
   },
   beforeMount() {
     this.getCongregationGroups();
@@ -425,6 +431,9 @@ export default defineComponent({
     getSketchGroup() {
       const opt = {
         route: "/desktop/statistics/getSketchByGroupActivity",
+        body: {
+          organismId: this.$route.query.organismId
+        }
       };
       useFetch(opt).then((r) => {
         console.log("r.data", r.data);
@@ -451,17 +460,23 @@ export default defineComponent({
       }
     },
     submitForm(item) {
-      console.log("item:", item);
+      // item.expanded =!item.expanded
+      this.formDepart.push(
+        item.departamentoData
+      )
+      this.$q.notify("Salvo com sucesso!");
+      console.log('erevrvefrvefverve', this.formDepart);
+    },
+    submitAllItens(){
       const opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
         body: {
           organismId: this.$route.query.organismId,
-          departamentoData: item.departamentoData,
+          departamentoData: this.formDepart,
         },
       };
       useFetch(opt).then((r) => {
         if (r.error) return;
-        this.$q.notify("Salvo com sucesso!");
       });
     },
     goToStatistics() {

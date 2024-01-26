@@ -1,6 +1,17 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            
+            <q-breadcrumbs-el label="Composição" />
+        </q-breadcrumbs>
+      </div>
       <div class="text-h5  text-center">
         Composição
       </div>
