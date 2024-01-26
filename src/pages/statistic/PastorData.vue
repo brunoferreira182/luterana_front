@@ -1,7 +1,18 @@
 <template>
   <q-page-container class="no-padding">
     <q-page> 
-      <div class="q-pa-md text-center">
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            
+            <q-breadcrumbs-el label="Gestão paroquial" />
+        </q-breadcrumbs>
+      </div>
+      <!-- <div class="q-pa-md text-center">
         <div class="text-capitalize"> 
           <div class="row">
             <q-btn 
@@ -20,7 +31,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div>
         <div>
           <div class="text-h5 q-px-md">Dados pessoais</div>

@@ -1,17 +1,15 @@
 <template>
   <q-page-container class="no-padding">
     <q-page >
+      
       <div class="q-pa-md q-gutter-sm">
         <q-breadcrumbs align="center">
           <q-breadcrumbs-el 
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"          />
-            <q-breadcrumbs-el 
-              style="cursor: pointer;" 
-              :label="congregationName" 
-            />
+            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            
             <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
       </div>
