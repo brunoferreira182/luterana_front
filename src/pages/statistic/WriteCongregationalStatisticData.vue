@@ -966,7 +966,6 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
-<<<<<<< HEAD
     activateCongregation(iOrg) {
       console.log(iOrg, 'mas que macaquisse é essa?')
       this.composition.congregations[iOrg].action = ''
@@ -988,7 +987,7 @@ export default defineComponent({
     openDialogRemoveCongregation(iOrg) {
       this.dialogRemoveCongregation.open = true,
       this.dialogRemoveCongregation.iOrg = iOrg
-=======
+    },
     async saveFinal () {
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
@@ -1017,7 +1016,6 @@ export default defineComponent({
         this.$q.notify('Rascunho descartado com sucesso')
         this.getCompositionByUserId()
       })
->>>>>>> 5b95baea0a405b3c352f3200993b0c317a58a3d5
     },
     cleanDialogAddNewDepartament() {
       this.dialogAddNewDepartament= {
