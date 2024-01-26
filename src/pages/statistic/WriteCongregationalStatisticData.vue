@@ -41,6 +41,7 @@
           :key="org"
           > 
             <q-expansion-item
+              v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
@@ -57,40 +58,38 @@
                     v-for="(func, iFunc) in org.organismFunctions" 
                     :key="func"
                   >
-                    <div v-if="!func.action || func.action !== 'remove'">
-                      <strong>{{ func.functionName }}:</strong>
-                      <q-btn
-                        color="primary"
-                        flat
-                        rounded
-                        icon="add"
-                        @click="addFunctionUser(iFunc, iOrg, func.functionName)"
-                        size="12px"
+                    <strong>{{ func.functionName }}:</strong>
+                    <q-btn
+                      color="primary"
+                      flat
+                      rounded
+                      icon="add"
+                      @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                      size="12px"
+                    >
+                    </q-btn>
+                    <div
+                      v-for="(user, iUser) in func.functionUsers"
+                      :key="user"
+                    >
+                      <q-item
+                        class="no-padding"
+                        v-if="!user.action || user.action !== 'remove'"
                       >
-                      </q-btn>
-                      <div
-                        class="q-ml-sm q-pa-sm"
-                      >
-                        <q-item
-                          class="no-padding"
-                          v-for="(user, iUser) in func.functionUsers"
-                          :key="user"
-                        >
-                          <q-item-section class="no-padding">
-                            <q-item-label>
-                              {{ user.userName }}
-                              <q-btn
-                                color="red"
-                                flat
-                                rounded
-                                unelevated
-                                icon="delete"
-                                @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
-                              ></q-btn>
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </div>
+                        <q-item-section class="no-padding" >
+                          <q-item-label>
+                            {{ user.userName }}
+                            <q-btn
+                              color="red"
+                              flat
+                              rounded
+                              unelevated
+                              icon="delete"
+                              @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                            ></q-btn>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </div>
                   </div>
                 </q-expansion-item>
@@ -119,12 +118,11 @@
                             :color="dep.existingDepartaments.length === 0 ? 'grey' : 'primary'" 
                             text-color="white"
                           >
-                            {{ dep.existingDepartaments.length }}
+                            {{ dep.existingDepartaments.length }} 
                           </q-avatar>
                         </q-item-section>
                         <q-item-section>{{dep.organismConfigName}}</q-item-section>
                       </q-item>
-
                     </div>
                   </q-list>
                   <div class="text-left q-ma-md text-h6">
@@ -1283,6 +1281,8 @@ export default defineComponent({
     },
     deleteUserFromFunction(iOrg, iFunc, iUser) {
       if (!this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action) {
+        this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
+      } else {
         this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
       }
       

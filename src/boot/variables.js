@@ -1,5 +1,9 @@
 //////////// VARIAVEIS DA APLICACAO //////
+<<<<<<< HEAD
 const MODE_MASTER_SERVER = "tiago";
+=======
+const MODE_MASTER_SERVER = "darta";
+>>>>>>> 869fb94f4498af19d55d8817b797422ea142f97f
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 17
