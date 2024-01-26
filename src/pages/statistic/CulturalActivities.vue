@@ -10,7 +10,7 @@
               @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
             />
             <q-breadcrumbs-el 
-              :label="culturalActivities[0].organismName" 
+              :label="congregationName" 
               style="cursor: pointer;" 
               class="text-wrap"
               @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
@@ -102,7 +102,9 @@ export default defineComponent({
   data() {
     return {
       validated: false,
-      congregationData:{},
+      congregationData: {},
+      culturalActivities: [],
+      congregationName: '',
       activitiesData:{
         cultoData: {
           qtyDadosPastor: 0,

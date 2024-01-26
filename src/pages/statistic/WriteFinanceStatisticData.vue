@@ -135,8 +135,12 @@
                   v-model="table.output.todasSaidas" 
                 />
               </div>
-              <div v-if="showNotify" class="text-subtitle1">
-                Há difença entre o valor de empréstimo registrado no SGA e a devolução de empréstimo
+              <div v-if="showNotify" class="text-subtitle1 text-bold q-px-md">
+                <div class="text-center">
+                  Atenção!
+                </div>
+                Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
+                Envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="text-center">
                 
@@ -218,8 +222,8 @@ export default defineComponent({
           devolucaoEmprestimoIELB: 0,
           todasSaidas: 0
         },
-        showNotify: false,
       },
+      showNotify: false,
     }
   },
   beforeMount() {
