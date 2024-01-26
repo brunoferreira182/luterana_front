@@ -2,7 +2,7 @@
   <q-page-container class="no-padding">
     <q-page >
       <div class="q-ma-lg q-gutter-sm text-h5">
-        Atividades culicas
+        Atividades culticas
       </div>
       <div class="row justify-center q-pa-md">
         <div class="col q-gutter-y-md" v-if="culturalActivities && culturalActivities.length > 0">
@@ -12,7 +12,7 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-h5">
+            <div class="text-subtitle1">
               Culto {{ item.organismName }}
             </div>
             <q-input
@@ -31,7 +31,7 @@
               v-model.number="item.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-xl">
-              <div class="text-h5">
+              <div class="text-subtitle1">
                 Santa-ceia
               </div>
               <q-input
