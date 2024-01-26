@@ -231,6 +231,9 @@ export default defineComponent({
       showContributionCalculatedLess: false,
     }
   },
+  beforeUnmount(){
+    this.insertFinanceStatisticsDraft()
+  },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
     this.getOrganismNameForBreadCrumbs()
@@ -241,101 +244,101 @@ export default defineComponent({
       this.showEmprestimoNotify = true
     }
   },
-    calculateOfferPercents(){
-      console.log('entrou calculateOfferPercents')
-      let total = 0
-      let outPutTotalPercents = 0
-      let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
-      let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replace(',', '.')
-      let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replace(',', '.')
-      total = ofertasDominicais + ofertasMensais + receitasAlugueis
-      outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
-      if(+total * 0.11 >= outPutTotalPercents){
-        this.contributionCalculatedMore = total * 0.11
-        this.showContributionCalculatedMore = true
-      }else if(+total * 0.11 < outPutTotalPercents){
-        this.contributionCalculatedLess = total * 0.11
-        this.showContribuitionNotify = true
-        this.showContributionCalculatedLess = true
-      }
-    },
-    insertFinanceStatisticsDraft() {
-      const opt = {
-        route: "/desktop/statistics/insertFinanceStatisticsDraft",
-        body: {
-          organismId: this.$route.query.organismId,
-          financeData: this.table
-        },
-      };
-      if (Object.keys(this.table.output).length > 0) {
-        opt.body.financeData = this.table;
-      } else if (Object.keys(this.table.entry).length > 0) {
-        opt.body.financeData = this.table;
-      }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-        opt.body.financeData = this.table
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.$q.notify('Dados salvos como rascunho')
-      });
-    },
-    getOrganismNameForBreadCrumbs() {
+  calculateOfferPercents(){
+    console.log('entrou calculateOfferPercents')
+    let total = 0
+    let outPutTotalPercents = 0
+    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
+    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replace(',', '.')
+    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replace(',', '.')
+    total = ofertasDominicais + ofertasMensais + receitasAlugueis
+    outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
+    if(+total * 0.11 >= outPutTotalPercents){
+      this.contributionCalculatedMore = total * 0.11
+      this.showContributionCalculatedMore = true
+    }else if(+total * 0.11 < outPutTotalPercents){
+      this.contributionCalculatedLess = total * 0.11
+      this.showContribuitionNotify = true
+      this.showContributionCalculatedLess = true
+    }
+  },
+  insertFinanceStatisticsDraft() {
     const opt = {
-      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
-        // organismId: "6530487ab2980d56e0985464",
-        organismId: this.$route.query.organismId
+        organismId: this.$route.query.organismId,
+        financeData: this.table
       },
     };
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
     useFetch(opt).then((r) => {
-      if (r.error) return;
-      this.congregationName = r.data.organismName 
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+        return
+      }
+      this.$q.notify('Dados salvos como rascunho')
     });
   },
-    getFinanceStatisticByOrganismId() {
-      const opt = {
-        route: "/desktop/statistics/getFinanceStatisticByOrganismId",
-        body: {
-          organismId: this.$route.query.organismId,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error || !r.data) return
-        this.validated = r.data.validated
-        console.log(r)
-        this.contributionOutputSum = r.data.contributionOutput
-        this.contributionEntriesSum = r.data.contributionEntries
-        r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
-        this.table.output = {
-          contribuicaoDistrito: 0,
-          devolucaoEmprestimoIELB: 0,
-          todasSaidas: 0
-        },
-        r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
-        this.table.entries = {
-          saldoAnterior: 0,
-          receitasRegulares: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
-          },
-          ofertasEspeciais: 0,
-          campanhasEspecificas: 0,
-          auxilio: 0,
-          emprestimos: 0,
-          todasOutrasReceitas: 0,
-        }
-      });
+  getOrganismNameForBreadCrumbs() {
+  const opt = {
+    route: "/desktop/statistics/getCongregacaoByOrganismId",
+    body: {
+      // organismId: "6530487ab2980d56e0985464",
+      organismId: this.$route.query.organismId
     },
+  };
+  useFetch(opt).then((r) => {
+    if (r.error) return;
+    this.congregationName = r.data.organismName 
+  });
+},
+  getFinanceStatisticByOrganismId() {
+    const opt = {
+      route: "/desktop/statistics/getFinanceStatisticByOrganismId",
+      body: {
+        organismId: this.$route.query.organismId,
+        page: this.pagination.page,
+        rowsPerPage: this.pagination.rowsPerPage,
+      },
+    };
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      if (r.error || !r.data) return
+      this.validated = r.data.validated
+      console.log(r)
+      this.contributionOutputSum = r.data.contributionOutput
+      this.contributionEntriesSum = r.data.contributionEntries
+      r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
+      this.table.output = {
+        contribuicaoDistrito: 0,
+        devolucaoEmprestimoIELB: 0,
+        todasSaidas: 0
+      },
+      r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
+      this.table.entries = {
+        saldoAnterior: 0,
+        receitasRegulares: {
+          ofertasDominicais: 0,
+          ofertasMensais: 0,
+          receitasAlugueis: 0,
+        },
+        ofertasEspeciais: 0,
+        campanhasEspecificas: 0,
+        auxilio: 0,
+        emprestimos: 0,
+        todasOutrasReceitas: 0,
+      }
+    });
+  },
   }
 })
 </script>
