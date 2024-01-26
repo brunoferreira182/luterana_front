@@ -407,8 +407,11 @@ export default defineComponent({
     };
   },
   beforeUnmount() {
-    this.submitForm();
     this.submitAllItens();
+    const timer = setTimeout(() => {
+      console.log("Timer executado ao desmontar a página!");
+      clearTimeout(timer);
+    }, 5000);
   },
   beforeMount() {
     this.getCongregationGroups();
@@ -455,16 +458,14 @@ export default defineComponent({
     },
     expandItem(item) {
       item.expanded = !item.expanded;
-      if (!item.expanded) {
         this.submitForm(item);
-      }
     },
     submitForm(item) {
       // item.expanded =!item.expanded
       this.formDepart.push(
         item.departamentoData
       )
-      this.$q.notify("Salvo com sucesso!");
+      // this.$q.notify("Salvo com sucesso!");
       console.log('erevrvefrvefverve', this.formDepart);
     },
     submitAllItens(){
@@ -477,6 +478,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (r.error) return;
+        this.$q.notify("Salvo com sucesso!");
       });
     },
     goToStatistics() {
