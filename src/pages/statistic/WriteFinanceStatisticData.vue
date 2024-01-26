@@ -117,6 +117,8 @@
                 <q-input 
                   label="Contribuição Distrito"
                   prefix="R$"
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
                   v-model="table.output.contribuicaoDistrito" 
                 />
                 <q-input 
@@ -220,6 +222,11 @@ export default defineComponent({
           todasOutrasReceitas: 0,
         },
         output: {
+          contribuicaoIELB: {
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
+          },
           contribuicaoDistrito: 0,
           devolucaoEmprestimoIELB: 0,
           todasSaidas: 0
@@ -319,6 +326,11 @@ export default defineComponent({
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
+        contribuicaoIELB: {
+          ofertasDominicais: 0,
+          ofertasMensais: 0,
+          receitasAlugueis: 0,
+        },
         contribuicaoDistrito: 0,
         devolucaoEmprestimoIELB: 0,
         todasSaidas: 0
