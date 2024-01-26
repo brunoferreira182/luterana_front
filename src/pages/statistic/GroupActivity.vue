@@ -431,8 +431,11 @@ export default defineComponent({
         if (r.error) return;
 
         this.departamentos.forEach((departamento) => {
-          const sketch = r.data.find((sketch) =>sketch.departamentoData.organismConfigName === 
-          departamento.departamentoData.organismConfigName);
+          const sketch = r.data.find(
+            (sketch) =>
+              sketch.departamentoData.organismConfigName ===
+              departamento.departamentoData.organismConfigName
+          );
           if (sketch) {
             departamento.departamentoData = sketch.departamentoData;
             console.log("departamento updatado", departamento);

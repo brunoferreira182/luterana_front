@@ -106,13 +106,13 @@
                   Saídas
                 </div>
                 <div class="text-h6">
-                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}</q-chip>
+                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
                 </div>
-                <div class="text-green" v-if="contributionCalculatedMore > 0">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
+                <div class="text-green" v-if="showContributionCalculatedMore">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
                 </div>
-                <div class="text-red" v-else-if="contributionCalculatedLess > 0">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess }} <q-icon name="south"/>
+                <div class="text-red" v-else-if="showContributionCalculatedLess">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
                 </div>
                 <q-input 
                   label="Contribuição Distrito"
@@ -124,6 +124,7 @@
                   prefix="R$"
                   reverse-fill-mask
                   mask="###.###.###,##" 
+                  @blur="calculateDiffBetweenEmprestimos()"
                   v-model="table.output.devolucaoEmprestimoIELB" 
                 />
                 <q-input 
@@ -133,6 +134,20 @@
                   mask="###.###.###,##" 
                   v-model="table.output.todasSaidas" 
                 />
+              </div>
+              <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
+                <div class="text-center">
+                  Atenção!
+                </div>
+                Há difença entre o valor de entrada de contribuição no SGA e saída das contribuições.
+                Envie um e-mail com os comprovantes para teste@teste.com
+              </div>
+              <div v-if="showEmprestimoNotify" class="text-subtitle1 text-bold q-px-md">
+                <div class="text-center">
+                  Atenção!
+                </div>
+                Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
+                Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="text-center">
                 
@@ -188,8 +203,8 @@ export default defineComponent({
       validated: false,
       contributionCalculatedMore: 0,
       contributionCalculatedLess: 0,
-      contributionOutputSum: null,
-      contributionEntriesSum: null,
+      contributionOutputSum: 0,
+      contributionEntriesSum: 0,
       table: {
         entries:{
           saldoAnterior: 0,
@@ -205,17 +220,15 @@ export default defineComponent({
           todasOutrasReceitas: 0,
         },
         output: {
-          contribuicaoIELB: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
-          },
           contribuicaoDistrito: 0,
           devolucaoEmprestimoIELB: 0,
           todasSaidas: 0
         },
-  
       },
+      showEmprestimoNotify: false,
+      showContribuitionNotify: false,
+      showContributionCalculatedMore: false,
+      showContributionCalculatedLess: false,
     }
   },
   beforeMount() {
@@ -223,19 +236,27 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+  calculateDiffBetweenEmprestimos() {
+    if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
+      this.showEmprestimoNotify = true
+    }
+  },
     calculateOfferPercents(){
-      let total = null
-      
-      let outPutTotalPercents = null
-      let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
-      let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais
-      let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis
+      console.log('entrou calculateOfferPercents')
+      let total = 0
+      let outPutTotalPercents = 0
+      let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
+      let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replace(',', '.')
+      let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replace(',', '.')
       total = ofertasDominicais + ofertasMensais + receitasAlugueis
       outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
-      if(total * 0.11 >= outPutTotalPercents){
+      if(+total * 0.11 >= outPutTotalPercents){
         this.contributionCalculatedMore = total * 0.11
-      }else if(total * 0.11 < outPutTotalPercents){
+        this.showContributionCalculatedMore = true
+      }else if(+total * 0.11 < outPutTotalPercents){
         this.contributionCalculatedLess = total * 0.11
+        this.showContribuitionNotify = true
+        this.showContributionCalculatedLess = true
       }
     },
     insertFinanceStatisticsDraft() {
@@ -293,25 +314,25 @@ export default defineComponent({
         console.log(r)
         this.contributionOutputSum = r.data.contributionOutput
         this.contributionEntriesSum = r.data.contributionEntries
-        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
+        r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
         this.table.output = {
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
+          contribuicaoDistrito: 0,
+          devolucaoEmprestimoIELB: 0,
+          todasSaidas: 0
         },
-        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
+        r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
         this.table.entries = {
-          saldoAnterior: '',
+          saldoAnterior: 0,
           receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
+            ofertasDominicais: 0,
+            ofertasMensais: 0,
+            receitasAlugueis: 0,
           },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
+          ofertasEspeciais: 0,
+          campanhasEspecificas: 0,
+          auxilio: 0,
+          emprestimos: 0,
+          todasOutrasReceitas: 0,
         }
       });
     },

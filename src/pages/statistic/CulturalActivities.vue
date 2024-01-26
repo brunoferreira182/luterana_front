@@ -8,16 +8,17 @@
               icon="home" 
               label="Introdução" 
               @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
-              />
-              <q-breadcrumbs-el 
+            />
+            <q-breadcrumbs-el 
               :label="congregationName" 
               style="cursor: pointer;" 
+              class="text-wrap"
               @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
-            <q-breadcrumbs-el label="Financeiro" />
+            <q-breadcrumbs-el label="Atividades cúlticas" />
           </q-breadcrumbs>
         </div>
-      <div class="q-ma-lg q-gutter-sm text-h6">
+      <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
       </div>
       <div class="row justify-center q-pa-md">
@@ -28,7 +29,7 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-h5">
+            <div class="text-h6">
               Culto {{ item.organismName }}
             </div>
             <q-input
@@ -47,7 +48,7 @@
               v-model.number="item.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-xl">
-              <div class="text-h5">
+              <div class="text-h6">
                 Santa-ceia
               </div>
               <q-input
@@ -65,7 +66,6 @@
         </div>
       </div>
       <div class="text-center">
-        
         <q-chip
           v-if="validated"
           color="green"
@@ -102,7 +102,9 @@ export default defineComponent({
   data() {
     return {
       validated: false,
-      congregationData:{},
+      congregationData: {},
+      culturalActivities: [],
+      congregationName: '',
       activitiesData:{
         cultoData: {
           qtyDadosPastor: 0,
