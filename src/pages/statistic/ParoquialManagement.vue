@@ -81,7 +81,8 @@ export default defineComponent({
     }
   },
   beforeMount() {
-    this.getOrganismNameForBreadCrumbs()
+    // this.getOrganismNameForBreadCrumbs()
+    this.getParoquialManagementType()
   },
   methods: {
     insertParoquialManagementType(){
@@ -100,20 +101,15 @@ export default defineComponent({
         this.$q.notify('Dados salvos com sucesso')
       });
     },
-    getOrganismNameForBreadCrumbs() {
-    const opt = {
-      route: "/desktop/statistics/getCongregacaoByOrganismId",
-      body: {
-        // organismId: "6530487ab2980d56e0985464",
-        organismId: this.$route.query.organismId
-      },
-    };
-    useFetch(opt).then((r) => {
-      if (r.error) return;
-      this.congregationName = r.data.organismName 
-      console.log("grupos", this.congregationName);
-    });
-  },
+    getParoquialManagementType(){
+      const opt = {
+        route:'/desktop/statistics/getParoquialManagementType',
+        // body : {}
+        }
+        useFetch(opt).then((r)=>{
+          this.group = r.data.managementType
+        })
+    }
   }
 })
 </script>
