@@ -1443,47 +1443,47 @@ export default defineComponent({
         this.dialogReportError.type = type
     },
     saveDraft() {
-      let regex = '/^\S+ \S+$/'
-      let pastorName = this.pastorData.name.value
-      let fatherName = this.pastorData.father.userName
-      let motherName = this.pastorData.mother.userName
-      let partnerName
-      if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
-        partnerName = this.pastorData.maritalRelation.partner.userName
-      }
-      console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
-      this.pastorData.parentalRelation.child.forEach((child) => {
-        if (child && (!child.userName.match(regex))) {
-          console.log(child)
-          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-          return
-        }
-      })
+      // let regex = '/^\S+ \S+$/'
+      // let pastorName = this.pastorData.name.value
+      // let fatherName = this.pastorData.father.userName
+      // let motherName = this.pastorData.mother.userName
+      // let partnerName
+      // if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+      //   partnerName = this.pastorData.maritalRelation.partner.userName
+      // }
+      // console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
+      // this.pastorData.parentalRelation.child.forEach((child) => {
+      //   if (child && (!child.userName.match(regex))) {
+      //     console.log(child)
+      //     this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //     return
+      //   }
+      // })
 
-      if (partnerName && (!partnerName.match(regex))) {
-        console.log(partnerName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('1')
-        return
-      } 
-      if (motherName && (!motherName.match(regex))) {
-        console.log(motherName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('2')
-        return
-      } 
-      if (fatherName && (!fatherName.match(regex))) {
-        console.log(fatherName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('3')
-        return
-      } 
-      if (!pastorName.match(regex)) {
-        console.log(pastorName)
-        this.$q.notify('Coloque ao menos um sobrenome em seu nome')
-        console.log('4')
-        return
-      }
+      // if (partnerName && (!partnerName.match(regex))) {
+      //   console.log(partnerName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('1')
+      //   return
+      // } 
+      // if (motherName && (!motherName.match(regex))) {
+      //   console.log(motherName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('2')
+      //   return
+      // } 
+      // if (fatherName && (!fatherName.match(regex))) {
+      //   console.log(fatherName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('3')
+      //   return
+      // } 
+      // if (!pastorName.match(regex)) {
+      //   console.log(pastorName)
+      //   this.$q.notify('Coloque ao menos um sobrenome em seu nome')
+      //   console.log('4')
+      //   return
+      // }
 
       let pastoralData = {
         pastorData: this.pastorData,
@@ -1494,9 +1494,9 @@ export default defineComponent({
         reportedErrors: this.reportedErrors
       }
       const opt = {
-        route: '/desktop/statistics/savePastoralData',
+        route: '/desktop/statistics/insertPastoralStatisticsDraft',
         body: {
-          userDataTabs: pastoralData
+          pastoralData: pastoralData
         }
       }
       useFetch(opt).then((r) => {
