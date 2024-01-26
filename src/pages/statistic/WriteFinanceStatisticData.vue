@@ -124,6 +124,7 @@
                   prefix="R$"
                   reverse-fill-mask
                   mask="###.###.###,##" 
+                  @blur="calculateDiffBetweenEmprestimos()"
                   v-model="table.output.devolucaoEmprestimoIELB" 
                 />
                 <q-input 
@@ -133,6 +134,9 @@
                   mask="###.###.###,##" 
                   v-model="table.output.todasSaidas" 
                 />
+              </div>
+              <div v-if="showNotify" class="text-subtitle1">
+                Há difença entre o valor de empréstimo registrado no SGA e a devolução de empréstimo
               </div>
               <div class="text-center">
                 
@@ -214,7 +218,7 @@ export default defineComponent({
           devolucaoEmprestimoIELB: 0,
           todasSaidas: 0
         },
-  
+        showNotify: false,
       },
     }
   },
@@ -223,9 +227,13 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    calculateDiffBetweenEmprestimos() {
+      if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
+        this.showNotify = true
+      }
+    },
     calculateOfferPercents(){
       let total = null
-      
       let outPutTotalPercents = null
       let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
       let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais

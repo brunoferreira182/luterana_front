@@ -22,7 +22,7 @@
         <q-item v-for="(item) in departamentos" :key="item" >
           <div style="border-radius: 1rem; background-color: rgb(245, 245, 245); width: 94%; " >
           <q-item-section class="item-section q-pa-md" >
-            <q-item-label @click="expandItem(item)" class="text-h5" style="white-space: nowrap;">
+            <q-item-label @click="expandItem(item)" class="text-h6" style="white-space: nowrap;">
               {{ item.organismName }}
               <q-btn
                 round

@@ -8,13 +8,14 @@
               icon="home" 
               label="Introdução" 
               @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
-              />
-              <q-breadcrumbs-el 
-              :label="congregationName" 
+            />
+            <q-breadcrumbs-el 
+              :label="culturalActivities[0].organismName" 
               style="cursor: pointer;" 
+              class="text-wrap"
               @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
-            <q-breadcrumbs-el label="Financeiro" />
+            <q-breadcrumbs-el label="Atividades cúlticas" />
           </q-breadcrumbs>
         </div>
       <div class="q-ma-lg q-gutter-sm text-h6 text-center">
@@ -65,7 +66,6 @@
         </div>
       </div>
       <div class="text-center">
-        
         <q-chip
           v-if="validated"
           color="green"
