@@ -14,6 +14,18 @@
           <q-item-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
           </q-item-section>
+          <q-chip
+            color="green"
+            label="Validado"
+            text-color="white"
+            v-if="status && status.pastoralStatus === 'sent'"
+          />
+          <q-chip
+            v-else
+            color="red"
+            label="Não Validado"
+            text-color="white"
+          />
         </q-item>
         <q-item 
           class="card" 
@@ -24,6 +36,18 @@
           <q-item-section>
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
+          <q-chip
+            color="green"
+            label="Validado"
+            text-color="white"
+            v-if="status && status.compositionStatus === 'sent'"
+          />
+          <q-chip
+            v-else
+            color="red"
+            label="Não Validado"
+            text-color="white"
+          />
         </q-item>
         <q-item 
           class="card" 
@@ -34,12 +58,24 @@
           <q-item-section>
             <q-item-label class="text-h5">Gestão Paroquial</q-item-label>
           </q-item-section>
+          <q-chip
+            color="green"
+            label="Validado"
+            text-color="white"
+            v-if="status && status.gestaoParoquialStatus === 'sent'"
+          />
+          <q-chip
+            v-else
+            color="red"
+            label="Não Validado"
+            text-color="white"
+          />
         </q-item>
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
           :disable="isPastor ? false : true" 
-          @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+          @click="goToStatistic"
         >
           <q-item-section>
             <q-item-label class="text-h5">Estatística</q-item-label>
@@ -64,11 +100,36 @@
           </q-item-section>
         </q-item> -->
       </q-list>
+      <q-dialog
+        v-model="dialogNotifystatus.open"
+        @hide="clearDialogNotifyStatus"
+      >
+        <q-card
+          style="width:400px"
+        >
+          <q-card-section
+            class="text-center text-h6"
+          >
+            Antes de ir para a estatística, todos os campos devem ser validados
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="Voltar"
+              @click="clearDialogNotifyStatus"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
 
 <script>
+import useFetch from "src/boot/useFetch";
 import { defineComponent } from "vue";
 // import useFetch from "src/boot/useFetch";
 import utils from "../../boot/utils";
@@ -79,13 +140,54 @@ export default defineComponent({
       userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
+      paroquiaId: null,
+      status: null,
+      dialogNotifystatus: {
+        open: false
+      }
     }
   },
   beforeMount(){
     this.verifyIfIsPastor()
+    this.getParoquiaId()
     // this.getParoquiasByUserId()
   },
   methods: {
+    clearDialogNotifyStatus() {
+      this.dialogNotifystatus = {
+        open: false
+      }
+    },
+    goToStatistic() {
+      if (this.status && this.status.statisticPermission) {
+        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      } else {
+        this.dialogNotifystatus.open = true
+      }
+    },
+    getParoquiaId() {
+      const opt = {
+        route: '/desktop/statistics/getParoquiaIdByUserId',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.paroquiaId = r.data.organismId
+        this.getStatusPreStatistic()
+      })
+    },
+    getStatusPreStatistic() {
+      const opt = {
+        route: '/desktop/statistics/getPreStatisticStatus',
+        body: {
+          organismId: this.paroquiaId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.status = r.data
+        console.log(this.status, 'o que será que está acontecendo')
+      })
+    },
     verifyIfIsPastor() {
       const userInfo = utils.presentUserInfo()
       if (userInfo.userType === 'pastor') {
