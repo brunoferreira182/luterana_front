@@ -179,13 +179,12 @@
                     Quando ocorre o evento:
                   </div>
                   <q-list
-                  bordered
+                    bordered
                     v-for="day in composition.congregations[iOrg].diaEHorario"
                     :key="day"
+                    class="q-mt-sm"
                   >
-                  <q-item
-                  
-                  >
+                  <q-item>
                     <q-item-section>
                       <q-item-label lines="1">
                         Dia: {{ day.day }}
