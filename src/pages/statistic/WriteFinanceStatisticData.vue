@@ -106,17 +106,19 @@
                   Saídas
                 </div>
                 <div class="text-h6">
-                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum ? contributionOutputSum : '0' }}</q-chip>
+                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
                 </div>
-                <div class="text-green" v-if="contributionCalculatedMore > 0">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore }} <q-icon name="north"/>
+                <div class="text-green" v-if="showContributionCalculatedMore">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
                 </div>
-                <div class="text-red" v-else-if="contributionCalculatedLess > 0">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess }} <q-icon name="south"/>
+                <div class="text-red" v-else-if="showContributionCalculatedLess">
+                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
                 </div>
                 <q-input 
                   label="Contribuição Distrito"
                   prefix="R$"
+                  reverse-fill-mask
+                  mask="###.###.###,##" 
                   v-model="table.output.contribuicaoDistrito" 
                 />
                 <q-input 
@@ -135,12 +137,19 @@
                   v-model="table.output.todasSaidas" 
                 />
               </div>
-              <div v-if="showNotify" class="text-subtitle1 text-bold q-px-md">
+              <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
+                <div class="text-center">
+                  Atenção!
+                </div>
+                Há difença entre o valor de entrada de contribuição no SGA e saída das contribuições.
+                Envie um e-mail com os comprovantes para teste@teste.com
+              </div>
+              <div v-if="showEmprestimoNotify" class="text-subtitle1 text-bold q-px-md">
                 <div class="text-center">
                   Atenção!
                 </div>
                 Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
-                Envie um e-mail com os comprovantes para teste@teste.com
+                Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="text-center">
                 
@@ -196,8 +205,8 @@ export default defineComponent({
       validated: false,
       contributionCalculatedMore: 0,
       contributionCalculatedLess: 0,
-      contributionOutputSum: null,
-      contributionEntriesSum: null,
+      contributionOutputSum: 0,
+      contributionEntriesSum: 0,
       table: {
         entries:{
           saldoAnterior: 0,
@@ -223,110 +232,125 @@ export default defineComponent({
           todasSaidas: 0
         },
       },
-      showNotify: false,
+      showEmprestimoNotify: false,
+      showContribuitionNotify: false,
+      showContributionCalculatedMore: false,
+      showContributionCalculatedLess: false,
     }
+  },
+  beforeUnmount(){
+    this.insertFinanceStatisticsDraft()
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    calculateDiffBetweenEmprestimos() {
-      if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
-        this.showNotify = true
-      }
-    },
-    calculateOfferPercents(){
-      let total = null
-      let outPutTotalPercents = null
-      let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais
-      let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais
-      let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis
-      total = ofertasDominicais + ofertasMensais + receitasAlugueis
-      outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
-      if(total * 0.11 >= outPutTotalPercents){
-        this.contributionCalculatedMore = total * 0.11
-      }else if(total * 0.11 < outPutTotalPercents){
-        this.contributionCalculatedLess = total * 0.11
-      }
-    },
-    insertFinanceStatisticsDraft() {
-      const opt = {
-        route: "/desktop/statistics/insertFinanceStatisticsDraft",
-        body: {
-          organismId: this.$route.query.organismId,
-          financeData: this.table
-        },
-      };
-      if (Object.keys(this.table.output).length > 0) {
-        opt.body.financeData = this.table;
-      } else if (Object.keys(this.table.entry).length > 0) {
-        opt.body.financeData = this.table;
-      }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-        opt.body.financeData = this.table
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.$q.notify('Dados salvos como rascunho')
-      });
-    },
-    getOrganismNameForBreadCrumbs() {
+  calculateDiffBetweenEmprestimos() {
+    if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
+      this.showEmprestimoNotify = true
+    }
+  },
+  calculateOfferPercents(){
+    console.log('entrou calculateOfferPercents')
+    let total = 0
+    let outPutTotalPercents = 0
+    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
+    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replace(',', '.')
+    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replace(',', '.')
+    total = ofertasDominicais + ofertasMensais + receitasAlugueis
+    outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
+    if(+total * 0.11 >= outPutTotalPercents){
+      this.contributionCalculatedMore = total * 0.11
+      this.showContributionCalculatedMore = true
+    }else if(+total * 0.11 < outPutTotalPercents){
+      this.contributionCalculatedLess = total * 0.11
+      this.showContribuitionNotify = true
+      this.showContributionCalculatedLess = true
+    }
+  },
+  insertFinanceStatisticsDraft() {
     const opt = {
-      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
-        // organismId: "6530487ab2980d56e0985464",
-        organismId: this.$route.query.organismId
+        organismId: this.$route.query.organismId,
+        financeData: this.table
       },
     };
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
     useFetch(opt).then((r) => {
-      if (r.error) return;
-      this.congregationName = r.data.organismName 
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+        return
+      }
+      this.$q.notify('Dados salvos como rascunho')
     });
   },
-    getFinanceStatisticByOrganismId() {
-      const opt = {
-        route: "/desktop/statistics/getFinanceStatisticByOrganismId",
-        body: {
-          organismId: this.$route.query.organismId,
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error || !r.data) return
-        this.validated = r.data.validated
-        console.log(r)
-        this.contributionOutputSum = r.data.contributionOutput
-        this.contributionEntriesSum = r.data.contributionEntries
-        this.table.output = r.data.financeData.output ? r.data.financeData.output : 
-        this.table.output = {
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
-        },
-        this.table.entries = r.data.financeData.entries ? r.data.financeData.entries :  
-        this.table.entries = {
-          saldoAnterior: '',
-          receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
-        }
-      });
+  getOrganismNameForBreadCrumbs() {
+  const opt = {
+    route: "/desktop/statistics/getCongregacaoByOrganismId",
+    body: {
+      // organismId: "6530487ab2980d56e0985464",
+      organismId: this.$route.query.organismId
     },
+  };
+  useFetch(opt).then((r) => {
+    if (r.error) return;
+    this.congregationName = r.data.organismName 
+  });
+},
+  getFinanceStatisticByOrganismId() {
+    const opt = {
+      route: "/desktop/statistics/getFinanceStatisticByOrganismId",
+      body: {
+        organismId: this.$route.query.organismId,
+        page: this.pagination.page,
+        rowsPerPage: this.pagination.rowsPerPage,
+      },
+    };
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      if (r.error || !r.data) return
+      this.validated = r.data.validated
+      console.log(r)
+      this.contributionOutputSum = r.data.contributionOutput
+      this.contributionEntriesSum = r.data.contributionEntries
+      r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
+      this.table.output = {
+        contribuicaoIELB: {
+          ofertasDominicais: 0,
+          ofertasMensais: 0,
+          receitasAlugueis: 0,
+        },
+        contribuicaoDistrito: 0,
+        devolucaoEmprestimoIELB: 0,
+        todasSaidas: 0
+      },
+      r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
+      this.table.entries = {
+        saldoAnterior: 0,
+        receitasRegulares: {
+          ofertasDominicais: 0,
+          ofertasMensais: 0,
+          receitasAlugueis: 0,
+        },
+        ofertasEspeciais: 0,
+        campanhasEspecificas: 0,
+        auxilio: 0,
+        emprestimos: 0,
+        todasOutrasReceitas: 0,
+      }
+    });
+  },
   }
 })
 </script>

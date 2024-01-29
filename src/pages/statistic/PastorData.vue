@@ -1,7 +1,18 @@
 <template>
   <q-page-container class="no-padding">
     <q-page> 
-      <div class="q-pa-md text-center">
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            
+            <q-breadcrumbs-el label="Gestão paroquial" />
+        </q-breadcrumbs>
+      </div>
+      <!-- <div class="q-pa-md text-center">
         <div class="text-capitalize"> 
           <div class="row">
             <q-btn 
@@ -20,7 +31,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div>
         <div>
           <div class="text-h5 q-px-md">Dados pessoais</div>
@@ -456,14 +467,30 @@
             </q-item>
           </div> -->
         </div>
-        <div class="q-my-lg text-right q-ma-lg">
+        <div class="q-ma-lg">
           <q-btn
-            label="Salvar como rascunho"
-            class="q-ma-md text-center"
-            color="warning"
+            :disable="status && status.value === 'sent'"
+            label="Salvar rascunho"
+            class="full-width"
+            color="primary"
+            outline
             rounded
             no-caps
             @click="saveDraft"
+          >
+            <q-tooltip>
+              Salvar rascunho
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            :disable="status && status.value === 'sent'"
+            label="Salvar oficial"
+            class="full-width q-my-md"
+            color="green"
+            rounded
+            unelevated
+            no-caps
+            @click="saveOficial"
           >
             <q-tooltip>
               Salvar rascunho
@@ -1188,6 +1215,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogLastPastoralActivity.open"
+        @hide="clearDialogLastPastoralActivity"
       >
         <q-card style="width: 400px;">
           <q-card-section>
@@ -1233,6 +1261,7 @@
               unelevated
               no-caps
               label="Sair"
+              @click="clearDialogLastPastoralActivity"
             />
             <q-btn
               color="primary"
@@ -1376,14 +1405,51 @@ export default defineComponent({
       filterValue: '',
       organismList: null,
       lastOrganismPastorActivities: null,
+      paroquiaId: null,
+      validated: false,
+      status: null
     }
   },
 
   beforeMount() {
-    this.getPastorDataTabs()
+    // this.getPastorDataTabs()
     this.getMyOrganismsList()
+    this.getParoquiaId()
   },
   methods: {
+    clearDialogLastPastoralActivity() {
+      this.dialogLastPastoralActivity = {
+        open: false,
+        selectedOrganism: null,
+        lastOrganismPastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+        ],
+      }
+    },
+    async getParoquiaId() {
+      const opt = {
+        route: '/desktop/statistics/getParoquiaIdByUserId',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.paroquiaId = r.data.organismId
+        this.getPastorDataTabs()
+      })
+    },
+    saveOficial() {
+      const opt = {
+        route: '/desktop/statistics/insertPastoralStatisticsDone',
+        body: {
+          organismId: this.paroquiaId
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.getPastorDataTabs()
+      })
+    },
     addLastPastoralActivity() {
       this.lastOrganismPastorActivities = {
         selectedOrganism: this.dialogLastPastoralActivity.selectedOrganism._id,
@@ -1392,8 +1458,6 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = false
     },
     getCongregatiionsByString(val, update, abort) {
-      console.log('Me chamou')
-      console.log(val, 'teste')
       if (val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
@@ -1443,47 +1507,47 @@ export default defineComponent({
         this.dialogReportError.type = type
     },
     saveDraft() {
-      let regex = '/^\S+ \S+$/'
-      let pastorName = this.pastorData.name.value
-      let fatherName = this.pastorData.father.userName
-      let motherName = this.pastorData.mother.userName
-      let partnerName
-      if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
-        partnerName = this.pastorData.maritalRelation.partner.userName
-      }
-      console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
-      this.pastorData.parentalRelation.child.forEach((child) => {
-        if (child && (!child.userName.match(regex))) {
-          console.log(child)
-          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-          return
-        }
-      })
+      // let regex = '/^\S+ \S+$/'
+      // let pastorName = this.pastorData.name.value
+      // let fatherName = this.pastorData.father.userName
+      // let motherName = this.pastorData.mother.userName
+      // let partnerName
+      // if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+      //   partnerName = this.pastorData.maritalRelation.partner.userName
+      // }
+      // console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
+      // this.pastorData.parentalRelation.child.forEach((child) => {
+      //   if (child && (!child.userName.match(regex))) {
+      //     console.log(child)
+      //     this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //     return
+      //   }
+      // })
 
-      if (partnerName && (!partnerName.match(regex))) {
-        console.log(partnerName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('1')
-        return
-      } 
-      if (motherName && (!motherName.match(regex))) {
-        console.log(motherName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('2')
-        return
-      } 
-      if (fatherName && (!fatherName.match(regex))) {
-        console.log(fatherName)
-        this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-        console.log('3')
-        return
-      } 
-      if (!pastorName.match(regex)) {
-        console.log(pastorName)
-        this.$q.notify('Coloque ao menos um sobrenome em seu nome')
-        console.log('4')
-        return
-      }
+      // if (partnerName && (!partnerName.match(regex))) {
+      //   console.log(partnerName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('1')
+      //   return
+      // } 
+      // if (motherName && (!motherName.match(regex))) {
+      //   console.log(motherName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('2')
+      //   return
+      // } 
+      // if (fatherName && (!fatherName.match(regex))) {
+      //   console.log(fatherName)
+      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+      //   console.log('3')
+      //   return
+      // } 
+      // if (!pastorName.match(regex)) {
+      //   console.log(pastorName)
+      //   this.$q.notify('Coloque ao menos um sobrenome em seu nome')
+      //   console.log('4')
+      //   return
+      // }
 
       let pastoralData = {
         pastorData: this.pastorData,
@@ -1494,14 +1558,16 @@ export default defineComponent({
         reportedErrors: this.reportedErrors
       }
       const opt = {
-        route: '/desktop/statistics/savePastoralData',
+        route: '/desktop/statistics/insertPastoralStatisticsDraft',
         body: {
-          userDataTabs: pastoralData
+          pastoralData: pastoralData,
+          organismId: this.paroquiaId
         }
       }
       useFetch(opt).then((r) => {
         if  (r.error) return
         else this.$q.notify('Rascunho salvo com sucesso')
+        this.beforeMount()
       })
     },
     clearDialogAddLink() {
@@ -1934,25 +2000,27 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getPastorStatisticsData',
         body: {
-          organismId: this.$route.query.organismId
+          organismId: this.paroquiaId
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
         } else {
-          console.log(r.data, 'macacos agudos com ferroes de abelha')
-          this.pastorData = r.data.pastorData
-          if (r.data.pastorFormations) {
-            this.pastorFormations = r.data.pastorFormations
+          console.log(r.data, 'retorno fetch')
+          this.validated = r.data.validated
+          this.status = r.data.status
+          this.pastorData = r.data.pastoralData.pastorData
+          if (r.data.pastoralData.pastorFormations) {
+            this.pastorFormations = r.data.pastoralData.pastorFormations
           }
-          if (r.data.pastorActivities){
-            this.pastorActivities = r.data.pastorActivities
+          if (r.data.pastoralData.pastorActivities){
+            this.pastorActivities = r.data.pastoralData.pastorActivities
           }
-          if (r.data.lastPastorActivities) {
-            this.lastOrganismPastorActivities = r.data.lastPastorActivities
-          } if (r.data.pastorLinks) {
-            this.pastorLink = r.data.pastorLinks
+          if (r.data.pastoralData.lastPastorActivities) {
+            this.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities
+          } if (r.data.pastoralData.pastorLinks) {
+            this.pastorLink = r.data.pastoralData.pastorLinks
           }
         }
       })

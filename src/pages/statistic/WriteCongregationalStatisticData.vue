@@ -1,6 +1,17 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      <div class="q-pa-md q-gutter-sm">
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer;" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            
+            <q-breadcrumbs-el label="Composição" />
+        </q-breadcrumbs>
+      </div>
       <div class="text-h5  text-center">
         Composição
       </div>
@@ -109,16 +120,16 @@
                     >
                       <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
                       <q-item 
-                        clickable 
+                        :clickable="dep.trueLength > 0 ? true : false"
                         v-ripple
-                        @click="openDepartamentDetail(iOrg, iDep)"
+                        @click="openSelectDepartamentDetail(iOrg, iDep)"
                       >
                         <q-item-section avatar>
                           <q-avatar
                             :color="dep.trueLength === 0 ? 'grey' : 'primary'" 
                             text-color="white"
                           >
-                            {{ dep.existingDepartaments.length }} 
+                            {{ dep.trueLength }} 
                           </q-avatar>
                         </q-item-section>
                         <q-item-section>{{dep.organismConfigName}}</q-item-section>
@@ -253,6 +264,7 @@
                   <q-input
                     label="Data de fundação"
                     class="q-pa-sm"
+                    mask="##/##/####"
                     v-model="org.foundationDate"
                   />
                 </q-expansion-item>
@@ -286,12 +298,14 @@
           rounded
           unelevated
           no-caps
+          :disable="status && status.status === 'sent'"
           label="Descartar Rascunho"
           color="orange"
           @click="discardDraft"
           outline
         ></q-btn>
         <q-btn
+          :disable="status && status.status === 'sent'"
           class="full-width q-mt-md"
           rounded
           unelevated
@@ -301,6 +315,8 @@
           @click="saveDraft"
         ></q-btn>
         <q-btn
+          v-if="validated"
+          :disable="status && status.status === 'sent'"
           class="full-width q-mt-md"
           rounded
           unelevated
@@ -678,115 +694,81 @@
         >
           <q-card-section 
             class="text-center"
-            v-for="(dep, iDep) in dialogDepartamentDetail.data"
-            :key="dep"
           >
-            <div v-if="!dep.action || dep.action !== 'remove'">
-              <div class="text-h6">
-                {{ dep.departamentName }}
-                <q-btn
-                  unelevated  
-                  icon="delete"
-                  size="10px"
-                  round
-                  no-caps
-                  rounded
-                  color="red"
-                  @click="deleteDepartament(iDep)"
-                >
-                  <q-tooltip>Excluir Departamento</q-tooltip>
-                </q-btn>
-              </div>
-              <div class="text-left q-ml-sm">
-                <strong>Funções:</strong>
-              </div>
-              <div
-                v-for="(func, iFunc) in dep.organismFunctions"
-                :key="func"
-                class="q-my-md text-left q-ml-md"
+            <div class="text-h6">
+              {{ dialogDepartamentDetail.data.departamentName }}
+              <q-btn
+                class="text-left"
+                unelevated  
+                icon="delete"
+                size="10px"
+                round
+                no-caps
+                rounded
+                color="red"
+                @click="deleteDepartament()"
               >
-                {{ func.functionName }}
-                <q-btn
-                  color="primary"
-                  flat
-                  rounded
-                  icon="add"
-                  @click="addUserFunctioninDept(iDep, iFunc)"
-                >
-                  <q-tooltip>Adicionar pessoa na função</q-tooltip>
-                </q-btn>
-                <div
-                  v-for="(user, iUser) in func.functionUsers"
-                  :key="user"
-                  class="q-ml-sm"
-                >
-                  {{ user.userName }}
-                  <q-btn
-                    color="red"
-                    flat
-                    rounded
-                    icon="delete"
-                    @click="removeUserFromFunctionDept(iDep, iFunc, iUser)"
-                  ></q-btn>
-                </div>
-              </div>
+                <q-tooltip>Excluir Departamento</q-tooltip>
+              </q-btn>
             </div>
           </q-card-section>
           <q-card-section>
-            <q-item
-              v-for="(func, iFunc) in dialogDepartamentDetail.data.organismFunctions"
-              :key="func"
-            >
-              <q-item-section>
-                <q-item-label>
-                  <strong>{{ func.functionName }}:</strong>
+            <q-list bordered>
+              <q-expansion-item
+                label="Funções"
+                class="bg-grey-2 q-pa-sm text-left q-ma-sm"
+                style="border-radius: 1rem;"
+              >
+                <div
+                  class="text-left q-ml-lg"
+                  v-for="(func, iFunc) in dialogDepartamentDetail.data.organismFunctions"
+                  :key="func"
+                >
+                  <strong>{{ func.functionName }}</strong>
                   <q-btn
                     color="primary"
                     flat
                     rounded
                     icon="add"
-                    @click="addFuncToDept(iFunc )"
+                    @click="addUserFunctioninDept(iFunc)"
+                    size="12px"
                   >
-                    <q-tooltip>
-                      Adicionar usuário a função
-                    </q-tooltip>
                   </q-btn>
-                </q-item-label>
-                <q-item-label  
-                  v-for="(user, iUser) in func.functionUsers"
-                  :key="user"
-                >
-                  {{ user.userName }}
-                  <q-btn
-                    color='red'
-                    flat
-                    rounded
-                    icon="delete"
-                    @click="removeUserFromFunctionDept(iFunc, iUser)"
-                  > 
-                    <q-tooltip>Excluir usuário da função</q-tooltip>
-                  </q-btn>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <!-- <div class="text-center q-mt-sm">
-              <q-btn
-                flat
-                label="Voltar"
-                no-caps
-                rounded
-                color="primary"
-                @click="clearDialogDepartaments"
-              />
-              <q-btn
-                label="Excluir departamento"
-                unelevated  
-                no-caps
-                rounded
-                color="red"
-                @click="deleteDepartament()"
-              />
-            </div> -->
+                  <div
+                    v-for="(user, iUser) in dialogDepartamentDetail.data.organismFunctions[iFunc].functionUsers"
+                    :key="user"
+                  >
+                    <q-item
+                      class="no-padding"
+                      v-if="!user.action || (user.action && user.action !== 'remove')"
+                    >
+                      <q-item-section>
+                        <q-item-label>
+                          {{ user.userName }}
+                          <q-btn
+                            color="red"
+                            flat
+                            rounded
+                            unelevated
+                            @click="removeUserFromFunctionDept(iFunc, iUser)"
+                            icon="delete"
+                          />
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                </div>
+              </q-expansion-item>
+            </q-list>
+            <q-list bordered class="q-mt-sm">
+              <q-expansion-item
+                class="bg-grey-2 q-pa-sm text-left q-ma-sm"
+                style="border-radius:1rem"
+                label="Outros dados"
+              >
+
+              </q-expansion-item>
+            </q-list>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -866,6 +848,34 @@
               @click="removeCongregation()"
             />
           </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogSelectDepartamentDetail.open"
+        @hide="clearDialogSelectDepartamentDetail"
+      >
+        <q-card style="width: 400px;border-radius:1rem">
+          <q-card-section class="text-center text-h6">
+            Selecione o departamento
+          </q-card-section>
+          <q-card-section>
+            <div
+              v-for="(dep, iExistsDept) in dialogSelectDepartamentDetail.departaments"
+              :key="dep"
+            >
+              <q-item
+                v-if="!dep.action || (dep.action && dep.action !== 'remove')"
+                class="bg-grey-2 q-my-sm"
+                clickable
+                style="border-radius:.7rem"
+                @click="openDepartamentDetail(iExistsDept)"
+              > 
+                <div>
+                  <strong>{{ dep.departamentName }}</strong>
+                </div>
+              </q-item>
+            </div>
+          </q-card-section>
         </q-card>
       </q-dialog>
     </q-page>
@@ -958,13 +968,31 @@ export default defineComponent({
       dialogRemoveCongregation: {
         open: false,
         iOrg: null
-      }
+      },
+      dialogSelectDepartamentDetail: {
+        open: false,
+        departaments: null
+      },
+      validated: false,
+      status: null
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
+    clearDialogSelectDepartamentDetail() {
+      this.dialogSelectDepartamentDetail = {
+        open: false,
+        departaments: null
+      }
+    },
+    openSelectDepartamentDetail(iOrg, iDep) {
+      this.dialogSelectDepartamentDetail.departaments = this.composition.congregations[iOrg].depts[iDep].existingDepartaments
+      this.dialogSelectDepartamentDetail.open = true
+      this.dialogDepartamentDetail.iOrg = iOrg
+      this.dialogDepartamentDetail.iDep = iDep
+    },
     activateCongregation(iOrg) {
       console.log(iOrg, 'mas que macaquisse é essa?')
       this.composition.congregations[iOrg].action = ''
@@ -1029,7 +1057,6 @@ export default defineComponent({
     },
     confirmAddNewDepartament() {
       this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts.forEach((departament, iDep) => {
-        console.log(departament)
         if (departament.organismConfigId === this.dialogAddNewDepartament.departamentSelected.organismConfigId ) {
           let functions = []
           this.dialogAddNewDepartament.functions.forEach((func) => {
@@ -1047,6 +1074,7 @@ export default defineComponent({
             organismFunctions: functions,
             action: 'add'
           })
+          this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[iDep].trueLength++
         }
       })
       this.cleanDialogAddNewDepartament()
@@ -1090,11 +1118,8 @@ export default defineComponent({
         console.log(r.data)
       })
     },
-    addUserFunctioninDept(iExistsDept, iFunc) {
-      this.dialogAddFunctionToDept.iExistsDept = iExistsDept
+    addUserFunctioninDept(iFunc) {
       this.dialogAddFunctionToDept.iFunc = iFunc
-      this.dialogAddFunctionToDept.iDep = this.dialogDepartamentDetail.iDep
-      this.dialogAddFunctionToDept.iOrg = this.dialogDepartamentDetail.iOrg
       this.dialogAddFunctionToDept.open = true
     },
     clearDialogDepartaments() {
@@ -1106,22 +1131,22 @@ export default defineComponent({
         iExistsDept: null
       }
     },
-    deleteDepartament(iDep) {
-      if (!this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iDep].action) {
-        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iDep].action = 'remove'
+    deleteDepartament() {
+      if (!this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].action) {
+        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].action = 'remove'
       } else {
-        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iDep].action = 'remove'
+        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].action = 'remove'
       }
+      !this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].trueLength--
       this.clearDialogDepartaments()
     },
-    openDepartamentDetail(iOrg, iDep) {
-      this.dialogDepartamentDetail.data = 
-        this.composition.congregations[iOrg]
-        .depts[iDep]
-        .existingDepartaments
+    openDepartamentDetail(iExistsDept) {
+      this.dialogDepartamentDetail.data = this.composition.congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[iExistsDept]
+      this.dialogDepartamentDetail.iExistsDept = iExistsDept
       this.dialogDepartamentDetail.open = true
-      this.dialogDepartamentDetail.iOrg = iOrg
-      this.dialogDepartamentDetail.iDep = iDep
+      this.clearDialogSelectDepartamentDetail()
     },
     addNewDepartament(iOrg) {
       this.dialogAddNewDepartament.iOrg = iOrg
@@ -1152,7 +1177,6 @@ export default defineComponent({
     confirmAddNewOrganism() {
       this.dialogAddCongregation.functions.forEach((func, iFunc) => {
         let funcData = func
-        console.log(funcData, 'cu')
         if (funcData.users) {
           this.dialogAddCongregation.functions[iFunc] = {
             functionName: funcData.description,
@@ -1168,12 +1192,20 @@ export default defineComponent({
           }
         }
       })
+      
+      let departaments = [] 
+      
+      this.composition.congregations[0].depts.forEach((dep, iDep)  => {
+        departaments.push(dep)
+        departaments[iDep].existingDepartaments = []
+      })
 
       this.composition.congregations.push({
         organismChildConfig: 'Congregação',
         organismConfigId: '6525360fd7cd5c09a8d759be',
         organismChildName: this.dialogAddCongregation.data.name,
         organismFunctions: this.dialogAddCongregation.functions,
+        depts: departaments,
         action: 'add',
         additionalData: {
           email: this.dialogAddCongregation.data.email,
@@ -1259,9 +1291,9 @@ export default defineComponent({
     },
     confirmAddUserToFunctionInDept() {
       this.composition.
-      congregations[this.dialogAddFunctionToDept.iOrg].
-      depts[this.dialogAddFunctionToDept.iDep].
-      existingDepartaments[this.dialogAddFunctionToDept.iExistsDept].
+      congregations[this.dialogDepartamentDetail.iOrg].
+      depts[this.dialogDepartamentDetail.iDep].
+      existingDepartaments[this.dialogDepartamentDetail.iExistsDept].
       organismFunctions[this.dialogAddFunctionToDept.iFunc].
       functionUsers.push({
         userName: this.dialogAddFunctionToDept.userSelected.userName,
@@ -1270,11 +1302,11 @@ export default defineComponent({
       })
       this.clearDialogAddUserToFunctionInDept()
     },
-    removeUserFromFunctionDept(iExistsDept, iFunc, iUser) {
-      if (!this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action) {
-        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action =  'remove'
+    removeUserFromFunctionDept(iFunc, iUser) {
+      if (!this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action) {
+        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action =  'remove'
       } else {
-        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
+        this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
       }
     },
     saveDraft() {
@@ -1286,6 +1318,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
+        this.getCompositionByUserId()
       })
     },
     deleteUserFromFunction(iOrg, iFunc, iUser) {
@@ -1357,6 +1390,12 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.composition = r.data
+        if (r.data.validated) {
+          this.validated = r.data.validated
+        }
+        if (r.data.status) {
+          this.status = r.data.status
+        }
         let depConfigList = []
         this.composition.congregations[0].depts.forEach((dep) => {
           depConfigList.push({
