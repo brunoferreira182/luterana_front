@@ -121,8 +121,8 @@
                       v-for="(dep, iDep) in org.depts"
                       :key="dep"
                     >
-                      <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
                       <q-item 
+                        v-if="dep.action !== 'naoExiste'"
                         :clickable="dep.trueLength > 0 ? true : false"
                         v-ripple
                         @click="openSelectDepartamentDetail(iOrg, iDep)"
@@ -722,7 +722,39 @@
                 style="border-radius:1rem"
                 label="Outros dados"
               >
-
+                <div class="text-h6 q-my-sm q-ml-sm">
+                  Quando ocorre o evento:
+                </div>
+                <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
+                  <q-list
+                    bordered
+                      v-for="day in composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario"
+                      :key="day"
+                      class="q-my-sm"
+                  >
+                    <q-item>
+                      <q-item-section>
+                        <q-item-label lines="1">
+                          Dia: {{ day.day }}
+                        </q-item-label>
+                        <q-item-label lines="2">
+                          Horário: {{ day.hour }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+                <q-btn
+                  label="Adicionar dia e horário"
+                  color="primary"
+                  unelevated
+                  no-caps
+                  rounded
+                  flat
+                  @click="addDayAndHourInDept(iOrg, iDep)"
+                  icon="add"
+                  class="q-px-sm q-ml-sm"
+                />
               </q-expansion-item>
             </q-list>
           </q-card-section>
@@ -839,7 +871,7 @@
         @hide="clearDialogAddEventsDayAndHour"
       >
         <q-card
-          style="width:400px"
+          style="width:400px;border-radius:1rem"
         >
           <q-card-section class="text-center text-h6">
             <strong>Selecione o dia da semana e o horário</strong>
@@ -874,6 +906,53 @@
               label="Adicionar"
               no-caps
               @click="confirmAddEventsDayAndHour"
+              unelevated
+              rounded
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddEventsDayAndHourInDep.open"
+        @hide="clearDialogAddDayAndHourInDept"
+      >
+      <q-card
+          style="width:400px;border-radius:1rem"
+        >
+          <q-card-section class="text-center text-h6">
+            <strong>Selecione o dia da semana e o horário</strong>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddEventsDayAndHourInDep.day"
+              class="q-px-sm"
+              label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Informe o horário"
+              class="q-px-sm"
+              v-model="dialogAddEventsDayAndHourInDep.hour"
+              type="time"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogAddDayAndHourInDept"
+              flat
+              unelevated
+              color="primary"
+            />
+            <q-btn
+              label="Adicionar"
+              no-caps
+              @click="confirmAddEventsDayAndHourInDept"
               unelevated
               rounded
               color="primary"
@@ -985,6 +1064,11 @@ export default defineComponent({
         iOrg: null,
         hour: null
       },
+      dialogAddEventsDayAndHourInDep: {
+        open: false,
+        day: null,
+        hour: null
+      },
       daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo']
     }
   }, 
@@ -992,10 +1076,45 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: {
+    clearDialogAddDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep = {
+        open: false,
+        day: null,
+        hour: null
+      }
+    },
+    confirmAddEventsDayAndHourInDept() {
+      if (!this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario) {
+        this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario = []
+      }
+      
+      this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario.push({
+        day: this.dialogAddEventsDayAndHourInDep.day,
+        hour: this.dialogAddEventsDayAndHourInDep.hour,
+        action: 'add'
+      })
+      this.clearDialogAddDayAndHourInDept()
+    },
+    addDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep.open = true
+    }, 
     confirmAddEventsDayAndHour() {
       this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
         day: this.dialogAddEventsDayAndHour.day,
-        hour: this.dialogAddEventsDayAndHour.hour
+        hour: this.dialogAddEventsDayAndHour.hour,
+        action: 'add'
       })
       this.clearDialogAddEventsDayAndHour()
     },
