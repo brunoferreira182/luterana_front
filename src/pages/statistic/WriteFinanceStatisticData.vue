@@ -172,7 +172,6 @@
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
-                  rounded
                   class="q-my-lg"
                   no-caps
                   @click="insertFinanceStatisticsDraft"
