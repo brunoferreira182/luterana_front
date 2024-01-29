@@ -381,7 +381,7 @@
           </div>
         </q-item>
       </q-list>
-      <div class="q-ma-sm q-mt-lg" >
+      <div class="q-ma-sm q-mt-lg text-center" >
         <q-chip
           v-if="validated"
           color="green"
