@@ -27,9 +27,26 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <q-item-label class="text-subtitle1" lines="2">
-              {{ organism.organismConfigName }}
+            <!-- <q-item-label>
+              <q-chip v-if="!organism.status.atividadeCulticaStatus || organism.status.atividadeCulticaStatus === 'notSent'">
+                Atividades cúlticas não enviado
+              </q-chip>
             </q-item-label>
+            <q-item-label>
+              <q-chip :color="organism.status.groupsActivitiesStatus === null && organism.status.groupsActivitiesStatus === 'notSend' ? 'primary' : 'grey'">
+                Atividades de grupos {{ organism.status.groupsActivitiesStatus === null || organism.status.groupsActivitiesStatus === 'notSend' ? 'enviado' : 'rascunho' }}
+              </q-chip>
+            </q-item-label>
+            <q-item-label>
+              <q-chip >
+                Movimento de membros {{ organism.status.membersMovementStatus }}
+              </q-chip>
+            </q-item-label>
+            <q-item-label>
+              <q-chip >
+                Financeiro {{ organism.status.financeStatus }}
+              </q-chip>
+            </q-item-label> -->
             <div class="q-mt-md">Progresso:</div>
             <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
             <div class="absolute-full flex flex-center">
@@ -37,7 +54,6 @@
             </div>
           </q-linear-progress>
           </q-item-section>
-          
         </q-item>
         <q-btn
           label="Enviar estatística"
@@ -54,7 +70,7 @@
               Atenção
             </q-item-section>
             <q-item-section class="text-subtitle2">
-              A estatísica só estará pronta para envio <br/> 
+              A estatística só estará pronta para envio <br/> 
               se todos os progressos estiverem em 100%
             </q-item-section>
             <q-item-section>
@@ -97,24 +113,7 @@ export default defineComponent({
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
   },
-  mounted(){
-    this.getStatisticStatus()
-  },
   methods: {
-    async getStatisticStatus() {
-    await this.getParoquiasByUserId();
-      const opt = {
-        route: "/desktop/statistics/getStatisticStatus",
-        body: {
-          organismsIds: this.organismsIds
-        }
-      }
-      this.$q.loading.show()
-      await useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        console.log(r)
-      });
-    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -128,12 +127,12 @@ export default defineComponent({
     goToCompleteStatistic(organism) {
       this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
-    async getParoquiasByUserId(){
+    getParoquiasByUserId(){
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",
       };
       this.$q.loading.show()
-      await useFetch(opt).then((r) => {
+      useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
         let value, color
@@ -150,17 +149,6 @@ export default defineComponent({
           }
         })
         let childData = this.userOrganismList.childData
-        if (this.organismsIds.length > 0) {
-          this.organismsIds = [];
-        } 
-        childData.forEach((childOrg) => {
-          console.log(childOrg)
-          if (childOrg.childOrganismId) {
-            this.organismsIds.push({
-              organismId: childOrg.childOrganismId
-            });
-          }
-        });
         for (let i = 0; i < childData.length; i++) {
           if (childData.percentualEstatistica && childData.percentualEstatistica.value !== 1) {
             this.allOrganismCompleteValidated = false;
