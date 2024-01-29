@@ -135,6 +135,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
+        // let childData = this.userOrganismList.childData
         let value, color
         this.userOrganismList.childData.forEach((org, i) => {
           value = org.statusEstatistica.length / this.stepsNum
@@ -148,10 +149,13 @@ export default defineComponent({
             color
           }
         })
-        let childData = this.userOrganismList.childData
-        for (let i = 0; i < childData.length; i++) {
-          if (childData.percentualEstatistica && childData.percentualEstatistica.value !== 1) {
-            this.allOrganismCompleteValidated = false;
+        
+        for (let i = 0; i < this.userOrganismList.childData.length; i++) {
+          console.log('entrou no for')
+          if (this.userOrganismList.childData[i].percentualEstatistica.value === 1) {
+            console.log('entrou no if')
+            console.log('entrou no if',   this.allOrganismCompleteValidated)
+            this.allOrganismCompleteValidated = true;
             break;
           }
         }
