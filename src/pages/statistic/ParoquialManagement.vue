@@ -48,7 +48,7 @@
         /><br>
   
         <q-btn
-          label="Salvar rascunho"
+          label="Salvar"
           color="primary"
           class="q-my-lg"
           no-caps
