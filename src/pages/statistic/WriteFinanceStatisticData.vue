@@ -253,7 +253,6 @@ export default defineComponent({
     }
   },
   calculateOfferPercents(){
-    console.log('entrou calculateOfferPercents')
     let total = 0
     let outPutTotalPercents = 0
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
@@ -322,7 +321,6 @@ export default defineComponent({
       this.$q.loading.hide()
       if (r.error || !r.data) return
       this.validated = r.data.validated
-      console.log(r)
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :

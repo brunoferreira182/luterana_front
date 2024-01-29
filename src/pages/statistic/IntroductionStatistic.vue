@@ -134,7 +134,6 @@ export default defineComponent({
       this.$router.push('/statistic/PastorData?organismId=' + this.$route.query.organismId + '&t=p')
     },
     verifyStatusTypes() {
-      console.log('me chamaram')
       this.statisticStatus.forEach((status) => {
         if (status.type === 'financceStatistics') {
           if (status.status.value === 'draft') {
@@ -182,7 +181,6 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        console.log(r, 'CUZIZIZIZIZI')
         // this.organismsFinancesStatistics = r.data.list
       });
     },

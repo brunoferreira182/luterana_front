@@ -408,7 +408,6 @@ export default defineComponent({
   beforeUnmount() {
     this.submitAllItens();
     const timer = setTimeout(() => {
-      console.log("Timer executado ao desmontar a página!");
       clearTimeout(timer);
     }, 5000);
   },
@@ -447,7 +446,6 @@ export default defineComponent({
         }
       };
       useFetch(opt).then((r) => {
-        console.log("Rascunho pego do estatisca:", r.data[0]);
         if (r.error) return;
 
         this.departamentos.forEach((departamento) => {
@@ -456,14 +454,11 @@ export default defineComponent({
               sketch.organismConfigName ===
               departamento.departamentoData.organismConfigName
           );
-          console.log(sketch, 'dbnasidbhaujhbsdjhabsjdbasjb');
           if (sketch) {
             departamento.departamentoData = sketch.departamentoData;
-            console.log("departamento updated", departamento);
           }
           
         });
-        console.log(this.departamentos, "rascunho interado por departamento");
       });
     },
     expandItem(item) {
@@ -476,7 +471,6 @@ export default defineComponent({
         item.departamentoData
       )
       // this.$q.notify("Salvo com sucesso!");
-      console.log('enfiando coisa num array', this.formDepart);
     },
     submitAllItens(){
       this.departamentos.forEach((departamento) => {

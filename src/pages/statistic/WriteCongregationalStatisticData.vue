@@ -910,7 +910,6 @@ export default defineComponent({
       this.dialogDepartamentDetail.iDep = iDep
     },
     activateCongregation(iOrg) {
-      console.log(iOrg, 'mas que macaquisse é essa?')
       this.composition.congregations[iOrg].action = ''
     },
     cleanDialogRemoveCongregation() {
@@ -1032,7 +1031,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.dialogAddNewDepartament.functions = r.data
-        console.log(r.data)
       })
     },
     addUserFunctioninDept(iFunc) {

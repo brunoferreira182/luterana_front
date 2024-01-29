@@ -81,7 +81,6 @@ export default defineComponent({
       const todasVariaveisSaoUm = childData.percentualEstatistica.every(item => item.value === 1);
 
       if (todasVariaveisSaoUm) {
-        console.log("Todas as variáveis value são iguais a 1");
       }
     },
     getFinanceTotalValueFromParoquia(){

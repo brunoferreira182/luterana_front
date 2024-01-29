@@ -1518,7 +1518,6 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = true
     },
     confirmReportError() {
-      console.log(this.dialogReportError.type)
       if (this.dialogReportError.type === 'historic') {
         this.reportedErrors.push ({
           errorText: this.dialogReportError.text,
@@ -1828,7 +1827,6 @@ export default defineComponent({
       this.dialogAddParent.open = true
     },
     removeParent(type) {
-      // console.log(type)
       if (type === 'Pai') {
         this.pastorData.father._id = null,
         this.pastorData.father.userName = null
@@ -2002,7 +2000,6 @@ export default defineComponent({
       this.dialogEditChild.child = null
     },
     openDialogEditChild(child, iChild) {
-      console.log(child, 'cade esses macaquinhos')
       this.dialogEditChild.open = true,
       this.dialogEditChild.child = child.userName,
       this.dialogEditChild.newChild = child.userName
@@ -2044,7 +2041,6 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
         } else {
-          console.log(r.data, 'retorno fetch')
           this.validated = r.data.validated
           this.status = r.data.status
           this.pastorData = r.data.pastoralData.pastorData

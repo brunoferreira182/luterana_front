@@ -104,7 +104,6 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.congregationName);
     });
   },
     getStatisticStatus() {
@@ -117,7 +116,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
-        console.log(this.statisticStatus);
         // this.verifyStatusTypes()
       })
     },
