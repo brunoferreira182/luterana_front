@@ -808,18 +808,26 @@
         <q-card
           style="width:400px"
         >
-          <q-card-section class="text-center">
+          <q-card-section class="text-center text-h6">
             <strong>Selecione o dia da semana e o horário</strong>
           </q-card-section>
           <q-card-section>
             <q-select
               :options="daysOfWeek"
               v-model="dialogAddEventsDayAndHour.day"
-              class="q-pa-sm"
+              class="q-px-sm"
               label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Informe o horário"
+              class="q-px-sm"
+              v-model="dialogAddEventsDayAndHour.hour"
+              type="time"
             >
 
-            </q-select>
+            </q-input>
           </q-card-section>
         </q-card>
       </q-dialog>
