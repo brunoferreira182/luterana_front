@@ -42,6 +42,7 @@
         <q-btn
           label="Enviar estatística"
           no-caps
+          unelevated
           rounded
           @click="allOrganismCompleteValidated ? 'rota pra salvar' : dialogSendStatistic = true"
           class="full-width"
@@ -85,9 +86,9 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
-      allMyOrganismsIds: [],
+      organismsIds: [],
       dialogSendStatistic: false,
-      allOrganismCompleteValidated: true,
+      allOrganismCompleteValidated: false,
       validationResume: null,
       stepsNum: 4
     }
@@ -96,19 +97,20 @@ export default defineComponent({
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
   },
-  // mounted(){
-  //   this.getStatisticStatus()
-  // },
+  mounted(){
+    this.getStatisticStatus()
+  },
   methods: {
-    getStatisticStatus(){
+    async getStatisticStatus() {
+    await this.getParoquiasByUserId();
       const opt = {
         route: "/desktop/statistics/getStatisticStatus",
         body: {
-          organismsIds: this.allMyOrganismsIds
+          organismsIds: this.organismsIds
         }
       }
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      await useFetch(opt).then((r) => {
         this.$q.loading.hide()
         console.log(r)
       });
@@ -126,12 +128,12 @@ export default defineComponent({
     goToCompleteStatistic(organism) {
       this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
-    getParoquiasByUserId(){
+    async getParoquiasByUserId(){
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      await useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
         let value, color
@@ -143,15 +145,24 @@ export default defineComponent({
           else color = 'green'
           this.userOrganismList.childData[i].percentualEstatistica = {
             value,
-            label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100) + '%',
+            label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
         })
-        const childData = this.userOrganismList.childData;
+        let childData = this.userOrganismList.childData
+        if (this.organismsIds.length > 0) {
+          this.organismsIds = [];
+        } 
+        childData.forEach((childOrg) => {
+          console.log(childOrg)
+          if (childOrg.childOrganismId) {
+            this.organismsIds.push({
+              organismId: childOrg.childOrganismId
+            });
+          }
+        });
         for (let i = 0; i < childData.length; i++) {
-          const org = childData[i];
-          this.allMyOrganismsIds = org
-          if (org.percentualEstatistica && org.percentualEstatistica.value !== 1) {
+          if (childData.percentualEstatistica && childData.percentualEstatistica.value !== 1) {
             this.allOrganismCompleteValidated = false;
             break;
           }

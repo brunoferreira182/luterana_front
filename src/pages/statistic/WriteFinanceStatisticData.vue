@@ -291,7 +291,7 @@ export default defineComponent({
         this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
         return
       }
-      this.$q.notify('Dados salvos como rascunho')
+      this.$q.notify('Rascunho salvo com sucesso!')
     });
   },
   getOrganismNameForBreadCrumbs() {
