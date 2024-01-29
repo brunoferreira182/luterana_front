@@ -208,6 +208,8 @@ export default defineComponent({
           return
         }
         this.$q.notify('Rascunho salvo com sucesso!')
+        this.getAtividadesCulticas()
+        this.getPontosDeMissaoByOrganismId()
       });
     },
   }

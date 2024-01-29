@@ -470,6 +470,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
+        this.getGroupActivitiesByOrganismId()
       });
     },
     goToStatistics() {

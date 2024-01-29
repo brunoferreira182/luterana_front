@@ -306,6 +306,7 @@ export default defineComponent({
         return
       }
       this.$q.notify('Rascunho salvo com sucesso!')
+      this.getFinanceStatisticByOrganismId()
     });
   },
   getOrganismNameForBreadCrumbs() {
