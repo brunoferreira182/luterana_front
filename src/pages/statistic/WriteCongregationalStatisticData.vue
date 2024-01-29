@@ -1740,33 +1740,17 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
 
-        // r.data.congregations.forEach((congregacao, i) => {
-        //   congregacao.depts.forEach((departament, j) => {
-        //     console.log(departament.existingDepartaments.length, 'tamanho dos existing')
-        //     departament.existingDepartaments.forEach((existingDepartament, k) => {
-        //       console.log(i, j, k)
-        //       if (existingDepartament.organismParentId !== congregacao.organismChildId) {
-        //         console.log('é diferente, vai deletar')
-        //         console.log(congregacao.organismChildName, 'congregacao', i, j, k)
-        //         r.data.congregations[i].depts[j].existingDepartaments.splice(k, 1)
-        //       }
-        //     })
-        //   })
-        // })
-
-        for (let i = 0; i < r.data.congregations.length; i++) {
-          for (let j = 0; j < r.data.congregations[i].depts.length; j++) {
-            for (let k = 0; k < r.data.congregations[i].depts[j].existingDepartaments.length; k++) {
-              if (r.data.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
-                console.log('é diferente, vai deletar')
-                console.log(r.data.congregations[i].organismChildName, 'congregacao', i, j, k)
-                r.data.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+        if (!r.data._id) {
+          for (let i = 0; i < r.data.congregations.length; i++) {
+            for (let j = 0; j < r.data.congregations[i].depts.length; j++) {
+              for (let k = 0; k < r.data.congregations[i].depts[j].existingDepartaments.length; k++) {
+                if (r.data.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
+                  r.data.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+                }
               }
             }
           }
         }
-
-
 
         this.composition = r.data
         if (r.data.validated) {
