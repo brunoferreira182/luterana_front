@@ -75,14 +75,6 @@ export default defineComponent({
     this.getFinanceTotalValueFromParoquia()
   },
   methods: {
-    teste(){
-      const childData = this.userOrganismList.childData[i];
-
-      const todasVariaveisSaoUm = childData.percentualEstatistica.every(item => item.value === 1);
-
-      if (todasVariaveisSaoUm) {
-      }
-    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
