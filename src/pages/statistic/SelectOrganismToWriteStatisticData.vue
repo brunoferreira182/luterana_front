@@ -14,8 +14,7 @@
       </div>
       <div class="text-subtitle1">
         Selecione o organismo que deseja escrever os dados de estatística. 
-        A estatísica só estará pronta para envio <br/> 
-        se todos os progressos estiverem em 100%
+        
       </div>
       <q-list> 
         <q-item
@@ -41,13 +40,34 @@
           
         </q-item>
         <q-btn
-          :disable="allOrganismCompleteValidated ? false : true"
           label="Enviar estatística"
           no-caps
           rounded
+          @click="allOrganismCompleteValidated ? 'rota pra salvar' : dialogSendStatistic = true"
           class="full-width"
           color="primary"
         />
+        <q-dialog v-model="dialogSendStatistic">
+          <q-item class="card">
+            <q-item-section class="text-h6">
+              Atenção
+            </q-item-section>
+            <q-item-section class="text-subtitle2">
+              A estatísica só estará pronta para envio <br/> 
+              se todos os progressos estiverem em 100%
+            </q-item-section>
+            <q-item-section>
+              <q-btn
+                no-caps
+                color="primary"
+                rounded
+                @click="dialogSendStatistic = false"
+                flat
+                label="Entendi"
+              />
+            </q-item-section>
+          </q-item>
+        </q-dialog>
       </q-list>
     </q-page>
   </q-page-container>
@@ -65,6 +85,8 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
+      allMyOrganismsIds: [],
+      dialogSendStatistic: false,
       allOrganismCompleteValidated: true,
       validationResume: null,
       stepsNum: 4
@@ -74,8 +96,23 @@ export default defineComponent({
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
   },
+  // mounted(){
+  //   this.getStatisticStatus()
+  // },
   methods: {
- 
+    getStatisticStatus(){
+      const opt = {
+        route: "/desktop/statistics/getStatisticStatus",
+        body: {
+          organismsIds: this.allMyOrganismsIds
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        console.log(r)
+      });
+    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -113,6 +150,7 @@ export default defineComponent({
         const childData = this.userOrganismList.childData;
         for (let i = 0; i < childData.length; i++) {
           const org = childData[i];
+          this.allMyOrganismsIds = org
           if (org.percentualEstatistica && org.percentualEstatistica.value !== 1) {
             this.allOrganismCompleteValidated = false;
             break;
@@ -123,3 +161,16 @@ export default defineComponent({
   }
 })
 </script>
+<style scoped>
+.card {
+  border-radius: 1rem;
+  height: 9rem;
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  box-shadow: 0px 0px 6px -3px;
+}
+</style>
