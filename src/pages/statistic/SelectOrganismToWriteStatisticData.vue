@@ -104,7 +104,7 @@ export default defineComponent({
       },
       organismsIds: [],
       dialogSendStatistic: false,
-      allOrganismCompleteValidated: false,
+      allOrganismCompleteValidated: true,
       validationResume: null,
       stepsNum: 4
     }
@@ -135,7 +135,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
-        // let childData = this.userOrganismList.childData
         let value, color
         this.userOrganismList.childData.forEach((org, i) => {
           value = org.statusEstatistica.length / this.stepsNum
@@ -148,17 +147,10 @@ export default defineComponent({
             label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
-        })
-        
-        for (let i = 0; i < this.userOrganismList.childData.length; i++) {
-          console.log('entrou no for')
-          if (this.userOrganismList.childData[i].percentualEstatistica.value === 1) {
-            console.log('entrou no if')
-            console.log('entrou no if',   this.allOrganismCompleteValidated)
-            this.allOrganismCompleteValidated = true;
-            break;
+          if (this.userOrganismList.childData[i].percentualEstatistica.value !== 1) {
+            this.allOrganismCompleteValidated = false;
           }
-        }
+        })
       });
     },
   }
