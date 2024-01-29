@@ -180,7 +180,7 @@
                   </div>
                   <q-list
                     bordered
-                    v-for="day in composition.congregations[iOrg].diaEHorario"
+                    v-for="(day, iDay) in composition.congregations[iOrg].diaEHorario"
                     :key="day"
                     class="q-mt-sm"
                   >
@@ -192,6 +192,15 @@
                       <q-item-label>
                         Horário: {{ day.hour }}
                       </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        color="red"
+                        flat
+                        rounded
+                        icon="delete"
+                        @click="removeDay(iOrg, iDay)"
+                      />
                     </q-item-section>
                   </q-item>
 
@@ -232,7 +241,7 @@
       <q-separator class="q-ma-md"/>
       <q-expansion-item
         label="Secretárias contratadas"
-        class="bg-grey-2 q-pa-sm text-left q-ma-sm"
+        class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
         style="border-radius: 1rem;"
       >
         <div class="q-mx-md">
@@ -274,17 +283,17 @@
           </q-list>
           </div>
         </div>
+        <div class="q-ml-lg text-h6">
+          <q-btn
+            label="Secretária"
+            icon="add"
+            color="primary"
+            rounded
+            unelevated
+            @click="addSecretaryToParoquia"
+          />
+        </div>
       </q-expansion-item>
-      <div class="q-ml-lg text-h6">
-        <q-btn
-          label="Secretária"
-          icon="add"
-          color="primary"
-          rounded
-          unelevated
-          @click="addSecretaryToParoquia"
-        />
-      </div>
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -628,8 +637,11 @@
             </q-select>
           </q-card-section>
           <q-card-section>
-            <div class="text-center text-h6 q-my-sm">
-              Nome ao departamento
+            <div 
+              class="text-center text-h6 q-my-sm"
+              v-if="dialogAddNewDepartament.functions"
+            >
+              Nome do departamento
             </div>
             <q-input
               v-if="dialogAddNewDepartament.functions"
@@ -1224,6 +1236,11 @@ export default defineComponent({
     this.getCompositionByUserId()
   },
   methods: { 
+    removeDay(iOrg, iDay) {
+      this.composition
+      .congregations[iOrg]
+      .diaEHorario.splice(iDay, 1)
+    },
     removeDayInDep(iDay) {
       this.composition
       .congregations[this.dialogDepartamentDetail.iOrg]
