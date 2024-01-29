@@ -4,7 +4,7 @@
       <div class="text-h5 q-ma-md">
         Bem-vindo(a) a Estatística 2023!
       </div>
-      <div class="q-pa-sm">
+      <div class="q-pa-sm" v-if="hasParoquia">
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
@@ -82,24 +82,22 @@
           </q-item-section>
         </q-item>
       </div>
-      <q-list> 
-
-        <!-- <q-item
-          v-for="organism in userOrganismList"
-          style="border-radius: .5em"
-          class="bg-grey-3 q-ma-md"
-          :key="organism"
-          clickable
-          @click="goToIntroductionStatistic(organism.organismId)"
-        >
-          <q-item-section>
-            <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <q-item-label class="text-subtitle1" lines="2">
-              {{ organism.organismConfigName }}
-            </q-item-label>
-          </q-item-section>
-        </q-item> -->
-      </q-list>
+      <div 
+        v-else
+      >
+        <div class="text-center text-h6 text-wrap q-pa-md">
+          Você não faz parte de nenhuma paróquia. Portanto não precisa responder nenhum dado referente a estatística 2023!
+        </div>
+        <div class="text-center">
+          <q-btn
+            color="primary"
+            rounded
+            unelevated
+            label="Voltar"
+            @click="$router.back"   
+          />
+        </div>
+      </div>
       <q-dialog
         v-model="dialogNotifystatus.open"
         @hide="clearDialogNotifyStatus"
@@ -140,17 +138,16 @@ export default defineComponent({
       userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
-      paroquiaId: null,
       status: null,
       dialogNotifystatus: {
         open: false
-      }
+      },
+      hasParoquia: true
     }
   },
   beforeMount(){
     this.verifyIfIsPastor()
-    this.getParoquiaId()
-    // this.getParoquiasByUserId()
+    this.getStatusPreStatistic()
   },
   methods: {
     clearDialogNotifyStatus() {
@@ -165,27 +162,26 @@ export default defineComponent({
         this.dialogNotifystatus.open = true
       }
     },
-    getParoquiaId() {
-      const opt = {
-        route: '/desktop/statistics/getParoquiaIdByUserId',
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.paroquiaId = r.data.organismId
-        this.getStatusPreStatistic()
-      })
-    },
+    // getParoquiaId() {
+    //   const opt = {
+    //     route: '/desktop/statistics/getParoquiaIdByUserId',
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     if (r.error) return
+    //     this.paroquiaId = r.data.organismId
+    //     this.getStatusPreStatistic()
+    //   })
+    // },
     getStatusPreStatistic() {
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',
-        body: {
-          organismId: this.paroquiaId
-        }
       }
       useFetch(opt).then((r) => {
-        if (r.error) return
+        if (r.error) return 
         this.status = r.data
-        console.log(this.status, 'o que será que está acontecendo')
+        if (this.status === false) {
+          this.hasParoquia = false
+        }
       })
     },
     verifyIfIsPastor() {
