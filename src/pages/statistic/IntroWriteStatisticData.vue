@@ -138,7 +138,6 @@ export default defineComponent({
       userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
-      paroquiaId: null,
       status: null,
       dialogNotifystatus: {
         open: false
@@ -148,8 +147,7 @@ export default defineComponent({
   },
   beforeMount(){
     this.verifyIfIsPastor()
-    this.getParoquiaId()
-    // this.getParoquiasByUserId()
+    this.getStatusPreStatistic()
   },
   methods: {
     clearDialogNotifyStatus() {
@@ -164,30 +162,26 @@ export default defineComponent({
         this.dialogNotifystatus.open = true
       }
     },
-    getParoquiaId() {
-      const opt = {
-        route: '/desktop/statistics/getParoquiaIdByUserId',
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.paroquiaId = r.data.organismId
-        this.getStatusPreStatistic()
-      })
-    },
+    // getParoquiaId() {
+    //   const opt = {
+    //     route: '/desktop/statistics/getParoquiaIdByUserId',
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     if (r.error) return
+    //     this.paroquiaId = r.data.organismId
+    //     this.getStatusPreStatistic()
+    //   })
+    // },
     getStatusPreStatistic() {
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',
-        body: {
-          organismId: this.paroquiaId
-        }
       }
       useFetch(opt).then((r) => {
-        if (r.error) return
+        if (r.error) return 
         this.status = r.data
-        if (this.status.hasParoquia === 'false') {
+        if (this.status === false) {
           this.hasParoquia = false
         }
-        console.log(this.status, 'o que será que está acontecendo')
       })
     },
     verifyIfIsPastor() {
