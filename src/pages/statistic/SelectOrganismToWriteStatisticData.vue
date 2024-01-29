@@ -27,9 +27,26 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <q-item-label class="text-subtitle1" lines="2">
-              {{ organism.organismConfigName }}
+            <!-- <q-item-label>
+              <q-chip v-if="!organism.status.atividadeCulticaStatus || organism.status.atividadeCulticaStatus === 'notSent'">
+                Atividades cúlticas não enviado
+              </q-chip>
             </q-item-label>
+            <q-item-label>
+              <q-chip :color="organism.status.groupsActivitiesStatus === null && organism.status.groupsActivitiesStatus === 'notSend' ? 'primary' : 'grey'">
+                Atividades de grupos {{ organism.status.groupsActivitiesStatus === null || organism.status.groupsActivitiesStatus === 'notSend' ? 'enviado' : 'rascunho' }}
+              </q-chip>
+            </q-item-label>
+            <q-item-label>
+              <q-chip >
+                Movimento de membros {{ organism.status.membersMovementStatus }}
+              </q-chip>
+            </q-item-label>
+            <q-item-label>
+              <q-chip >
+                Financeiro {{ organism.status.financeStatus }}
+              </q-chip>
+            </q-item-label> -->
             <div class="q-mt-md">Progresso:</div>
             <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
             <div class="absolute-full flex flex-center">
@@ -37,11 +54,11 @@
             </div>
           </q-linear-progress>
           </q-item-section>
-          
         </q-item>
         <q-btn
           label="Enviar estatística"
           no-caps
+          unelevated
           rounded
           @click="allOrganismCompleteValidated ? 'rota pra salvar' : dialogSendStatistic = true"
           class="full-width"
@@ -53,7 +70,7 @@
               Atenção
             </q-item-section>
             <q-item-section class="text-subtitle2">
-              A estatísica só estará pronta para envio <br/> 
+              A estatística só estará pronta para envio <br/> 
               se todos os progressos estiverem em 100%
             </q-item-section>
             <q-item-section>
@@ -85,9 +102,9 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
-      allMyOrganismsIds: [],
+      organismsIds: [],
       dialogSendStatistic: false,
-      allOrganismCompleteValidated: true,
+      allOrganismCompleteValidated: false,
       validationResume: null,
       stepsNum: 4
     }
@@ -96,23 +113,7 @@ export default defineComponent({
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
   },
-  // mounted(){
-  //   this.getStatisticStatus()
-  // },
   methods: {
-    getStatisticStatus(){
-      const opt = {
-        route: "/desktop/statistics/getStatisticStatus",
-        body: {
-          organismsIds: this.allMyOrganismsIds
-        }
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        console.log(r)
-      });
-    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -143,15 +144,13 @@ export default defineComponent({
           else color = 'green'
           this.userOrganismList.childData[i].percentualEstatistica = {
             value,
-            label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100) + '%',
+            label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
         })
-        const childData = this.userOrganismList.childData;
+        let childData = this.userOrganismList.childData
         for (let i = 0; i < childData.length; i++) {
-          const org = childData[i];
-          this.allMyOrganismsIds = org
-          if (org.percentualEstatistica && org.percentualEstatistica.value !== 1) {
+          if (childData.percentualEstatistica && childData.percentualEstatistica.value !== 1) {
             this.allOrganismCompleteValidated = false;
             break;
           }

@@ -121,8 +121,8 @@
                       v-for="(dep, iDep) in org.depts"
                       :key="dep"
                     >
-                      <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
                       <q-item 
+                        v-if="dep.action !== 'naoExiste'"
                         :clickable="dep.trueLength > 0 ? true : false"
                         v-ripple
                         @click="openSelectDepartamentDetail(iOrg, iDep)"
@@ -179,13 +179,12 @@
                     Quando ocorre o evento:
                   </div>
                   <q-list
-                  bordered
-                    v-for="day in composition.congregations[iOrg].diaEHorario"
+                    bordered
+                    v-for="(day, iDay) in composition.congregations[iOrg].diaEHorario"
                     :key="day"
+                    class="q-mt-sm"
                   >
-                  <q-item
-                  
-                  >
+                  <q-item>
                     <q-item-section>
                       <q-item-label lines="1">
                         Dia: {{ day.day }}
@@ -193,6 +192,15 @@
                       <q-item-label>
                         Horário: {{ day.hour }}
                       </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        color="red"
+                        flat
+                        rounded
+                        icon="delete"
+                        @click="removeDay(iOrg, iDay)"
+                      />
                     </q-item-section>
                   </q-item>
 
@@ -230,6 +238,62 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-separator class="q-ma-md"/>
+      <q-expansion-item
+        label="Secretárias contratadas"
+        class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
+        style="border-radius: 1rem;"
+      >
+        <div class="q-mx-md">
+          <div v-if="composition && composition.secretary && composition.secretary.length > 0">
+          <q-list 
+            bordered 
+            class="q-my-sm" 
+            v-for="(sec, iSec) in composition.secretary"
+            :key="sec" 
+          >
+            <q-item
+              class="q-ma-sm"
+            >  
+              <q-item-section>
+                <q-item-label lines="1">
+                  Nome: {{ sec.user.userName }}
+                </q-item-label>
+                <q-item-label lines="2">
+                  Dia da semana: {{ sec.day }}
+                </q-item-label>
+                <q-item-label lines="3">
+                  Hora inicial: {{sec.initialHour}}
+                </q-item-label>
+                <q-item-label>
+                  Hora final: {{sec.finalHour}}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn
+                  color="red"
+                  flat
+                  unelevated
+                  rounded
+                  icon="delete"
+                  @click="removeSecretary(iSec)"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+          </div>
+        </div>
+        <div class="q-ml-lg text-h6">
+          <q-btn
+            label="Secretária"
+            icon="add"
+            color="primary"
+            rounded
+            unelevated
+            @click="addSecretaryToParoquia"
+          />
+        </div>
+      </q-expansion-item>
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -285,7 +349,6 @@
           <q-card-section>
             <q-select
               v-model="dialogAddFunction.userSelected"
-              filled
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -337,7 +400,6 @@
           <q-card-section>
             <q-select
               v-model="dialogAddFunctionToDept.userSelected"
-              filled
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -519,7 +581,6 @@
             <q-select
               class="q-pa-sm"
               v-model="dialogInsertUserFunctionInNewCongregation.userSelected"
-              filled
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -570,15 +631,17 @@
               class="q-pa-sm"
               v-model="dialogAddNewDepartament.departamentSelected"
               @update:model-value="getFunctionsByDepartamentId"
-              filled
               option-label="organismConfigName"
               :options="deptConfigs"
             >
             </q-select>
           </q-card-section>
           <q-card-section>
-            <div class="text-center text-h6 q-my-sm">
-              Nome ao departamento
+            <div 
+              class="text-center text-h6 q-my-sm"
+              v-if="dialogAddNewDepartament.functions"
+            >
+              Nome do departamento
             </div>
             <q-input
               v-if="dialogAddNewDepartament.functions"
@@ -723,7 +786,48 @@
                 style="border-radius:1rem"
                 label="Outros dados"
               >
-
+                <div class="text-h6 q-my-sm q-ml-sm">
+                  Quando ocorre o evento:
+                </div>
+                <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
+                  <q-list
+                    bordered
+                      v-for="(day, iDay) in composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario"
+                      :key="day"
+                      class="q-my-sm"
+                  >
+                    <q-item>
+                      <q-item-section>
+                        <q-item-label lines="1">
+                          Dia: {{ day.day }}
+                        </q-item-label>
+                        <q-item-label lines="2">
+                          Horário: {{ day.hour }}
+                        </q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-btn
+                          color="red"
+                          flat
+                          unelevated
+                          icon="delete"
+                          @click="removeDayInDep(iDay)"
+                        />
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+                <q-btn
+                  label="Adicionar dia e horário"
+                  color="primary"
+                  unelevated
+                  no-caps
+                  rounded
+                  flat
+                  @click="addDayAndHourInDept(iOrg, iDep)"
+                  icon="add"
+                  class="q-px-sm q-ml-sm"
+                />
               </q-expansion-item>
             </q-list>
           </q-card-section>
@@ -740,7 +844,6 @@
           <q-card-section>
             <q-select
               v-model="dialogInserFunctionUserInNewDept.userSelected"
-              filled
               use-input
               label="Nome do usuário"
               option-label="userName"
@@ -840,7 +943,7 @@
         @hide="clearDialogAddEventsDayAndHour"
       >
         <q-card
-          style="width:400px"
+          style="width:400px;border-radius:1rem"
         >
           <q-card-section class="text-center text-h6">
             <strong>Selecione o dia da semana e o horário</strong>
@@ -878,6 +981,134 @@
               unelevated
               rounded
               color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddEventsDayAndHourInDep.open"
+        @hide="clearDialogAddDayAndHourInDept"
+      >
+      <q-card
+          style="width:400px;border-radius:1rem"
+        >
+          <q-card-section class="text-center text-h6">
+            <strong>Selecione o dia da semana e o horário</strong>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddEventsDayAndHourInDep.day"
+              class="q-px-sm"
+              label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Informe o horário"
+              class="q-px-sm"
+              v-model="dialogAddEventsDayAndHourInDep.hour"
+              type="time"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogAddDayAndHourInDept"
+              flat
+              unelevated
+              color="primary"
+            />
+            <q-btn
+              label="Adicionar"
+              no-caps
+              @click="confirmAddEventsDayAndHourInDept"
+              unelevated
+              rounded
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        @hide="clearDialogAddSecretary"
+        v-model="dialogAddSecretary.open"
+      >
+        <q-card
+          style="width:400px;border-radius:1rem"
+        >
+          <q-card-section class="text-h6 text-center"> 
+            selecione o usuário
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogAddSecretary.userSelected"
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Selecione o dia da semana
+            </div>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddSecretary.day"
+              class="q-px-sm q-mt-md"
+              label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <div
+              class="text-h6 text-center"
+            >
+              Selecione os horários
+            </div>
+            <q-input
+              label="Hora inical"
+              class="q-px-sm q-mt-sm"
+              v-model="dialogAddSecretary.initialHour"
+              type="time"
+            />
+            <q-input
+              label="Hora final"
+              class="q-px-sm q-mt-sm"
+              v-model="dialogAddSecretary.finalHour"
+              type="time"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Sair"
+              no-caps
+              color="primary"
+              @click="clearDialogAddSecretary"
+              flat
+              rounded
+              unelevated
+            />
+            <q-btn
+              label="Confirmar"
+              no-caps
+              color="primary"
+              rounded
+              unelevated
+              @click="confirmAddSecretary"
             />
           </q-card-actions>
         </q-card>
@@ -986,17 +1217,107 @@ export default defineComponent({
         iOrg: null,
         hour: null
       },
-      daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo']
+      dialogAddEventsDayAndHourInDep: {
+        open: false,
+        day: null,
+        hour: null
+      },
+      daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'],
+      dialogAddSecretary: {
+        open: false,
+        userSelected: null,
+        day: null,
+        initialHour: null,
+        finalHour: null
+      }
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
-  methods: {
+  methods: { 
+    removeDay(iOrg, iDay) {
+      this.composition
+      .congregations[iOrg]
+      .diaEHorario.splice(iDay, 1)
+    },
+    removeDayInDep(iDay) {
+      this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario.splice(iDay, 1)
+    },
+    removeSecretary(iSec) {
+      this.composition.secretary.splice(iSec, 1)
+    },
+    confirmAddSecretary() {
+      if (!this.composition.secretary) {
+        this.composition.secretary = []
+      }
+      this.composition.secretary.push({
+        action: 'add',
+        user: {
+          userName: this.dialogAddSecretary.userSelected.userName,
+          userId: this.dialogAddSecretary.userSelected.userId
+        },
+        day: this.dialogAddSecretary.day,
+        initialHour: this.dialogAddSecretary.initialHour,
+        finalHour: this.dialogAddSecretary.finalHour
+      })
+      this.clearDialogAddSecretary()
+    },
+    clearDialogAddSecretary() {
+      this.dialogAddSecretary = {
+        open: false,
+        userSelected: null,
+        day: null,
+        initialHour: null,
+        finalHour: null
+      }
+    },
+    addSecretaryToParoquia() {
+      this.dialogAddSecretary.open = true
+    },
+    clearDialogAddDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep = {
+        open: false,
+        day: null,
+        hour: null
+      }
+    },
+    confirmAddEventsDayAndHourInDept() {
+      if (!this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario) {
+        this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario = []
+      }
+      
+      this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario.push({
+        day: this.dialogAddEventsDayAndHourInDep.day,
+        hour: this.dialogAddEventsDayAndHourInDep.hour,
+        action: 'add'
+      })
+      this.clearDialogAddDayAndHourInDept()
+    },
+    addDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep.open = true
+    }, 
     confirmAddEventsDayAndHour() {
       this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
         day: this.dialogAddEventsDayAndHour.day,
-        hour: this.dialogAddEventsDayAndHour.hour
+        hour: this.dialogAddEventsDayAndHour.hour,
+        action: 'add'
       })
       this.clearDialogAddEventsDayAndHour()
     },

@@ -156,11 +156,11 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      if (this.status && this.status.statisticPermission) {
-        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      } else {
-        this.dialogNotifystatus.open = true
-      }
+      // if (this.status && this.status.statisticPermission) {
+      // } else {
+      //   this.dialogNotifystatus.open = true
+      // }
+      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
     },
     // getParoquiaId() {
     //   const opt = {
