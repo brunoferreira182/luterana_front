@@ -98,7 +98,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(() => {
         this.$q.loading.hide()
-        this.$q.notify('Dados salvos com sucesso')
+        this.$q.notify('Rascunho salvo com sucesso!')
       });
     },
     getParoquialManagementType(){
