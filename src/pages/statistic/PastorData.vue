@@ -58,6 +58,7 @@
               :label="data.label"
               v-model="data.value"
               :mask="data.mask"
+              :readonly="status && status.value === 'sent'"
             >
             </q-input>
             <div
@@ -76,7 +77,7 @@
                   {{data.userName}}
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label>
+                  <q-item-label v-if="!status || (status && status.value !== 'sent')">
                     <q-btn
                         icon="edit"
                         color="primary"
@@ -98,15 +99,14 @@
               </q-item>
               <div v-if="!data.userName">
                 <q-btn
+                  v-if="!status || (status && status.value !== 'sent')"
                   icon="add"
                   rounded
                   :label="data.label"
                   flat
                   color="primary"
                   @click="addParent(data.label)"
-                >
-
-                </q-btn>
+                />
               </div>
             </div>
             <div
@@ -125,7 +125,9 @@
                   {{data.userName}}
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label>
+                  <q-item-label
+                    v-if="!status || (status && status.value !== 'sent')"
+                  >
                     <q-btn
                       icon="edit"
                       color="primary"
@@ -145,7 +147,7 @@
                   </q-item-label>
                 </q-item-section>
               </q-item>
-              <div v-if="!data.userName">
+              <div v-if="!data.userName && (!status || (status && status.value !== 'sent'))">
                 <q-btn
                   icon="add"
                   :label="data.label"
@@ -153,9 +155,7 @@
                   rounded
                   @click="addParent(data.label)"
                   color="primary"
-                >
-
-                </q-btn>
+                />
               </div>
             </div>
             <div 
@@ -182,7 +182,9 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-item-label>
+                    <q-item-label
+                      v-if="!status || (status && status.value !== 'sent')"
+                    >
                       <q-btn
                         icon="edit"
                         color="primary"
@@ -204,6 +206,7 @@
                 </q-item>
               </div>
               <q-btn
+                v-if="!status || (status && status.value !== 'sent')"
                 label="Rede social"
                 icon="add"
                 color="primary"
@@ -232,7 +235,9 @@
                       Data inicial: {{ data.partner.dates.initialDate }}
                     </q-item-label>
                   </q-item-section>
-                  <q-item-section side>
+                  <q-item-section side
+                    v-if="!status || (status && status.value !== 'sent')"
+                  >
                     <q-item-label>
                       <q-btn
                         icon="edit"
@@ -257,7 +262,7 @@
                 </q-item>
               </div>
               <q-btn
-                v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner.userName"
+                v-if="(!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner.userName) && (!status || (status && status.value !== 'sent'))"
                 color="primary"
                 flat
                 rounded
@@ -282,7 +287,10 @@
                   <q-item-section >
                     {{ child.userName }}
                   </q-item-section>
-                  <q-item-section side>
+                  <q-item-section 
+                    side
+                    v-if="!status || (status && status.value !== 'sent')"
+                  >
                     <q-item-label>
                       <q-btn
                         icon="edit"
@@ -309,6 +317,7 @@
                 </q-item>
               </div>
               <q-btn
+                v-if="!status || (status && status.value !== 'sent')"
                 label="Filho"
                 icon="add"
                 color="primary"
@@ -347,17 +356,20 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <div class="q-ml-lg">
-              <q-btn
-              color="primary"
-              icon="sync_problem"
-              label="Solicitar alteração"
-              flat
-              @click="reportError('formations')"
-              rounded
+            <div 
+              class="q-ml-lg"
+              v-if="!status || (status && status.value !== 'sent')"
             >
-              <q-tooltip>Solicitar alteração</q-tooltip>
-            </q-btn>
+              <q-btn
+                color="primary"
+                icon="sync_problem"
+                label="Solicitar alteração"
+                flat
+                @click="reportError('formations')"
+                rounded
+              >
+                <q-tooltip>Solicitar alteração</q-tooltip>
+              </q-btn>
             </div>
           </div>
           <div>
@@ -392,6 +404,7 @@
               icon="sync_problem"
               flat
               rounded
+              v-if="!status || (status && status.value !== 'sent')"
               color="primary"
               @click="reportError('historic')"
             >
@@ -418,10 +431,16 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input  v-model="item.quantity" label="Qtde de visitas">
-                  </q-input>
-                  <q-input  v-model="item.people" label="Qtde de pessoas ">
-                  </q-input>
+                  <q-input  
+                    v-model="item.quantity" 
+                    label="Qtde de visitas"
+                    :readonly="status && status.value === 'sent'"
+                  />
+                  <q-input  
+                    v-model="item.people" 
+                    label="Qtde de pessoas"
+                    :readonly="status && status.value === 'sent'"
+                  />
                 </div>
               </q-item-section>
             </q-item>
@@ -467,9 +486,14 @@
             </q-item>
           </div> -->
         </div>
-        <div class="q-ma-lg">
+        <q-separator 
+          class='q-mx-md q-my-sm'
+        />
+        <div 
+          class="q-ma-lg" 
+          v-if="!status || (status && status.value !== 'sent')"
+        >
           <q-btn
-            :disable="status && status.value === 'sent'"
             label="Salvar rascunho"
             class="full-width"
             color="primary"
@@ -483,7 +507,6 @@
             </q-tooltip>
           </q-btn>
           <q-btn
-            :disable="status && status.value === 'sent'"
             label="Salvar oficial"
             class="full-width q-my-md"
             color="green"
@@ -496,6 +519,12 @@
               Salvar rascunho
             </q-tooltip>
           </q-btn>
+        </div>
+        <div
+          v-else
+          class="q-pa-md text-h6 text-center"
+        >
+          Estes dados já foram enviados, estão disponíveis somente para consulta.
         </div>
       </div>
       <q-dialog
@@ -1230,6 +1259,7 @@
               use-input
               @filter="getCongregatiionsByString"
               :options="organismList"
+              :readonly="status && status.value === 'sent'"
             >
           </q-select>
           </q-card-section>
@@ -1245,10 +1275,16 @@
               <q-item-section>
                 <p class="text-left q-pl-lg no-margin"> <strong>{{item.title}}</strong></p>
                 <q-item-label class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input v-model="item.quantity" label="Qtde de visitas">
-                  </q-input>
-                  <q-input  v-model="item.people" label="Qtde de pessoas ">
-                  </q-input>
+                  <q-input 
+                    borderlessv-model="item.quantity" 
+                    label="Qtde de visitas"
+                    :readonly="status && status.value === 'sent'"
+                  />
+                  <q-input  
+                    v-model="item.people" 
+                    label="Qtde de pessoas "
+                    :readonly="status && status.value === 'sent'"
+                  />
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -1264,6 +1300,7 @@
               @click="clearDialogLastPastoralActivity"
             />
             <q-btn
+              v-if="!status || (status && status.value !== 'sent')"
               color="primary"
               rounded
               unelevated
@@ -1507,7 +1544,7 @@ export default defineComponent({
         this.dialogReportError.type = type
     },
     saveDraft() {
-      // let regex = '/^\S+ \S+$/'
+      // let regex = /^[a-zA-Z]+(\s[a-zA-Z]+)?$/
       // let pastorName = this.pastorData.name.value
       // let fatherName = this.pastorData.father.userName
       // let motherName = this.pastorData.mother.userName
