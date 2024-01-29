@@ -1518,17 +1518,16 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = true
     },
     confirmReportError() {
-      if (this.dialogReportError.type === 'historic') {
-        this.reportedErrors.push ({
-          errorText: this.dialogReportError.text,
-          type: this.dialogReportError.type
-        }) 
-      } else if (this.dialogReportError.type === 'forations') {
-        this.reportedErrors.push ({
-          errorText: this.dialogReportError.text,
-          type: this.dialogReportError.type
-        }) 
+      const opt = {
+        route: '/desktop/statistics/insertPastoralErrorReport',
+        body: {
+          reportData: this.dialogReportError.text
+        }
       }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Erro reportado com sucesso')
+      })
       this.clearDialogReportError()
     },
     clearDialogReportError() {
