@@ -119,6 +119,9 @@ export default defineComponent({
     
     }
   },
+  beforeUnmount(){
+    this.insertAtividadesCulticasStatisticDraft()
+  },
   beforeMount() {
     this.getAtividadesCulticas()
     this.getPontosDeMissaoByOrganismId()
@@ -139,7 +142,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        console.log(r)
         this.culturalActivities = r.data.organismList
       });
     },
