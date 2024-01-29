@@ -298,12 +298,14 @@
           rounded
           unelevated
           no-caps
+          :disable="status && status.status === 'sent'"
           label="Descartar Rascunho"
           color="orange"
           @click="discardDraft"
           outline
         ></q-btn>
         <q-btn
+          :disable="status && status.status === 'sent'"
           class="full-width q-mt-md"
           rounded
           unelevated
@@ -313,6 +315,8 @@
           @click="saveDraft"
         ></q-btn>
         <q-btn
+          v-if="validated"
+          :disable="status && status.status === 'sent'"
           class="full-width q-mt-md"
           rounded
           unelevated
@@ -1172,7 +1176,6 @@ export default defineComponent({
     confirmAddNewOrganism() {
       this.dialogAddCongregation.functions.forEach((func, iFunc) => {
         let funcData = func
-        console.log(funcData, 'cu')
         if (funcData.users) {
           this.dialogAddCongregation.functions[iFunc] = {
             functionName: funcData.description,
@@ -1188,12 +1191,20 @@ export default defineComponent({
           }
         }
       })
+      
+      let departaments = [] 
+      
+      this.composition.congregations[0].depts.forEach((dep, iDep)  => {
+        departaments.push(dep)
+        departaments[iDep].existingDepartaments = []
+      })
 
       this.composition.congregations.push({
         organismChildConfig: 'Congregação',
         organismConfigId: '6525360fd7cd5c09a8d759be',
         organismChildName: this.dialogAddCongregation.data.name,
         organismFunctions: this.dialogAddCongregation.functions,
+        depts: departaments,
         action: 'add',
         additionalData: {
           email: this.dialogAddCongregation.data.email,
@@ -1305,6 +1316,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
+        this.getCompositionByUserId()
       })
     },
     deleteUserFromFunction(iOrg, iFunc, iUser) {
@@ -1376,11 +1388,11 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.composition = r.data
-        if (r.validated) {
-          this.validated = r.validated
+        if (r.data.validated) {
+          this.validated = r.data.validated
         }
-        if (r.status) {
-          this.status = r.status
+        if (r.data.status) {
+          this.status = r.data.status
         }
         let depConfigList = []
         this.composition.congregations[0].depts.forEach((dep) => {

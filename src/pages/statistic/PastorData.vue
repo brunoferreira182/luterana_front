@@ -469,6 +469,7 @@
         </div>
         <div class="q-ma-lg">
           <q-btn
+            :disable="status && status.value === 'sent'"
             label="Salvar rascunho"
             class="full-width"
             color="primary"
@@ -482,11 +483,12 @@
             </q-tooltip>
           </q-btn>
           <q-btn
-            v-if="validated"
+            :disable="status && status.value === 'sent'"
             label="Salvar oficial"
-            class="full-width q-mt-md"
+            class="full-width q-my-md"
             color="green"
             rounded
+            unelevated
             no-caps
             @click="saveOficial"
           >
@@ -1213,6 +1215,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogLastPastoralActivity.open"
+        @hide="clearDialogLastPastoralActivity"
       >
         <q-card style="width: 400px;">
           <q-card-section>
@@ -1258,6 +1261,7 @@
               unelevated
               no-caps
               label="Sair"
+              @click="clearDialogLastPastoralActivity"
             />
             <q-btn
               color="primary"
@@ -1413,6 +1417,17 @@ export default defineComponent({
     this.getParoquiaId()
   },
   methods: {
+    clearDialogLastPastoralActivity() {
+      this.dialogLastPastoralActivity = {
+        open: false,
+        selectedOrganism: null,
+        lastOrganismPastorActivities: [
+        { title:'Visitas Missionárias', quantity:'', people:'' },
+        { title:'Visitas Pastorais', quantity:'', people:'' },
+        { title:'Visitas Enfermos', quantity:'', people:'' }
+        ],
+      }
+    },
     async getParoquiaId() {
       const opt = {
         route: '/desktop/statistics/getParoquiaIdByUserId',
@@ -1443,8 +1458,6 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = false
     },
     getCongregatiionsByString(val, update, abort) {
-      console.log('Me chamou')
-      console.log(val, 'teste')
       if (val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
@@ -1554,6 +1567,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if  (r.error) return
         else this.$q.notify('Rascunho salvo com sucesso')
+        this.beforeMount()
       })
     },
     clearDialogAddLink() {
