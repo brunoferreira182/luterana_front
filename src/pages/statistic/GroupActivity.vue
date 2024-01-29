@@ -359,7 +359,7 @@
                       label="Finalidade do grupo"
                     ></q-input>
                     <q-input
-                      v-model="item.departamentoData.organização"
+                      v-model="item.departamentoData.organizacao"
                       class="q-pl-sm q-mr-md"
                       label="Organização do grupo"
                     ></q-input>
@@ -381,7 +381,6 @@
           </div>
         </q-item>
       </q-list>
-      <q-btn>lldnaksjn</q-btn>
     </q-page>
   </q-page-container>
 </template>
@@ -416,6 +415,15 @@ export default defineComponent({
   beforeMount() {
     this.getCongregationGroups();
   },
+  // watch:{
+  //   handler(newDepartamentos, oldDepartamentos) {
+  //     newDepartamentos.forEach((departamento,index) => {
+  //       if (departamento.expanded === false && oldDepartamentos[index].expanded===true){
+  //         this.submitForm(departamento)
+  //       }
+  //     })
+  //   }
+  // },
   methods: {
     getCongregationGroups() {
       const opt = {
@@ -439,26 +447,28 @@ export default defineComponent({
         }
       };
       useFetch(opt).then((r) => {
-        console.log("r.data", r.data);
+        console.log("Rascunho pego do estatisca:", r.data[0]);
         if (r.error) return;
 
         this.departamentos.forEach((departamento) => {
-          const sketch = r.data.find(
+          const sketch = r.data.departamentoData.find(
             (sketch) =>
-              sketch.departamentoData.organismConfigName ===
+              sketch.organismConfigName ===
               departamento.departamentoData.organismConfigName
           );
+          console.log(sketch, 'dbnasidbhaujhbsdjhabsjdbasjb');
           if (sketch) {
             departamento.departamentoData = sketch.departamentoData;
-            console.log("departamento updatado", departamento);
+            console.log("departamento updated", departamento);
           }
+          
         });
-        console.log(this.departamentos, "rascunhadooo");
+        console.log(this.departamentos, "rascunho interado por departamento");
       });
     },
     expandItem(item) {
       item.expanded = !item.expanded;
-        this.submitForm(item);
+        if(!item.expanded) this.submitForm(item);
     },
     submitForm(item) {
       // item.expanded =!item.expanded
@@ -466,9 +476,12 @@ export default defineComponent({
         item.departamentoData
       )
       // this.$q.notify("Salvo com sucesso!");
-      console.log('erevrvefrvefverve', this.formDepart);
+      console.log('enfiando coisa num array', this.formDepart);
     },
     submitAllItens(){
+      this.departamentos.forEach((departamento) => {
+        departamento.expanded === false 
+      })
       const opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
         body: {
