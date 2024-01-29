@@ -179,7 +179,7 @@ export default defineComponent({
         route: "/desktop/statistics/getMyOrganismsToChooseOne",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(() => {
         this.$q.loading.hide()
         // this.organismsFinancesStatistics = r.data.list
       });
