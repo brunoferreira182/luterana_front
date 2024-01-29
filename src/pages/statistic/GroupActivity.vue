@@ -80,7 +80,7 @@
                     <q-radio v-model="departamentos[i].departamentoData.padrinhos.exist" val="noExist" label="Não" />
                     <q-input
                       v-model="departamentos[i].departamentoData.padrinhos.qtn"
-                      v-if="padrinhos === 'exist'"
+                      v-if="departamentos[i].departamentoData.padrinhos.exist === 'exist'"
                       dense
                       class="q-mx-sm"
                       label="Quantidade Padrinhos"
