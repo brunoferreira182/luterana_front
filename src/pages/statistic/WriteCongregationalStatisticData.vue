@@ -1020,6 +1020,7 @@ export default defineComponent({
         route: '/desktop/statistics/saveCompositionDraft',
         body: this.composition
       }
+      opt.body.status = 'sent'
       let r = await useFetch(opt)
       if (r.error) {
         this.$q.notify('Ocorreu um erro. Tente novamente')
@@ -1313,6 +1314,7 @@ export default defineComponent({
         route: '/desktop/statistics/saveCompositionDraft',
         body: this.composition
       }
+      opt.body.status = 'notSent'
       useFetch(opt).then((r) => {
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
