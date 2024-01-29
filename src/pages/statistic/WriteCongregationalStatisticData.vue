@@ -1337,6 +1337,9 @@ export default defineComponent({
       this.dialogAddEventsDayAndHourInDep.open = true
     }, 
     confirmAddEventsDayAndHour() {
+      if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
+        this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
+      }
       this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
         day: this.dialogAddEventsDayAndHour.day,
         hour: this.dialogAddEventsDayAndHour.hour,
