@@ -1257,6 +1257,9 @@ export default defineComponent({
   beforeMount() {
     this.getCompositionByUserId()
   },
+  beforeUnmount() {
+    this.saveDraft()
+  },
   methods: { 
     removeDay(iOrg, iDay) {
       this.composition

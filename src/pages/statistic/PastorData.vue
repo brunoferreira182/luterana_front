@@ -1453,6 +1453,9 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
   },
+  beforeUnmount() {
+    this.saveDraft()
+  },
   methods: {
     clearDialogLastPastoralActivity() {
       this.dialogLastPastoralActivity = {
