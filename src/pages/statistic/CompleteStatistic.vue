@@ -77,11 +77,12 @@ export default defineComponent({
   },
   beforeMount() {
     this.getMyOrganismsToChooseOne()
-    this.getStatisticStatus()
+    this.getStatisticStatusByOrganismId()
     this.getValidationResumeByOrganism()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+   
     getValidationResumeByOrganism () {
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -106,7 +107,7 @@ export default defineComponent({
       this.congregationName = r.data.organismName 
     });
   },
-    getStatisticStatus() {
+    getStatisticStatusByOrganismId() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
         body: {

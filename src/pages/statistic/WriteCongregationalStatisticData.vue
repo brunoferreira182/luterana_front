@@ -121,8 +121,8 @@
                       v-for="(dep, iDep) in org.depts"
                       :key="dep"
                     >
-                      <!-- Fazer o for em todos, e dar destaque aos que esxistem em chip ou o número no avatar -->
                       <q-item 
+                        v-if="dep.action !== 'naoExiste'"
                         :clickable="dep.trueLength > 0 ? true : false"
                         v-ripple
                         @click="openSelectDepartamentDetail(iOrg, iDep)"
@@ -174,6 +174,35 @@
                     class="q-pa-sm"
                     mask="##/##/####"
                     v-model="org.foundationDate"
+                  />
+                  <div class="text-h6 q-my-sm q-ml-sm">
+                    Quando ocorre o evento:
+                  </div>
+                  <q-list
+                    bordered
+                    v-for="day in composition.congregations[iOrg].diaEHorario"
+                    :key="day"
+                    class="q-mt-sm"
+                  >
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label lines="1">
+                        Dia: {{ day.day }}
+                      </q-item-label>
+                      <q-item-label>
+                        Horário: {{ day.hour }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+
+                  </q-list>
+                  <q-btn
+                    label="Adicionar dia e horário do evento"
+                    color="primary"
+                    unelevated
+                    rounded
+                    class="q-pa-sm q-my-md"
+                    @click="addEventsDayAndHour(iOrg)"
                   />
                 </q-expansion-item>
               </q-list>
@@ -546,6 +575,17 @@
             >
             </q-select>
           </q-card-section>
+          <q-card-section>
+            <div class="text-center text-h6 q-my-sm">
+              Nome ao departamento
+            </div>
+            <q-input
+              v-if="dialogAddNewDepartament.functions"
+              label="Dê um nome ao departamento"
+              v-model="dialogAddNewDepartament.name"
+              class="q-pa-sm"
+            />
+          </q-card-section>
           <q-card-section v-if="dialogAddNewDepartament.functions">
             <div class="text-center text-h6 q-my-sm">
               Preencha ao menos uma função
@@ -682,7 +722,39 @@
                 style="border-radius:1rem"
                 label="Outros dados"
               >
-
+                <div class="text-h6 q-my-sm q-ml-sm">
+                  Quando ocorre o evento:
+                </div>
+                <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
+                  <q-list
+                    bordered
+                      v-for="day in composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario"
+                      :key="day"
+                      class="q-my-sm"
+                  >
+                    <q-item>
+                      <q-item-section>
+                        <q-item-label lines="1">
+                          Dia: {{ day.day }}
+                        </q-item-label>
+                        <q-item-label lines="2">
+                          Horário: {{ day.hour }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+                <q-btn
+                  label="Adicionar dia e horário"
+                  color="primary"
+                  unelevated
+                  no-caps
+                  rounded
+                  flat
+                  @click="addDayAndHourInDept(iOrg, iDep)"
+                  icon="add"
+                  class="q-px-sm q-ml-sm"
+                />
               </q-expansion-item>
             </q-list>
           </q-card-section>
@@ -794,6 +866,100 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddEventsDayAndHour.open"
+        @hide="clearDialogAddEventsDayAndHour"
+      >
+        <q-card
+          style="width:400px;border-radius:1rem"
+        >
+          <q-card-section class="text-center text-h6">
+            <strong>Selecione o dia da semana e o horário</strong>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddEventsDayAndHour.day"
+              class="q-px-sm"
+              label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Informe o horário"
+              class="q-px-sm"
+              v-model="dialogAddEventsDayAndHour.hour"
+              type="time"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogAddEventsDayAndHour"
+              flat
+              unelevated
+              color="primary"
+            />
+            <q-btn
+              label="Adicionar"
+              no-caps
+              @click="confirmAddEventsDayAndHour"
+              unelevated
+              rounded
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddEventsDayAndHourInDep.open"
+        @hide="clearDialogAddDayAndHourInDept"
+      >
+      <q-card
+          style="width:400px;border-radius:1rem"
+        >
+          <q-card-section class="text-center text-h6">
+            <strong>Selecione o dia da semana e o horário</strong>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddEventsDayAndHourInDep.day"
+              class="q-px-sm"
+              label="Dia da semana"
+            />
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Informe o horário"
+              class="q-px-sm"
+              v-model="dialogAddEventsDayAndHourInDep.hour"
+              type="time"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              no-caps
+              rounded
+              @click="clearDialogAddDayAndHourInDept"
+              flat
+              unelevated
+              color="primary"
+            />
+            <q-btn
+              label="Adicionar"
+              no-caps
+              @click="confirmAddEventsDayAndHourInDept"
+              unelevated
+              rounded
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -862,6 +1028,7 @@ export default defineComponent({
         open: false,
         iOrg: null,
         iExistsDept: null,
+        name: null,
         data: null,
         departamentSelected: null,
         functions: null
@@ -890,13 +1057,78 @@ export default defineComponent({
         departaments: null
       },
       validated: false,
-      status: null
+      status: null,
+      dialogAddEventsDayAndHour: {
+        open: false,
+        day: null,
+        iOrg: null,
+        hour: null
+      },
+      dialogAddEventsDayAndHourInDep: {
+        open: false,
+        day: null,
+        hour: null
+      },
+      daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo']
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
+    clearDialogAddDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep = {
+        open: false,
+        day: null,
+        hour: null
+      }
+    },
+    confirmAddEventsDayAndHourInDept() {
+      if (!this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario) {
+        this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario = []
+      }
+      
+      this.composition
+      .congregations[this.dialogDepartamentDetail.iOrg]
+      .depts[this.dialogDepartamentDetail.iDep]
+      .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
+      .diaEHorario.push({
+        day: this.dialogAddEventsDayAndHourInDep.day,
+        hour: this.dialogAddEventsDayAndHourInDep.hour,
+        action: 'add'
+      })
+      this.clearDialogAddDayAndHourInDept()
+    },
+    addDayAndHourInDept() {
+      this.dialogAddEventsDayAndHourInDep.open = true
+    }, 
+    confirmAddEventsDayAndHour() {
+      this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
+        day: this.dialogAddEventsDayAndHour.day,
+        hour: this.dialogAddEventsDayAndHour.hour,
+        action: 'add'
+      })
+      this.clearDialogAddEventsDayAndHour()
+    },
+    clearDialogAddEventsDayAndHour() {
+      this.dialogAddEventsDayAndHour = {
+        open: false,
+        day: null,
+        hour: null
+      }
+    },
+    addEventsDayAndHour(iOrg) {
+      this.dialogAddEventsDayAndHour.open = true
+      this.dialogAddEventsDayAndHour.iOrg = iOrg
+    },
     clearDialogSelectDepartamentDetail() {
       this.dialogSelectDepartamentDetail = {
         open: false,
@@ -983,10 +1215,10 @@ export default defineComponent({
             })
           })
     
-    
           this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[iDep].existingDepartaments.push({
             departamentConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId,
-            departamentName: this.dialogAddNewDepartament.departamentSelected.organismConfigName,
+            departamentConfigName: this.dialogAddNewDepartament.departamentSelected.organismConfigName,
+            departamentName: this.dialogAddNewDepartament.name,
             organismFunctions: functions,
             action: 'add'
           })
@@ -1304,6 +1536,35 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return 
+
+        // r.data.congregations.forEach((congregacao, i) => {
+        //   congregacao.depts.forEach((departament, j) => {
+        //     console.log(departament.existingDepartaments.length, 'tamanho dos existing')
+        //     departament.existingDepartaments.forEach((existingDepartament, k) => {
+        //       console.log(i, j, k)
+        //       if (existingDepartament.organismParentId !== congregacao.organismChildId) {
+        //         console.log('é diferente, vai deletar')
+        //         console.log(congregacao.organismChildName, 'congregacao', i, j, k)
+        //         r.data.congregations[i].depts[j].existingDepartaments.splice(k, 1)
+        //       }
+        //     })
+        //   })
+        // })
+
+        for (let i = 0; i < r.data.congregations.length; i++) {
+          for (let j = 0; j < r.data.congregations[i].depts.length; j++) {
+            for (let k = 0; k < r.data.congregations[i].depts[j].existingDepartaments.length; k++) {
+              if (r.data.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
+                console.log('é diferente, vai deletar')
+                console.log(r.data.congregations[i].organismChildName, 'congregacao', i, j, k)
+                r.data.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+              }
+            }
+          }
+        }
+
+
+
         this.composition = r.data
         if (r.data.validated) {
           this.validated = r.data.validated
