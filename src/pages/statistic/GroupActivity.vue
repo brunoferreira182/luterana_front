@@ -430,6 +430,9 @@ export default defineComponent({
       ],
     };
   },
+  beforeUnmount(){
+    this.saveDraft()
+  },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
   },
@@ -446,7 +449,6 @@ export default defineComponent({
         this.departamentos = r.data.childData;
         this.congregationName = r.data.organismName;
         this.validated = r.data.validated
-        console.log(this.departamentos,"cuzinho doce");
       });
     },
     expand(item) {
@@ -467,7 +469,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         if (r.error) return;
-        this.$q.notify("Salvo com sucesso!");
+        this.$q.notify("Rascunho salvo com sucesso!");
       });
     },
     goToStatistics() {

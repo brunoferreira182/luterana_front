@@ -65,6 +65,7 @@
                     v-model="table.entries.receitasRegulares.receitasAlugueis" 
                   />
                 </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Ofertas especiais"
@@ -72,6 +73,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.ofertasEspeciais" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Campanhas específicas"
@@ -79,6 +82,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.campanhasEspecificas" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Auxílio"
                   prefix="R$"
@@ -86,6 +91,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.auxilio" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Empréstimos"
                   prefix="R$"
@@ -93,13 +100,15 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.emprestimos" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Todas as Outras receitas"
                   prefix="R$"
                   reverse-fill-mask
                   mask="###.###.###,##" 
                   v-model="table.entries.todasOutrasReceitas" 
-                />
+                /></div>
               </div>
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
                 <div class="text-h5">
@@ -114,6 +123,7 @@
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
                   Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
                 </div>
+                <div class="no-margin">
                 <q-input 
                   label="Contribuição Distrito"
                   prefix="R$"
@@ -121,6 +131,8 @@
                   mask="###.###.###,##" 
                   v-model="table.output.contribuicaoDistrito" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Devolução de empréstimos IELB"
                   prefix="R$"
@@ -129,6 +141,8 @@
                   @blur="calculateDiffBetweenEmprestimos()"
                   v-model="table.output.devolucaoEmprestimoIELB" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Todas as outras saídas"
@@ -136,6 +150,7 @@
                   mask="###.###.###,##" 
                   v-model="table.output.todasSaidas" 
                 />
+                </div>
               </div>
               <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
                 <div class="text-center">
@@ -172,7 +187,6 @@
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
-                  rounded
                   class="q-my-lg"
                   no-caps
                   @click="insertFinanceStatisticsDraft"
