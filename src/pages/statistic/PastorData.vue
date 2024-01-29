@@ -262,7 +262,7 @@
                 </q-item>
               </div>
               <q-btn
-                v-if="!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner.userName && (!status || (status && status.value !== 'sent'))"
+                v-if="(!pastorData.maritalRelation.partner || !pastorData.maritalRelation.partner.userName) && (!status || (status && status.value !== 'sent'))"
                 color="primary"
                 flat
                 rounded
