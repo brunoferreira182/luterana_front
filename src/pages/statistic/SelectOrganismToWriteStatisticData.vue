@@ -45,7 +45,6 @@
           label="Enviar estatística"
           no-caps
           rounded
-          unelevated
           class="full-width"
           color="primary"
         />
