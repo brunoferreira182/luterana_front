@@ -36,7 +36,7 @@
           >
             <q-item-section class="item-section q-pa-md">
               <q-item-label
-                @click="expandItem(item)"
+                @click="expand(item)"
                 class="text-h6"
                 style="white-space: nowrap"
               >
@@ -80,7 +80,7 @@
                     <q-radio v-model="departamentos[i].departamentoData.padrinhos.exist" val="noExist" label="Não" />
                     <q-input
                       v-model="departamentos[i].departamentoData.padrinhos.qtn"
-                      v-if="padrinhos === 'exist'"
+                      v-if="departamentos[i].departamentoData.padrinhos.exist === 'exist'"
                       dense
                       class="q-mx-sm"
                       label="Quantidade Padrinhos"
@@ -381,6 +381,31 @@
           </div>
         </q-item>
       </q-list>
+      <div class="q-ma-sm q-mt-lg text-center" >
+        <q-chip
+          v-if="validated"
+          color="green"
+          label="Validado"
+          text-color="white"
+          icon="done"
+        />
+
+        <q-chip
+          v-if="!validated"
+          color="red"
+          label="Não Validado"
+          text-color="white"
+          icon="warning"
+        /><br>
+
+        <q-btn
+          label="Salvar rascunho"
+          color="primary"
+          class="q-my-lg"
+          no-caps
+          @click="saveDraft()"
+        />
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -393,9 +418,8 @@ export default defineComponent({
   data() {
     return {
       departamentos: [],
-      rascunhos: [],
-      formDepart: [],
       congregationName: "",
+      validated: false,
       statisticStatus: null,
       arrayIgnore: [
         "Departamento de Escola Dominical",
@@ -406,14 +430,11 @@ export default defineComponent({
       ],
     };
   },
-  beforeUnmount() {
-    this.submitAllItens();
-  },
   beforeMount() {
-    this.getCongregationGroups();
+    this.getGroupActivitiesByOrganismId();
   },
   methods: {
-    getCongregationGroups() {
+    getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
         body: {
@@ -423,55 +444,25 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return;
         this.departamentos = r.data.childData;
-        console.log(this.departamentos,"cuzinho doce");
         this.congregationName = r.data.organismName;
-      });
-      this.getSketchGroup();
-    },
-    getSketchGroup() {
-      const opt = {
-        route: "/desktop/statistics/getSketchByGroupActivity",
-        body: {
-          organismId: this.$route.query.organismId
-        }
-      };
-      useFetch(opt).then((r) => {
-        console.log("Rascunho pego do estatisca:", r.data);
-        if (r.error) return;
-        this.rascunhos = r.data[0]
-        console.log(this.rascunhos, 'dlkmaskd')
-        
-        this.departamentos.forEach((item) =>{
-          const rask = this.rascunhos.departamentoData.find((rascunho) => 
-            rascunho.organismConfigName === item.organismConfigName
-          )
-          if (rask){
-            item.departamentoData = rask
-            console.log('atualizado', item);
-          }
-        })
+        this.validated = r.data.validated
+        console.log(this.departamentos,"cuzinho doce");
       });
     },
-    expandItem(item) {
+    expand(item) {
       item.expanded = !item.expanded;
-        if(!item.expanded) this.submitForm(item);
-    },
-    submitForm(item) {
-      // item.expanded =!item.expanded
-      this.formDepart.push(
-        item.departamentoData
-      )
       // this.$q.notify("Salvo com sucesso!");
     },
-    submitAllItens(){
+    saveDraft(){
       this.departamentos.forEach((departamento) => {
-        departamento.expanded === false 
+        departamento.expanded = false 
       })
       const opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
         body: {
           organismId: this.$route.query.organismId,
-          departamentoData: this.formDepart,
+          groupActivity: this.departamentos,
+          organismFatherName: this.congregationName
         },
       };
       useFetch(opt).then((r) => {

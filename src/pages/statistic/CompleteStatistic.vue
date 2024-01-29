@@ -32,8 +32,8 @@
             Atividades de grupos
           </q-item-section>
           <q-chip
-            :label="validationResume.groupsActivitiesStatistics ? 'Validado' : 'Não validado'"
-            :color="validationResume.groupsActivitiesStatistics ? 'green' : 'red'"
+            :label="validationResume.groupActivity ? 'Validado' : 'Não validado'"
+            :color="validationResume.groupActivity ? 'green' : 'red'"
             text-color="white"
           />
         </q-item>
