@@ -77,11 +77,26 @@ export default defineComponent({
   },
   beforeMount() {
     this.getMyOrganismsToChooseOne()
-    this.getStatisticStatus()
+    this.getStatisticStatusByOrganismId()
     this.getValidationResumeByOrganism()
+    this.getStatisticStatus()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    getStatisticStatus(){
+      const opt = {
+        route: "/desktop/statistics/getStatisticStatus",
+        body: {
+          organismId: this.$route.query.organismId
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        console.log(r)
+        // this.paroquiaData = r.data
+      });
+    },
     getValidationResumeByOrganism () {
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -106,7 +121,7 @@ export default defineComponent({
       this.congregationName = r.data.organismName 
     });
   },
-    getStatisticStatus() {
+  getStatisticStatusByOrganismId() {
       const opt = {
         route: '/desktop/statistics/getStatisticStatusByOrganismId',
         body: {

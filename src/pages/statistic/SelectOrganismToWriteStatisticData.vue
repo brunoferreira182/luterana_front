@@ -75,6 +75,7 @@ export default defineComponent({
     this.getFinanceTotalValueFromParoquia()
   },
   methods: {
+ 
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
