@@ -295,7 +295,6 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-      <q-separator class="q-ma-md"/>
       <!-- <q-expansion-item
         label="Secretárias contratadas"
         class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
