@@ -408,29 +408,10 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.submitAllItens();
-<<<<<<< HEAD
-    // const timer = setTimeout(() => {
-    //   console.log("Timer executado ao desmontar a página!");
-    //   clearTimeout(timer);
-    // }, 5000);
-=======
-    const timer = setTimeout(() => {
-      clearTimeout(timer);
-    }, 5000);
->>>>>>> 08fbab37bf29ce04c8c8be1a525db27773eaac5c
   },
   beforeMount() {
     this.getCongregationGroups();
   },
-  // watch:{
-  //   handler(newDepartamentos, oldDepartamentos) {
-  //     newDepartamentos.forEach((departamento,index) => {
-  //       if (departamento.expanded === false && oldDepartamentos[index].expanded===true){
-  //         this.submitForm(departamento)
-  //       }
-  //     })
-  //   }
-  // },
   methods: {
     getCongregationGroups() {
       const opt = {
