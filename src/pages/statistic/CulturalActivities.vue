@@ -29,8 +29,11 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-h6">
-              Culto {{ cultural.organismName }}
+            <div class="text-h5">
+              {{ cultural.organismName }}
+            </div>
+            <div class="q-mt-md">
+              Culto
             </div>
             <q-input
               type="number"
@@ -47,8 +50,8 @@
               label="Soma total de frequência no ano"
               v-model.number="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
-            <div class="q-py-xl">
-              <div class="text-h6">
+            <div class="q-py-md">
+              <div class="q-mt-md">
                 Santa-ceia
               </div>
               <q-input
