@@ -325,6 +325,9 @@ export default defineComponent({
       total: 0
     }
   },
+  beforeUnmount(){
+    this.saveDraft()
+  },
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
     this.getOrganismNameForBreadCrumbs()

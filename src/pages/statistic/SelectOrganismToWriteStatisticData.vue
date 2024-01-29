@@ -65,7 +65,7 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
-      allOrganismCompleteValidated: false,
+      allOrganismCompleteValidated: true,
       validationResume: null,
       stepsNum: 4
     }
@@ -75,15 +75,6 @@ export default defineComponent({
     this.getFinanceTotalValueFromParoquia()
   },
   methods: {
-    teste(){
-      const childData = this.userOrganismList.childData[i];
-
-      const todasVariaveisSaoUm = childData.percentualEstatistica.every(item => item.value === 1);
-
-      if (todasVariaveisSaoUm) {
-        console.log("Todas as variáveis value são iguais a 1");
-      }
-    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -118,9 +109,13 @@ export default defineComponent({
             color
           }
         })
-        const allOrganismsComplete = this.userOrganismList.childData.forEach(org => org.percentualEstatistica.value === 1);
-        if (allOrganismsComplete) {
-          this.allOrganismCompleteValidated = allOrganismsComplete
+        const childData = this.userOrganismList.childData;
+        for (let i = 0; i < childData.length; i++) {
+          const org = childData[i];
+          if (org.percentualEstatistica && org.percentualEstatistica.value !== 1) {
+            this.allOrganismCompleteValidated = false;
+            break;
+          }
         }
       });
     },

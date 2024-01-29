@@ -159,7 +159,7 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        this.validated = r.data.validated
+        this.validated = r.data.validated ?  this.validated = r.data.validated : this.validated = false
         this.culturalActivities = r.data.activitiesData
       });
     },
