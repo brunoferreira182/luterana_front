@@ -175,6 +175,14 @@
                     mask="##/##/####"
                     v-model="org.foundationDate"
                   />
+                  <q-btn
+                    label="Adicionar dia e horário do evento"
+                    color="primary"
+                    unelevated
+                    rounded
+                    class="q-pa-sm q-my-md"
+                    @click="addEventsDayAndHour"
+                  />
                 </q-expansion-item>
               </q-list>
               <div class="text-right q-ma-sm">
@@ -794,6 +802,27 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddEventsDayAndHour.open"
+      >
+        <q-card
+          style="width:400px"
+        >
+          <q-card-section class="text-center">
+            <strong>Selecione o dia da semana e o horário</strong>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              :options="daysOfWeek"
+              v-model="dialogAddEventsDayAndHour.day"
+              class="q-pa-sm"
+              label="Dia da semana"
+            >
+
+            </q-select>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -890,13 +919,22 @@ export default defineComponent({
         departaments: null
       },
       validated: false,
-      status: null
+      status: null,
+      dialogAddEventsDayAndHour: {
+        open: false,
+        day: null,
+        hour: null
+      },
+      daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo']
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
   },
   methods: {
+    addEventsDayAndHour() {
+      this.dialogAddEventsDayAndHour.open = true
+    },
     clearDialogSelectDepartamentDetail() {
       this.dialogSelectDepartamentDetail = {
         open: false,
