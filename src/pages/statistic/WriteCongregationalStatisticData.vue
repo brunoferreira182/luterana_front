@@ -215,6 +215,63 @@
                   />
                 </q-expansion-item>
               </q-list>
+              <q-list bordered class="q-mt-sm">
+                <q-expansion-item
+                  label="Secretárias contratadas"
+                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
+                  style="border-radius: 1rem;"
+                >
+                  <div class="q-mx-md">
+                    <div v-if="org && org.secretary">
+                      <q-list
+                        bordered
+                        class="q-my-sm"
+                        v-for="(sec, iSec) in org.secretary"
+                        :key="sec"
+                      >
+                        <q-item
+                          class="q-ma-sm"
+                        >  
+                          <q-item-section>
+                            <q-item-label lines="1">
+                              Nome: {{ sec.user.userName }}
+                            </q-item-label>
+                            <q-item-label lines="2">
+                              Dia da semana: {{ sec.day }}
+                            </q-item-label>
+                            <q-item-label lines="3">
+                              Hora inicial: {{sec.initialHour}}
+                            </q-item-label>
+                            <q-item-label>
+                              Hora final: {{sec.finalHour}}
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-btn
+                              color="red"
+                              flat
+                              unelevated
+                              rounded
+                              icon="delete"
+                              @click="removeSecretary(iOrg, iSec)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+                  </div>
+                  <div class="q-ma-md text-h6">
+                    <q-btn
+                      label="Secretária"
+                      icon="add"
+                      color="primary"
+                      rounded
+                      unelevated
+                      @click="addSecretaryToParoquia(iOrg)"
+                    />
+                  </div>
+                </q-expansion-item>
+              </q-list>
               <div class="text-right q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
@@ -235,11 +292,11 @@
                 />
               </div>
             </q-expansion-item>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
+              </q-item-label>
+            </q-item-section>
+          </q-item>
       <q-separator class="q-ma-md"/>
-      <q-expansion-item
+      <!-- <q-expansion-item
         label="Secretárias contratadas"
         class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
         style="border-radius: 1rem;"
@@ -252,48 +309,12 @@
             v-for="(sec, iSec) in composition.secretary"
             :key="sec" 
           >
-            <q-item
-              class="q-ma-sm"
-            >  
-              <q-item-section>
-                <q-item-label lines="1">
-                  Nome: {{ sec.user.userName }}
-                </q-item-label>
-                <q-item-label lines="2">
-                  Dia da semana: {{ sec.day }}
-                </q-item-label>
-                <q-item-label lines="3">
-                  Hora inicial: {{sec.initialHour}}
-                </q-item-label>
-                <q-item-label>
-                  Hora final: {{sec.finalHour}}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  color="red"
-                  flat
-                  unelevated
-                  rounded
-                  icon="delete"
-                  @click="removeSecretary(iSec)"
-                />
-              </q-item-section>
-            </q-item>
+           
           </q-list>
           </div>
         </div>
-        <div class="q-ml-lg text-h6">
-          <q-btn
-            label="Secretária"
-            icon="add"
-            color="primary"
-            rounded
-            unelevated
-            @click="addSecretaryToParoquia"
-          />
-        </div>
-      </q-expansion-item>
+        
+      </q-expansion-item> -->
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -1226,6 +1247,7 @@ export default defineComponent({
       dialogAddSecretary: {
         open: false,
         userSelected: null,
+        iOrg: null,
         day: null,
         initialHour: null,
         finalHour: null
@@ -1234,6 +1256,9 @@ export default defineComponent({
   }, 
   beforeMount() {
     this.getCompositionByUserId()
+  },
+  beforeUnmount() {
+    this.saveDraft()
   },
   methods: { 
     removeDay(iOrg, iDay) {
@@ -1248,14 +1273,14 @@ export default defineComponent({
       .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
       .diaEHorario.splice(iDay, 1)
     },
-    removeSecretary(iSec) {
-      this.composition.secretary.splice(iSec, 1)
+    removeSecretary(iOrg, iSec) {
+      this.composition.congregations[iOrg].secretary.splice(iSec, 1)
     },
     confirmAddSecretary() {
-      if (!this.composition.secretary) {
-        this.composition.secretary = []
+      if (!this.composition.congregations[this.dialogAddSecretary.iOrg].secretary) {
+        this.composition.congregations[this.dialogAddSecretary.iOrg].secretary = []
       }
-      this.composition.secretary.push({
+      this.composition.congregations[this.dialogAddSecretary.iOrg].secretary.push({
         action: 'add',
         user: {
           userName: this.dialogAddSecretary.userSelected.userName,
@@ -1276,8 +1301,9 @@ export default defineComponent({
         finalHour: null
       }
     },
-    addSecretaryToParoquia() {
+    addSecretaryToParoquia(iOrg) {
       this.dialogAddSecretary.open = true
+      this.dialogAddSecretary.iOrg = iOrg
     },
     clearDialogAddDayAndHourInDept() {
       this.dialogAddEventsDayAndHourInDep = {
@@ -1314,6 +1340,9 @@ export default defineComponent({
       this.dialogAddEventsDayAndHourInDep.open = true
     }, 
     confirmAddEventsDayAndHour() {
+      if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
+        this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
+      }
       this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
         day: this.dialogAddEventsDayAndHour.day,
         hour: this.dialogAddEventsDayAndHour.hour,
