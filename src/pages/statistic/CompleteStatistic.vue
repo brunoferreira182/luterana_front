@@ -22,15 +22,8 @@
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
           <q-chip
-            v-if="validationResume.atividadesCulticasStatistics"
-            label="Validado"
-            color="green"
-            text-color="white"
-          />
-          <q-chip
-            v-else-if="!validationResume.atividadesCulticasStatistics"
-            label="Não validado"
-            color="red"
+            :label="validationResume.atividadesCulticasStatistics ? 'Validado' : 'Não validado'"
+            :color="validationResume.atividadesCulticasStatistics ? 'green' : 'red'"
             text-color="white"
           />
         </q-item>
@@ -39,15 +32,8 @@
             Atividades de grupos
           </q-item-section>
           <q-chip
-            v-if="validationResume.groupsActivities"
-            label="Validado"
-            color="green"
-            text-color="white"
-          />
-          <q-chip
-            v-else-if="!validationResume.groupsActivities"
-            label="Não validado"
-            color="red"
+            :label="validationResume.groupsActivitiesStatistics ? 'Validado' : 'Não validado'"
+            :color="validationResume.groupsActivitiesStatistics ? 'green' : 'red'"
             text-color="white"
           />
         </q-item>
@@ -57,15 +43,8 @@
             
           </q-item-section>
           <q-chip
-            v-if="validationResume.membersMovement"
-            label="Validado"
-            color="green"
-            text-color="white"
-          />
-          <q-chip
-            v-else-if="!validationResume.membersMovement"
-            label="Não validado"
-            color="red"
+            :label="validationResume.membersMovement ? 'Validado' : 'Não validado'"
+            :color="validationResume.membersMovement ? 'green' : 'red'"
             text-color="white"
           />
         </q-item>
@@ -74,15 +53,8 @@
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>
           <q-chip
-            v-if="validationResume.financeStatistics"
-            label="Validado"
-            color="green"
-            text-color="white"
-          />
-          <q-chip
-            v-else-if="!validationResume.financeStatistics"
-            label="Não validado"
-            color="red"
+            :label="validationResume.financeStatistics ? 'Validado' : 'Não validado'"
+            :color="validationResume.financeStatistics ? 'green' : 'red'"
             text-color="white"
           />
         </q-item>
@@ -132,7 +104,6 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.congregationName);
     });
   },
     getStatisticStatus() {
@@ -145,7 +116,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.statisticStatus = r.data
-        console.log(this.statisticStatus);
         // this.verifyStatusTypes()
       })
     },

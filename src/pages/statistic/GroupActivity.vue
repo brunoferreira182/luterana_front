@@ -408,10 +408,16 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.submitAllItens();
+<<<<<<< HEAD
     // const timer = setTimeout(() => {
     //   console.log("Timer executado ao desmontar a página!");
     //   clearTimeout(timer);
     // }, 5000);
+=======
+    const timer = setTimeout(() => {
+      clearTimeout(timer);
+    }, 5000);
+>>>>>>> 08fbab37bf29ce04c8c8be1a525db27773eaac5c
   },
   beforeMount() {
     this.getCongregationGroups();
@@ -475,7 +481,6 @@ export default defineComponent({
         item.departamentoData
       )
       // this.$q.notify("Salvo com sucesso!");
-      console.log('enfiando coisa num array', this.formDepart);
     },
     submitAllItens(){
       this.departamentos.forEach((departamento) => {

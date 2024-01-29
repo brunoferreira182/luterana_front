@@ -1,6 +1,6 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page class="q-ma-md">
+    <q-page class="q-ma-md q-gutter-y-md">
       <div class="text-h6">
         Você está em Paróquia {{ userOrganismList.organismName }}
       </div>
@@ -13,7 +13,9 @@
         {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
       </div>
       <div class="text-subtitle1">
-        Selecione o organismo que deseja escrever os dados de estatística
+        Selecione o organismo que deseja escrever os dados de estatística. 
+        A estatísica só estará pronta para envio <br/> 
+        se todos os progressos estiverem em 100%
       </div>
       <q-list> 
         <q-item
@@ -38,6 +40,14 @@
           </q-item-section>
           
         </q-item>
+        <q-btn
+          :disable="allOrganismCompleteValidated ? false : true"
+          label="Enviar estatística"
+          no-caps
+          rounded
+          class="full-width"
+          color="primary"
+        />
       </q-list>
     </q-page>
   </q-page-container>
@@ -55,6 +65,7 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
+      allOrganismCompleteValidated: true,
       validationResume: null,
       stepsNum: 4
     }
@@ -62,19 +73,16 @@ export default defineComponent({
   beforeMount(){
     this.getParoquiasByUserId()
     this.getFinanceTotalValueFromParoquia()
-    // this.getValidationResumeAllOrganisms()
   },
   methods: {
-    // getValidationResumeAllOrganisms () {
-    //   const opt = {
-    //     route: "/desktop/statistics/getValidationResumeAllOrganisms",
-    //   }
-    //   this.$q.loading.show()
-    //   useFetch(opt).then((r) => {
-    //     this.$q.loading.hide()
-    //     this.validationResume = r.data
-    //   });
-    // },
+    teste(){
+      const childData = this.userOrganismList.childData[i];
+
+      const todasVariaveisSaoUm = childData.percentualEstatistica.every(item => item.value === 1);
+
+      if (todasVariaveisSaoUm) {
+      }
+    },
     getFinanceTotalValueFromParoquia(){
       const opt = {
         route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -109,6 +117,14 @@ export default defineComponent({
             color
           }
         })
+        const childData = this.userOrganismList.childData;
+        for (let i = 0; i < childData.length; i++) {
+          const org = childData[i];
+          if (org.percentualEstatistica && org.percentualEstatistica.value !== 1) {
+            this.allOrganismCompleteValidated = false;
+            break;
+          }
+        }
       });
     },
   }

@@ -325,6 +325,9 @@ export default defineComponent({
       total: 0
     }
   },
+  beforeUnmount(){
+    this.saveDraft()
+  },
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
     this.getOrganismNameForBreadCrumbs()
@@ -371,7 +374,6 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error || !r.data) return
         const keys = Object.keys(r.data.membersMovement)
-        console.log(keys)
         keys.forEach((key) => {
           this.membersMovement[key] = r.data.membersMovement[key]
         })
@@ -418,7 +420,6 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       if (r.error) return;
       this.congregationName = r.data.organismName 
-      console.log("grupos", this.congregationName);
     });
   },
   }

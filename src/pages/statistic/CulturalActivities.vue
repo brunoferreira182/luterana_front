@@ -24,28 +24,28 @@
       <div class="row justify-center q-pa-md">
         <div class="col q-gutter-y-md" v-if="culturalActivities && culturalActivities.length > 0">
           <div
-            v-for="(item, index) in culturalActivities"
+            v-for="(cultural, index) in culturalActivities"
             :key="index"
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
             <div class="text-h6">
-              Culto {{ item.organismName }}
+              Culto {{ cultural.organismName }}
             </div>
             <q-input
               type="number"
               label="Quantos dados por pastor"
-              v-model.number="item.activitiesData.cultoData.qtyDadosPastor"
+              v-model.number="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
               type="number"
               label="Quantos cultos de leitura"
-              v-model.number="item.activitiesData.cultoData.qtyCultoLeitura"
+              v-model.number="cultural.activitiesData.cultoData.qtyCultoLeitura"
             />
             <q-input
               type="number"
               label="Soma total de frequência no ano"
-              v-model.number="item.activitiesData.cultoData.somaFrequenciaAnual"
+              v-model.number="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-xl">
               <div class="text-h6">
@@ -54,12 +54,12 @@
               <q-input
                 type="number"
                 label="Quantidade oferecida no ano"
-                v-model.number="item.activitiesData.santaCeiaData.qtyOferecidaAnual"
+                v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
               />
               <q-input
                 type="number"
                 label="Soma total de comungantes"
-                v-model.number="item.activitiesData.santaCeiaData.somaTotalComungantes"
+                v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
               />
             </div>
           </div>
@@ -119,6 +119,9 @@ export default defineComponent({
     
     }
   },
+  beforeUnmount(){
+    this.insertAtividadesCulticasStatisticDraft()
+  },
   beforeMount() {
     this.getAtividadesCulticas()
     this.getPontosDeMissaoByOrganismId()
@@ -139,7 +142,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        console.log(r)
         this.culturalActivities = r.data.organismList
       });
     },
@@ -157,7 +159,7 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        this.validated = r.data.validated
+        this.validated = r.data.validated ?  this.validated = r.data.validated : this.validated = false
         this.culturalActivities = r.data.activitiesData
       });
     },
