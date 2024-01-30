@@ -444,7 +444,9 @@ export default defineComponent({
           organismId: this.$route.query.organismId,
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return;
         this.departamentos = r.data.childData;
         this.congregationName = r.data.organismName;
@@ -467,7 +469,9 @@ export default defineComponent({
           organismFatherName: this.congregationName
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
         this.getGroupActivitiesByOrganismId()
