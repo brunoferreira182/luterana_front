@@ -162,7 +162,7 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        this.validated = r.data.validated ?  this.validated = r.data.validated : this.validated = false
+        r.data.validated ? this.validated = r.data.validated : this.validated = false
         this.culturalActivities = r.data.activitiesData
       });
     },
@@ -187,6 +187,7 @@ export default defineComponent({
           activitiesData: item.activitiesData,
         };
         if (index === 0) {
+          //a congregação precisa ser o primeiro índice sempre
           extractedItem.congregationId = item.organismId;
         } else {
           extractedItem.organismId = item.childOrganismId;

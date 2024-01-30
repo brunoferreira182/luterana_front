@@ -97,57 +97,31 @@
         </div>
       </div>
       <q-dialog v-model="addReceiverDialog">
-        <q-card style="border-radius: 1rem">
+        <q-card style="border-radius: 1rem; width: 450px;">
           <q-card-section>
             <div class="text-h5 text-center q-mb-md">Novo destinatário</div>
             <div class="text-subtitle1">Quero enviar para:</div>
-            <div class="q-gutter-sm">
+            <div class="q-gutter-y-sm">
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="organism"
-                label="Organismo"
+                val="general"
+                label="Geral"
               />
-              <br />
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="organismType"
-                label="Tipo de organismo"
+                val="pastors"
+                label="Pastores"
               />
-              <br />
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="structure"
-                label="Estrutura"
+                val="specificDistrict"
+                label="Distrito específico"
               />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="function"
-                label="Função"
-              />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="title"
-                label="Título"
-              />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="user"
-                label="Usuário"
-              />
-              <br />
             </div>
             <q-select
+              v-if="receiverType === 'specificDistrict'"
               outlined
-              class="q-mt-md q-mr-xl"
+              class="full-width"
               v-model="newReceiver"
               use-input
               hide-selected
@@ -155,21 +129,20 @@
               fill-input
               input-debounce="300"
               label="Buscar"
-              :options="filteredOptions"
-              @filter="filterFn"
-              style="width: 350px"
+              :options="districtOptions"
+              @filter="getSpecificDistrictsToSendAttach"
               hint="Pesquise ou selecione a opção desejada"
             >
-              <template #no-option>
+              <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
-                    No results
+                    Nenhum resultado
                   </q-item-section>
                 </q-item>
               </template>
             </q-select>
           </q-card-section>
-          <q-card-actions align="around" class="q-mb-md">
+          <q-card-actions align="center" class="q-mb-md">
             <q-btn
               flat
               label="Cancelar"
@@ -211,7 +184,7 @@ export default defineComponent({
       addReceiverDialog: false,
       receiverType: "organism",
       receiverOptions: [],
-      filteredOptions: [],
+      districtOptions: [],
       organismsList: [],
       newReceiver: null,
       currentTypeName: "",
@@ -229,6 +202,27 @@ export default defineComponent({
     this.getOptionsListByType();
   },
   methods: {
+    getSpecificDistrictsToSendAttach(val, update, abort){
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/attach/getSpecificDistrictsToSendAttach",
+        body: {
+          searchString: val,
+          isActive: 1,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        update(() => {
+          this.districtOptions = r.data.list;
+        })
+      });
+    },
     filterFn(val, update) {
       update(() => {
         if (val === "") {
