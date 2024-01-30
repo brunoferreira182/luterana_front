@@ -108,11 +108,13 @@ export default defineComponent({
         route:'/desktop/statistics/getParoquialManagementType',
         }
         useFetch(opt).then((r)=>{
-          this.group = r.data.managementType
-          if (r.data.status) {
+          if (r.data && r.data.managementType) {
+            this.group = r.data.managementType
+          }
+          if (r.data && r.data.status) {
             this.status = r.data.status
           }
-          if (r.data.validated) {
+          if (r.data && r.data.validated) {
             this.validated = r.data.validated
           }
         })

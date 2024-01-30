@@ -292,7 +292,6 @@ export default defineComponent({
         contribuitionOutput: this.contributionOutputSum
       },
     };
-    console.log(this.contributionOutputSum, 'teste do tilau')
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
