@@ -1453,9 +1453,10 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
   },
-  // beforeUnmount() {
-  //   this.saveDraft()
-  // },
+  beforeUnmount() {
+    if (this.validated && (this.status && this.status.value === 'sent')) return
+    this.saveDraft()
+  },
   methods: {
     clearDialogLastPastoralActivity() {
       this.dialogLastPastoralActivity = {
@@ -1485,9 +1486,12 @@ export default defineComponent({
           organismId: this.paroquiaId
         }
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return
-        this.getPastorDataTabs()
+        this.getMyOrganismsList()
+        this.getParoquiaId()
       })
     },
     addLastPastoralActivity() {

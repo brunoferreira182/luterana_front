@@ -1256,9 +1256,10 @@ export default defineComponent({
   beforeMount() {
     this.getCompositionByUserId()
   },
-  // beforeUnmount() {
-  //   this.saveDraft()
-  // },
+  beforeUnmount() {
+    if (this.validated && (this.status && this.status.value === 'sent')) return
+    this.saveDraft()
+  },
   methods: { 
     removeDay(iOrg, iDay) {
       this.composition
@@ -1407,7 +1408,9 @@ export default defineComponent({
       opt = {
         route: '/desktop/statistics/saveCompositionFinal',
       }
+      this.$q.loading.show()
       r = await useFetch(opt)
+      this.$q.loading.hide()
       if (r.error) {
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
