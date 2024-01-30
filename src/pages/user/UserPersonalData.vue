@@ -112,6 +112,14 @@
                     </div>
                     <div class="row justify-center q-pa-md">
                       <div class="col-4 q-px-lg">
+                        <q-btn
+                          label="Trocar foto"
+                          @click="clkOpenFilePicker"
+                          color="primary"
+                          unelevated
+                          rounded
+                          no-caps
+                        />
                         <q-file
                           v-model="userImg"
                           label="Clique para inserir foto"
@@ -122,6 +130,8 @@
                           accept=".png, .jpg, image/*"
                           @rejected="rejectUserPhoto"
                           max-files="1"
+                          ref="filePicker"
+                          style="display: none"
                         >
                           <template v-slot:prepend>
                             <q-icon name="photo_camera" />
@@ -484,7 +494,7 @@
                   <q-item-section avatar class="q-px-md q-pa-md">
                     <q-img 
                       style="border-radius: 1rem"
-                      :src="userImg !== null ? userPhoto : avatar" 
+                      :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
                       width="208px" 
                       height="208px"
                     />
@@ -492,6 +502,14 @@
                 </div>
                 <div class="row justify-center q-pa-md text-center">
                   <div class="col q-px-xl">
+                    <q-btn
+                      label="Trocar foto"
+                      @click="clkOpenFilePicker"
+                      color="primary"
+                      unelevated
+                      rounded
+                      no-caps
+                    />
                     <q-file
                       v-model="userImg"
                       label="Clique para inserir foto"
@@ -502,6 +520,8 @@
                       accept=".png, .jpg, image/*"
                       @rejected="rejectUserPhoto"
                       max-files="1"
+                      ref="filePicker"
+                      style="display: none"
                     >
                       <template v-slot:prepend>
                         <q-icon name="photo_camera" />
@@ -1261,6 +1281,10 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    clkOpenFilePicker () {
+      console.log(this.$refs.filePicker[0].pickFiles())
+      // this.$refs.filePicker.pickFiles()
+    },
     editAttach(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddAttach.open = true,
       this.dialogAddAttach.fieldIndex = fieldIndex
