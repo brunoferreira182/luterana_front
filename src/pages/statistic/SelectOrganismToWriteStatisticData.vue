@@ -27,7 +27,7 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <!-- <q-item-label>
+            <q-item-label>
               <q-chip v-if="!organism.status.atividadeCulticaStatus || organism.status.atividadeCulticaStatus === 'notSent'">
                 Atividades cúlticas não enviado
               </q-chip>
@@ -46,7 +46,7 @@
               <q-chip >
                 Financeiro {{ organism.status.financeStatus }}
               </q-chip>
-            </q-item-label> -->
+            </q-item-label>
             <div class="q-mt-md">Progresso:</div>
             <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
             <div class="absolute-full flex flex-center">

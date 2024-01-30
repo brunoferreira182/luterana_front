@@ -1693,7 +1693,9 @@ export default defineComponent({
         body: this.composition
       }
       opt.body.status = 'notSent'
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
@@ -1765,7 +1767,9 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return 
 
         if (!r.data._id) {

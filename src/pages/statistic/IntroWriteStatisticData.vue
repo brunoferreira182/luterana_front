@@ -103,7 +103,7 @@
         @hide="clearDialogNotifyStatus"
       >
         <q-card
-          style="width:400px"
+          style="width:400px; border-radius: 1rem;"
         >
           <q-card-section
             class="text-center text-h6"
