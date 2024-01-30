@@ -12,8 +12,12 @@
           </q-chip>
         </div>
       </div>
+      <!-- Aqui eu tenho algumas etapas para serem cumpridas antes de alterar o front:
+      1- Copiar q query do organismDetail e adicionar os complementos que faltam
+      2- Ajustar a função mountTree para poder utilizar a q-tree
+      3- Ajustar o front conforme a imagem do éder -->
       <div class="q-pa-sm">
-        <q-tree
+        <!-- <q-tree
           default-expand-all
           :nodes="organismChildData"
           node-key="label"
@@ -33,7 +37,7 @@
                 <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
               </q-btn>
             </div>
-            <!-- <div class="items-center" v-else>
+          <div class="items-center" v-else>
               <q-icon
                 v-if="prop.node.type === 'Congregação'"
                 name="church"
@@ -52,9 +56,9 @@
                 class="cursor-pointer"
                 @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
               >{{ prop.node.label }}</span>
-            </div> -->
+            </div>
           </template>
-        </q-tree>
+        </q-tree> -->
       </div>
     </q-page>
   </q-page-container>
