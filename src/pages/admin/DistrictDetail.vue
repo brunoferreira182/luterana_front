@@ -8,7 +8,7 @@
             :style="{background: organismConfigStyle}"
             text-color="white"
           >
-            3 Paróquias | 10 Congregaçoes | 15 Pontos de Missão | 7 Pastores
+            {{ numOfParishs }} Paróquias | {{numOfCongregations}} Congregaçoes | {{ numOfMissionPoints }} Pontos de Missão | xxx Pastores
           </q-chip>
         </div>
       </div>
@@ -85,7 +85,10 @@ export default defineComponent({
       parentData: null,
       idLegado: null,
       congregacaoSedeAddress: null,
-      organismListTree: []
+      organismListTree: [],
+      numOfParishs: null,
+      numOfCongregations: 0,
+      numOfMissionPoints: 0
     }
   },
   beforeMount() {
@@ -103,6 +106,7 @@ export default defineComponent({
           children: []
         }
         parish.organismChildData.forEach((congregation, iCongregation) => {
+          this.numOfCongregations++
           tree.children.push({
             type: 'Para que seve isso ainda não sei',
             label: congregation.organismConfigName + ' ' + congregation.childName,
@@ -111,7 +115,6 @@ export default defineComponent({
             children: []
           })
           congregation.organismChildData.forEach((dept) => {
-            console.log(dept, 'é assim que estamos atualmente')
             if (dept) {
               tree.children[iCongregation].children.push({
                 type: 'não faõ ideia',
@@ -119,6 +122,9 @@ export default defineComponent({
                 body: 'normal',
                 organismId: dept._id
               })
+            }
+            if (dept && dept.organismChildConfig && dept.organismChildConfig.organismConfigName === 'Ponto de Missão') {
+              this.numOfMissionPoints++
             }
           })
         })
@@ -161,6 +167,7 @@ export default defineComponent({
               this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
             }
           }
+          this.numOfParishs = this.organismChildData.length
           this.mountTree()
         }
       });
