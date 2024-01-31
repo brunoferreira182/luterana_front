@@ -8,7 +8,7 @@
             :style="{background: organismConfigStyle}"
             text-color="white"
           >
-            {{ numOfParishs }} Paróquias | {{numOfCongregations}} Congregaçoes | {{ numOfMissionPoints }} Pontos de Missão | xxx Pastores
+            {{ numOfParishs }} Paróquias | {{numOfCongregations}} Congregaçoes | {{ numOfMissionPoints }} Pontos de Missão | {{numOfPastor}} Pastores
           </q-chip>
         </div>
       </div>
@@ -151,6 +151,7 @@ export default defineComponent({
       numOfParishs: null,
       numOfCongregations: 0,
       numOfMissionPoints: 0,
+      numOfPastor: 0,
       dialogParishDetail: {
         open: false,
         data: null
@@ -265,6 +266,9 @@ export default defineComponent({
           this.numOfParishs = this.organismChildData.length
           this.mountTree()
           this.mountTreeFunctions()
+          this.organismChildData.forEach((parish) => {
+            this.numOfPastor = this.numOfParishs + parish.functions.users.length
+          })
         }
       });
     },
