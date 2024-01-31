@@ -288,7 +288,8 @@ export default defineComponent({
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
         organismId: this.$route.query.organismId,
-        financeData: this.table
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
       },
     };
     if (Object.keys(this.table.output).length > 0) {
@@ -313,7 +314,6 @@ export default defineComponent({
   const opt = {
     route: "/desktop/statistics/getCongregacaoByOrganismId",
     body: {
-      // organismId: "6530487ab2980d56e0985464",
       organismId: this.$route.query.organismId
     },
   };
@@ -337,6 +337,9 @@ export default defineComponent({
       if (r.error || !r.data) return
       this.validated = r.data.validated
       this.contributionOutputSum = r.data.contributionOutput
+      if (r.data.contributionOutputSGA) {
+        this.contributionOutputSum = r.data.contributionOutputSGA
+      }
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
