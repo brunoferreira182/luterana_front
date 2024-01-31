@@ -1,6 +1,6 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page>
+    <q-page v-if="organismListTree">
       <div class="text-center q-mt-md">
         <div class="col text-capitalize"> 
           <div class="text-h4">Distrito {{ organismName }}</div>
@@ -13,17 +13,17 @@
         </div>
       </div>
       <!-- Aqui eu tenho algumas etapas para serem cumpridas antes de alterar o front:
-      1- Copiar q query do organismDetail e adicionar os complementos que faltam
+      1- Copiar q query do organismDetail e adicionar os complementos que faltam FEITO
       2- Ajustar a função mountTree para poder utilizar a q-tree
       3- Ajustar o front conforme a imagem do éder -->
-      <div class="q-pa-sm">
-        <!-- <q-tree
+      <div class="q-pa-sm q-ma-lg">
+        <q-tree
           default-expand-all
-          :nodes="organismChildData"
+          :nodes="organismListTree"
           node-key="label"
           ref="tree"
         >
-          <template v-slot:default-header="prop">
+          <!-- <template v-slot:default-header="prop">
             <div class=" items-center" v-if="prop.node.header">
               <span class="text-weight-bold text-primary">{{ prop.node.label }}</span>
               <q-btn
@@ -57,8 +57,8 @@
                 @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
               >{{ prop.node.label }}</span>
             </div>
-          </template>
-        </q-tree> -->
+          </template> -->
+        </q-tree>
       </div>
     </q-page>
   </q-page-container>
@@ -84,17 +84,52 @@ export default defineComponent({
       organismChildData: null,
       parentData: null,
       idLegado: null,
-      congregacaoSedeAddress: null
+      congregacaoSedeAddress: null,
+      organismListTree: []
     }
   },
   beforeMount() {
     this.getOrganismDetailById()
   },
   methods: {
+    mountTree() {
+      let tree = []
+      this.organismChildData.forEach((parish) => {
+        tree = {
+          type: 'Para que serve isso?',
+          label: parish.organismConfigName + ' ' + parish.childName,
+          header: 'generic',
+          organismId: parish.childId,
+          children: []
+        }
+        parish.organismChildData.forEach((congregation, iCongregation) => {
+          tree.children.push({
+            type: 'Para que seve isso ainda não sei',
+            label: congregation.organismConfigName + ' ' + congregation.childName,
+            body: 'normal',
+            organismId: congregation.childId,
+            children: []
+          })
+          congregation.organismChildData.forEach((dept) => {
+            console.log(dept, 'é assim que estamos atualmente')
+            if (dept) {
+              tree.children[iCongregation].children.push({
+                type: 'não faõ ideia',
+                label: dept.organismChildConfig.organismConfigName + ' ' + dept.organismChildData.childName,
+                body: 'normal',
+                organismId: dept._id
+              })
+            }
+          })
+        })
+        this.organismListTree.push(tree)
+      })
+
+    },
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {
-        route: "/desktop/adm/getOrganismDetailById",
+        route: "/desktop/adm/getDistrictDetail",
         body: {
           organismId: organismId,
         },
@@ -126,6 +161,7 @@ export default defineComponent({
               this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
             }
           }
+          this.mountTree()
         }
       });
     },
