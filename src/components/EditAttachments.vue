@@ -74,11 +74,12 @@
             </template>
           </q-file>
 
-          <div class="text-h5 q-my-md">
+          <div class="text-h5 q-my-md" >
             Destinatário
             <q-btn
               icon="add"
               rounded
+              :disable="selectedFilters.length === 1 ? true : false"
               flat
               color="primary"
               @click="addReceiverDialog = true"
@@ -86,12 +87,20 @@
             >
           </div>
           <div class="filters-box">
+            <q-chip v-if="receiverType === 'pastors'">
+              Todos os pastores
+            </q-chip>
+            <q-chip v-if="receiverType === 'general'">
+              Todos
+            </q-chip>
             <q-chip
               v-for="(item, i) in selectedFilters"
               :key="i"
               removable
-              @remove="selectedFilters.splice(i, 1)"
-              >{{ item.typeName }} - {{ item.name }}</q-chip
+              @remove="removeSelectedFilter(i)"
+              >{{ item.organismName }}
+              
+              </q-chip
             >
           </div>
         </div>
@@ -125,13 +134,12 @@
               v-model="newReceiver"
               use-input
               hide-selected
-              option-label="name"
+              option-label="organismName"
               fill-input
-              input-debounce="300"
               label="Buscar"
               :options="districtOptions"
+              :option-value="(item) => item"
               @filter="getSpecificDistrictsToSendAttach"
-              hint="Pesquise ou selecione a opção desejada"
             >
               <template v-slot:no-option>
                 <q-item>
@@ -174,7 +182,7 @@ export default defineComponent({
   name: "CreateAttachment",
   data() {
     return {
-      files: [],
+      files: null,
       attachmentInfo: {
         title: "",
         description: "",
@@ -182,7 +190,7 @@ export default defineComponent({
       },
       selectedFilters: [],
       addReceiverDialog: false,
-      receiverType: "organism",
+      receiverType: "",
       receiverOptions: [],
       districtOptions: [],
       organismsList: [],
@@ -199,27 +207,25 @@ export default defineComponent({
     if (this.$route.path === "/attach/attachmentDetail") {
       this.getAttachmentById();
     }
-    this.getOptionsListByType();
+    this.getSpecificDistrictsToSendAttach();
   },
   methods: {
-    getSpecificDistrictsToSendAttach(val, update, abort){
-      if(val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres')
-        abort()
-        return
-      }
+    removeSelectedFilter(i){
+      this.selectedFilters.splice(i, 1)
+      this.newReceiver = null
+    },
+    getSpecificDistrictsToSendAttach(val, update){
       const opt = {
         route: "/desktop/attach/getSpecificDistrictsToSendAttach",
         body: {
           searchString: val,
-          isActive: 1,
         },
       };
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         update(() => {
-          this.districtOptions = r.data.list;
+          this.districtOptions = r.data;
         })
       });
     },
@@ -250,44 +256,67 @@ export default defineComponent({
       });
     },
     addReceiverFilter() {
-      if (!this.newReceiver) {
-        this.$q.notify("Selecione uma opção!");
-        return;
-      } else {
-        this.addReceiverDialog = false;
-        this.selectedFilters.push({
-          typeName: this.currentTypeName,
-          type: this.receiverType,
-          ...this.newReceiver,
-        });
-      }
-    },
-    radioChanged() {
-      this.newReceiver = null;
-      setTimeout(() => {
-        this.getOptionsListByType();
-      }, 1);
+      if(this.receiverType === 'specificDistrict'){
+        if (!this.newReceiver) {
+          this.$q.notify("Selecione uma opção!");
+          return;
+        } else {
+          this.addReceiverDialog = false;
+          
+          this.selectedFilters.push({
+            typeName: this.currentTypeName,
+            type: this.receiverType,
+            ...this.newReceiver,
+          });
+        }
+      }else{ this.addReceiverDialog = false;}
     },
     clkSaveAttachment() {
       this.$route.path === "/attach/attachmentDetail"
         ? this.updateAttachment()
-        : this.sendAttachment();
+        : this.createAttachment();
     },
-    sendAttachment() {
+    createAttachment() {
+      const file = [{file:this.files,name:this.files.name}]
+      console.log(file, 'file')
+      console.log(this.files, 'files')
+      // return
+      if(this.attachmentInfo.title === '' || this.attachmentInfo.description === ''){
+        this.$q.notify('Preencha título e descrição')
+        return
+      }
       const opt = {
         route: "/desktop/attach/createAttachment",
         body: {
-          receivers: this.selectedFilters,
           attachmentInfo: {
             title: this.attachmentInfo.title,
             description: this.attachmentInfo.description,
             priority: this.attachmentInfo.priority,
           },
         },
+        file: []
       };
-      opt.file = [{ name: this.files.name, file: this.files }];
+      if(this.files !== null){
+        opt.file = file
+      }
+      switch(this.receiverType){
+        case 'specificDistrict':
+          opt.body.subType = 'district'
+          opt.body.districtId = this.newReceiver._id
+        break;
+        case 'pastors':
+          opt.body.subType = 'pastors'
+        break;
+        case 'general':
+          opt.body.subType = 'general'
+        break;
+        case '':
+          this.$q.notify('Selecione o destinatário')
+          return
+      }
       this.$q.loading.show();
       useFetch(opt).then(() => {
+        this.$q.loading.hide();
         this.$q.notify("Enviado!");
       });
     },

@@ -16,11 +16,12 @@ const useUtils = {
   //   link.click()
   //   document.body.removeChild(link)
   // },
+  
   downloadFile (options) {
     const opt = {
       method: 'get',
       responseType: 'arraybuffer',
-      route: '/donwload/' + options.filename
+      route: '/download/' + options.filename
     }
     useFetch(opt).then(async response => {
       const link = window.URL.createObjectURL(new Blob([response], {type: options.type}))
