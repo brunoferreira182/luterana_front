@@ -25,9 +25,9 @@
           node-key="label"
           ref="tree"
         >
-          <!-- <template v-slot:default-header="prop">
+          <template v-slot:default-header="prop">
             <div class=" items-center" v-if="prop.node.header">
-              <span class="text-weight-bold text-primary">{{ prop.node.label }}</span>
+              <span class="text-weight-bold">{{ prop.node.label }}</span>
               <q-btn
                 icon="navigate_next"
                 round
@@ -36,7 +36,7 @@
                 flat
                 v-on:click.stop="clkParent(prop.node.organismId)"
               >
-                <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
+                <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn>
             </div>
           <div class="items-center" v-else>
@@ -59,7 +59,7 @@
                 @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
               >{{ prop.node.label }}</span>
             </div>
-          </template> -->
+          </template>
         </q-tree>
       </div>
       <q-separator class="q-my-sm q-mx-lg"/>
@@ -77,6 +77,50 @@
           </q-tree>
         </div>
       </div>
+      <q-dialog
+        v-model="dialogParishDetail.open"
+      >
+        <q-card
+          style="width: 500px;"
+        >
+          <q-card-section class="text-h6 text-center">
+            {{ this.dialogParishDetail.data.organismConfigName + ' - ' + this.dialogParishDetail.data.childName }}
+          </q-card-section>
+          <q-separator class="q-mx-md"/>
+          <q-card-section>
+            <div class="text-h6 q-ma-sm">
+              Funções:
+            </div>
+            <div class="q-ml-md">
+              <div>
+                <strong>{{ this.dialogParishDetail.data.functions.functionName }}:</strong>
+                <q-btn
+                  color="primary"
+                  icon="add"
+                  rounded
+                  unelevated
+                  class="q-pa-sm"
+                  flat
+                />
+              </div>
+              <div 
+                class="q-ml-sm q-my-sm"
+                v-for="user in this.dialogParishDetail.data.functions.users"
+                :key="user"
+              >
+                {{ user.userName }}
+                <q-btn
+                  color="red"
+                  flat
+                  unelevated
+                  rounded
+                  icon="delete"
+                  />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+    </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -106,13 +150,25 @@ export default defineComponent({
       functionsListTree: [],
       numOfParishs: null,
       numOfCongregations: 0,
-      numOfMissionPoints: 0
+      numOfMissionPoints: 0,
+      dialogParishDetail: {
+        open: false,
+        data: null
+      }
     }
   },
   beforeMount() {
     this.getOrganismDetailById()
   },
   methods: {
+    clkParent(id) {
+      this.organismChildData.forEach((parish) => {
+        if (parish.childId === id) {
+          this.dialogParishDetail.data = parish
+        }
+      })
+      this.dialogParishDetail.open = true
+    },
     mountTreeFunctions() {
       let tree = []
       this.functions.forEach((func) => {
