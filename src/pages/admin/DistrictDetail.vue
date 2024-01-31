@@ -17,7 +17,9 @@
       2- Ajustar a função mountTree para poder utilizar a q-tree
       3- Ajustar o front conforme a imagem do éder -->
       <div class="q-pa-sm q-ma-lg">
+        <div class="text-h6">Composição:</div>
         <q-tree
+          class="q-ml-sm"
           default-expand-all
           :nodes="organismListTree"
           node-key="label"
@@ -60,6 +62,21 @@
           </template> -->
         </q-tree>
       </div>
+      <q-separator class="q-my-sm q-mx-lg"/>
+      <div v-if="functions" class="q-ma-lg">
+        <div class="text-h6">
+          Funções distritais:
+        </div>
+        <div class="q-ml-sm">
+          <q-tree
+            class="q-ml-sm"
+            :nodes="functionsListTree"
+            node-key="label"
+            ref="tree"
+          >
+          </q-tree>
+        </div>
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -86,6 +103,7 @@ export default defineComponent({
       idLegado: null,
       congregacaoSedeAddress: null,
       organismListTree: [],
+      functionsListTree: [],
       numOfParishs: null,
       numOfCongregations: 0,
       numOfMissionPoints: 0
@@ -95,11 +113,32 @@ export default defineComponent({
     this.getOrganismDetailById()
   },
   methods: {
+    mountTreeFunctions() {
+      let tree = []
+      this.functions.forEach((func) => {
+        tree = {
+          type: func.group,
+          label: func.functionName,
+          header: 'generic',
+          functionId: func.functionId,
+          children: []
+        }
+        func.users.forEach((user) => {
+          tree.children.push({
+            type: 'user',
+            label: user.userName,
+            header: 'normal',
+            userId: user.userId,
+          })
+        })
+        this.functionsListTree.push(tree)
+      })
+    },
     mountTree() {
       let tree = []
       this.organismChildData.forEach((parish) => {
         tree = {
-          type: 'Para que serve isso?',
+          type: parish.organismConfigName,
           label: parish.organismConfigName + ' ' + parish.childName,
           header: 'generic',
           organismId: parish.childId,
@@ -108,7 +147,7 @@ export default defineComponent({
         parish.organismChildData.forEach((congregation, iCongregation) => {
           this.numOfCongregations++
           tree.children.push({
-            type: 'Para que seve isso ainda não sei',
+            type: congregation.organismConfigName,
             label: congregation.organismConfigName + ' ' + congregation.childName,
             body: 'normal',
             organismId: congregation.childId,
@@ -117,7 +156,7 @@ export default defineComponent({
           congregation.organismChildData.forEach((dept) => {
             if (dept) {
               tree.children[iCongregation].children.push({
-                type: 'não faõ ideia',
+                type: dept.organismChildConfig.organismConfigName,
                 label: dept.organismChildConfig.organismConfigName + ' ' + dept.organismChildData.childName,
                 body: 'normal',
                 organismId: dept._id
@@ -169,6 +208,7 @@ export default defineComponent({
           }
           this.numOfParishs = this.organismChildData.length
           this.mountTree()
+          this.mountTreeFunctions()
         }
       });
     },
