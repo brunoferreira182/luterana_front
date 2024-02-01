@@ -55,115 +55,101 @@
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
-              default-opened
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
               exp
             >
               <q-list bordered class="q-mb-sm">
-                <q-expansion-item
-                  class="q-mt-sm q-mx-sm bg-grey-2"
-                  label="Funções"
-                  :disable="org.action && org.actions === 'remove'"
-                  style="border-radius: .7rem;"
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Funções
+                </div>
+                <div 
+                  class="text-left q-ml-lg"
+                  v-for="(func, iFunc) in org.organismFunctions" 
+                  :key="func"
                 >
-                  <div 
-                    class="text-left q-ml-lg"
-                    v-for="(func, iFunc) in org.organismFunctions" 
-                    :key="func"
+                  <strong>{{ func.functionName }}:</strong>
+                  <q-btn
+                    color="primary"
+                    flat
+                    v-if="!status || (status && status.value !== 'sent')"
+                    rounded
+                    icon="add"
+                    @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                    size="12px"
                   >
-                    <strong>{{ func.functionName }}:</strong>
-                    <q-btn
-                      color="primary"
-                      flat
-                      v-if="!status || (status && status.value !== 'sent')"
-                      rounded
-                      icon="add"
-                      @click="addFunctionUser(iFunc, iOrg, func.functionName)"
-                      size="12px"
+                  </q-btn>
+                  <div
+                    v-for="(user, iUser) in func.functionUsers"
+                    :key="user"
+                  >
+                    <q-item
+                      class="no-padding"
+                      v-if="!user.action || user.action !== 'remove'"
                     >
-                    </q-btn>
-                    <div
-                      v-for="(user, iUser) in func.functionUsers"
-                      :key="user"
-                    >
-                      <q-item
-                        class="no-padding"
-                        v-if="!user.action || user.action !== 'remove'"
-                      >
-                        <q-item-section class="no-padding" >
-                          <q-item-label>
-                            {{ user.userName }}
-                            <q-btn
-                              color="red"
-                              flat
-                              v-if="!status || (status && status.value !== 'sent')"
-                              rounded
-                              unelevated
-                              icon="delete"
-                              @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
-                            ></q-btn>
-                          </q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </div>
+                      <q-item-section class="no-padding" >
+                        <q-item-label>
+                          {{ user.userName }}
+                          <q-btn
+                            color="red"
+                            flat
+                            v-if="!status || (status && status.value !== 'sent')"
+                            rounded
+                            unelevated
+                            icon="delete"
+                            @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                          ></q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
                   </div>
-                </q-expansion-item>
+                </div>
               </q-list>
               <q-list bordered class="q-mb-sm">
-                <q-expansion-item
-                  default-opened
-                  :disable="org.action && org.action === 'remove'"
-                  label="Departamentos"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
-                  style="border-radius: .7rem;"
-                > 
-                  <q-list>
-                    <div 
-                      v-for="(dep, iDep) in org.depts"
-                      :key="dep"
-                    >
-                      <q-item 
-                        v-if="dep.action !== 'naoExiste'"
-                        :clickable="dep.trueLength > 0 ? true : false"
-                        v-ripple
-                        @click="openSelectDepartamentDetail(iOrg, iDep)"
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Departamentos
+                </div>
+                <div 
+                  v-for="(dep, iDep) in org.depts"
+                  :key="dep"
+                >
+                  <q-item 
+                    v-if="dep.action !== 'naoExiste'"
+                    :clickable="dep.trueLength > 0 ? true : false"
+                    v-ripple
+                    @click="openSelectDepartamentDetail(iOrg, iDep)"
+                  >
+                    <q-item-section avatar>
+                      <q-avatar
+                        :color="dep.trueLength === 0 ? 'grey' : 'primary'" 
+                        text-color="white"
                       >
-                        <q-item-section avatar>
-                          <q-avatar
-                            :color="dep.trueLength === 0 ? 'grey' : 'primary'" 
-                            text-color="white"
-                          >
-                            {{ dep.trueLength }} 
-                          </q-avatar>
-                        </q-item-section>
-                        <q-item-section>{{dep.organismConfigName}}</q-item-section>
-                      </q-item>
-                    </div>
-                  </q-list>
-                  <div class="text-left q-ma-md text-h6">
-                    <q-btn
-                      color="primary"
-                      flat
-                      v-if="!status || (status && status.value !== 'sent')"
-                      rounded
-                      icon="add"
-                      label="Adicionar novo departamento"
-                      @click="addNewDepartament(iOrg)"
-                    >
-                      <q-tooltip>Adicionar Departamento</q-tooltip>
-                    </q-btn>
-                  </div>
-                </q-expansion-item>
+                        {{ dep.trueLength }} 
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>{{dep.organismConfigName}}</q-item-section>
+                  </q-item>
+                </div>
+                <div class="text-left q-ma-md text-h6">
+                  <q-btn
+                    color="primary"
+                    flat
+                    v-if="!status || (status && status.value !== 'sent')"
+                    rounded
+                    icon="add"
+                    label="Adicionar novo departamento"
+                    @click="addNewDepartament(iOrg)"
+                  >
+                    <q-tooltip>Adicionar Departamento</q-tooltip>
+                  </q-btn>
+                </div>
               </q-list>
               <q-list bordered>
-                <q-expansion-item
-                  label="Outras informações"
-                  :disable="org.action && org.action === 'remove'"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
-                  style="border-radius: .7rem;"
-                >
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Outras informações
+                </div>
+                <div class="q-mx-md">
                   <q-select
                     v-model="org.affiliatedOrganism"
                     :readonly="status && status.value === 'sent'"
@@ -171,13 +157,20 @@
                     :options="filiatedOptions"
                     class="q-pa-sm"
                   />
-                  <q-input
-                    :readonly="status && status.value === 'sent'"
-                    label="Data de fundação"
-                    class="q-pa-sm"
-                    mask="##/##/####"
-                    v-model="org.foundationDate"
-                  />
+                  <div class="row items-center">  
+                    <q-input
+                      :readonly="status && status.value === 'sent'"
+                      label="Data de fundação"
+                      class="q-pa-sm"
+                      mask="##/##/####"
+                      v-model="org.foundationDate"
+                    />
+                    <div class="col">  
+                      <q-checkbox
+                      label="Não sei"
+                      />
+                    </div>  
+                  </div>
                   <div class="text-h6 q-my-sm q-ml-sm">
                     Quando ocorre o culto:
                   </div>
@@ -206,7 +199,7 @@
                       />
                     </q-item-section>
                   </q-item>
-
+  
                   </q-list>
                   <q-btn
                     label="Adicionar dia e horário do culto"
@@ -217,83 +210,81 @@
                     class="q-pa-sm q-my-md"
                     @click="clkAddServices(iOrg)"
                   />
-                </q-expansion-item>
+                </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
-                <q-expansion-item
-                  label="Secretárias contratadas"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
-                  style="border-radius: 1rem;"
-                >
-                  <div class="q-mx-md">
-                    <div v-if="org && org.secretary">
-                      <q-list
-                        bordered
-                        class="q-my-sm"
-                        v-for="(sec, iSec) in org.secretary"
-                        :key="sec"
-                      >
-                        <q-item
-                          class="q-ma-sm"
-                        >  
-                          <q-item-section>
-                            <q-item-label lines="1">
-                              Nome: {{ sec.user.userName }}
-                            </q-item-label>
-                            <q-item-label lines="2">
-                              Dia da semana: {{ sec.day }}
-                            </q-item-label>
-                            <q-item-label lines="3">
-                              Hora inicial: {{sec.initialHour}}
-                            </q-item-label>
-                            <q-item-label>
-                              Hora final: {{sec.finalHour}}
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-btn
-                              color="red"
-                              flat
-                              unelevated
-                              rounded
-                              icon="delete"
-                              @click="removeSecretary(iOrg, iSec)"
-                            />
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </div>
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Secretária contratada
+                </div>
+                <div class="q-mx-md">
+                  <div v-if="org && org.secretary">
+                    <q-list
+                      bordered
+                      class="q-my-sm"
+                      v-for="(sec, iSec) in org.secretary"
+                      :key="sec"
+                    >
+                      <q-item
+                        class="q-ma-sm"
+                      >  
+                        <q-item-section>
+                          <q-item-label lines="1">
+                            Nome: {{ sec.user.userName }}
+                          </q-item-label>
+                          <q-item-label lines="2">
+                            Dia da semana: {{ sec.day }}
+                          </q-item-label>
+                          <q-item-label lines="3">
+                            Hora inicial: {{sec.initialHour}}
+                          </q-item-label>
+                          <q-item-label>
+                            Hora final: {{sec.finalHour}}
+                          </q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn
+                            color="red"
+                            flat
+                            unelevated
+                            rounded
+                            icon="delete"
+                            @click="removeSecretary(iOrg, iSec)"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
                   </div>
-                  <div class="q-ma-md text-h6">
-                    <q-btn
-                      label="Secretária"
-                      icon="add"
-                      color="primary"
-                      rounded
-                      unelevated
-                      @click="addSecretaryToParoquia(iOrg)"
-                    />
-                  </div>
-                </q-expansion-item>
+                </div>
+                <div class="q-ma-md text-h6">
+                  <q-btn
+                    label="Secretária"
+                    icon="add"
+                    color="primary"
+                    rounded
+                    unelevated
+                    @click="addSecretaryToParoquia(iOrg)"
+                  />
+                </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
-                <q-expansion-item
-                  label="Gestão Paroquial"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left q-mb-sm"
-                  style="border-radius: 1rem;"
-                >
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Gestão Paroquial
+                </div>
+                <div class="q-mx-md q-my-sm">
                   <q-option-group
                     :options="options"
                     type="radio"
                     v-model="org.paroquialManagement"
+                    @update:model-value="insertParoquialManagementType(iOrg, org)"
                   />
                   <q-input
                     v-if="org.paroquialManagement === 'outro'"
+                    @update:model-value="insertParoquialManagementType(iOrg, org)"
                     label="Outro"
                     class="q-pa-sm"
                     v-model="org.other"
                   />
-                </q-expansion-item>
+                </div>
               </q-list>
               <div class="text-right q-ma-sm">
                 <q-btn
@@ -368,7 +359,7 @@
           rounded
           unelevated
           no-caps
-          label="Salvar oficial"
+          label="Finalizar etapa"
           color="green"
           @click="saveFinal"
         ></q-btn>
@@ -1878,6 +1869,22 @@ export default defineComponent({
     openDialogRemoveCongregation(iOrg) {
       this.dialogRemoveCongregation.open = true,
       this.dialogRemoveCongregation.iOrg = iOrg
+    },
+    insertParoquialManagementType(iOrg, org){
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org._id
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
     },
     async saveFinal () {
       let opt = {
