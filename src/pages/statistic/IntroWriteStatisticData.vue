@@ -16,7 +16,7 @@
           </q-item-section>
           <q-chip
             color="green"
-            label="Validado"
+            label="Etapa finalizada"
             text-color="white"
             v-if="status && status.pastoralStatus === 'sent'"
           />
@@ -49,7 +49,7 @@
             text-color="white"
           />
         </q-item>
-        <q-item 
+        <!-- <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
           :disable="isPastor ? false : true" 
@@ -70,7 +70,7 @@
             label="Não Validado"
             text-color="white"
           />
-        </q-item>
+        </q-item> -->
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 

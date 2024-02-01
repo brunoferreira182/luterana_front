@@ -55,8 +55,11 @@
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
+              default-opened
+              header-class="text-primary"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
+              exp
             >
               <q-list bordered class="q-mb-sm">
                 <q-expansion-item
@@ -272,6 +275,25 @@
                   </div>
                 </q-expansion-item>
               </q-list>
+              <q-list bordered class="q-mt-sm">
+                <q-expansion-item
+                  label="Gestão Paroquial"
+                  class="q-mt-sm q-mx-sm bg-grey-2 text-left q-mb-sm"
+                  style="border-radius: 1rem;"
+                >
+                  <q-option-group
+                    :options="options"
+                    type="radio"
+                    v-model="group"
+                  />
+                  <q-input
+                    v-if="group === 'outro'"
+                    label="Outro"
+                    class="q-pa-sm"
+                    v-model="other"
+                  />
+                </q-expansion-item>
+              </q-list>
               <div class="text-right q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
@@ -354,7 +376,7 @@
         v-else
         class="q-pa-md text-h6 text-center"
       >
-          Estes dados já foram preenchidos e estão disponíveis somente para consulta
+          Esta etapa foi concluida. Os dados estão disponíveis somente para consulta
       </div>
       <q-dialog
         v-model="dialogAddFunction.open"
@@ -1249,8 +1271,18 @@ export default defineComponent({
         iOrg: null,
         day: null,
         initialHour: null,
-        finalHour: null
-      }
+        finalHour: null,
+      },
+      options: [
+        { label: 'SIPAR', value: 'SIPAR' },
+        { label: 'Prover', value: 'Prover', color: 'green' },
+        { label: 'Inchurch', value: 'Inchurch', color: 'red' },
+        { label: 'F5 Sapi', value: 'F5 Sapi', color: 'yellow-8' },
+        { label: 'Não possuo', value: 'Não possuo', color: 'pink-8' },
+        { label: 'Outro: Qual', value: 'outro', color: 'purple' }
+      ],
+      other: '',
+      group: null
     }
   }, 
   beforeMount() {
