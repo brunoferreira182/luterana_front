@@ -43,12 +43,19 @@
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
             :key="index"
           >
-            <div class="col q-gutter-y-md">
-              <q-input 
-                type="number"
-                :label="`Confirmados em ${confirmado.ano}`"
-                v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
-              />
+            <div class="row q-gutter-y-md">
+              <q-item-label class="q-pa-sm"> {{`Confirmados em ${confirmado.ano}`}}
+                <q-input 
+                  type="number"
+                  label=" 1°ano "
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
+                />
+                  <q-input 
+                  type="number"
+                  label=" 2°ano"
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
+                  />
+              </q-item-label>
             </div>
           </div>
         </div>
@@ -339,7 +346,7 @@ export default defineComponent({
         this.membersMovement.instrucaoDeConfirmados.confirmados.push(
           {
             ano: 2023 - i + 1,
-            qtde: 0
+            qtde: null
           }
         )
       }
