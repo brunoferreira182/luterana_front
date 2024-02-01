@@ -156,22 +156,22 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      // if (this.status && this.status.statisticPermission) {
-      // } else {
-      //   this.dialogNotifystatus.open = true
-      // }
-      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      if (this.status && this.status.statisticPermission) {
+        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      } else {
+        this.dialogNotifystatus.open = true
+      }
     },
-    // getParoquiaId() {
-    //   const opt = {
-    //     route: '/desktop/statistics/getParoquiaIdByUserId',
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     if (r.error) return
-    //     this.paroquiaId = r.data.organismId
-    //     this.getStatusPreStatistic()
-    //   })
-    // },
+    getParoquiaId() {
+      const opt = {
+        route: '/desktop/statistics/getParoquiaIdByUserId',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.paroquiaId = r.data.organismId
+        this.getStatusPreStatistic()
+      })
+    },
     getStatusPreStatistic() {
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',

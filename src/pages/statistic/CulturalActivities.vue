@@ -51,16 +51,20 @@
               <div class="text-h6">
                 Santa-ceia
               </div>
-              <q-input
-                type="number"
-                label="Quantidade oferecida no ano"
-                v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
-              />
-              <q-input
-                type="number"
-                label="Soma total de comungantes"
-                v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
-              />
+              <div class="row q-gutter-md ">
+                <q-input
+                  class="col"
+                  type="number"
+                  label="Quantidade oferecida ano"
+                  v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
+                />
+                <q-input
+                  class="col"
+                  type="number"
+                  label="Soma total de comungantes"
+                  v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
+                />
+              </div>
             </div>
           </div>
         </div>
