@@ -56,7 +56,7 @@
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
               default-opened
-              header-class="text-primary"
+              header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
               exp
@@ -291,13 +291,13 @@
                   <q-option-group
                     :options="options"
                     type="radio"
-                    v-model="group"
+                    v-model="org.paroquialManagement"
                   />
                   <q-input
-                    v-if="group === 'outro'"
+                    v-if="org.paroquialManagement === 'outro'"
                     label="Outro"
                     class="q-pa-sm"
-                    v-model="other"
+                    v-model="org.other"
                   />
                 </q-expansion-item>
               </q-list>
@@ -359,7 +359,7 @@
           color="orange"
           @click="discardDraft"
           outline
-        />
+        ></q-btn>
         <q-btn
           class="full-width q-mt-md"
           rounded
@@ -368,16 +368,16 @@
           label="Salvar Rascunho"
           color="primary"
           @click="saveDraft"
-        />
+        ></q-btn>
         <q-btn
           class="full-width q-mt-md"
           rounded
           unelevated
           no-caps
-          label="Finalizar etapa"
+          label="Salvar oficial"
           color="green"
           @click="saveFinal"
-        />
+        ></q-btn>
       </div>
       <div 
         v-else
@@ -1454,7 +1454,6 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
-      this.$router.back()
       this.getCompositionByUserId()
     },
     discardDraft () {
