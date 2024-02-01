@@ -19,9 +19,19 @@
           </q-breadcrumbs>
         </div>
         <div > 
-          <div class="text-h5 q-mb-sm text-center">
+          <div class="text-h5 text-center">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
+          </div>
+          <div class="text-center q-py-md">
+            <div>
+              Soma das entradas da paróquia: R$
+              {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
+            </div>
+            <div>
+              Soma das saídas da paróquia: R$
+              {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
+            </div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -65,6 +75,7 @@
                     v-model="table.entries.receitasRegulares.receitasAlugueis" 
                   />
                 </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Ofertas especiais"
@@ -72,6 +83,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.ofertasEspeciais" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Campanhas específicas"
@@ -79,6 +92,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.campanhasEspecificas" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Auxílio"
                   prefix="R$"
@@ -86,6 +101,8 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.auxilio" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Empréstimos"
                   prefix="R$"
@@ -93,27 +110,30 @@
                   mask="###.###.###,##" 
                   v-model="table.entries.emprestimos" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Todas as Outras receitas"
                   prefix="R$"
                   reverse-fill-mask
                   mask="###.###.###,##" 
                   v-model="table.entries.todasOutrasReceitas" 
-                />
+                /></div>
               </div>
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
                 <div class="text-h5">
                   Saídas
                 </div>
                 <div class="text-h6">
-                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
+                  Contribuição registrada na Administração Nacional <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
                 </div>
                 <div class="text-green" v-if="showContributionCalculatedMore">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
+                  Contribuição registrada na Administração Nacional e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
                 </div>
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
+                  Contribuição registrada na Administração Nacional 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
                 </div>
+                <div class="no-margin">
                 <q-input 
                   label="Contribuição Distrito"
                   prefix="R$"
@@ -121,6 +141,8 @@
                   mask="###.###.###,##" 
                   v-model="table.output.contribuicaoDistrito" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   label="Devolução de empréstimos IELB"
                   prefix="R$"
@@ -129,6 +151,8 @@
                   @blur="calculateDiffBetweenEmprestimos()"
                   v-model="table.output.devolucaoEmprestimoIELB" 
                 />
+                </div>
+                <div class="no-margin">
                 <q-input 
                   prefix="R$"
                   label="Todas as outras saídas"
@@ -136,6 +160,7 @@
                   mask="###.###.###,##" 
                   v-model="table.output.todasSaidas" 
                 />
+                </div>
               </div>
               <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
                 <div class="text-center">
@@ -172,7 +197,6 @@
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
-                  rounded
                   class="q-my-lg"
                   no-caps
                   @click="insertFinanceStatisticsDraft"
@@ -204,39 +228,43 @@ export default defineComponent({
         searchString: ''
       },
       validated: false,
-      contributionCalculatedMore: 0,
-      contributionCalculatedLess: 0,
-      contributionOutputSum: 0,
-      contributionEntriesSum: 0,
+      contributionCalculatedMore: '',
+      contributionCalculatedLess: '',
+      contributionOutputSum: '',
+      contributionEntriesSum: '',
       table: {
         entries:{
-          saldoAnterior: 0,
+          saldoAnterior: '',
           receitasRegulares: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
           },
-          ofertasEspeciais: 0,
-          campanhasEspecificas: 0,
-          auxilio: 0,
-          emprestimos: 0,
-          todasOutrasReceitas: 0,
+          ofertasEspeciais: '',
+          campanhasEspecificas: '',
+          auxilio: '',
+          emprestimos: '',
+          todasOutrasReceitas: '',
         },
         output: {
           contribuicaoIELB: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
           },
-          contribuicaoDistrito: 0,
-          devolucaoEmprestimoIELB: 0,
-          todasSaidas: 0
+          contribuicaoDistrito: '',
+          devolucaoEmprestimoIELB: '',
+          todasSaidas: ''
         },
       },
       showEmprestimoNotify: false,
       showContribuitionNotify: false,
       showContributionCalculatedMore: false,
       showContributionCalculatedLess: false,
+      paroquiaData: {
+        contributionOutput: '',
+        contributionEntries: '',
+      },
     }
   },
   beforeUnmount(){
@@ -244,9 +272,20 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
+    this.getFinanceTotalValueFromParoquia()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+  getFinanceTotalValueFromParoquia(){
+    const opt = {
+      route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
+    }
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      this.paroquiaData = r.data
+    });
+  },
   calculateDiffBetweenEmprestimos() {
     if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
       this.showEmprestimoNotify = true
@@ -274,7 +313,8 @@ export default defineComponent({
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
         organismId: this.$route.query.organismId,
-        financeData: this.table
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
       },
     };
     if (Object.keys(this.table.output).length > 0) {
@@ -292,13 +332,13 @@ export default defineComponent({
         return
       }
       this.$q.notify('Rascunho salvo com sucesso!')
+      this.getFinanceStatisticByOrganismId()
     });
   },
   getOrganismNameForBreadCrumbs() {
   const opt = {
     route: "/desktop/statistics/getCongregacaoByOrganismId",
     body: {
-      // organismId: "6530487ab2980d56e0985464",
       organismId: this.$route.query.organismId
     },
   };
@@ -322,31 +362,34 @@ export default defineComponent({
       if (r.error || !r.data) return
       this.validated = r.data.validated
       this.contributionOutputSum = r.data.contributionOutput
+      if (r.data.contributionOutputSGA) {
+        this.contributionOutputSum = r.data.contributionOutputSGA
+      }
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
         contribuicaoIELB: {
-          ofertasDominicais: 0,
-          ofertasMensais: 0,
-          receitasAlugueis: 0,
+          ofertasDominicais: '',
+          ofertasMensais: '',
+          receitasAlugueis: '',
         },
-        contribuicaoDistrito: 0,
-        devolucaoEmprestimoIELB: 0,
-        todasSaidas: 0
+        contribuicaoDistrito: '',
+        devolucaoEmprestimoIELB: '',
+        todasSaidas: ''
       },
       r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
       this.table.entries = {
-        saldoAnterior: 0,
+        saldoAnterior: '',
         receitasRegulares: {
-          ofertasDominicais: 0,
-          ofertasMensais: 0,
-          receitasAlugueis: 0,
+          ofertasDominicais: '',
+          ofertasMensais: '',
+          receitasAlugueis: '',
         },
-        ofertasEspeciais: 0,
-        campanhasEspecificas: 0,
-        auxilio: 0,
-        emprestimos: 0,
-        todasOutrasReceitas: 0,
+        ofertasEspeciais: '',
+        campanhasEspecificas: '',
+        auxilio: '',
+        emprestimos: '',
+        todasOutrasReceitas: '',
       }
     });
   },

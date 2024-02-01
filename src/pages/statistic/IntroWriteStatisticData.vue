@@ -103,7 +103,7 @@
         @hide="clearDialogNotifyStatus"
       >
         <q-card
-          style="width:400px"
+          style="width:400px; border-radius: 1rem;"
         >
           <q-card-section
             class="text-center text-h6"
@@ -118,6 +118,29 @@
               no-caps
               label="Voltar"
               @click="clearDialogNotifyStatus"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogSipar.open"
+        @hide="clearDialogSipar"
+      >
+        <q-card
+          style="width: 400px;border-radius: 1rem;"
+          class="q-pa-md"
+        >
+          <q-card-section class="text-center text-h6">
+            A gestão paroquial foi selecionada como SIPAR, portanto, os dados estatísticos serão preenchidos através do SIPAR
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="Voltar"
+              @click="clearDialogSipar"
             />
           </q-card-actions>
         </q-card>
@@ -142,6 +165,9 @@ export default defineComponent({
       dialogNotifystatus: {
         open: false
       },
+      dialogSipar: {
+        open: false
+      },
       hasParoquia: true
     }
   },
@@ -150,6 +176,9 @@ export default defineComponent({
     this.getStatusPreStatistic()
   },
   methods: {
+    clearDialogSipar() {
+      this.dialogSipar.open = false
+    },
     clearDialogNotifyStatus() {
       this.dialogNotifystatus = {
         open: false
@@ -158,19 +187,11 @@ export default defineComponent({
     goToStatistic() {
       if (this.status && this.status.statisticPermission) {
         this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      } else if (this.status.isSipar) {
+        this.dialogSipar.open = true
       } else {
         this.dialogNotifystatus.open = true
       }
-    },
-    getParoquiaId() {
-      const opt = {
-        route: '/desktop/statistics/getParoquiaIdByUserId',
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.paroquiaId = r.data.organismId
-        this.getStatusPreStatistic()
-      })
     },
     getStatusPreStatistic() {
       const opt = {

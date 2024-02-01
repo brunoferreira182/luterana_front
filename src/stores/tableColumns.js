@@ -1,6 +1,29 @@
 import { defineStore } from "pinia";
 export const useTableColumns = defineStore("tableColumns", {
   state: () => ({
+    attach:[
+      {
+        name: "title",
+        align: "left",
+        label: "Título",
+        field: (row) => row.attachmentInfo.title,
+        sortable: true,
+      },
+      // {
+      //   name: "organismParentName",
+      //   align: "left",
+      //   label: "Nome do organismo",
+      //   field: (row) => row.organismData.organismParentName,
+      //   sortable: true,
+      // },
+      // {
+      //   name: "saldoAnterior",
+      //   align: "left",
+      //   label: "Saldo anterior",
+      //   field: "saldoAnterior",
+      //   sortable: true,
+      // },
+    ],
     entryValueAnual: [
       {
         name: "organismParentConfig",

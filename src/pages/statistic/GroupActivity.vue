@@ -446,6 +446,9 @@ export default defineComponent({
       ],
     };
   },
+  beforeUnmount(){
+    this.saveDraft()
+  },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
   },
@@ -457,12 +460,13 @@ export default defineComponent({
           organismId: this.$route.query.organismId,
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return;
         this.departamentos = r.data.childData;
         this.congregationName = r.data.organismName;
         this.validated = r.data.validated
-        console.log(this.departamentos,"cuzinho doce");
       });
     },
     expand(item) {
@@ -481,10 +485,12 @@ export default defineComponent({
           organismFatherName: this.congregationName
         },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.show()
         if (r.error) return;
-        console.log(this.departamentos,'validar')
-        this.$q.notify("Salvo com sucesso!");
+        this.$q.notify("Rascunho salvo com sucesso!");
+        this.getGroupActivitiesByOrganismId()
       });
     },
     goToStatistics() {

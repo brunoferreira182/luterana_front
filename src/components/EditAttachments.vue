@@ -74,11 +74,12 @@
             </template>
           </q-file>
 
-          <div class="text-h5 q-my-md">
+          <div class="text-h5 q-my-md" >
             Destinatário
             <q-btn
               icon="add"
               rounded
+              :disable="selectedFilters.length === 1 ? true : false"
               flat
               color="primary"
               @click="addReceiverDialog = true"
@@ -86,90 +87,70 @@
             >
           </div>
           <div class="filters-box">
+            <q-chip v-if="receiverType === 'pastors'">
+              Todos os pastores
+            </q-chip>
+            <q-chip v-if="receiverType === 'general'">
+              Todos
+            </q-chip>
             <q-chip
               v-for="(item, i) in selectedFilters"
               :key="i"
               removable
-              @remove="selectedFilters.splice(i, 1)"
-              >{{ item.typeName }} - {{ item.name }}</q-chip
+              @remove="removeSelectedFilter(i)"
+              >{{ item.organismName }}
+              
+              </q-chip
             >
           </div>
         </div>
       </div>
       <q-dialog v-model="addReceiverDialog">
-        <q-card style="border-radius: 1rem">
+        <q-card style="border-radius: 1rem; width: 450px;">
           <q-card-section>
             <div class="text-h5 text-center q-mb-md">Novo destinatário</div>
             <div class="text-subtitle1">Quero enviar para:</div>
-            <div class="q-gutter-sm">
+            <div class="q-gutter-y-sm">
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="organism"
-                label="Organismo"
+                val="general"
+                label="Geral"
               />
-              <br />
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="organismType"
-                label="Tipo de organismo"
+                val="pastors"
+                label="Pastores"
               />
-              <br />
               <q-radio
-                @update:model-value="radioChanged"
                 v-model="receiverType"
-                val="structure"
-                label="Estrutura"
+                val="specificDistrict"
+                label="Distrito específico"
               />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="function"
-                label="Função"
-              />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="title"
-                label="Título"
-              />
-              <br />
-              <q-radio
-                @update:model-value="radioChanged"
-                v-model="receiverType"
-                val="user"
-                label="Usuário"
-              />
-              <br />
             </div>
             <q-select
+              v-if="receiverType === 'specificDistrict'"
               outlined
-              class="q-mt-md q-mr-xl"
+              class="full-width"
               v-model="newReceiver"
               use-input
               hide-selected
-              option-label="name"
+              option-label="organismName"
               fill-input
-              input-debounce="300"
               label="Buscar"
-              :options="filteredOptions"
-              @filter="filterFn"
-              style="width: 350px"
-              hint="Pesquise ou selecione a opção desejada"
+              :options="districtOptions"
+              :option-value="(item) => item"
+              @filter="getSpecificDistrictsToSendAttach"
             >
-              <template #no-option>
+              <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
-                    No results
+                    Nenhum resultado
                   </q-item-section>
                 </q-item>
               </template>
             </q-select>
           </q-card-section>
-          <q-card-actions align="around" class="q-mb-md">
+          <q-card-actions align="center" class="q-mb-md">
             <q-btn
               flat
               label="Cancelar"
@@ -201,7 +182,7 @@ export default defineComponent({
   name: "CreateAttachment",
   data() {
     return {
-      files: [],
+      files: null,
       attachmentInfo: {
         title: "",
         description: "",
@@ -209,9 +190,9 @@ export default defineComponent({
       },
       selectedFilters: [],
       addReceiverDialog: false,
-      receiverType: "organism",
+      receiverType: "",
       receiverOptions: [],
-      filteredOptions: [],
+      districtOptions: [],
       organismsList: [],
       newReceiver: null,
       currentTypeName: "",
@@ -226,9 +207,28 @@ export default defineComponent({
     if (this.$route.path === "/attach/attachmentDetail") {
       this.getAttachmentById();
     }
-    this.getOptionsListByType();
+    this.getSpecificDistrictsToSendAttach();
   },
   methods: {
+    removeSelectedFilter(i){
+      this.selectedFilters.splice(i, 1)
+      this.newReceiver = null
+    },
+    getSpecificDistrictsToSendAttach(val, update){
+      const opt = {
+        route: "/desktop/attach/getSpecificDistrictsToSendAttach",
+        body: {
+          searchString: val,
+        },
+      };
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        update(() => {
+          this.districtOptions = r.data;
+        })
+      });
+    },
     filterFn(val, update) {
       update(() => {
         if (val === "") {
@@ -256,44 +256,67 @@ export default defineComponent({
       });
     },
     addReceiverFilter() {
-      if (!this.newReceiver) {
-        this.$q.notify("Selecione uma opção!");
-        return;
-      } else {
-        this.addReceiverDialog = false;
-        this.selectedFilters.push({
-          typeName: this.currentTypeName,
-          type: this.receiverType,
-          ...this.newReceiver,
-        });
-      }
-    },
-    radioChanged() {
-      this.newReceiver = null;
-      setTimeout(() => {
-        this.getOptionsListByType();
-      }, 1);
+      if(this.receiverType === 'specificDistrict'){
+        if (!this.newReceiver) {
+          this.$q.notify("Selecione uma opção!");
+          return;
+        } else {
+          this.addReceiverDialog = false;
+          
+          this.selectedFilters.push({
+            typeName: this.currentTypeName,
+            type: this.receiverType,
+            ...this.newReceiver,
+          });
+        }
+      }else{ this.addReceiverDialog = false;}
     },
     clkSaveAttachment() {
       this.$route.path === "/attach/attachmentDetail"
         ? this.updateAttachment()
-        : this.sendAttachment();
+        : this.createAttachment();
     },
-    sendAttachment() {
+    createAttachment() {
+      const file = [{file:this.files,name:this.files.name}]
+      console.log(file, 'file')
+      console.log(this.files, 'files')
+      // return
+      if(this.attachmentInfo.title === '' || this.attachmentInfo.description === ''){
+        this.$q.notify('Preencha título e descrição')
+        return
+      }
       const opt = {
         route: "/desktop/attach/createAttachment",
         body: {
-          receivers: this.selectedFilters,
           attachmentInfo: {
             title: this.attachmentInfo.title,
             description: this.attachmentInfo.description,
             priority: this.attachmentInfo.priority,
           },
         },
+        file: []
       };
-      opt.file = [{ name: this.files.name, file: this.files }];
+      if(this.files !== null){
+        opt.file = file
+      }
+      switch(this.receiverType){
+        case 'specificDistrict':
+          opt.body.subType = 'district'
+          opt.body.districtId = this.newReceiver._id
+        break;
+        case 'pastors':
+          opt.body.subType = 'pastors'
+        break;
+        case 'general':
+          opt.body.subType = 'general'
+        break;
+        case '':
+          this.$q.notify('Selecione o destinatário')
+          return
+      }
       this.$q.loading.show();
       useFetch(opt).then(() => {
+        this.$q.loading.hide();
         this.$q.notify("Enviado!");
       });
     },

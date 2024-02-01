@@ -6,18 +6,19 @@
         class="bg-accent"
         title="Anexos"
         :columns="columnsData"
-        :rows="structureList"
+        :rows="attachFiles"
         row-key="_id"
         rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento"
+        no-data-label="Nenhum dado recebido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="downloadAttach"
         :selected-rows-label="getSelectedString"
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
+        <!-- <template #top-right>
           <div class="flex row text-right q-gutter-sm items-center">
             <div class="col">
               <q-select
@@ -64,7 +65,7 @@
               Inativo
             </q-chip>
           </q-td>
-        </template>
+        </template> -->
       </q-table>
     </q-page>
   </q-page-container>
@@ -74,13 +75,13 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
-
+import utils from "../../boot/utils";
 export default defineComponent({
-  name: "StructuresList",
+  name: "ReceivedAttachments",
   data() {
     return {
-      columnsData: useTableColumns().structureList,
-      structureList: [],
+      columnsData: useTableColumns().attach,
+      attachFiles: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Ativos",
@@ -96,9 +97,17 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAttachmentsListByUserId();
+    this.getAttachByPastor();
   },
   methods: {
+    downloadAttach(e, r) {
+      let arquivo = r;
+      utils.downloadFile({
+        filename: arquivo.attach.filename,
+        originalname: arquivo.attach.originalname,
+        type: arquivo.attach.mimetype
+      })
+    },
     getSelectedString() {
       return this.selected.length === 0
         ? ""
@@ -113,25 +122,39 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getStructures();
     },
-    getAttachmentsListByUserId() {
+    getAttachByPastor() {
       const opt = {
-        route: "/desktop/attach/getAttachmentsListByUserId",
+        route: "/desktop/attach/getAttachByPastor",
         body: {
-          searchString: this.filter,
           page: this.pagination.page,
           rowsPerPage:this.pagination.rowsPerPage,
-          isActive: 1,
         },
       };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.structureList = r.data;
+        this.$q.loading.hide()
+        this.attachFiles = r.data.list
       });
     },
+    // getAttachmentsListByUserId() {
+    //   const opt = {
+    //     route: "/desktop/attach/getAttachmentsListByUserId",
+    //     body: {
+    //       searchString: this.filter,
+    //       page: this.pagination.page,
+    //       rowsPerPage:this.pagination.rowsPerPage,
+    //       isActive: 1,
+    //     },
+    //   };
+    //   if (this.selectFilter === "Ativos") {
+    //     opt.body.isActive = 1;
+    //   } else if (this.selectFilter === "Inativos") {
+    //     opt.body.isActive = 0;
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     this.structureList = r.data;
+    //   });
+    // },
   },
 });
 </script>

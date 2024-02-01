@@ -507,18 +507,14 @@
             </q-tooltip>
           </q-btn>
           <q-btn
-            label="Salvar oficial"
+            label="Finalizar etapa"
             class="full-width q-my-md"
             color="green"
             rounded
             unelevated
             no-caps
             @click="saveOficial"
-          >
-            <q-tooltip>
-              Salvar rascunho
-            </q-tooltip>
-          </q-btn>
+          />
         </div>
         <div
           v-else
@@ -1453,7 +1449,19 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
   },
+  beforeUnmount() {
+    if (this.validated && (this.status && this.status.value === 'sent')) return
+    this.saveDraft()
+  },
   methods: {
+    cancelChangeChild () {
+      this.dialogEditChild = {
+        open: false,
+        child: null,
+        iChild: null,
+        newChild: null
+      }
+    },
     clearDialogLastPastoralActivity() {
       this.dialogLastPastoralActivity = {
         open: false,
@@ -1476,16 +1484,75 @@ export default defineComponent({
       })
     },
     saveOficial() {
-      const opt = {
-        route: '/desktop/statistics/insertPastoralStatisticsDone',
-        body: {
-          organismId: this.paroquiaId
+      let regex = /\s/;
+      let pastorName = null
+      let fatherName = null
+      let motherName = null
+      let partnerName = null
+      let x = 0
+      if (this.pastorData && this.pastorData.name && this.pastorData.name.value) {
+        pastorName = this.pastorData.name.value
+      } else if (this.pastorData && this.pastorData.father && this.pastorData.father.userName) {
+        fatherName = this.pastorData.father.userName
+      } else if (this.pastorData && this.pastorData.mother && this.pastorData.mother.userName) {
+        motherName = this.pastorData.mother.userName
+      } else if ( this.pastorData && this.pastorData.maritalRelation && this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+        partnerName = this.pastorData.maritalRelation.partner.userName
+      } 
+
+      if (pastorName) {
+        if (!regex.test(pastorName)) {
+          this.$q.notify('Coloque ao menos um sobrenome em seu nome');
+          x = 1
+          return;
         }
+      } else if (fatherName) {
+        if (!regex.test(fatherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (motherName) {
+        if (!regex.test(motherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (partnerName) {
+        if (!regex.test(partnerName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        } 
       }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.getPastorDataTabs()
-      })
+      if (this.pastorData && this.pastorData.parentalRelation && this.pastorData.parentalRelation.child && this.pastorData.parentalRelation.child.length > 0) {
+        this.pastorData.parentalRelation.child.forEach((child) => {
+          if (child) {
+            if (!regex.test(child)) {
+              this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+              x = 1
+              return
+            }
+          }
+        })
+      }
+      if (x === 0) {
+        const opt = {
+          route: '/desktop/statistics/insertPastoralStatisticsDone',
+          body: {
+            organismId: this.paroquiaId
+          }
+        }
+        this.$q.loading.show()
+        useFetch(opt).then((r) => {
+          this.$q.loading.hide()
+          if (r.error) return
+          this.$q.notify('Salvo com sucesso!')
+          this.$router.back()
+          this.getMyOrganismsList()
+          this.getParoquiaId()
+        })
+      }
     },
     addLastPastoralActivity() {
       this.lastOrganismPastorActivities = {
@@ -1518,17 +1585,16 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = true
     },
     confirmReportError() {
-      if (this.dialogReportError.type === 'historic') {
-        this.reportedErrors.push ({
-          errorText: this.dialogReportError.text,
-          type: this.dialogReportError.type
-        }) 
-      } else if (this.dialogReportError.type === 'forations') {
-        this.reportedErrors.push ({
-          errorText: this.dialogReportError.text,
-          type: this.dialogReportError.type
-        }) 
+      const opt = {
+        route: '/desktop/statistics/insertPastoralErrorReport',
+        body: {
+          reportData: this.dialogReportError.text
+        }
       }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Erro reportado com sucesso')
+      })
       this.clearDialogReportError()
     },
     clearDialogReportError() {
@@ -1543,68 +1609,80 @@ export default defineComponent({
         this.dialogReportError.type = type
     },
     saveDraft() {
-      // let regex = /^[a-zA-Z]+(\s[a-zA-Z]+)?$/
-      // let pastorName = this.pastorData.name.value
-      // let fatherName = this.pastorData.father.userName
-      // let motherName = this.pastorData.mother.userName
-      // let partnerName
-      // if (this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
-      //   partnerName = this.pastorData.maritalRelation.partner.userName
-      // }
-      // console.log(pastorName, fatherName, motherName, partnerName, 'vamos ver como está essa coisa' )
-      // this.pastorData.parentalRelation.child.forEach((child) => {
-      //   if (child && (!child.userName.match(regex))) {
-      //     console.log(child)
-      //     this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-      //     return
-      //   }
-      // })
+      let regex = /\s/;
+      let pastorName = null
+      let fatherName = null
+      let motherName = null
+      let partnerName = null
+      let x = 0
+      if (this.pastorData && this.pastorData.name && this.pastorData.name.value) {
+        pastorName = this.pastorData.name.value
+      } else if (this.pastorData && this.pastorData.father && this.pastorData.father.userName) {
+        fatherName = this.pastorData.father.userName
+      } else if (this.pastorData && this.pastorData.mother && this.pastorData.mother.userName) {
+        motherName = this.pastorData.mother.userName
+      } else if ( this.pastorData && this.pastorData.maritalRelation && this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+        partnerName = this.pastorData.maritalRelation.partner.userName
+      } 
 
-      // if (partnerName && (!partnerName.match(regex))) {
-      //   console.log(partnerName)
-      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-      //   console.log('1')
-      //   return
-      // } 
-      // if (motherName && (!motherName.match(regex))) {
-      //   console.log(motherName)
-      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-      //   console.log('2')
-      //   return
-      // } 
-      // if (fatherName && (!fatherName.match(regex))) {
-      //   console.log(fatherName)
-      //   this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
-      //   console.log('3')
-      //   return
-      // } 
-      // if (!pastorName.match(regex)) {
-      //   console.log(pastorName)
-      //   this.$q.notify('Coloque ao menos um sobrenome em seu nome')
-      //   console.log('4')
-      //   return
-      // }
-
-      let pastoralData = {
-        pastorData: this.pastorData,
-        pastorFormations: this.pastorFormations,
-        pastorLinks: this.pastorLink,
-        pastorActivities: this.pastorActivities,
-        lastPastorActivities: this.lastOrganismPastorActivities,
-        reportedErrors: this.reportedErrors
-      }
-      const opt = {
-        route: '/desktop/statistics/insertPastoralStatisticsDraft',
-        body: {
-          pastoralData: pastoralData,
-          organismId: this.paroquiaId
+      if (pastorName) {
+        if (!regex.test(pastorName)) {
+          this.$q.notify('Coloque ao menos um sobrenome em seu nome');
+          x = 1
+          return;
         }
+      } else if (fatherName) {
+        if (!regex.test(fatherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (motherName) {
+        if (!regex.test(motherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (partnerName) {
+        if (!regex.test(partnerName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        } 
       }
-      useFetch(opt).then((r) => {
-        if  (r.error) return
-        else this.$q.notify('Rascunho salvo com sucesso')
-        this.beforeMount()
-      })
+      if (this.pastorData && this.pastorData.parentalRelation && this.pastorData.parentalRelation.child && this.pastorData.parentalRelation.child.length > 0) {
+        this.pastorData.parentalRelation.child.forEach((child) => {
+          if (child) {
+            if (!regex.test(child)) {
+              this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+              x = 1
+              return
+            }
+          }
+        })
+      }
+      if (x === 0)  {
+        let pastoralData = {
+          pastorData: this.pastorData,
+          pastorFormations: this.pastorFormations,
+          pastorLinks: this.pastorLink,
+          pastorActivities: this.pastorActivities,
+          lastPastorActivities: this.lastOrganismPastorActivities,
+          reportedErrors: this.reportedErrors
+        }
+        const opt = {
+          route: '/desktop/statistics/insertPastoralStatisticsDraft',
+          body: {
+            pastoralData: pastoralData,
+            organismId: this.paroquiaId
+          }
+        }
+        useFetch(opt).then((r) => {
+          if  (r.error) return
+          else this.$q.notify('Rascunho salvo com sucesso')
+          this.getMyOrganismsList()
+        })
+      }
     },
     clearDialogAddLink() {
       this.dialogAddLink = {
@@ -1833,6 +1911,7 @@ export default defineComponent({
       } else if (type === 'Mãe') {
         this.pastorData.mother._id = null,
         this.pastorData.mother.userName = null
+        this.pastorData.mother.value = null
       }
     },
     clearDialogParent() {

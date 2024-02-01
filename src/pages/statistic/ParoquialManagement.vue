@@ -8,8 +8,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
-            
+            @click="$router.push('/statistic/introWriteStatisticData')"
+          />
             <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
       </div>
@@ -68,6 +68,7 @@ export default defineComponent({
     return {
       congregationName:'',
       validated: false,
+      status: null,
       other: '',
       group: null,
       options: [
@@ -98,16 +99,24 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(() => {
         this.$q.loading.hide()
-        this.$q.notify('Rascunho salvo com sucesso!')
+        this.$q.notify('Salvo com sucesso!')
+        this.getParoquialManagementType()
       });
     },
     getParoquialManagementType(){
       const opt = {
         route:'/desktop/statistics/getParoquialManagementType',
-        // body : {}
         }
         useFetch(opt).then((r)=>{
-          this.group = r.data.managementType
+          if (r.data && r.data.managementType) {
+            this.group = r.data.managementType
+          }
+          if (r.data && r.data.status) {
+            this.status = r.data.status
+          }
+          if (r.data && r.data.validated) {
+            this.validated = r.data.validated
+          }
         })
     }
   }

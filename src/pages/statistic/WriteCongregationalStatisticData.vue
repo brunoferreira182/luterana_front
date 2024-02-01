@@ -180,7 +180,7 @@
                   </div>
                   <q-list
                     bordered
-                    v-for="day in composition.congregations[iOrg].diaEHorario"
+                    v-for="(day, iDay) in composition.congregations[iOrg].diaEHorario"
                     :key="day"
                     class="q-mt-sm"
                   >
@@ -193,6 +193,15 @@
                         Horário: {{ day.hour }}
                       </q-item-label>
                     </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        color="red"
+                        flat
+                        rounded
+                        icon="delete"
+                        @click="removeDay(iOrg, iDay)"
+                      />
+                    </q-item-section>
                   </q-item>
 
                   </q-list>
@@ -204,6 +213,63 @@
                     class="q-pa-sm q-my-md"
                     @click="addEventsDayAndHour(iOrg)"
                   />
+                </q-expansion-item>
+              </q-list>
+              <q-list bordered class="q-mt-sm">
+                <q-expansion-item
+                  label="Secretárias contratadas"
+                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
+                  style="border-radius: 1rem;"
+                >
+                  <div class="q-mx-md">
+                    <div v-if="org && org.secretary">
+                      <q-list
+                        bordered
+                        class="q-my-sm"
+                        v-for="(sec, iSec) in org.secretary"
+                        :key="sec"
+                      >
+                        <q-item
+                          class="q-ma-sm"
+                        >  
+                          <q-item-section>
+                            <q-item-label lines="1">
+                              Nome: {{ sec.user.userName }}
+                            </q-item-label>
+                            <q-item-label lines="2">
+                              Dia da semana: {{ sec.day }}
+                            </q-item-label>
+                            <q-item-label lines="3">
+                              Hora inicial: {{sec.initialHour}}
+                            </q-item-label>
+                            <q-item-label>
+                              Hora final: {{sec.finalHour}}
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-btn
+                              color="red"
+                              flat
+                              unelevated
+                              rounded
+                              icon="delete"
+                              @click="removeSecretary(iOrg, iSec)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
+                  </div>
+                  <div class="q-ma-md text-h6">
+                    <q-btn
+                      label="Secretária"
+                      icon="add"
+                      color="primary"
+                      rounded
+                      unelevated
+                      @click="addSecretaryToParoquia(iOrg)"
+                    />
+                  </div>
                 </q-expansion-item>
               </q-list>
               <div class="text-right q-ma-sm">
@@ -226,13 +292,12 @@
                 />
               </div>
             </q-expansion-item>
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-separator class="q-ma-md"/>
-      <q-expansion-item
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+      <!-- <q-expansion-item
         label="Secretárias contratadas"
-        class="bg-grey-2 q-pa-sm text-left q-ma-sm"
+        class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
         style="border-radius: 1rem;"
       >
         <div class="q-mx-md">
@@ -243,48 +308,12 @@
             v-for="(sec, iSec) in composition.secretary"
             :key="sec" 
           >
-            <q-item
-              class="q-ma-sm"
-            >  
-              <q-item-section>
-                <q-item-label lines="1">
-                  Nome: {{ sec.user.userName }}
-                </q-item-label>
-                <q-item-label lines="2">
-                  Dia da semana: {{ sec.day }}
-                </q-item-label>
-                <q-item-label lines="3">
-                  Hora inicial: {{sec.initialHour}}
-                </q-item-label>
-                <q-item-label>
-                  Hora final: {{sec.finalHour}}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  color="red"
-                  flat
-                  unelevated
-                  rounded
-                  icon="delete"
-                  @click="removeSecretary(iSec)"
-                />
-              </q-item-section>
-            </q-item>
+           
           </q-list>
           </div>
         </div>
-      </q-expansion-item>
-      <div class="q-ml-lg text-h6">
-        <q-btn
-          label="Secretária"
-          icon="add"
-          color="primary"
-          rounded
-          unelevated
-          @click="addSecretaryToParoquia"
-        />
-      </div>
+        
+      </q-expansion-item> -->
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -301,7 +330,7 @@
           color="orange"
           @click="discardDraft"
           outline
-        ></q-btn>
+        />
         <q-btn
           class="full-width q-mt-md"
           rounded
@@ -310,16 +339,16 @@
           label="Salvar Rascunho"
           color="primary"
           @click="saveDraft"
-        ></q-btn>
+        />
         <q-btn
           class="full-width q-mt-md"
           rounded
           unelevated
           no-caps
-          label="Salvar oficial"
+          label="Finalizar etapa"
           color="green"
           @click="saveFinal"
-        ></q-btn>
+        />
       </div>
       <div 
         v-else
@@ -628,8 +657,11 @@
             </q-select>
           </q-card-section>
           <q-card-section>
-            <div class="text-center text-h6 q-my-sm">
-              Nome ao departamento
+            <div 
+              class="text-center text-h6 q-my-sm"
+              v-if="dialogAddNewDepartament.functions"
+            >
+              Nome do departamento
             </div>
             <q-input
               v-if="dialogAddNewDepartament.functions"
@@ -1214,6 +1246,7 @@ export default defineComponent({
       dialogAddSecretary: {
         open: false,
         userSelected: null,
+        iOrg: null,
         day: null,
         initialHour: null,
         finalHour: null
@@ -1223,7 +1256,16 @@ export default defineComponent({
   beforeMount() {
     this.getCompositionByUserId()
   },
+  beforeUnmount() {
+    if (this.validated && (this.status && this.status.value === 'sent')) return
+    this.saveDraft()
+  },
   methods: { 
+    removeDay(iOrg, iDay) {
+      this.composition
+      .congregations[iOrg]
+      .diaEHorario.splice(iDay, 1)
+    },
     removeDayInDep(iDay) {
       this.composition
       .congregations[this.dialogDepartamentDetail.iOrg]
@@ -1231,14 +1273,14 @@ export default defineComponent({
       .existingDepartaments[this.dialogDepartamentDetail.iExistsDept]
       .diaEHorario.splice(iDay, 1)
     },
-    removeSecretary(iSec) {
-      this.composition.secretary.splice(iSec, 1)
+    removeSecretary(iOrg, iSec) {
+      this.composition.congregations[iOrg].secretary.splice(iSec, 1)
     },
     confirmAddSecretary() {
-      if (!this.composition.secretary) {
-        this.composition.secretary = []
+      if (!this.composition.congregations[this.dialogAddSecretary.iOrg].secretary) {
+        this.composition.congregations[this.dialogAddSecretary.iOrg].secretary = []
       }
-      this.composition.secretary.push({
+      this.composition.congregations[this.dialogAddSecretary.iOrg].secretary.push({
         action: 'add',
         user: {
           userName: this.dialogAddSecretary.userSelected.userName,
@@ -1259,8 +1301,9 @@ export default defineComponent({
         finalHour: null
       }
     },
-    addSecretaryToParoquia() {
+    addSecretaryToParoquia(iOrg) {
       this.dialogAddSecretary.open = true
+      this.dialogAddSecretary.iOrg = iOrg
     },
     clearDialogAddDayAndHourInDept() {
       this.dialogAddEventsDayAndHourInDep = {
@@ -1297,6 +1340,9 @@ export default defineComponent({
       this.dialogAddEventsDayAndHourInDep.open = true
     }, 
     confirmAddEventsDayAndHour() {
+      if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
+        this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
+      }
       this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
         day: this.dialogAddEventsDayAndHour.day,
         hour: this.dialogAddEventsDayAndHour.hour,
@@ -1362,11 +1408,14 @@ export default defineComponent({
       opt = {
         route: '/desktop/statistics/saveCompositionFinal',
       }
+      this.$q.loading.show()
       r = await useFetch(opt)
+      this.$q.loading.hide()
       if (r.error) {
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$router.back()
       this.getCompositionByUserId()
     },
     discardDraft () {
@@ -1648,7 +1697,9 @@ export default defineComponent({
         body: this.composition
       }
       opt.body.status = 'notSent'
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
@@ -1720,36 +1771,22 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
       }
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if (r.error) return 
 
-        // r.data.congregations.forEach((congregacao, i) => {
-        //   congregacao.depts.forEach((departament, j) => {
-        //     console.log(departament.existingDepartaments.length, 'tamanho dos existing')
-        //     departament.existingDepartaments.forEach((existingDepartament, k) => {
-        //       console.log(i, j, k)
-        //       if (existingDepartament.organismParentId !== congregacao.organismChildId) {
-        //         console.log('é diferente, vai deletar')
-        //         console.log(congregacao.organismChildName, 'congregacao', i, j, k)
-        //         r.data.congregations[i].depts[j].existingDepartaments.splice(k, 1)
-        //       }
-        //     })
-        //   })
-        // })
-
-        for (let i = 0; i < r.data.congregations.length; i++) {
-          for (let j = 0; j < r.data.congregations[i].depts.length; j++) {
-            for (let k = 0; k < r.data.congregations[i].depts[j].existingDepartaments.length; k++) {
-              if (r.data.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
-                console.log('é diferente, vai deletar')
-                console.log(r.data.congregations[i].organismChildName, 'congregacao', i, j, k)
-                r.data.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+        if (!r.data._id) {
+          for (let i = 0; i < r.data.congregations.length; i++) {
+            for (let j = 0; j < r.data.congregations[i].depts.length; j++) {
+              for (let k = 0; k < r.data.congregations[i].depts[j].existingDepartaments.length; k++) {
+                if (r.data.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
+                  r.data.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+                }
               }
             }
           }
         }
-
-
 
         this.composition = r.data
         if (r.data.validated) {

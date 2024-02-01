@@ -29,8 +29,11 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-h6">
-              Culto {{ cultural.organismName }}
+            <div class="text-h5">
+              {{ cultural.organismName }}
+            </div>
+            <div class="q-mt-md">
+              Culto
             </div>
             <q-input
               type="number"
@@ -47,8 +50,8 @@
               label="Soma total de frequência no ano"
               v-model.number="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
-            <div class="q-py-xl">
-              <div class="text-h6">
+            <div class="q-py-md">
+              <div class="q-mt-md">
                 Santa-ceia
               </div>
               <div class="row q-gutter-md ">
@@ -111,13 +114,13 @@ export default defineComponent({
       congregationName: '',
       activitiesData:{
         cultoData: {
-          qtyDadosPastor: 0,
-          qtyCultoLeitura: 0,
-          somaFrequenciaAnual: 0,
+          qtyDadosPastor: '',
+          qtyCultoLeitura: '',
+          somaFrequenciaAnual: '',
         },
         santaCeiaData: {
-          qtyOferecidaAnual: 0,
-          somaTotalComungantes: 0,
+          qtyOferecidaAnual: '',
+          somaTotalComungantes: '',
         },
       },
     
@@ -127,7 +130,6 @@ export default defineComponent({
     this.insertAtividadesCulticasStatisticDraft()
   },
   beforeMount() {
-    this.getAtividadesCulticas()
     this.getPontosDeMissaoByOrganismId()
     this.getOrganismNameForBreadCrumbs()
   },
@@ -149,29 +151,29 @@ export default defineComponent({
         this.culturalActivities = r.data.organismList
       });
     },
-    getAtividadesCulticas() {
-      const opt = {
-        route: "/desktop/statistics/getAtividadesCulticas",
-        body: {
-          organismId: this.$route.query.organismId,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.validated = r.data.validated ?  this.validated = r.data.validated : this.validated = false
-        this.culturalActivities = r.data.activitiesData
-      });
-    },
+    // getAtividadesCulticas() {
+    //   const opt = {
+    //     route: "/desktop/statistics/getAtividadesCulticas",
+    //     body: {
+    //       organismId: this.$route.query.organismId,
+    //     },
+    //   };
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     if (r.error) {
+    //       this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+    //       return
+    //     }
+    //     console.log(r, 'asdosiakdpok')
+    //     r.data.validated ? this.validated = r.data.validated : this.validated = false
+    //     this.culturalActivities = r.data.activitiesData
+    //   });
+    // },
     getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
       body: {
-        // organismId: "6530487ab2980d56e0985464",
         organismId: this.$route.query.organismId
       },
     };
@@ -188,6 +190,7 @@ export default defineComponent({
           activitiesData: item.activitiesData,
         };
         if (index === 0) {
+          //a congregação precisa ser o primeiro índice sempre
           extractedItem.congregationId = item.organismId;
         } else {
           extractedItem.organismId = item.childOrganismId;
@@ -209,6 +212,8 @@ export default defineComponent({
           return
         }
         this.$q.notify('Rascunho salvo com sucesso!')
+        this.getAtividadesCulticas()
+        this.getPontosDeMissaoByOrganismId()
       });
     },
   }
