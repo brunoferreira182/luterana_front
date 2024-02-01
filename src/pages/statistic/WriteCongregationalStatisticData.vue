@@ -55,7 +55,6 @@
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
-              default-opened
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
@@ -63,7 +62,8 @@
             >
               <q-list bordered class="q-mb-sm">
                 <q-expansion-item
-                  class="q-mt-sm q-mx-sm bg-grey-2"
+                default-opened
+                class="q-mt-sm q-mx-sm bg-grey-2"
                   label="Funções"
                   :disable="org.action && org.actions === 'remove'"
                   style="border-radius: .7rem;"
@@ -159,6 +159,7 @@
               </q-list>
               <q-list bordered>
                 <q-expansion-item
+                  default-opened
                   label="Outras informações"
                   :disable="org.action && org.action === 'remove'"
                   class="q-mt-sm q-mx-sm bg-grey-2 text-left"
@@ -220,6 +221,7 @@
               </q-list>
               <q-list bordered class="q-mt-sm">
                 <q-expansion-item
+                  default-opened
                   label="Secretárias contratadas"
                   class="q-mt-sm q-mx-sm bg-grey-2 text-left"
                   style="border-radius: 1rem;"
@@ -277,6 +279,7 @@
               </q-list>
               <q-list bordered class="q-mt-sm">
                 <q-expansion-item
+                  default-opened
                   label="Gestão Paroquial"
                   class="q-mt-sm q-mx-sm bg-grey-2 text-left q-mb-sm"
                   style="border-radius: 1rem;"
@@ -285,9 +288,11 @@
                     :options="options"
                     type="radio"
                     v-model="org.paroquialManagement"
+                    @update:model-value="insertParoquialManagementType(iOrg, org)"
                   />
                   <q-input
                     v-if="org.paroquialManagement === 'outro'"
+                    @update:model-value="insertParoquialManagementType(iOrg, org)"
                     label="Outro"
                     class="q-pa-sm"
                     v-model="org.other"
@@ -367,7 +372,7 @@
           rounded
           unelevated
           no-caps
-          label="Salvar oficial"
+          label="Finalizar etapa"
           color="green"
           @click="saveFinal"
         ></q-btn>
@@ -1425,6 +1430,22 @@ export default defineComponent({
     openDialogRemoveCongregation(iOrg) {
       this.dialogRemoveCongregation.open = true,
       this.dialogRemoveCongregation.iOrg = iOrg
+    },
+    insertParoquialManagementType(iOrg, org){
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org._id
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
     },
     async saveFinal () {
       let opt = {
