@@ -54,16 +54,20 @@
               <div class="q-mt-md">
                 Santa-ceia
               </div>
-              <q-input
-                type="number"
-                label="Quantidade oferecida no ano"
-                v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
-              />
-              <q-input
-                type="number"
-                label="Soma total de comungantes"
-                v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
-              />
+              <div class="row q-gutter-md ">
+                <q-input
+                  class="col"
+                  type="number"
+                  label="Quantidade oferecida ano"
+                  v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
+                />
+                <q-input
+                  class="col"
+                  type="number"
+                  label="Soma total de comungantes"
+                  v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -110,13 +114,13 @@ export default defineComponent({
       congregationName: '',
       activitiesData:{
         cultoData: {
-          qtyDadosPastor: 0,
-          qtyCultoLeitura: 0,
-          somaFrequenciaAnual: 0,
+          qtyDadosPastor: '',
+          qtyCultoLeitura: '',
+          somaFrequenciaAnual: '',
         },
         santaCeiaData: {
-          qtyOferecidaAnual: 0,
-          somaTotalComungantes: 0,
+          qtyOferecidaAnual: '',
+          somaTotalComungantes: '',
         },
       },
     
@@ -126,7 +130,6 @@ export default defineComponent({
     this.insertAtividadesCulticasStatisticDraft()
   },
   beforeMount() {
-    this.getAtividadesCulticas()
     this.getPontosDeMissaoByOrganismId()
     this.getOrganismNameForBreadCrumbs()
   },
@@ -148,29 +151,29 @@ export default defineComponent({
         this.culturalActivities = r.data.organismList
       });
     },
-    getAtividadesCulticas() {
-      const opt = {
-        route: "/desktop/statistics/getAtividadesCulticas",
-        body: {
-          organismId: this.$route.query.organismId,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        r.data.validated ? this.validated = r.data.validated : this.validated = false
-        this.culturalActivities = r.data.activitiesData
-      });
-    },
+    // getAtividadesCulticas() {
+    //   const opt = {
+    //     route: "/desktop/statistics/getAtividadesCulticas",
+    //     body: {
+    //       organismId: this.$route.query.organismId,
+    //     },
+    //   };
+    //   this.$q.loading.show()
+    //   useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //     if (r.error) {
+    //       this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+    //       return
+    //     }
+    //     console.log(r, 'asdosiakdpok')
+    //     r.data.validated ? this.validated = r.data.validated : this.validated = false
+    //     this.culturalActivities = r.data.activitiesData
+    //   });
+    // },
     getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
       body: {
-        // organismId: "6530487ab2980d56e0985464",
         organismId: this.$route.query.organismId
       },
     };

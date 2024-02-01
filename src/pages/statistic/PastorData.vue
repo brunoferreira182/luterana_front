@@ -507,24 +507,20 @@
             </q-tooltip>
           </q-btn>
           <q-btn
-            label="Salvar oficial"
+            label="Finalizar etapa"
             class="full-width q-my-md"
             color="green"
             rounded
             unelevated
             no-caps
             @click="saveOficial"
-          >
-            <q-tooltip>
-              Salvar rascunho
-            </q-tooltip>
-          </q-btn>
+          />
         </div>
         <div
           v-else
           class="q-pa-md text-h6 text-center"
         >
-          Estes dados já foram enviados, estão disponíveis somente para consulta.
+          Esta etapa foi finalizada, os dados estão disponíveis somente para consulta.
         </div>
       </div>
       <q-dialog
@@ -1551,7 +1547,7 @@ export default defineComponent({
         useFetch(opt).then((r) => {
           this.$q.loading.hide()
           if (r.error) return
-          this.$q.notify('Salvo com sucesso!')
+          this.$q.notify('Etapa finalizada com sucesso!')
           this.getMyOrganismsList()
           this.getParoquiaId()
         })
