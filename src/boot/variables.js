@@ -2,7 +2,7 @@
 const MODE_MASTER_SERVER = "local";
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
-const BUILD = 18
+const BUILD = 19
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;
 const MODE_AUTH_SERVER = "local";
