@@ -18,12 +18,17 @@
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
         </div>
-        <div > 
-          <div class="text-h5 text-center">
+        <div class="text-center q-gutter-md"> 
+          <div class="text-h5">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
           </div>
-          <div class="text-center q-py-md">
+          <q-checkbox 
+            dense
+            label="Dados serão concentrados na congregação sede?"
+            v-model="focusOnCongregation"
+          />
+          <div >
             <div>
               Soma das entradas da paróquia: R$
               {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
@@ -257,6 +262,7 @@ export default defineComponent({
           todasSaidas: ''
         },
       },
+      focusOnCongregation: false,
       showEmprestimoNotify: false,
       showContribuitionNotify: false,
       showContributionCalculatedMore: false,
