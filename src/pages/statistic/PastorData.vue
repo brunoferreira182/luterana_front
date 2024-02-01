@@ -514,11 +514,7 @@
             unelevated
             no-caps
             @click="saveOficial"
-          >
-            <q-tooltip>
-              Salvar rascunho
-            </q-tooltip>
-          </q-btn>
+          />
         </div>
         <div
           v-else

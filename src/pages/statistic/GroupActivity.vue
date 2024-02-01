@@ -55,16 +55,18 @@
                   <q-item-section
                     v-if="!arrayIgnore.includes(item.organismConfigName)"
                   >
-                    <q-input
-                      label="Frequência total"
-                      v-model="departamentos[i].departamentoData.freqTotal"
-                    >
-                    </q-input>
-                    <q-input
-                      label="Número de encontros"
-                      v-model="departamentos[i].departamentoData.qtnEncontros"
-                    >
-                    </q-input>
+                    <div class="row q-gutter-sm">
+                      <q-input
+                        label="Frequência total"
+                        v-model="departamentos[i].departamentoData.freqTotal"
+                      >
+                      </q-input>
+                      <q-input
+                        label="Número de encontros"
+                        v-model="departamentos[i].departamentoData.qtnEncontros"
+                      >
+                      </q-input>
+                    </div>
                   </q-item-section>
 
                   <q-item-label
@@ -91,7 +93,7 @@
                     v-model="departamentos[i].departamentoData.professores"
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical'
+                      'Escola Dominical de leigos'
                     "
                     label="Quantidade de professores"
                   >
@@ -99,7 +101,7 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical'
+                      'Escola Dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
@@ -120,7 +122,7 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical'
+                      'Escola Dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
@@ -143,7 +145,7 @@
                   <!-- Musica -->
                   <q-item-section
                     class="justify-around"
-                    v-if="item.organismConfigName === 'Departamento da Música'"
+                    v-if="item.organismConfigName === 'Música de leigos'"
                   >
                     <q-item-label>
                       Grupo Músical
@@ -263,22 +265,24 @@
                     ></q-input>
 
                     <q-item-section>
-                      <q-input
-                        class="q-mr-md"
+                      <div class="row">
+                        <q-input
+                        class="q-mr-md col"
                         v-model="departamentos[i].departamentoData.formalGroup.freqTotal"
                         label="Frequência Total"
-                      ></q-input>
-                      <q-input
-                        class="q-mr-md"
+                        />
+                        <q-input
+                        class="q-mr-md col"
                         v-model="departamentos[i].departamentoData.formalGroup.qtnEncontros"
                         label="Número de encontros"
-                      ></q-input>
+                        />
+                      </div>
                     </q-item-section>
                   </q-item-section>
                   <!-- visitação -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departamento de Visitação'
+                      item.organismConfigName === 'Visitação de leigos'
                     "
                   >
                     <q-input
@@ -287,68 +291,78 @@
                       label="Total de visitantes do grupo"
                     />
                     <q-item-label class="q-mt-sm" /> Visitas Missionárias
-                    <q-input
-                      v-model="
-                        departamentos[i].departamentoData.visitasMissionarias.qtnVisitas
-                      "
-                      class="q-pl-sm q-mr-md"
-                      label="Número de visitas"
-                    />
-                    <q-input
-                      v-model="
-                        departamentos[i].departamentoData.visitasMissionarias.pessoas
-                      "
-                      class="q-pl-sm q-mr-md"
-                      label="Total de pessoas"
-                    />
+                    <div class="row">
+                      <q-input
+                        v-model="
+                          departamentos[i].departamentoData.visitasMissionarias.qtnVisitas
+                        "
+                        class="q-pl-sm q-mr-md col"
+                        label="Número de visitas"
+                      />
+                      <q-input
+                        v-model="
+                          departamentos[i].departamentoData.visitasMissionarias.pessoas
+                        "
+                        class="q-pl-sm q-mr-md col"
+                        label="Total de pessoas"
+                      />
+                    </div>
                     <q-item-label class="q-mt-sm" /> Visitas à Membros
-                    <q-input
-                      v-model="departamentos[i].departamentoData.visitasMembros.qtnVisitas"
-                      class="q-pl-sm q-mr-md"
-                      label="Número de visitas"
-                    />
-                    <q-input
-                      v-model="departamentos[i].departamentoData.visitasMembros.pessoas"
-                      class="q-pl-sm q-mr-md"
-                      label="Total de pessoas"
-                    />
+                    <div class="row">
+                      <q-input
+                        v-model="departamentos[i].departamentoData.visitasMembros.qtnVisitas"
+                        class="q-pl-sm q-mr-md col"
+                        label="Número de visitas"
+                      />
+                      <q-input
+                        v-model="departamentos[i].departamentoData.visitasMembros.pessoas"
+                        class="q-pl-sm q-mr-md col"
+                        label="Total de pessoas"
+                      />
+                    </div>
                     <q-item-label class="q-mt-sm" /> Enfermos
-                    <q-input
-                      v-model="departamentos[i].departamentoData.visitasEnfermos.qtnVisitas"
-                      class="q-pl-sm q-mr-md"
-                      label="Número de visitas"
-                    />
-                    <q-input
-                      v-model="departamentos[i].departamentoData.visitasEnfermos.enfermos"
-                      class="q-pl-sm q-mr-md"
-                      label="Total de enfermos"
-                    />
+                    <div class="row">
+                      <q-input
+                        v-model="departamentos[i].departamentoData.visitasEnfermos.qtnVisitas"
+                        class="q-pl-sm q-mr-md col"
+                        label="Número de visitas"
+                      />
+                      <q-input
+                        v-model="departamentos[i].departamentoData.visitasEnfermos.enfermos"
+                        class="q-pl-sm q-mr-md col"
+                        label="Total de enfermos"
+                      />
+                    </div>
                   </q-item-section>
                   <!-- Sobre ação social   -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departamento de Ação social'
+                      item.organismConfigName === 'Ação social de leigos'
                     "
                   >
-                    <q-input
-                      v-model="departamentos[i].departamentoData.pessoasEnvol"
-                      class="q-pl-sm q-mr-md"
-                      label="Total de pessoas envolvidas"
+                  <div class="row">
+                  <q-input
+                    v-model="departamentos[i].departamentoData.pessoasEnvol"
+                    class="q-pl-sm col q-mr-md"
+                    label="Total de pessoas"
                     />
-                    <q-input
-                      v-model="departamentos[i].departamentoData.pessoasBeneft"
-                      class="q-pl-sm q-mr-md"
-                      label="Total de pessoas Beneficiadas"
+                  <q-input
+                    v-model="departamentos[i].departamentoData.pessoasBeneft"
+                    class="q-pl-sm col q-mr-md"
+                    label="Total Beneficiados"
                     />
-                    <q-input
-                      v-model="departamentos[i].departamentoData.permProgs"
-                      class="q-pl-sm q-mr-md"
-                      label="Descrição dos programas permanentes"
-                    />
-                    <q-input
-                      v-model="departamentos[i].departamentoData.acoesEventuais"
-                      class="q-pl-sm q-mr-md"
-                      label="Ações eventuais"
+                  </div>
+                  <q-input
+                    v-model="departamentos[i].departamentoData.acoesEventuais"
+                    class="q-pl-sm col q-mr-md"
+                    label="Ações eventuais"
+                  />
+                  <!-- </div>
+                  <div class="row"> -->
+                  <q-input
+                    v-model="departamentos[i].departamentoData.permProgs"
+                    class="q-pl-sm col q-mr-md"
+                    label="Programas permanentes"
                     />
                   </q-item-section>
                   <!-- Sobre outros   -->
@@ -363,16 +377,18 @@
                       class="q-pl-sm q-mr-md"
                       label="Organização do grupo"
                     ></q-input>
-                    <q-input
+                    <div class="row">
+                      <q-input
                       v-model="departamentos[i].departamentoData.freqTotal"
-                      class="q-pl-sm q-mr-md"
+                      class="q-pl-sm col q-mr-md"
                       label="Número de encontros"
-                    ></q-input>
-                    <q-input
+                      />
+                      <q-input
                       v-model="departamentos[i].departamentoData.qtnEncontros"
-                      class="q-pl-sm q-mr-md"
+                      class="q-pl-sm col q-mr-md"
                       label="Frequência total "
-                    ></q-input>
+                      />
+                    </div>
                   </q-item-section>
                   <!-- ainda sobre outros -->
                 </div>
@@ -422,10 +438,10 @@ export default defineComponent({
       validated: false,
       statisticStatus: null,
       arrayIgnore: [
-        "Departamento de Escola Dominical",
-        "Departamento da Música",
-        "Departamento de Visitação",
-        "Departamento de Ação social",
+        "Escola Dominical de leigos",
+        "Música de leigos",
+        "Visitação de leigos",
+        "Ação social de leigos",
         "Outros",
       ],
     };
