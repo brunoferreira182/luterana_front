@@ -330,7 +330,7 @@
           color="orange"
           @click="discardDraft"
           outline
-        ></q-btn>
+        />
         <q-btn
           class="full-width q-mt-md"
           rounded
@@ -339,16 +339,16 @@
           label="Salvar Rascunho"
           color="primary"
           @click="saveDraft"
-        ></q-btn>
+        />
         <q-btn
           class="full-width q-mt-md"
           rounded
           unelevated
           no-caps
-          label="Salvar oficial"
+          label="Finalizar etapa"
           color="green"
           @click="saveFinal"
-        ></q-btn>
+        />
       </div>
       <div 
         v-else
@@ -1415,6 +1415,7 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$router.back()
       this.getCompositionByUserId()
     },
     discardDraft () {

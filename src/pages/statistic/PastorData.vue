@@ -507,18 +507,14 @@
             </q-tooltip>
           </q-btn>
           <q-btn
-            label="Salvar oficial"
+            label="Finalizar etapa"
             class="full-width q-my-md"
             color="green"
             rounded
             unelevated
             no-caps
             @click="saveOficial"
-          >
-            <q-tooltip>
-              Salvar rascunho
-            </q-tooltip>
-          </q-btn>
+          />
         </div>
         <div
           v-else
@@ -1552,6 +1548,7 @@ export default defineComponent({
           this.$q.loading.hide()
           if (r.error) return
           this.$q.notify('Salvo com sucesso!')
+          this.$router.back()
           this.getMyOrganismsList()
           this.getParoquiaId()
         })

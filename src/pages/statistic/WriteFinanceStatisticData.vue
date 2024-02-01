@@ -218,33 +218,33 @@ export default defineComponent({
         searchString: ''
       },
       validated: false,
-      contributionCalculatedMore: 0,
-      contributionCalculatedLess: 0,
-      contributionOutputSum: 0,
-      contributionEntriesSum: 0,
+      contributionCalculatedMore: '',
+      contributionCalculatedLess: '',
+      contributionOutputSum: '',
+      contributionEntriesSum: '',
       table: {
         entries:{
-          saldoAnterior: 0,
+          saldoAnterior: '',
           receitasRegulares: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
           },
-          ofertasEspeciais: 0,
-          campanhasEspecificas: 0,
-          auxilio: 0,
-          emprestimos: 0,
-          todasOutrasReceitas: 0,
+          ofertasEspeciais: '',
+          campanhasEspecificas: '',
+          auxilio: '',
+          emprestimos: '',
+          todasOutrasReceitas: '',
         },
         output: {
           contribuicaoIELB: {
-            ofertasDominicais: 0,
-            ofertasMensais: 0,
-            receitasAlugueis: 0,
+            ofertasDominicais: '',
+            ofertasMensais: '',
+            receitasAlugueis: '',
           },
-          contribuicaoDistrito: 0,
-          devolucaoEmprestimoIELB: 0,
-          todasSaidas: 0
+          contribuicaoDistrito: '',
+          devolucaoEmprestimoIELB: '',
+          todasSaidas: ''
         },
       },
       showEmprestimoNotify: false,
@@ -344,27 +344,27 @@ export default defineComponent({
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
         contribuicaoIELB: {
-          ofertasDominicais: 0,
-          ofertasMensais: 0,
-          receitasAlugueis: 0,
+          ofertasDominicais: '',
+          ofertasMensais: '',
+          receitasAlugueis: '',
         },
-        contribuicaoDistrito: 0,
-        devolucaoEmprestimoIELB: 0,
-        todasSaidas: 0
+        contribuicaoDistrito: '',
+        devolucaoEmprestimoIELB: '',
+        todasSaidas: ''
       },
       r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
       this.table.entries = {
-        saldoAnterior: 0,
+        saldoAnterior: '',
         receitasRegulares: {
-          ofertasDominicais: 0,
-          ofertasMensais: 0,
-          receitasAlugueis: 0,
+          ofertasDominicais: '',
+          ofertasMensais: '',
+          receitasAlugueis: '',
         },
-        ofertasEspeciais: 0,
-        campanhasEspecificas: 0,
-        auxilio: 0,
-        emprestimos: 0,
-        todasOutrasReceitas: 0,
+        ofertasEspeciais: '',
+        campanhasEspecificas: '',
+        auxilio: '',
+        emprestimos: '',
+        todasOutrasReceitas: '',
       }
     });
   },
