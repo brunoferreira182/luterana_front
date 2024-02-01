@@ -12,10 +12,6 @@
           </q-chip>
         </div>
       </div>
-      <!-- Aqui eu tenho algumas etapas para serem cumpridas antes de alterar o front:
-      1- Copiar q query do organismDetail e adicionar os complementos que faltam FEITO
-      2- Ajustar a função mountTree para poder utilizar a q-tree
-      3- Ajustar o front conforme a imagem do éder -->
       <div class="q-pa-sm q-ma-lg">
         <div class="text-h6">Composição:</div>
         <q-tree
