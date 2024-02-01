@@ -148,108 +148,25 @@
                     v-if="item.organismConfigName === 'Música de leigos'"
                   >
                     <q-item-label>
-                      Grupo Músical
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.musicGroup.exist"
-                        val="exist"
-                        label="Sim"
-                      />
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.musicGroup.exist"
-                        val="noExist"
-                        label="Não"
-                      />
-                      <q-input
-                        dense
-                        v-if="
-                          item.departamentoData.musicGroup.exist === 'banda'
-                        "
-                        v-model="departamentos[i].departamentoData.musicGroup.qtn"
-                        class="q-mx-xs q-mr-md"
-                        label="Quantidade"
-                      ></q-input>
-                    </q-item-label>
-                    <q-item-label>
-                      Banda
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.banda.exist"
-                        val="exist"
-                        label="Sim"
-                      />
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.banda.exist"
-                        val="noExist"
-                        label="Não"
-                      />
-                      <q-input
-                        dense
-                        v-if="item.departamentoData.banda.exist === 'exist'"
-                        v-model="departamentos[i].departamentoData.banda.qtn"
-                        class="q-mx-xs q-mr-md"
-                        label="Quantidade"
-                      ></q-input>
-                    </q-item-label>
-                    <q-item-label>
-                      Grupo de Louvor
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.grupoLouvor.exist"
-                        val="exist"
-                        label="Sim"
-                      />
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.grupoLouvor.exist"
-                        val="noExist"
-                        label="Não"
-                      />
-                      <q-input
-                        dense
-                        v-if="
-                          item.departamentoData.grupoLouvor.exist === 'exist'
-                        "
-                        v-model="departamentos[i].departamentoData.grupoLouvor.qtn"
-                        class="q-mx-xs q-mr-md"
-                        label="Quantidade"
-                      ></q-input>
-                    </q-item-label>
-                    <q-item-label>
-                      Quarteto
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.quarteto.exist"
-                        val="exist"
-                        label="Sim"
-                      />
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.quarteto.exist"
-                        val="noExist"
-                        label="Não"
-                      />
-                      <q-input
-                        dense
-                        v-if="item.departamentoData.quarteto.exist === 'exist'"
-                        v-model="departamentos[i].departamentoData.quarteto.qtn"
-                        class="q-mx-xs q-mr-md"
-                        label="Quantidade"
-                      ></q-input>
-                    </q-item-label>
-                    <q-item-label>
-                      Vocal
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.vocal.exist"
-                        val="exist"
-                        label="Sim"
-                      />
-                      <q-radio
-                        v-model="departamentos[i].departamentoData.vocal.exist"
-                        val="noExist"
-                        label="Não"
-                      />
-                      <q-input
-                        dense
-                        v-if="item.departamentoData.vocal.exist === 'exist'"
-                        v-model="departamentos[i].departamentoData.vocal.qtn"
-                        class="q-mx-xs q-mr-md"
-                        label="Quantidade"
-                      ></q-input>
+                      <div class="col items-center">
+                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal
+                        <q-radio
+                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          val="exist"
+                          label="Sim"
+                        />
+                        <q-radio
+                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          val="noExist"
+                          label="Não"
+                        />
+                        <q-input
+                          v-if="departamentos[i].departamentoData.musicGroup.exist === 'exist'"
+                          v-model="departamentos[i].departamentoData.musicGroup.qtn"
+                          class="q-pl-sm col q-mr-md"
+                          label="Quantidade de integrantes"
+                        />
+                      </div>
                     </q-item-label>
                     <q-item-section>
                       <q-input
