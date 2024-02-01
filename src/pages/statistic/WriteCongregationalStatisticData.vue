@@ -171,13 +171,20 @@
                     :options="filiatedOptions"
                     class="q-pa-sm"
                   />
-                  <q-input
-                    :readonly="status && status.value === 'sent'"
-                    label="Data de fundação"
-                    class="q-pa-sm"
-                    mask="##/##/####"
-                    v-model="org.foundationDate"
-                  />
+                  <div class="row items-center">  
+                    <q-input
+                      :readonly="status && status.value === 'sent'"
+                      label="Data de fundação"
+                      class="q-pa-sm"
+                      mask="##/##/####"
+                      v-model="org.foundationDate"
+                    />
+                    <div class="col">  
+                      <q-checkbox
+                      label="Não sei"
+                      />
+                    </div>  
+                  </div>
                   <div class="text-h6 q-my-sm q-ml-sm">
                     Quando ocorre o evento:
                   </div>
