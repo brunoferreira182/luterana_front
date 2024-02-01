@@ -4,14 +4,7 @@
       <div class="text-h6">
         Você está em Paróquia {{ userOrganismList.organismName }}
       </div>
-      <div>
-        Soma das entradas: R$
-        {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
-      </div>
-      <div>
-        Soma das saídas: R$
-        {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
-      </div>
+   
       <div class="text-subtitle1">
         Selecione o organismo que deseja escrever os dados de estatística. 
         
@@ -98,10 +91,7 @@ export default defineComponent({
   data() {
     return {
       userOrganismList:{},
-      paroquiaData: {
-        contributionOutput: '',
-        contributionEntries: '',
-      },
+      
       organismsIds: [],
       dialogSendStatistic: false,
       allOrganismCompleteValidated: true,
@@ -111,19 +101,8 @@ export default defineComponent({
   },
   beforeMount(){
     this.getParoquiasByUserId()
-    this.getFinanceTotalValueFromParoquia()
   },
   methods: {
-    getFinanceTotalValueFromParoquia(){
-      const opt = {
-        route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.paroquiaData = r.data
-      });
-    },
     goToCompleteStatistic(organism) {
       this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },

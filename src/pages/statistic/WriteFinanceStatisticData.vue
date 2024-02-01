@@ -19,9 +19,19 @@
           </q-breadcrumbs>
         </div>
         <div > 
-          <div class="text-h5 q-mb-sm text-center">
+          <div class="text-h5 text-center">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
+          </div>
+          <div class="text-center q-py-md">
+            <div>
+              Soma das entradas da paróquia: R$
+              {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
+            </div>
+            <div>
+              Soma das saídas da paróquia: R$
+              {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
+            </div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -115,13 +125,13 @@
                   Saídas
                 </div>
                 <div class="text-h6">
-                  Contribuição registrada no SGA <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
+                  Contribuição registrada na Administração Nacional <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
                 </div>
                 <div class="text-green" v-if="showContributionCalculatedMore">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
+                  Contribuição registrada na Administração Nacional e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
                 </div>
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
-                  Contribuição registrada no SGA e calculado 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
+                  Contribuição registrada na Administração Nacional 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
                 </div>
                 <div class="no-margin">
                 <q-input 
@@ -251,6 +261,10 @@ export default defineComponent({
       showContribuitionNotify: false,
       showContributionCalculatedMore: false,
       showContributionCalculatedLess: false,
+      paroquiaData: {
+        contributionOutput: '',
+        contributionEntries: '',
+      },
     }
   },
   beforeUnmount(){
@@ -258,9 +272,20 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
+    this.getFinanceTotalValueFromParoquia()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+  getFinanceTotalValueFromParoquia(){
+    const opt = {
+      route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
+    }
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      this.paroquiaData = r.data
+    });
+  },
   calculateDiffBetweenEmprestimos() {
     if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
       this.showEmprestimoNotify = true
