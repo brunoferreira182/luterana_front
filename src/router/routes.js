@@ -298,6 +298,10 @@ const routes = [
         component: () => import("src/pages/statistic/IntroductionStatistic.vue"),
       },
       {
+        path: "/statistic/construction",
+        component: () => import("src/pages/statistic/Construction.vue"),
+      },
+      {
         path: "/statistic/writeFinanceStatisticData",
         component: () => import("src/pages/statistic/WriteFinanceStatisticData.vue"),
       },
