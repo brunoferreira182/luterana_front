@@ -989,6 +989,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogAddServices.open"
+        @hide="clearDialogAddServices"
       >
         <q-card style="width: 400px;">
           <q-card-section>
