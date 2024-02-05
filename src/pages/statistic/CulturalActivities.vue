@@ -24,8 +24,8 @@
       <div class="row justify-center q-pa-md">
         <div class="col q-gutter-y-md" v-if="culturalActivities && culturalActivities.length > 0">
           <div
-            v-for="(cultural, index) in culturalActivities"
-            :key="index"
+            v-for="(cultural, i) in culturalActivities"
+            :key="i"
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
@@ -38,17 +38,17 @@
             <q-input
               type="number"
               label="Quantos dados por pastor"
-              v-model.number="cultural.activitiesData.cultoData.qtyDadosPastor"
+              v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
               type="number"
               label="Quantos cultos de leitura"
-              v-model.number="cultural.activitiesData.cultoData.qtyCultoLeitura"
+              v-model="cultural.activitiesData.cultoData.qtyCultoLeitura"
             />
             <q-input
               type="number"
               label="Soma total de frequência no ano"
-              v-model.number="cultural.activitiesData.cultoData.somaFrequenciaAnual"
+              v-model="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-md">
               <div class="q-mt-md">
@@ -59,13 +59,13 @@
                   class="col"
                   type="number"
                   label="Quantidade oferecida ano"
-                  v-model.number="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
+                  v-model="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
                 />
                 <q-input
                   class="col"
                   type="number"
                   label="Soma total de comungantes"
-                  v-model.number="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
+                  v-model="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
                 />
               </div>
             </div>
@@ -82,9 +82,17 @@
         />
   
         <q-chip
-          v-if="!validated"
+          v-else-if="!validated && culturalActivities !== null"
+          color="orange"
+          label="Rascunho"
+          text-color="white"
+          icon="warning"
+        /><br>
+
+        <q-chip
+          v-if="!validated && !culturalActivities"
           color="red"
-          label="Não Validado"
+          label="Não iniciada"
           text-color="white"
           icon="warning"
         /><br>
