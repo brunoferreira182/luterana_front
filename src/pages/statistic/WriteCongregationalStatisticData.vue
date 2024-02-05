@@ -176,41 +176,70 @@
                     </div>  
                   </div>
                   <div class="text-h6 q-my-sm q-ml-sm">
-                    Quando ocorre o evento:
+                    Quando ocorre o culto:
                   </div>
                   <q-list
                     bordered
-                    v-for="(day, iDay) in composition.congregations[iOrg].diaEHorario"
-                    :key="day"
                     class="q-mt-sm"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
                   >
-                    <q-item>
-                      <q-item-section>
-                        <q-item-label lines="1">
-                          Dia: {{ day.day }}
-                        </q-item-label>
-                        <q-item-label>
-                          Horário: {{ day.hour }}
-                        </q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        <q-btn
-                          color="red"
-                          flat
-                          rounded
-                          icon="delete"
-                          @click="removeDay(iOrg, iDay)"
-                        />
-                      </q-item-section>
-                    </q-item>
+                  <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
+                    <q-item-section v-if="day.model === 'month'">
+                      <q-item-label>
+                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
+                      </q-item-label>
+                      <div
+                        v-for="week in day.weeks"
+                        :key="week"
+                        class="q-ml-xs q-py-md row"
+                      >
+                        <div class="col-4">
+                          {{ week.label }}:
+                        </div>
+                        <q-list class="col-8">
+                          <q-item
+                            class="no-padding"
+                            v-for="val in week.value"
+                            :key="val"
+                          >
+                            <q-item-label>
+                              {{ val.day.label }} às {{ val.time }}
+                            </q-item-label>
+                          </q-item>
+                        </q-list>
+                      </div>
+                    </q-item-section>
+                    <q-item-section v-else-if="day.model === 'week'">
+                      <q-item-label>
+                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
+                      </q-item-label>
+                      <div
+                        v-for="days in day.days"
+                        :key="days"
+                        class="q-ml-xs q-py-md row"
+                      >
+                        {{ days.value.label }} às {{ days.value.times.initial }}
+                      </div>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        color="red"
+                        flat
+                        rounded
+                        icon="delete"
+                        @click="removeDay(iOrg, iDay)"
+                      />
+                    </q-item-section>
+                  </q-item>
+
                   </q-list>
                   <q-btn
-                    label="Adicionar dia e horário do evento"
+                    label="Adicionar dia e horário do culto"
                     color="primary"
                     unelevated
                     rounded
                     class="q-pa-sm q-my-md"
-                    @click="addEventsDayAndHour(iOrg)"
+                    @click="clkAddServices(iOrg)"
                   />
                 </div>
               </q-list>
@@ -287,9 +316,11 @@
                   :options="options"
                   type="radio"
                   v-model="org.paroquialManagement"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                   label="Outro"
                   class="q-pa-sm"
                   v-model="org.other"
@@ -478,14 +509,8 @@
             />
             <q-input
               class="q-pa-sm"
-              label="E-mail" 
-              hint="Informe o e-mail"
-              v-model="dialogAddCongregation.data.email"
-            />
-            <q-input
-              class="q-pa-sm"
-              label="Celular" 
-              hint="Informe o número de celular"
+              label="Número" 
+              hint="Informe o número"
               mask="(##) #####-####"
               v-model="dialogAddCongregation.data.phone"
             />
@@ -716,7 +741,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogAddUserToFunctionInDept"
+              @click="cleanDialogAddNewDepartament"
             />
             <q-btn
               label="Adicionar"
@@ -811,7 +836,7 @@
                 label="Outros dados"
               >
                 <div class="text-h6 q-my-sm q-ml-sm">
-                  Quando ocorre o evento:
+                  Quando ocorre o culto:
                 </div>
                 <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
                   <q-list
@@ -963,6 +988,206 @@
         </q-card>
       </q-dialog>
       <q-dialog
+        v-model="dialogAddServices.open"
+      >
+        <q-card>
+          <q-card-section>
+            <div>
+              <strong>Frequência:</strong>
+              <q-select
+                class="q-pa-sm"
+                filled
+                use-input
+                label="Selecione a Frequência"
+                option-label="label"
+                v-model="dialogAddServices.selectedEventOption"
+                :options="dialogAddServices.eventsOptions.map(option => ({ ...option }))"
+                :loading="false"
+                @update:model-value="resetDays"
+              />
+            </div>
+            <div class=q-mt-md v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'week'">
+              <strong>Dias:</strong>
+              <div
+                v-for="(day, iDay) in dialogAddServices.selectedEventOption.days"
+                :key="iDay"
+              >
+                <div
+                  class="row"
+                >
+                  <q-select
+                    class="q-pa-sm col-7"
+                    filled
+                    use-input
+                    label="Selecione o dia"
+                    option-label="label"
+                    v-model="day.value"
+                    :options="dialogAddServices.daysOfWeek"
+                    :loading="false"
+                  />
+                  <q-chip 
+                    class="col-2 q-ml-sm"
+                    v-if="day.value && day.value.times && day.value.times.initial"
+                    color="white"
+                    model-value=false
+                    flat
+                    text-color="primary"
+                  >
+                    {{ day.value.times.initial }}
+                    <q-tooltip>Horário inicial</q-tooltip>
+                  </q-chip>
+                  <q-btn
+                    v-if="day.value && day.value.label"
+                    class="col-2"
+                    color="primary"
+                    flat
+                    icon="schedule"
+                    rounded
+                    @click="addTimeForDay(iDay)"
+                  >
+                    <q-tooltip>Selecione o horário</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+              <div
+                align="center"
+              >
+                <q-btn
+                  color="primary"
+                  rounded
+                  unelevated
+                  label="confirmar"
+                  @click="confirmAddEventsWeek"
+                />
+              </div>
+            </div>
+            <div
+              v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'month'"
+            >
+              <div
+                v-for="(week, iWeek) in dialogAddServices.selectedEventOption.weeks"
+                :key="week"
+              >
+                <div class="">
+                  <strong>{{ week.label }}:</strong>
+                  <q-btn 
+                    v-if="(!week.value || !week.value.label) && dialogAddServices.selectedEventOption.num > dialogAddDayInMonth.count"
+                    icon="add"
+                    color="primary"
+                    flat
+                    rounded
+                    size="12px"
+                    @click="addDayInMonth(iWeek)"
+                  >
+                    <q-tooltip>Adicionar culto</q-tooltip>
+                  </q-btn>
+                  <div v-if="week.value">
+                    <div 
+                      v-for="(value, iValue) in week.value"
+                      :key="value"
+                    >
+                      <div class="row">
+                        <q-select
+                          class="col-5"
+                          filled
+                          use-input
+                          label="Selecione o dia"
+                          option-label="label"
+                          v-model="value.day"
+                          :options="dialogAddServices.daysOfWeek"
+                          :loading="false"
+                        />
+                        <q-chip
+                          class="col-2"
+                          v-if="value && value.time"
+                          color="white"
+                          text-color="primary"
+                        >
+                          {{ value.time }}
+                        </q-chip>
+                        <q-btn
+                          v-if="value.day"
+                          class="col-2 q-pa-sm"
+                          color="primary"
+                          flat
+                          icon="schedule"
+                          rounded
+                          @click="addTimeForDay(iWeek, iValue)"
+                        >
+                          <q-tooltip>Selecione o horário</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          class="col-2"
+                          color="red"
+                          flat
+                          icon="delete"
+                          rounded
+                          @click="removeMonthDay(iWeek, iValue)"
+                        >
+                          <q-tooltip>Excluir dia</q-tooltip>
+                        </q-btn>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </q-card-section>
+          <q-card-actions
+            align="center"
+            v-if="dialogAddDayInMonth 
+            && dialogAddServices.selectedEventOption 
+            && dialogAddServices.selectedEventOption.num === dialogAddDayInMonth.count"
+          >
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              label="confirmar"
+              @click="confirmAddEventsMonth"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        @hide="clearTimeForDayDialog"
+        v-model="dialogAddTimeForDay.open"
+      >
+        <q-card style="width: 300px;">
+          <q-card-section>
+            <div class='text-center text-h6'>
+              Horários
+            </div>
+            <q-input 
+              type="time" 
+              class="q-my-sm"
+              outlined
+              label="Início" 
+              v-model="dialogAddTimeForDay.initial"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearTimeForDayDialog"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddTimeForDay"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <!-- <q-dialog
         v-model="dialogAddEventsDayAndHour.open"
         @hide="clearDialogAddEventsDayAndHour"
       >
@@ -1008,7 +1233,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
       <q-dialog
         v-model="dialogAddEventsDayAndHourInDep.open"
         @hide="clearDialogAddDayAndHourInDept"
@@ -1200,7 +1425,6 @@ export default defineComponent({
         open: false,
         data: {
           name: '',
-          email: '',
           phone: '',
           address: {
             city: '',
@@ -1275,17 +1499,24 @@ export default defineComponent({
         hour: null
       },
       semFoundation: false,
-      // dialogAddEventsDayAndHour: {
-      //   open: false,
-      //   day: null,
-      //   iOrg: null,
-      //   hour: null
-      // },
-      // dialogAddEventsDayAndHourInDep: {
-      //   open: false,
-      //   day: null,
-      //   hour: null
-      // },
+      dialogAddServices: {
+        open: false,
+        eventsOptions: null,
+        daysOfWeek: null,
+        selectedEventOption: null,
+        selectedDay: null,
+        selectedValue: null,
+        iOrg: null
+      },
+      dialogAddDayInMonth: {
+        open: false,
+        index: null,
+        count: 0,
+        initial: null
+      },
+      dialogAddTimeForDay: {
+        open: false,
+      },
       daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'],
       dialogAddSecretary: {
         open: false,
@@ -1318,12 +1549,31 @@ export default defineComponent({
   }, 
   beforeMount() {
     this.getCompositionByUserId()
+    this.getEventsOptions()
+    this.getDaysOfWeek()
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
     this.saveDraft()
   },
   methods: { 
+    insertParoquialManagementType(iOrg, org){
+      console.log(org)
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org.childOrganismId
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
+    },
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
@@ -1332,6 +1582,47 @@ export default defineComponent({
       this.dialogAddTimeForDay.initial = null
       this.dialogAddTimeForDay.open = false
     },
+    confirmAddEventsMonth() {
+      let allHaveTime = true
+      this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+        if (w.value && w.value.length > 0) {
+          
+          w.value.forEach((v) => {
+            if (v.time) {
+              allHaveTime = true; 
+            }
+            else if (!v.time) {
+              console.log(v);
+              this.$q.notify('Preencha o horário');
+              allHaveTime = false; 
+              return;
+            }
+          });
+        }
+      });
+      if (allHaveTime) {
+        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+        }
+        this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
+        this.clearDialogAddServices()
+      }
+    },
+    // confirmAddEventsDayAndHour() {
+    //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
+    //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
+    //   }
+    //   this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
+    //     day: this.dialogAddEventsDayAndHour.day,
+    //     hour: this.dialogAddEventsDayAndHour.hour,
+    //     action: 'add'
+    //   })
+    //   this.clearDialogAddEventsDayAndHour()
+    // },
+    removeMonthDay(iWeek, iValue) {
+      this.dialogAddServices.selectedEventOption.weeks[iWeek].value.splice(iValue, 1)
+      this.dialogAddDayInMonth.count--
+    },
     confirmAddTimeForDay() {
       if (this.dialogAddServices.selectedEventOption.days) {
         this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.times.initial = this.dialogAddTimeForDay.initial;
@@ -1339,6 +1630,17 @@ export default defineComponent({
         this.dialogAddServices.selectedEventOption.weeks[this.dialogAddServices.selectedDay].value[this.dialogAddServices.selectedValue].time = this.dialogAddTimeForDay.initial;
       }
       this.dialogAddTimeForDay.open = false
+    },
+    addDayInMonth(i) {
+      this.dialogAddServices.selectedEventOption.weeks[i].value.push({
+        day: null,
+        time: null
+      })
+      this.dialogAddDayInMonth.count++
+    },
+    clkAddServices(iOrg) {
+      this.dialogAddServices.open = true
+      this.dialogAddServices.iOrg = iOrg
     },
     addTimeForDay(iDay, iValue) {
       this.dialogAddServices.selectedDay = iDay
@@ -1413,7 +1715,7 @@ export default defineComponent({
     removeDay(iOrg, iDay) {
       this.composition
       .congregations[iOrg]
-      .diaEHorario.splice(iDay, 1)
+      .value.splice(iDay, 1)
     },
     removeDayInDep(iDay) {
       this.composition
