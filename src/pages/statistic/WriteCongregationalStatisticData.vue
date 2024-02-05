@@ -175,7 +175,7 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations.length">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
                     Quando ocorre o culto:
                   </div>
                   <q-list
@@ -1590,34 +1590,70 @@ export default defineComponent({
         if (w.value && w.value.length > 0) {
           const eventsWithTime = w.value.filter((v) => v.time);
 
-          if (eventsWithTime.length > 0) {
-            // Adiciona apenas se houver eventos com horário
-            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
-              ...this.dialogAddServices.selectedEventOption,
-              weeks: [{ value: eventsWithTime }]  // Apenas os eventos com horário
-            });
-          } else {
-            allHaveTime = false;
-            this.$q.notify('Preencha o horário para pelo menos um evento.');
+          if (!eventsWithTime.every((event) => event.time)) {
+            allHaveTime = false; // Define como false se pelo menos um evento não tiver horário
+            this.$q.notify('Preencha o horário para todos os eventos.');
+            return;
           }
+        } else {
+          allHaveTime = false; // Define como false se w.value for nulo ou vazio
         }
       });
 
       if (allHaveTime) {
+        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+        }
+
+        this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+          ...this.dialogAddServices.selectedEventOption,
+          weeks: [{ value: eventsWithTime, label: w.label }]
+        });
+
         this.clearDialogAddServices();
       }
     },
+
+    // confirmAddEventsMonth() {
+    //   let allHaveTime = true;
+
+    //   this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+    //     console.log(w, 'wwwwwwwww');
+
+    //     if (w.value && w.value.length > 0) {
+    //       const eventsWithTime = w.value.filter((v) => v.time);
+    //       if (eventsWithTime.length > 0) {
+    //         if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+    //           this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+    //         }
+    //         this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+    //           ...this.dialogAddServices.selectedEventOption,
+    //           weeks: [{ value: eventsWithTime, label: w.label  }]  
+    //         });
+    //       } else {
+    //         allHaveTime = false;
+    //         this.$q.notify('Preencha o horário para pelo menos um evento.');
+    //       }
+    //     }
+    //   });
+
+    //   if (allHaveTime) {
+    //     this.clearDialogAddServices();
+    //   }
+    // },
     // confirmAddEventsMonth() {
     //   let allHaveTime = true
     //   this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
     //     console.log(w, 'wwwwwwwww')
     //     if (w.value && w.value.length > 0) {
     //       const eventsWithTime = w.value.filter((v) => v.time);
-    //       if(eventsWithTime)
-    //       this.composition.congregations[this.dialogAddServices.iOrg].value.push({
-    //       ...this.dialogAddServices.selectedEventOption,
-    //       weeks: [{ value: eventsWithTime }]  
-    //     });
+    //       if(eventsWithTime.length > 0){
+    //         const label = this.dialogAddServices.selectedEventOption.label;
+    //         this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+    //           ...this.dialogAddServices.selectedEventOption,
+    //           weeks: [{ value: eventsWithTime, label: label }]  
+    //         });
+    //       }
     //       w.value.forEach((v) => {
     //         if (v.time) {
     //           allHaveTime = true; 
@@ -2192,7 +2228,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
         body: {
-          composition : this.composition,
+          composition: this.composition,
         },
       }
       this.$q.loading.show()
