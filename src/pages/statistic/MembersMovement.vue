@@ -39,22 +39,24 @@
             </div>
           </div>
           <div
-            class="row q-ma-sm"
+            class="q-ma-sm"
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
             :key="index"
           >
-            <div class="row q-gutter-y-md">
-              <q-item-label class="q-pa-sm"> {{`Confirmados em ${confirmado.ano}`}}
-                <q-input 
+            <div class="col q-gutter-y-md">
+              <q-item-label class=" q-pa-sm"> {{`Confirmados em ${confirmado.ano}`}}
+                <div class="row justify-between">
+                  <q-input 
                   type="number"
                   label=" 1°ano "
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
-                />
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde1"
+                  />
                   <q-input 
                   type="number"
                   label=" 2°ano"
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde2"
                   />
+                </div>
               </q-item-label>
             </div>
           </div>
@@ -346,7 +348,8 @@ export default defineComponent({
         this.membersMovement.instrucaoDeConfirmados.confirmados.push(
           {
             ano: 2023 - i + 1,
-            qtde: null
+            qtde1: null,
+            qtde2: null
           }
         )
       }

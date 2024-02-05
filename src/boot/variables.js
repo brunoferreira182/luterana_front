@@ -1,9 +1,5 @@
 //////////// VARIAVEIS DA APLICACAO //////
-<<<<<<< HEAD
 const MODE_MASTER_SERVER = "local";
-=======
-const MODE_MASTER_SERVER = "darta";
->>>>>>> 6d63d0354d716e8515c19f67744cd87bf61d1caa
 const COMPANY_ID = 10;
 const VERSION = "1.2 Beta"
 const BUILD = 19
