@@ -49,7 +49,6 @@
                   "
                 />
               </q-item-label>
-
               <q-slide-transition>
                 <div v-show="item.expanded">
                   <q-item-section
