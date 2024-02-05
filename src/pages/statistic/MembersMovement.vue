@@ -49,7 +49,7 @@
                   <q-input 
                   type="number"
                   :label="`${confirmado.turma} °ano`"
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant."
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
                   />
                 </div>
               </q-item-label>
@@ -343,7 +343,7 @@ export default defineComponent({
         this.membersMovement.instrucaoDeConfirmados.confirmados.push(
           {
             turma: i  ,
-            Quant.: null,
+            Quant: null,
           }
         )
       }
