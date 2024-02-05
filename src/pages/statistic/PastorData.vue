@@ -1537,6 +1537,14 @@ export default defineComponent({
         })
       }
       if (x === 0) {
+        let pastoralData = {
+          pastorData: this.pastorData,
+          pastorFormations: this.pastorFormations,
+          pastorLinks: this.pastorLink,
+          pastorActivities: this.pastorActivities,
+          lastPastorActivities: this.lastOrganismPastorActivities,
+          reportedErrors: this.reportedErrors
+        }
         let opt = {
           route: '/desktop/statistics/insertPastoralStatisticsDraft',
           body: {

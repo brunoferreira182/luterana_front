@@ -182,6 +182,7 @@
                   <q-list
                     bordered
                     class="q-mt-sm"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
                   >
                   <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
                     <q-item-section v-if="day.model === 'month'">
