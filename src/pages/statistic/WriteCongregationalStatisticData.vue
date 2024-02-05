@@ -153,7 +153,7 @@
                 </div>
                 <div class="q-ma-md">
                   <q-select
-                    v-model="org.affiliatedOrganism"
+                    v-model="composition.congregations[iOrg].affiliatedOrganism"
                     :readonly="status && status.value === 'sent'"
                     label="Filiado?"
                     :options="filiatedOptions"
@@ -161,18 +161,16 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      readonly="status && status.value === 'sent'"
+                      :readonly="composition.congregations[iOrg].semFoundation"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
-                      v-model="org.foundationDate"
+                      v-model="composition.congregations[iOrg].foundationDate"
                     />
                     <div class="col">  
                       <q-checkbox
                       label="Não sei"
-                      v-if= "!org.foundationDate || org.foundationDate !== '00/00/0000'"
-                      @click= "clkCheckboxDate(org)"
-                      v-model="semFoundation"
+                      v-model="composition.congregations[iOrg].semFundação"
                       />
                     </div>  
                   </div>
@@ -316,7 +314,7 @@
                 <q-option-group
                   :options="options"
                   type="radio"
-                  v-model="org.paroquialManagement"
+                  v-model="composition.congregations[iOrg].paroquialManagement"
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
                 <q-input
@@ -324,7 +322,7 @@
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
                   label="Outro"
                   class="q-pa-sm"
-                  v-model="org.other"
+                  v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
               <div class="text-right q-ma-sm">
@@ -989,6 +987,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogAddServices.open"
+        @hide="clearDialogAddServices"
       >
         <q-card style="width: 400px;">
           <q-card-section>
