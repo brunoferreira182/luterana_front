@@ -40,8 +40,7 @@
         </q-item>
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable
           @click="$router.push('/statistic/writeCongregationalStatisticData')"
         >
           <q-item-section>
@@ -84,8 +83,7 @@
         </q-item> -->
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable 
           @click="goToStatistic"
         >
           <q-item-section>
