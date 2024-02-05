@@ -26,7 +26,7 @@
             label="Não Validado"
             text-color="white"
           /> -->
-          <div v-if="status && status.pastors.length > 0" class="text-center">
+          <div v-if="status && status.pastors && status.pastors.length > 0" class="text-center">
             <q-chip
               v-for="pastor in status.pastors"
               :key="pastor._id"
