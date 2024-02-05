@@ -167,7 +167,11 @@
                     />
                     <div class="col">  
                       <q-checkbox
+                      toggle-indeterminate
                       label="Não sei"
+                      v-if= "!org.foundationDate || org.foundationDate !== '00/00/0000'"
+                      @click= "clkCheckboxDate(org)"
+                      v-model = "org.foundationDate"
                       />
                     </div>  
                   </div>
@@ -1151,6 +1155,7 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
+      // composition.congregations.foundationDate,
       filter: '',
       pagination: {
         sortBy: '',
@@ -1827,7 +1832,6 @@ export default defineComponent({
             }
           }
         }
-
         this.composition = r.data
         if (r.data.validated) {
           this.validated = r.data.validated
@@ -1852,6 +1856,10 @@ export default defineComponent({
         })
         this.deptConfigs = depConfigList
       })
+    },
+    clkCheckboxDate(org){
+      console.log('console do org', org);
+      org.foundationDate = '00/00/0000'
     }
   }
 })
