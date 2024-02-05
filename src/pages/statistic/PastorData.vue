@@ -7,8 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
-            
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
       </div>
@@ -1537,7 +1537,25 @@ export default defineComponent({
         })
       }
       if (x === 0) {
-        const opt = {
+        let pastoralData = {
+          pastorData: this.pastorData,
+          pastorFormations: this.pastorFormations,
+          pastorLinks: this.pastorLink,
+          pastorActivities: this.pastorActivities,
+          lastPastorActivities: this.lastOrganismPastorActivities,
+          reportedErrors: this.reportedErrors
+        }
+        let opt = {
+          route: '/desktop/statistics/insertPastoralStatisticsDraft',
+          body: {
+            pastoralData: pastoralData,
+            organismId: this.paroquiaId
+          }
+        }
+        useFetch(opt).then((r) => {
+          if  (r.error) return
+        })
+        opt = {
           route: '/desktop/statistics/insertPastoralStatisticsDone',
           body: {
             organismId: this.paroquiaId

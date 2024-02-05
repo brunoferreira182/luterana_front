@@ -4,7 +4,6 @@
       <div class="text-h6">
         Você está em Paróquia {{ userOrganismList.organismName }}
       </div>
-   
       <div class="text-subtitle1">
         Selecione o organismo que deseja escrever os dados de estatística. 
         
@@ -20,7 +19,7 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <q-item-label>
+            <!-- <q-item-label>
               <q-chip v-if="!organism.status.atividadeCulticaStatus || organism.status.atividadeCulticaStatus === 'notSent'">
                 Atividades cúlticas não enviado
               </q-chip>
@@ -39,13 +38,21 @@
               <q-chip >
                 Financeiro {{ organism.status.financeStatus }}
               </q-chip>
-            </q-item-label>
-            <div class="q-mt-md">Progresso:</div>
-            <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
-            <div class="absolute-full flex flex-center">
-              <q-badge color="white" :text-color="organism.percentualEstatistica.color" :label="organism.percentualEstatistica.label" />
+            </q-item-label> -->
+            
+            <div class="q-mt-md" v-if="organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR'">
+              <q-banner rounded class="bg-purple-8 text-white">
+                Esta congregação usa SIPAR, não é necessário preencher estatística
+              </q-banner>
             </div>
-          </q-linear-progress>
+            <div v-else>
+              <div class="q-mt-md">Progresso:</div>
+              <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
+                <div class="absolute-full flex flex-center">
+                  <q-badge color="white" :text-color="organism.percentualEstatistica.color" :label="organism.percentualEstatistica.label" />
+                </div>
+              </q-linear-progress>
+            </div>
           </q-item-section>
         </q-item>
         <q-btn
@@ -53,7 +60,7 @@
           no-caps
           unelevated
           rounded
-          @click="allOrganismCompleteValidated ? 'rota pra salvar' : dialogSendStatistic = true"
+          @click="checkCanSendStatistics"
           class="full-width"
           color="primary"
         />
@@ -103,7 +110,19 @@ export default defineComponent({
     this.getParoquiasByUserId()
   },
   methods: {
+    checkCanSendStatistics () {
+      let chk = []
+      this.userOrganismList.childData.forEach((org) => {
+        if (org.percentualEstatistica.value === 1) chk.push('true')
+        else if (org.gestaoParoquial && org.gestaoParoquial.managementType === 'SIPAR') chk.push('true')
+        else chk.push('false')
+      })
+      if (chk.includes('false')) {
+        this.dialogSendStatistic = true
+      }
+    },
     goToCompleteStatistic(organism) {
+      if (organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR') return
       this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
     getParoquiasByUserId(){
@@ -126,7 +145,9 @@ export default defineComponent({
             label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
-          if (this.userOrganismList.childData[i].percentualEstatistica.value !== 1) {
+          if (org.gestaoParoquial && org.gestaoParoquial.managementType === 'SIPAR') {
+            this.allOrganismCompleteValidated = true;
+          } else if (org.percentualEstatistica.value !== 1) {
             this.allOrganismCompleteValidated = false;
           }
         })

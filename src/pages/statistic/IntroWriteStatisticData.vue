@@ -14,7 +14,7 @@
           <q-item-section>
             <q-item-label class="text-h5">Dados pastorais</q-item-label>
           </q-item-section>
-          <q-chip
+          <!-- <q-chip
             color="green"
             label="Etapa finalizada"
             text-color="white"
@@ -25,15 +25,25 @@
             color="red"
             label="Não Validado"
             text-color="white"
-          />
+          /> -->
+          <div v-if="status && status.pastors && status.pastors.length > 0" class="text-center">
+            <q-chip
+              v-for="pastor in status.pastors"
+              :key="pastor._id"
+              :label="pastor.name"
+              :outline="!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent'"
+              color="green"
+              text-color="white"
+              :icon="pastor.preStatistic && pastor.preStatistic.status.value === 'sent' ? 'check' : ''"
+            />
+          </div>
         </q-item>
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable
           @click="$router.push('/statistic/writeCongregationalStatisticData')"
         >
-          <q-item-section>
+          <q-item-section @click="$router.push('/statistic/writeCongregationalStatisticData')">
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
           <q-chip
@@ -73,11 +83,10 @@
         </q-item> -->
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable 
           @click="goToStatistic"
         >
-          <q-item-section>
+          <q-item-section @click="goToStatistic">
             <q-item-label class="text-h5">Estatística</q-item-label>
           </q-item-section>
         </q-item>
@@ -145,6 +154,29 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog
+        v-model="dialogPastors.open"
+      >
+        <q-card
+          style="width: 400px;border-radius: 1rem;"
+          class="q-pa-md"
+        >
+          <q-card-section class="text-center text-h6">
+            Há pastores que não enviaram os dados pastorais. Verifique e tente novamente.
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="Voltar"
+              @click="dialogPastors.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -158,6 +190,9 @@ export default defineComponent({
   name:"IntroWriteStatisticData",
   data() {
     return {
+      dialogPastors: {
+        open: false
+      },
       userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
@@ -176,6 +211,7 @@ export default defineComponent({
     this.getStatusPreStatistic()
   },
   methods: {
+    aaa () {console.log('caraio')},
     clearDialogSipar() {
       this.dialogSipar.open = false
     },
@@ -185,13 +221,30 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      if (this.status && this.status.statisticPermission) {
-        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      } else if (this.status.isSipar) {
-        this.dialogSipar.open = true
-      } else {
-        this.dialogNotifystatus.open = true
+      console.log('caraioaioai')
+      let chk = true
+      this.status.pastors.forEach((pastor) => {
+        if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
+          chk = false
+        }
+      })
+      if (!chk) {
+        this.dialogPastors.open = true
+        return
       }
+      if (this.status.compositionStatus !== 'sent') {
+        this.dialogNotifystatus.open = true
+        return
+      }
+      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+
+      // if (this.status && this.status.statisticPermission) {
+      //   this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      // } else if (this.status.isSipar) {
+      //   this.dialogSipar.open = true
+      // } else {
+      //   this.dialogNotifystatus.open = true
+      // }
     },
     getStatusPreStatistic() {
       const opt = {

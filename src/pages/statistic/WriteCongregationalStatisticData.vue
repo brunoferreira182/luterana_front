@@ -7,7 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             
             <q-breadcrumbs-el label="Composição" />
         </q-breadcrumbs>
@@ -62,18 +63,26 @@
               exp
             >
               <q-list bordered class="q-mb-sm">
-                <q-expansion-item
-                  class="q-mt-sm q-mx-sm bg-grey-2"
-                  label="Funções"
-                  :disable="org.action && org.actions === 'remove'"
-                  style="border-radius: .7rem;"
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Funções
+                </div>
+                <div 
+                  class="text-left q-ml-lg"
+                  v-for="(func, iFunc) in org.organismFunctions" 
+                  :key="func"
                 >
-                  <div 
-                    class="text-left q-ml-lg"
-                    v-for="(func, iFunc) in org.organismFunctions" 
-                    :key="func"
+                  <strong>{{ func.functionName }}:</strong>
+                  <q-btn
+                    color="primary"
+                    flat
+                    v-if="!status || (status && status.value !== 'sent')"
+                    rounded
+                    icon="add"
+                    @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                    size="12px"
                   >
                     <strong>{{ func.functionName }}:</strong>
+                  
                     <q-btn
                       color="primary"
                       flat
@@ -119,62 +128,53 @@
                         </q-item-section>
                       </q-item>
                     </div>
-                  </div>
-                </q-expansion-item>
+                  </q-btn>
+                </div>
               </q-list>
               <q-list bordered class="q-mb-sm">
-                <q-expansion-item
-                  default-opened
-                  :disable="org.action && org.action === 'remove'"
-                  label="Departamentos"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
-                  style="border-radius: .7rem;"
-                > 
-                  <q-list>
-                    <div 
-                      v-for="(dep, iDep) in org.depts"
-                      :key="dep"
-                    >
-                      <q-item 
-                        v-if="dep.action !== 'naoExiste'"
-                        :clickable="dep.trueLength > 0 ? true : false"
-                        v-ripple
-                        @click="openSelectDepartamentDetail(iOrg, iDep)"
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Departamentos
+                </div>
+                <div 
+                  v-for="(dep, iDep) in org.depts"
+                  :key="dep"
+                >
+                  <q-item 
+                    v-if="dep.action !== 'naoExiste'"
+                    :clickable="dep.trueLength > 0 ? true : false"
+                    v-ripple
+                    @click="openSelectDepartamentDetail(iOrg, iDep)"
+                  >
+                    <q-item-section avatar>
+                      <q-avatar
+                        :color="dep.trueLength === 0 ? 'grey' : 'primary'" 
+                        text-color="white"
                       >
-                        <q-item-section avatar>
-                          <q-avatar
-                            :color="dep.trueLength === 0 ? 'grey' : 'primary'" 
-                            text-color="white"
-                          >
-                            {{ dep.trueLength }} 
-                          </q-avatar>
-                        </q-item-section>
-                        <q-item-section>{{dep.organismConfigName}}</q-item-section>
-                      </q-item>
-                    </div>
-                  </q-list>
-                  <div class="text-left q-ma-md text-h6">
-                    <q-btn
-                      color="primary"
-                      flat
-                      v-if="!status || (status && status.value !== 'sent')"
-                      rounded
-                      icon="add"
-                      label="Adicionar novo departamento"
-                      @click="addNewDepartament(iOrg)"
-                    >
-                      <q-tooltip>Adicionar Departamento</q-tooltip>
-                    </q-btn>
-                  </div>
-                </q-expansion-item>
+                        {{ dep.trueLength }} 
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>{{dep.organismConfigName}}</q-item-section>
+                  </q-item>
+                </div>
+                <div class="text-left q-ma-md text-h6">
+                  <q-btn
+                    color="primary"
+                    flat
+                    v-if="!status || (status && status.value !== 'sent')"
+                    rounded
+                    icon="add"
+                    label="Adicionar novo departamento"
+                    @click="addNewDepartament(iOrg)"
+                  >
+                    <q-tooltip>Adicionar Departamento</q-tooltip>
+                  </q-btn>
+                </div>
               </q-list>
               <q-list bordered>
-                <q-expansion-item
-                  label="Outras informações"
-                  :disable="org.action && org.action === 'remove'"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left"
-                  style="border-radius: .7rem;"
-                >
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Outras informações
+                </div>
+                <div class="q-ma-md">
                   <q-select
                     v-model="org.affiliatedOrganism"
                     readonly
@@ -194,35 +194,64 @@
                   </q-btn>
                   <div class="row items-center">  
                     <q-input
-                      :readonly="status && status.value === 'sent'"
+                      :readonly="composition.congregations[iOrg].semFoundation"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
-                      v-model="org.foundationDate"
+                      v-model="composition.congregations[iOrg].foundationDate"
                     />
                     <div class="col">  
                       <q-checkbox
                       label="Não sei"
+                      v-model="composition.congregations[iOrg].semFundação"
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm">
-                    Quando ocorre o evento:
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
+                    Quando ocorre o culto:
                   </div>
                   <q-list
                     bordered
-                    v-for="(day, iDay) in composition.congregations[iOrg].diaEHorario"
-                    :key="day"
                     class="q-mt-sm"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
                   >
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label lines="1">
-                        Dia: {{ day.day }}
-                      </q-item-label>
+                  <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
+                    <q-item-section v-if="day.model === 'month'">
                       <q-item-label>
-                        Horário: {{ day.hour }}
+                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
                       </q-item-label>
+                      <div
+                        v-for="week in day.weeks"
+                        :key="week"
+                        class="q-ml-xs q-py-md row"
+                      >
+                        <div class="col-4">
+                          {{ week.label }}:
+                        </div>
+                        <q-list class="col-8">
+                          <q-item
+                            class="no-padding"
+                            v-for="val in week.value"
+                            :key="val"
+                          >
+                            <q-item-label>
+                              {{ val.day.label }} às {{ val.time }}
+                            </q-item-label>
+                          </q-item>
+                        </q-list>
+                      </div>
+                    </q-item-section>
+                    <q-item-section v-else-if="day.model === 'week'">
+                      <q-item-label>
+                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
+                      </q-item-label>
+                      <div
+                        v-for="days in day.days"
+                        :key="days"
+                        class="q-ml-xs q-py-md row"
+                      >
+                        {{ days.value.label }} às {{ days.value.times.initial }}
+                      </div>
                     </q-item-section>
                     <q-item-section side>
                       <q-btn
@@ -237,14 +266,14 @@
 
                   </q-list>
                   <q-btn
-                    label="Adicionar dia e horário do evento"
+                    label="Adicionar dia e horário do culto"
                     color="primary"
                     unelevated
                     rounded
                     class="q-pa-sm q-my-md"
-                    @click="addEventsDayAndHour(iOrg)"
+                    @click="clkAddServices(iOrg)"
                   />
-                </q-expansion-item>
+                </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
@@ -312,23 +341,22 @@
                   </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
-                <q-expansion-item
-                  label="Gestão Paroquial"
-                  class="q-mt-sm q-mx-sm bg-grey-2 text-left q-mb-sm"
-                  style="border-radius: 1rem;"
-                >
-                  <q-option-group
-                    :options="options"
-                    type="radio"
-                    v-model="org.paroquialManagement"
-                  />
-                  <q-input
-                    v-if="org.paroquialManagement === 'outro'"
-                    label="Outro"
-                    class="q-pa-sm"
-                    v-model="org.other"
-                  />
-                </q-expansion-item>
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Gestão Paroquial
+                </div>
+                <q-option-group
+                  :options="options"
+                  type="radio"
+                  v-model="composition.congregations[iOrg].paroquialManagement"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
+                />
+                <q-input
+                  v-if="org.paroquialManagement === 'outro'"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
+                  label="Outro"
+                  class="q-pa-sm"
+                  v-model="composition.congregations[iOrg].other"
+                />
               </q-list>
               <div class="text-right q-ma-sm">
                 <q-btn
@@ -548,14 +576,8 @@
             />
             <q-input
               class="q-pa-sm"
-              label="E-mail" 
-              hint="Informe o e-mail"
-              v-model="dialogAddCongregation.data.email"
-            />
-            <q-input
-              class="q-pa-sm"
-              label="Celular" 
-              hint="Informe o número de celular"
+              label="Número" 
+              hint="Informe o número"
               mask="(##) #####-####"
               v-model="dialogAddCongregation.data.phone"
             />
@@ -744,8 +766,7 @@
               @update:model-value="getFunctionsByDepartamentId"
               option-label="organismConfigName"
               :options="deptConfigs"
-            >
-            </q-select>
+            />
           </q-card-section>
           <q-card-section>
             <div 
@@ -803,7 +824,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogAddUserToFunctionInDept"
+              @click="cleanDialogAddNewDepartament"
             />
             <q-btn
               label="Adicionar"
@@ -898,7 +919,7 @@
                 label="Outros dados"
               >
                 <div class="text-h6 q-my-sm q-ml-sm">
-                  Quando ocorre o evento:
+                  Quando ocorre o culto:
                 </div>
                 <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
                   <q-list
@@ -1067,6 +1088,207 @@
         </q-card>
       </q-dialog>
       <q-dialog
+        v-model="dialogAddServices.open"
+        @hide="clearDialogAddServices"
+      >
+        <q-card style="width: 400px;">
+          <q-card-section>
+            <div>
+              <strong>Frequência:</strong>
+              <q-select
+                class="q-pa-sm"
+                filled
+                use-input
+                label="Selecione a Frequência"
+                option-label="label"
+                v-model="dialogAddServices.selectedEventOption"
+                :options="dialogAddServices.eventsOptions.map(option => ({ ...option }))"
+                :loading="false"
+                @update:model-value="resetDays"
+              />
+            </div>
+            <div class=q-mt-md v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'week'">
+              <strong>Dias:</strong>
+              <div
+                v-for="(day, iDay) in dialogAddServices.selectedEventOption.days"
+                :key="iDay"
+              >
+                <div
+                  class="row"
+                >
+                  <q-select
+                    class="q-pa-sm col-7"
+                    filled
+                    use-input
+                    label="Selecione o dia"
+                    option-label="label"
+                    v-model="day.value"
+                    :options="dialogAddServices.daysOfWeek"
+                    :loading="false"
+                  />
+                  <q-chip 
+                    class="col-2 q-ml-sm"
+                    v-if="day.value && day.value.times && day.value.times.initial"
+                    color="white"
+                    model-value=false
+                    flat
+                    text-color="primary"
+                  >
+                    {{ day.value.times.initial }}
+                    <q-tooltip>Horário inicial</q-tooltip>
+                  </q-chip>
+                  <q-btn
+                    v-if="day.value && day.value.label"
+                    class="col-2"
+                    color="primary"
+                    flat
+                    icon="schedule"
+                    rounded
+                    @click="addTimeForDay(iDay)"
+                  >
+                    <q-tooltip>Selecione o horário</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+              <div
+                align="center"
+              >
+                <q-btn
+                  color="primary"
+                  rounded
+                  unelevated
+                  label="confirmar"
+                  @click="confirmAddEventsWeek"
+                />
+              </div>
+            </div>
+            <div
+              v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'month'"
+            >
+              <div
+                v-for="(week, iWeek) in dialogAddServices.selectedEventOption.weeks"
+                :key="week"
+              >
+                <div class="">
+                  <strong>{{ week.label }}:</strong>
+                  <q-btn 
+                    v-if="(!week.value || !week.value.label) && dialogAddServices.selectedEventOption.num > dialogAddDayInMonth.count"
+                    icon="add"
+                    color="primary"
+                    flat
+                    rounded
+                    size="12px"
+                    @click="addDayInMonth(iWeek)"
+                  >
+                    <q-tooltip>Adicionar culto</q-tooltip>
+                  </q-btn>
+                  <div v-if="week.value">
+                    <div 
+                      v-for="(value, iValue) in week.value"
+                      :key="value"
+                    >
+                      <div class="row">
+                        <q-select
+                          class="col-5"
+                          filled
+                          use-input
+                          label="Selecione o dia"
+                          option-label="label"
+                          v-model="value.day"
+                          :options="dialogAddServices.daysOfWeek"
+                          :loading="false"
+                        />
+                        <q-chip
+                          class="col-2"
+                          v-if="value && value.time"
+                          color="white"
+                          text-color="primary"
+                        >
+                          {{ value.time }}
+                        </q-chip>
+                        <q-btn
+                          v-if="value.day"
+                          class="col-2 q-pa-sm"
+                          color="primary"
+                          flat
+                          icon="schedule"
+                          rounded
+                          @click="addTimeForDay(iWeek, iValue)"
+                        >
+                          <q-tooltip>Selecione o horário</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          class="col-2"
+                          color="red"
+                          flat
+                          icon="delete"
+                          rounded
+                          @click="removeMonthDay(iWeek, iValue)"
+                        >
+                          <q-tooltip>Excluir dia</q-tooltip>
+                        </q-btn>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </q-card-section>
+          <q-card-actions
+            align="center"
+            v-if="dialogAddDayInMonth 
+            && dialogAddServices.selectedEventOption 
+            && dialogAddServices.selectedEventOption.num === dialogAddDayInMonth.count"
+          >
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              label="confirmar"
+              @click="confirmAddEventsMonth"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        @hide="clearTimeForDayDialog"
+        v-model="dialogAddTimeForDay.open"
+      >
+        <q-card style="width: 300px;">
+          <q-card-section>
+            <div class='text-center text-h6'>
+              Horários
+            </div>
+            <q-input 
+              type="time" 
+              class="q-my-sm"
+              outlined
+              label="Início" 
+              v-model="dialogAddTimeForDay.initial"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearTimeForDayDialog"
+            />
+            <q-btn
+              label="Adicionar"
+              unelevated
+              no-caps
+              rounded
+              color="primary"
+              @click="confirmAddTimeForDay"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <!-- <q-dialog
         v-model="dialogAddEventsDayAndHour.open"
         @hide="clearDialogAddEventsDayAndHour"
       >
@@ -1112,7 +1334,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
       <q-dialog
         v-model="dialogAddEventsDayAndHourInDep.open"
         @hide="clearDialogAddDayAndHourInDept"
@@ -1410,6 +1632,7 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
+      // composition.congregations.foundationDate,
       filter: '',
       pagination: {
         sortBy: '',
@@ -1450,7 +1673,6 @@ export default defineComponent({
         open: false,
         data: {
           name: '',
-          email: '',
           phone: '',
           address: {
             city: '',
@@ -1530,17 +1752,25 @@ export default defineComponent({
         day: null,
         hour: null
       },
-      // dialogAddEventsDayAndHour: {
-      //   open: false,
-      //   day: null,
-      //   iOrg: null,
-      //   hour: null
-      // },
-      // dialogAddEventsDayAndHourInDep: {
-      //   open: false,
-      //   day: null,
-      //   hour: null
-      // },
+      semFoundation: false,
+      dialogAddServices: {
+        open: false,
+        eventsOptions: null,
+        daysOfWeek: null,
+        selectedEventOption: null,
+        selectedDay: null,
+        selectedValue: null,
+        iOrg: null
+      },
+      dialogAddDayInMonth: {
+        open: false,
+        index: null,
+        count: 0,
+        initial: null
+      },
+      dialogAddTimeForDay: {
+        open: false,
+      },
       daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'],
       dialogAddSecretary: {
         open: false,
@@ -1573,6 +1803,8 @@ export default defineComponent({
   }, 
   beforeMount() {
     this.getCompositionByUserId()
+    this.getEventsOptions()
+    this.getDaysOfWeek()
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
@@ -1634,6 +1866,23 @@ export default defineComponent({
         userSelected: ''
       }
     },  
+    insertParoquialManagementType(iOrg, org){
+      console.log(org)
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org.organismChildId
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
+    },
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
@@ -1642,6 +1891,47 @@ export default defineComponent({
       this.dialogAddTimeForDay.initial = null
       this.dialogAddTimeForDay.open = false
     },
+    confirmAddEventsMonth() {
+      let allHaveTime = true;
+
+      this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+        if (w.value && w.value.length > 0) {
+          const eventsWithTime = w.value.filter((v) => v.time);
+          if (eventsWithTime.length > 0) {
+            if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+              this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+            }
+            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+              ...this.dialogAddServices.selectedEventOption,
+              weeks: [{ value: eventsWithTime, label: w.label  }]  
+            });
+          } else {
+            allHaveTime = false;
+            this.$q.notify('Preencha o horário para pelo menos um evento.');
+          }
+        }
+      });
+
+      if (allHaveTime) {
+        this.clearDialogAddServices();
+      }
+    },
+  
+    // confirmAddEventsDayAndHour() {
+    //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
+    //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
+    //   }
+    //   this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario.push({
+    //     day: this.dialogAddEventsDayAndHour.day,
+    //     hour: this.dialogAddEventsDayAndHour.hour,
+    //     action: 'add'
+    //   })
+    //   this.clearDialogAddEventsDayAndHour()
+    // },
+    removeMonthDay(iWeek, iValue) {
+      this.dialogAddServices.selectedEventOption.weeks[iWeek].value.splice(iValue, 1)
+      this.dialogAddDayInMonth.count--
+    },
     confirmAddTimeForDay() {
       if (this.dialogAddServices.selectedEventOption.days) {
         this.dialogAddServices.selectedEventOption.days[this.dialogAddServices.selectedDay].value.times.initial = this.dialogAddTimeForDay.initial;
@@ -1649,6 +1939,17 @@ export default defineComponent({
         this.dialogAddServices.selectedEventOption.weeks[this.dialogAddServices.selectedDay].value[this.dialogAddServices.selectedValue].time = this.dialogAddTimeForDay.initial;
       }
       this.dialogAddTimeForDay.open = false
+    },
+    addDayInMonth(i) {
+      this.dialogAddServices.selectedEventOption.weeks[i].value.push({
+        day: null,
+        time: null
+      })
+      this.dialogAddDayInMonth.count++
+    },
+    clkAddServices(iOrg) {
+      this.dialogAddServices.open = true
+      this.dialogAddServices.iOrg = iOrg
     },
     addTimeForDay(iDay, iValue) {
       this.dialogAddServices.selectedDay = iDay
@@ -1723,7 +2024,7 @@ export default defineComponent({
     removeDay(iOrg, iDay) {
       this.composition
       .congregations[iOrg]
-      .diaEHorario.splice(iDay, 1)
+      .value.splice(iDay, 1)
     },
     removeDayInDep(iDay) {
       this.composition
@@ -2170,7 +2471,6 @@ export default defineComponent({
         route: '/desktop/statistics/saveCompositionDraft',
         body: this.composition
       }
-      opt.body.status = 'notSent'
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -2261,7 +2561,6 @@ export default defineComponent({
             }
           }
         }
-
         this.composition = r.data
         if (r.data.validated) {
           this.validated = r.data.validated
@@ -2279,6 +2578,13 @@ export default defineComponent({
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
+              if (dep.existingDepartaments.length > 0) {
+                dep.existingDepartaments.forEach((ed, iEd) => {
+                  if (ed.action && ed.action === 'naoExiste') {
+                    dep.existingDepartaments.splice(iEd, 1)
+                  }
+                })
+              }
               let trueLength = dep.existingDepartaments.length
               dep.trueLength = trueLength
             })
@@ -2286,6 +2592,12 @@ export default defineComponent({
         })
         this.deptConfigs = depConfigList
       })
+    },
+    clkCheckboxDate(org){
+      if(org.foundationDate || org.foundationDate === null ){
+        org.foundationDate= '00/00/0000'
+        this.semFoundation = false
+      }
     }
   }
 })
