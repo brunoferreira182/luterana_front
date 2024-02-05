@@ -1252,7 +1252,9 @@
               v-model="dialogLastPastoralActivity.selectedOrganism"
               hint="Busque pela cidade ou nome"
               option-label="organismName"
+              emit-value
               use-input
+              map-options
               @filter="getCongregatiionsByString"
               :options="organismList"
               :readonly="status && status.value === 'sent'"
@@ -1272,7 +1274,7 @@
                 <p class="text-left q-pl-lg no-margin"> <strong>{{item.title}}</strong></p>
                 <q-item-label class="row q-pa-sm q-pl-lg q-gutter-md" > 
                   <q-input 
-                    borderlessv-model="item.quantity" 
+                    v-model="item.quantity" 
                     label="Qtde de visitas"
                     :readonly="status && status.value === 'sent'"
                   />
@@ -1487,7 +1489,7 @@ export default defineComponent({
       const pastorActivities = this.pastorActivities;
       for (const activity of pastorActivities) {
         if (!activity.quantity || !activity.people) {
-          this.$q.notify('Preencha todos os campos de visitas em Atividade pastoral.');
+          this.$q.notify('Preencha todos os campos de visitas em Atividade pastoral');
           return;
         }
       }
@@ -1580,11 +1582,23 @@ export default defineComponent({
       }
     },
     addLastPastoralActivity() {
+      const lastOrganismPastorActivities = this.dialogLastPastoralActivity.lastOrganismPastorActivities;
+      for (const activity of lastOrganismPastorActivities) {
+        if (!activity.quantity || !activity.people) {
+          this.$q.notify('Preencha todos os campos nos dados de visitação');
+          return;
+        }
+      }
+      if(!this.dialogLastPastoralActivity.selectedOrganism){
+        this.$q.notify('Selecione a congregação');
+        return
+      }
       this.lastOrganismPastorActivities = {
         selectedOrganism: this.dialogLastPastoralActivity.selectedOrganism._id,
         lastOrganismPastorActivities: this.dialogLastPastoralActivity.lastOrganismPastorActivities
       }
       this.dialogLastPastoralActivity.open = false
+      
     },
     getCongregatiionsByString(val, update, abort) {
       if (val.length < 3) {
