@@ -2160,13 +2160,7 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-<<<<<<< HEAD
         body: this.composition
-=======
-        body: {
-          composition: this.composition,
-        },
->>>>>>> 6f67c4ed9f7239d93f0120c9956b4d44d6207252
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
