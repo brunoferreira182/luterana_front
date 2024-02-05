@@ -26,7 +26,7 @@
             label="Não Validado"
             text-color="white"
           /> -->
-          <div v-if="status && status.pastors.length > 0" class="text-center">
+          <div v-if="status && status.pastors && status.pastors.length > 0" class="text-center">
             <q-chip
               v-for="pastor in status.pastors"
               :key="pastor._id"
@@ -222,23 +222,24 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      let chk = true
-      this.status.pastors.forEach((pastor) => {
-        if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
-          chk = false
-        }
-      })
-      if (!chk) {
-        this.dialogPastors.open = true
-        return
-      }
-      if (this.status && this.status.statisticPermission) {
-        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      } else if (this.status.isSipar) {
-        this.dialogSipar.open = true
-      } else {
-        this.dialogNotifystatus.open = true
-      }
+      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      // let chk = true
+      // this.status.pastors.forEach((pastor) => {
+      //   if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
+      //     chk = false
+      //   }
+      // })
+      // if (!chk) {
+      //   this.dialogPastors.open = true
+      //   return
+      // }
+      // if (this.status && this.status.statisticPermission) {
+      //   this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      // } else if (this.status.isSipar) {
+      //   this.dialogSipar.open = true
+      // } else {
+      //   this.dialogNotifystatus.open = true
+      // }
     },
     getStatusPreStatistic() {
       const opt = {
