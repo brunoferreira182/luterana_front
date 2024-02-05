@@ -1573,7 +1573,7 @@ export default defineComponent({
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
           managementType: this.composition.congregations[iOrg].paroquialManagement,
-          organismId: org.childOrganismId
+          organismId: org.organismChildId
         }
       }
       if(this.paroquialManagement === 'outro'){
