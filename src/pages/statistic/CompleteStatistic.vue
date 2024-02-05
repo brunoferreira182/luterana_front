@@ -22,8 +22,21 @@
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
           <q-chip
-            :label="validationResume.atividadesCulticasStatistics ? 'Validado' : 'Não validado'"
-            :color="validationResume.atividadesCulticasStatistics ? 'green' : 'red'"
+            v-if="validationResume.atividadesCulticasStatistics === 't'"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-if="validationResume.atividadesCulticasStatistics === 'f'"
+            label="Em andamento"
+            color="orange"
+            text-color="white"
+          />
+          <q-chip
+            v-if="!validationResume.atividadesCulticasStatistics"
+            label="Não iniciado"
+            color="red"
             text-color="white"
           />
         </q-item>
@@ -32,10 +45,28 @@
             Atividades de grupos
           </q-item-section>
           <q-chip
+            v-if="validationResume.groupActivity === 't'"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-if="validationResume.groupActivity === 'f'"
+            label="Em andamento"
+            color="orange"
+            text-color="white"
+          />
+          <q-chip
+            v-if="!validationResume.groupActivity"
+            label="Não iniciado"
+            color="red"
+            text-color="white"
+          />
+          <!-- <q-chip
             :label="validationResume.groupActivity ? 'Validado' : 'Não validado'"
             :color="validationResume.groupActivity ? 'green' : 'red'"
             text-color="white"
-          />
+          /> -->
         </q-item>
         <q-item class="card" clickable @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)">
           <q-item-section>
@@ -43,20 +74,56 @@
             
           </q-item-section>
           <q-chip
+            v-if="validationResume.membersMovement === 't'"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-if="validationResume.membersMovement === 'f'"
+            label="Em andamento"
+            color="orange"
+            text-color="white"
+          />
+          <q-chip
+            v-if="!validationResume.membersMovement"
+            label="Não iniciado"
+            color="red"
+            text-color="white"
+          />
+          <!-- <q-chip
             :label="validationResume.membersMovement ? 'Validado' : 'Não validado'"
             :color="validationResume.membersMovement ? 'green' : 'red'"
             text-color="white"
-          />
+          /> -->
         </q-item>
         <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>
           <q-chip
+            v-if="validationResume.financeStatistics === 't'"
+            label="Validado"
+            color="green"
+            text-color="white"
+          />
+          <q-chip
+            v-if="validationResume.financeStatistics === 'f'"
+            label="Em andamento"
+            color="orange"
+            text-color="white"
+          />
+          <q-chip
+            v-if="!validationResume.financeStatistics"
+            label="Não iniciado"
+            color="red"
+            text-color="white"
+          />
+          <!-- <q-chip
             :label="validationResume.financeStatistics ? 'Validado' : 'Não validado'"
             :color="validationResume.financeStatistics ? 'green' : 'red'"
             text-color="white"
-          />
+          /> -->
         </q-item>
       </div>
     </q-page>
