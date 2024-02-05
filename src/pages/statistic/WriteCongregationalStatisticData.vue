@@ -1568,11 +1568,12 @@ export default defineComponent({
   },
   methods: { 
     insertParoquialManagementType(iOrg, org){
+      console.log(org)
       const opt = {
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
           managementType: this.composition.congregations[iOrg].paroquialManagement,
-          organismId: org._id
+          organismId: org.childOrganismId
         }
       }
       if(this.paroquialManagement === 'outro'){
