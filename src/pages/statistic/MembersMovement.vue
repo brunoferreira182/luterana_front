@@ -31,7 +31,7 @@
           <div class="row q-ma-sm">
             <div class="col q-gutter-y-md">
               <q-select 
-                label="Anos de estudo"
+                label="Numero de turmas"
                 v-model="membersMovement.instrucaoDeConfirmados.anosEstudo"
                 @update:model-value="(ev) => calculaAnosEstudo(ev)"
                 :options="[1, 2, 3, 4]"
@@ -39,22 +39,19 @@
             </div>
           </div>
           <div
-            class="row q-ma-sm"
+            class="q-ma-sm"
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
             :key="index"
           >
-            <div class="row q-gutter-y-md">
-              <q-item-label class="q-pa-sm"> {{`Confirmados em ${confirmado.ano}`}}
-                <q-input 
-                  type="number"
-                  label=" 1°ano "
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
-                />
+            <div class="col q-gutter-y-md">
+              <q-item-label class=" q-pa-sm"> Confirmados em 2023
+                <div class="col-6 justify-between">
                   <q-input 
                   type="number"
-                  label=" 2°ano"
+                  :label="`${confirmado.turma} °ano`"
                   v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
                   />
+                </div>
               </q-item-label>
             </div>
           </div>
@@ -345,8 +342,8 @@ export default defineComponent({
       for (let i = 1; i <= ev; i++) {
         this.membersMovement.instrucaoDeConfirmados.confirmados.push(
           {
-            ano: 2023 - i + 1,
-            qtde: null
+            turma: i  ,
+            qtde: null,
           }
         )
       }
