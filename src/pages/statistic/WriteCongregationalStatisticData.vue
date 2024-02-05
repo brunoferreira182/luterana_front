@@ -228,16 +228,27 @@
                       >  
                         <q-item-section>
                           <q-item-label lines="1">
-                            Nome: {{ sec.user.userName }}
+                            <strong>Nome:</strong> {{ sec.user.userName }}
                           </q-item-label>
                           <q-item-label lines="2">
-                            Dia da semana: {{ sec.day }}
+                            <strong>Dia da semana:</strong> 
                           </q-item-label>
+                            <div
+                              v-for="day in sec.days"
+                              :key="day"
+                              class="q-ma-sm"
+                            >
+                              {{day.label}}
+                            </div>
                           <q-item-label lines="3">
-                            Hora inicial: {{sec.initialHour}}
+                            <strong>Hora inicial:</strong> {{sec.initialHour}}
                           </q-item-label>
                           <q-item-label>
-                            Hora final: {{sec.finalHour}}
+                            <strong>Hora final:</strong> {{sec.finalHour}}
+                          </q-item-label>
+                          <q-item-label lines="4" v-if="sec.obs">
+                            <strong>Observções:</strong>
+                            {{ sec.obs }}
                           </q-item-label>
                         </q-item-section>
                         <q-item-section side>
@@ -1107,16 +1118,10 @@
                 :key="day"
                 class="q-pa-sm col-12"
                 v-model="day.selected"
-                >
-                  {{ day.label }}
+              >
+                {{ day.label }}
               </q-checkbox>
             </div>
-            <q-select
-              :options="daysOfWeek"
-              v-model="dialogAddSecretary.day"
-              class="q-px-sm q-mt-md"
-              label="Dia da semana"
-            />
           </q-card-section>
           <q-card-section>
             <div
@@ -1136,6 +1141,19 @@
               v-model="dialogAddSecretary.finalHour"
               type="time"
             />
+          </q-card-section>
+          <q-card-section>
+            <div
+              class="text-h6 text-center"
+            >
+              Observações
+            </div>
+            <q-input
+              label="Adicione aqui alguma observação"
+              v-model="dialogAddSecretary.obs"
+            >
+
+            </q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1282,7 +1300,8 @@ export default defineComponent({
           {label: 'Sexta-feira', selected: false},
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
-        ]
+        ],
+        obs: ''
       },
       options: [
         { label: 'SIPAR', value: 'SIPAR' },
@@ -1320,18 +1339,24 @@ export default defineComponent({
       this.composition.congregations[iOrg].secretary.splice(iSec, 1)
     },
     confirmAddSecretary() {
+      if (!this.dialogAddSecretary.userSelected || !this.dialogAddSecretary.userSelected.userName || !this.dialogAddSecretary.initialHour || !this.dialogAddSecretary.finalHour ) {
+        this.$q.notify('Preencha todos os campos para prosseguir')
+        returns
+      }
       if (!this.composition.congregations[this.dialogAddSecretary.iOrg].secretary) {
         this.composition.congregations[this.dialogAddSecretary.iOrg].secretary = []
       }
+      let days = this.dialogAddSecretary.days.filter((day) => day.selected)
       this.composition.congregations[this.dialogAddSecretary.iOrg].secretary.push({
         action: 'add',
         user: {
           userName: this.dialogAddSecretary.userSelected.userName,
           userId: this.dialogAddSecretary.userSelected.userId
         },
-        day: this.dialogAddSecretary.day,
+        days,
         initialHour: this.dialogAddSecretary.initialHour,
-        finalHour: this.dialogAddSecretary.finalHour
+        finalHour: this.dialogAddSecretary.finalHour,
+        obs: this.dialogAddSecretary.obs
       })
       this.clearDialogAddSecretary()
     },
@@ -1339,9 +1364,19 @@ export default defineComponent({
       this.dialogAddSecretary = {
         open: false,
         userSelected: null,
-        day: null,
+        iOrg: null,
         initialHour: null,
-        finalHour: null
+        finalHour: null,
+        days: [
+          {label: 'Segunda-feira', selected: false},
+          {label: 'Terça-feira', selected: false},
+          {label: 'Quarta-feira', selected: false},
+          {label: 'Quinta-feira', selected: false},
+          {label: 'Sexta-feira', selected: false},
+          {label: 'Sábado', selected: false},
+          {label: 'Domingo', selected: false}
+        ],
+        obs: ''
       }
     },
     addSecretaryToParoquia(iOrg) {
