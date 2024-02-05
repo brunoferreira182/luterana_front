@@ -7,7 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             
             <q-breadcrumbs-el label="Composição" />
         </q-breadcrumbs>
@@ -680,8 +681,7 @@
               @update:model-value="getFunctionsByDepartamentId"
               option-label="organismConfigName"
               :options="deptConfigs"
-            >
-            </q-select>
+            />
           </q-card-section>
           <q-card-section>
             <div 
@@ -1391,6 +1391,7 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
+      // composition.congregations.foundationDate,
       filter: '',
       pagination: {
         sortBy: '',
@@ -1560,7 +1561,7 @@ export default defineComponent({
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
           managementType: this.composition.congregations[iOrg].paroquialManagement,
-          organismId: org.childOrganismId
+          organismId: org.organismChildId
         }
       }
       if(this.paroquialManagement === 'outro'){
@@ -1583,96 +1584,28 @@ export default defineComponent({
       let allHaveTime = true;
 
       this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
-        console.log(w, 'wwwwwwwww');
-
         if (w.value && w.value.length > 0) {
           const eventsWithTime = w.value.filter((v) => v.time);
-
-          if (!eventsWithTime.every((event) => event.time)) {
-            allHaveTime = false; // Define como false se pelo menos um evento não tiver horário
-            this.$q.notify('Preencha o horário para todos os eventos.');
-            return;
+          if (eventsWithTime.length > 0) {
+            if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+              this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+            }
+            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+              ...this.dialogAddServices.selectedEventOption,
+              weeks: [{ value: eventsWithTime, label: w.label  }]  
+            });
+          } else {
+            allHaveTime = false;
+            this.$q.notify('Preencha o horário para pelo menos um evento.');
           }
-        } else {
-          allHaveTime = false; // Define como false se w.value for nulo ou vazio
         }
       });
 
       if (allHaveTime) {
-        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-        }
-
-        this.composition.congregations[this.dialogAddServices.iOrg].value.push({
-          ...this.dialogAddServices.selectedEventOption,
-          weeks: [{ value: eventsWithTime, label: w.label }]
-        });
-
         this.clearDialogAddServices();
       }
     },
-
-    // confirmAddEventsMonth() {
-    //   let allHaveTime = true;
-
-    //   this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
-    //     console.log(w, 'wwwwwwwww');
-
-    //     if (w.value && w.value.length > 0) {
-    //       const eventsWithTime = w.value.filter((v) => v.time);
-    //       if (eventsWithTime.length > 0) {
-    //         if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-    //           this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-    //         }
-    //         this.composition.congregations[this.dialogAddServices.iOrg].value.push({
-    //           ...this.dialogAddServices.selectedEventOption,
-    //           weeks: [{ value: eventsWithTime, label: w.label  }]  
-    //         });
-    //       } else {
-    //         allHaveTime = false;
-    //         this.$q.notify('Preencha o horário para pelo menos um evento.');
-    //       }
-    //     }
-    //   });
-
-    //   if (allHaveTime) {
-    //     this.clearDialogAddServices();
-    //   }
-    // },
-    // confirmAddEventsMonth() {
-    //   let allHaveTime = true
-    //   this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
-    //     console.log(w, 'wwwwwwwww')
-    //     if (w.value && w.value.length > 0) {
-    //       const eventsWithTime = w.value.filter((v) => v.time);
-    //       if(eventsWithTime.length > 0){
-    //         const label = this.dialogAddServices.selectedEventOption.label;
-    //         this.composition.congregations[this.dialogAddServices.iOrg].value.push({
-    //           ...this.dialogAddServices.selectedEventOption,
-    //           weeks: [{ value: eventsWithTime, label: label }]  
-    //         });
-    //       }
-    //       w.value.forEach((v) => {
-    //         if (v.time) {
-    //           allHaveTime = true; 
-    //         }
-    //         else if (!v.time) {
-    //           this.$q.notify('Preencha o horário');
-    //           allHaveTime = false; 
-    //           return;
-    //         }
-    //       });
-    //     }
-    //   });
-    //   if (allHaveTime) {
-    //     if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-    //       this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-    //     }
-        
-    //     this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
-    //     this.clearDialogAddServices()
-    //   }
-    // },
+  
     // confirmAddEventsDayAndHour() {
     //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
     //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
@@ -2225,15 +2158,12 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: {
-          composition: this.composition,
-        },
+        body: this.composition
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) return
-        console.log(this.composition,'JHADBJHASBDJHSB');
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
       })
@@ -2337,6 +2267,13 @@ export default defineComponent({
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
+              if (dep.existingDepartaments.length > 0) {
+                dep.existingDepartaments.forEach((ed, iEd) => {
+                  if (ed.action && ed.action === 'naoExiste') {
+                    dep.existingDepartaments.splice(iEd, 1)
+                  }
+                })
+              }
               let trueLength = dep.existingDepartaments.length
               dep.trueLength = trueLength
             })
