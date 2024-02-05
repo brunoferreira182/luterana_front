@@ -40,6 +40,7 @@
         </q-item>
         <q-item 
           class="card" 
+          clickable
           @click="$router.push('/statistic/writeCongregationalStatisticData')"
         >
           <q-item-section @click="$router.push('/statistic/writeCongregationalStatisticData')">
@@ -82,6 +83,7 @@
         </q-item> -->
         <q-item 
           class="card" 
+          clickable 
           @click="goToStatistic"
         >
           <q-item-section @click="goToStatistic">

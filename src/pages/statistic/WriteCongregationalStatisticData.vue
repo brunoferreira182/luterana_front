@@ -316,9 +316,11 @@
                   :options="options"
                   type="radio"
                   v-model="org.paroquialManagement"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                   label="Outro"
                   class="q-pa-sm"
                   v-model="org.other"
@@ -1565,6 +1567,22 @@ export default defineComponent({
     this.saveDraft()
   },
   methods: { 
+    insertParoquialManagementType(iOrg, org){
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org._id
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
+    },
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
