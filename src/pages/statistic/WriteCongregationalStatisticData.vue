@@ -7,7 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             
             <q-breadcrumbs-el label="Composição" />
         </q-breadcrumbs>
@@ -682,8 +683,7 @@
               @update:model-value="getFunctionsByDepartamentId"
               option-label="organismConfigName"
               :options="deptConfigs"
-            >
-            </q-select>
+            />
           </q-card-section>
           <q-card-section>
             <div 
@@ -2160,9 +2160,7 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: {
-          composition = this.composition,
-        },
+        body: this.composition
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
@@ -2271,6 +2269,13 @@ export default defineComponent({
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
+              if (dep.existingDepartaments.length > 0) {
+                dep.existingDepartaments.forEach((ed, iEd) => {
+                  if (ed.action && ed.action === 'naoExiste') {
+                    dep.existingDepartaments.splice(iEd, 1)
+                  }
+                })
+              }
               let trueLength = dep.existingDepartaments.length
               dep.trueLength = trueLength
             })
