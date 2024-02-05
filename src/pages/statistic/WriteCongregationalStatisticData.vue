@@ -7,7 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             
             <q-breadcrumbs-el label="Composição" />
         </q-breadcrumbs>
@@ -152,7 +153,7 @@
                 </div>
                 <div class="q-ma-md">
                   <q-select
-                    v-model="org.affiliatedOrganism"
+                    v-model="composition.congregations[iOrg].affiliatedOrganism"
                     :readonly="status && status.value === 'sent'"
                     label="Filiado?"
                     :options="filiatedOptions"
@@ -160,18 +161,16 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      readonly="status && status.value === 'sent'"
+                      :readonly="composition.congregations[iOrg].semFoundation"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
-                      v-model="org.foundationDate"
+                      v-model="composition.congregations[iOrg].foundationDate"
                     />
                     <div class="col">  
                       <q-checkbox
                       label="Não sei"
-                      v-if= "!org.foundationDate || org.foundationDate !== '00/00/0000'"
-                      @click= "clkCheckboxDate(org)"
-                      v-model="semFoundation"
+                      v-model="composition.congregations[iOrg].semFundação"
                       />
                     </div>  
                   </div>
@@ -315,7 +314,7 @@
                 <q-option-group
                   :options="options"
                   type="radio"
-                  v-model="org.paroquialManagement"
+                  v-model="composition.congregations[iOrg].paroquialManagement"
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
                 <q-input
@@ -323,7 +322,7 @@
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
                   label="Outro"
                   class="q-pa-sm"
-                  v-model="org.other"
+                  v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
               <div class="text-right q-ma-sm">
@@ -682,8 +681,7 @@
               @update:model-value="getFunctionsByDepartamentId"
               option-label="organismConfigName"
               :options="deptConfigs"
-            >
-            </q-select>
+            />
           </q-card-section>
           <q-card-section>
             <div 
@@ -2161,9 +2159,7 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: {
-          composition: this.composition,
-        },
+        body: this.composition
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
@@ -2272,6 +2268,13 @@ export default defineComponent({
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
+              if (dep.existingDepartaments.length > 0) {
+                dep.existingDepartaments.forEach((ed, iEd) => {
+                  if (ed.action && ed.action === 'naoExiste') {
+                    dep.existingDepartaments.splice(iEd, 1)
+                  }
+                })
+              }
               let trueLength = dep.existingDepartaments.length
               dep.trueLength = trueLength
             })
