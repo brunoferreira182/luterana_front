@@ -1537,7 +1537,17 @@ export default defineComponent({
         })
       }
       if (x === 0) {
-        const opt = {
+        let opt = {
+          route: '/desktop/statistics/insertPastoralStatisticsDraft',
+          body: {
+            pastoralData: pastoralData,
+            organismId: this.paroquiaId
+          }
+        }
+        useFetch(opt).then((r) => {
+          if  (r.error) return
+        })
+        opt = {
           route: '/desktop/statistics/insertPastoralStatisticsDone',
           body: {
             organismId: this.paroquiaId
