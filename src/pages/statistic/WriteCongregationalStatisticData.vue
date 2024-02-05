@@ -160,7 +160,7 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      readonly="status && status.value === 'sent'"
+                      :readonly="status && status.value === 'sent'"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -1393,7 +1393,6 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
-      // composition.congregations.foundationDate,
       filter: '',
       pagination: {
         sortBy: '',
@@ -2167,6 +2166,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) return
+        console.log(this.composition,'JHADBJHASBDJHSB');
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
       })
