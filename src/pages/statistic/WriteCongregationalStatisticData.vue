@@ -180,9 +180,9 @@
                     Quando ocorre o culto:
                   </div>
                   <q-list
-                    v-if="composition.congregations[iOrg].value.length"
                     bordered
                     class="q-mt-sm"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
                   >
                   <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
                     <q-item-section v-if="day.model === 'month'">
@@ -317,9 +317,11 @@
                   :options="options"
                   type="radio"
                   v-model="org.paroquialManagement"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
                   label="Outro"
                   class="q-pa-sm"
                   v-model="org.other"
@@ -1566,6 +1568,23 @@ export default defineComponent({
     this.saveDraft()
   },
   methods: { 
+    insertParoquialManagementType(iOrg, org){
+      console.log(org)
+      const opt = {
+        route: "/desktop/statistics/insertParoquialManagementType",
+        body:{
+          managementType: this.composition.congregations[iOrg].paroquialManagement,
+          organismId: org.childOrganismId
+        }
+      }
+      if(this.paroquialManagement === 'outro'){
+        opt.body.managementType = this.composition.congregations[iOrg].other
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(() => {
+        this.$q.loading.hide()
+      });
+    },
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null

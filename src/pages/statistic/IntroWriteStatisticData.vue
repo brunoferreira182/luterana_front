@@ -40,11 +40,10 @@
         </q-item>
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable
           @click="$router.push('/statistic/writeCongregationalStatisticData')"
         >
-          <q-item-section>
+          <q-item-section @click="$router.push('/statistic/writeCongregationalStatisticData')">
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
           <q-chip
@@ -84,11 +83,10 @@
         </q-item> -->
         <q-item 
           class="card" 
-          :clickable="isPastor ? true : false" 
-          :disable="isPastor ? false : true" 
+          clickable 
           @click="goToStatistic"
         >
-          <q-item-section>
+          <q-item-section @click="goToStatistic">
             <q-item-label class="text-h5">Estatística</q-item-label>
           </q-item-section>
         </q-item>
@@ -213,6 +211,7 @@ export default defineComponent({
     this.getStatusPreStatistic()
   },
   methods: {
+    aaa () {console.log('caraio')},
     clearDialogSipar() {
       this.dialogSipar.open = false
     },
@@ -222,6 +221,7 @@ export default defineComponent({
       }
     },
     goToStatistic() {
+      console.log('caraioaioai')
       let chk = true
       this.status.pastors.forEach((pastor) => {
         if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
@@ -232,13 +232,19 @@ export default defineComponent({
         this.dialogPastors.open = true
         return
       }
-      if (this.status && this.status.statisticPermission) {
-        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      } else if (this.status.isSipar) {
-        this.dialogSipar.open = true
-      } else {
+      if (this.status.compositionStatus !== 'sent') {
         this.dialogNotifystatus.open = true
+        return
       }
+      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+
+      // if (this.status && this.status.statisticPermission) {
+      //   this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      // } else if (this.status.isSipar) {
+      //   this.dialogSipar.open = true
+      // } else {
+      //   this.dialogNotifystatus.open = true
+      // }
     },
     getStatusPreStatistic() {
       const opt = {
