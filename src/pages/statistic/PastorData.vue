@@ -7,8 +7,8 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          />
-            
+            @click="$router.push('/statistic/introWriteStatisticData')"          
+          />
             <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
       </div>
