@@ -160,7 +160,7 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      :readonly="status && status.value === 'sent'"
+                      readonly="status && status.value === 'sent'"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -168,20 +168,20 @@
                     />
                     <div class="col">  
                       <q-checkbox
-                      toggle-indeterminate
                       label="Não sei"
                       v-if= "!org.foundationDate || org.foundationDate !== '00/00/0000'"
                       @click= "clkCheckboxDate(org)"
-                      v-model = "org.foundationDate"
+                      v-model="semFoundation"
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
                     Quando ocorre o culto:
                   </div>
                   <q-list
                     bordered
                     class="q-mt-sm"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
                   >
                   <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
                     <q-item-section v-if="day.model === 'month'">
@@ -990,7 +990,7 @@
       <q-dialog
         v-model="dialogAddServices.open"
       >
-        <q-card>
+        <q-card style="width: 400px;">
           <q-card-section>
             <div>
               <strong>Frequência:</strong>
@@ -1498,6 +1498,7 @@ export default defineComponent({
         day: null,
         hour: null
       },
+      semFoundation: false,
       dialogAddServices: {
         open: false,
         eventsOptions: null,
@@ -1516,17 +1517,6 @@ export default defineComponent({
       dialogAddTimeForDay: {
         open: false,
       },
-      // dialogAddEventsDayAndHour: {
-      //   open: false,
-      //   day: null,
-      //   iOrg: null,
-      //   hour: null
-      // },
-      // dialogAddEventsDayAndHourInDep: {
-      //   open: false,
-      //   day: null,
-      //   hour: null
-      // },
       daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'],
       dialogAddSecretary: {
         open: false,
@@ -1593,31 +1583,31 @@ export default defineComponent({
       this.dialogAddTimeForDay.open = false
     },
     confirmAddEventsMonth() {
-      let allHaveTime = true
+      let allHaveTime = true;
+
       this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
         if (w.value && w.value.length > 0) {
-          
-          w.value.forEach((v) => {
-            if (v.time) {
-              allHaveTime = true; 
+          const eventsWithTime = w.value.filter((v) => v.time);
+          if (eventsWithTime.length > 0) {
+            if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+              this.composition.congregations[this.dialogAddServices.iOrg].value = [];
             }
-            else if (!v.time) {
-              console.log(v);
-              this.$q.notify('Preencha o horário');
-              allHaveTime = false; 
-              return;
-            }
-          });
+            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+              ...this.dialogAddServices.selectedEventOption,
+              weeks: [{ value: eventsWithTime, label: w.label  }]  
+            });
+          } else {
+            allHaveTime = false;
+            this.$q.notify('Preencha o horário para pelo menos um evento.');
+          }
         }
       });
+
       if (allHaveTime) {
-        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-        }
-        this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
-        this.clearDialogAddServices()
+        this.clearDialogAddServices();
       }
     },
+  
     // confirmAddEventsDayAndHour() {
     //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
     //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
@@ -2170,9 +2160,10 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: this.composition
+        body: {
+          composition: this.composition,
+        },
       }
-      opt.body.status = 'notSent'
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -2289,8 +2280,10 @@ export default defineComponent({
       })
     },
     clkCheckboxDate(org){
-      console.log('console do org', org);
-      org.foundationDate = '00/00/0000'
+      if(org.foundationDate || org.foundationDate === null ){
+        org.foundationDate= '00/00/0000'
+        this.semFoundation = false
+      }
     }
   }
 })
