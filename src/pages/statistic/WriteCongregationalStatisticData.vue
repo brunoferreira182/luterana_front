@@ -320,25 +320,6 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-      <!-- <q-expansion-item
-        label="Secretárias contratadas"
-        class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
-        style="border-radius: 1rem;"
-      >
-        <div class="q-mx-md">
-          <div v-if="composition && composition.secretary && composition.secretary.length > 0">
-          <q-list 
-            bordered 
-            class="q-my-sm" 
-            v-for="(sec, iSec) in composition.secretary"
-            :key="sec" 
-          >
-           
-          </q-list>
-          </div>
-        </div>
-        
-      </q-expansion-item> -->
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -1356,102 +1337,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <q-dialog
-        v-model="dialogAddEventsDayAndHour.open"
-        @hide="clearDialogAddEventsDayAndHour"
-      >
-        <q-card
-          style="width:400px;border-radius:1rem"
-        >
-          <q-card-section class="text-center text-h6">
-            <strong>Selecione a quantidade de dias da semana</strong>
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              :options="daysOfWeek"
-              v-model="dialogAddEventsDayAndHour.day"
-              class="q-px-sm"
-              label="Dia da semana"
-            />
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              label="Informe o horário"
-              class="q-px-sm"
-              v-model="dialogAddEventsDayAndHour.hour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              label="Voltar"
-              no-caps
-              rounded
-              @click="clearDialogAddEventsDayAndHour"
-              flat
-              unelevated
-              color="primary"
-            />
-            <q-btn
-              label="Adicionar"
-              no-caps
-              @click="confirmAddEventsDayAndHour"
-              unelevated
-              rounded
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
-      
-      
-      <!-- <q-dialog
-        v-model="dialogAddEventsDayAndHourInDep.open"
-        @hide="clearDialogAddDayAndHourInDept"
-      >
-      <q-card
-          style="width:400px;border-radius:1rem"
-        >
-          <q-card-section class="text-center text-h6">
-            <strong>Selecione o dia da semana e o horário</strong>
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              :options="daysOfWeek"
-              v-model="dialogAddEventsDayAndHourInDep.day"
-              class="q-px-sm"
-              label="Dia da semana"
-            />
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              label="Informe o horário"
-              class="q-px-sm"
-              v-model="dialogAddEventsDayAndHourInDep.hour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              label="Voltar"
-              no-caps
-              rounded
-              @click="clearDialogAddDayAndHourInDept"
-              flat
-              unelevated
-              color="primary"
-            />
-            <q-btn
-              label="Adicionar"
-              no-caps
-              @click="confirmAddEventsDayAndHourInDept"
-              unelevated
-              rounded
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
       <q-dialog
         @hide="clearDialogAddSecretary"
         v-model="dialogAddSecretary.open"
@@ -1614,6 +1499,7 @@
     </q-card>
   </q-dialog>
 </template>
+
 <script>
 import useFetch from "src/boot/useFetch";
 // import utils from "../../boot/utils";s
