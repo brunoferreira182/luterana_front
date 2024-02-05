@@ -176,7 +176,7 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
                     Quando ocorre o culto:
                   </div>
                   <q-list
@@ -990,7 +990,7 @@
       <q-dialog
         v-model="dialogAddServices.open"
       >
-        <q-card>
+        <q-card style="width: 400px;">
           <q-card-section>
             <div>
               <strong>Frequência:</strong>
@@ -1563,7 +1563,7 @@ export default defineComponent({
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
           managementType: this.composition.congregations[iOrg].paroquialManagement,
-          organismId: org.childOrganismId
+          organismId: org.organismChildId
         }
       }
       if(this.paroquialManagement === 'outro'){
@@ -1583,31 +1583,31 @@ export default defineComponent({
       this.dialogAddTimeForDay.open = false
     },
     confirmAddEventsMonth() {
-      let allHaveTime = true
+      let allHaveTime = true;
+
       this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
         if (w.value && w.value.length > 0) {
-          
-          w.value.forEach((v) => {
-            if (v.time) {
-              allHaveTime = true; 
+          const eventsWithTime = w.value.filter((v) => v.time);
+          if (eventsWithTime.length > 0) {
+            if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+              this.composition.congregations[this.dialogAddServices.iOrg].value = [];
             }
-            else if (!v.time) {
-              console.log(v);
-              this.$q.notify('Preencha o horário');
-              allHaveTime = false; 
-              return;
-            }
-          });
+            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+              ...this.dialogAddServices.selectedEventOption,
+              weeks: [{ value: eventsWithTime, label: w.label  }]  
+            });
+          } else {
+            allHaveTime = false;
+            this.$q.notify('Preencha o horário para pelo menos um evento.');
+          }
         }
       });
+
       if (allHaveTime) {
-        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-        }
-        this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
-        this.clearDialogAddServices()
+        this.clearDialogAddServices();
       }
     },
+  
     // confirmAddEventsDayAndHour() {
     //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
     //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
@@ -2160,7 +2160,13 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
+<<<<<<< HEAD
         body: this.composition
+=======
+        body: {
+          composition: this.composition,
+        },
+>>>>>>> 6f67c4ed9f7239d93f0120c9956b4d44d6207252
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
