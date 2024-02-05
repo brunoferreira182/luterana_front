@@ -160,7 +160,7 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      readonly="status && status.value === 'sent'"
+                      :readonly="status && status.value === 'sent'"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -175,7 +175,7 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg].value.length">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations.length">
                     Quando ocorre o culto:
                   </div>
                   <q-list
@@ -1393,7 +1393,6 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
-      // composition.congregations.foundationDate,
       filter: '',
       pagination: {
         sortBy: '',
@@ -2193,13 +2192,14 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
         body: {
-          composition = this.composition,
+          composition : this.composition,
         },
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) return
+        console.log(this.composition,'JHADBJHASBDJHSB');
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
       })
