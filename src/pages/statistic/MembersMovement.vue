@@ -49,7 +49,7 @@
                   <q-input 
                   type="number"
                   :label="`${confirmado.turma} °ano`"
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].qtde"
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant."
                   />
                 </div>
               </q-item-label>
@@ -83,7 +83,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde crianças batizadas familias IELB"
+                label="Quant. crianças batizadas familias IELB"
                 v-model="membersMovement.criancasBatizadasFamiliasIelb"
                 @blur="calculateTotal()"
               />
@@ -93,7 +93,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde tranferências recebidas de comunganates"
+                label="Quant. tranferências recebidas de comunganates"
                 v-model="membersMovement.transferenciasRecebidasComungantes"
                 @blur="calculateTotal()"
               />
@@ -104,7 +104,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde tranferências recebidas de não comunganates"
+                label="Quant. tranferências recebidas de não comunganates"
                 v-model="membersMovement.transferenciasRecebidasNaoComungantes"
                 @blur="calculateTotal()"
               />
@@ -114,7 +114,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de profissão de fé com batismo adultos comungantes"
+                label="Quant. de profissão de fé com batismo adultos comungantes"
                 v-model="membersMovement.profissaoFeBatismoAdultos"
                 @blur="calculateTotal()"
               />
@@ -124,7 +124,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de profissão de fé comungantes"
+                label="Quant. de profissão de fé comungantes"
                 v-model="membersMovement.profissaoFe"
                 @blur="calculateTotal()"
               />
@@ -134,7 +134,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de crianças batizadas de famílias que entraram por profissão de fé"
+                label="Quant. de crianças batizadas de famílias que entraram por profissão de fé"
                 v-model="membersMovement.criancasBatizadasFamiliasEntraramPorProfissaoFe"
                 @blur="calculateTotal()"
               />
@@ -145,7 +145,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de reconhecimento de batismos não comungantes de famílias que entraram por profissão de fé"
+                label="Quant. de reconhecimento de batismos não comungantes de famílias que entraram por profissão de fé"
                 v-model="membersMovement.reconhecimentoDeBatismos"
                 @blur="calculateTotal()"
               />
@@ -155,7 +155,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de óbitos de comungantes"
+                label="Quant. de óbitos de comungantes"
                 v-model="membersMovement.obitoComungantes"
                 @blur="calculateTotal()"
               />
@@ -165,7 +165,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de óbitos de não comungantes"
+                label="Quant. de óbitos de não comungantes"
                 v-model="membersMovement.obitoNaoComungantes"
                 @blur="calculateTotal()"
               />
@@ -196,7 +196,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de abandono de comungantes"
+                label="Quant. de abandono de comungantes"
                 v-model="membersMovement.abandonoComungantes"
                 @blur="calculateTotal()"
               />
@@ -206,7 +206,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de abandono de não comungantes"
+                label="Quant. de abandono de não comungantes"
                 v-model="membersMovement.abandonoNaoComungantes"
                 @blur="calculateTotal()"
               />
@@ -216,7 +216,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de exclusão de comungantes"
+                label="Quant. de exclusão de comungantes"
                 v-model="membersMovement.exclusoesComungantes"
                 @blur="calculateTotal()"
               />
@@ -227,7 +227,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Qtde de exclusão de não comungantes"
+                label="Quant. de exclusão de não comungantes"
                 v-model="membersMovement.exclusoesNaoComungantes"
                 @blur="calculateTotal()"
               />
@@ -343,7 +343,7 @@ export default defineComponent({
         this.membersMovement.instrucaoDeConfirmados.confirmados.push(
           {
             turma: i  ,
-            qtde: null,
+            Quant.: null,
           }
         )
       }

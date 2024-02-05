@@ -77,7 +77,7 @@
                     <q-btn
                       color="primary"
                       flat
-                      v-if="!status || (status && status.value !== 'sent')"
+                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
                       rounded
                       icon="add"
                       @click="addFunctionUser(iFunc, iOrg, func.functionName)"
@@ -98,12 +98,23 @@
                             <q-btn
                               color="red"
                               flat
-                              v-if="!status || (status && status.value !== 'sent')"
+                              v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
                               rounded
                               unelevated
                               icon="delete"
                               @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
                             ></q-btn>
+                            <q-btn
+                              color="primary"
+                              icon="sync_problem"
+                              v-if="func.functionName === 'Pastor'"
+                              label="Solicitar alteração"
+                              flat
+                              @click="reportError('changePastor', org.organismChildId)"
+                              rounded
+                            >
+                              <q-tooltip>Solicitar alteração do Pastor</q-tooltip>
+                            </q-btn>
                           </q-item-label>
                         </q-item-section>
                       </q-item>
@@ -166,11 +177,21 @@
                 >
                   <q-select
                     v-model="org.affiliatedOrganism"
-                    :readonly="status && status.value === 'sent'"
+                    readonly
                     label="Filiado?"
                     :options="filiatedOptions"
                     class="q-pa-sm"
                   />
+                  <q-btn
+                    color="primary"
+                    icon="sync_problem"
+                    label="Solicitar alteração"
+                    flat
+                    @click="reportError('isAffiliated', org.organismChildId)"
+                    rounded
+                  >
+                    <q-tooltip>Solicitar alteração</q-tooltip>
+                  </q-btn>
                   <div class="row items-center">  
                     <q-input
                       :readonly="status && status.value === 'sent'"
@@ -395,11 +416,29 @@
               :loading="false"
               :option-value="(item) => item._id"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
                   </q-item-section>
+                  <q-item-section class="text-grey">
+                    <q-btn 
+                      icon="person_add"
+                      dense
+                      flat
+                      color="primary"
+                      @click="dialogAddUser.open = true"
+                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                  </q-item-section>
+                  
                 </q-item>
               </template>
             </q-select>
@@ -446,10 +485,27 @@
               :loading="false"
               :option-value="(item) => item._id"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
+                  </q-item-section>
+                  <q-item-section class="text-grey">
+                    <q-btn 
+                      icon="person_add"
+                      dense
+                      flat
+                      color="primary"
+                      @click="dialogAddUser.open = true"
+                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
                   </q-item-section>
                 </q-item>
               </template>
@@ -627,10 +683,27 @@
               :loading="false"
               :option-value="(item) => item._id"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
+                  </q-item-section>
+                  <q-item-section class="text-grey">
+                    <q-btn 
+                      icon="person_add"
+                      dense
+                      flat
+                      color="primary"
+                      @click="dialogAddUser.open = true"
+                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
                   </q-item-section>
                 </q-item>
               </template>
@@ -890,10 +963,27 @@
               :loading="false"
               :option-value="(item) => item._id"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
+                  </q-item-section>
+                  <q-item-section class="text-grey">
+                    <q-btn 
+                      icon="person_add"
+                      dense
+                      flat
+                      color="primary"
+                      @click="dialogAddUser.open = true"
+                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
                   </q-item-section>
                 </q-item>
               </template>
@@ -1091,10 +1181,27 @@
               :loading="false"
               :option-value="(item) => item._id"
             >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
+                  </q-item-section>
+                  <q-item-section class="text-grey">
+                    <q-btn 
+                      icon="person_add"
+                      dense
+                      flat
+                      color="primary"
+                      @click="dialogAddUser.open = true"
+                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
                   </q-item-section>
                 </q-item>
               </template>
@@ -1172,6 +1279,127 @@
       </q-dialog>
     </q-page>
   </q-page-container>
+  <q-dialog
+    v-model="dialogReportError.open"
+  >
+    <q-card style="width: 400px;">
+      <q-card-section
+        v-if="dialogReportError.type === 'isAffiliated'"
+        class="text-h6 text-center"
+      >
+        Observação:
+      </q-card-section>
+      <q-card-section
+        v-if="dialogReportError.type === 'changePastor'"
+        class="text-h6 text-center"
+      >
+        Informe o substituto desejado:
+      </q-card-section>
+      <q-card-section>
+        <q-select v-if="dialogReportError.type === 'changePastor'"
+          v-model="dialogReportError.userSelected"
+          use-input
+          label="Nome do usuário"
+          option-label="userName"
+          :options="usersOptions"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+        >
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+              <q-item-section class="text-grey">
+                <q-btn 
+                  icon="person_add"
+                  dense
+                  flat
+                  color="primary"
+                  @click="dialogAddUser.open = true"
+                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-input v-if="dialogReportError.type === 'isAffiliated'"
+          type="textarea"
+          label="Informe o problema"
+          v-model="dialogReportError.text"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          flat
+          rounded
+          color="primary"
+          label="Sair"
+          no-caps
+          unelevated
+          @click="clearDialogReportError"
+        />
+        <q-btn
+          rounded
+          color="primary"
+          unelevated
+          label="Confirmar"
+          no-caps
+          @click="confirmReportError"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
+    v-model="dialogAddUser.open"
+  >
+    <q-card style="width: 400px;">
+      <q-card-section
+        class="text-h6 text-center"
+      >
+        Informe os dados do novo usuário:
+      </q-card-section>
+      <q-card-section>
+        <q-input
+          label="Nome completo"
+          class="q-px-sm q-mt-sm"
+          v-model="dialogAddUser.data.name"
+        />
+        <q-input
+          label="Email do novo usuário"
+          class="q-px-sm q-mt-sm"
+          v-model="dialogAddUser.data.email"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          flat
+          rounded
+          color="primary"
+          label="Sair"
+          no-caps
+          unelevated
+          @click="clearDialogNewUser"
+        />
+        <q-btn
+          rounded
+          color="primary"
+          unelevated
+          label="Confirmar"
+          no-caps
+          @click="confirmCreateNewUser"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -1208,6 +1436,15 @@ export default defineComponent({
         iDep: null,
         iOrg: null,
         userSelected: null
+      },
+      dialogAddUser: {
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
       },
       dialogAddCongregation: {
         open: false,
@@ -1262,6 +1499,12 @@ export default defineComponent({
       dialogRemoveCongregation: {
         open: false,
         iOrg: null
+      },
+      dialogReportError: {
+        open: false,
+        type: null,
+        text: '',
+        organismId: ''
       },
       dialogSelectDepartamentDetail: {
         open: false,
@@ -1335,7 +1578,62 @@ export default defineComponent({
     if (this.validated && (this.status && this.status.value === 'sent')) return
     this.saveDraft()
   },
-  methods: { 
+  methods: {
+    confirmCreateNewUser () {
+      const opt = {
+        route: '/desktop/statistics/createNewUser',
+        body: {
+          data: this.dialogAddUser.data
+        }
+      }
+      useFetch(opt).then((r) => {
+        this.$q.notify('Usuário criado, selecione-o para prosseguir')
+        this.dialogAddUser.open = false
+        this.dialogAddUser.data = {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
+        console.log(r)
+      })
+    },
+    clearDialogNewUser() {
+      this.dialogAddUser.open = false,
+      this.dialogAddUser.data = {
+        name: '',
+        email: '',
+        phone: '',
+        document: ''
+      }
+    },
+    reportError(type, organismId) {
+      this.dialogReportError.open = true,
+      this.dialogReportError.organismId = organismId
+      this.dialogReportError.type = type
+    },
+    confirmReportError() {
+      const opt = {
+        route: '/desktop/statistics/insertErrorReport',
+        body: {
+          reportData: this.dialogReportError
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Erro reportado com sucesso')
+      })
+      this.clearDialogReportError()
+    },
+    clearDialogReportError() {
+      this.dialogReportError= {
+        open: false,
+        type: null,
+        text: '',
+        organismId: '',
+        userSelected: ''
+      }
+    },  
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
