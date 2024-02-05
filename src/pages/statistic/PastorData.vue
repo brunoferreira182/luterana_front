@@ -433,12 +433,12 @@
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
                   <q-input  
                     v-model="item.quantity" 
-                    label="Quant. de visitas"
+                    label="Qtde de visitas"
                     :readonly="status && status.value === 'sent'"
                   />
                   <q-input  
                     v-model="item.people" 
-                    label="Quant. de pessoas"
+                    label="Qtde de pessoas"
                     :readonly="status && status.value === 'sent'"
                   />
                 </div>
@@ -477,9 +477,9 @@
               <q-item-section>
                 <p class=" q-pl-lg no-margin"> {{item.title}}</p>
                 <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input  v-model="item.quantity" label="Quant. de visitas">
+                  <q-input  v-model="item.quantity" label="Qtde de visitas">
                   </q-input>
-                  <q-input  v-model="item.people" label="Quant. de pessoas ">
+                  <q-input  v-model="item.people" label="Qtde de pessoas ">
                   </q-input>
                 </div>
               </q-item-section>
@@ -1273,12 +1273,12 @@
                 <q-item-label class="row q-pa-sm q-pl-lg q-gutter-md" > 
                   <q-input 
                     borderlessv-model="item.quantity" 
-                    label="Quant. de visitas"
+                    label="Qtde de visitas"
                     :readonly="status && status.value === 'sent'"
                   />
                   <q-input  
                     v-model="item.people" 
-                    label="Quant. de pessoas "
+                    label="Qtde de pessoas "
                     :readonly="status && status.value === 'sent'"
                   />
                 </q-item-label>
@@ -1484,6 +1484,14 @@ export default defineComponent({
       })
     },
     saveOficial() {
+      const pastorActivities = this.pastorActivities;
+      for (const activity of pastorActivities) {
+        if (!activity.quantity || !activity.people) {
+          this.$q.notify('Preencha todos os campos de visitas em Atividade pastoral.');
+          return;
+        }
+      }
+
       let regex = /\s/;
       let pastorName = null
       let fatherName = null

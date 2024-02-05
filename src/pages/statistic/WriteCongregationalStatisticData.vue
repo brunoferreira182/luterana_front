@@ -182,7 +182,7 @@
                   </q-btn>
                   <div class="row items-center">  
                     <q-input
-                      :readonly="composition.congregations[iOrg].semFoundation"
+                      :disable="composition.congregations[iOrg].semFundacao"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -191,7 +191,7 @@
                     <div class="col">  
                       <q-checkbox
                       label="Não sei"
-                      v-model="composition.congregations[iOrg].semFundação"
+                      v-model="composition.congregations[iOrg].semFundacao"
                       />
                     </div>  
                   </div>
