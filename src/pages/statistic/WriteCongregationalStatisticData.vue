@@ -75,60 +75,48 @@
                   <q-btn
                     color="primary"
                     flat
-                    v-if="!status || (status && status.value !== 'sent')"
+                    v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
                     rounded
                     icon="add"
                     @click="addFunctionUser(iFunc, iOrg, func.functionName)"
                     size="12px"
                   >
-                    <strong>{{ func.functionName }}:</strong>
-                  
-                    <q-btn
-                      color="primary"
-                      flat
-                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
-                      rounded
-                      icon="add"
-                      @click="addFunctionUser(iFunc, iOrg, func.functionName)"
-                      size="12px"
-                    >
-                    </q-btn>
-                    <div
-                      v-for="(user, iUser) in func.functionUsers"
-                      :key="user"
-                    >
-                      <q-item
-                        class="no-padding"
-                        v-if="!user.action || user.action !== 'remove'"
-                      >
-                        <q-item-section class="no-padding" >
-                          <q-item-label>
-                            {{ user.userName }}
-                            <q-btn
-                              color="red"
-                              flat
-                              v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
-                              rounded
-                              unelevated
-                              icon="delete"
-                              @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
-                            ></q-btn>
-                            <q-btn
-                              color="primary"
-                              icon="sync_problem"
-                              v-if="func.functionName === 'Pastor'"
-                              label="Solicitar alteração"
-                              flat
-                              @click="reportError('changePastor', org.organismChildId)"
-                              rounded
-                            >
-                              <q-tooltip>Solicitar alteração do Pastor</q-tooltip>
-                            </q-btn>
-                          </q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </div>
                   </q-btn>
+                  <div
+                    v-for="(user, iUser) in func.functionUsers"
+                    :key="user"
+                  >
+                    <q-item
+                      class="no-padding"
+                      v-if="!user.action || user.action !== 'remove'"
+                    >
+                      <q-item-section class="no-padding" >
+                        <q-item-label>
+                          {{ user.userName }}
+                          <q-btn
+                            color="red"
+                            flat
+                            v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
+                            rounded
+                            unelevated
+                            icon="delete"
+                            @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                          ></q-btn>
+                          <q-btn
+                            color="primary"
+                            icon="sync_problem"
+                            v-if="func.functionName === 'Pastor'"
+                            label="Solicitar alteração"
+                            flat
+                            @click="reportError('changePastor', org.organismChildId)"
+                            rounded
+                          >
+                            <q-tooltip>Solicitar alteração do Pastor</q-tooltip>
+                          </q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </div>
                 </div>
               </q-list>
               <q-list bordered class="q-mb-sm">
