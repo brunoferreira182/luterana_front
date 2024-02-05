@@ -160,7 +160,7 @@
                   />
                   <div class="row items-center">  
                     <q-input
-                      :readonly="status && status.value === 'sent'"
+                      readonly="status && status.value === 'sent'"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -168,11 +168,10 @@
                     />
                     <div class="col">  
                       <q-checkbox
-                      toggle-indeterminate
                       label="Não sei"
                       v-if= "!org.foundationDate || org.foundationDate !== '00/00/0000'"
                       @click= "clkCheckboxDate(org)"
-                      v-model = "org.foundationDate"
+                      v-model="semFoundation"
                       />
                     </div>  
                   </div>
@@ -1499,6 +1498,7 @@ export default defineComponent({
         day: null,
         hour: null
       },
+      semFoundation: false,
       dialogAddServices: {
         open: false,
         eventsOptions: null,
@@ -1517,17 +1517,6 @@ export default defineComponent({
       dialogAddTimeForDay: {
         open: false,
       },
-      // dialogAddEventsDayAndHour: {
-      //   open: false,
-      //   day: null,
-      //   iOrg: null,
-      //   hour: null
-      // },
-      // dialogAddEventsDayAndHourInDep: {
-      //   open: false,
-      //   day: null,
-      //   hour: null
-      // },
       daysOfWeek: ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'],
       dialogAddSecretary: {
         open: false,
@@ -2203,9 +2192,10 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: this.composition
+        body: {
+          composition = this.composition,
+        },
       }
-      opt.body.status = 'notSent'
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -2322,8 +2312,10 @@ export default defineComponent({
       })
     },
     clkCheckboxDate(org){
-      console.log('console do org', org);
-      org.foundationDate = '00/00/0000'
+      if(org.foundationDate || org.foundationDate === null ){
+        org.foundationDate= '00/00/0000'
+        this.semFoundation = false
+      }
     }
   }
 })
