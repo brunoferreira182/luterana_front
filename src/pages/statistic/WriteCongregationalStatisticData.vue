@@ -475,14 +475,8 @@
             />
             <q-input
               class="q-pa-sm"
-              label="E-mail" 
-              hint="Informe o e-mail"
-              v-model="dialogAddCongregation.data.email"
-            />
-            <q-input
-              class="q-pa-sm"
-              label="Celular" 
-              hint="Informe o número de celular"
+              label="Número" 
+              hint="Informe o número"
               mask="(##) #####-####"
               v-model="dialogAddCongregation.data.phone"
             />
@@ -713,7 +707,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogAddUserToFunctionInDept"
+              @click="cleanDialogAddNewDepartament"
             />
             <q-btn
               label="Adicionar"
@@ -1196,7 +1190,6 @@ export default defineComponent({
         open: false,
         data: {
           name: '',
-          email: '',
           phone: '',
           address: {
             city: '',
