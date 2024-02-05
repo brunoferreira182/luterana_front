@@ -319,25 +319,6 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-      <!-- <q-expansion-item
-        label="Secretárias contratadas"
-        class="bg-grey-2 q-pa-sm text-left q-mx-lg q-mb-md"
-        style="border-radius: 1rem;"
-      >
-        <div class="q-mx-md">
-          <div v-if="composition && composition.secretary && composition.secretary.length > 0">
-          <q-list 
-            bordered 
-            class="q-my-sm" 
-            v-for="(sec, iSec) in composition.secretary"
-            :key="sec" 
-          >
-           
-          </q-list>
-          </div>
-        </div>
-        
-      </q-expansion-item> -->
       <q-separator 
         class='q-mx-md q-my-sm'
       />
@@ -1179,6 +1160,7 @@
     </q-page>
   </q-page-container>
 </template>
+
 <script>
 import useFetch from "src/boot/useFetch";
 // import utils from "../../boot/utils";s
