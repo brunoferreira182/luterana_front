@@ -151,25 +151,25 @@ export default defineComponent({
         this.culturalActivities = r.data.organismList
       });
     },
-    // getAtividadesCulticas() {
-    //   const opt = {
-    //     route: "/desktop/statistics/getAtividadesCulticas",
-    //     body: {
-    //       organismId: this.$route.query.organismId,
-    //     },
-    //   };
-    //   this.$q.loading.show()
-    //   useFetch(opt).then((r) => {
-    //     this.$q.loading.hide()
-    //     if (r.error) {
-    //       this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-    //       return
-    //     }
-    //     console.log(r, 'asdosiakdpok')
-    //     r.data.validated ? this.validated = r.data.validated : this.validated = false
-    //     this.culturalActivities = r.data.activitiesData
-    //   });
-    // },
+    getAtividadesCulticas() {
+      const opt = {
+        route: "/desktop/statistics/getAtividadesCulticas",
+        body: {
+          organismId: this.$route.query.organismId,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        console.log(r, 'a')
+        r.data.validated ? this.validated = r.data.validated : this.validated = false
+        this.culturalActivities = r.data.activitiesData
+      });
+    },
     getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
