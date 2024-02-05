@@ -222,24 +222,23 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      // let chk = true
-      // this.status.pastors.forEach((pastor) => {
-      //   if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
-      //     chk = false
-      //   }
-      // })
-      // if (!chk) {
-      //   this.dialogPastors.open = true
-      //   return
-      // }
-      // if (this.status && this.status.statisticPermission) {
-      //   this.$router.push('/statistic/selectOrganismToWriteStatisticData')
-      // } else if (this.status.isSipar) {
-      //   this.dialogSipar.open = true
-      // } else {
-      //   this.dialogNotifystatus.open = true
-      // }
+      let chk = true
+      this.status.pastors.forEach((pastor) => {
+        if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
+          chk = false
+        }
+      })
+      if (!chk) {
+        this.dialogPastors.open = true
+        return
+      }
+      if (this.status && this.status.statisticPermission) {
+        this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      } else if (this.status.isSipar) {
+        this.dialogSipar.open = true
+      } else {
+        this.dialogNotifystatus.open = true
+      }
     },
     getStatusPreStatistic() {
       const opt = {
