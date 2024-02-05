@@ -176,10 +176,11 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg].value.length">
                     Quando ocorre o culto:
                   </div>
                   <q-list
+                    v-if="composition.congregations[iOrg].value.length"
                     bordered
                     class="q-mt-sm"
                   >
@@ -988,7 +989,7 @@
       <q-dialog
         v-model="dialogAddServices.open"
       >
-        <q-card>
+        <q-card style="width: 400px;">
           <q-card-section>
             <div>
               <strong>Frequência:</strong>
@@ -1574,31 +1575,63 @@ export default defineComponent({
       this.dialogAddTimeForDay.open = false
     },
     confirmAddEventsMonth() {
-      let allHaveTime = true
+      let allHaveTime = true;
+
       this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+        console.log(w, 'wwwwwwwww');
+
         if (w.value && w.value.length > 0) {
-          
-          w.value.forEach((v) => {
-            if (v.time) {
-              allHaveTime = true; 
-            }
-            else if (!v.time) {
-              console.log(v);
-              this.$q.notify('Preencha o horário');
-              allHaveTime = false; 
-              return;
-            }
-          });
+          const eventsWithTime = w.value.filter((v) => v.time);
+
+          if (eventsWithTime.length > 0) {
+            // Adiciona apenas se houver eventos com horário
+            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+              ...this.dialogAddServices.selectedEventOption,
+              weeks: [{ value: eventsWithTime }]  // Apenas os eventos com horário
+            });
+          } else {
+            allHaveTime = false;
+            this.$q.notify('Preencha o horário para pelo menos um evento.');
+          }
         }
       });
+
       if (allHaveTime) {
-        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
-        }
-        this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
-        this.clearDialogAddServices()
+        this.clearDialogAddServices();
       }
     },
+    // confirmAddEventsMonth() {
+    //   let allHaveTime = true
+    //   this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
+    //     console.log(w, 'wwwwwwwww')
+    //     if (w.value && w.value.length > 0) {
+    //       const eventsWithTime = w.value.filter((v) => v.time);
+    //       if(eventsWithTime)
+    //       this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+    //       ...this.dialogAddServices.selectedEventOption,
+    //       weeks: [{ value: eventsWithTime }]  
+    //     });
+    //       w.value.forEach((v) => {
+    //         if (v.time) {
+    //           allHaveTime = true; 
+    //         }
+    //         else if (!v.time) {
+    //           this.$q.notify('Preencha o horário');
+    //           allHaveTime = false; 
+    //           return;
+    //         }
+    //       });
+    //     }
+    //   });
+    //   if (allHaveTime) {
+    //     if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
+    //       this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+    //     }
+        
+    //     this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
+    //     this.clearDialogAddServices()
+    //   }
+    // },
     // confirmAddEventsDayAndHour() {
     //   if (!this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario) {
     //     this.composition.congregations[this.dialogAddEventsDayAndHour.iOrg].diaEHorario = []
