@@ -107,6 +107,8 @@
                             icon="sync_problem"
                             v-if="func.functionName === 'Pastor'"
                             label="Solicitar alteração"
+                            dense
+                            no-caps
                             flat
                             @click="reportError('changePastor', org.organismChildId)"
                             rounded
@@ -174,6 +176,8 @@
                     color="primary"
                     icon="sync_problem"
                     label="Solicitar alteração"
+                    dense
+                    no-caps
                     flat
                     @click="reportError('isAffiliated', org.organismChildId)"
                     rounded
@@ -255,6 +259,8 @@
                   </q-list>
                   <q-btn
                     label="Adicionar dia e horário do culto"
+                    dense
+                    no-caps
                     color="primary"
                     unelevated
                     rounded
