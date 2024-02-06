@@ -57,8 +57,10 @@
                 && data.label !== 'Mãe'"
               class="q-px-md q-mx-md"
               :label="data.label"
+              :rules="data.label === 'Nome' || data.label === 'Contato' ? [val => !!val || '* Campo obrigatório'] : []"
               v-model="data.value"
               :mask="data.mask"
+              
               :readonly="status && status.value === 'sent'"
             />
             <div 
@@ -427,18 +429,30 @@
               :key="item"
             >
               <q-item-section>
-                <p class=" q-pl-lg no-margin"> {{item.title}}</p>
-                <div class="row q-pa-sm q-pl-lg q-gutter-md" > 
-                  <q-input  
-                    v-model="item.quantity" 
-                    label="Qtde de visitas"
-                    :readonly="status && status.value === 'sent'"
-                  />
-                  <q-input  
-                    v-model="item.people" 
-                    label="Qtde de pessoas"
-                    :readonly="status && status.value === 'sent'"
-                  />
+                <p class="no-margin text-h6"> {{item.title}}</p>
+                <div class="row q-gutter-x-md" > 
+                  <div class="col">
+                    <q-input  
+                      v-model="item.quantity" 
+                      label="Qtde de visitas"
+                      type="number"
+                      error-message="* Campo obrigatório"
+                      :error="item.validatePastorActivities"
+                      :rules="[val => !!val]"
+                      :readonly="status && status.value === 'sent'"
+                    />
+                  </div>
+                  <div class="col">
+                    <q-input  
+                      v-model="item.people" 
+                      label="Qtde de pessoas"
+                      type="number"
+                      error-message="* Campo obrigatório"
+                      :error="item.validatePastorActivities"
+                      :rules="[val => !!val]"
+                      :readonly="status && status.value === 'sent'"
+                    />
+                  </div>
                 </div>
               </q-item-section>
             </q-item>
@@ -1240,7 +1254,7 @@
         v-model="dialogLastPastoralActivity.open"
         @hide="clearDialogLastPastoralActivity"
       >
-        <q-card style="width: 400px;">
+        <q-card style="width: 400px; border-radius: 1rem;">
           <q-card-section>
             <div class="text-center text-h6">
               Selecione a congregação
@@ -1274,11 +1288,19 @@
                   <q-input 
                     v-model="item.quantity" 
                     label="Qtde de visitas"
+                    error-message="* Campo obrigatório"
+                    :error="item.validatePastorActivities"
+                    type="number"
                     :readonly="status && status.value === 'sent'"
+                    :rules="[val => !!val]"
                   />
                   <q-input  
                     v-model="item.people" 
                     label="Qtde de pessoas "
+                    error-message="* Campo obrigatório"
+                    type="number"
+                    :error="item.validatePastorActivities"
+                    :rules="[val => !!val]"
                     :readonly="status && status.value === 'sent'"
                   />
                 </q-item-label>
@@ -1440,7 +1462,8 @@ export default defineComponent({
       lastOrganismPastorActivities: null,
       paroquiaId: null,
       validated: false,
-      status: null
+      status: null,
+      validatePastorActivities: true,
     }
   },
 
@@ -1449,10 +1472,10 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
   },
-  beforeUnmount() {
-    if (this.validated && (this.status && this.status.value === 'sent')) return
-    this.saveDraft()
-  },
+  // beforeUnmount() {
+  //   if (this.validated && (this.status && this.status.value === 'sent')) return
+  //   this.saveDraft()
+  // },
   methods: {
     cancelChangeChild () {
       this.dialogEditChild = {
@@ -1484,11 +1507,19 @@ export default defineComponent({
       })
     },
     saveOficial() {
+      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ){
+        this.$q.notify('Preencha seu nome e fone para contato')
+        return
+      }
       const pastorActivities = this.pastorActivities;
       for (const activity of pastorActivities) {
         if (!activity.quantity || !activity.people) {
+          activity.validatePastorActivities = this.validatePastorActivities
           this.$q.notify('Preencha todos os campos de visitas em Atividade pastoral');
           return;
+        }
+        else{
+          activity.validatePastorActivities = false
         }
       }
 
@@ -1584,8 +1615,12 @@ export default defineComponent({
       const lastOrganismPastorActivities = this.dialogLastPastoralActivity.lastOrganismPastorActivities;
       for (const activity of lastOrganismPastorActivities) {
         if (!activity.quantity || !activity.people) {
+          activity.validatePastorActivities = this.validatePastorActivities
           this.$q.notify('Preencha todos os campos nos dados de visitação');
           return;
+        }
+        else{
+          activity.validatePastorActivities = false
         }
       }
       if(!this.dialogLastPastoralActivity.selectedOrganism){

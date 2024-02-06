@@ -96,7 +96,7 @@
                     type="number"
                     v-if="
                       item.organismConfigName ===
-                      'Escola Dominical de leigos'
+                      'Departamento de Escola Dominical de leigos'
                     "
                     label="Quantidade de professores"
                   >
@@ -104,20 +104,20 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Escola Dominical de leigos'
+                      'Departamento de Escola Dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
                       Aulas durante o culto</q-item-label
                     >
                     <q-input
-                      v-model="departamentos[i].departamentoData.aulasCulto.freqCulto"
+                      v-model="departamentos[i].departamentoData.cultoData.freqCulto"
                       class="q-ml-md"
                       type="number"
                       label="Frequência total durante culto"
                     ></q-input>
                     <q-input
-                      v-model="departamentos[i].departamentoData.aulasCulto.qtnFaixaEtaria"
+                      v-model="departamentos[i].departamentoData.cultoData.qtnFaixaEtaria"
                       class="q-ml-md"
                       type="number"
                       label="Divisão de faixa etária"
@@ -127,7 +127,7 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Escola Dominical de leigos'
+                      'Departamento de Escola Dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
@@ -152,7 +152,7 @@
                   <!-- Musica -->
                   <q-item-section
                     class="justify-around"
-                    v-if="item.organismConfigName === 'Música de leigos'"
+                    v-if="item.organismConfigName === 'Departamento da Música de leigos'"
                   >
                     <q-item-label>
                       <div class="col items-center">
@@ -211,7 +211,7 @@
                   <!-- visitação -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Visitação de leigos'
+                      item.organismConfigName === 'Departamento de Visitação de leigos'
                     "
                   >
                     <q-input
@@ -273,7 +273,7 @@
                   <!-- Sobre ação social   -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Ação social de leigos'
+                      item.organismConfigName === 'Departmento de Ação social de leigos'
                     "
                   >
                   <div class="row">
@@ -380,10 +380,10 @@ export default defineComponent({
       validated: false,
       statisticStatus: null,
       arrayIgnore: [
-        "Escola Dominical de leigos",
-        "Música de leigos",
-        "Visitação de leigos",
-        "Ação social de leigos",
+        "Departamento de Escola Dominical de leigos",
+        "Departamento da Música de leigos",
+        "Departamento de Visitação de leigos",
+        "Departamento de Ação social de leigos",
         "Outros",
       ],
     };

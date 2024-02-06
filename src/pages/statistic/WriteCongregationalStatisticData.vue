@@ -132,7 +132,9 @@
                               color="primary"
                               icon="sync_problem"
                               v-if="func.functionName === 'Pastor'"
-                              label="Solicitar alteração/correção"
+                              dense
+                            no-caps
+                            label="Solicitar alteração/correção"
                               flat
                               @click="reportError('changePastor', org.organismChildId)"
                               rounded
@@ -211,6 +213,8 @@
                   <q-btn
                     color="primary"
                     icon="sync_problem"
+                    dense
+                    no-caps
                     label="Solicitar alteração/correção"
                     flat
                     @click="reportError('isAffiliated', org.organismChildId)"
@@ -228,6 +232,7 @@
                     />
                     <div class="col">  
                       <q-checkbox
+                      v-if="!composition.congregations[iOrg].foundationDate"
                       label="Não sei"
                       v-model="composition.congregations[iOrg].semFundacao"
                       />
@@ -293,6 +298,8 @@
                   </q-list>
                   <q-btn
                     label="Adicionar dia e horário do culto"
+                    dense
+                    no-caps
                     color="primary"
                     unelevated
                     rounded
