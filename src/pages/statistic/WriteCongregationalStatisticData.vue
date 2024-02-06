@@ -2178,6 +2178,7 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$router.back()
       this.getCompositionByUserId()
     },
     discardDraft () {
@@ -2464,6 +2465,7 @@ export default defineComponent({
         if (r.error) return
         this.$q.notify('Rascunho salvo com sucesso')
         this.getCompositionByUserId()
+        this.$router.back()
       })
     },
     deleteUserFromFunction(iOrg, iFunc, iUser) {

@@ -432,6 +432,7 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
+        this.$router.back()
         this.getGroupActivitiesByOrganismId()
       });
     },
