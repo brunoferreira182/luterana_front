@@ -664,7 +664,7 @@
                       no-caps
                       rounded
                       color="primary"
-                      @click="clearDialogAddUserToFunctionInDept"
+                      @click="clearDialogAddNewCongrgation"
                     />
                     <q-btn
                       label="Confirmar"
@@ -736,7 +736,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogConfirmAddFunctionUserInNewDept"
+              @click="clearDialogAddUserFunctionInNewCongregation"
             />
             <q-btn
               label="Adicionar"
@@ -949,6 +949,17 @@
               </q-expansion-item>
             </q-list>
           </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogDepartaments"
+              label="Voltar"
+              no-caps
+              rounded
+              unelevated
+              color="primary"
+              flat
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <q-dialog
