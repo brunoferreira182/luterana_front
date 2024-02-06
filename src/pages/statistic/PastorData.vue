@@ -57,8 +57,10 @@
                 && data.label !== 'Mãe'"
               class="q-px-md q-mx-md"
               :label="data.label"
+              :rules="data.label === 'Nome' || data.label === 'Contato' ? [val => !!val || '* Campo obrigatório'] : []"
               v-model="data.value"
               :mask="data.mask"
+              
               :readonly="status && status.value === 'sent'"
             />
             <div 
@@ -1505,6 +1507,10 @@ export default defineComponent({
       })
     },
     saveOficial() {
+      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ){
+        this.$q.notify('Preencha seu nome e fone para contato')
+        return
+      }
       const pastorActivities = this.pastorActivities;
       for (const activity of pastorActivities) {
         if (!activity.quantity || !activity.people) {
