@@ -36,11 +36,12 @@
         <div>
           <div class="text-h5 q-px-md">Dados pessoais</div>
           <div 
-            class="text-h6 q-pa-md text-wrap"
+            class="text-h6 q-mt-sm q-px-md text-wrap"
           >
-            Nesta seção revise cuidadosamente seus dados, 
-            se não tiver uma rede social pessoal, como o Instagram, 
-            deixe o campo em branco não insira o da congregação. 
+            Revise seus dados pessoais.
+          </div>
+          <div class="q-px-md text-h6">
+            Obs.: Insira somente redes sociais pessoais, deixe em branco caso não tenha.
           </div>
           <div
             v-for="(data) in pastorData"
@@ -59,8 +60,66 @@
               v-model="data.value"
               :mask="data.mask"
               :readonly="status && status.value === 'sent'"
+            />
+            <div 
+              v-if="data.label === 'Redes sociais'"
+              class="q-mx-lg"
             >
-            </q-input>
+              <div class="q-mx-sm">
+                <div class="text-h6">
+                  {{data.label}}
+                </div>
+                <q-item 
+                  class="bg-grey-2"
+                  style="border-radius: 1rem;"
+                  v-for="(social, iSocial) in data.value"
+                  :key="social"
+                >
+                  <q-item-section>
+                    {{ social.selectedSocialType }}
+                    <q-item-label>
+                      Nome: {{ social.name }}
+                    </q-item-label>
+                    <q-item-label>
+                      Tipo: {{ social.type }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label
+                      v-if="!status || (status && status.value !== 'sent')"
+                    >
+                      <q-btn
+                        icon="edit"
+                        color="primary"
+                        flat
+                        rounded
+                        @click="editSocialNetwork(social, iSocial)"
+                      />
+                      <q-btn
+                        icon="delete"
+                        color="red"
+                        flat
+                        rounded
+                        @click="removeSocialNetwork(iSocial)"
+                      >
+                        <q-tooltip>Remover rede social</q-tooltip>
+                      </q-btn>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </div>
+              <q-btn
+                v-if="!status || (status && status.value !== 'sent')"
+                label="Rede social"
+                icon="add"
+                color="primary"
+                flat
+                rounded
+                @click="clkAddNewSocialNetwork"
+              >
+                <q-tooltip>Adicionar rede social</q-tooltip>
+              </q-btn>
+            </div>
             <div
               v-if="data.label === 'Pai'"
               class="q-mx-lg q-px-md q-py-sm"
@@ -158,69 +217,10 @@
                 />
               </div>
             </div>
-            <div 
-              v-if="data.label === 'Redes sociais'"
-              class="q-mx-lg"
-            >
-              <div class="q-mx-sm">
-                <div class="text-h6">
-                  {{data.label}}
-                </div>
-                <q-item 
-                  class="bg-grey-2"
-                  style="border-radius: 1rem;"
-                  v-for="(social, iSocial) in data.value"
-                  :key="social"
-                >
-                  <q-item-section>
-                    {{ social.selectedSocialType }}
-                    <q-item-label>
-                      Nome: {{ social.name }}
-                    </q-item-label>
-                    <q-item-label>
-                      Tipo: {{ social.type }}
-                    </q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-item-label
-                      v-if="!status || (status && status.value !== 'sent')"
-                    >
-                      <q-btn
-                        icon="edit"
-                        color="primary"
-                        flat
-                        rounded
-                        @click="editSocialNetwork(social, iSocial)"
-                      />
-                      <q-btn
-                        icon="delete"
-                        color="red"
-                        flat
-                        rounded
-                        @click="removeSocialNetwork(iSocial)"
-                      >
-                        <q-tooltip>Remover rede social</q-tooltip>
-                      </q-btn>
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </div>
-              <q-btn
-                v-if="!status || (status && status.value !== 'sent')"
-                label="Rede social"
-                icon="add"
-                color="primary"
-                flat
-                rounded
-                @click="clkAddNewSocialNetwork"
-              >
-                <q-tooltip>Adicionar rede social</q-tooltip>
-              </q-btn>
-            </div>
             <div v-if="data.label === 'Relação conjugal'" class="q-mx-lg q-px-sm q-py-sm">
               <div class="q-mx-sm">
                 <div class="text-h6">
-                  {{ data.label }}
+                  Estado civil
                 </div>
                 <q-item
                   v-if="data.partner"
@@ -270,7 +270,7 @@
                 label="Adicionar relação"
                 @click="addMaritalRelation"
               >
-                <q-tooltip>Adicionar sua relação conjugal</q-tooltip>
+                <q-tooltip>Adicionar cônjuge</q-tooltip>
               </q-btn>
             </div>
             <div v-if="data.label === 'Filhos'" class="q-mx-lg q-mt-md q-px-sm">
@@ -335,7 +335,7 @@
         <div>
           <div class="text-h5 q-px-md">Vida pastoral</div>
           <div class="text-h6 q-pa-md text-wrap">
-            Nestes campos vamos conferir a sua vida acadêmica, ministerial dentro da Igreja.
+            Confirme seu histórico acadêmico e ministerial.
           </div>
           <div>
             <div class="q-mx-lg q-mt-md q-px-sm text-h6">Formações</div>
@@ -363,12 +363,12 @@
               <q-btn
                 color="primary"
                 icon="sync_problem"
-                label="Solicitar alteração"
+                label="Solicitar alteração/correção"
                 flat
                 @click="reportError('formations')"
                 rounded
               >
-                <q-tooltip>Solicitar alteração</q-tooltip>
+                <q-tooltip>Solicitar alteração/correção</q-tooltip>
               </q-btn>
             </div>
           </div>
@@ -400,7 +400,7 @@
             <div>
               <q-btn
               class="q-mx-lg q-my-sm"
-              label="Solicitar alteração"
+              label="Solicitar alteração/correção"
               icon="sync_problem"
               flat
               rounded
@@ -408,19 +408,17 @@
               color="primary"
               @click="reportError('historic')"
             >
-              <q-tooltip>Solicitar alteração</q-tooltip>
+              <q-tooltip>Solicitar alteração/correçãoo</q-tooltip>
             </q-btn>
             </div>
           </div>
           <q-separator class="q-ma-sm q-my-md"/>
         </div>
         <div>
-          <div class="text-h5 q-mx-md">Atividade pastoral</div>
-          <div class="text-h6 q-mb-md  text-wrap q-pa-md">
+          <div class="text-h5 q-mx-md">Visitas</div>
+          <div class="text-h6 text-wrap">
             <div class="text-h6 q-mb-md q-pa-md text-wrap">
-              Pastor, estes dados são do seu ministério, caso tenha trocado de congregação ao longo do ano de 2023, 
-              insira somente os dados de visita da congregação/paróquia que começou o trabalho em 2023, no final do 
-              bloco há um campo para inserir os dados da congregação na qual fazia parte no início de 2023.
+              Preencha as visitas realizadas em 2023. Caso tenha trocado de congregação ao longo do ano de 2023, insira somente os dados de visitação da atual congregação/paróquia. No final do bloco, há um campo para inserir os dados da congregação anterior. 
             </div>
           </div>
           <div>
@@ -462,9 +460,9 @@
               Trocou de congregação em 2023?
             </q-checkbox>
           </div> -->
-          <div class="q-ml-md text-h6 q-pa-md">
+          <!-- <div class="q-ml-md text-h6 q-pa-md">
             Caso venha de outra congregação, clique no botão abaixo para preencher os dados de visitação
-          </div>
+          </div> -->
           <div>
             <q-btn
               label="Preencher dados da  congregação anterior"
@@ -1220,12 +1218,12 @@
       >
         <q-card style="width: 400px;">
           <q-card-section class="text-h6 text-center">
-            Informe o problema:
+            Informe a alteração:
           </q-card-section>
           <q-card-section>
             <q-input
               type="textarea"
-              label="Informe o problema"
+              label="Informe a alteração"
               v-model="dialogReportError.text"
             />
           </q-card-section>
