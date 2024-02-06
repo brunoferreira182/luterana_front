@@ -105,6 +105,8 @@
                             color="primary"
                             icon="sync_problem"
                             v-if="func.functionName === 'Pastor'"
+                            dense
+                            no-caps
                             label="Solicitar alteração/correção"
                             flat
                             @click="reportError('changePastor', org.organismChildId)"
@@ -183,6 +185,8 @@
                   <q-btn
                     color="primary"
                     icon="sync_problem"
+                    dense
+                    no-caps
                     label="Solicitar alteração/correção"
                     flat
                     @click="reportError('isAffiliated', org.organismChildId)"
@@ -266,6 +270,8 @@
                   </q-list>
                   <q-btn
                     label="Adicionar dia e horário do culto"
+                    dense
+                    no-caps
                     color="primary"
                     unelevated
                     rounded
@@ -665,7 +671,7 @@
                       no-caps
                       rounded
                       color="primary"
-                      @click="clearDialogAddUserToFunctionInDept"
+                      @click="clearDialogAddNewCongrgation"
                     />
                     <q-btn
                       label="Confirmar"
@@ -737,7 +743,7 @@
               no-caps
               rounded
               color="primary"
-              @click="clearDialogConfirmAddFunctionUserInNewDept"
+              @click="clearDialogAddUserFunctionInNewCongregation"
             />
             <q-btn
               label="Adicionar"
@@ -950,6 +956,17 @@
               </q-expansion-item>
             </q-list>
           </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogDepartaments"
+              label="Voltar"
+              no-caps
+              rounded
+              unelevated
+              color="primary"
+              flat
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <q-dialog
