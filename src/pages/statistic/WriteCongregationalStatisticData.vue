@@ -1107,7 +1107,6 @@
                   <q-select
                     class="q-pa-sm col-7"
                     filled
-                    use-input
                     label="Selecione o dia"
                     option-label="label"
                     v-model="day.value"
