@@ -120,45 +120,16 @@ export default defineComponent({
       congregationData: {},
       culturalActivities: [],
       congregationName: '',
-      activitiesData:{
-        cultoData: {
-          qtyDadosPastor: '',
-          qtyCultoLeitura: '',
-          somaFrequenciaAnual: '',
-        },
-        santaCeiaData: {
-          qtyOferecidaAnual: '',
-          somaTotalComungantes: '',
-        },
-      },
-    
     }
   },
   beforeUnmount(){
     this.insertAtividadesCulticasStatisticDraft()
   },
   beforeMount() {
-    this.getPontosDeMissaoByOrganismId()
+    this.getAtividadesCulticas()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    getPontosDeMissaoByOrganismId() {
-      const opt = {
-        route: "/desktop/statistics/getPontosDeMissaoByOrganismId",
-        body: {
-          organismId: this.$route.query.organismId,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.culturalActivities = r.data.organismList
-      });
-    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
@@ -175,7 +146,12 @@ export default defineComponent({
         }
         console.log(r, 'a')
         r.data.validated ? this.validated = r.data.validated : this.validated = false
-        this.culturalActivities = r.data.activitiesData
+        if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
+          this.culturalActivities = r.data.activitiesData
+        } else {
+          this.culturalActivities = r.data
+        }
+        
       });
     },
     getOrganismNameForBreadCrumbs() {
