@@ -56,11 +56,13 @@
                   >
                     <div class="row q-gutter-sm">
                       <q-input
+                        type="number"
                         label="Frequência total"
                         v-model="departamentos[i].departamentoData.freqTotal"
                       >
                       </q-input>
                       <q-input
+                        type="number"
                         label="Número de encontros"
                         v-model="departamentos[i].departamentoData.qtnEncontros"
                       >
@@ -84,12 +86,14 @@
                       v-if="departamentos[i].departamentoData.padrinhos.exist === 'exist'"
                       dense
                       class="q-mx-sm"
+                      type="number"
                       label="Quantidade Padrinhos"
                     ></q-input>
                   </q-item-label>
                   <!--  Sobre escolas dominicais ---->
                   <q-input
                     v-model="departamentos[i].departamentoData.professores"
+                    type="number"
                     v-if="
                       item.organismConfigName ===
                       'Escola Dominical de leigos'
@@ -109,11 +113,13 @@
                     <q-input
                       v-model="departamentos[i].departamentoData.aulasCulto.freqCulto"
                       class="q-ml-md"
+                      type="number"
                       label="Frequência total durante culto"
                     ></q-input>
                     <q-input
                       v-model="departamentos[i].departamentoData.aulasCulto.qtnFaixaEtaria"
                       class="q-ml-md"
+                      type="number"
                       label="Divisão de faixa etária"
                     ></q-input>
                   </q-item-section>
@@ -128,11 +134,13 @@
                       Aulas no momento</q-item-label
                     >
                     <q-input
+                      type="number"
                       v-model="departamentos[i].departamentoData.aulasMomento.freqMomento"
                       class="q-ml-md"
                       label="Frequência total no momento"
                     ></q-input>
                     <q-input
+                      type="number"
                       v-model="
                         departamentos[i].departamentoData.aulasMomento.qtnFaixaEtaria
                       "
@@ -160,6 +168,7 @@
                           label="Não"
                         />
                         <q-input
+                          type="number" 
                           v-if="departamentos[i].departamentoData.musicGroup.exist === 'exist'"
                           v-model="departamentos[i].departamentoData.musicGroup.qtn"
                           class="q-pl-sm col q-mr-md"
@@ -169,12 +178,14 @@
                     </q-item-label>
                     <q-item-section>
                       <q-input
+                        type="number"
                         class="q-mr-md"
                         v-model="departamentos[i].departamentoData.coro"
                         label="Total no Coro"
                       ></q-input>
                     </q-item-section>
                     <q-input
+                      type="number"
                       class="q-mr-md"
                       v-model="departamentos[i].departamentoData.musicosTotal"
                       label="Músicos envolvidos ao total"
@@ -183,11 +194,13 @@
                     <q-item-section>
                       <div class="row">
                         <q-input
+                        type="number"
                         class="q-mr-md col"
                         v-model="departamentos[i].departamentoData.formalGroup.freqTotal"
                         label="Frequência Total"
                         />
                         <q-input
+                        type="number"
                         class="q-mr-md col"
                         v-model="departamentos[i].departamentoData.formalGroup.qtnEncontros"
                         label="Número de encontros"
@@ -202,6 +215,7 @@
                     "
                   >
                     <q-input
+                      type="number"
                       v-model="departamentos[i].departamentoData.visitadoresTotal"
                       class="q-pl-sm q-mr-md"
                       label="Total de visitantes do grupo"
@@ -209,6 +223,7 @@
                     <q-item-label class="q-mt-sm" /> Visitas Missionárias
                     <div class="row">
                       <q-input
+                        type="number"
                         v-model="
                           departamentos[i].departamentoData.visitasMissionarias.qtnVisitas
                         "
@@ -216,6 +231,7 @@
                         label="Número de visitas"
                       />
                       <q-input
+                        type="number"
                         v-model="
                           departamentos[i].departamentoData.visitasMissionarias.pessoas
                         "
@@ -226,11 +242,13 @@
                     <q-item-label class="q-mt-sm" /> Visitas à Membros
                     <div class="row">
                       <q-input
+                        type="number"
                         v-model="departamentos[i].departamentoData.visitasMembros.qtnVisitas"
                         class="q-pl-sm q-mr-md col"
                         label="Número de visitas"
                       />
                       <q-input
+                        type="number"
                         v-model="departamentos[i].departamentoData.visitasMembros.pessoas"
                         class="q-pl-sm q-mr-md col"
                         label="Total de pessoas"
@@ -241,11 +259,13 @@
                       <q-input
                         v-model="departamentos[i].departamentoData.visitasEnfermos.qtnVisitas"
                         class="q-pl-sm q-mr-md col"
+                        type="number"
                         label="Número de visitas"
                       />
                       <q-input
                         v-model="departamentos[i].departamentoData.visitasEnfermos.enfermos"
                         class="q-pl-sm q-mr-md col"
+                        type="number"
                         label="Total de enfermos"
                       />
                     </div>
@@ -260,17 +280,20 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.pessoasEnvol"
                     class="q-pl-sm col q-mr-md"
+                    type="number"
                     label="Total de pessoas"
                     />
                   <q-input
                     v-model="departamentos[i].departamentoData.pessoasBeneft"
                     class="q-pl-sm col q-mr-md"
+                    type="number"
                     label="Total Beneficiados"
                     />
                   </div>
                   <q-input
                     v-model="departamentos[i].departamentoData.acoesEventuais"
                     class="q-pl-sm col q-mr-md"
+                    type="number"
                     label="Ações eventuais"
                   />
                   <!-- </div>
@@ -278,6 +301,7 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.permProgs"
                     class="q-pl-sm col q-mr-md"
+                    type="number"
                     label="Programas permanentes"
                     />
                   </q-item-section>
@@ -295,11 +319,13 @@
                     ></q-input>
                     <div class="row">
                       <q-input
+                      type="number"
                       v-model="departamentos[i].departamentoData.freqTotal"
                       class="q-pl-sm col q-mr-md"
                       label="Número de encontros"
                       />
                       <q-input
+                      type="number"
                       v-model="departamentos[i].departamentoData.qtnEncontros"
                       class="q-pl-sm col q-mr-md"
                       label="Frequência total "
@@ -406,6 +432,7 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
+        this.$router.back()
         this.getGroupActivitiesByOrganismId()
       });
     },

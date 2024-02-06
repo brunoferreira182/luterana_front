@@ -363,6 +363,7 @@ export default defineComponent({
         this.$q.notify({
           message: 'Rascunho salvo com sucesso',
         })
+        this.$router.back()
         this.getMovimentoMembrosPorCongregacao()
       })
     },

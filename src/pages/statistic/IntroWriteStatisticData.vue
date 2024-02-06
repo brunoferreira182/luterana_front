@@ -86,8 +86,8 @@
           clickable 
           @click="goToStatistic"
         >
-          <q-item-section @click="goToStatistic">
-            <q-item-label class="text-h5">Estatística</q-item-label>
+          <q-item-section>
+            <q-item-label class="text-h5">Preenchimento</q-item-label>
           </q-item-section>
         </q-item>
       </div>
