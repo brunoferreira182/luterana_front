@@ -200,6 +200,7 @@
                     />
                     <div class="col">  
                       <q-checkbox
+                      v-if="!composition.congregations[iOrg].foundationDate"
                       label="Não sei"
                       v-model="composition.congregations[iOrg].semFundacao"
                       />
