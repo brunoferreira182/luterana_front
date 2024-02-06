@@ -56,7 +56,6 @@
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
-              default-opened
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
@@ -106,12 +105,12 @@
                             color="primary"
                             icon="sync_problem"
                             v-if="func.functionName === 'Pastor'"
-                            label="Solicitar alteração"
+                            label="Solicitar alteração/correção"
                             flat
                             @click="reportError('changePastor', org.organismChildId)"
                             rounded
                           >
-                            <q-tooltip>Solicitar alteração do Pastor</q-tooltip>
+                            <q-tooltip>Solicitar alteração/correção</q-tooltip>
                           </q-btn>
                         </q-item-label>
                       </q-item-section>
@@ -142,9 +141,20 @@
                       </q-avatar>
                     </q-item-section>
                     <q-item-section>{{dep.organismConfigName}}</q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        color="primary"
+                        flat
+                        rounded
+                        icon="add"
+                        label="departamento"
+                        @click="addNewDepartament(iOrg, iDep)"
+                      />
+                    </q-item-section>
                   </q-item>
+                  <q-separator class="q-mx-lg"/>
                 </div>
-                <div class="text-left q-ma-md text-h6">
+                <!-- <div class="text-left q-ma-md text-h6">
                   <q-btn
                     color="primary"
                     flat
@@ -156,7 +166,7 @@
                   >
                     <q-tooltip>Adicionar Departamento</q-tooltip>
                   </q-btn>
-                </div>
+                </div> -->
               </q-list>
               <q-list bordered>
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
@@ -173,12 +183,12 @@
                   <q-btn
                     color="primary"
                     icon="sync_problem"
-                    label="Solicitar alteração"
+                    label="Solicitar alteração/correção"
                     flat
                     @click="reportError('isAffiliated', org.organismChildId)"
                     rounded
                   >
-                    <q-tooltip>Solicitar alteração</q-tooltip>
+                    <q-tooltip>Solicitar alteração/correção</q-tooltip>
                   </q-btn>
                   <div class="row items-center">  
                     <q-input
@@ -744,18 +754,6 @@
         @hide="cleanDialogAddNewDepartament"
       >
         <q-card style="width: 400px;">
-          <q-card-section class="text-h6 text-center">
-            Selecione a configuração
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              class="q-pa-sm"
-              v-model="dialogAddNewDepartament.departamentSelected"
-              @update:model-value="getFunctionsByDepartamentId"
-              option-label="organismConfigName"
-              :options="deptConfigs"
-            />
-          </q-card-section>
           <q-card-section>
             <div 
               class="text-center text-h6 q-my-sm"
@@ -1543,7 +1541,7 @@
         </q-select>
         <q-input v-if="dialogReportError.type === 'isAffiliated'"
           type="textarea"
-          label="Informe o problema"
+          label="Informe a alteração"
           v-model="dialogReportError.text"
         />
       </q-card-section>
@@ -1685,10 +1683,9 @@ export default defineComponent({
       dialogAddNewDepartament: {
         open: false,
         iOrg: null,
-        iExistsDept: null,
+        iDep: null,
         name: null,
         data: null,
-        departamentSelected: null,
         functions: null
       },
       dialogDepartamentDetail: {
@@ -2202,27 +2199,22 @@ export default defineComponent({
       }
     },
     confirmAddNewDepartament() {
-      this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts.forEach((departament, iDep) => {
-        if (departament.organismConfigId === this.dialogAddNewDepartament.departamentSelected.organismConfigId ) {
-          let functions = []
-          this.dialogAddNewDepartament.functions.forEach((func) => {
-            functions.push({
-              organismFunctionConfigId: func._id,
-              functionName: func.functionName,
-              functionUsers: func.functionUsers
-            })
-          })
-    
-          this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[iDep].existingDepartaments.push({
-            departamentConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId,
-            departamentConfigName: this.dialogAddNewDepartament.departamentSelected.organismConfigName,
-            departamentName: this.dialogAddNewDepartament.name,
-            organismFunctions: functions,
-            action: 'add'
-          })
-          this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[iDep].trueLength++
-        }
+      let functions = []
+      this.dialogAddNewDepartament.functions.forEach((func) => {
+        functions.push({
+          organismFunctionConfigId: func._id,
+          functionName: func.functionName,
+          functionUsers: func.functionUsers
+        })
       })
+      this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[this.dialogAddNewDepartament.iDep].existingDepartaments.push({
+        departamentConfigId: this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[this.dialogAddNewDepartament.iDep].organismConfigId,
+        departamentConfigName: this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[this.dialogAddNewDepartament.iDep].organismConfigName,
+        departamentName: this.dialogAddNewDepartament.name,
+        organismFunctions: functions,
+        action: 'add'
+      })
+      this.composition.congregations[this.dialogAddNewDepartament.iOrg].depts[this.dialogAddNewDepartament.iDep].trueLength++
       this.cleanDialogAddNewDepartament()
     },
     removeUserFromNewDept(iFunc, iUser) {
@@ -2251,11 +2243,11 @@ export default defineComponent({
       this.dialogInserFunctionUserInNewDept.iFunc = iFunc
       this.dialogInserFunctionUserInNewDept.functionName = func.functionName
     },
-    getFunctionsByDepartamentId() {
+    getFunctionsByDepartamentId(id) {
       const opt = {
         route: '/desktop/statistics/getFunctionsByDepartamentId',
         body: {
-          organismConfigId: this.dialogAddNewDepartament.departamentSelected.organismConfigId
+          organismConfigId: id
         }
       }
       useFetch(opt).then((r) => {
@@ -2293,8 +2285,11 @@ export default defineComponent({
       this.dialogDepartamentDetail.open = true
       this.clearDialogSelectDepartamentDetail()
     },
-    addNewDepartament(iOrg) {
+    addNewDepartament(iOrg, iDep) {
+      let id = this.composition.congregations[iOrg].depts[iDep].organismConfigId
+      this.getFunctionsByDepartamentId(id)
       this.dialogAddNewDepartament.iOrg = iOrg
+      this.dialogAddNewDepartament.iDep = iDep
       this.dialogAddNewDepartament.open = true
     },
     clearDialogAddNewCongrgation() {
