@@ -363,7 +363,7 @@ export default defineComponent({
     };
   },
   beforeUnmount(){
-    this.saveDraft()
+    // this.saveDraft()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
