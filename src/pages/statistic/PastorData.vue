@@ -1577,6 +1577,7 @@ export default defineComponent({
           if (r.error) return
           this.$q.notify('Etapa finalizada com sucesso!')
           this.getMyOrganismsList()
+          this.$router.back()
           this.getParoquiaId()
         })
       }
@@ -1719,6 +1720,7 @@ export default defineComponent({
         useFetch(opt).then((r) => {
           if  (r.error) return
           else this.$q.notify('Rascunho salvo com sucesso')
+          this.$router.back()
           this.getMyOrganismsList()
         })
       }
