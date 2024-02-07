@@ -83,7 +83,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Quant. crianças batizadas familias IELB"
+                label="Quant. crianças batizadas de familias IELB"
                 v-model="membersMovement.criancasBatizadasFamiliasIelb"
                 @blur="calculateTotal()"
               />
@@ -114,7 +114,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Quant. de profissão de fé com batismo adultos comungantes"
+                label="Quant. de profissão de fé com batismo adultos"
                 v-model="membersMovement.profissaoFeBatismoAdultos"
                 @blur="calculateTotal()"
               />
@@ -124,7 +124,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Quant. de profissão de fé comungantes"
+                label="Quant. de profissão de fé com reconhecimento de batismo"
                 v-model="membersMovement.profissaoFe"
                 @blur="calculateTotal()"
               />
@@ -257,11 +257,12 @@
         </div>
       </div>
 
-      <div class="q-ma-sm q-mt-lg text-center">
+      <div class="q-ma-sm q-mt-lg q-ml-md text-left">
+        <div class="text-h5">Totalização de membros: {{ total }}</div>
         <div class="text-h6">Comungantes: {{ totalComungantes }}</div>
         <div class="text-h6">Não comungantes: {{ totalNaoComungantes }}</div>
-        <div class="text-h5">Total: {{ total }}</div>
-
+      </div>
+      <div class="q-ma-sm q-mt-md text-center">
         <q-chip
           v-if="validated"
           color="green"
@@ -269,7 +270,7 @@
           text-color="white"
           icon="done"
         />
-
+  
         <q-chip
           v-if="!validated"
           color="red"
@@ -277,11 +278,13 @@
           text-color="white"
           icon="warning"
         /><br>
-
+  
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="q-my-lg"
+          unelevated
+          class="q-my-lg full-width"
+          rounded
           no-caps
           @click="saveDraft()"
         />

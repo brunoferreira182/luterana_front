@@ -4,7 +4,7 @@
       <div class="text-h5 q-ma-md">
         Bem-vindo(a) a Estatística 2023!
       </div>
-      <div class="q-pa-sm" v-if="hasParoquia">
+      <div class="q-pa-sm text-center" v-if="hasParoquia">
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
@@ -43,12 +43,12 @@
           clickable
           @click="$router.push('/statistic/writeCongregationalStatisticData')"
         >
-          <q-item-section @click="$router.push('/statistic/writeCongregationalStatisticData')">
+          <q-item-section >
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
           <q-chip
             color="green"
-            label="Validado"
+            label="Etapa finalizada"
             text-color="white"
             v-if="status && status.compositionStatus === 'sent'"
           />
@@ -211,7 +211,6 @@ export default defineComponent({
     this.getStatusPreStatistic()
   },
   methods: {
-    aaa () {console.log('caraio')},
     clearDialogSipar() {
       this.dialogSipar.open = false
     },

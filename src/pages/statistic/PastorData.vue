@@ -1496,7 +1496,7 @@ export default defineComponent({
         ],
       }
     },
-    async getParoquiaId() {
+    getParoquiaId() {
       const opt = {
         route: '/desktop/statistics/getParoquiaIdByUserId',
       }
@@ -1506,7 +1506,7 @@ export default defineComponent({
         this.getPastorDataTabs()
       })
     },
-    saveOficial() {
+    async saveOficial() {
       if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ){
         this.$q.notify('Preencha seu nome e fone para contato')
         return
@@ -1602,13 +1602,20 @@ export default defineComponent({
         }
         this.$q.loading.show()
         useFetch(opt).then((r) => {
-          this.$q.loading.hide()
-          if (r.error) return
-          this.$q.notify('Etapa finalizada com sucesso!')
-          this.getMyOrganismsList()
-          this.$router.back()
-          this.getParoquiaId()
+          if (r.error) return this.$q.loading.hide()
+          this.$q.notify('Finalizando etapa...')
         })
+        const promisses = [
+          this.getPastorDataTabs(),
+          this.getMyOrganismsList(),
+          this.getParoquiaId()
+        ]
+        await Promise.all(promisses)
+        setTimeout(() => {
+          this.$q.loading.hide()
+          this.$q.notify('Etapa finalizada.')
+          this.$router.back();
+        }, 2000)
       }
     },
     addLastPastoralActivity() {
