@@ -43,8 +43,24 @@
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
             :key="index"
           >
-            <div class="col q-gutter-y-md">
-              <q-item-label class=" q-pa-sm"> Confirmados em 2023
+            <div 
+              class="col q-gutter-y-md"
+              v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1"
+            >
+              <q-item-label class=" q-pa-sm"> Quantidade de alunos
+                <div class="col-6 justify-between">
+                  <q-input 
+                  type="number"
+                  :label="`${confirmado.turma} °ano`"
+                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
+                  />
+                </div>
+              </q-item-label>
+            </div>
+            <div
+              v-if="(instructionYears - 1 === 0) || index === instructionYears - 1"
+            >
+              <q-item-label class=" q-pa-sm"> Quant. de confirmados
                 <div class="col-6 justify-between">
                   <q-input 
                   type="number"
@@ -56,7 +72,6 @@
             </div>
           </div>
         </div>
-
         <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md q-mt-md">
           <div class="text-h6">Movimento de membros</div>
           <div class="row q-ma-sm">
@@ -329,7 +344,8 @@ export default defineComponent({
       validated: false,
       totalComungantes: 0,
       totalNaoComungantes: 0,
-      total: 0
+      total: 0,
+      instructionYears: null
     }
   },
   beforeUnmount(){
@@ -341,14 +357,26 @@ export default defineComponent({
   },
   methods: {
     calculaAnosEstudo (ev) {
+      this.instructionYears = ev
       this.membersMovement.instrucaoDeConfirmados.confirmados = []
       for (let i = 1; i <= ev; i++) {
-        this.membersMovement.instrucaoDeConfirmados.confirmados.push(
-          {
-            turma: i  ,
-            Quant: null,
-          }
-        )
+        if (i === ev) {
+          this.membersMovement.instrucaoDeConfirmados.confirmados.push(
+            {
+              turma: i  ,
+              Quant: null,
+              confirmationYear: true
+            }
+          )
+        } else {
+          this.membersMovement.instrucaoDeConfirmados.confirmados.push(
+            {
+              turma: i  ,
+              Quant: null,
+              confirmationYear: false
+            }
+          )
+        }
       }
     },
     saveDraft () {
