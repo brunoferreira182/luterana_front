@@ -151,7 +151,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getUsersList();
+    // this.getUsersList();
   },
   unmounted() {
     const currentRoute = this.$route

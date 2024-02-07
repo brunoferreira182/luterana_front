@@ -27,7 +27,7 @@
       <q-item
         v-if="composition"
         style="border-radius: 1rem;"
-        class="q-ma-sm"
+        class=""
       >
         <q-item-section>
           <div class="text-h6 text-left">
@@ -74,10 +74,10 @@
             </q-btn>
           </div>
           <q-item-label 
-          class="bg-white q-mt-sm text-center"
-          style="border-radius: .7rem;"
-          v-for="(org, iOrg) in composition.congregations"
-          :key="org"
+            class="bg-white q-mt-sm text-center"
+            style="border-radius: .7rem;"
+            v-for="(org, iOrg) in composition.congregations"
+            :key="org"
           > 
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
@@ -87,6 +87,27 @@
               style="border-radius: 1rem;"
               exp
             >
+              <div class="text-left q-ma-sm">
+                <q-btn
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                  color="red"
+                  rounded
+                  @click="openDialogRemoveCongregation(iOrg)"
+                  flat
+                  unelevated
+                  label="Inativar congregação"
+                  no-caps
+                />
+                <q-btn
+                  v-else-if="(org.action && org.action === 'remove') && (!status || (status && status.value !== 'sent'))"
+                  color="primary"
+                  rounded
+                  unelevated
+                  @click="activateCongregation(iOrg)"
+                  label="Ativar congregação"
+                  no-caps
+                />
+              </div>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Funções
@@ -135,6 +156,73 @@
                   </div>
                 </div>
               </q-list>
+              <q-list bordered class="q-my-sm">
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Secretária contratada
+                </div>
+                <div class="q-mx-md">
+                  <div v-if="org && org.secretary">
+                    <q-list
+                      bordered
+                      class="q-my-sm"
+                      v-for="(sec, iSec) in org.secretary"
+                      :key="sec"
+                    >
+                      <q-item
+                        class="q-ma-sm"
+                      >  
+                        <q-item-section>
+                          <q-item-label lines="1">
+                            <strong>Nome:</strong> {{ sec.user.userName }}
+                          </q-item-label>
+                          <q-item-label lines="2">
+                            <strong>Dia da semana:</strong> 
+                          </q-item-label>
+                            <div
+                              v-for="day in sec.days"
+                              :key="day"
+                              class="q-ma-sm"
+                            >
+                              {{day.label}}
+                            </div>
+                          <q-item-label lines="3">
+                            <strong>Hora inicial:</strong> {{sec.initialHour}}
+                          </q-item-label>
+                          <q-item-label>
+                            <strong>Hora final:</strong> {{sec.finalHour}}
+                          </q-item-label>
+                          <q-item-label lines="4" v-if="sec.obs">
+                            <strong>Observções:</strong>
+                            {{ sec.obs }}
+                          </q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn
+                            color="red"
+                            flat
+                            unelevated
+                            rounded
+                            icon="delete"
+                            @click="removeSecretary(iOrg, iSec)"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+                  <div class="q-ma-md text-h6">
+                    <q-btn
+                      label="Secretária"
+                      icon="add"
+                      class="full-width"
+                      rounded
+                      no-caps
+                      color="primary"
+                      flat
+                      @click="addSecretaryToParoquia(iOrg)"
+                    />
+                  </div>
+                </div>
+              </q-list>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Departamentos
@@ -164,8 +252,9 @@
                         flat
                         rounded
                         icon="add"
-                        label="departamento"
+                        label="Adicionar"
                         @click="addNewDepartament(iOrg, iDep)"
+                        no-caps
                       />
                     </q-item-section>
                   </q-item>
@@ -287,77 +376,13 @@
                     dense
                     no-caps
                     color="primary"
-                    unelevated
                     rounded
-                    class="q-pa-sm q-my-md"
+                    flat
+                    icon="add"
+                    class="full-width q-py-md"
                     @click="clkAddServices(iOrg)"
                   />
                 </div>
-              </q-list>
-              <q-list bordered class="q-mt-sm">
-                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
-                  Secretária contratada
-                </div>
-                <div class="q-mx-md">
-                  <div v-if="org && org.secretary">
-                    <q-list
-                      bordered
-                      class="q-my-sm"
-                      v-for="(sec, iSec) in org.secretary"
-                      :key="sec"
-                    >
-                      <q-item
-                        class="q-ma-sm"
-                      >  
-                        <q-item-section>
-                          <q-item-label lines="1">
-                            <strong>Nome:</strong> {{ sec.user.userName }}
-                          </q-item-label>
-                          <q-item-label lines="2">
-                            <strong>Dia da semana:</strong> 
-                          </q-item-label>
-                            <div
-                              v-for="day in sec.days"
-                              :key="day"
-                              class="q-ma-sm"
-                            >
-                              {{day.label}}
-                            </div>
-                          <q-item-label lines="3">
-                            <strong>Hora inicial:</strong> {{sec.initialHour}}
-                          </q-item-label>
-                          <q-item-label>
-                            <strong>Hora final:</strong> {{sec.finalHour}}
-                          </q-item-label>
-                          <q-item-label lines="4" v-if="sec.obs">
-                            <strong>Observções:</strong>
-                            {{ sec.obs }}
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-btn
-                            color="red"
-                            flat
-                            unelevated
-                            rounded
-                            icon="delete"
-                            @click="removeSecretary(iOrg, iSec)"
-                          />
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </div>
-                  <div class="q-ma-md text-h6">
-                    <q-btn
-                      label="Secretária"
-                      icon="add"
-                      color="primary"
-                      rounded
-                      unelevated
-                      @click="addSecretaryToParoquia(iOrg)"
-                    />
-                  </div>
-                  </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
@@ -371,31 +396,13 @@
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
-                  @update:model-value="insertParoquialManagementType(iOrg, org)"
-                  label="Outro"
+                  @blur="insertParoquialManagementType(iOrg, org)"
+                  label="Qual?"
                   class="q-pa-sm"
                   v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
-              <div class="text-right q-ma-sm">
-                <q-btn
-                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
-                  color="red"
-                  rounded
-                  @click="openDialogRemoveCongregation(iOrg)"
-                  flat
-                  unelevated
-                  label="Excluir congregação"
-                />
-                <q-btn
-                  v-else-if="(org.action && org.action === 'remove') && (!status || (status && status.value !== 'sent'))"
-                  color="primary"
-                  rounded
-                  unelevated
-                  @click="activateCongregation(iOrg)"
-                  label="Ativar congregação"
-                />
-              </div>
+              
             </q-expansion-item>
               </q-item-label>
             </q-item-section>
@@ -1056,7 +1063,14 @@
       >
         <q-card style="width: 400px">
           <q-card-section class="text-center text-h6">
-            Deseja remover esta congregação?
+            Deseja inativar esta congregação?
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              type="date"
+              label="Data do encerramento"
+              v-model="dialogRemoveCongregation.date"
+            ></q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1409,7 +1423,7 @@
           style="width:400px;border-radius:1rem"
         >
           <q-card-section class="text-h6 text-center"> 
-            selecione o usuário
+            Selecione o usuário
           </q-card-section>
           <q-card-section>
             <q-select
@@ -1469,33 +1483,12 @@
             <div
               class="text-h6 text-center"
             >
-              Selecione os horários
+              Informe os horários
             </div>
             <q-input
-              label="Hora inical"
-              class="q-px-sm q-mt-sm"
-              v-model="dialogAddSecretary.initialHour"
-              type="time"
+              label="Horários"
+              v-model="dialogAddSecretary.obsHours"
             />
-            <q-input
-              label="Hora final"
-              class="q-px-sm q-mt-sm"
-              v-model="dialogAddSecretary.finalHour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-section>
-            <div
-              class="text-h6 text-center"
-            >
-              Observações
-            </div>
-            <q-input
-              label="Adicione aqui alguma observação"
-              v-model="dialogAddSecretary.obs"
-            >
-
-            </q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1813,7 +1806,8 @@ export default defineComponent({
       filiatedOptions: ['Sim', 'Não'],
       dialogRemoveCongregation: {
         open: false,
-        iOrg: null
+        iOrg: null,
+        date: ''
       },
       dialogReportError: {
         open: false,
@@ -1869,8 +1863,6 @@ export default defineComponent({
         open: false,
         userSelected: null,
         iOrg: null,
-        initialHour: null,
-        finalHour: null,
         days: [
           {label: 'Segunda-feira', selected: false},
           {label: 'Terça-feira', selected: false},
@@ -1880,7 +1872,7 @@ export default defineComponent({
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
         ],
-        obs: ''
+        obsHours: ''
       },
       options: [
         { label: 'SIPAR', value: 'SIPAR' },
@@ -1888,7 +1880,7 @@ export default defineComponent({
         { label: 'Inchurch', value: 'Inchurch', color: 'red' },
         { label: 'F5 Sapi', value: 'F5 Sapi', color: 'yellow-8' },
         { label: 'Não possuo', value: 'Não possuo', color: 'pink-8' },
-        { label: 'Outro: Qual', value: 'outro', color: 'purple' }
+        { label: 'Outro', value: 'outro', color: 'purple' }
       ],
       other: '',
       group: null,
@@ -2167,7 +2159,7 @@ export default defineComponent({
       this.composition.congregations[iOrg].secretary.splice(iSec, 1)
     },
     confirmAddSecretary() {
-      if (!this.dialogAddSecretary.userSelected || !this.dialogAddSecretary.userSelected.userName || !this.dialogAddSecretary.initialHour || !this.dialogAddSecretary.finalHour ) {
+      if (!this.dialogAddSecretary.userSelected || !this.dialogAddSecretary.userSelected.userName || !this.dialogAddSecretary.obsHours ) {
         this.$q.notify('Preencha todos os campos para prosseguir')
         returns
       }
@@ -2182,9 +2174,7 @@ export default defineComponent({
           userId: this.dialogAddSecretary.userSelected.userId
         },
         days,
-        initialHour: this.dialogAddSecretary.initialHour,
-        finalHour: this.dialogAddSecretary.finalHour,
-        obs: this.dialogAddSecretary.obs
+        obsHours: this.dialogAddSecretary.obsHours
       })
       this.clearDialogAddSecretary()
     },
@@ -2193,8 +2183,6 @@ export default defineComponent({
         open: false,
         userSelected: null,
         iOrg: null,
-        initialHour: null,
-        finalHour: null,
         days: [
           {label: 'Segunda-feira', selected: false},
           {label: 'Terça-feira', selected: false},
@@ -2204,7 +2192,7 @@ export default defineComponent({
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
         ],
-        obs: ''
+        obsHours: ''
       }
     },
     addSecretaryToParoquia(iOrg) {
@@ -2289,10 +2277,16 @@ export default defineComponent({
       }
     },
     removeCongregation() {
+      if (this.dialogRemoveCongregation.date === '') {
+        this.$q.notify('Informe a data de desativação')
+        return
+      }
       if (!this.composition.congregations[this.dialogRemoveCongregation.iOrg].action) {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
+        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       } else {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
+        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       }
       this.cleanDialogRemoveCongregation()
     },
@@ -2321,10 +2315,12 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$q.notify('Finalizando etapa...')
       this.$q.loading.show();
       await this.getCompositionByUserId();
       setTimeout(() => {
         this.$q.loading.hide();
+        this.$q.notify('Etapa finalizada com sucesso')
         this.$router.back();
       }, 2000);
     },

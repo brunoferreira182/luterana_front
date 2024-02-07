@@ -324,13 +324,15 @@ export default defineComponent({
   watch: {
     $route() {
       let existe = false;
-      this.options.forEach((element) => {
-        if (this.$route.path === element.route) {
-          existe = true;
+      if (this.options) {
+        this.options.forEach((element) => {
+          if (this.$route.path === element.route) {
+            existe = true;
+          }
+        });
+        if (!existe) {
+          this.active = false;
         }
-      });
-      if (!existe) {
-        this.active = false;
       }
     },
   },

@@ -17,6 +17,27 @@
             />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
+          <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
         </div>
         <div class="text-center q-gutter-md"> 
           <div class="text-h5">
@@ -273,6 +294,20 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
+      otherOrganisms: [],
+    }
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getFinanceStatisticByOrganismId()
+          this.getFinanceTotalValueFromParoquia()
+          this.getOrganismNameForBreadCrumbs()
+          this.getOthersCongregations()
+        }
+      },
+      immediate: true
     }
   },
   beforeUnmount(){
@@ -282,8 +317,29 @@ export default defineComponent({
     this.getFinanceStatisticByOrganismId()
     this.getFinanceTotalValueFromParoquia()
     this.getOrganismNameForBreadCrumbs()
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
   getFinanceTotalValueFromParoquia(){
     const opt = {
       route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
