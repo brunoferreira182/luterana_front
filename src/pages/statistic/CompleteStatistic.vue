@@ -23,7 +23,7 @@
           </q-item-section>
           <q-chip
             v-if="validationResume.atividadesCulticasStatistics === 't'"
-            label="Validado"
+            label="Etapa finalizada"
             color="green"
             text-color="white"
           />
@@ -46,7 +46,7 @@
           </q-item-section>
           <q-chip
             v-if="validationResume.groupActivity === 't'"
-            label="Validado"
+            label="Etapa finalizada"
             color="green"
             text-color="white"
           />
@@ -75,7 +75,7 @@
           </q-item-section>
           <q-chip
             v-if="validationResume.membersMovement === 't'"
-            label="Validado"
+            label="Etapa finalizada"
             color="green"
             text-color="white"
           />
@@ -103,7 +103,7 @@
           </q-item-section>
           <q-chip
             v-if="validationResume.financeStatistics === 't'"
-            label="Validado"
+            label="Etapa finalizada"
             color="green"
             text-color="white"
           />

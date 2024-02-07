@@ -29,8 +29,8 @@
             style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
             class="q-pa-md"
           >
-            <div class="text-h5">
-              {{ cultural.organismName }}
+            <div class="text-h5" >
+              <u>{{ cultural.organismName }}</u>
             </div>
             <div class="q-mt-md">
               Culto

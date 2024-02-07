@@ -96,7 +96,7 @@
                     type="number"
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical de leigos'
+                      'Departamento de Escola dominical de leigos'
                     "
                     label="Quantidade de professores"
                   >
@@ -104,7 +104,7 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical de leigos'
+                      'Departamento de Escola dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
@@ -127,7 +127,7 @@
                   <q-item-section
                     v-if="
                       item.organismConfigName ===
-                      'Departamento de Escola Dominical de leigos'
+                      'Departamento de Escola dominical de leigos'
                     "
                   >
                     <q-item-label class="q-pt-lg q-pl-xs">
@@ -211,7 +211,7 @@
                   <!-- visitação -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departamento de Visitação de leigos'
+                      item.organismConfigName === 'Grupo de Visitação de leigos'
                     "
                   >
                     <q-input
@@ -273,7 +273,7 @@
                   <!-- Sobre ação social   -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departmento de Ação social de leigos'
+                      item.organismConfigName === 'Departamento de Ação social de leigos'
                     "
                   >
                   <div class="row">
@@ -380,11 +380,11 @@ export default defineComponent({
       validated: false,
       statisticStatus: null,
       arrayIgnore: [
-        "Departamento de Escola Dominical de leigos",
-        "Departamento da Música de leigos",
-        "Departamento de Visitação de leigos",
-        "Departamento de Ação social de leigos",
-        "Outros",
+      'Departamento de Escola dominical de leigos',
+      'Departamento da Música de leigos', 
+      'Grupo de Visitação de leigos', 
+      'Departamento de Ação social de leigos', 
+      'Outros'
       ],
     };
   },
