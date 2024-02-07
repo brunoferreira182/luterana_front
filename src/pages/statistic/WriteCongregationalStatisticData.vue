@@ -34,6 +34,33 @@
           <div class="text-h6 text-left">
             Paróquia: {{ composition.organismParentName }}
           </div>
+          <div class="q-my-sm" v-if="pastorsList && pastorsList.length > 0">
+            <div class="text-h6">
+              Pastores:
+            </div>
+            <q-list>
+              <q-item
+                v-for="pastor in pastorsList"
+                :key="pastor"
+                class="bg-grey-2 q-ma-sm"
+                style="border-radius:1rem"
+              > 
+                {{ pastor.userName }}
+              </q-item>
+            </q-list>
+            <div>
+              <q-btn
+                color="primary"
+                icon="sync_problem"
+                label="Solicitar alteração/correção"
+                flat
+                @click="reportError('changePastor', org.organismChildId)"
+                rounded
+              >
+                <q-tooltip>Solicitar alteração/correção</q-tooltip>
+              </q-btn>
+            </div>
+          </div>
           <div class="q-mt-sm text-left text-h6">
             Congregações:
             <q-btn
@@ -59,7 +86,6 @@
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
-              exp
             >
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
@@ -70,53 +96,55 @@
                   v-for="(func, iFunc) in org.organismFunctions" 
                   :key="func"
                 >
-                  <strong>{{ func.functionName }}:</strong>
-                  <q-btn
-                    color="primary"
-                    flat
-                    v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
-                    rounded
-                    icon="add"
-                    @click="addFunctionUser(iFunc, iOrg, func.functionName)"
-                    size="12px"
-                  >
-                  </q-btn>
-                  <div
-                    v-for="(user, iUser) in func.functionUsers"
-                    :key="user"
-                  >
-                    <q-item
-                      class="no-padding"
-                      v-if="!user.action || user.action !== 'remove'"
+                  <div v-if="func.functionName !== 'Pastor'">
+                    <strong>{{ func.functionName }}:</strong>
+                    <q-btn
+                      color="primary"
+                      flat
+                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
+                      rounded
+                      icon="add"
+                      @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                      size="12px"
                     >
-                      <q-item-section class="no-padding" >
-                        <q-item-label>
-                          {{ user.userName }}
-                          <q-btn
-                            color="red"
-                            flat
-                            v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
-                            rounded
-                            unelevated
-                            icon="delete"
-                            @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
-                          ></q-btn>
-                          <q-btn
-                            color="primary"
-                            icon="sync_problem"
-                            v-if="func.functionName === 'Pastor'"
-                            dense
+                    </q-btn>
+                    <div
+                      v-for="(user, iUser) in func.functionUsers"
+                      :key="user"
+                    >
+                      <q-item
+                        class="no-padding"
+                        v-if="!user.action || user.action !== 'remove'"
+                      >
+                        <q-item-section class="no-padding" >
+                          <q-item-label>
+                            {{ user.userName }}
+                            <q-btn
+                              color="red"
+                              flat
+                              v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
+                              rounded
+                              unelevated
+                              icon="delete"
+                              @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                            ></q-btn>
+                            <q-btn
+                              color="primary"
+                              icon="sync_problem"
+                              v-if="func.functionName === 'Pastor'"
+                              dense
                             no-caps
                             label="Solicitar alteração/correção"
-                            flat
-                            @click="reportError('changePastor', org.organismChildId)"
-                            rounded
-                          >
-                            <q-tooltip>Solicitar alteração/correção</q-tooltip>
-                          </q-btn>
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
+                              flat
+                              @click="reportError('changePastor', org.organismChildId)"
+                              rounded
+                            >
+                              <q-tooltip>Solicitar alteração/correção</q-tooltip>
+                            </q-btn>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </div>
                   </div>
                 </div>
               </q-list>
@@ -204,6 +232,7 @@
                     />
                     <div class="col">  
                       <q-checkbox
+                      v-if="!composition.congregations[iOrg].foundationDate"
                       label="Não sei"
                       v-model="composition.congregations[iOrg].semFundacao"
                       />
@@ -1801,7 +1830,8 @@ export default defineComponent({
         { label: 'Outro: Qual', value: 'outro', color: 'purple' }
       ],
       other: '',
-      group: null
+      group: null,
+      pastorsList: []
     }
   }, 
   beforeMount() {
@@ -2581,7 +2611,20 @@ export default defineComponent({
             organismConfigId: dep.organismConfigId
           })
         })
+        this.composition.congregations.forEach((org)=> {
+          org.organismFunctions.forEach((func) => {
+            if (func.functionName === 'Pastor' && func.functionUsers.length > 0) {
+              func.functionUsers.forEach((pastor) => {
+                const exists = this.pastorsList.some(existPastor => existPastor.userName === pastor.userName);
+                if (!exists) {
+                  this.pastorsList.push(pastor);
+                }
+              });
+            }
+          });
+        });
         this.composition.congregations.forEach((org) => {
+          
           if (org.depts) {
             org.depts.forEach((dep) => {
               if (dep.existingDepartaments.length > 0) {
