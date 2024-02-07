@@ -135,6 +135,73 @@
                   </div>
                 </div>
               </q-list>
+              <q-list bordered class="q-my-sm">
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Secretária contratada
+                </div>
+                <div class="q-mx-md">
+                  <div v-if="org && org.secretary">
+                    <q-list
+                      bordered
+                      class="q-my-sm"
+                      v-for="(sec, iSec) in org.secretary"
+                      :key="sec"
+                    >
+                      <q-item
+                        class="q-ma-sm"
+                      >  
+                        <q-item-section>
+                          <q-item-label lines="1">
+                            <strong>Nome:</strong> {{ sec.user.userName }}
+                          </q-item-label>
+                          <q-item-label lines="2">
+                            <strong>Dia da semana:</strong> 
+                          </q-item-label>
+                            <div
+                              v-for="day in sec.days"
+                              :key="day"
+                              class="q-ma-sm"
+                            >
+                              {{day.label}}
+                            </div>
+                          <q-item-label lines="3">
+                            <strong>Hora inicial:</strong> {{sec.initialHour}}
+                          </q-item-label>
+                          <q-item-label>
+                            <strong>Hora final:</strong> {{sec.finalHour}}
+                          </q-item-label>
+                          <q-item-label lines="4" v-if="sec.obs">
+                            <strong>Observções:</strong>
+                            {{ sec.obs }}
+                          </q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn
+                            color="red"
+                            flat
+                            unelevated
+                            rounded
+                            icon="delete"
+                            @click="removeSecretary(iOrg, iSec)"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+                  <div class="q-ma-md text-h6">
+                    <q-btn
+                      label="Secretária"
+                      icon="add"
+                      class="full-width"
+                      rounded
+                      no-caps
+                      color="primary"
+                      flat
+                      @click="addSecretaryToParoquia(iOrg)"
+                    />
+                  </div>
+                </div>
+              </q-list>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Departamentos
@@ -287,78 +354,15 @@
                     dense
                     no-caps
                     color="primary"
-                    unelevated
                     rounded
-                    class="q-pa-sm q-my-md"
+                    flat
+                    icon="add"
+                    class="full-width q-py-md"
                     @click="clkAddServices(iOrg)"
                   />
                 </div>
               </q-list>
-              <q-list bordered class="q-mt-sm">
-                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
-                  Secretária contratada
-                </div>
-                <div class="q-mx-md">
-                  <div v-if="org && org.secretary">
-                    <q-list
-                      bordered
-                      class="q-my-sm"
-                      v-for="(sec, iSec) in org.secretary"
-                      :key="sec"
-                    >
-                      <q-item
-                        class="q-ma-sm"
-                      >  
-                        <q-item-section>
-                          <q-item-label lines="1">
-                            <strong>Nome:</strong> {{ sec.user.userName }}
-                          </q-item-label>
-                          <q-item-label lines="2">
-                            <strong>Dia da semana:</strong> 
-                          </q-item-label>
-                            <div
-                              v-for="day in sec.days"
-                              :key="day"
-                              class="q-ma-sm"
-                            >
-                              {{day.label}}
-                            </div>
-                          <q-item-label lines="3">
-                            <strong>Hora inicial:</strong> {{sec.initialHour}}
-                          </q-item-label>
-                          <q-item-label>
-                            <strong>Hora final:</strong> {{sec.finalHour}}
-                          </q-item-label>
-                          <q-item-label lines="4" v-if="sec.obs">
-                            <strong>Observções:</strong>
-                            {{ sec.obs }}
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-btn
-                            color="red"
-                            flat
-                            unelevated
-                            rounded
-                            icon="delete"
-                            @click="removeSecretary(iOrg, iSec)"
-                          />
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </div>
-                  <div class="q-ma-md text-h6">
-                    <q-btn
-                      label="Secretária"
-                      icon="add"
-                      color="primary"
-                      rounded
-                      unelevated
-                      @click="addSecretaryToParoquia(iOrg)"
-                    />
-                  </div>
-                  </div>
-              </q-list>
+             
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Gestão Paroquial
