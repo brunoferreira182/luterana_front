@@ -54,7 +54,7 @@
                 icon="sync_problem"
                 label="Solicitar alteração/correção"
                 flat
-                @click="reportError('changePastor', org.organismChildId)"
+                @click="reportPastorError('changePastor')"
                 rounded
               >
                 <q-tooltip>Solicitar alteração/correção</q-tooltip>
@@ -128,19 +128,6 @@
                               icon="delete"
                               @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
                             ></q-btn>
-                            <q-btn
-                              color="primary"
-                              icon="sync_problem"
-                              v-if="func.functionName === 'Pastor'"
-                              dense
-                            no-caps
-                            label="Solicitar alteração/correção"
-                              flat
-                              @click="reportError('changePastor', org.organismChildId)"
-                              rounded
-                            >
-                              <q-tooltip>Solicitar alteração/correção</q-tooltip>
-                            </q-btn>
                           </q-item-label>
                         </q-item-section>
                       </q-item>
@@ -1612,6 +1599,81 @@
     </q-card>
   </q-dialog>
   <q-dialog
+    v-model="dialogReportPastorError.open"
+  >
+    <q-card style="width: 400px;">
+      <q-card-section
+        class="text-h6 text-center"
+      >
+        Informe o substituto desejado:
+      </q-card-section>
+      <q-card-section>
+        <q-select
+          v-model="dialogReportPastorError.userSelected"
+          use-input
+          label="Nome do usuário"
+          option-label="userName"
+          :options="usersOptions"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+        >
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+              <q-item-section class="text-grey">
+                <q-btn 
+                  icon="person_add"
+                  dense
+                  flat
+                  color="primary"
+                  @click="dialogAddUser.open = true"
+                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </q-card-section>
+      <q-card-section>
+        <q-input
+          label="Observações"
+          v-model="dialogReportPastorError.text"
+        >
+
+        </q-input>
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          flat
+          rounded
+          color="primary"
+          label="Sair"
+          no-caps
+          unelevated
+          @click="clearDialogReportError"
+        />
+        <q-btn
+          rounded
+          color="primary"
+          unelevated
+          label="Confirmar"
+          no-caps
+          @click="confirmReportPastorError"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
     v-model="dialogAddUser.open"
   >
     <q-card style="width: 400px;">
@@ -1829,7 +1891,13 @@ export default defineComponent({
       ],
       other: '',
       group: null,
-      pastorsList: []
+      pastorsList: [],
+      dialogReportPastorError: {
+        open: false,
+        type: '',
+        userSelected: '',
+        text: ''
+      }
     }
   }, 
   beforeMount() {
@@ -1868,6 +1936,33 @@ export default defineComponent({
         email: '',
         phone: '',
         document: ''
+      }
+    },
+    reportPastorError(type) {
+      this.dialogReportPastorError.open = true
+      this.dialogReportPastorError.type = type
+    },
+    confirmReportPastorError() {
+      const opt = {
+        route: '/desktop/statistics/insertPastorErrorReport',
+        body: {
+          userSelected: this.dialogReportPastorError.userSelected,
+          text: this.dialogReportPastorError.text,
+          type: this.dialogReportPastorError.type
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.$q.notify('Alteração reportada com sucesso')
+        this.clearDialogReportPastorError()
+      })
+    },
+    clearDialogReportPastorError() {
+      this.dialogReportPastorError = {
+        open: false,
+        type: '',
+        userSelected: '',
+        text: ''
       }
     },
     reportError(type, organismId) {
