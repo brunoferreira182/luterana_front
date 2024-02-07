@@ -202,7 +202,7 @@
                 Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
                 Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
-              <div class="text-center">
+              <div class="q-ma-sm text-center">
                 
                 <q-chip
                   v-if="validated"
@@ -223,9 +223,11 @@
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
-                  class="q-my-lg"
+                  rounded
+                  unelevated
+                  class="q-my-md full-width"
                   no-caps
-                  @click="insertFinanceStatisticsDraft"
+                  @click="saveDraft()"
                 />
               </div>
             </div>
@@ -309,7 +311,7 @@ export default defineComponent({
     }
   },
   beforeUnmount(){
-    this.insertFinanceStatisticsDraft()
+    this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
@@ -370,7 +372,7 @@ export default defineComponent({
       this.showContributionCalculatedLess = true
     }
   },
-  insertFinanceStatisticsDraft() {
+  saveDraft() {
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
@@ -396,6 +398,32 @@ export default defineComponent({
       this.$q.notify('Rascunho salvo com sucesso!')
       this.$router.back()
       this.getFinanceStatisticByOrganismId()
+    });
+  },
+  saveDraftOnBeforeUnmount() {
+    const opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
+      body: {
+        organismId: this.$route.query.organismId,
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
+      },
+    };
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+        return
+      }
+      this.$q.notify('Rascunho salvo com sucesso!')
     });
   },
   getOrganismNameForBreadCrumbs() {

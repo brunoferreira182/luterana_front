@@ -93,7 +93,7 @@
           </div>
         </div>
       </div>
-      <div class="text-center">
+      <div class="q-ma-lg text-center">
         <q-chip
           v-if="validated"
           color="green"
@@ -121,9 +121,11 @@
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="q-my-lg"
+          rounded
+          unelevated
+          class="full-width"
           no-caps
-          @click="insertAtividadesCulticasStatisticDraft"
+          @click="saveDraft"
         />
       </div>
     </q-page>
@@ -157,7 +159,7 @@ export default defineComponent({
     }
   },
   beforeUnmount(){
-    this.insertAtividadesCulticasStatisticDraft()
+    this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getAtividadesCulticas()
@@ -221,7 +223,39 @@ export default defineComponent({
         this.congregationName = r.data.organismName 
       });
     },
-    insertAtividadesCulticasStatisticDraft() {
+    saveDraftOnBeforeUnmount() {
+      this.extractedData = [];
+      this.culturalActivities.forEach((item, index) => {
+        const extractedItem = {
+          organismName: item.organismName,
+          activitiesData: item.activitiesData,
+        };
+        if (index === 0) {
+          //a congregação precisa ser o primeiro índice sempre
+          extractedItem.congregationId = item.organismId;
+        } else {
+          extractedItem.organismId = item.childOrganismId;
+        }
+        this.extractedData.push(extractedItem);
+      });
+      const opt = {
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          activitiesData: this.extractedData
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.$q.notify('Rascunho salvo com sucesso!')
+      });
+    },
+    saveDraft() {
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -258,7 +292,7 @@ export default defineComponent({
   }
 })
 </script>
-<style>
+<style scoped>
 .card {
   display: flex;
   flex-direction: column;
