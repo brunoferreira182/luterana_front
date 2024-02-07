@@ -408,9 +408,10 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error) return;
-        this.departamentos = r.data.childData;
-        this.congregationName = r.data.organismName;
         this.validated = r.data.validated
+        this.congregationName = r.data.organismName;
+        this.departamentos = r.data.childData;
+        this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
       });
     },
     expand(item) {
