@@ -155,7 +155,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getPastorList();
+    // this.getPastorList();
   },
   unmounted() {
     const currentRoute = this.$route
