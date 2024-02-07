@@ -2321,10 +2321,12 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$q.notify('Finalizando etapa...')
       this.$q.loading.show();
       await this.getCompositionByUserId();
       setTimeout(() => {
         this.$q.loading.hide();
+        this.$q.notify('Etapa finalizada com sucesso')
         this.$router.back();
       }, 2000);
     },
