@@ -482,6 +482,8 @@
                       icon="person_add"
                       dense
                       flat
+                      no-caps
+                      label="Novo usuário"
                       color="primary"
                       @click="dialogAddUser.open = true"
                     ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
@@ -1676,7 +1678,7 @@
   <q-dialog
     v-model="dialogAddUser.open"
   >
-    <q-card style="width: 400px;">
+    <q-card style="width: 400px; border-radius: 1rem">
       <q-card-section
         class="text-h6 text-center"
       >
@@ -1914,10 +1916,14 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/createNewUser',
         body: {
-          data: this.dialogAddUser.data
+          data: this.dialogAddUser.data,
+          userType: ''
         }
       }
-      useFetch(opt).then((r) => {
+      if(this.dialogAddFunction.functionName === 'Pastor'){
+        opt.body.userType = 'pastor'
+      }
+      useFetch(opt).then(() => {
         this.$q.notify('Usuário criado, selecione-o para prosseguir')
         this.dialogAddUser.open = false
         this.dialogAddUser.data = {
@@ -1926,7 +1932,6 @@ export default defineComponent({
           phone: '',
           document: ''
         }
-        console.log(r)
       })
     },
     clearDialogNewUser() {
