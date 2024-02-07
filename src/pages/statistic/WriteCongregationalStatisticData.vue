@@ -2172,8 +2172,6 @@ export default defineComponent({
         open: false,
         userSelected: null,
         iOrg: null,
-        initialHour: null,
-        finalHour: null,
         days: [
           {label: 'Segunda-feira', selected: false},
           {label: 'Terça-feira', selected: false},
@@ -2183,7 +2181,7 @@ export default defineComponent({
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
         ],
-        obs: ''
+        obsHours: ''
       }
     },
     addSecretaryToParoquia(iOrg) {

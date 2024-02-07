@@ -286,6 +286,7 @@ export default defineComponent({
   border-radius: 1rem; 
   height: 9rem;
   display: flex;
+  background-color: rgb(248, 248, 248);
   flex-direction: column;
   align-items: center;
   justify-content: center;

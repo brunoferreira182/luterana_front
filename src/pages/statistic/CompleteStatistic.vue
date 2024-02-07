@@ -207,6 +207,7 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: rgb(248, 248, 248);
   margin: 10px;
   box-shadow: 0px 0px 6px -3px;
 }
