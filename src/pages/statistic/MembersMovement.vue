@@ -78,7 +78,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Total de membros comungantes 2022"
+                label="Total de comungantes 2022"
                 v-model="membersMovement.totalMambrosComungantes2022"
                 @blur="calculateTotal()"
               />
@@ -89,7 +89,7 @@
               <q-input 
                 type="number"
                 label="Total de membros não comungantes 2022"
-                v-model="membersMovement.totalMembrosNaoComungantes2022"
+                v-model="membersMovement.totalMambrosNaoComungantes2022"
                 @blur="calculateTotal()"
               />
             </div>
@@ -318,7 +318,7 @@ export default defineComponent({
       congregationName:'',
       membersMovement: {
         totalMambrosComungantes2022: '',
-        totalMembrosNaoComungantes2022: '',
+        totalMambrosNaoComungantes2022: '',
         criancasBatizadasFamiliasIelb: '',
         transferenciasRecebidasComungantes: '',
         transferenciasRecebidasNaoComungantes: '',
@@ -431,6 +431,7 @@ export default defineComponent({
           this.membersMovement[key] = r.data.membersMovement[key]
         })
         this.validated = r.data.validated
+
         this.calculateTotal()
       })
     },
