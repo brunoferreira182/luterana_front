@@ -7,7 +7,7 @@
             style="cursor: pointer;" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/introWriteStatisticData')"          
+            @click="$router.back()"          
           />
             <q-breadcrumbs-el label="Gestão paroquial" />
         </q-breadcrumbs>
@@ -1472,10 +1472,10 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
   },
-  // beforeUnmount() {
-  //   if (this.validated && (this.status && this.status.value === 'sent')) return
-  //   this.saveDraft()
-  // },
+  beforeUnmount() {
+    if (this.validated && (this.status && this.status.value === 'sent')) return
+    this.saveDraftOnBeforeUnmount()
+  },
   methods: {
     cancelChangeChild () {
       this.dialogEditChild = {
@@ -1687,6 +1687,81 @@ export default defineComponent({
     reportError(type) {
         this.dialogReportError.open = true,
         this.dialogReportError.type = type
+    },
+    saveDraftOnBeforeUnmount() {
+      let regex = /\s/;
+      let pastorName = null
+      let fatherName = null
+      let motherName = null
+      let partnerName = null
+      let x = 0
+      if (this.pastorData && this.pastorData.name && this.pastorData.name.value) {
+        pastorName = this.pastorData.name.value
+      } else if (this.pastorData && this.pastorData.father && this.pastorData.father.userName) {
+        fatherName = this.pastorData.father.userName
+      } else if (this.pastorData && this.pastorData.mother && this.pastorData.mother.userName) {
+        motherName = this.pastorData.mother.userName
+      } else if ( this.pastorData && this.pastorData.maritalRelation && this.pastorData.maritalRelation.partner && this.pastorData.maritalRelation.partner.userName) {
+        partnerName = this.pastorData.maritalRelation.partner.userName
+      } 
+
+      if (pastorName) {
+        if (!regex.test(pastorName)) {
+          this.$q.notify('Coloque ao menos um sobrenome em seu nome');
+          x = 1
+          return;
+        }
+      } else if (fatherName) {
+        if (!regex.test(fatherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (motherName) {
+        if (!regex.test(motherName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        }
+      } else if (partnerName) {
+        if (!regex.test(partnerName)) {
+          this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares');
+          x = 1
+          return;
+        } 
+      }
+      if (this.pastorData && this.pastorData.parentalRelation && this.pastorData.parentalRelation.child && this.pastorData.parentalRelation.child.length > 0) {
+        this.pastorData.parentalRelation.child.forEach((child) => {
+          if (child) {
+            if (!regex.test(child)) {
+              this.$q.notify('Coloque ao menos um sobrenome no nome de seus familiares')
+              x = 1
+              return
+            }
+          }
+        })
+      }
+      if (x === 0)  {
+        let pastoralData = {
+          pastorData: this.pastorData,
+          pastorFormations: this.pastorFormations,
+          pastorLinks: this.pastorLink,
+          pastorActivities: this.pastorActivities,
+          lastPastorActivities: this.lastOrganismPastorActivities,
+          reportedErrors: this.reportedErrors
+        }
+        const opt = {
+          route: '/desktop/statistics/insertPastoralStatisticsDraft',
+          body: {
+            pastoralData: pastoralData,
+            organismId: this.paroquiaId
+          }
+        }
+        useFetch(opt).then((r) => {
+          if  (r.error) return
+          else this.$q.notify('Rascunho salvo com sucesso')
+        })
+      }
     },
     saveDraft() {
       let regex = /\s/;
