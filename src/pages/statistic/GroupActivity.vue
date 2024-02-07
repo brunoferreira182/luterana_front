@@ -40,7 +40,7 @@
                 class="text-h6"
                 style="white-space: nowrap"
               >
-                {{ item.organismName }}
+                {{ item.organismConfigName }} - {{ item.organismName }}
                 <q-btn
                   round
                   flat
