@@ -262,7 +262,7 @@
         <div class="text-h6">Comungantes: {{ totalComungantes }}</div>
         <div class="text-h6">Não comungantes: {{ totalNaoComungantes }}</div>
       </div>
-      <div class="q-ma-sm q-mt-md text-center">
+      <div class="q-ma-lg text-center">
         <q-chip
           v-if="validated"
           color="green"
@@ -333,7 +333,7 @@ export default defineComponent({
     }
   },
   beforeUnmount(){
-    this.saveDraft()
+    this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
@@ -350,6 +350,23 @@ export default defineComponent({
           }
         )
       }
+    },
+    saveDraftOnBeforeUnmount(){
+      const opt = {
+        route: '/desktop/statistics/saveDraftMembersMovement',
+        body: {
+          organismId: this.$route.query.organismId,
+          membersMovement: this.membersMovement
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) return
+        this.$q.notify({
+          message: 'Rascunho salvo com sucesso',
+        })
+      })
     },
     saveDraft () {
       const opt = {

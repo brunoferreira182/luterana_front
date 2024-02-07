@@ -339,7 +339,7 @@
           </div>
         </q-item>
       </q-list>
-      <div class="q-ma-sm q-mt-lg text-center" >
+      <div class="q-ma-lg text-center" >
         <q-chip
           v-if="validated"
           color="green"
@@ -359,7 +359,9 @@
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="q-my-lg"
+          class="full-width"
+          rounded
+          unelevated
           no-caps
           @click="saveDraft()"
         />
@@ -389,7 +391,7 @@ export default defineComponent({
     };
   },
   beforeUnmount(){
-    this.saveDraft()
+    this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
@@ -414,6 +416,25 @@ export default defineComponent({
     expand(item) {
       item.expanded = !item.expanded;
       // this.$q.notify("Salvo com sucesso!");
+    },
+    saveDraftOnBeforeUnmount(){
+      this.departamentos.forEach((departamento) => {
+        departamento.expanded = false 
+      })
+      const opt = {
+        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          groupActivity: this.departamentos,
+          organismFatherName: this.congregationName
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.show()
+        if (r.error) return;
+        this.$q.notify("Rascunho salvo com sucesso!");
+      });
     },
     saveDraft(){
       this.departamentos.forEach((departamento) => {
