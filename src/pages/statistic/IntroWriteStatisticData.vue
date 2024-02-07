@@ -48,7 +48,7 @@
           </q-item-section>
           <q-chip
             color="green"
-            label="Validado"
+            label="Etapa finalizada"
             text-color="white"
             v-if="status && status.compositionStatus === 'sent'"
           />

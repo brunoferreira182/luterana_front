@@ -413,7 +413,7 @@
           rounded
           unelevated
           no-caps
-          label="Descartar Rascunho"
+          label="Reiniciar"
           color="orange"
           @click="discardDraft"
           outline
@@ -432,7 +432,7 @@
           rounded
           unelevated
           no-caps
-          label="Salvar oficial"
+          label="Finalizar Etapa"
           color="green"
           @click="saveFinal"
         ></q-btn>
@@ -2322,8 +2322,12 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
-      this.$router.back()
-      this.getCompositionByUserId()
+      this.$q.loading.show();
+      await this.getCompositionByUserId();
+      setTimeout(() => {
+        this.$q.loading.hide();
+        this.$router.back();
+      }, 2000);
     },
     discardDraft () {
       const opt = {
@@ -2672,7 +2676,7 @@ export default defineComponent({
       this.dialogAddFunction.functionName = functionName
       this.dialogAddFunction.open = true
     },
-    getCompositionByUserId() {
+    async getCompositionByUserId() {
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
       }
