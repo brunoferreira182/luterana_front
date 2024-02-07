@@ -16,7 +16,7 @@
           </q-breadcrumbs-el>
         </q-breadcrumbs>
       </div>
-      <div class="fit column q-mt-lg content-center">
+      <div class="q-pa-sm text-center">
         <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)">
           <q-item-section>
             <q-item-label class="text-h5" />Atividades cúlticas
@@ -149,7 +149,6 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-   
     getValidationResumeByOrganism () {
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -200,9 +199,9 @@ export default defineComponent({
   }
 })
 </script>
-<style>
-.card {
-  border-radius: 1rem;
+<style scoped>
+.card{
+  border-radius: 1rem; 
   height: 9rem;
   display: flex;
   flex-direction: column;
