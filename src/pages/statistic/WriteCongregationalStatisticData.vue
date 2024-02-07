@@ -1413,7 +1413,7 @@
           style="width:400px;border-radius:1rem"
         >
           <q-card-section class="text-h6 text-center"> 
-            selecione o usuário
+            Selecione o usuário
           </q-card-section>
           <q-card-section>
             <q-select
@@ -1473,33 +1473,12 @@
             <div
               class="text-h6 text-center"
             >
-              Selecione os horários
+              Informe os horários
             </div>
             <q-input
-              label="Hora inical"
-              class="q-px-sm q-mt-sm"
-              v-model="dialogAddSecretary.initialHour"
-              type="time"
+              label="Horários"
+              v-model="dialogAddSecretary.obsHours"
             />
-            <q-input
-              label="Hora final"
-              class="q-px-sm q-mt-sm"
-              v-model="dialogAddSecretary.finalHour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-section>
-            <div
-              class="text-h6 text-center"
-            >
-              Observações
-            </div>
-            <q-input
-              label="Adicione aqui alguma observação"
-              v-model="dialogAddSecretary.obs"
-            >
-
-            </q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1873,8 +1852,6 @@ export default defineComponent({
         open: false,
         userSelected: null,
         iOrg: null,
-        initialHour: null,
-        finalHour: null,
         days: [
           {label: 'Segunda-feira', selected: false},
           {label: 'Terça-feira', selected: false},
@@ -1884,7 +1861,7 @@ export default defineComponent({
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
         ],
-        obs: ''
+        obsHours: ''
       },
       options: [
         { label: 'SIPAR', value: 'SIPAR' },
@@ -2171,7 +2148,7 @@ export default defineComponent({
       this.composition.congregations[iOrg].secretary.splice(iSec, 1)
     },
     confirmAddSecretary() {
-      if (!this.dialogAddSecretary.userSelected || !this.dialogAddSecretary.userSelected.userName || !this.dialogAddSecretary.initialHour || !this.dialogAddSecretary.finalHour ) {
+      if (!this.dialogAddSecretary.userSelected || !this.dialogAddSecretary.userSelected.userName || !this.dialogAddSecretary.obsHours ) {
         this.$q.notify('Preencha todos os campos para prosseguir')
         returns
       }
@@ -2186,9 +2163,7 @@ export default defineComponent({
           userId: this.dialogAddSecretary.userSelected.userId
         },
         days,
-        initialHour: this.dialogAddSecretary.initialHour,
-        finalHour: this.dialogAddSecretary.finalHour,
-        obs: this.dialogAddSecretary.obs
+        obsHours: this.dialogAddSecretary.obsHours
       })
       this.clearDialogAddSecretary()
     },
