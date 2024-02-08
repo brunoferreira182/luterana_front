@@ -74,12 +74,14 @@
               se todos os progressos estiverem em 100%
             </q-item-section>
             <q-item-section class="text-subtitle2 text-center">
-              <div class="q-px-md">
-                Os seguintes pastores não enviaram seus dados
-              </div>
-              <div dense v-for="item in dialogSendStatistic.pastorsDataNotSent" :key="item">
-                {{ item }}
-              </div>
+              <q-item-label class="">
+                <div class="">
+                  Solicite que os seguintes pastores preencham seus dados
+                </div>
+                <q-chip v-for="item in dialogSendStatistic.pastorsDataNotSent" :key="item">
+                  {{ item }}
+                </q-chip>
+              </q-item-label>
             </q-item-section>
             <q-item-section>
               <q-btn
@@ -128,14 +130,11 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return 
-        // this.dialogSendStatistic.pastors = r.data.pastors
         let pastorsarray = []
         pastorsarray = r.data.pastors
         for(const pastor of pastorsarray){
           if(!pastor.preStatistic || pastor.preStatistic.status.value === "notSent"){
             this.dialogSendStatistic.pastorsDataNotSent.push(pastor.name)
-            // console.log(this.dialogSendStatistic.pastorsDataNotSent)
-            // console.log(pastor.name)
           }
         }
       })
