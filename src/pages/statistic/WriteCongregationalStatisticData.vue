@@ -86,7 +86,7 @@
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
             >
-            <template v-slot:header>
+            <!-- <template v-slot:header>
               <q-item-section>
                 {{org.organismChildName}}
               </q-item-section>
@@ -96,7 +96,6 @@
                   <q-btn
                     @click.stop="console.log('oi')"
                     color="primary"
-                    label="Ponto de missão"
                     icon="add"
                     flat
                     rounded
@@ -107,11 +106,10 @@
                     icon="delete"
                     rounded
                     flat
-                    label="congragação"
                   ></q-btn>
                 </div>
               </q-item-section>
-            </template>
+            </template> -->
               <div class="text-left q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
@@ -132,6 +130,17 @@
                   label="Ativar congregação"
                   no-caps
                 />
+                <q-btn
+                  color="primary"
+                  rounded
+                  flat
+                  unelevated
+                  label="Adicionar ponto de missão"
+                  no-caps
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                />
+              </div>
+              <div>
               </div>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
