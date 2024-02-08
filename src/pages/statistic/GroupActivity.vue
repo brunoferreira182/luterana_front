@@ -28,7 +28,7 @@
           class="text-center q-mt-lg"
           v-if="otherOrganisms && otherOrganisms.length > 0"
         >
-          <div class="text-h6">
+          <div class="text-h6" style="white-space: normal">
             Selecione outras congregações para responder estes dados:
           </div>
           <div>
@@ -55,13 +55,13 @@
               width: 94%;
             "
           >
-            <q-item-section class="item-section q-pa-md">
+            <q-item-section class="q-pa-md">
               <q-item-label
                 @click="expand(item)"
-                class="text-h6"
-                style="white-space: nowrap"
+                class="text-h6 label-container"
               >
-                {{ item.organismConfigName }} - {{ item.organismName }}
+                {{ item.organismConfigName }}
+                {{ item.organismName }}
                 <q-btn
                   round
                   flat
@@ -526,14 +526,19 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 }
-.item-section {
-  position: relative;
-}
 .form-section {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   z-index: 1;
+}
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre-line
+}
+.separator{
+  margin: 0 5px;
 }
 </style>
