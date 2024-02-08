@@ -252,11 +252,10 @@
                       </q-item>
                     </q-list>
                   </div>
-                  <div class="q-ma-md text-h6">
+                  <div class="q-ma-md text-h6 items-left">
                     <q-btn
                       label="Secretária"
                       icon="add"
-                      class="full-width"
                       rounded
                       no-caps
                       color="primary"
