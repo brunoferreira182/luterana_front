@@ -85,9 +85,32 @@
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
-              exp
             >
-              <div class="text-left q-ma-sm">
+            <!-- <template v-slot:header>
+              <q-item-section>
+                {{org.organismChildName}}
+              </q-item-section>
+
+              <q-item-section side>
+                <div class="row items-center">
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="primary"
+                    icon="add"
+                    flat
+                    rounded
+                  ></q-btn>
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="red"
+                    icon="delete"
+                    rounded
+                    flat
+                  ></q-btn>
+                </div>
+              </q-item-section>
+            </template> -->
+              <div class="q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
                   color="red"
@@ -95,7 +118,7 @@
                   @click="openDialogRemoveCongregation(iOrg)"
                   flat
                   unelevated
-                  label="Excluir congregação"
+                  label="Inativar congregação"
                   no-caps
                 />
                 <q-btn
@@ -107,6 +130,18 @@
                   label="Ativar congregação"
                   no-caps
                 />
+                <q-btn
+                  color="primary"
+                  rounded
+                  flat
+                  unelevated
+                  label="Adicionar ponto de missão"
+                  no-caps
+                  @click="addPontoDeMissão(iOrg)"
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                />
+              </div>
+              <div>
               </div>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
@@ -2302,10 +2337,12 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$q.notify('Finalizando etapa...')
       this.$q.loading.show();
       await this.getCompositionByUserId();
       setTimeout(() => {
         this.$q.loading.hide();
+        this.$q.notify('Etapa finalizada com sucesso')
         this.$router.back();
       }, 2000);
     },
@@ -2422,6 +2459,18 @@ export default defineComponent({
       this.dialogAddNewDepartament.iOrg = iOrg
       this.dialogAddNewDepartament.iDep = iDep
       this.dialogAddNewDepartament.open = true
+    },
+    addPontoDeMissão(iOrg) {
+      this.composition.congregations[iOrg].depts.forEach((dep, iDep) => {
+        if (dep.organismConfigName === 'Ponto de Missão'){
+          let id = this.composition.congregations[iOrg].depts[iDep].organismConfigId
+          this.getFunctionsByDepartamentId(id)
+          this.dialogAddNewDepartament.iOrg = iOrg
+          this.dialogAddNewDepartament.iDep = iDep
+          this.dialogAddNewDepartament.open = true
+        }
+        console.log('oioioi')
+      })
     },
     clearDialogAddNewCongrgation() {
       this.dialogAddCongregation= {
@@ -2702,6 +2751,18 @@ export default defineComponent({
             organismConfigId: dep.organismConfigId
           })
         })
+        this.composition.congregations.forEach((org)=> {
+          org.organismFunctions.forEach((func) => {
+            if (func.functionName === 'Pastor' && func.functionUsers.length > 0) {
+              func.functionUsers.forEach((pastor) => {
+                const exists = this.pastorsList.some(existPastor => existPastor.userName === pastor.userName);
+                if (!exists) {
+                  this.pastorsList.push(pastor);
+                }
+              });
+            }
+          });
+        });
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {

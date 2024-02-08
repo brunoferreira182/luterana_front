@@ -17,6 +17,27 @@
             />
             <q-breadcrumbs-el label="Atividades cúlticas" />
           </q-breadcrumbs>
+          <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/culturalActivities?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
         </div>
       <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
@@ -37,7 +58,7 @@
             </div>
             <q-input
               type="number"
-              label="Quantos dados por pastor"
+              label="Quantos cultos por pastor"
               v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
@@ -52,7 +73,7 @@
             />
             <div class="q-py-md">
               <div class="q-mt-md">
-                Santa-ceia
+                Santa Ceia
               </div>
               <div class="row q-gutter-md ">
                 <q-input
@@ -122,6 +143,19 @@ export default defineComponent({
       congregationData: {},
       culturalActivities: [],
       congregationName: '',
+      otherOrganisms: []
+    }
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getAtividadesCulticas()
+          this.getOrganismNameForBreadCrumbs()
+          this.getOthersCongregations()
+        }
+      },
+      immediate: true
     }
   },
   beforeUnmount(){
@@ -130,8 +164,29 @@ export default defineComponent({
   beforeMount() {
     this.getAtividadesCulticas()
     this.getOrganismNameForBreadCrumbs()
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",

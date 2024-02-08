@@ -24,6 +24,27 @@
           </q-breadcrumbs-el>
           <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
+        <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6 text-wrap">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/groupActivity?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
       </div>
       <q-list>
         <q-item v-for="(item, i) in departamentos" :key="item">
@@ -34,13 +55,12 @@
               width: 94%;
             "
           >
-            <q-item-section class="item-section q-pa-md">
+            <q-item-section class="q-pa-md">
               <q-item-label
                 @click="expand(item)"
-                class="text-h6"
-                style="white-space: nowrap"
+                class="text-h6 label-container"
               >
-                {{ item.organismConfigName }} - {{ item.organismName }}
+                {{ item.organismName }}
                 <q-btn
                   round
                   flat
@@ -48,6 +68,11 @@
                     item.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
                   "
                 />
+              </q-item-label>
+              <q-item-label class="label-container">
+                <div>
+                  <q-chip>{{ item.organismConfigName }}</q-chip>
+                </div>
               </q-item-label>
               <q-slide-transition>
                 <div v-show="item.expanded">
@@ -388,15 +413,48 @@ export default defineComponent({
       'Departamento de Ação social de leigos', 
       'Outros'
       ],
+      otherOrganisms: [],
     };
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getGroupActivitiesByOrganismId();
+          this.getOthersCongregations();
+        }
+      },
+      immediate: true
+    }
   },
   beforeUnmount(){
     this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
     getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
@@ -472,14 +530,16 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 }
-.item-section {
-  position: relative;
-}
 .form-section {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   z-index: 1;
+}
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre-line
 }
 </style>
