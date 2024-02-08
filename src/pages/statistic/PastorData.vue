@@ -1259,15 +1259,19 @@
             <div class="text-center text-h6">
               Selecione a congregação
             </div>
+            <!-- <q-input
+              label="Informe a cidade cidade"
+              v-model="dialogLastPastoralActivity.selectedCity"
+            /> -->
             <q-select 
               label="selecione a congregação"
               v-model="dialogLastPastoralActivity.selectedOrganism"
-              hint="Busque pela cidade ou nome"
+              hint="Busque pelo nome"
               option-label="organismName"
               emit-value
               use-input
               map-options
-              @filter="getCongregatiionsByString"
+              @filter="getCongregationsByString"
               :options="organismList"
               :readonly="status && status.value === 'sent'"
             >
@@ -1450,7 +1454,8 @@ export default defineComponent({
       reportedErrors: [],
       dialogLastPastoralActivity: {
         open: false,
-        selectedOrganism: null,
+        selectedOrganism: '',
+        selectedCity: '',
         lastOrganismPastorActivities: [
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
@@ -1486,15 +1491,7 @@ export default defineComponent({
       }
     },
     clearDialogLastPastoralActivity() {
-      this.dialogLastPastoralActivity = {
-        open: false,
-        selectedOrganism: null,
-        lastOrganismPastorActivities: [
-        { title:'Visitas Missionárias', quantity:'', people:'' },
-        { title:'Visitas Pastorais', quantity:'', people:'' },
-        { title:'Visitas Enfermos', quantity:'', people:'' }
-        ],
-      }
+      this.dialogLastPastoralActivity.open = false
     },
     getParoquiaId() {
       const opt = {
@@ -1630,7 +1627,7 @@ export default defineComponent({
           activity.validatePastorActivities = false
         }
       }
-      if(!this.dialogLastPastoralActivity.selectedOrganism){
+      if(!this.dialogLastPastoralActivity.selectedOrganism || this.dialogLastPastoralActivity.selectedOrganism === '' ){
         this.$q.notify('Selecione a congregação');
         return
       }
@@ -1641,7 +1638,7 @@ export default defineComponent({
       this.dialogLastPastoralActivity.open = false
       
     },
-    getCongregatiionsByString(val, update, abort) {
+    getCongregationsByString(val, update, abort) {
       if (val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
@@ -1650,7 +1647,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCongregacoesByString',
         body:{
-          filterValue: val
+          filterValue: val,
         }
       }
       this.$q.loading.show()
