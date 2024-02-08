@@ -28,7 +28,7 @@
           class="text-center q-mt-lg"
           v-if="otherOrganisms && otherOrganisms.length > 0"
         >
-          <div class="text-h6" style="white-space: normal">
+          <div class="text-h6 text-wrap">
             Selecione outras congregações para responder estes dados:
           </div>
           <div>
@@ -60,7 +60,6 @@
                 @click="expand(item)"
                 class="text-h6 label-container"
               >
-                {{ item.organismConfigName }}
                 {{ item.organismName }}
                 <q-btn
                   round
@@ -69,6 +68,11 @@
                     item.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
                   "
                 />
+              </q-item-label>
+              <q-item-label class="label-container">
+                <div>
+                  <q-chip>{{ item.organismConfigName }}</q-chip>
+                </div>
               </q-item-label>
               <q-slide-transition>
                 <div v-show="item.expanded">
@@ -537,8 +541,5 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   white-space: pre-line
-}
-.separator{
-  margin: 0 5px;
 }
 </style>

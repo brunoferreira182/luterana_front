@@ -58,7 +58,7 @@
             </div>
             <q-input
               type="number"
-              label="Quantos dados por pastor"
+              label="Quantos cultos por pastor"
               v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
@@ -73,7 +73,7 @@
             />
             <div class="q-py-md">
               <div class="q-mt-md">
-                Santa-ceia
+                Santa Ceia
               </div>
               <div class="row q-gutter-md ">
                 <q-input
