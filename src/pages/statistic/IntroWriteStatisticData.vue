@@ -220,7 +220,6 @@ export default defineComponent({
       }
     },
     goToStatistic() {
-      console.log('caraioaioai')
       let chk = true
       this.status.pastors.forEach((pastor) => {
         if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {

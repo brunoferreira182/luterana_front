@@ -32,6 +32,14 @@
         <q-item-section>
           <div class="text-h6 text-left">
             Paróquia: {{ composition.organismParentName }}
+            <q-btn
+              color="primary"
+              flat
+              icon="edit"
+              rounded
+              unelevated
+              @click="changeParishName"
+            />
           </div>
           <div class="q-my-sm" v-if="pastorsList && pastorsList.length > 0">
             <div class="text-h6">
@@ -1738,6 +1746,43 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog
+    v-model="dialogChangeParishName.open"
+    @hide="clearDialogChangeParishName"
+  >
+    <q-card
+      style="width: 300px;"
+    >
+      <q-card-section>
+        <div>
+          Alterar nome da paróquia
+        </div>
+        <q-input
+          v-model="dialogChangeParishName.name"
+          class="q-pa-sm"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          no-caps
+          rounded
+          flat
+          color="primary"
+          @click="confirmChangeParishName"
+        >
+        </q-btn>
+        <q-btn
+          label="Confirmar"
+          no-caps
+          rounded
+          color="primary"
+          @click="clearDialogChangeParishName"
+        >
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -1918,6 +1963,10 @@ export default defineComponent({
         type: '',
         userSelected: '',
         text: ''
+      },
+      dialogChangeParishName: {
+        open: false,
+        name: null
       }
     }
   }, 
@@ -1931,6 +1980,20 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    clearDialogChangeParishName() {
+      this.dialogChangeParishName = {
+        open: false,
+        name: null
+      }
+    },
+    confirmChangeParishName() {
+      this.composition.organismParentName = this.dialogChangeParishName.name
+      this.clearDialogChangeParishName()
+    },
+    changeParishName() {
+      this.dialogChangeParishName.open = true
+      this.dialogChangeParishName.name = this.composition.organismParentName
+    },
     confirmCreateNewUser () {
       const opt = {
         route: '/desktop/statistics/createNewUser',
@@ -2017,7 +2080,6 @@ export default defineComponent({
       }
     },  
     insertParoquialManagementType(iOrg, org){
-      console.log(org)
       const opt = {
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
@@ -2469,7 +2531,6 @@ export default defineComponent({
           this.dialogAddNewDepartament.iDep = iDep
           this.dialogAddNewDepartament.open = true
         }
-        console.log('oioioi')
       })
     },
     clearDialogAddNewCongrgation() {

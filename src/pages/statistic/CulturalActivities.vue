@@ -59,7 +59,7 @@
             <q-input
               type="number"
               label="Quantos cultos por pastor"
-              v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
+              v-model="cultural.activitiesData.cultoData.qtyCultosPastor"
             />
             <q-input
               type="number"
@@ -79,13 +79,13 @@
                 <q-input
                   class="col"
                   type="number"
-                  label="Quantidade oferecida ano"
+                  label="Quantidade no ano"
                   v-model="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
                 />
                 <q-input
                   class="col"
                   type="number"
-                  label="Soma total de comungantes"
+                  label="Frequencia total de comungantes"
                   v-model="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
                 />
               </div>
@@ -201,7 +201,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        console.log(r, 'a')
         r.data.validated ? this.validated = r.data.validated : this.validated = false
         if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
           this.culturalActivities = r.data.activitiesData
