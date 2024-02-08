@@ -2,7 +2,7 @@
   <q-page-container class="no-padding">
     <q-page class="q-ma-md q-gutter-y-md">
       <div class="text-h6">
-        Você está em Paróquia {{ userOrganismList.organismName }}
+        Você está em {{ userOrganismList.organismName }}
       </div>
       <div class="text-subtitle1">
         Selecione o organismo que deseja escrever os dados de estatística. 
@@ -64,7 +64,7 @@
           class="full-width"
           color="primary"
         />
-        <q-dialog v-model="dialogSendStatistic">
+        <q-dialog v-model="dialogSendStatistic.open">
           <q-item class="card">
             <q-item-section class="text-h6">
               Atenção
@@ -73,12 +73,20 @@
               A estatística só estará pronta para envio <br/> 
               se todos os progressos estiverem em 100%
             </q-item-section>
+            <q-item-section class="text-subtitle2 text-center">
+              <div class="q-px-md">
+                Os seguintes pastores não enviaram seus dados
+              </div>
+              <div dense v-for="item in dialogSendStatistic.pastorsDataNotSent" :key="item">
+                {{ item }}
+              </div>
+            </q-item-section>
             <q-item-section>
               <q-btn
                 no-caps
                 color="primary"
                 rounded
-                @click="dialogSendStatistic = false"
+                @click="dialogSendStatistic.open = false"
                 flat
                 label="Entendi"
               />
@@ -100,7 +108,10 @@ export default defineComponent({
       userOrganismList:{},
       
       organismsIds: [],
-      dialogSendStatistic: false,
+      dialogSendStatistic: {
+        open: false,
+        pastorsDataNotSent: []
+      },
       allOrganismCompleteValidated: true,
       validationResume: null,
       stepsNum: 4
@@ -108,8 +119,27 @@ export default defineComponent({
   },
   beforeMount(){
     this.getParoquiasByUserId()
+    this.getStatusPreStatistic()
   },
   methods: {
+    getStatusPreStatistic() {
+      const opt = {
+        route: '/desktop/statistics/getPreStatisticStatus',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return 
+        // this.dialogSendStatistic.pastors = r.data.pastors
+        let pastorsarray = []
+        pastorsarray = r.data.pastors
+        for(const pastor of pastorsarray){
+          if(!pastor.preStatistic || pastor.preStatistic.status.value === "notSent"){
+            this.dialogSendStatistic.pastorsDataNotSent.push(pastor.name)
+            // console.log(this.dialogSendStatistic.pastorsDataNotSent)
+            // console.log(pastor.name)
+          }
+        }
+      })
+    },
     checkCanSendStatistics () {
       let chk = []
       this.userOrganismList.childData.forEach((org) => {
@@ -118,7 +148,7 @@ export default defineComponent({
         else chk.push('false')
       })
       if (chk.includes('false')) {
-        this.dialogSendStatistic = true
+        this.dialogSendStatistic.open = true
       }
     },
     goToCompleteStatistic(organism) {
@@ -159,7 +189,7 @@ export default defineComponent({
 <style scoped>
 .card {
   border-radius: 1rem;
-  height: 9rem;
+  height: 200px;
   background-color: aliceblue;
   display: flex;
   flex-direction: column;

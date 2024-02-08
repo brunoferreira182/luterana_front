@@ -55,14 +55,13 @@
               width: 94%;
             "
           >
-            <q-item-section class="item-section q-pa-md">
+            <q-item-section class="q-pa-md">
               <q-item-label
                 @click="expand(item)"
-                class="text-h6"
-                style="white-space: nowrap"
+                class="text-h6 label-container"
               >
-                  {{ item.organismName }}
-                  <q-btn
+                {{ item.organismName }}
+                <q-btn
                   round
                   flat
                   :icon="
@@ -70,7 +69,7 @@
                   "
                 />
               </q-item-label>
-              <q-item-label>
+              <q-item-label class="label-container">
                 <div>
                   <q-chip>{{ item.organismConfigName }}</q-chip>
                 </div>
@@ -531,14 +530,16 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 }
-.item-section {
-  position: relative;
-}
 .form-section {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   z-index: 1;
+}
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre-line
 }
 </style>

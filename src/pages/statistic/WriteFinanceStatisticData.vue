@@ -154,10 +154,10 @@
                   Contribuição registrada na Administração Nacional <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
                 </div>
                 <div class="text-green" v-if="showContributionCalculatedMore">
-                  Contribuição registrada na Administração Nacional e calculado 11% R$ {{ contributionCalculatedMore.toFixed(2) }} <q-icon name="north"/>
+                  Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
                 </div>
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
-                  Contribuição registrada na Administração Nacional 11% R$ {{ contributionCalculatedLess.toFixed(2) }} <q-icon name="south"/>
+                  Contribuição {{ contributionCalculatedLess }} <q-icon name="south"/> 
                 </div>
                 <div class="no-margin">
                 <q-input 
@@ -259,14 +259,15 @@ export default defineComponent({
       contributionCalculatedMore: '',
       contributionCalculatedLess: '',
       contributionOutputSum: '',
+      contributionOutputNum: null,
       contributionEntriesSum: '',
       table: {
         entries:{
           saldoAnterior: '',
           receitasRegulares: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
+            ofertasDominicais: null,
+            ofertasMensais: null,
+            receitasAlugueis: null,
           },
           ofertasEspeciais: '',
           campanhasEspecificas: '',
@@ -357,18 +358,23 @@ export default defineComponent({
   },
   calculateOfferPercents(){
     let total = 0
-    let outPutTotalPercents = 0
-    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replace(',', '.')
-    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replace(',', '.')
-    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replace(',', '.')
+    let contribution = 0
+    let contributionPercents = 0
+    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
+    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
+    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
     total = ofertasDominicais + ofertasMensais + receitasAlugueis
-    outPutTotalPercents = +this.contributionOutputSum - +this.contributionOutputSum * 0.11
-    if(+total * 0.11 >= outPutTotalPercents){
-      this.contributionCalculatedMore = total * 0.11
+    contribution = (+this.contributionOutputNum/+total)
+    contributionPercents = Math.trunc(contribution*100) + '%' 
+    
+    if(contributionPercents >= '11%'){
+      this.contributionCalculatedMore = contributionPercents
       this.showContributionCalculatedMore = true
-    }else if(+total * 0.11 < outPutTotalPercents){
-      this.contributionCalculatedLess = total * 0.11
+      this.showContributionCalculatedLess = false
+    }else if(contributionPercents < '11%'){
+      this.contributionCalculatedLess = contributionPercents
       this.showContribuitionNotify = true
+      this.showContributionCalculatedMore = false
       this.showContributionCalculatedLess = true
     }
   },
@@ -450,19 +456,18 @@ export default defineComponent({
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
+      console.log(r, 'kkkkkkkkkk ')
       if (r.error || !r.data) return
       this.validated = r.data.validated
       this.contributionOutputSum = r.data.contributionOutput
-      if (r.data.contributionOutputSGA) {
-        this.contributionOutputSum = r.data.contributionOutputSGA
-      }
+      this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
         contribuicaoIELB: {
-          ofertasDominicais: '',
-          ofertasMensais: '',
-          receitasAlugueis: '',
+          ofertasDominicais: null,
+          ofertasMensais: null,
+          receitasAlugueis: null,
         },
         contribuicaoDistrito: '',
         devolucaoEmprestimoIELB: '',
@@ -472,9 +477,9 @@ export default defineComponent({
       this.table.entries = {
         saldoAnterior: '',
         receitasRegulares: {
-          ofertasDominicais: '',
-          ofertasMensais: '',
-          receitasAlugueis: '',
+          ofertasDominicais: null,
+          ofertasMensais: null,
+          receitasAlugueis: null,
         },
         ofertasEspeciais: '',
         campanhasEspecificas: '',
