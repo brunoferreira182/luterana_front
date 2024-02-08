@@ -303,7 +303,7 @@ export default defineComponent({
       handler(newOrganismId, oldOrganismId) {
         if (newOrganismId !== oldOrganismId) {
           this.getFinanceStatisticByOrganismId()
-          this.getFinanceTotalValueFromParoquia()
+          // this.getFinanceTotalValueFromParoquia()
           this.getOrganismNameForBreadCrumbs()
           this.getOthersCongregations()
         }
@@ -316,7 +316,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
-    this.getFinanceTotalValueFromParoquia()
+    // this.getFinanceTotalValueFromParoquia()
     this.getOrganismNameForBreadCrumbs()
     this.getOthersCongregations()
   },
@@ -487,6 +487,7 @@ export default defineComponent({
         emprestimos: '',
         todasOutrasReceitas: '',
       }
+      this.getFinanceTotalValueFromParoquia()
     });
   },
   }
