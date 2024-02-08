@@ -118,7 +118,7 @@
                   @click="openDialogRemoveCongregation(iOrg)"
                   flat
                   unelevated
-                  label="Excluir congregação"
+                  label="Inativar congregação"
                   no-caps
                 />
                 <q-btn
@@ -418,7 +418,6 @@
                   />
                 </div>
               </q-list>
-             
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Gestão Paroquial
@@ -431,8 +430,8 @@
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
-                  @update:model-value="insertParoquialManagementType(iOrg, org)"
-                  label="Outro"
+                  @blur="insertParoquialManagementType(iOrg, org)"
+                  label="Qual?"
                   class="q-pa-sm"
                   v-model="composition.congregations[iOrg].other"
                 />
@@ -1098,7 +1097,14 @@
       >
         <q-card style="width: 400px">
           <q-card-section class="text-center text-h6">
-            Deseja remover esta congregação?
+            Deseja inativar esta congregação?
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              type="date"
+              label="Data do encerramento"
+              v-model="dialogRemoveCongregation.date"
+            ></q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1834,7 +1840,8 @@ export default defineComponent({
       filiatedOptions: ['Sim', 'Não'],
       dialogRemoveCongregation: {
         open: false,
-        iOrg: null
+        iOrg: null,
+        date: ''
       },
       dialogReportError: {
         open: false,
@@ -1907,7 +1914,7 @@ export default defineComponent({
         { label: 'Inchurch', value: 'Inchurch', color: 'red' },
         { label: 'F5 Sapi', value: 'F5 Sapi', color: 'yellow-8' },
         { label: 'Não possuo', value: 'Não possuo', color: 'pink-8' },
-        { label: 'Outro: Qual', value: 'outro', color: 'purple' }
+        { label: 'Outro', value: 'outro', color: 'purple' }
       ],
       other: '',
       group: null,
@@ -2304,10 +2311,16 @@ export default defineComponent({
       }
     },
     removeCongregation() {
+      if (this.dialogRemoveCongregation.date === '') {
+        this.$q.notify('Informe a data de desativação')
+        return
+      }
       if (!this.composition.congregations[this.dialogRemoveCongregation.iOrg].action) {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
+        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       } else {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
+        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       }
       this.cleanDialogRemoveCongregation()
     },
