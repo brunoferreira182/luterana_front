@@ -434,6 +434,11 @@ export default defineComponent({
       }
     },
     saveDraftOnBeforeUnmount(){
+      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
+        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '' || !this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant) {
+            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+        }
+      }
       const opt = {
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {
@@ -451,6 +456,11 @@ export default defineComponent({
       })
     },
     saveDraft () {
+      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
+        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
+            return this.$q.notify('Preencha todos os campos obrigatórios!')
+        }
+      }
       const opt = {
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {

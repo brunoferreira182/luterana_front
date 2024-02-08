@@ -140,6 +140,7 @@ export default defineComponent({
   data() {
     return {
       validated: false,
+      canNavigate: true,
       congregationData: {},
       culturalActivities: [],
       congregationName: '',
@@ -223,6 +224,13 @@ export default defineComponent({
       });
     },
     saveDraftOnBeforeUnmount() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') {
+              return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+            }
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -255,6 +263,11 @@ export default defineComponent({
       });
     },
     saveDraft() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -288,6 +301,13 @@ export default defineComponent({
         this.getAtividadesCulticas()
       });
     },
+    handleBackNavigation() {
+    if (this.canNavigateBack) {
+      this.$router.back();
+    } else {
+      this.$q.notify('Complete todos os campos antes de salvar!');
+    }
+  }
   }
 })
 </script>

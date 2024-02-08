@@ -70,7 +70,7 @@
                 />
               </q-item-label>
               <q-item-label class="label-container">
-                <div>
+                <div class="q-py-xs">
                   <q-chip>{{ item.organismConfigName }}</q-chip>
                 </div>
               </q-item-label>
@@ -477,6 +477,13 @@ export default defineComponent({
       // this.$q.notify("Salvo com sucesso!");
     },
     saveDraftOnBeforeUnmount(){
+      for(let i = 0; i < this.departamentos.length; i++){
+        if(this.departamentos[i].organismConfigName === 'Outros'){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+          }
+        }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
@@ -496,6 +503,13 @@ export default defineComponent({
       });
     },
     saveDraft(){
+      for(let i = 0; i < this.departamentos.length; i++){
+        if(this.departamentos[i].organismConfigName === 'Outros'){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('Preencha todos os campos Obrigatórios!')
+          }
+        }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
