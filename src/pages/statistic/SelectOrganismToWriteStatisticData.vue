@@ -73,11 +73,14 @@
               A estatística só estará pronta para envio <br/> 
               se todos os progressos estiverem em 100%
             </q-item-section>
-            <!-- <q-item-section class="text-subtitle2">
-              <div v-for="item in dialogSendStatistic.pastorsDataNotSent" :key="item">
+            <q-item-section class="text-subtitle2 text-center">
+              <div class="q-px-md">
+                Os seguintes pastores não enviaram seus dados
+              </div>
+              <div dense v-for="item in dialogSendStatistic.pastorsDataNotSent" :key="item">
                 {{ item }}
               </div>
-            </q-item-section> -->
+            </q-item-section>
             <q-item-section>
               <q-btn
                 no-caps
@@ -130,7 +133,9 @@ export default defineComponent({
         pastorsarray = r.data.pastors
         for(const pastor of pastorsarray){
           if(!pastor.preStatistic || pastor.preStatistic.status.value === "notSent"){
-            this.dialogSendStatistic.pastorsDataNotSent = pastor.name
+            this.dialogSendStatistic.pastorsDataNotSent.push(pastor.name)
+            // console.log(this.dialogSendStatistic.pastorsDataNotSent)
+            // console.log(pastor.name)
           }
         }
       })
@@ -184,7 +189,7 @@ export default defineComponent({
 <style scoped>
 .card {
   border-radius: 1rem;
-  height: 9rem;
+  height: 200px;
   background-color: aliceblue;
   display: flex;
   flex-direction: column;
