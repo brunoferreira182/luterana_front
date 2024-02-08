@@ -110,7 +110,7 @@
                 </div>
               </q-item-section>
             </template> -->
-              <div class="text-left q-ma-sm">
+              <div class="q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
                   color="red"
@@ -118,7 +118,7 @@
                   @click="openDialogRemoveCongregation(iOrg)"
                   flat
                   unelevated
-                  label="Excluir congregação"
+                  label="Inativar congregação"
                   no-caps
                 />
                 <q-btn
