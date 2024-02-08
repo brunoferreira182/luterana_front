@@ -118,7 +118,7 @@
                   @click="openDialogRemoveCongregation(iOrg)"
                   flat
                   unelevated
-                  label="Inativar congregação"
+                  label="Excluir congregação"
                   no-caps
                 />
                 <q-btn
@@ -137,6 +137,7 @@
                   unelevated
                   label="Adicionar ponto de missão"
                   no-caps
+                  @click="addPontoDeMissão(iOrg)"
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
                 />
               </div>
@@ -418,6 +419,7 @@
                   />
                 </div>
               </q-list>
+             
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Gestão Paroquial
@@ -430,8 +432,8 @@
                 />
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
-                  @blur="insertParoquialManagementType(iOrg, org)"
-                  label="Qual?"
+                  @update:model-value="insertParoquialManagementType(iOrg, org)"
+                  label="Outro"
                   class="q-pa-sm"
                   v-model="composition.congregations[iOrg].other"
                 />
@@ -1097,14 +1099,7 @@
       >
         <q-card style="width: 400px">
           <q-card-section class="text-center text-h6">
-            Deseja inativar esta congregação?
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              type="date"
-              label="Data do encerramento"
-              v-model="dialogRemoveCongregation.date"
-            ></q-input>
+            Deseja remover esta congregação?
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1840,8 +1835,7 @@ export default defineComponent({
       filiatedOptions: ['Sim', 'Não'],
       dialogRemoveCongregation: {
         open: false,
-        iOrg: null,
-        date: ''
+        iOrg: null
       },
       dialogReportError: {
         open: false,
@@ -1914,7 +1908,7 @@ export default defineComponent({
         { label: 'Inchurch', value: 'Inchurch', color: 'red' },
         { label: 'F5 Sapi', value: 'F5 Sapi', color: 'yellow-8' },
         { label: 'Não possuo', value: 'Não possuo', color: 'pink-8' },
-        { label: 'Outro', value: 'outro', color: 'purple' }
+        { label: 'Outro: Qual', value: 'outro', color: 'purple' }
       ],
       other: '',
       group: null,
@@ -2311,16 +2305,10 @@ export default defineComponent({
       }
     },
     removeCongregation() {
-      if (this.dialogRemoveCongregation.date === '') {
-        this.$q.notify('Informe a data de desativação')
-        return
-      }
       if (!this.composition.congregations[this.dialogRemoveCongregation.iOrg].action) {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
-        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       } else {
         this.composition.congregations[this.dialogRemoveCongregation.iOrg].action = 'remove'
-        this.composition.congregations[this.dialogRemoveCongregation.iOrg].inactivationDate = this.dialogRemoveCongregation.date
       }
       this.cleanDialogRemoveCongregation()
     },
@@ -2471,6 +2459,18 @@ export default defineComponent({
       this.dialogAddNewDepartament.iOrg = iOrg
       this.dialogAddNewDepartament.iDep = iDep
       this.dialogAddNewDepartament.open = true
+    },
+    addPontoDeMissão(iOrg) {
+      this.composition.congregations[iOrg].depts.forEach((dep, iDep) => {
+        if (dep.organismConfigName === 'Ponto de Missão'){
+          let id = this.composition.congregations[iOrg].depts[iDep].organismConfigId
+          this.getFunctionsByDepartamentId(id)
+          this.dialogAddNewDepartament.iOrg = iOrg
+          this.dialogAddNewDepartament.iDep = iDep
+          this.dialogAddNewDepartament.open = true
+        }
+        console.log('oioioi')
+      })
     },
     clearDialogAddNewCongrgation() {
       this.dialogAddCongregation= {
