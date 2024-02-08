@@ -85,8 +85,33 @@
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
-              exp
             >
+            <template v-slot:header>
+              <q-item-section>
+                {{org.organismChildName}}
+              </q-item-section>
+
+              <q-item-section side>
+                <div class="row items-center">
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="primary"
+                    label="Ponto de missão"
+                    icon="add"
+                    flat
+                    rounded
+                  ></q-btn>
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="red"
+                    icon="delete"
+                    rounded
+                    flat
+                    label="congragação"
+                  ></q-btn>
+                </div>
+              </q-item-section>
+            </template>
               <div class="text-left q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
@@ -2704,6 +2729,18 @@ export default defineComponent({
             organismConfigId: dep.organismConfigId
           })
         })
+        this.composition.congregations.forEach((org)=> {
+          org.organismFunctions.forEach((func) => {
+            if (func.functionName === 'Pastor' && func.functionUsers.length > 0) {
+              func.functionUsers.forEach((pastor) => {
+                const exists = this.pastorsList.some(existPastor => existPastor.userName === pastor.userName);
+                if (!exists) {
+                  this.pastorsList.push(pastor);
+                }
+              });
+            }
+          });
+        });
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
