@@ -356,14 +356,6 @@ export default defineComponent({
     this.getOthersCongregations()
   },
   methods: {
-    formatAsNumber(key) {
-      if (this.table[key] !== undefined) {
-        const value = this.table[key] || '';
-        // Remove os caracteres não numéricos, substitui a vírgula por ponto e converte para número
-        this.$set(this.table, key, parseFloat(value.toString().replace(/[^\d.,]/g, '').replace(',', '.')) || null);
-      }
-      console.log(this.table[key])
-    },
     getOthersCongregations() {
       this.otherOrganisms = []
       const opt = {
@@ -394,11 +386,11 @@ export default defineComponent({
       this.paroquiaData = r.data
     });
   },
-  calculateDiffBetweenEmprestimos() {
-    if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
-      this.showEmprestimoNotify = true
-    }
-  },
+  // calculateDiffBetweenEmprestimos() {
+  //   if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
+  //     this.showEmprestimoNotify = true
+  //   }
+  // },
   calculateOfferPercents(){
     let total = 0
     let contribution = 0
@@ -409,14 +401,19 @@ export default defineComponent({
     total = ofertasDominicais + ofertasMensais + receitasAlugueis
     contribution = (+this.contributionOutputNum/+total)
     contributionPercents = Math.trunc(contribution*100)
+    console.log(ofertasDominicais, 'ofertasDominicais')
+    console.log(ofertasMensais, 'ofertasMensais')
+    console.log(receitasAlugueis, 'receitasAlugueis')
+    console.log(total, 'total')
+    console.log(contribution, 'contribution')
     this.showContribuitionNotify = contributionPercents
-    console.log(contributionPercents, 'kkkkkkkkkk')
+    console.log(contributionPercents, 'contributionPercents')
     if(contributionPercents >= 11){
-      // this.contributionCalculatedMore = contributionPercents
+      this.contributionCalculatedMore = contributionPercents
       this.showContributionCalculatedMore = true
       this.showContributionCalculatedLess = false
     }else if(contributionPercents < 11){
-      // this.contributionCalculatedLess = contributionPercents
+      this.contributionCalculatedLess = contributionPercents
       this.showContribuitionNotify = true
       this.showContributionCalculatedMore = false
       this.showContributionCalculatedLess = true

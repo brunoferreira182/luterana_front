@@ -336,7 +336,7 @@
                         color="primary"
                         no-caps
                         label="Não confere"
-                        @update:model-value="filiadoNãoConfereIntoCompositionOrg(iOrg)"
+                        @update:model-value="filiadoNaoConfereIntoCompositionOrg(iOrg)"
                         v-model="filiadoNaoConfere"
                       />
                     </div>
@@ -428,7 +428,6 @@
                   />
                 </div>
               </q-list>
-             
               <q-list bordered class="q-mt-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Gestão Paroquial
@@ -447,7 +446,13 @@
                   v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
-              
+              <q-checkbox
+                color="primary"
+                no-caps
+                label="Confirmo que revisei os dados e estão de acordo"
+                @update:model-value="reviseiOsDados(iOrg)"
+                v-model="allCongregationalDataIsOk"
+              />
             </q-expansion-item>
               </q-item-label>
             </q-item-section>
@@ -1804,6 +1809,7 @@ export default defineComponent({
         searchString: ''
       },
       composition: null,
+      allCongregationalDataIsOk: false,
       dialogAddFunction: {
         open: false,
         iFunc: null,
@@ -1970,6 +1976,7 @@ export default defineComponent({
         name: null
       },
       semFundacao: false,
+      
     }
   }, 
   beforeMount() {
@@ -1982,6 +1989,9 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    reviseiOsDados(iOrg){
+      this.composition.congregations[iOrg].allCongregationalDataIsOk = this.allCongregationalDataIsOk
+    },
     requestModifications () {
       const opt = {
         route: '/desktop/statistics/requestModifications',
@@ -2010,10 +2020,11 @@ export default defineComponent({
         } else this.hasModificationRequest = false
       })
     },
+    
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
-    filiadoNãoConfereIntoCompositionOrg(iOrg){
+    filiadoNaooConfereIntoCompositionOrg(iOrg){
       this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
     },
     removeDepartamentFromList(iExistsDept) {
@@ -2422,6 +2433,13 @@ export default defineComponent({
       this.dialogRemoveCongregation.iOrg = iOrg
     },
     async saveFinal () {
+      for (let i = 0; i < this.composition.congregations.length; i++) {
+        const congregation = this.composition.congregations[i];
+        if (!congregation.paroquialManagement) {
+          this.$q.notify(`O campo Gestão paroquial não está preenchida para a congregação ${congregation.organismChildName}`);
+          return
+        }
+      }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
         body: this.composition
