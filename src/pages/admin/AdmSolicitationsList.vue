@@ -5,8 +5,8 @@
         flat
         class="bg-accent"
         title="Lista de solicitações"
-        :columns="suggestionData"
-        :rows="suggestionList"
+        :columns="solicitationsData"
+        :rows="solicitationsList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
@@ -19,17 +19,12 @@
       >
         <template #top-right>
         </template>
-        <template #body-cell-document="props">
+        <template #body-cell-status="props">
           <q-td :props="props">
-            <div v-if="!props.row.document || props.row.document === ''">
-              Não informado
-            </div>
-            <div v-else-if="props.row.document !== ''">
-              {{props.row.document}}
-            </div>
+            {{ props.row.status }}
           </q-td>
         </template>
-        <template #body-cell-status="props">
+        <!-- <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
@@ -48,7 +43,7 @@
               Inativo
             </q-chip>
           </q-td>
-        </template>
+        </template> -->
       </q-table>
 
     </q-page>
@@ -63,8 +58,8 @@ export default defineComponent({
   name: "SolicitationList",
   data() {
     return {
-      suggestionData: useTableColumns().suggestionList,
-      suggestionList: [],
+      solicitationsData: useTableColumns().solicitationsList,
+      solicitationsList: [],
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -99,7 +94,7 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getSuggestionsList();
+      this.getSolicitationsList();
     },
     getSolicitationsList() {
       const opt = {
@@ -111,7 +106,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.suggestionList = r.data.list
+        this.solicitationsList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },

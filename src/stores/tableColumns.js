@@ -143,6 +143,29 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    solicitationsList: [
+      {
+        name: "organismType",
+        align: "left",
+        label: "Tipo de organismo",
+        field: "organismType",
+        sortable: true,
+      },
+      {
+        name: "organismName",
+        align: "left",
+        label: "Nome do organism",
+        field: "organismName",
+        sortable: true,
+      },
+      {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: (row) => row.status,
+        sortable: true,
+      },
+    ],
     allFunctionsSolicitations: [
       {
         name: "userName",
