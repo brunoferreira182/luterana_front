@@ -727,6 +727,7 @@
         </q-card>
       </q-dialog>
       <q-dialog
+        @hide="clearDialogAddNewChild()"
         v-model="dialogAddNewChild.open"
       >
         <q-card style="width: 300px;border-radius: 1rem;">
@@ -745,6 +746,7 @@
               color="primary"
               flat
               no-caps
+              @click="clearDialogAddNewChild"
               unelevated
               rounded
             />
@@ -1259,11 +1261,12 @@
             <div class="text-center text-h6">
               Selecione a congregação
             </div>
-            <!-- <q-input
+            <q-input
               label="Informe a cidade cidade"
               v-model="dialogLastPastoralActivity.selectedCity"
-            /> -->
-            <q-select 
+            />
+            <q-select   
+              v-if="dialogLastPastoralActivity.selectedCity !== ''"
               label="selecione a congregação"
               v-model="dialogLastPastoralActivity.selectedOrganism"
               hint="Busque pelo nome"
@@ -1647,6 +1650,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCongregacoesByString',
         body:{
+          filterCity: this.dialogLastPastoralActivity.selectedCity,
           filterValue: val,
         }
       }

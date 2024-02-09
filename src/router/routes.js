@@ -63,8 +63,12 @@ const routes = [
         component: () => import("pages/admin/FunctionsSolicitations.vue"),
       },
       {
+        path: "/admin/admSugestionsList",
+        component: () => import("src/pages/admin/AdmSugestionsList.vue"),
+      },
+      {
         path: "/admin/admSolicitationsList",
-        component: () => import("pages/admin/AdmSolicitationsList.vue"),
+        component: () => import("src/pages/admin/AdmSolicitationsList.vue"),
       },
       {
         path: "/admin/attachDetail",

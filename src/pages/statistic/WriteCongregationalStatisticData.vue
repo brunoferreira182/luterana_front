@@ -492,7 +492,24 @@
         v-else
         class="q-pa-md text-h6 text-center"
       >
-          Esta etapa foi concluida. Os dados estão disponíveis somente para consulta
+        <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
+        <div>
+          <q-btn v-if="hasModificationRequest === false"
+            color="red"
+            class="q-mt-md"
+            label="Solicitar alteração de dados"
+            rounded
+            icon="report"
+            @click="requestModifications"
+          ></q-btn>
+          <q-btn v-else-if="hasModificationRequest === true"
+            color="orange"
+            class="q-mt-md"
+            label="Aguarde a aprovação da solicitaçao"
+            rounded
+            icon="schedule"
+          ></q-btn>
+        </div>
       </div>
       <q-dialog
         v-model="dialogAddFunction.open"
@@ -1584,41 +1601,6 @@
         Informe o substituto desejado:
       </q-card-section>
       <q-card-section>
-        <q-select v-if="dialogReportError.type === 'changePastor'"
-          v-model="dialogReportError.userSelected"
-          use-input
-          label="Nome do usuário"
-          option-label="userName"
-          :options="usersOptions"
-          @filter="getUsers"
-          :loading="false"
-          :option-value="(item) => item._id"
-        >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps">
-              <q-item-section>
-                <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                Nenhum resultado
-              </q-item-section>
-              <q-item-section class="text-grey">
-                <q-btn 
-                  icon="person_add"
-                  dense
-                  flat
-                  color="primary"
-                  @click="dialogAddUser.open = true"
-                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
         <q-input v-if="dialogReportError.type === 'isAffiliated'"
           type="textarea"
           label="Informe a alteração"
@@ -1982,6 +1964,7 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
+      hasModificationRequest: false,
       dialogChangeParishName: {
         open: false,
         name: null
@@ -1999,6 +1982,34 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    requestModifications () {
+      const opt = {
+        route: '/desktop/statistics/requestModifications',
+        body: {
+          organismId: this.composition.organismParentId,
+          organismName: this.composition.organismParentName,
+          organismType: this.composition.organismParentLocal
+        }
+      }
+      useFetch(opt).then(() => {
+        this.$q.notify('Solicitação enviada, aguarde até um administrador aceitar sua solicitação...')
+        this.getModificationsRequest()
+      })
+    },
+    getModificationsRequest () {
+      const opt = {
+        route: '/desktop/statistics/getModificationsRequest',
+        body: {
+          organismId: this.composition.organismParentId
+        }
+      }
+      useFetch(opt).then((r) => {
+        console.log(r.data)
+        if(r.data){
+          this.hasModificationRequest = true
+        } else this.hasModificationRequest = false
+      })
+    },
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
@@ -2066,7 +2077,6 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/insertPastorErrorReport',
         body: {
-          userSelected: this.dialogReportPastorError.userSelected,
           text: this.dialogReportPastorError.text,
           type: this.dialogReportPastorError.type
         }
@@ -2832,8 +2842,10 @@ export default defineComponent({
           }
         }
         this.composition = r.data
+        
         if (r.data.validated) {
           this.validated = r.data.validated
+          this.getModificationsRequest()
         }
         if (r.data.status) {
           this.status = r.data.status
