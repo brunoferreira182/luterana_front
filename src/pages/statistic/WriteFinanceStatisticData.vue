@@ -371,7 +371,6 @@ export default defineComponent({
         // Remove os caracteres não numéricos, substitui a vírgula por ponto e converte para número
         this.$set(this.table, key, parseFloat(value.toString().replace(/[^\d.,]/g, '').replace(',', '.')) || null);
       }
-      console.log(this.table[key])
     },
     getOthersCongregations() {
       this.otherOrganisms = []
@@ -447,7 +446,6 @@ export default defineComponent({
     contribution = (+this.contributionOutputNum/+total)
     contributionPercents = Math.trunc(contribution*100)
     this.showContribuitionNotify = contributionPercents
-    console.log(contributionPercents, 'kkkkkkkkkk')
     if(contributionPercents >= 11){
       // this.contributionCalculatedMore = contributionPercents
       this.showContributionCalculatedMore = true
@@ -537,7 +535,6 @@ export default defineComponent({
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
-      console.log(r, 'kkkkkkkkkk ')
       if (r.error || !r.data) return
       this.validated = r.data.validated
       this.contributionOutputSum = r.data.contributionOutput
