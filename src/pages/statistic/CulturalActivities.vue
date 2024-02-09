@@ -117,7 +117,6 @@
           text-color="white"
           icon="warning"
         />
-  
         <q-btn
           label="Salvar rascunho"
           color="primary"
@@ -126,6 +125,15 @@
           class="full-width q-my-sm"
           no-caps
           @click="saveDraft"
+        />
+        <q-btn
+          label="Salvar Oficial"
+          color="orange"
+          rounded
+          unelevated
+          class="full-width q-my-sm"
+          no-caps
+          @click="saveOficial"
         />
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
@@ -319,6 +327,45 @@ export default defineComponent({
           return
         }
         this.$q.notify('Rascunho salvo com sucesso!')
+        this.$router.back()
+        this.getAtividadesCulticas()
+      });
+    },
+    saveOficial(){
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
+          }
+      this.extractedData = [];
+      this.culturalActivities.forEach((item, index) => {
+        const extractedItem = {
+          organismName: item.organismName,
+          activitiesData: item.activitiesData,
+        };
+        if (index === 0) {
+          //a congregação precisa ser o primeiro índice sempre
+          extractedItem.congregationId = item.organismId;
+        } else {
+          extractedItem.organismId = item.childOrganismId;
+        }
+        this.extractedData.push(extractedItem);
+      });
+      const opt = {
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticDone",
+        body: {
+          organismId: this.$route.query.organismId,
+          activitiesData: this.extractedData
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+          return
+        }
+        this.$q.notify('Atividades salvas com sucesso!')
         this.$router.back()
         this.getAtividadesCulticas()
       });

@@ -239,6 +239,15 @@
                   no-caps
                   @click="saveDraft()"
                 />
+                <q-btn
+                  label="Salvar Oficial"
+                  color="orange"
+                  rounded
+                  unelevated
+                  class="full-width q-my-sm"
+                  no-caps
+                  @click="saveOficial()"
+                />
                 <div class="row q-gutter-sm q-pt-xs">
                   <q-btn
                     label="Etapa anterior"

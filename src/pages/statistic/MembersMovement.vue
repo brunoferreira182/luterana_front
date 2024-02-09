@@ -323,6 +323,15 @@
           no-caps
           @click="saveDraft()"
         />
+        <q-btn
+          label="Salvar Oficial"
+          color="orange"
+          rounded
+          unelevated
+          class="full-width q-my-sm"
+          no-caps
+          @click="saveOficial()"
+        />
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
             label="Etapa anterior"
@@ -495,7 +504,31 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error) return
         this.$q.notify({
-          message: 'Rascunho salvo com sucesso',
+          message: 'Rascunho salvo com sucesso!',
+        })
+        this.$router.back()
+        this.getMovimentoMembrosPorCongregacao()
+      })
+    },
+    saveOficial(){
+      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
+        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
+            return this.$q.notify('Preencha todos os campos obrigatórios!')
+        }
+      }
+      const opt = {
+        route: '/desktop/statistics/saveDraftMembersMovement',
+        body: {
+          organismId: this.$route.query.organismId,
+          membersMovement: this.membersMovement
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) return
+        this.$q.notify({
+          message: 'Movimento de Membros salvo com sucesso!',
         })
         this.$router.back()
         this.getMovimentoMembrosPorCongregacao()
@@ -517,7 +550,6 @@ export default defineComponent({
           this.membersMovement[key] = r.data.membersMovement[key]
         })
         this.validated = r.data.validated
-
         this.calculateTotal()
       })
     },
