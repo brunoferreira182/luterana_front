@@ -148,6 +148,16 @@
                   @click="addPontoDeMissão(iOrg)"
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
                 />
+                <q-btn
+                  color="primary"
+                  rounded
+                  flat
+                  unelevated
+                  label="Alterar nome da congregação"
+                  no-caps
+                  @click="changeCongregationName(iOrg)"
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                />
               </div>
               <div>
               </div>
@@ -1768,17 +1778,45 @@
           rounded
           flat
           color="primary"
-          @click="confirmChangeParishName"
-        >
-        </q-btn>
+          @click="clearDialogChangeParishName"
+        />
         <q-btn
           label="Confirmar"
           no-caps
           rounded
           color="primary"
-          @click="clearDialogChangeParishName"
-        >
-        </q-btn>
+          @click="confirmChangeParishName"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
+    v-model="dialogChangeCongregationName.open"
+    @hide="clearDialogChangeCongregationName"
+  >   
+    <q-card style="width:300px">
+      <q-card-section>
+        <q-input
+          v-model="dialogChangeCongregationName.name"
+          class="q-pa-m"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          no-caps
+          rounded
+          flat
+          color="primary"
+          @click="clearDialogChangeCongregationName"
+        />
+        <q-btn
+          label="Confirmar"
+          no-caps
+          rounded
+          color="primary"
+          @click="confirmChangeCongregationhName"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -1792,7 +1830,11 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
-      // composition.congregations.foundationDate,
+      dialogChangeCongregationName: {
+        open: false,
+        name: '',
+        iOrg: null
+      },
       filter: '',
       pagination: {
         sortBy: '',
@@ -1982,6 +2024,22 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    clearDialogChangeCongregationName() {
+      this.dialogChangeCongregationName = {
+        open: false,
+        name: '',
+        iOrg: null
+      }
+    },
+    confirmChangeCongregationhName()  {
+      this.composition.congregations[this.dialogChangeCongregationName.iOrg].organismChildName = this.dialogChangeCongregationName.name
+      this.clearDialogChangeCongregationName()
+    },
+    changeCongregationName(iOrg) {
+      this.dialogChangeCongregationName.name = this.composition.congregations[iOrg].organismChildName
+      this.dialogChangeCongregationName.open = true
+      this.dialogChangeCongregationName.iOrg = iOrg
+    },
     requestModifications () {
       const opt = {
         route: '/desktop/statistics/requestModifications',

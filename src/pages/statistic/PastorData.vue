@@ -1262,7 +1262,7 @@
               Selecione a congregação
             </div>
             <q-input
-              label="Informe a cidade cidade"
+              label="Informe a cidade"
               v-model="dialogLastPastoralActivity.selectedCity"
             />
             <q-select   
