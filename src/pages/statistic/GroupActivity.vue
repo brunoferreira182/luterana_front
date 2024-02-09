@@ -181,7 +181,7 @@
                   >
                     <q-item-label>
                       <div class="col items-center">
-                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal
+                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal:
                         <q-radio
                           v-model="departamentos[i].departamentoData.musicGroup.exist"
                           val="exist"
@@ -202,12 +202,27 @@
                       </div>
                     </q-item-label>
                     <q-item-section>
-                      <q-input
-                        type="number"
-                        class="q-mr-md"
-                        v-model="departamentos[i].departamentoData.coro"
-                        label="Total no Coro"
-                      ></q-input>
+                      <q-item-label>
+                        <div class="col items-center"> Coro:
+                        <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="exist"
+                            label="Sim"
+                          />
+                          <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="noExist"
+                            label="Não"
+                          />
+                          <q-input
+                            type="number"
+                            class="q-pl-sm col q-mr-md"
+                            v-if="departamentos[i].departamentoData.coro.exist === 'exist'"
+                            v-model="departamentos[i].departamentoData.coro.qtn"
+                            label="Total no Coro"
+                          ></q-input>
+                          </div>
+                      </q-item-label>
                     </q-item-section>
                     <q-input
                       type="number"
