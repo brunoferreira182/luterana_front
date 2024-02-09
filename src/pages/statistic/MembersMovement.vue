@@ -1,7 +1,6 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-
       <div class="q-pa-md q-gutter-sm">
         <q-breadcrumbs align="center">
           <q-breadcrumbs-el 
@@ -17,6 +16,27 @@
           />
           <q-breadcrumbs-el label="Movimento de membros" />
         </q-breadcrumbs>
+        <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/membersMovement?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
       </div>
 
       <div class="text-h5 q-my-md text-center">
@@ -38,6 +58,7 @@
               />
             </div>
           </div>
+          <div v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1">Quantidade de alunos</div>
           <div
             class="q-ma-sm"
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
@@ -47,11 +68,11 @@
               class="col q-gutter-y-md"
               v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1"
             >
-              <q-item-label class=" q-pa-sm"> Quantidade de alunos
+              <q-item-label class=" q-pa-sm"> 
                 <div class="col-6 justify-between">
                   <q-input 
                   type="number"
-                  :label="`${confirmado.turma} °ano`"
+                  :label="`${confirmado.turma}° ano de 2023`"
                   v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
                   />
                 </div>
@@ -60,11 +81,10 @@
             <div
               v-if="(instructionYears - 1 === 0) || index === instructionYears - 1"
             >
-              <q-item-label class=" q-pa-sm"> Quant. de confirmados
+              <q-item-label class=" q-pa-sm"> Quant. de confirmados em 2023
                 <div class="col-6 justify-between">
                   <q-input 
                   type="number"
-                  :label="`${confirmado.turma} °ano`"
                   v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
                   />
                 </div>
@@ -78,7 +98,7 @@
             <div class="col q-gutter-y-md">
               <q-input 
                 type="number"
-                label="Total de membros comungantes 2022"
+                label="Total de comungantes 2022"
                 v-model="membersMovement.totalMambrosComungantes2022"
                 @blur="calculateTotal()"
               />
@@ -277,7 +297,7 @@
         <div class="text-h6">Comungantes: {{ totalComungantes }}</div>
         <div class="text-h6">Não comungantes: {{ totalNaoComungantes }}</div>
       </div>
-      <div class="q-ma-lg text-center">
+      <div class="q-ma-lg q-pb-sm text-center">
         <q-chip
           v-if="validated"
           color="green"
@@ -292,17 +312,39 @@
           label="Não Validado"
           text-color="white"
           icon="warning"
-        /><br>
+        />
   
         <q-btn
           label="Salvar rascunho"
           color="primary"
           unelevated
-          class="q-my-lg full-width"
+          class="q-my-sm full-width"
           rounded
           no-caps
           @click="saveDraft()"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -345,7 +387,20 @@ export default defineComponent({
       totalComungantes: 0,
       totalNaoComungantes: 0,
       total: 0,
-      instructionYears: null
+      instructionYears: null,
+      otherOrganisms: [],
+    }
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getMovimentoMembrosPorCongregacao()
+          this.getOrganismNameForBreadCrumbs()
+          this.getOthersCongregations()
+        }
+      },
+      immediate: true
     }
   },
   beforeUnmount(){
@@ -354,8 +409,29 @@ export default defineComponent({
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
     this.getOrganismNameForBreadCrumbs()
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
     calculaAnosEstudo (ev) {
       this.instructionYears = ev
       this.membersMovement.instrucaoDeConfirmados.confirmados = []
@@ -380,6 +456,11 @@ export default defineComponent({
       }
     },
     saveDraftOnBeforeUnmount(){
+      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
+        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '' || !this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant) {
+            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+        }
+      }
       const opt = {
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {
@@ -397,6 +478,11 @@ export default defineComponent({
       })
     },
     saveDraft () {
+      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
+        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
+            return this.$q.notify('Preencha todos os campos obrigatórios!')
+        }
+      }
       const opt = {
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {
@@ -431,6 +517,7 @@ export default defineComponent({
           this.membersMovement[key] = r.data.membersMovement[key]
         })
         this.validated = r.data.validated
+
         this.calculateTotal()
       })
     },

@@ -6,7 +6,7 @@
           <q-breadcrumbs-el
             style="cursor: pointer"
             icon="home"
-            label="Completar estatística"
+            label="Introdução"
             @click="
               $router.push('/statistic/selectOrganismToWriteStatisticData')
             "
@@ -24,6 +24,27 @@
           </q-breadcrumbs-el>
           <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
+        <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6 text-wrap">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/groupActivity?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
       </div>
       <q-list>
         <q-item v-for="(item, i) in departamentos" :key="item">
@@ -34,13 +55,12 @@
               width: 94%;
             "
           >
-            <q-item-section class="item-section q-pa-md">
+            <q-item-section class="q-pa-md">
               <q-item-label
                 @click="expand(item)"
-                class="text-h6"
-                style="white-space: nowrap"
+                class="text-h6 label-container"
               >
-                {{ item.organismConfigName }} - {{ item.organismName }}
+                {{ item.organismName }}
                 <q-btn
                   round
                   flat
@@ -48,6 +68,11 @@
                     item.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'
                   "
                 />
+              </q-item-label>
+              <q-item-label class="label-container">
+                <div class="q-py-xs">
+                  <q-chip>{{ item.organismConfigName }}</q-chip>
+                </div>
               </q-item-label>
               <q-slide-transition>
                 <div v-show="item.expanded">
@@ -156,7 +181,7 @@
                   >
                     <q-item-label>
                       <div class="col items-center">
-                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal
+                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal:
                         <q-radio
                           v-model="departamentos[i].departamentoData.musicGroup.exist"
                           val="exist"
@@ -177,18 +202,33 @@
                       </div>
                     </q-item-label>
                     <q-item-section>
-                      <q-input
-                        type="number"
-                        class="q-mr-md"
-                        v-model="departamentos[i].departamentoData.coro"
-                        label="Total no Coro"
-                      ></q-input>
+                      <q-item-label>
+                        <div class="col items-center"> Coro:
+                        <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="exist"
+                            label="Sim"
+                          />
+                          <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="noExist"
+                            label="Não"
+                          />
+                          <q-input
+                            type="number"
+                            class="q-pl-sm col q-mr-md"
+                            v-if="departamentos[i].departamentoData.coro.exist === 'exist'"
+                            v-model="departamentos[i].departamentoData.coro.qtn"
+                            label="Total no Coro"
+                          ></q-input>
+                          </div>
+                      </q-item-label>
                     </q-item-section>
                     <q-input
                       type="number"
                       class="q-mr-md"
                       v-model="departamentos[i].departamentoData.musicosTotal"
-                      label="Músicos envolvidos ao total"
+                      label="Músicos envolvidos na congregação "
                     ></q-input>
 
                     <q-item-section>
@@ -293,7 +333,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.acoesEventuais"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Ações eventuais"
                   />
                   <!-- </div>
@@ -301,7 +340,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.permProgs"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Programas permanentes"
                     />
                   </q-item-section>
@@ -310,12 +348,12 @@
                     <q-input
                       v-model="departamentos[i].departamentoData.finalidade"
                       class="q-pl-sm q-mr-md"
-                      label="Finalidade do grupo"
+                      label="Finalidade do grupo *"
                     ></q-input>
                     <q-input
                       v-model="departamentos[i].departamentoData.organizacao"
                       class="q-pl-sm q-mr-md"
-                      label="Organização do grupo"
+                      label="Organização do grupo *"
                     ></q-input>
                     <div class="row">
                       <q-input
@@ -339,7 +377,7 @@
           </div>
         </q-item>
       </q-list>
-      <div class="q-ma-lg text-center" >
+      <div class="q-ma-lg q-pb-sm text-center" >
         <q-chip
           v-if="validated"
           color="green"
@@ -354,17 +392,39 @@
           label="Não Validado"
           text-color="white"
           icon="warning"
-        /><br>
+        />
 
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="full-width"
+          class="full-width q-my-sm"
           rounded
           unelevated
           no-caps
           @click="saveDraft()"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -388,15 +448,48 @@ export default defineComponent({
       'Departamento de Ação social de leigos', 
       'Outros'
       ],
+      otherOrganisms: [],
     };
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getGroupActivitiesByOrganismId();
+          this.getOthersCongregations();
+        }
+      },
+      immediate: true
+    }
   },
   beforeUnmount(){
     this.saveDraftOnBeforeUnmount()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
     getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
@@ -419,6 +512,11 @@ export default defineComponent({
       // this.$q.notify("Salvo com sucesso!");
     },
     saveDraftOnBeforeUnmount(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+          }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
@@ -438,6 +536,11 @@ export default defineComponent({
       });
     },
     saveDraft(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('Preencha todos os campos Obrigatórios!')
+          }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
@@ -472,14 +575,16 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 }
-.item-section {
-  position: relative;
-}
 .form-section {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   z-index: 1;
+}
+.label-container {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre-line
 }
 </style>

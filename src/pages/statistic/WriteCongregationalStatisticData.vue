@@ -27,11 +27,19 @@
       <q-item
         v-if="composition"
         style="border-radius: 1rem;"
-        class="q-ma-sm"
+        class=""
       >
         <q-item-section>
           <div class="text-h6 text-left">
             Paróquia: {{ composition.organismParentName }}
+            <q-btn
+              color="primary"
+              flat
+              icon="edit"
+              rounded
+              unelevated
+              @click="changeParishName"
+            />
           </div>
           <div class="q-my-sm" v-if="pastorsList && pastorsList.length > 0">
             <div class="text-h6">
@@ -74,10 +82,10 @@
             </q-btn>
           </div>
           <q-item-label 
-          class="bg-white q-mt-sm text-center"
-          style="border-radius: .7rem;"
-          v-for="(org, iOrg) in composition.congregations"
-          :key="org"
+            class="bg-white q-mt-sm text-center"
+            style="border-radius: .7rem;"
+            v-for="(org, iOrg) in composition.congregations"
+            :key="org"
           > 
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
@@ -85,8 +93,64 @@
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
-              exp
             >
+            <!-- <template v-slot:header>
+              <q-item-section>
+                {{org.organismChildName}}
+              </q-item-section>
+
+              <q-item-section side>
+                <div class="row items-center">
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="primary"
+                    icon="add"
+                    flat
+                    rounded
+                  ></q-btn>
+                  <q-btn
+                    @click.stop="console.log('oi')"
+                    color="red"
+                    icon="delete"
+                    rounded
+                    flat
+                  ></q-btn>
+                </div>
+              </q-item-section>
+            </template> -->
+              <div class="q-ma-sm">
+                <q-btn
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                  color="red"
+                  rounded
+                  @click="openDialogRemoveCongregation(iOrg)"
+                  flat
+                  unelevated
+                  label="Inativar congregação"
+                  no-caps
+                />
+                <q-btn
+                  v-else-if="(org.action && org.action === 'remove') && (!status || (status && status.value !== 'sent'))"
+                  color="primary"
+                  rounded
+                  unelevated
+                  @click="activateCongregation(iOrg)"
+                  label="Ativar congregação"
+                  no-caps
+                />
+                <q-btn
+                  color="primary"
+                  rounded
+                  flat
+                  unelevated
+                  label="Adicionar ponto de missão"
+                  no-caps
+                  @click="addPontoDeMissão(iOrg)"
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                />
+              </div>
+              <div>
+              </div>
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Funções
@@ -188,11 +252,10 @@
                       </q-item>
                     </q-list>
                   </div>
-                  <div class="q-ma-md text-h6">
+                  <div class="q-ma-md text-h6 items-left">
                     <q-btn
                       label="Secretária"
                       icon="add"
-                      class="full-width"
                       rounded
                       no-caps
                       color="primary"
@@ -231,8 +294,9 @@
                         flat
                         rounded
                         icon="add"
-                        label="departamento"
+                        label="Adicionar"
                         @click="addNewDepartament(iOrg, iDep)"
+                        no-caps
                       />
                     </q-item-section>
                   </q-item>
@@ -267,12 +331,13 @@
                         class="q-pa-sm"
                       />
                     </div>
-                    <div class="col ">
+                    <div class="col" >
                       <q-checkbox
                         color="primary"
                         no-caps
                         label="Não confere"
-                        v-model="composition.congregations[iOrg].filiadoNaoConfere"
+                        @update:model-value="filiadoNãoConfereIntoCompositionOrg(iOrg)"
+                        v-model="filiadoNaoConfere"
                       />
                     </div>
                   </div>
@@ -284,15 +349,16 @@
                       mask="##/##/####"
                       v-model="composition.congregations[iOrg].foundationDate"
                     />
-                    <div class="col">  
+                    <div class="col" v-if="!composition.congregations[iOrg].foundationDate">  
                       <q-checkbox
-                      label="Não sei"
-                      v-model="composition.congregations[iOrg].semFundacao"
+                        label="Não sei"
+                        @update:model-value="insertCheckBoxNoFundationCompositionOrg(iOrg)"
+                        v-model="semFundacao"
                       />
                     </div>  
                   </div>
                   <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
-                    Quando ocorre o culto:
+                    Quando ocorre os cultos:
                   </div>
                   <q-list
                     bordered
@@ -357,7 +423,7 @@
                     rounded
                     flat
                     icon="add"
-                    class="full-width q-py-md"
+                    class="q-pa-sm"
                     @click="clkAddServices(iOrg)"
                   />
                 </div>
@@ -381,25 +447,7 @@
                   v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
-              <div class="text-right q-ma-sm">
-                <q-btn
-                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
-                  color="red"
-                  rounded
-                  @click="openDialogRemoveCongregation(iOrg)"
-                  flat
-                  unelevated
-                  label="Excluir congregação"
-                />
-                <q-btn
-                  v-else-if="(org.action && org.action === 'remove') && (!status || (status && status.value !== 'sent'))"
-                  color="primary"
-                  rounded
-                  unelevated
-                  @click="activateCongregation(iOrg)"
-                  label="Ativar congregação"
-                />
-              </div>
+              
             </q-expansion-item>
               </q-item-label>
             </q-item-section>
@@ -820,30 +868,32 @@
               v-for="(func, iFunc) in dialogAddNewDepartament.functions" 
               :key="func"
             >
-              <strong>{{ func.functionName }}</strong>
-              <q-btn
-                color="primary"
-                icon="add"
-                flat
-                rounded
-                @click="addFunctionUserInNewDepartament(func, iFunc)"
-              >
-                <q-tooltip>Adicionar pessoa para esta função</q-tooltip>
-              </q-btn>
-              <div 
-                class="q-ml-sm"
-                v-for="(user, iUser) in func.functionUsers"
-                :key="user"
-              >
-                {{ user.userName }}
+              <div v-if="func.functionName !== 'Pastor'">
+                <strong>{{ func.functionName }}</strong>
                 <q-btn
-                  icon="delete"
-                  color="red"
+                  color="primary"
+                  icon="add"
                   flat
                   rounded
-                  @click="removeUserFromNewDept(iFunc, iUser)"
+                  @click="addFunctionUserInNewDepartament(func, iFunc)"
                 >
+                  <q-tooltip>Adicionar pessoa para esta função</q-tooltip>
                 </q-btn>
+                <div 
+                  class="q-ml-sm"
+                  v-for="(user, iUser) in func.functionUsers"
+                  :key="user"
+                >
+                  {{ user.userName }}
+                  <q-btn
+                    icon="delete"
+                    color="red"
+                    flat
+                    rounded
+                    @click="removeUserFromNewDept(iFunc, iUser)"
+                  >
+                  </q-btn>
+                </div>
               </div>
             </div>
           </q-card-section>
@@ -906,38 +956,40 @@
                   v-for="(func, iFunc) in dialogDepartamentDetail.data.organismFunctions"
                   :key="func"
                 >
-                  <strong>{{ func.functionName }}</strong>
-                  <q-btn
-                    color="primary"
-                    flat
-                    rounded
-                    icon="add"
-                    @click="addUserFunctioninDept(iFunc)"
-                    size="12px"
-                  >
-                  </q-btn>
-                  <div
-                    v-for="(user, iUser) in dialogDepartamentDetail.data.organismFunctions[iFunc].functionUsers"
-                    :key="user"
-                  >
-                    <q-item
-                      class="no-padding"
-                      v-if="!user.action || (user.action && user.action !== 'remove')"
+                  <div v-if="func.functionName !== 'Pastor'">
+                    <strong>{{ func.functionName }}</strong>
+                    <q-btn
+                      color="primary"
+                      flat
+                      rounded
+                      icon="add"
+                      @click="addUserFunctioninDept(iFunc)"
+                      size="12px"
                     >
-                      <q-item-section>
-                        <q-item-label>
-                          {{ user.userName }}
-                          <q-btn
-                            color="red"
-                            flat
-                            rounded
-                            unelevated
-                            @click="removeUserFromFunctionDept(iFunc, iUser)"
-                            icon="delete"
-                          />
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
+                    </q-btn>
+                    <div
+                      v-for="(user, iUser) in dialogDepartamentDetail.data.organismFunctions[iFunc].functionUsers"
+                      :key="user"
+                    >
+                      <q-item
+                        class="no-padding"
+                        v-if="!user.action || (user.action && user.action !== 'remove')"
+                      >
+                        <q-item-section>
+                          <q-item-label>
+                            {{ user.userName }}
+                            <q-btn
+                              color="red"
+                              flat
+                              rounded
+                              unelevated
+                              @click="removeUserFromFunctionDept(iFunc, iUser)"
+                              icon="delete"
+                            />
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </div>
                   </div>
                 </div>
               </q-expansion-item>
@@ -1120,9 +1172,21 @@
                 style="border-radius:.7rem"
                 @click="openDepartamentDetail(iExistsDept)"
               > 
-                <div>
-                  <strong>{{ dep.departamentName }}</strong>
-                </div>
+                <q-item-section>
+                  <div>
+                    <strong>{{ dep.departamentName }}</strong>
+                  </div>
+                </q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    color="red"
+                    icon="delete"
+                    flat
+                    rounded
+                    unelevated
+                    @click.stop="removeDepartamentFromList(iExistsDept)"
+                  />
+                </q-item-section>
               </q-item>
             </div>
           </q-card-section>
@@ -1716,6 +1780,43 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog
+    v-model="dialogChangeParishName.open"
+    @hide="clearDialogChangeParishName"
+  >
+    <q-card
+      style="width: 300px;"
+    >
+      <q-card-section>
+        <div>
+          Alterar nome da paróquia
+        </div>
+        <q-input
+          v-model="dialogChangeParishName.name"
+          class="q-pa-sm"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          no-caps
+          rounded
+          flat
+          color="primary"
+          @click="confirmChangeParishName"
+        >
+        </q-btn>
+        <q-btn
+          label="Confirmar"
+          no-caps
+          rounded
+          color="primary"
+          @click="clearDialogChangeParishName"
+        >
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -1803,6 +1904,7 @@ export default defineComponent({
         iDep: null,
         iExistsDept: null
       },
+      filiadoNaoConfere: false,
       deptConfigs: null,
       dialogInserFunctionUserInNewDept: {
         open: false,
@@ -1897,7 +1999,12 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
-      hasModificationRequest: false
+      hasModificationRequest: false,
+      dialogChangeParishName: {
+        open: false,
+        name: null
+      },
+      semFundacao: false,
     }
   }, 
   beforeMount() {
@@ -1937,6 +2044,34 @@ export default defineComponent({
           this.hasModificationRequest = true
         } else this.hasModificationRequest = false
       })
+    },
+    insertCheckBoxNoFundationCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].semFundacao = this.semFundacao
+    },
+    filiadoNãoConfereIntoCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
+    },
+    removeDepartamentFromList(iExistsDept) {
+      this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].action = 'remove'
+      this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].trueLength--
+      if (this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].trueLength === 0) {
+        this.clearDialogSelectDepartamentDetail()
+      }
+
+    },
+    clearDialogChangeParishName() {
+      this.dialogChangeParishName = {
+        open: false,
+        name: null
+      }
+    },
+    confirmChangeParishName() {
+      this.composition.organismParentName = this.dialogChangeParishName.name
+      this.clearDialogChangeParishName()
+    },
+    changeParishName() {
+      this.dialogChangeParishName.open = true
+      this.dialogChangeParishName.name = this.composition.organismParentName
     },
     confirmCreateNewUser () {
       const opt = {
@@ -2024,7 +2159,6 @@ export default defineComponent({
       }
     },  
     insertParoquialManagementType(iOrg, org){
-      console.log(org)
       const opt = {
         route: "/desktop/statistics/insertParoquialManagementType",
         body:{
@@ -2134,7 +2268,7 @@ export default defineComponent({
           }
           if (!d.value.times || !d.value.times.initial) {
             allHaveTime = false
-            this.$q.notify('Preencha os horários')
+            this.$q.notify('preencha todo o formulário para compeltar')
             return
           }
         }
@@ -2218,8 +2352,6 @@ export default defineComponent({
         open: false,
         userSelected: null,
         iOrg: null,
-        initialHour: null,
-        finalHour: null,
         days: [
           {label: 'Segunda-feira', selected: false},
           {label: 'Terça-feira', selected: false},
@@ -2229,7 +2361,7 @@ export default defineComponent({
           {label: 'Sábado', selected: false},
           {label: 'Domingo', selected: false}
         ],
-        obs: ''
+        obsHours: ''
       }
     },
     addSecretaryToParoquia(iOrg) {
@@ -2346,10 +2478,12 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.$q.notify('Finalizando etapa...')
       this.$q.loading.show();
       await this.getCompositionByUserId();
       setTimeout(() => {
         this.$q.loading.hide();
+        this.$q.notify('Etapa finalizada com sucesso')
         this.$router.back();
       }, 2000);
     },
@@ -2466,6 +2600,17 @@ export default defineComponent({
       this.dialogAddNewDepartament.iOrg = iOrg
       this.dialogAddNewDepartament.iDep = iDep
       this.dialogAddNewDepartament.open = true
+    },
+    addPontoDeMissão(iOrg) {
+      this.composition.congregations[iOrg].depts.forEach((dep, iDep) => {
+        if (dep.organismConfigName === 'Ponto de Missão'){
+          let id = this.composition.congregations[iOrg].depts[iDep].organismConfigId
+          this.getFunctionsByDepartamentId(id)
+          this.dialogAddNewDepartament.iOrg = iOrg
+          this.dialogAddNewDepartament.iDep = iDep
+          this.dialogAddNewDepartament.open = true
+        }
+      })
     },
     clearDialogAddNewCongrgation() {
       this.dialogAddCongregation= {
@@ -2748,6 +2893,18 @@ export default defineComponent({
             organismConfigId: dep.organismConfigId
           })
         })
+        this.composition.congregations.forEach((org)=> {
+          org.organismFunctions.forEach((func) => {
+            if (func.functionName === 'Pastor' && func.functionUsers.length > 0) {
+              func.functionUsers.forEach((pastor) => {
+                const exists = this.pastorsList.some(existPastor => existPastor.userName === pastor.userName);
+                if (!exists) {
+                  this.pastorsList.push(pastor);
+                }
+              });
+            }
+          });
+        });
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {

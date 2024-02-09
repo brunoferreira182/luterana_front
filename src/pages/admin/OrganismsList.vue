@@ -1,6 +1,13 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      <div class="q-gutter-md q-pa-md">
+        <q-chip v-for="(name, nameIndex) in organismsConfigsNamesList" :key="name" class="q-ma-sm" outline clickable
+          :style="{ textTransform: 'capitalize', color: name.organismStyle }"
+          :icon="selectedChipIndex === nameIndex ? 'check_circle' : ''" @click="filterOrganisms(nameIndex)">
+          {{ name.organismConfigName }}
+        </q-chip>
+      </div>
       <q-table 
         flat 
         class="bg-accent" 
@@ -100,13 +107,7 @@
           </q-td>
         </template>
       </q-table>
-      <div class="q-gutter-md q-pa-md">
-        <q-chip v-for="(name, nameIndex) in organismsConfigsNamesList" :key="name" class="q-ma-sm" outline clickable
-          :style="{ textTransform: 'capitalize', color: name.organismStyle }"
-          :icon="selectedChipIndex === nameIndex ? 'check_circle' : ''" @click="filterOrganisms(nameIndex)">
-          {{ name.organismConfigName }}
-        </q-chip>
-      </div>
+      
     </q-page>
   </q-page-container>
 </template>
@@ -144,7 +145,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getOrganismsList();
+    // this.getOrganismsList();
     this.getOrganismsConfigsNamesList();
   },
   unmounted() {

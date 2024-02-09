@@ -4,19 +4,40 @@
       <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs align="center">
             <q-breadcrumbs-el 
-              style="cursor: pointer;" 
+              style="cursor: pointer" 
               icon="home" 
               label="Introdução" 
               @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
             />
             <q-breadcrumbs-el 
               :label="congregationName" 
-              style="cursor: pointer;" 
+              style="cursor: pointer" 
               class="text-wrap"
               @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
             <q-breadcrumbs-el label="Atividades cúlticas" />
           </q-breadcrumbs>
+          <div
+          class="text-center q-mt-lg"
+          v-if="otherOrganisms && otherOrganisms.length > 0"
+        >
+          <div class="text-h6">
+            Selecione outras congregações para responder estes dados:
+          </div>
+          <div>
+            <q-chip
+              clickable
+              v-for="org in otherOrganisms"
+              :key="org"
+              @click="$router.push('/statistic/culturalActivities?organismId=' + org._id)"
+            >
+              {{ org.name }}
+            </q-chip>
+          </div>
+          <q-separator
+            class="q-mt-md q-mx-md"
+          ></q-separator>
+        </div>
         </div>
       <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
@@ -32,39 +53,39 @@
             <div class="text-h5" >
               <u>{{ cultural.organismName }}</u>
             </div>
-            <div class="q-mt-md">
+            <!-- <div class="q-mt-md">
               Culto
-            </div>
+            </div> -->
             <q-input
               type="number"
-              label="Quantos dados por pastor"
+              label="Quantos cultos por pastor *"
               v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
               type="number"
-              label="Quantos cultos de leitura"
+              label="Quantos cultos de leitura *"
               v-model="cultural.activitiesData.cultoData.qtyCultoLeitura"
             />
             <q-input
               type="number"
-              label="Soma total de frequência no ano"
+              label="Soma total de frequência no ano *"
               v-model="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-md">
               <div class="q-mt-md">
-                Santa-ceia
+                Santa Ceia
               </div>
               <div class="row q-gutter-md ">
                 <q-input
                   class="col"
                   type="number"
-                  label="Quantidade oferecida ano"
+                  label="* Quantidade no ano"
                   v-model="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
                 />
                 <q-input
                   class="col"
                   type="number"
-                  label="Soma total de comungantes"
+                  label="* Frequencia total comungantes"
                   v-model="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
                 />
               </div>
@@ -87,7 +108,7 @@
           label="Rascunho"
           text-color="white"
           icon="warning"
-        /><br>
+        />
 
         <q-chip
           v-if="!validated && !culturalActivities"
@@ -95,17 +116,39 @@
           label="Não iniciada"
           text-color="white"
           icon="warning"
-        /><br>
+        />
   
         <q-btn
           label="Salvar rascunho"
           color="primary"
           rounded
           unelevated
-          class="full-width"
+          class="full-width q-my-sm"
           no-caps
           @click="saveDraft"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -119,9 +162,23 @@ export default defineComponent({
   data() {
     return {
       validated: false,
+      canNavigate: true,
       congregationData: {},
       culturalActivities: [],
       congregationName: '',
+      otherOrganisms: []
+    }
+  },
+  watch: {
+    '$route.query.organismId': {
+      handler(newOrganismId, oldOrganismId) {
+        if (newOrganismId !== oldOrganismId) {
+          this.getAtividadesCulticas()
+          this.getOrganismNameForBreadCrumbs()
+          this.getOthersCongregations()
+        }
+      },
+      immediate: true
     }
   },
   beforeUnmount(){
@@ -130,8 +187,29 @@ export default defineComponent({
   beforeMount() {
     this.getAtividadesCulticas()
     this.getOrganismNameForBreadCrumbs()
+    this.getOthersCongregations()
   },
   methods: {
+    getOthersCongregations() {
+      this.otherOrganisms = []
+      const opt = {
+        route: '/desktop/statistics/getMyOrganismsList'
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        r.data.forEach((org) => {
+          if (org._id !== this.$route.query.organismId) {
+            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
+            if (!exists) {
+              this.otherOrganisms.push({
+                name: org.name,
+                _id: org._id
+              });
+            }
+          }
+        })       
+      })
+    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
@@ -146,7 +224,6 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        console.log(r, 'a')
         r.data.validated ? this.validated = r.data.validated : this.validated = false
         if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
           this.culturalActivities = r.data.activitiesData
@@ -169,6 +246,13 @@ export default defineComponent({
       });
     },
     saveDraftOnBeforeUnmount() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') {
+              return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+            }
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -201,6 +285,11 @@ export default defineComponent({
       });
     },
     saveDraft() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -234,6 +323,13 @@ export default defineComponent({
         this.getAtividadesCulticas()
       });
     },
+    handleBackNavigation() {
+    if (this.canNavigateBack) {
+      this.$router.back();
+    } else {
+      this.$q.notify('Complete todos os campos antes de salvar!');
+    }
+  }
   }
 })
 </script>
