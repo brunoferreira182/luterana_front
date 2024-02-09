@@ -4,14 +4,14 @@
       <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs align="center">
             <q-breadcrumbs-el 
-              style="cursor: pointer;" 
+              style="cursor: pointer" 
               icon="home" 
               label="Introdução" 
               @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
             />
             <q-breadcrumbs-el 
               :label="congregationName" 
-              style="cursor: pointer;" 
+              style="cursor: pointer" 
               class="text-wrap"
               @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
             />
@@ -108,7 +108,7 @@
           label="Rascunho"
           text-color="white"
           icon="warning"
-        /><br>
+        />
 
         <q-chip
           v-if="!validated && !culturalActivities"
@@ -116,17 +116,39 @@
           label="Não iniciada"
           text-color="white"
           icon="warning"
-        /><br>
+        />
   
         <q-btn
           label="Salvar rascunho"
           color="primary"
           rounded
           unelevated
-          class="full-width"
+          class="full-width q-my-sm"
           no-caps
           @click="saveDraft"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>

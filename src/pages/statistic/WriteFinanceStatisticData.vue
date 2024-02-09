@@ -203,7 +203,6 @@
                 Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="q-ma-sm text-center">
-                
                 <q-chip
                   v-if="validated"
                   color="green"
@@ -218,17 +217,39 @@
                   label="Não Validado"
                   text-color="white"
                   icon="warning"
-                /><br>
+                />
   
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
                   rounded
                   unelevated
-                  class="q-my-md full-width"
+                  class="q-my-sm full-width"
                   no-caps
                   @click="saveDraft()"
                 />
+                <div class="row q-gutter-sm q-pt-xs">
+                  <q-btn
+                    label="Etapa anterior"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon="navigate_before"
+                    class="col items-start"
+                    no-caps
+                    @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+                  />
+                  <q-btn
+                    label="Próxima etapa"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon-right="navigate_next"
+                    class="col items-end"
+                    no-caps
+                    @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+                  /> 
+                </div>
               </div>
             </div>
           </div>
