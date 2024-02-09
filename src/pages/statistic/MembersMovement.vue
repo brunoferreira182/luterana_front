@@ -58,6 +58,7 @@
               />
             </div>
           </div>
+          <div v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1">Quantidade de alunos</div>
           <div
             class="q-ma-sm"
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
@@ -67,11 +68,11 @@
               class="col q-gutter-y-md"
               v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1"
             >
-              <q-item-label class=" q-pa-sm"> Quantidade de alunos
+              <q-item-label class=" q-pa-sm"> 
                 <div class="col-6 justify-between">
                   <q-input 
                   type="number"
-                  :label="`${confirmado.turma} °ano`"
+                  :label="`${confirmado.turma}° ano de 2023`"
                   v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
                   />
                 </div>
@@ -80,11 +81,10 @@
             <div
               v-if="(instructionYears - 1 === 0) || index === instructionYears - 1"
             >
-              <q-item-label class=" q-pa-sm"> Quant. de confirmados
+              <q-item-label class=" q-pa-sm"> Quant. de confirmados em 2023
                 <div class="col-6 justify-between">
                   <q-input 
                   type="number"
-                  :label="`${confirmado.turma} °ano`"
                   v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
                   />
                 </div>
@@ -109,7 +109,7 @@
               <q-input 
                 type="number"
                 label="Total de membros não comungantes 2022"
-                v-model="membersMovement.totalMambrosNaoComungantes2022"
+                v-model="membersMovement.totalMembrosNaoComungantes2022"
                 @blur="calculateTotal()"
               />
             </div>
@@ -338,7 +338,7 @@ export default defineComponent({
       congregationName:'',
       membersMovement: {
         totalMambrosComungantes2022: '',
-        totalMambrosNaoComungantes2022: '',
+        totalMembrosNaoComungantes2022: '',
         criancasBatizadasFamiliasIelb: '',
         transferenciasRecebidasComungantes: '',
         transferenciasRecebidasNaoComungantes: '',
