@@ -233,11 +233,11 @@ const useUtils = {
           route: "/user/userSugestionsList",
           icon: "assistant",
         },
-        // {
-        //   label: "Estatística",
-        //   route: "/statistic/introWriteStatisticData",
-        //   icon: "equalizer",
-        // },
+        {
+          label: "Estatística",
+          route: "/statistic/introWriteStatisticData",
+          icon: "equalizer",
+        },
         // {
         //   label: "Falar com admin",
         //   route: "/user/talkToAdmin",
