@@ -53,22 +53,22 @@
             <div class="text-h5" >
               <u>{{ cultural.organismName }}</u>
             </div>
-            <div class="q-mt-md">
+            <!-- <div class="q-mt-md">
               Culto
-            </div>
+            </div> -->
             <q-input
               type="number"
-              label="Quantos cultos por pastor"
-              v-model="cultural.activitiesData.cultoData.qtyCultosPastor"
+              label="Quantos cultos por pastor *"
+              v-model="cultural.activitiesData.cultoData.qtyDadosPastor"
             />
             <q-input
               type="number"
-              label="Quantos cultos de leitura"
+              label="Quantos cultos de leitura *"
               v-model="cultural.activitiesData.cultoData.qtyCultoLeitura"
             />
             <q-input
               type="number"
-              label="Soma total de frequência no ano"
+              label="Soma total de frequência no ano *"
               v-model="cultural.activitiesData.cultoData.somaFrequenciaAnual"
             />
             <div class="q-py-md">
@@ -79,13 +79,13 @@
                 <q-input
                   class="col"
                   type="number"
-                  label="Quantidade no ano"
+                  label="* Quantidade no ano"
                   v-model="cultural.activitiesData.santaCeiaData.qtyOferecidaAnual"
                 />
                 <q-input
                   class="col"
                   type="number"
-                  label="Frequencia total de comungantes"
+                  label="* Frequencia total comungantes"
                   v-model="cultural.activitiesData.santaCeiaData.somaTotalComungantes"
                 />
               </div>
@@ -140,6 +140,7 @@ export default defineComponent({
   data() {
     return {
       validated: false,
+      canNavigate: true,
       congregationData: {},
       culturalActivities: [],
       congregationName: '',
@@ -223,6 +224,13 @@ export default defineComponent({
       });
     },
     saveDraftOnBeforeUnmount() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') {
+              return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+            }
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -255,6 +263,11 @@ export default defineComponent({
       });
     },
     saveDraft() {
+      for(let i = 0; i < this.culturalActivities.length; i++){
+        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
+            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
+          }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -288,6 +301,13 @@ export default defineComponent({
         this.getAtividadesCulticas()
       });
     },
+    handleBackNavigation() {
+    if (this.canNavigateBack) {
+      this.$router.back();
+    } else {
+      this.$q.notify('Complete todos os campos antes de salvar!');
+    }
+  }
   }
 })
 </script>
