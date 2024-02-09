@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Lista de solicitações"
+        title="Lista de sugestões"
         :columns="suggestionData"
         :rows="suggestionList"
         row-key="_id"
@@ -13,6 +13,7 @@
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkGoToFunctionInOrganismDetail"
         :selected-rows-label="getSelectedString"
         v-model:pagination="pagination"
         @request="nextPage"
@@ -50,7 +51,34 @@
           </q-td>
         </template>
       </q-table>
-
+      <q-dialog v-model="dialogNewSugestion.open" @hide="clearDialog()">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <div class="text-h6 text-center q-pa-md ">Escreva</div>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Título"
+              v-model="dialogNewSugestion.suggestionTitle"
+            />
+            <q-input
+              outlined
+              label="Descrição"
+              autogrow
+              v-model="dialogNewSugestion.suggestionText"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              rounded
+              @click="dialogNewSugestion.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -60,7 +88,7 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "SolicitationList",
+  name: "SuggestionList",
   data() {
     return {
       suggestionData: useTableColumns().suggestionList,
@@ -80,7 +108,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getSolicitationsList();
+    this.getSuggestionsList();
   },
   methods: {
       clkGoToFunctionInOrganismDetail(e, r) {
@@ -101,9 +129,9 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       this.getSuggestionsList();
     },
-    getSolicitationsList() {
+    getSuggestionsList() {
       const opt = {
-        route: "/desktop/adm/getSolicitationsList",
+        route: "/desktop/adm/getSuggestionsList",
         body: {
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,

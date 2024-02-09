@@ -113,6 +113,11 @@ const useUtils = {
         {
           label: "Lista de solicitações",
           route: "/admin/admSolicitationsList",
+          icon: "checklist",
+        },
+        {
+          label: "Lista de sugestões",
+          route: "/admin/admSugestionsList",
           icon: "format_list_bulleted",
         },
       ],
@@ -228,11 +233,11 @@ const useUtils = {
           route: "/user/userSugestionsList",
           icon: "assistant",
         },
-        {
-          label: "Estatística",
-          route: "/statistic/introWriteStatisticData",
-          icon: "equalizer",
-        },
+        // {
+        //   label: "Estatística",
+        //   route: "/statistic/introWriteStatisticData",
+        //   icon: "equalizer",
+        // },
         // {
         //   label: "Falar com admin",
         //   route: "/user/talkToAdmin",

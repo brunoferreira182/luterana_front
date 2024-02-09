@@ -444,7 +444,24 @@
         v-else
         class="q-pa-md text-h6 text-center"
       >
-          Esta etapa foi concluida. Os dados estão disponíveis somente para consulta
+        <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
+        <div>
+          <q-btn v-if="hasModificationRequest === false"
+            color="red"
+            class="q-mt-md"
+            label="Solicitar alteração de dados"
+            rounded
+            icon="report"
+            @click="requestModifications"
+          ></q-btn>
+          <q-btn v-else-if="hasModificationRequest === true"
+            color="orange"
+            class="q-mt-md"
+            label="Aguarde a aprovação da solicitaçao"
+            rounded
+            icon="schedule"
+          ></q-btn>
+        </div>
       </div>
       <q-dialog
         v-model="dialogAddFunction.open"
@@ -1879,7 +1896,8 @@ export default defineComponent({
         type: '',
         userSelected: '',
         text: ''
-      }
+      },
+      hasModificationRequest: false
     }
   }, 
   beforeMount() {
@@ -1892,6 +1910,34 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    requestModifications () {
+      const opt = {
+        route: '/desktop/statistics/requestModifications',
+        body: {
+          organismId: this.composition.organismParentId,
+          organismName: this.composition.organismParentName,
+          organismType: this.composition.organismParentLocal
+        }
+      }
+      useFetch(opt).then(() => {
+        this.$q.notify('Solicitação enviada, aguarde até um administrador aceitar sua solicitação...')
+        this.getModificationsRequest()
+      })
+    },
+    getModificationsRequest () {
+      const opt = {
+        route: '/desktop/statistics/getModificationsRequest',
+        body: {
+          organismId: this.composition.organismParentId
+        }
+      }
+      useFetch(opt).then((r) => {
+        console.log(r.data)
+        if(r.data){
+          this.hasModificationRequest = true
+        } else this.hasModificationRequest = false
+      })
+    },
     confirmCreateNewUser () {
       const opt = {
         route: '/desktop/statistics/createNewUser',
@@ -2687,8 +2733,10 @@ export default defineComponent({
           }
         }
         this.composition = r.data
+        
         if (r.data.validated) {
           this.validated = r.data.validated
+          this.getModificationsRequest()
         }
         if (r.data.status) {
           this.status = r.data.status
