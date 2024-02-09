@@ -403,6 +403,15 @@
           no-caps
           @click="saveDraft()"
         />
+        <q-btn
+          label="Salvar Oficial"
+          color="orange"
+          rounded
+          unelevated
+          class="full-width q-my-sm"
+          no-caps
+          @click="saveOficial()"
+        />
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
             label="Etapa anterior"
@@ -557,6 +566,32 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
+        this.$router.back()
+        this.getGroupActivitiesByOrganismId()
+      });
+    },
+    saveOficial(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('Preencha todos os campos Obrigatórios!')
+          }
+      }
+      this.departamentos.forEach((departamento) => {
+        departamento.expanded = false 
+      })
+      const opt = {
+        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          groupActivity: this.departamentos,
+          organismFatherName: this.congregationName
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.show()
+        if (r.error) return;
+        this.$q.notify("Atividades salvas com sucesso!");
         this.$router.back()
         this.getGroupActivitiesByOrganismId()
       });
