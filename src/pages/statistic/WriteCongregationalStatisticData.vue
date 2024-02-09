@@ -527,7 +527,7 @@
               use-input
               label="Nome do usuário"
               option-label="userName"
-              :options="usersOptions"
+              :options="[...usersOptions, {}]"
               @filter="getUsers"
               :loading="false"
               :option-value="(item) => item._id"
