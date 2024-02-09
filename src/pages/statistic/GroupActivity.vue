@@ -181,7 +181,7 @@
                   >
                     <q-item-label>
                       <div class="col items-center">
-                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal
+                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal:
                         <q-radio
                           v-model="departamentos[i].departamentoData.musicGroup.exist"
                           val="exist"
@@ -202,18 +202,33 @@
                       </div>
                     </q-item-label>
                     <q-item-section>
-                      <q-input
-                        type="number"
-                        class="q-mr-md"
-                        v-model="departamentos[i].departamentoData.coro"
-                        label="Total no Coro"
-                      ></q-input>
+                      <q-item-label>
+                        <div class="col items-center"> Coro:
+                        <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="exist"
+                            label="Sim"
+                          />
+                          <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="noExist"
+                            label="Não"
+                          />
+                          <q-input
+                            type="number"
+                            class="q-pl-sm col q-mr-md"
+                            v-if="departamentos[i].departamentoData.coro.exist === 'exist'"
+                            v-model="departamentos[i].departamentoData.coro.qtn"
+                            label="Total no Coro"
+                          ></q-input>
+                          </div>
+                      </q-item-label>
                     </q-item-section>
                     <q-input
                       type="number"
                       class="q-mr-md"
                       v-model="departamentos[i].departamentoData.musicosTotal"
-                      label="Músicos envolvidos ao total"
+                      label="Músicos envolvidos na congregação "
                     ></q-input>
 
                     <q-item-section>
@@ -318,7 +333,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.acoesEventuais"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Ações eventuais"
                   />
                   <!-- </div>
@@ -326,7 +340,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.permProgs"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Programas permanentes"
                     />
                   </q-item-section>
@@ -335,12 +348,12 @@
                     <q-input
                       v-model="departamentos[i].departamentoData.finalidade"
                       class="q-pl-sm q-mr-md"
-                      label="Finalidade do grupo"
+                      label="Finalidade do grupo *"
                     ></q-input>
                     <q-input
                       v-model="departamentos[i].departamentoData.organizacao"
                       class="q-pl-sm q-mr-md"
-                      label="Organização do grupo"
+                      label="Organização do grupo *"
                     ></q-input>
                     <div class="row">
                       <q-input
@@ -478,11 +491,9 @@ export default defineComponent({
     },
     saveDraftOnBeforeUnmount(){
       for(let i = 0; i < this.departamentos.length; i++){
-        if(this.departamentos[i].organismConfigName === 'Outros'){
           if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
             return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
           }
-        }
       }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
@@ -504,11 +515,9 @@ export default defineComponent({
     },
     saveDraft(){
       for(let i = 0; i < this.departamentos.length; i++){
-        if(this.departamentos[i].organismConfigName === 'Outros'){
           if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
             return this.$q.notify('Preencha todos os campos Obrigatórios!')
           }
-        }
       }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
