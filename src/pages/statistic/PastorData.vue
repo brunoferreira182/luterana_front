@@ -269,7 +269,7 @@
                 flat
                 rounded
                 icon="add"
-                label="Adicionar relação"
+                label="Adicionar"
                 @click="addMaritalRelation"
               >
                 <q-tooltip>Adicionar cônjuge</q-tooltip>
@@ -765,7 +765,7 @@
       >
         <q-card style="width: 300px;border-radius: 1rem;">
           <q-card-section class="text-h6 text-center">
-            Adicionar relação conjugal
+            Adicionar estado civil
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
