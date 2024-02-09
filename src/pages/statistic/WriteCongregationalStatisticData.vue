@@ -33,6 +33,7 @@
           <div class="text-h6 text-left">
             Paróquia: {{ composition.organismParentName }}
             <q-btn
+              v-if="!status || (status && status.value !== 'sent')"
               color="primary"
               flat
               icon="edit"
@@ -55,7 +56,7 @@
                 {{ pastor.userName }}
               </q-item>
             </q-list>
-            <div>
+            <div v-if="!status || (status && status.value !== 'sent')">
               <q-btn
                 color="primary"
                 icon="sync_problem"
@@ -102,14 +103,12 @@
               <q-item-section side>
                 <div class="row items-center">
                   <q-btn
-                    @click.stop="console.log('oi')"
                     color="primary"
                     icon="add"
                     flat
                     rounded
                   ></q-btn>
                   <q-btn
-                    @click.stop="console.log('oi')"
                     color="red"
                     icon="delete"
                     rounded
@@ -249,7 +248,7 @@
                             {{ sec.obs }}
                           </q-item-label>
                         </q-item-section>
-                        <q-item-section side>
+                        <q-item-section side v-if="!status || (status && status.value !== 'sent')">
                           <q-btn
                             color="red"
                             flat
@@ -262,7 +261,7 @@
                       </q-item>
                     </q-list>
                   </div>
-                  <div class="q-ma-md text-h6 items-left">
+                  <div class="q-ma-md text-h6 items-left" v-if="!status || (status && status.value !== 'sent')">
                     <q-btn
                       label="Secretária"
                       icon="add"
@@ -298,7 +297,7 @@
                       </q-avatar>
                     </q-item-section>
                     <q-item-section>{{dep.organismConfigName}}</q-item-section>
-                    <q-item-section side>
+                    <q-item-section side v-if="!status || (status && status.value !== 'sent')">
                       <q-btn
                         color="primary"
                         flat
@@ -343,6 +342,7 @@
                     </div>
                     <div class="col" >
                       <q-checkbox
+                        :disable="!status || (status && status.value !== 'sent') ? false : true"
                         color="primary"
                         no-caps
                         label="Não confere"
@@ -353,7 +353,7 @@
                   </div>
                   <div class="row items-center">  
                     <q-input
-                      :disable="composition.congregations[iOrg].semFundacao"
+                      :disable="!status || (status && status.value !== 'sent') ? false : true"
                       label="Data de fundação"
                       class="q-pa-sm"
                       mask="##/##/####"
@@ -361,6 +361,7 @@
                     />
                     <div class="col" v-if="!composition.congregations[iOrg].foundationDate">  
                       <q-checkbox
+                        :disable="!status || (status && status.value !== 'sent') ? false : true"
                         label="Não sei"
                         @update:model-value="insertCheckBoxNoFundationCompositionOrg(iOrg)"
                         v-model="semFundacao"
@@ -425,7 +426,8 @@
                   </q-item>
 
                   </q-list>
-                  <q-btn
+                  <q-btn 
+                    v-if="!status || (status && status.value !== 'sent')"
                     label="Adicionar dia e horário do culto"
                     dense
                     no-caps
@@ -2072,7 +2074,6 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        console.log(r.data)
         if(r.data){
           this.hasModificationRequest = true
         } else this.hasModificationRequest = false

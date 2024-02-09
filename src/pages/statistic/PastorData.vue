@@ -467,6 +467,7 @@
           </div> -->
           <div>
             <q-btn
+              v-if="!status || (status && status.value !== 'sent')"
               label="Preencher dados da  congregação anterior"
               unelevated
               icon="description"
@@ -515,7 +516,7 @@
             @click="saveDraft"
           >
             <q-tooltip>
-              Salvar rascunho
+              Salvar rascunhor
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -1472,6 +1473,7 @@ export default defineComponent({
       validated: false,
       status: null,
       validatePastorActivities: true,
+      canSaveDraft: true
     }
   },
 
@@ -1482,7 +1484,8 @@ export default defineComponent({
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
-    // this.saveDraftOnBeforeUnmount()
+    if (!this.canSaveDraft) return
+    this.saveDraftOnBeforeUnmount()
   },
   methods: {
     cancelChangeChild () {
@@ -1507,7 +1510,7 @@ export default defineComponent({
       })
     },
     async saveOficial() {
-      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ){
+      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ) {
         this.$q.notify('Preencha seu nome e fone para contato')
         return
       }
@@ -1605,6 +1608,7 @@ export default defineComponent({
           if (r.error) return this.$q.loading.hide()
           this.$q.notify('Finalizando etapa...')
         })
+        this.canSaveDraft = false
         const promisses = [
           this.getPastorDataTabs(),
           this.getMyOrganismsList(),

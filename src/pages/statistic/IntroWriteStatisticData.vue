@@ -221,11 +221,6 @@ export default defineComponent({
     },
     goToStatistic() {
       let chk = true
-      this.status.pastors.forEach((pastor) => {
-        if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
-          chk = false
-        }
-      })
       if (!chk) {
         this.dialogPastors.open = true
         return
