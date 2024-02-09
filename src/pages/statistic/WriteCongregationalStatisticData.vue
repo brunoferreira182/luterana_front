@@ -336,7 +336,8 @@
                         color="primary"
                         no-caps
                         label="Não confere"
-                        v-model="composition.congregations[iOrg].filiadoNaoConfere"
+                        @update:model-value="filiadoNãoConfereIntoCompositionOrg(iOrg)"
+                        v-model="filiadoNaoConfere"
                       />
                     </div>
                   </div>
@@ -350,8 +351,9 @@
                     />
                     <div class="col" v-if="!composition.congregations[iOrg].foundationDate">  
                       <q-checkbox
-                      label="Não sei"
-                      v-model="composition.congregations[iOrg].semFundacao"
+                        label="Não sei"
+                        @update:model-value="insertCheckBoxNoFundationCompositionOrg(iOrg)"
+                        v-model="semFundacao"
                       />
                     </div>  
                   </div>
@@ -1885,6 +1887,7 @@ export default defineComponent({
         iDep: null,
         iExistsDept: null
       },
+      filiadoNaoConfere: false,
       deptConfigs: null,
       dialogInserFunctionUserInNewDept: {
         open: false,
@@ -1982,7 +1985,8 @@ export default defineComponent({
       dialogChangeParishName: {
         open: false,
         name: null
-      }
+      },
+      semFundacao: false,
     }
   }, 
   beforeMount() {
@@ -1995,6 +1999,12 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    insertCheckBoxNoFundationCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].semFundacao = this.semFundacao
+    },
+    filiadoNãoConfereIntoCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
+    },
     removeDepartamentFromList(iExistsDept) {
       this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].action = 'remove'
       this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].trueLength--
