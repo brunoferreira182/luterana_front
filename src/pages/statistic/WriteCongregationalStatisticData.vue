@@ -331,7 +331,7 @@
                         class="q-pa-sm"
                       />
                     </div>
-                    <div class="col ">
+                    <div class="col" >
                       <q-checkbox
                         color="primary"
                         no-caps
@@ -348,7 +348,7 @@
                       mask="##/##/####"
                       v-model="composition.congregations[iOrg].foundationDate"
                     />
-                    <div class="col">  
+                    <div class="col" v-if="!composition.congregations[iOrg].foundationDate">  
                       <q-checkbox
                       label="Não sei"
                       v-model="composition.congregations[iOrg].semFundacao"
