@@ -148,6 +148,16 @@
                   @click="addPontoDeMissão(iOrg)"
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
                 />
+                <q-btn
+                  color="primary"
+                  rounded
+                  flat
+                  unelevated
+                  label="Alterar nome da congregação"
+                  no-caps
+                  @click="changeCongregationName(iOrg)"
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                />
               </div>
               <div>
               </div>
@@ -1601,41 +1611,6 @@
         Informe o substituto desejado:
       </q-card-section>
       <q-card-section>
-        <q-select v-if="dialogReportError.type === 'changePastor'"
-          v-model="dialogReportError.userSelected"
-          use-input
-          label="Nome do usuário"
-          option-label="userName"
-          :options="usersOptions"
-          @filter="getUsers"
-          :loading="false"
-          :option-value="(item) => item._id"
-        >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps">
-              <q-item-section>
-                <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                Nenhum resultado
-              </q-item-section>
-              <q-item-section class="text-grey">
-                <q-btn 
-                  icon="person_add"
-                  dense
-                  flat
-                  color="primary"
-                  @click="dialogAddUser.open = true"
-                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
         <q-input v-if="dialogReportError.type === 'isAffiliated'"
           type="textarea"
           label="Informe a alteração"
@@ -1803,17 +1778,45 @@
           rounded
           flat
           color="primary"
-          @click="confirmChangeParishName"
-        >
-        </q-btn>
+          @click="clearDialogChangeParishName"
+        />
         <q-btn
           label="Confirmar"
           no-caps
           rounded
           color="primary"
-          @click="clearDialogChangeParishName"
-        >
-        </q-btn>
+          @click="confirmChangeParishName"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
+    v-model="dialogChangeCongregationName.open"
+    @hide="clearDialogChangeCongregationName"
+  >   
+    <q-card style="width:300px">
+      <q-card-section>
+        <q-input
+          v-model="dialogChangeCongregationName.name"
+          class="q-pa-m"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          no-caps
+          rounded
+          flat
+          color="primary"
+          @click="clearDialogChangeCongregationName"
+        />
+        <q-btn
+          label="Confirmar"
+          no-caps
+          rounded
+          color="primary"
+          @click="confirmChangeCongregationhName"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -1827,7 +1830,11 @@ export default defineComponent({
   name:"WriteCongregationalStatisticData",
   data() {
     return {
-      // composition.congregations.foundationDate,
+      dialogChangeCongregationName: {
+        open: false,
+        name: '',
+        iOrg: null
+      },
       filter: '',
       pagination: {
         sortBy: '',
@@ -2017,6 +2024,22 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    clearDialogChangeCongregationName() {
+      this.dialogChangeCongregationName = {
+        open: false,
+        name: '',
+        iOrg: null
+      }
+    },
+    confirmChangeCongregationhName()  {
+      this.composition.congregations[this.dialogChangeCongregationName.iOrg].organismChildName = this.dialogChangeCongregationName.name
+      this.clearDialogChangeCongregationName()
+    },
+    changeCongregationName(iOrg) {
+      this.dialogChangeCongregationName.name = this.composition.congregations[iOrg].organismChildName
+      this.dialogChangeCongregationName.open = true
+      this.dialogChangeCongregationName.iOrg = iOrg
+    },
     requestModifications () {
       const opt = {
         route: '/desktop/statistics/requestModifications',
@@ -2112,7 +2135,6 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/insertPastorErrorReport',
         body: {
-          userSelected: this.dialogReportPastorError.userSelected,
           text: this.dialogReportPastorError.text,
           type: this.dialogReportPastorError.type
         }

@@ -239,6 +239,15 @@
                   no-caps
                   @click="saveDraft()"
                 />
+                <q-btn
+                  label="Salvar Oficial"
+                  color="orange"
+                  rounded
+                  unelevated
+                  class="full-width q-my-sm"
+                  no-caps
+                  @click="saveOficial()"
+                />
                 <div class="row q-gutter-sm q-pt-xs">
                   <q-btn
                     label="Etapa anterior"
@@ -392,6 +401,34 @@ export default defineComponent({
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
       this.paroquiaData = r.data
+    });
+  },
+  saveOficial(){
+    const opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
+      body: {
+        organismId: this.$route.query.organismId,
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
+      },
+    };
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
+    useFetch(opt).then((r) => {
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+        return
+      }
+      this.$q.notify('Finanças salvas com sucesso!')
+      this.$router.back()
+      this.getFinanceStatisticByOrganismId()
     });
   },
   calculateDiffBetweenEmprestimos() {
