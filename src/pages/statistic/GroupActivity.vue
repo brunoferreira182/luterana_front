@@ -60,7 +60,7 @@
                 @click="expand(item)"
                 class="text-h6 label-container"
               >
-                {{ item.organismName }}
+                {{ item.organismConfigName }}
                 <q-btn
                   round
                   flat
@@ -71,13 +71,13 @@
               </q-item-label>
               <q-item-label class="label-container">
                 <div class="q-py-xs">
-                  <q-chip>{{ item.organismConfigName }}</q-chip>
+                  <q-chip>{{ item.organismName }}</q-chip>
                 </div>
               </q-item-label>
               <q-slide-transition>
                 <div v-show="item.expanded">
                   <q-item-section
-                    v-if="!arrayIgnore.includes(item.organismConfigName)"
+                  v-if="!item.action"
                   >
                     <div class="row q-gutter-sm">
                       <q-input
@@ -177,7 +177,7 @@
                   <!-- Musica -->
                   <q-item-section
                     class="justify-around"
-                    v-if="item.organismConfigName === 'Departamento da Música de leigos'"
+                    v-if="item.organismConfigName === 'Música'"
                   >
                     <q-item-label>
                       <div class="col items-center">
@@ -251,7 +251,7 @@
                   <!-- visitação -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Grupo de Visitação de leigos'
+                      item.organismConfigName === 'Visitação'
                     "
                   >
                     <q-input
@@ -313,7 +313,7 @@
                   <!-- Sobre ação social   -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departamento de Ação social de leigos'
+                      item.organismConfigName === 'Ação social'
                     "
                   >
                   <div class="row">
@@ -420,10 +420,9 @@ export default defineComponent({
       validated: false,
       statisticStatus: null,
       arrayIgnore: [
-      'Departamento de Escola dominical de leigos',
-      'Departamento da Música de leigos', 
-      'Grupo de Visitação de leigos', 
-      'Departamento de Ação social de leigos', 
+      'Música', 
+      'Visitação', 
+      'Ação social', 
       'Outros'
       ],
       otherOrganisms: [],

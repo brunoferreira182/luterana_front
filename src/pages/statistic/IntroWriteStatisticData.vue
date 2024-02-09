@@ -83,11 +83,10 @@
         </q-item> -->
         <q-item 
           class="card" 
-          clickable 
           @click="goToStatistic"
         >
           <q-item-section>
-            <q-item-label class="text-h5">Preenchimento</q-item-label>
+            <q-item-label class="text-h5">Em breve...</q-item-label>
           </q-item-section>
         </q-item>
       </div>

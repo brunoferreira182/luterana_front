@@ -1582,41 +1582,6 @@
         Informe o substituto desejado:
       </q-card-section>
       <q-card-section>
-        <q-select v-if="dialogReportError.type === 'changePastor'"
-          v-model="dialogReportError.userSelected"
-          use-input
-          label="Nome do usuário"
-          option-label="userName"
-          :options="usersOptions"
-          @filter="getUsers"
-          :loading="false"
-          :option-value="(item) => item._id"
-        >
-          <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps">
-              <q-item-section>
-                <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-          <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                Nenhum resultado
-              </q-item-section>
-              <q-item-section class="text-grey">
-                <q-btn 
-                  icon="person_add"
-                  dense
-                  flat
-                  color="primary"
-                  @click="dialogAddUser.open = true"
-                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
         <q-input v-if="dialogReportError.type === 'isAffiliated'"
           type="textarea"
           label="Informe a alteração"
@@ -2056,7 +2021,6 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/insertPastorErrorReport',
         body: {
-          userSelected: this.dialogReportPastorError.userSelected,
           text: this.dialogReportPastorError.text,
           type: this.dialogReportPastorError.type
         }
