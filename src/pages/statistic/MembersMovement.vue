@@ -297,7 +297,7 @@
         <div class="text-h6">Comungantes: {{ totalComungantes }}</div>
         <div class="text-h6">Não comungantes: {{ totalNaoComungantes }}</div>
       </div>
-      <div class="q-ma-lg text-center">
+      <div class="q-ma-lg q-pb-sm text-center">
         <q-chip
           v-if="validated"
           color="green"
@@ -312,17 +312,39 @@
           label="Não Validado"
           text-color="white"
           icon="warning"
-        /><br>
+        />
   
         <q-btn
           label="Salvar rascunho"
           color="primary"
           unelevated
-          class="q-my-lg full-width"
+          class="q-my-sm full-width"
           rounded
           no-caps
           @click="saveDraft()"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>

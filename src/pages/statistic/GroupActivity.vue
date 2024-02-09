@@ -6,7 +6,7 @@
           <q-breadcrumbs-el
             style="cursor: pointer"
             icon="home"
-            label="Completar estatística"
+            label="Introdução"
             @click="
               $router.push('/statistic/selectOrganismToWriteStatisticData')
             "
@@ -377,7 +377,7 @@
           </div>
         </q-item>
       </q-list>
-      <div class="q-ma-lg text-center" >
+      <div class="q-ma-lg q-pb-sm text-center" >
         <q-chip
           v-if="validated"
           color="green"
@@ -392,17 +392,39 @@
           label="Não Validado"
           text-color="white"
           icon="warning"
-        /><br>
+        />
 
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="full-width"
+          class="full-width q-my-sm"
           rounded
           unelevated
           no-caps
           @click="saveDraft()"
         />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>

@@ -39,17 +39,18 @@
           ></q-separator>
         </div>
         </div>
-        <div class="text-center q-gutter-md"> 
-          <div class="text-h5">
+        <div class="text-left q-gutter-md"> 
+          <div class="text-h5 q-px-sm">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
           </div>
           <q-checkbox 
+            class="q-px-sm"
             dense
             label="Dados serão concentrados na congregação sede?"
             v-model="focusOnCongregation"
           />
-          <div >
+          <div class="text-left q-px-sm">
             <div>
               Soma das entradas da paróquia: R$
               {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
@@ -63,147 +64,156 @@
             <div class="col q-gutter-y-md">
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
               
-                <div class="text-h5">
+                <div class="text-h5 text-left">
                   Entradas
                 </div>
-                <q-input 
+                <q-input
                   prefix="R$"
                   label="Saldo anterior"
                   reverse-fill-mask
                   mask="###.###.###,##"
-                  v-model="table.entries.saldoAnterior" 
+                  v-model="table.entries.saldoAnterior"
                 />
+
                 <div class="no-margin">
-                  <q-input 
+                  <q-input
                     prefix="R$"
                     label="Ofertas dominicais"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.ofertasDominicais" 
+                    mask="###.###.###,##"
+                    v-model="table.entries.receitasRegulares.ofertasDominicais"
                   />
                 </div>
+
                 <div class="no-margin">
-                  <q-input 
-                    label="Ofertas mensais"
+                  <q-input
                     prefix="R$"
+                    label="Ofertas mensais"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.ofertasMensais" 
+                    mask="###.###.###,##"
+                    v-model="table.entries.receitasRegulares.ofertasMensais"
                   />
                 </div>
+
                 <div class="no-margin">
-                  <q-input 
+                  <q-input
                     prefix="R$"
                     label="Receitas de aluguéis"
                     @blur="calculateOfferPercents()"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.receitasAlugueis" 
+                    mask="###.###.###,##"
+                    v-model="table.entries.receitasRegulares.receitasAlugueis"
                   />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Ofertas especiais"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.ofertasEspeciais" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Ofertas especiais"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.ofertasEspeciais"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Campanhas específicas"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.campanhasEspecificas" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Campanhas específicas"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.campanhasEspecificas"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Auxílio"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.auxilio" 
-                />
+                  <q-input
+                    label="Auxílio"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.auxilio"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Empréstimos"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.emprestimos" 
-                />
+                  <q-input
+                    label="Empréstimos"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.emprestimos"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Todas as Outras receitas"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.todasOutrasReceitas" 
-                /></div>
-              </div>
-              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+                  <q-input
+                    label="Todas as Outras receitas"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.todasOutrasReceitas"
+                  />
+                </div>
+
                 <div class="text-h5">
                   Saídas
                 </div>
-                <div class="text-h6">
-                  Contribuição registrada na Administração Nacional <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
-                </div>
+
+                <q-input
+                  label="Contribuição registrada na Administração Nacional"
+                  v-model="contributionOutputSum"
+                  readonly
+                >
+                  <q-btn
+                    label="Reportar erro"
+                    icon="report"
+                    no-caps
+                    dense
+                    flat
+                    color="primary"
+                  />
+                </q-input>
                 <div class="text-green" v-if="showContributionCalculatedMore">
                   Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
                 </div>
+
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
                   Contribuição {{ contributionCalculatedLess }} <q-icon name="south"/> 
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Contribuição Distrito"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.output.contribuicaoDistrito" 
-                />
+                  <q-input
+                    label="Contribuição Distrito"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.output.contribuicaoDistrito"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Devolução de empréstimos IELB"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  @blur="calculateDiffBetweenEmprestimos()"
-                  v-model="table.output.devolucaoEmprestimoIELB" 
-                />
+                  <q-input
+                    label="Devolução de empréstimos IELB"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    @blur="calculateDiffBetweenEmprestimos()"
+                    v-model="table.output.devolucaoEmprestimoIELB"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Todas as outras saídas"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.output.todasSaidas" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Todas as outras saídas"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.output.todasSaidas"
+                  />
                 </div>
-              </div>
-              <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
-                <div class="text-center">
-                  Atenção!
-                </div>
-                Há difença entre o valor de entrada de contribuição no SGA e saída das contribuições.
-                Envie um e-mail com os comprovantes para teste@teste.com
-              </div>
-              <div v-if="showEmprestimoNotify" class="text-subtitle1 text-bold q-px-md">
-                <div class="text-center">
-                  Atenção!
-                </div>
-                Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
-                Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="q-ma-sm text-center">
-                
                 <q-chip
                   v-if="validated"
                   color="green"
@@ -218,17 +228,39 @@
                   label="Não Validado"
                   text-color="white"
                   icon="warning"
-                /><br>
+                />
   
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
                   rounded
                   unelevated
-                  class="q-my-md full-width"
+                  class="q-my-sm full-width"
                   no-caps
                   @click="saveDraft()"
                 />
+                <div class="row q-gutter-sm q-pt-xs">
+                  <q-btn
+                    label="Etapa anterior"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon="navigate_before"
+                    class="col items-start"
+                    no-caps
+                    @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+                  />
+                  <q-btn
+                    label="Próxima etapa"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon-right="navigate_next"
+                    class="col items-end"
+                    no-caps
+                    @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+                  /> 
+                </div>
               </div>
             </div>
           </div>
@@ -245,6 +277,14 @@ export default defineComponent({
   name:"WriteFinanceStatisticData",
   data() {
     return {
+      moneyFormatForDirective: {
+        decimal: '.',
+        thousands: ',',
+        prefix: '$ ',
+        suffix: ' #',
+        precision: 2,
+        masked: false /* doesn't work with directive */
+      },
       congregationName:'',
       pagination: {
         sortBy: '',
@@ -258,37 +298,32 @@ export default defineComponent({
       validated: false,
       contributionCalculatedMore: '',
       contributionCalculatedLess: '',
-      contributionOutputSum: '',
+      contributionOutputSum: null,
       contributionOutputNum: null,
-      contributionEntriesSum: '',
+      contributionEntriesSum: null,
       table: {
         entries:{
-          saldoAnterior: '',
+          saldoAnterior: null,
           receitasRegulares: {
             ofertasDominicais: null,
             ofertasMensais: null,
             receitasAlugueis: null,
           },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
+          ofertasEspeciais:null,
+          campanhasEspecificas: null,
+          auxilio:null,
+          emprestimos: null,
+          todasOutrasReceitas: null,
         },
         output: {
-          contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
+          contribuicaoDistrito: null,
+          devolucaoEmprestimoIELB: null,
+          todasSaidas: null
         },
       },
       focusOnCongregation: false,
       showEmprestimoNotify: false,
-      showContribuitionNotify: false,
+      showContribuitionNotify: null,
       showContributionCalculatedMore: false,
       showContributionCalculatedLess: false,
       paroquiaData: {
@@ -321,6 +356,14 @@ export default defineComponent({
     this.getOthersCongregations()
   },
   methods: {
+    formatAsNumber(key) {
+      if (this.table[key] !== undefined) {
+        const value = this.table[key] || '';
+        // Remove os caracteres não numéricos, substitui a vírgula por ponto e converte para número
+        this.$set(this.table, key, parseFloat(value.toString().replace(/[^\d.,]/g, '').replace(',', '.')) || null);
+      }
+      console.log(this.table[key])
+    },
     getOthersCongregations() {
       this.otherOrganisms = []
       const opt = {
@@ -365,14 +408,15 @@ export default defineComponent({
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
     total = ofertasDominicais + ofertasMensais + receitasAlugueis
     contribution = (+this.contributionOutputNum/+total)
-    contributionPercents = Math.trunc(contribution*100) + '%' 
-    
-    if(contributionPercents >= '11%'){
-      this.contributionCalculatedMore = contributionPercents
+    contributionPercents = Math.trunc(contribution*100)
+    this.showContribuitionNotify = contributionPercents
+    console.log(contributionPercents, 'kkkkkkkkkk')
+    if(contributionPercents >= 11){
+      // this.contributionCalculatedMore = contributionPercents
       this.showContributionCalculatedMore = true
       this.showContributionCalculatedLess = false
-    }else if(contributionPercents < '11%'){
-      this.contributionCalculatedLess = contributionPercents
+    }else if(contributionPercents < 11){
+      // this.contributionCalculatedLess = contributionPercents
       this.showContribuitionNotify = true
       this.showContributionCalculatedMore = false
       this.showContributionCalculatedLess = true
@@ -464,14 +508,9 @@ export default defineComponent({
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
-        contribuicaoIELB: {
-          ofertasDominicais: null,
-          ofertasMensais: null,
-          receitasAlugueis: null,
-        },
-        contribuicaoDistrito: '',
-        devolucaoEmprestimoIELB: '',
-        todasSaidas: ''
+        contribuicaoDistrito: null,
+        devolucaoEmprestimoIELB: null,
+        todasSaidas: null
       },
       r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
       this.table.entries = {
@@ -481,11 +520,11 @@ export default defineComponent({
           ofertasMensais: null,
           receitasAlugueis: null,
         },
-        ofertasEspeciais: '',
-        campanhasEspecificas: '',
-        auxilio: '',
-        emprestimos: '',
-        todasOutrasReceitas: '',
+        ofertasEspeciais: null,
+        campanhasEspecificas: null,
+        auxilio: null,
+        emprestimos: null,
+        todasOutrasReceitas: null,
       }
       this.getFinanceTotalValueFromParoquia()
     });

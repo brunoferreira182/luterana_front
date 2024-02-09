@@ -336,7 +336,8 @@
                         color="primary"
                         no-caps
                         label="Não confere"
-                        v-model="composition.congregations[iOrg].filiadoNaoConfere"
+                        @update:model-value="filiadoNãoConfereIntoCompositionOrg(iOrg)"
+                        v-model="filiadoNaoConfere"
                       />
                     </div>
                   </div>
@@ -350,8 +351,9 @@
                     />
                     <div class="col" v-if="!composition.congregations[iOrg].foundationDate">  
                       <q-checkbox
-                      label="Não sei"
-                      v-model="composition.congregations[iOrg].semFundacao"
+                        label="Não sei"
+                        @update:model-value="insertCheckBoxNoFundationCompositionOrg(iOrg)"
+                        v-model="semFundacao"
                       />
                     </div>  
                   </div>
@@ -490,7 +492,24 @@
         v-else
         class="q-pa-md text-h6 text-center"
       >
-          Esta etapa foi concluida. Os dados estão disponíveis somente para consulta
+        <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
+        <div>
+          <q-btn v-if="hasModificationRequest === false"
+            color="red"
+            class="q-mt-md"
+            label="Solicitar alteração de dados"
+            rounded
+            icon="report"
+            @click="requestModifications"
+          ></q-btn>
+          <q-btn v-else-if="hasModificationRequest === true"
+            color="orange"
+            class="q-mt-md"
+            label="Aguarde a aprovação da solicitaçao"
+            rounded
+            icon="schedule"
+          ></q-btn>
+        </div>
       </div>
       <q-dialog
         v-model="dialogAddFunction.open"
@@ -1850,6 +1869,7 @@ export default defineComponent({
         iDep: null,
         iExistsDept: null
       },
+      filiadoNaoConfere: false,
       deptConfigs: null,
       dialogInserFunctionUserInNewDept: {
         open: false,
@@ -1944,10 +1964,12 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
+      hasModificationRequest: false,
       dialogChangeParishName: {
         open: false,
         name: null
-      }
+      },
+      semFundacao: false,
     }
   }, 
   beforeMount() {
@@ -1960,6 +1982,40 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    requestModifications () {
+      const opt = {
+        route: '/desktop/statistics/requestModifications',
+        body: {
+          organismId: this.composition.organismParentId,
+          organismName: this.composition.organismParentName,
+          organismType: this.composition.organismParentLocal
+        }
+      }
+      useFetch(opt).then(() => {
+        this.$q.notify('Solicitação enviada, aguarde até um administrador aceitar sua solicitação...')
+        this.getModificationsRequest()
+      })
+    },
+    getModificationsRequest () {
+      const opt = {
+        route: '/desktop/statistics/getModificationsRequest',
+        body: {
+          organismId: this.composition.organismParentId
+        }
+      }
+      useFetch(opt).then((r) => {
+        console.log(r.data)
+        if(r.data){
+          this.hasModificationRequest = true
+        } else this.hasModificationRequest = false
+      })
+    },
+    insertCheckBoxNoFundationCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].semFundacao = this.semFundacao
+    },
+    filiadoNãoConfereIntoCompositionOrg(iOrg){
+      this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
+    },
     removeDepartamentFromList(iExistsDept) {
       this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[iExistsDept].action = 'remove'
       this.composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].trueLength--
@@ -2786,8 +2842,10 @@ export default defineComponent({
           }
         }
         this.composition = r.data
+        
         if (r.data.validated) {
           this.validated = r.data.validated
+          this.getModificationsRequest()
         }
         if (r.data.status) {
           this.status = r.data.status
