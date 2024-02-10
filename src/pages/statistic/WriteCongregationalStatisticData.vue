@@ -2217,8 +2217,22 @@ export default defineComponent({
       if(this.dialogAddFunction.functionName === 'Pastor'){
         opt.body.userType = 'pastor'
       }
+
       useFetch(opt).then(() => {
-        this.$q.notify('Usuário criado, selecione-o para prosseguir')
+        this.$q.notify('Usuário criado com sucesso')
+        if (this.dialogAddUser.param === 'func') {
+          this.dialogAddFunction.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'secretary') {
+          this.dialogAddSecretary.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'funcInDept') {
+          this.dialogAddFunctionToDept.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        }
         this.dialogAddUser.open = false
         this.dialogAddUser.data = {
           name: '',
