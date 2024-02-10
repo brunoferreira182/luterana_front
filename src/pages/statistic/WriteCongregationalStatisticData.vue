@@ -544,7 +544,7 @@
               use-input
               label="Nome do usuário"
               option-label="userName"
-              :options="[...usersOptions, {}]"
+              :options="usersOptions"
               @filter="getUsers"
               :loading="false"
               :option-value="(item) => item._id"
@@ -558,22 +558,35 @@
                 </q-item>
               </template>
               <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                  <q-item-section class="text-grey">
-                    <q-btn 
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
                       icon="person_add"
                       dense
                       flat
                       no-caps
                       label="Novo usuário"
                       color="primary"
+                      class="q-pa-sm"
                       @click="dialogAddUser.open = true"
-                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                    />
                   </q-item-section>
-                  
+                </q-item>
+              </template>
+              <template v-slot:after-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="dialogAddUser.open = true"
+                    />
+                  </q-item-section>
                 </q-item>
               </template>
             </q-select>
