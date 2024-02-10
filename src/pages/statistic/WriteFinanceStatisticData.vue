@@ -465,39 +465,49 @@ export default defineComponent({
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
     this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
   },
-  saveOficial() {
-    // let opt = {
-    //   route: "/desktop/statistics/insertFinanceStatisticsDraft",
-    //   body: {
-    //     organismId: this.$route.query.organismId,
-    //     contribuitionOutput: this.contributionOutputSum
-    //   },
-    // }
-    // if (Object.keys(this.table.output).length > 0) {
-    //   opt.body.financeData = this.table;
-    // } else if (Object.keys(this.table.entry).length > 0) {
-    //   opt.body.financeData = this.table;
-    // } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-    //   opt.body.financeData = this.table
-    // }
-    // this.$q.loading.show()
-    // useFetch(opt).then((r) => {
-    //   this.$q.loading.hide()
-    //   if (r.error) {
-    //     this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-    //     return
-    //   }
-    // });
-    // opt = {
-    //   route: '/desktop/statistics/insertFinanceStatisticDone',
-    //   body: organismId: this.$route.query.organismId
-    // }
-    // useFetch(opt).then((r) => {
-    //   if (r.error) return this.$q.notify(r.errorMessage)
-    //   this.$q.notify('Etapa finalizada com sucesso')
-    //   this.$router.back()
-    // })
-  }
+  async saveOficial() {
+    const validated = this.validateForm()
+    if (!validated) {
+      this.$q.notify('Há dados a serem preenchidos. Passe os campos um a um')
+      return
+    }
+    let opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
+      body: {
+        organismId: this.$route.query.organismId,
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
+      },
+    };
+    opt.body.financeData.totais = this.calculateTotals()
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
+    let r = await useFetch(opt)
+    this.$q.loading.hide()
+    if (r.error) {
+      this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+      return
+    }
+    opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDone",
+      body: {
+        organismId: this.$route.query.organismId,
+      },
+    };
+    r = await useFetch(opt)
+    if (r.error) {
+      this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+      return
+    }
+    this.$q.notify('Etapa finalizada com sucesso')
+    this.$router.back()
+  },
   saveDraft() {
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
@@ -524,7 +534,6 @@ export default defineComponent({
       }
       this.$q.notify('Rascunho salvo com sucesso!')
       this.$router.back()
-      this.getFinanceStatisticByOrganismId()
     });
   },
   validateForm () {
