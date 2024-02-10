@@ -404,6 +404,31 @@ export default defineComponent({
     '$route.query.organismId': {
       handler(newOrganismId, oldOrganismId) {
         if (newOrganismId !== oldOrganismId) {
+          this.membersMovement = {
+            totalMambrosComungantes2022: '',
+            totalMembrosNaoComungantes2022: '',
+            criancasBatizadasFamiliasIelb: '',
+            transferenciasRecebidasComungantes: '',
+            transferenciasRecebidasNaoComungantes: '',
+            profissaoFeBatismoAdultos: '',
+            profissaoFe: '',
+            criancasBatizadasFamiliasEntraramPorProfissaoFe: '',
+            reconhecimentoDeBatismos: '',
+            obitoComungantes: '',
+            obitoNaoComungantes: '',
+            transferenciasComungantes: '',
+            transferenciasNaoComungantes: '',
+            abandonoComungantes: '',
+            abandonoNaoComungantes: '',
+            exclusoesComungantes: '',
+            exclusoesNaoComungantes: '',
+            familias: '',
+            casamentos: '',
+            instrucaoDeConfirmados: {
+              anosEstudo: '',
+              confirmados: []
+            }
+          }
           this.getMovimentoMembrosPorCongregacao()
           this.getOrganismNameForBreadCrumbs()
           this.getOthersCongregations()

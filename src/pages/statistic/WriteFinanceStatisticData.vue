@@ -464,8 +464,40 @@ export default defineComponent({
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
     this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
-    
   },
+  saveOficial() {
+    // let opt = {
+    //   route: "/desktop/statistics/insertFinanceStatisticsDraft",
+    //   body: {
+    //     organismId: this.$route.query.organismId,
+    //     contribuitionOutput: this.contributionOutputSum
+    //   },
+    // }
+    // if (Object.keys(this.table.output).length > 0) {
+    //   opt.body.financeData = this.table;
+    // } else if (Object.keys(this.table.entry).length > 0) {
+    //   opt.body.financeData = this.table;
+    // } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+    //   opt.body.financeData = this.table
+    // }
+    // this.$q.loading.show()
+    // useFetch(opt).then((r) => {
+    //   this.$q.loading.hide()
+    //   if (r.error) {
+    //     this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+    //     return
+    //   }
+    // });
+    // opt = {
+    //   route: '/desktop/statistics/insertFinanceStatisticDone',
+    //   body: organismId: this.$route.query.organismId
+    // }
+    // useFetch(opt).then((r) => {
+    //   if (r.error) return this.$q.notify(r.errorMessage)
+    //   this.$q.notify('Etapa finalizada com sucesso')
+    //   this.$router.back()
+    // })
+  }
   saveDraft() {
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
@@ -480,7 +512,7 @@ export default defineComponent({
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
       opt.body.financeData = this.table;
-    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
       opt.body.financeData = this.table
     }
     this.$q.loading.show()
