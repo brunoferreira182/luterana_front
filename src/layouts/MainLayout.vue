@@ -300,6 +300,7 @@ export default defineComponent({
         this.permissions.length === 1
       ) {
         this.options = utils.getDrawerOptions(this.permissions[0].role.toLowerCase());
+        console.log(this.options, 'options auqiqiuquiqu')
         this.activeRightDrawer = this.permissions[0].id;
         this.active = this.options[0].label;
         this.$router.push(this.options[0].route)
