@@ -44,20 +44,38 @@
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
           </div>
-          <q-checkbox 
+          <!-- <q-checkbox 
             class="q-px-sm"
             dense
             label="Dados serão concentrados na congregação sede?"
             v-model="focusOnCongregation"
-          />
+          /> -->
+          <div class="q-ml-lg text-h6">
+            Se você só possuir dados da paróquia, insira os mesmos na congregação sede
+          </div>
           <div class="text-left q-px-sm">
             <div>
-              Soma das entradas da paróquia: R$
-              {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
+              <!-- Soma das entradas da paróquia -->
+              <q-input
+                v-model="paroquiaData.contributionEntries"
+                mask="###.###.###,##"
+                prefix="R$"
+                readonly
+                label="Soma das entradas da paróquia"
+              />
+              <!-- {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }} -->
             </div>
             <div>
-              Soma das saídas da paróquia: R$
-              {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
+              <!-- Soma das saídas da paróquia -->
+              <q-input
+                v-model="paroquiaData.contributionOutput"
+                mask="###.###.###,##"
+                prefix="R$"
+                readonly
+                label="Soma das saídas da paróquia"
+                reverse-fill-mask
+              />
+              <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
           </div>
           <div class="row">
@@ -81,6 +99,7 @@
                     label="Ofertas dominicais"
                     reverse-fill-mask
                     mask="###.###.###,##"
+                    @blur="calculateOfferPercents()"
                     v-model="table.entries.receitasRegulares.ofertasDominicais"
                   />
                 </div>
@@ -91,6 +110,7 @@
                     label="Ofertas mensais"
                     reverse-fill-mask
                     mask="###.###.###,##"
+                    @blur="calculateOfferPercents()"
                     v-model="table.entries.receitasRegulares.ofertasMensais"
                   />
                 </div>
@@ -160,10 +180,11 @@
                   Saídas
                 </div>
 
-                <q-input
+                <!-- <q-input
                   label="Contribuição registrada na Administração Nacional"
-                  v-model="contributionOutputSum"
+                  v-model="table.output.contributionOnSgaLocal"
                   readonly
+                  prefix="R$"
                 >
                   <q-btn
                     label="Reportar erro"
@@ -173,14 +194,36 @@
                     flat
                     color="primary"
                   />
-                </q-input>
-                <div class="text-green" v-if="showContributionCalculatedMore">
+                </q-input> -->
+                <div>
+                  <q-banner
+                    :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
+                  >
+                    Contribuição registrada na Administração Nacional:<br>
+                    R$
+                    <strong class="text-h6">
+                      {{ table.output.contributionOnSgaLocal }}
+                    </strong><br>
+                    Percentual: 
+                    <strong class="text-h6">
+                      {{ contributionPercent }}
+                    </strong>
+                    
+                    <br>
+
+
+                    <template v-slot:action>
+                      <q-btn flat color="white" label="Reportar erro" />
+                    </template>
+                  </q-banner>
+                </div>
+                <!-- <div class="text-green q-mt-lg" v-if="showContributionCalculatedMore">
                   Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
                 </div>
 
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
                   Contribuição {{ contributionCalculatedLess }} <q-icon name="south"/> 
-                </div>
+                </div> -->
 
                 <div class="no-margin">
                   <q-input
@@ -312,22 +355,23 @@ export default defineComponent({
       contributionEntriesSum: null,
       table: {
         entries:{
-          saldoAnterior: null,
+          saldoAnterior: "",
           receitasRegulares: {
-            ofertasDominicais: null,
-            ofertasMensais: null,
-            receitasAlugueis: null,
+            ofertasDominicais: "",
+            ofertasMensais: "",
+            receitasAlugueis: "",
           },
-          ofertasEspeciais:null,
-          campanhasEspecificas: null,
-          auxilio:null,
-          emprestimos: null,
-          todasOutrasReceitas: null,
+          ofertasEspeciais: "",
+          campanhasEspecificas: "",
+          auxilio: "",
+          emprestimos: "",
+          todasOutrasReceitas: "",
         },
         output: {
-          contribuicaoDistrito: null,
-          devolucaoEmprestimoIELB: null,
-          todasSaidas: null
+          contributionOnSga: '',
+          contribuicaoDistrito: "",
+          devolucaoEmprestimoIELB: "",
+          todasSaidas: ""
         },
       },
       focusOnCongregation: false,
@@ -340,6 +384,8 @@ export default defineComponent({
         contributionEntries: '',
       },
       otherOrganisms: [],
+      contributionPercent: '',
+      contributionNumber: 0
     }
   },
   watch: {
@@ -392,6 +438,12 @@ export default defineComponent({
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
+        return
+      }
+      // r.data.contributionEntries = this.formatCurrency(r.data.contributionEntries.contributionEntries)
+      // r.data.contributionOutput = this.formatCurrency(r.data.contributionEntries.contributionOutput)
       this.paroquiaData = r.data
     });
   },
@@ -401,32 +453,13 @@ export default defineComponent({
   //   }
   // },
   calculateOfferPercents(){
-    let total = 0
-    let contribution = 0
-    let contributionPercents = 0
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
-    total = ofertasDominicais + ofertasMensais + receitasAlugueis
-    contribution = (+this.contributionOutputNum/+total)
-    contributionPercents = Math.trunc(contribution*100)
-    console.log(ofertasDominicais, 'ofertasDominicais')
-    console.log(ofertasMensais, 'ofertasMensais')
-    console.log(receitasAlugueis, 'receitasAlugueis')
-    console.log(total, 'total')
-    console.log(contribution, 'contribution')
-    this.showContribuitionNotify = contributionPercents
-    console.log(contributionPercents, 'contributionPercents')
-    if(contributionPercents >= 11){
-      this.contributionCalculatedMore = contributionPercents
-      this.showContributionCalculatedMore = true
-      this.showContributionCalculatedLess = false
-    }else if(contributionPercents < 11){
-      this.contributionCalculatedLess = contributionPercents
-      this.showContribuitionNotify = true
-      this.showContributionCalculatedMore = false
-      this.showContributionCalculatedLess = true
-    }
+    let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
+    this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
+    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
+    
   },
   saveDraft() {
     const opt = {
@@ -455,6 +488,25 @@ export default defineComponent({
       this.$router.back()
       this.getFinanceStatisticByOrganismId()
     });
+  },
+  validateForm () {
+    let validated = true
+    if (this.table.entries.saldoAnterior === '') validated = false
+    else if (this.table.entries.receitasRegulares.ofertasDominicais === '') validated = false
+    else if (this.table.entries.receitasRegulares.ofertasMensais === '') validated = false
+    else if (this.table.entries.receitasRegulares.receitasAlugueis === '') validated = false
+    
+    else if (this.table.entries.ofertasEspeciais === '') validated = false
+    else if (this.table.entries.campanhasEspecificas === '') validated = false
+    else if (this.table.entries.auxilio === '') validated = false
+    else if (this.table.entries.emprestimos === '') validated = false
+    else if (this.table.entries.todasOutrasReceitas === '') validated = false
+
+    else if (this.table.output.contribuicaoDistrito === '') validated = false
+    else if (this.table.output.devolucaoEmprestimoIELB === '') validated = false
+    else if (this.table.output.todasSaidas === '') validated = false
+    
+    return validated
   },
   saveDraftOnBeforeUnmount() {
     const opt = {
@@ -531,6 +583,7 @@ export default defineComponent({
         emprestimos: null,
         todasOutrasReceitas: null,
       }
+      this.calculateOfferPercents()
       this.getFinanceTotalValueFromParoquia()
     });
   },
