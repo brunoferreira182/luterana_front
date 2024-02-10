@@ -205,10 +205,12 @@
                     <strong class="text-h6">
                       {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
+                    <div v-if="table.output.contributionOnSgaLocal && table.output.contributionOnSgaLocal !== '' && table.output.contributionOnSgaLocal > 0">
                     Percentual: 
                     <strong class="text-h6">
                       {{ contributionPercent }}
                     </strong>
+                    </div>
                     
                     <br>
 
@@ -242,7 +244,6 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                    @blur="calculateDiffBetweenEmprestimos()"
                     v-model="table.output.devolucaoEmprestimoIELB"
                   />
                 </div>
@@ -555,7 +556,7 @@ export default defineComponent({
     return validated
   },
   calculateTotals () {
-    const totalSaidas = 
+    const totalEntradas = 
       +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replaceAll(',', '.')
@@ -566,7 +567,7 @@ export default defineComponent({
       + +this.table.entries.emprestimos.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replaceAll(',', '.')
     
-    const totalEntradas = 
+    const totalSaidas = 
       +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
