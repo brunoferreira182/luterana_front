@@ -568,7 +568,7 @@
                       label="Novo usuário"
                       color="primary"
                       class="q-pa-sm"
-                      @click="dialogAddUser.open = true"
+                      @click="openDialogAddUser('func')"
                     />
                   </q-item-section>
                 </q-item>
@@ -584,7 +584,7 @@
                       label="Novo usuário"
                       color="primary"
                       class="q-pa-sm"
-                      @click="dialogAddUser.open = true"
+                      @click="openDialogAddUser('func')"
                     />
                   </q-item-section>
                 </q-item>
@@ -642,18 +642,34 @@
                 </q-item>
               </template>
               <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                  <q-item-section class="text-grey">
-                    <q-btn 
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
                       icon="person_add"
                       dense
                       flat
+                      no-caps
+                      label="Novo usuário"
                       color="primary"
-                      @click="dialogAddUser.open = true"
-                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('funcInDept')"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:after-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('funcInDept')"
+                    />
                   </q-item-section>
                 </q-item>
               </template>
@@ -834,18 +850,34 @@
                 </q-item>
               </template>
               <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                  <q-item-section class="text-grey">
-                    <q-btn 
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
                       icon="person_add"
                       dense
                       flat
+                      no-caps
+                      label="Novo usuário"
                       color="primary"
-                      @click="dialogAddUser.open = true"
-                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('funcInNewCongregation')"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:after-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('funcInNewCongregation')"
+                    />
                   </q-item-section>
                 </q-item>
               </template>
@@ -1116,18 +1148,34 @@
                 </q-item>
               </template>
               <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                  <q-item-section class="text-grey">
-                    <q-btn 
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
                       icon="person_add"
                       dense
                       flat
+                      no-caps
+                      label="Novo usuário"
                       color="primary"
-                      @click="dialogAddUser.open = true"
-                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                      class="q-pa-sm"
+                      @click="openDialogAddUser(userFuncInNewDept)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:after-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser(userFuncInNewDept)"
+                    />
                   </q-item-section>
                 </q-item>
               </template>
@@ -1546,18 +1594,34 @@
                 </q-item>
               </template>
               <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                  <q-item-section class="text-grey">
-                    <q-btn 
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
                       icon="person_add"
                       dense
                       flat
+                      no-caps
+                      label="Novo usuário"
                       color="primary"
-                      @click="dialogAddUser.open = true"
-                    ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('secretary')"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:after-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser('secretary')"
+                    />
                   </q-item-section>
                 </q-item>
               </template>
@@ -1687,18 +1751,34 @@
             </q-item>
           </template>
           <template v-slot:no-option>
-            <q-item>
-              <q-item-section class="text-grey">
-                Nenhum resultado
-              </q-item-section>
-              <q-item-section class="text-grey">
-                <q-btn 
+            <q-item> 
+              <q-item-section>
+                <q-btn
                   icon="person_add"
                   dense
                   flat
+                  no-caps
+                  label="Novo usuário"
                   color="primary"
+                  class="q-pa-sm"
                   @click="dialogAddUser.open = true"
-                ><q-tooltip>Adicionar novo usuário</q-tooltip></q-btn>
+                />
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:after-options>
+            <q-item> 
+              <q-item-section>
+                <q-btn
+                  icon="person_add"
+                  dense
+                  flat
+                  no-caps
+                  label="Novo usuário"
+                  color="primary"
+                  class="q-pa-sm"
+                  @click="dialogAddUser.open = true"
+                />
               </q-item-section>
             </q-item>
           </template>
@@ -1884,6 +1964,7 @@ export default defineComponent({
         userSelected: null
       },
       dialogAddUser: {
+        param: null,
         open: false,
         data: {
           name: '',
@@ -2046,6 +2127,10 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    openDialogAddUser(param) {
+      this.dialogAddUser.param = param
+      this.dialogAddUser.open = true
+    },
     reviseiOsDados(iOrg){
       this.composition.congregations[iOrg].allCongregationalDataIsOk = this.allCongregationalDataIsOk
     },
