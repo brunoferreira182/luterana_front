@@ -69,6 +69,30 @@
               </q-btn>
             </div>
           </div>
+          <div class="q-my-sm" v-if="missionPointsList && missionPointsList.length > 0">
+            <div class="text-h6">
+              Pontos de missão:
+            </div>
+            <q-list>
+              <q-item
+                v-for="pm in missionPointsList"
+                :key="pm"
+                class="bg-grey-2 q-ma-sm"
+                style="border-radius:1rem"
+              > 
+                <q-item-section>
+                  <q-item-label class="q-ml-sm">
+                    {{ pm.departamentName }} 
+                  </q-item-label>
+                  <q-item-label>
+                    <q-chip>
+                    {{ pm.parentName }}
+                    </q-chip> 
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
           <div class="q-mt-sm text-left text-h6">
             Congregações:
             <q-btn
@@ -462,8 +486,7 @@
                 color="primary"
                 no-caps
                 label="Confirmo que revisei os dados e estão de acordo"
-                @update:model-value="reviseiOsDados(iOrg)"
-                v-model="allCongregationalDataIsOk"
+                v-model="org.allCongregationalDataIsOk"
               />
             </q-expansion-item>
               </q-item-label>
@@ -2102,6 +2125,7 @@ export default defineComponent({
       other: '',
       group: null,
       pastorsList: [],
+      missionPointsList: [],
       dialogReportPastorError: {
         open: false,
         type: '',
@@ -2131,8 +2155,12 @@ export default defineComponent({
       this.dialogAddUser.param = param
       this.dialogAddUser.open = true
     },
-    reviseiOsDados(iOrg){
-      this.composition.congregations[iOrg].allCongregationalDataIsOk = this.allCongregationalDataIsOk
+    inserVerifyCheckboxInCongregations() {
+      this.composition.congregations.forEach((org) => {
+        if (!org.allCongregationalDataIsOk) {
+          org.allCongregationalDataIsOk = false
+        }
+      })
     },
     clearDialogChangeCongregationName() {
       this.dialogChangeCongregationName = {
@@ -2605,9 +2633,12 @@ export default defineComponent({
     },
     async saveFinal () {
       for (let i = 0; i < this.composition.congregations.length; i++) {
-        const congregation = this.composition.congregations[i];
+        let congregation = this.composition.congregations[i];
         if (!congregation.paroquialManagement) {
           this.$q.notify(`O campo Gestão paroquial não está preenchida para a congregação ${congregation.organismChildName}`);
+          return
+        } else if (!congregation.allCongregationalDataIsOk) {
+          this.$q.notify(`Confirme que revisou os dados na congregação ${congregation.organismChildName}`)
           return
         }
       }
@@ -3073,7 +3104,21 @@ export default defineComponent({
             })
           }
         })
+        this.composition.congregations.forEach((org) => {
+          if (org.depts) {
+            org.depts.forEach((dep) => {
+              if (dep.organismConfigName === 'Ponto de Missão' && dep.existingDepartaments.length > 0) {
+                let parentName = org.organismChildName
+                dep.existingDepartaments.forEach((ed) => {
+                  ed.parentName = parentName
+                  this.missionPointsList.push(ed)
+                })
+              }
+            })
+          }
+        })
         this.deptConfigs = depConfigList
+        this.inserVerifyCheckboxInCongregations()
       })
     },
     clkCheckboxDate(org){

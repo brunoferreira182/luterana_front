@@ -46,7 +46,7 @@
           ></q-separator>
         </div>
       </div>
-      <q-list>
+      <q-list v-if="departamentos && departamentos.length > 0">
         <q-item v-for="(item, i) in departamentos" :key="item">
           <div
             style="
@@ -180,15 +180,15 @@
                     v-if="item.organismConfigName === 'Música'"
                   >
                     <q-item-label>
-                      <div class="col items-center">
+                      <div class="col items-center" v-if="item.departamentoData && item.departamentoData.musicGroup && item.departamentoData.musicGroup.exist">
                         Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal:
                         <q-radio
-                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          v-model="item.departamentoData.musicGroup.exist"
                           val="exist"
                           label="Sim"
                         />
                         <q-radio
-                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          v-model="item.departamentoData.musicGroup.exist"
                           val="noExist"
                           label="Não"
                         />
@@ -202,7 +202,7 @@
                       </div>
                     </q-item-label>
                     <q-item-section>
-                      <q-item-label>
+                      <q-item-label v-if="departamentos[i].departamentoData && departamentos[i].departamentoData.coro && departamentos[i].departamentoData.coro.exist">
                         <div class="col items-center"> Coro:
                         <q-radio
                             v-model="departamentos[i].departamentoData.coro.exist"
@@ -231,7 +231,7 @@
                       label="Músicos envolvidos na congregação "
                     ></q-input>
 
-                    <q-item-section>
+                    <q-item-section v-if="item.departamentoData && item.departamentoData.formalGroup && item.departamentoData.formalGroup.freqTotal">
                       <div class="row">
                         <q-input
                         type="number"
