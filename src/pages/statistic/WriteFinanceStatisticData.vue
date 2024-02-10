@@ -58,10 +58,11 @@
               <!-- Soma das entradas da paróquia -->
               <q-input
                 v-model="paroquiaData.contributionEntries"
-                mask="###.###.###,##"
                 prefix="R$"
                 readonly
                 label="Soma das entradas da paróquia"
+                reverse-fill-mask
+                mask="###.###.###,##"
               />
               <!-- {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }} -->
             </div>
@@ -69,11 +70,11 @@
               <!-- Soma das saídas da paróquia -->
               <q-input
                 v-model="paroquiaData.contributionOutput"
-                mask="###.###.###,##"
                 prefix="R$"
                 readonly
                 label="Soma das saídas da paróquia"
                 reverse-fill-mask
+                mask="###.###.###,##"
               />
               <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
@@ -442,8 +443,8 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
         return
       }
-      // r.data.contributionEntries = this.formatCurrency(r.data.contributionEntries.contributionEntries)
-      // r.data.contributionOutput = this.formatCurrency(r.data.contributionEntries.contributionOutput)
+      r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
+      r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
     });
   },
@@ -452,6 +453,10 @@ export default defineComponent({
   //     this.showEmprestimoNotify = true
   //   }
   // },
+  formatCurrency (d) {
+    return d.toString().replace('.', ',')
+    // return d
+  },
   calculateOfferPercents(){
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
@@ -470,6 +475,7 @@ export default defineComponent({
         contribuitionOutput: this.contributionOutputSum
       },
     };
+    opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -495,7 +501,6 @@ export default defineComponent({
     else if (this.table.entries.receitasRegulares.ofertasDominicais === '') validated = false
     else if (this.table.entries.receitasRegulares.ofertasMensais === '') validated = false
     else if (this.table.entries.receitasRegulares.receitasAlugueis === '') validated = false
-    
     else if (this.table.entries.ofertasEspeciais === '') validated = false
     else if (this.table.entries.campanhasEspecificas === '') validated = false
     else if (this.table.entries.auxilio === '') validated = false
@@ -508,6 +513,26 @@ export default defineComponent({
     
     return validated
   },
+  calculateTotals () {
+    const totalSaidas = 
+      +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.ofertasEspeciais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.auxilio.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.emprestimos.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replaceAll(',', '.')
+    
+    const totalEntradas = 
+      +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
+
+    return { totalSaidas, totalEntradas }
+
+  },
   saveDraftOnBeforeUnmount() {
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
@@ -517,6 +542,7 @@ export default defineComponent({
         contribuitionOutput: this.contributionOutputSum
       },
     };
+    opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
