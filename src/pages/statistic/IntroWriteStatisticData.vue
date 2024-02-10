@@ -46,6 +46,10 @@
           <q-item-section >
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
+          <q-chip>
+            {{ cardOrganismName.organismParentLocal }}
+            {{ cardOrganismName.organismParentName}}
+          </q-chip>
           <q-chip
             color="green"
             label="Etapa finalizada"
@@ -197,6 +201,7 @@ export default defineComponent({
       isSIPAR: false,
       isPastor: null,
       status: null,
+      cardOrganismName: [],
       dialogNotifystatus: {
         open: false
       },
@@ -208,6 +213,7 @@ export default defineComponent({
   },
   beforeMount(){
     this.verifyIfIsPastor()
+    this.getCardName()
     this.getStatusPreStatistic()
   },
   methods: {
@@ -218,6 +224,18 @@ export default defineComponent({
       this.dialogNotifystatus = {
         open: false
       }
+    },
+    getCardName() {
+      const opt = {
+        route: '/desktop/statistics/getCompositionByUserId'
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) return 
+        this.cardOrganismName = r.data
+        console.log(this.cardOrganismName, 'dkjasndkasjnd');
+      })
     },
     goToStatistic() {
       let chk = true
