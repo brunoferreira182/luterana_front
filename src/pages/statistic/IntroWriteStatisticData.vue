@@ -95,11 +95,9 @@
           </q-item-section>
         </q-item>
       </div>
-      <div 
-        v-else
-      >
+      <div v-else>
         <div class="text-center text-h6 text-wrap q-pa-md">
-          Você não faz parte de nenhuma paróquia. Portanto não precisa responder nenhum dado referente a estatística 2023!
+          Por favor peça para o pastor validar a composição para prosseguir com a estatística
         </div>
         <div class="text-center">
           <q-btn
