@@ -2,43 +2,22 @@
   <q-page-container class="no-padding">
     <q-page >
       <div class="q-pa-md q-gutter-sm">
-          <q-breadcrumbs align="center">
-            <q-breadcrumbs-el 
-              style="cursor: pointer" 
-              icon="home" 
-              label="Introdução" 
-              @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
-            />
-            <q-breadcrumbs-el 
-              :label="congregationName" 
-              style="cursor: pointer" 
-              class="text-wrap"
-              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-            />
-            <q-breadcrumbs-el label="Atividades cúlticas" />
-          </q-breadcrumbs>
-          <div
-          class="text-center q-mt-lg"
-          v-if="otherOrganisms && otherOrganisms.length > 0"
-        >
-          <div class="text-h6">
-            Selecione outras congregações para responder estes dados:
-          </div>
-          <div>
-            <q-chip
-              clickable
-              v-for="org in otherOrganisms"
-              :key="org"
-              @click="$router.push('/statistic/culturalActivities?organismId=' + org._id)"
-            >
-              {{ org.name }}
-            </q-chip>
-          </div>
-          <q-separator
-            class="q-mt-md q-mx-md"
-          ></q-separator>
-        </div>
-        </div>
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+          />
+          <q-breadcrumbs-el 
+            :label="congregationName" 
+            style="cursor: pointer" 
+            class="text-wrap"
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+          />
+          <q-breadcrumbs-el label="Atividades cúlticas" />
+        </q-breadcrumbs>
+      </div>
       <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
       </div>
@@ -173,51 +152,18 @@ export default defineComponent({
       canNavigate: true,
       congregationData: {},
       culturalActivities: [],
-      congregationName: '',
-      otherOrganisms: []
+      congregationName: ''
     }
   },
-  watch: {
-    '$route.query.organismId': {
-      handler(newOrganismId, oldOrganismId) {
-        if (newOrganismId !== oldOrganismId) {
-          this.getAtividadesCulticas()
-          this.getOrganismNameForBreadCrumbs()
-          this.getOthersCongregations()
-        }
-      },
-      immediate: true
-    }
-  },
+
   // beforeUnmount(){
   //   this.saveDraftOnBeforeUnmount()
   // },
   beforeMount() {
     this.getAtividadesCulticas()
     this.getOrganismNameForBreadCrumbs()
-    this.getOthersCongregations()
   },
   methods: {
-    getOthersCongregations() {
-      this.otherOrganisms = []
-      const opt = {
-        route: '/desktop/statistics/getMyOrganismsList'
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        r.data.forEach((org) => {
-          if (org._id !== this.$route.query.organismId) {
-            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
-            if (!exists) {
-              this.otherOrganisms.push({
-                name: org.name,
-                _id: org._id
-              });
-            }
-          }
-        })       
-      })
-    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
