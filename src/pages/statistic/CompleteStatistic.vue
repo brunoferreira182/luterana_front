@@ -125,6 +125,18 @@
             text-color="white"
           /> -->
         </q-item>
+        <div class="q-px-md">
+          <q-btn 
+            label="Enviar estatística" 
+            rounded 
+            color="primary" 
+            class="full-width"
+            unelevated 
+            :disable="canSendStatistic ? false : true"
+            @click="insertCongregationalStatisticsDone"
+            no-caps 
+          />
+        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -139,7 +151,8 @@ export default defineComponent({
     return {
       statisticStatus: null,
       congregationName:'',
-      validationResume: {}
+      validationResume: {},
+      canSendStatistic: null,
     }
   },
   beforeMount() {
@@ -149,6 +162,17 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    insertCongregationalStatisticsDone () {
+      const opt = {
+        route: '/desktop/statistics/insertCongregationalStatisticsDone',
+        body: {
+          organismId: this.$route.query.organismId,
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+      })
+    },
     getValidationResumeByOrganism () {
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -159,6 +183,16 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.validationResume = r.data
+        if (
+          this.validationResume &&
+          this.validationResume.financeStatistics === 't' &&
+          this.validationResume.membersMovement === 't' &&
+          this.validationResume.groupActivity === 't' &&
+          this.validationResume.atividadesCulticasStatistics === 't'
+        ) {
+          console.log('merda');
+          this.canSendStatistic = true;
+        }
       })
     },
     getOrganismNameForBreadCrumbs() {
