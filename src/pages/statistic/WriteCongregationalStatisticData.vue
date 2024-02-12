@@ -139,7 +139,7 @@
             </template>
               <div class="q-ma-sm">
                 <q-btn
-                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
+                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent')) && myOrganismsIds.length === 0"
                   color="red"
                   rounded
                   @click="openDialogRemoveCongregation(iOrg)"
