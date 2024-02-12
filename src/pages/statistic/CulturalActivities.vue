@@ -278,11 +278,14 @@ export default defineComponent({
       });
     },
     saveOficial(){
+
+      
+      
       for(let i = 0; i < this.culturalActivities.length; i++){
         if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
-            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
-            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
-          }
+        ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
+        ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') return this.$q.notify('Preencha todos os campos antes de salvar!')
+      }
       this.extractedData = [];
       this.culturalActivities.forEach((item, index) => {
         const extractedItem = {
@@ -298,7 +301,7 @@ export default defineComponent({
         this.extractedData.push(extractedItem);
       });
       const opt = {
-        route: "/desktop/statistics/insertAtividadesCulticasStatisticDone",
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticsDone",
         body: {
           organismId: this.$route.query.organismId,
           activitiesData: this.extractedData
