@@ -2201,16 +2201,11 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        this.modificationResquet = r.data
-        if(r.data){
+        if(r.data.status.value==='waitingApproval'){
           this.hasModificationRequest = true
-        } else this.hasModificationRequest = false
+        } else if(r.data.status.value==='approved') this.hasModificationRequest = false
       })
-      // if(this.modificationResquet.status.value==='approved'){
-      //   this.hasModificationRequest = false 
-      // }
     },
-    
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
