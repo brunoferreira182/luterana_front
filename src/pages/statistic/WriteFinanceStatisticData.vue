@@ -252,25 +252,29 @@
                   text-color="white"
                   icon="warning"
                 />
-  
-                <q-btn
-                  label="Salvar rascunho"
-                  color="primary"
-                  rounded
-                  unelevated
-                  class="q-my-sm full-width"
-                  no-caps
-                  @click="saveDraft()"
-                />
-                <q-btn
-                  label="Salvar Oficial"
-                  color="orange"
-                  rounded
-                  unelevated
-                  class="full-width q-my-sm"
-                  no-caps
-                  @click="saveOficial()"
-                />
+                <div v-if="(status && status.value !== 'sent') || !status">
+                  <q-btn
+                    label="Salvar rascunho"
+                    color="primary"
+                    rounded
+                    unelevated
+                    class="q-my-sm full-width"
+                    no-caps
+                    @click="saveDraft()"
+                  />
+                  <q-btn
+                    label="Salvar Oficial"
+                    color="orange"
+                    rounded
+                    unelevated
+                    class="full-width q-my-sm"
+                    no-caps
+                    @click="saveOficial()"
+                  />
+                </div>
+                <div v-else class="text-h6 q-ma-sm">
+                  Etapa finalizada
+                </div>
                 <div class="row q-gutter-sm q-pt-xs">
                   <q-btn
                     label="Etapa anterior"
@@ -367,6 +371,7 @@ export default defineComponent({
       contributionPercent: '',
       contributionNumber: 0,
       saldoCongregacao: '',
+      status: null
     }
   },
   // beforeUnmount(){
@@ -573,6 +578,7 @@ export default defineComponent({
       this.$q.loading.hide()
       if (r.error || !r.data) return
       this.validated = r.data.validated
+      this.status = r.data.status
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries

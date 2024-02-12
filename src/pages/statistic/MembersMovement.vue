@@ -37,7 +37,7 @@
               />
             </div>
           </div>
-          <div v-if="(instructionYears - 1 !== 0) &&  index !== instructionYears - 1">Quantidade de alunos</div>
+          <div v-if="(instructionYears - 1 !== 0)">Quantidade de alunos</div>
           <div
             class="q-ma-sm"
             v-for="(confirmado, index) in membersMovement.instrucaoDeConfirmados.confirmados"
@@ -292,25 +292,29 @@
           text-color="white"
           icon="warning"
         />
-  
-        <q-btn
-          label="Salvar rascunho"
-          color="primary"
-          unelevated
-          class="q-my-sm full-width"
-          rounded
-          no-caps
-          @click="saveDraft()"
-        />
-        <q-btn
-          label="Salvar Oficial"
-          color="orange"
-          rounded
-          unelevated
-          class="full-width q-my-sm"
-          no-caps
-          @click="saveOficial()"
-        />
+        <div v-if="(status && status.value !== 'sent') || !status">
+          <q-btn
+            label="Salvar rascunho"
+            color="primary"
+            unelevated
+            class="q-my-sm full-width"
+            rounded
+            no-caps
+            @click="saveDraft()"
+          />
+          <q-btn
+            label="Salvar Oficial"
+            color="orange"
+            rounded
+            unelevated
+            class="full-width q-my-sm"
+            no-caps
+            @click="saveOficial()"
+          />
+        </div>
+        <div v-else class="text-h6 q-ma-sm">
+          Etapa finalizada
+        </div>
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
             label="Etapa anterior"
@@ -372,6 +376,7 @@ export default defineComponent({
         }
       },
       validated: false,
+      status: null,
       totalComungantes: 0,
       totalNaoComungantes: 0,
       total: 0,
@@ -500,6 +505,7 @@ export default defineComponent({
           this.membersMovement[key] = r.data.membersMovement[key]
         })
         this.validated = r.data.validated
+        this.status = r.data.status
         this.calculateTotal()
       })
     },

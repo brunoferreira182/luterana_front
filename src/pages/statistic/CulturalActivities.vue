@@ -96,7 +96,7 @@
           text-color="white"
           icon="warning"
         />
-        <div v-if="status && !status.value === 'sent'">
+        <div v-if="(status && status.value !== 'sent') || !status">
           <q-btn
             label="Salvar rascunho"
             color="primary"
