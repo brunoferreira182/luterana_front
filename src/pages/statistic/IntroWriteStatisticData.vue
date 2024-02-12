@@ -216,6 +216,7 @@ export default defineComponent({
     this.verifyIfIsPastor()
     this.getCardName()
     this.getStatusPreStatistic()
+    this.getStatusPreStatistic()
   },
   methods: {
     clearDialogSipar() {

@@ -24,27 +24,6 @@
           </q-breadcrumbs-el>
           <q-breadcrumbs-el label="Atividades de Grupos" />
         </q-breadcrumbs>
-        <div
-          class="text-center q-mt-lg"
-          v-if="otherOrganisms && otherOrganisms.length > 0"
-        >
-          <div class="text-h6 text-wrap">
-            Selecione outras congregações para responder estes dados:
-          </div>
-          <div>
-            <q-chip
-              clickable
-              v-for="org in otherOrganisms"
-              :key="org"
-              @click="$router.push('/statistic/groupActivity?organismId=' + org._id)"
-            >
-              {{ org.name }}
-            </q-chip>
-          </div>
-          <q-separator
-            class="q-mt-md q-mx-md"
-          ></q-separator>
-        </div>
       </div>
       <q-list v-if="departamentos && departamentos.length > 0">
         <q-item v-for="(item, i) in departamentos" :key="item">
@@ -456,48 +435,15 @@ export default defineComponent({
       'Ação social', 
       'Outros'
       ],
-      otherOrganisms: [],
     };
-  },
-  watch: {
-    '$route.query.organismId': {
-      handler(newOrganismId, oldOrganismId) {
-        if (newOrganismId !== oldOrganismId) {
-          this.getGroupActivitiesByOrganismId();
-          this.getOthersCongregations();
-        }
-      },
-      immediate: true
-    }
   },
   // beforeUnmount(){
   //   this.saveDraftOnBeforeUnmount()
   // },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
-    this.getOthersCongregations()
   },
   methods: {
-    getOthersCongregations() {
-      this.otherOrganisms = []
-      const opt = {
-        route: '/desktop/statistics/getMyOrganismsList'
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        r.data.forEach((org) => {
-          if (org._id !== this.$route.query.organismId) {
-            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
-            if (!exists) {
-              this.otherOrganisms.push({
-                name: org.name,
-                _id: org._id
-              });
-            }
-          }
-        })       
-      })
-    },
     getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
