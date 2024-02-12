@@ -17,27 +17,6 @@
             />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
-          <div
-          class="text-center q-mt-lg"
-          v-if="otherOrganisms && otherOrganisms.length > 0"
-        >
-          <div class="text-h6">
-            Selecione outras congregações para responder estes dados:
-          </div>
-          <div>
-            <q-chip
-              clickable
-              v-for="org in otherOrganisms"
-              :key="org"
-              @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + org._id)"
-            >
-              {{ org.name }}
-            </q-chip>
-          </div>
-          <q-separator
-            class="q-mt-md q-mx-md"
-          ></q-separator>
-        </div>
         </div>
         <div class="text-left q-gutter-md"> 
           <div class="text-h5 q-px-sm">
@@ -77,6 +56,16 @@
                 mask="###.###.###,##"
               />
               <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
+            </div>
+            <div>
+              <q-input
+                v-model="saldoCongregacao"
+                prefix="R$"
+                readonly
+                label="Saldo congregação"
+                reverse-fill-mask
+                mask="###.###.###,##"
+              />
             </div>
           </div>
           <div class="row">
@@ -222,7 +211,6 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.contribuicaoDistrito"
                   />
                 </div>
@@ -233,7 +221,6 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.devolucaoEmprestimoIELB"
                   />
                 </div>
@@ -243,7 +230,6 @@
                     prefix="R$"
                     label="Todas as outras saídas"
                     reverse-fill-mask
-                    @blur="calculateSaldoCongregacao"
                     mask="###.###.###,##"
                     v-model="table.output.todasSaidas"
                   />
@@ -378,23 +364,9 @@ export default defineComponent({
         contributionOutput: '',
         contributionEntries: '',
       },
-      otherOrganisms: [],
       contributionPercent: '',
       contributionNumber: 0,
       saldoCongregacao: '',
-    }
-  },
-  watch: {
-    '$route.query.organismId': {
-      handler(newOrganismId, oldOrganismId) {
-        if (newOrganismId !== oldOrganismId) {
-          this.getFinanceStatisticByOrganismId()
-          this.getFinanceTotalValueFromParoquia()
-          this.getOrganismNameForBreadCrumbs()
-          this.getOthersCongregations()
-        }
-      },
-      immediate: true
     }
   },
   // beforeUnmount(){
@@ -404,29 +376,8 @@ export default defineComponent({
     this.getFinanceStatisticByOrganismId()
     this.getFinanceTotalValueFromParoquia()
     this.getOrganismNameForBreadCrumbs()
-    this.getOthersCongregations()
   },
   methods: {
-    getOthersCongregations() {
-      this.otherOrganisms = []
-      const opt = {
-        route: '/desktop/statistics/getMyOrganismsList'
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        r.data.forEach((org) => {
-          if (org._id !== this.$route.query.organismId) {
-            const exists = this.otherOrganisms.some(existOrg => existOrg._id === org._id);
-            if (!exists) {
-              this.otherOrganisms.push({
-                name: org.name,
-                _id: org._id
-              });
-            }
-          }
-        })       
-      })
-    },
   getFinanceTotalValueFromParoquia(){
     const opt = {
       route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -441,6 +392,11 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
+      const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
+      const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
+      this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+      console.log(this.saldoCongregacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+
     });
   },
   formatCurrency (d) {
