@@ -482,7 +482,7 @@
                 color="primary"
                 no-caps
                 label="Confirmo que revisei os dados e estão de acordo"
-                v-model="org.allCongregationalDataIsOk"
+                v-model="composition.congregations[iOrg].allCongregationalDataIsOk"
               />
             </q-expansion-item>
               </q-item-label>
