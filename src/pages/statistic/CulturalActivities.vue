@@ -184,7 +184,9 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
-        this.status = r.data.status
+        if (r.data.status) {
+          this.status = r.data.status
+        }
         r.data.validated ? this.validated = r.data.validated : this.validated = false
         if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
           this.culturalActivities = r.data.activitiesData
