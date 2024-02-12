@@ -298,7 +298,7 @@ export default defineComponent({
         this.extractedData.push(extractedItem);
       });
       const opt = {
-        route: "/desktop/statistics/insertAtividadesCulticasStatisticDone",
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticsDone",
         body: {
           organismId: this.$route.query.organismId,
           activitiesData: this.extractedData
