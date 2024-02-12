@@ -2633,13 +2633,7 @@ export default defineComponent({
     async saveFinal () {
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
-        if (!congregation.paroquialManagement) {
-          this.$q.notify(`O campo Gestão paroquial não está preenchida para a congregação ${congregation.organismChildName}`);
-          return
-        } else if (!congregation.allCongregationalDataIsOk) {
-          this.$q.notify(`Confirme que revisou os dados na congregação ${congregation.organismChildName}`)
-          return
-        }
+        this.$q.notify('Todas as congregações devem estar completas')
       }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
