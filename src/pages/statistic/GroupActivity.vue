@@ -532,7 +532,20 @@ export default defineComponent({
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
-      const opt = {
+
+      let opt = {
+        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
+              body: {
+                organismId: this.$route.query.organismId,
+                groupActivity: this.departamentos,
+                organismFatherName: this.congregationName
+              },
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+      })
+
+      opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDone",
         body: {
           organismId: this.$route.query.organismId,

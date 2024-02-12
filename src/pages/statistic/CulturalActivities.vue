@@ -309,7 +309,18 @@ export default defineComponent({
         }
         this.extractedData.push(extractedItem);
       });
-      const opt = {
+
+      let opt = {
+        route: "/desktop/statistics/insertAtividadesCulticasStatisticDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          activitiesData: this.extractedData
+        },
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+      })
+      opt = {
         route: "/desktop/statistics/insertAtividadesCulticasStatisticsDone",
         body: {
           organismId: this.$route.query.organismId,
