@@ -22,6 +22,7 @@
         <template #body-cell-status="props">
           <q-td :props="props">
             {{ props.row.status.label }}
+<<<<<<< HEAD
           </q-td>
           <q-td :props="props">
             <q-btn
@@ -38,6 +39,31 @@
             </q-btn>
           </q-td>
         </template>
+=======
+          </q-td>
+        </template>
+        
+        <!-- <template #body-cell-status="props">
+          <q-td :props="props">
+            <q-chip
+              outline
+              v-if="props.row.isActive === 1"
+              color="green"
+              size="14px"
+            >
+              Ativo
+            </q-chip>
+            <q-chip
+              outline
+              v-else-if="props.row.isActive === 0"
+              color="red"
+              size="14px"
+            >
+              Inativo
+            </q-chip>
+          </q-td>
+        </template> -->
+>>>>>>> 579bfdd62dfa4d3e045dcc1fea4c7f67f345e3bb
       </q-table>
 
     </q-page>

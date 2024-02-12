@@ -2200,9 +2200,11 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if(r.data){
+        if(r.data.status.value === 'waitingApproval'){
           this.hasModificationRequest = true
-        } else this.hasModificationRequest = false
+        } else { 
+          this.hasModificationRequest = false
+        }
       })
     },
     
