@@ -78,6 +78,16 @@
               />
               <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
+            <div>
+              <q-input
+                v-model="saldoCongregacao"
+                prefix="R$"
+                readonly
+                label="Saldo congregação"
+                reverse-fill-mask
+                mask="###.###.###,##"
+              />
+            </div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -222,7 +232,6 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.contribuicaoDistrito"
                   />
                 </div>
@@ -233,7 +242,6 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.devolucaoEmprestimoIELB"
                   />
                 </div>
@@ -243,7 +251,6 @@
                     prefix="R$"
                     label="Todas as outras saídas"
                     reverse-fill-mask
-                    @blur="calculateSaldoCongregacao"
                     mask="###.###.###,##"
                     v-model="table.output.todasSaidas"
                   />
@@ -441,6 +448,11 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
+      const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
+      const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
+      this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+      console.log(this.saldoCongregacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+
     });
   },
   formatCurrency (d) {
