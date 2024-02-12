@@ -2204,7 +2204,7 @@ export default defineComponent({
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
-    filiadoNaooConfereIntoCompositionOrg(iOrg){
+    filiadoNaoConfereIntoCompositionOrg(iOrg){
       this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
     },
     removeDepartamentFromList(iExistsDept) {

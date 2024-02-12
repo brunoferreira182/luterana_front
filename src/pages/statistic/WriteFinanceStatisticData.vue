@@ -226,7 +226,7 @@
                       Se houver diferença no valor, envie o comprovante para o e-mail da IELB.
                     </q-card-section>
                     <q-card-actions align="center">
-                      <q-btn flat label="Entendi" no-caps color="primary"></q-btn>
+                      <q-btn flat label="Entendi" no-caps color="primary" @click="dialogReportValueSGAError = false"/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
