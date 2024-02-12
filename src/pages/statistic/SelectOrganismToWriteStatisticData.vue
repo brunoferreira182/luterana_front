@@ -58,15 +58,6 @@
             </div>
           </q-item-section>
         </q-item>
-        <q-btn
-          label="Enviar estatística"
-          no-caps
-          unelevated
-          rounded
-          @click="checkCanSendStatistics"
-          class="full-width"
-          color="primary"
-        />
         <q-dialog v-model="dialogSendStatistic.open">
           <q-item class="card">
             <q-item-section class="text-h6">
