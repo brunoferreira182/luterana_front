@@ -1596,7 +1596,6 @@ export default defineComponent({
           }
         }
         this.$q.loading.show()
-        console.log('aqui 1')
         let r = await useFetch(opt)
         this.$q.loading.hide()
         if  (r.error) {
@@ -1610,7 +1609,6 @@ export default defineComponent({
           }
         }
         this.$q.loading.show()
-        console.log('aqui 2')
         useFetch(opt).then((r) => {
           this.$q.loading.hide()
           if (r.error) {

@@ -192,7 +192,6 @@ export default defineComponent({
           this.validationResume.groupActivity === 't' &&
           this.validationResume.atividadesCulticasStatistics === 't'
         ) {
-          console.log('merda');
           this.canSendStatistic = true;
         }
       })

@@ -400,7 +400,6 @@ export default defineComponent({
       const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
       const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
       this.saldoCongregacao = saldoContribuicao - saldoDespesas;
-      console.log(this.saldoCongregacao.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
 
     });
   },

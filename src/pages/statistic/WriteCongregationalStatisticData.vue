@@ -3057,7 +3057,6 @@ export default defineComponent({
           }
         }
         this.composition = r.data
-        console.log(this.composition, 'aqui que está dando merdinha')
         if (r.data.validated) {
           this.validated = r.data.validated
           this.getModificationsRequest()

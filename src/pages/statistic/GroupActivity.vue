@@ -523,7 +523,7 @@ export default defineComponent({
         this.getGroupActivitiesByOrganismId()
       });
     },
-    saveOficial(){
+    async saveOficial(){
       for(let i = 0; i < this.departamentos.length; i++){
         if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
           return this.$q.notify('Preencha todos os campos Obrigatórios!')
@@ -541,9 +541,9 @@ export default defineComponent({
                 organismFatherName: this.congregationName
               },
       }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-      })
+      let r = await useFetch(opt)
+
+      if (r.error) return
 
       opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDone",
