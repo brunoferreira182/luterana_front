@@ -15,6 +15,7 @@
           class="bg-grey-3 q-my-md"
           :key="organism"
           clickable
+          :disable="organism.disable"
           @click="goToCompleteStatistic(organism)"
         >
           <q-item-section>
@@ -162,6 +163,12 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
+        for (let i =  0; i < this.userOrganismList.childData.length; i++) {
+          let org = this.userOrganismList.childData[i]
+          if (!org.usuarioEstaEmCongregacao) {
+            org.disable = true
+          }
+        }
         let value, color
         this.userOrganismList.childData.forEach((org, i) => {
           value = org.statusEstatistica.length / this.stepsNum
