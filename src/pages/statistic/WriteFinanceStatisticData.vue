@@ -181,21 +181,6 @@
                   Saídas
                 </div>
 
-                <!-- <q-input
-                  label="Contribuição registrada na Administração Nacional"
-                  v-model="table.output.contributionOnSgaLocal"
-                  readonly
-                  prefix="R$"
-                >
-                  <q-btn
-                    label="Reportar erro"
-                    icon="report"
-                    no-caps
-                    dense
-                    flat
-                    color="primary"
-                  />
-                </q-input> -->
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
@@ -223,20 +208,13 @@
                 <q-dialog v-model="dialogReportValueSGAError">
                   <q-card style="border-radius: 1rem; width: 400px;">
                     <q-card-section class="text-subtitle1 text-center">
-                      Se houver diferença no valor, envie o comprovante para o e-mail da IELB.
+                      Se houver diferença no valor, envie os comprovantes para o e-mail da IELB.
                     </q-card-section>
                     <q-card-actions align="center">
                       <q-btn flat label="Entendi" no-caps color="primary" @click="dialogReportValueSGAError = false"/>
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
-                <!-- <div class="text-green q-mt-lg" v-if="showContributionCalculatedMore">
-                  Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
-                </div>
-
-                <div class="text-red" v-else-if="showContributionCalculatedLess">
-                  Contribuição {{ contributionCalculatedLess }} <q-icon name="south"/> 
-                </div> -->
 
                 <div class="no-margin">
                   <q-input
@@ -244,6 +222,7 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
+                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.contribuicaoDistrito"
                   />
                 </div>
@@ -254,6 +233,7 @@
                     prefix="R$"
                     reverse-fill-mask
                     mask="###.###.###,##"
+                    @blur="calculateSaldoCongregacao"
                     v-model="table.output.devolucaoEmprestimoIELB"
                   />
                 </div>
@@ -263,11 +243,13 @@
                     prefix="R$"
                     label="Todas as outras saídas"
                     reverse-fill-mask
+                    @blur="calculateSaldoCongregacao"
                     mask="###.###.###,##"
                     v-model="table.output.todasSaidas"
                   />
                 </div>
               </div>
+                
               <div class="q-ma-sm text-center">
                 <q-chip
                   v-if="validated"
@@ -398,7 +380,8 @@ export default defineComponent({
       },
       otherOrganisms: [],
       contributionPercent: '',
-      contributionNumber: 0
+      contributionNumber: 0,
+      saldoCongregacao: '',
     }
   },
   watch: {
@@ -414,9 +397,9 @@ export default defineComponent({
       immediate: true
     }
   },
-  beforeUnmount(){
-    this.saveDraftOnBeforeUnmount()
-  },
+  // beforeUnmount(){
+  //   this.saveDraftOnBeforeUnmount()
+  // },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
     this.getFinanceTotalValueFromParoquia()
@@ -460,11 +443,6 @@ export default defineComponent({
       this.paroquiaData = r.data
     });
   },
-  // calculateDiffBetweenEmprestimos() {
-  //   if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
-  //     this.showEmprestimoNotify = true
-  //   }
-  // },
   formatCurrency (d) {
     return d.toString().replace('.', ',')
     // return d

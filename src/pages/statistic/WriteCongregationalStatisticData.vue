@@ -2144,7 +2144,7 @@ export default defineComponent({
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
-    this.saveDraftOnBeforeUnmount()
+    // this.saveDraftOnBeforeUnmount()
   },
   methods: {
     openDialogAddUser(param) {

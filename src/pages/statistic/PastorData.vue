@@ -1486,7 +1486,7 @@ export default defineComponent({
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
     if (!this.canSaveDraft) return
-    if (this.saveOnUnmount) this.saveDraftOnBeforeUnmount()
+    // if (this.saveOnUnmount) this.saveDraftOnBeforeUnmount()
   },
   methods: {
     cancelChangeChild () {

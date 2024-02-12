@@ -4,7 +4,7 @@
       <div class="text-h5 q-ma-md">
         Bem-vindo(a) a Estatística 2023!
       </div>
-      <div class="q-pa-sm text-center" v-if="hasParoquia || hasCongregacao">
+      <div class="q-pa-sm text-center" v-if="status">
         <q-item 
           class="card" 
           :clickable="isPastor ? true : false" 
@@ -216,6 +216,7 @@ export default defineComponent({
     this.verifyIfIsPastor()
     this.getCardName()
     this.getStatusPreStatistic()
+    this.getStatusPreStatistic()
   },
   methods: {
     clearDialogSipar() {
@@ -235,17 +236,6 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error) return 
         this.cardOrganismName = r.data
-        if (r.data.usuarioEstaEmParoquia) {
-          this.hasParoquia = true
-          this.paroquiaId = r.data.organismParentId
-        } else {
-          r.data.congregations.forEach((org) => {
-            if (org.usuarioEstaEmCongregacao) {
-              this.hasCongregacao = true
-              this.congregationsId.push(org.organismChildId)
-            } 
-          })
-        }
       })
     },
     goToStatistic() {
@@ -275,9 +265,17 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.status = r.data
-        if (!this.status) {
-          this.hasParoquia = false
-        }
+        // if (r.data.usuarioEstaEmParoquia) {
+        //   this.hasParoquia = true
+        //   this.paroquiaId = r.data.organismParentId
+        // } else {
+        //   r.data.congregations.forEach((org) => {
+        //     if (org.usuarioEstaEmCongregacao) {
+        //       this.hasCongregacao = true
+        //       this.congregationsId.push(org.organismChildId)
+        //     } 
+        //   })
+        // }
       })
     },
     verifyIfIsPastor() {
