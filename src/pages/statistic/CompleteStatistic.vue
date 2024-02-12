@@ -162,7 +162,7 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    insertCongregationalStatisticsDone () {
+    insertCongregationalStatisticsDone() {
       const opt = {
         route: '/desktop/statistics/insertCongregationalStatisticsDone',
         body: {
