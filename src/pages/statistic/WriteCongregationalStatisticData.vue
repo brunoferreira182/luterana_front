@@ -2196,9 +2196,9 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if(r.data.status.value==='waitingApproval'){
+        if(r.data && r.data.status && r.data.status.value ==='waitingApproval'){
           this.hasModificationRequest = true
-        } else if(r.data.status.value==='approved') this.hasModificationRequest = false
+        } else if(r.data && r.data.status && r.data.status.value==='approved') this.hasModificationRequest = false
       })
     },
     insertCheckBoxNoFundationCompositionOrg(iOrg){
