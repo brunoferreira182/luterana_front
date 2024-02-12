@@ -20,7 +20,7 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <div v-if="organism.entregaEstatistica.status && organism.entregaEstatistica.status.value === 'sent'" class="q-mt-md">
+            <div v-if="organism.entregaEstatistica && organism.entregaEstatistica.status && organism.entregaEstatistica.status.value === 'sent'" class="q-mt-md">
               <q-icon name="star" size="sm" color="yellow-8"/>   Estatística entregue
             </div>
             <div class="q-mt-md" v-if="organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR'">
