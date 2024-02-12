@@ -372,25 +372,29 @@
           text-color="white"
           icon="warning"
         />
-
-        <q-btn
-          label="Salvar rascunho"
-          color="primary"
-          class="full-width q-my-sm"
-          rounded
-          unelevated
-          no-caps
-          @click="saveDraft()"
-        />
-        <q-btn
-          label="Salvar Oficial"
-          color="orange"
-          rounded
-          unelevated
-          class="full-width q-my-sm"
-          no-caps
-          @click="saveOficial()"
-        />
+        <div v-if="status && !status.value === 'sent'">
+          <q-btn
+            label="Salvar rascunho"
+            color="primary"
+            class="full-width q-my-sm"
+            rounded
+            unelevated
+            no-caps
+            @click="saveDraft()"
+          />
+          <q-btn
+            label="Salvar Oficial"
+            color="orange"
+            rounded
+            unelevated
+            class="full-width q-my-sm"
+            no-caps
+            @click="saveOficial()"
+          />
+        </div>
+        <div v-else class="text-h6 q-ma-sm">
+          Etapa finalizada
+        </div>
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
             label="Etapa anterior"
@@ -435,6 +439,7 @@ export default defineComponent({
       'Ação social', 
       'Outros'
       ],
+      status: null
     };
   },
   // beforeUnmount(){
@@ -459,6 +464,9 @@ export default defineComponent({
         this.congregationName = r.data.organismName;
         this.departamentos = r.data.childData;
         this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
+        if (r.data.status) {
+          this.status = r.data.status
+        }
       });
     },
     expand(item) {
