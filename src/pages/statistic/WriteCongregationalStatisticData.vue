@@ -115,32 +115,28 @@
             <q-expansion-item
               v-if="!org.action || org.action !== 'remove'"
               :label="org.organismChildName"
+              :disable="org.disable"
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
             >
-            <!-- <template v-slot:header>
+            <template v-slot:header v-if="!org.paroquialManagement">
               <q-item-section>
                 {{org.organismChildName}}
               </q-item-section>
 
               <q-item-section side>
-                <div class="row items-center">
-                  <q-btn
-                    color="primary"
-                    icon="add"
-                    flat
+                <div class="items-center">
+                  <q-chip
+                    color="purple"
                     rounded
-                  ></q-btn>
-                  <q-btn
-                    color="red"
-                    icon="delete"
-                    rounded
-                    flat
-                  ></q-btn>
+                    outline
+                  >
+                    Incompleto
+                  </q-chip>
                 </div>
               </q-item-section>
-            </template> -->
+            </template>
               <div class="q-ma-sm">
                 <q-btn
                   v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
@@ -2138,7 +2134,7 @@ export default defineComponent({
         name: null
       },
       semFundacao: false,
-      
+      myOrganismsIds: []
     }
   }, 
   beforeMount() {
@@ -2200,7 +2196,8 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if(r.data.status.value === 'waitingApproval'){
+        console.log(r, ' ai meu cu')
+        if(r.data && r.data.status.label === 'Aguardando aprovação'){
           this.hasModificationRequest = true
         } else { 
           this.hasModificationRequest = false
@@ -3064,7 +3061,7 @@ export default defineComponent({
           }
         }
         this.composition = r.data
-        
+        console.log(this.composition, 'aqui que está dando merdinha')
         if (r.data.validated) {
           this.validated = r.data.validated
           this.getModificationsRequest()
@@ -3119,6 +3116,17 @@ export default defineComponent({
             })
           }
         })
+        if (!r.data.usuarioEstaEmParoquia) {
+          r.data.congregations.forEach((org) => {
+            if (org.usuarioEstaEmCongregacao) {
+              this.myOrganismsIds.push(org.organismChildId)
+            }
+            this.myOrganismsIds.forEach((orgId) => {
+              let exists = org.organismChildId.includes(orgId)
+              if (!exists) org.disable = true
+            })
+          })
+        }
         this.deptConfigs = depConfigList
         this.inserVerifyCheckboxInCongregations()
       })
