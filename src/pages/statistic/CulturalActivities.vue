@@ -96,24 +96,29 @@
           text-color="white"
           icon="warning"
         />
-        <q-btn
-          label="Salvar rascunho"
-          color="primary"
-          rounded
-          unelevated
-          class="full-width q-my-sm"
-          no-caps
-          @click="saveDraft"
-        />
-        <q-btn
-          label="Salvar Oficial"
-          color="orange"
-          rounded
-          unelevated
-          class="full-width q-my-sm"
-          no-caps
-          @click="saveOficial"
-        />
+        <div v-if="status && !status.value === 'sent'">
+          <q-btn
+            label="Salvar rascunho"
+            color="primary"
+            rounded
+            unelevated
+            class="full-width q-my-sm"
+            no-caps
+            @click="saveDraft"
+          />
+          <q-btn
+            label="Salvar Oficial"
+            color="orange"
+            rounded
+            unelevated
+            class="full-width q-my-sm"
+            no-caps
+            @click="saveOficial"
+          />
+        </div>
+        <div v-else class="text-h6 q-ma-sm">
+          Etapa finalizada
+        </div>
         <div class="row q-gutter-sm q-pt-xs">
           <q-btn
             label="Etapa anterior"
@@ -152,7 +157,8 @@ export default defineComponent({
       canNavigate: true,
       congregationData: {},
       culturalActivities: [],
-      congregationName: ''
+      congregationName: '',
+      status: null
     }
   },
 
@@ -178,6 +184,7 @@ export default defineComponent({
           this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
           return
         }
+        this.status = r.data.status
         r.data.validated ? this.validated = r.data.validated : this.validated = false
         if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
           this.culturalActivities = r.data.activitiesData
