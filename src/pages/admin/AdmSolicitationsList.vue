@@ -21,9 +21,10 @@
         </template>
         <template #body-cell-status="props">
           <q-td :props="props">
-            {{ props.row.status }}
+            {{ props.row.status.label }}
           </q-td>
         </template>
+        
         <!-- <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
