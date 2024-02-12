@@ -535,11 +535,11 @@ export default defineComponent({
 
       let opt = {
         route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
-              body: {
-                organismId: this.$route.query.organismId,
-                groupActivity: this.departamentos,
-                organismFatherName: this.congregationName
-              },
+        body: {
+          organismId: this.$route.query.organismId,
+          groupActivity: this.departamentos,
+          organismFatherName: this.congregationName
+        },
       }
       let r = await useFetch(opt)
 
