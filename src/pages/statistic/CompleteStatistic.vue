@@ -126,8 +126,11 @@
           /> -->
         </q-item>
         <div class="q-px-md">
+          <div  v-if="validationResume.completeStatistic && validationResume.completeStatistic === 't'" class="text-h5">
+            Estatística enviada!
+          </div>
           <q-btn 
-            v-if="validationResume.completeStatistic && validationResume.completeStatistic === 't'"
+            v-if="!validationResume.completeStatistic"
             label="Enviar estatística" 
             rounded 
             color="primary" 
@@ -137,9 +140,7 @@
             @click="insertCongregationalStatisticsDone"
             no-caps 
           />
-          <div v-else class="text-h5">
-            Estatística enviada!
-          </div>
+          
         </div>
       </div>
     </q-page>
