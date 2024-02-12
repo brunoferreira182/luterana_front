@@ -47,7 +47,7 @@
               </q-banner>
             </div>
             <div v-else>
-              <div v-if="organism && organism.percentualEstatistica && organism.percentualEstatistica.value && organism.percentualEstatistica.color && organism.percentualEstatistica.label">
+              <div v-if="organism.percentualEstatistica">
                 <div class="q-mt-md">Progresso:</div>
                 <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
                   <div class="absolute-full flex flex-center">
@@ -166,7 +166,7 @@ export default defineComponent({
         this.$q.loading.hide()
         this.userOrganismList = r.data
         if (this.userOrganismList.usuarioEstaEmParoquia) {
-          return
+          //
         } else {
           for (let i =  0; i < this.userOrganismList.childData.length; i++) {
             let org = this.userOrganismList.childData[i]
@@ -187,11 +187,11 @@ export default defineComponent({
             label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
-          if (org.gestaoParoquial && org.gestaoParoquial.managementType === 'SIPAR') {
-            this.allOrganismCompleteValidated = true;
-          } else if (org.percentualEstatistica.value !== 1) {
-            this.allOrganismCompleteValidated = false;
-          }
+          // if (org.gestaoParoquial && org.gestaoParoquial.managementType === 'SIPAR') {
+          //   this.allOrganismCompleteValidated = true;
+          // } else if (org.percentualEstatistica.value !== 1) {
+          //   this.allOrganismCompleteValidated = false;
+          // }
         })
       });
     },
