@@ -126,11 +126,14 @@
           /> -->
         </q-item>
         <div class="q-px-md">
-          <div  v-if="validationResume.completeStatistic && validationResume.completeStatistic === 't'" class="text-h5">
+          <div 
+            v-if="validationResume.congregationStatistic && validationResume.congregationStatistic === 't'"
+            class="text-h5"
+          >
             Estatística enviada!
           </div>
           <q-btn 
-            v-if="!validationResume.completeStatistic"
+            v-else
             label="Enviar estatística" 
             rounded 
             color="primary" 
@@ -190,6 +193,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.validationResume = r.data
+        console.log(this.validationResume)
         if (
           this.validationResume &&
           this.validationResume.financeStatistics === 't' &&

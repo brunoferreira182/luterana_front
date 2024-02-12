@@ -286,7 +286,7 @@ export default defineComponent({
         this.getAtividadesCulticas()
       });
     },
-    saveOficial(){
+    async saveOficial(){
 
       
       
@@ -317,9 +317,10 @@ export default defineComponent({
           activitiesData: this.extractedData
         },
       }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-      })
+      let r = await useFetch(opt)
+      
+      if (r.error) return
+      
       opt = {
         route: "/desktop/statistics/insertAtividadesCulticasStatisticsDone",
         body: {
