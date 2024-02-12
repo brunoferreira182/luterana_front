@@ -517,15 +517,15 @@ export default defineComponent({
     },
     saveOficial(){
       for(let i = 0; i < this.departamentos.length; i++){
-          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
-            return this.$q.notify('Preencha todos os campos Obrigatórios!')
-          }
+        if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+          return this.$q.notify('Preencha todos os campos Obrigatórios!')
+        }
       }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
       const opt = {
-        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
+        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDone",
         body: {
           organismId: this.$route.query.organismId,
           groupActivity: this.departamentos,
@@ -534,11 +534,14 @@ export default defineComponent({
       };
       this.$q.loading.show()
       useFetch(opt).then((r) => {
-        this.$q.loading.show()
-        if (r.error) return;
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Estatística incompleta')
+          return
+        }
         this.$q.notify("Atividades salvas com sucesso!");
         this.$router.back()
-        this.getGroupActivitiesByOrganismId()
+        // this.getGroupActivitiesByOrganismId()
       });
     },
     goToStatistics() {
