@@ -6,7 +6,7 @@
           <q-breadcrumbs-el
             style="cursor: pointer"
             icon="home"
-            label="Completar estatística"
+            label="Introdução"
             @click="
               $router.push('/statistic/selectOrganismToWriteStatisticData')
             "
@@ -46,7 +46,7 @@
           ></q-separator>
         </div>
       </div>
-      <q-list>
+      <q-list v-if="departamentos && departamentos.length > 0">
         <q-item v-for="(item, i) in departamentos" :key="item">
           <div
             style="
@@ -60,7 +60,7 @@
                 @click="expand(item)"
                 class="text-h6 label-container"
               >
-                {{ item.organismName }}
+                {{ item.organismConfigName }}
                 <q-btn
                   round
                   flat
@@ -70,14 +70,14 @@
                 />
               </q-item-label>
               <q-item-label class="label-container">
-                <div>
-                  <q-chip>{{ item.organismConfigName }}</q-chip>
+                <div class="q-py-xs">
+                  <q-chip>{{ item.organismName }}</q-chip>
                 </div>
               </q-item-label>
               <q-slide-transition>
                 <div v-show="item.expanded">
                   <q-item-section
-                    v-if="!arrayIgnore.includes(item.organismConfigName)"
+                  v-if="!item.action"
                   >
                     <div class="row q-gutter-sm">
                       <q-input
@@ -177,18 +177,18 @@
                   <!-- Musica -->
                   <q-item-section
                     class="justify-around"
-                    v-if="item.organismConfigName === 'Departamento da Música de leigos'"
+                    v-if="item.organismConfigName === 'Música'"
                   >
                     <q-item-label>
-                      <div class="col items-center">
-                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal
+                      <div class="col items-center" v-if="item.departamentoData && item.departamentoData.musicGroup && item.departamentoData.musicGroup.exist">
+                        Grupo Músical / Banda / Grupo de Louvor / Quarteto / Vocal:
                         <q-radio
-                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          v-model="item.departamentoData.musicGroup.exist"
                           val="exist"
                           label="Sim"
                         />
                         <q-radio
-                          v-model="departamentos[i].departamentoData.musicGroup.exist"
+                          v-model="item.departamentoData.musicGroup.exist"
                           val="noExist"
                           label="Não"
                         />
@@ -202,21 +202,36 @@
                       </div>
                     </q-item-label>
                     <q-item-section>
-                      <q-input
-                        type="number"
-                        class="q-mr-md"
-                        v-model="departamentos[i].departamentoData.coro"
-                        label="Total no Coro"
-                      ></q-input>
+                      <q-item-label v-if="departamentos[i].departamentoData && departamentos[i].departamentoData.coro && departamentos[i].departamentoData.coro.exist">
+                        <div class="col items-center"> Coro:
+                        <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="exist"
+                            label="Sim"
+                          />
+                          <q-radio
+                            v-model="departamentos[i].departamentoData.coro.exist"
+                            val="noExist"
+                            label="Não"
+                          />
+                          <q-input
+                            type="number"
+                            class="q-pl-sm col q-mr-md"
+                            v-if="departamentos[i].departamentoData.coro.exist === 'exist'"
+                            v-model="departamentos[i].departamentoData.coro.qtn"
+                            label="Total no Coro"
+                          ></q-input>
+                          </div>
+                      </q-item-label>
                     </q-item-section>
                     <q-input
                       type="number"
                       class="q-mr-md"
                       v-model="departamentos[i].departamentoData.musicosTotal"
-                      label="Músicos envolvidos ao total"
+                      label="Músicos envolvidos na congregação "
                     ></q-input>
 
-                    <q-item-section>
+                    <q-item-section v-if="item.departamentoData && item.departamentoData.formalGroup && item.departamentoData.formalGroup.freqTotal">
                       <div class="row">
                         <q-input
                         type="number"
@@ -236,7 +251,7 @@
                   <!-- visitação -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Grupo de Visitação de leigos'
+                      item.organismConfigName === 'Visitação'
                     "
                   >
                     <q-input
@@ -298,7 +313,7 @@
                   <!-- Sobre ação social   -->
                   <q-item-section
                     v-if="
-                      item.organismConfigName === 'Departamento de Ação social de leigos'
+                      item.organismConfigName === 'Ação social'
                     "
                   >
                   <div class="row">
@@ -318,7 +333,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.acoesEventuais"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Ações eventuais"
                   />
                   <!-- </div>
@@ -326,7 +340,6 @@
                   <q-input
                     v-model="departamentos[i].departamentoData.permProgs"
                     class="q-pl-sm col q-mr-md"
-                    type="number"
                     label="Programas permanentes"
                     />
                   </q-item-section>
@@ -335,12 +348,12 @@
                     <q-input
                       v-model="departamentos[i].departamentoData.finalidade"
                       class="q-pl-sm q-mr-md"
-                      label="Finalidade do grupo"
+                      label="Finalidade do grupo *"
                     ></q-input>
                     <q-input
                       v-model="departamentos[i].departamentoData.organizacao"
                       class="q-pl-sm q-mr-md"
-                      label="Organização do grupo"
+                      label="Organização do grupo *"
                     ></q-input>
                     <div class="row">
                       <q-input
@@ -364,7 +377,7 @@
           </div>
         </q-item>
       </q-list>
-      <div class="q-ma-lg text-center" >
+      <div class="q-ma-lg q-pb-sm text-center" >
         <q-chip
           v-if="validated"
           color="green"
@@ -379,17 +392,48 @@
           label="Não Validado"
           text-color="white"
           icon="warning"
-        /><br>
+        />
 
         <q-btn
           label="Salvar rascunho"
           color="primary"
-          class="full-width"
+          class="full-width q-my-sm"
           rounded
           unelevated
           no-caps
           @click="saveDraft()"
         />
+        <q-btn
+          label="Salvar Oficial"
+          color="orange"
+          rounded
+          unelevated
+          class="full-width q-my-sm"
+          no-caps
+          @click="saveOficial()"
+        />
+        <div class="row q-gutter-sm q-pt-xs">
+          <q-btn
+            label="Etapa anterior"
+            color="primary"
+            rounded
+            unelevated
+            icon="navigate_before"
+            class="col items-start"
+            no-caps
+            @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+          />
+          <q-btn
+            label="Próxima etapa"
+            color="primary"
+            rounded
+            unelevated
+            icon-right="navigate_next"
+            class="col items-end"
+            no-caps
+            @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+          /> 
+        </div>
       </div>
     </q-page>
   </q-page-container>
@@ -407,10 +451,9 @@ export default defineComponent({
       validated: false,
       statisticStatus: null,
       arrayIgnore: [
-      'Departamento de Escola dominical de leigos',
-      'Departamento da Música de leigos', 
-      'Grupo de Visitação de leigos', 
-      'Departamento de Ação social de leigos', 
+      'Música', 
+      'Visitação', 
+      'Ação social', 
       'Outros'
       ],
       otherOrganisms: [],
@@ -477,6 +520,11 @@ export default defineComponent({
       // this.$q.notify("Salvo com sucesso!");
     },
     saveDraftOnBeforeUnmount(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
+          }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
@@ -496,6 +544,11 @@ export default defineComponent({
       });
     },
     saveDraft(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('Preencha todos os campos Obrigatórios!')
+          }
+      }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
       })
@@ -512,6 +565,32 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
+        this.$router.back()
+        this.getGroupActivitiesByOrganismId()
+      });
+    },
+    saveOficial(){
+      for(let i = 0; i < this.departamentos.length; i++){
+          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+            return this.$q.notify('Preencha todos os campos Obrigatórios!')
+          }
+      }
+      this.departamentos.forEach((departamento) => {
+        departamento.expanded = false 
+      })
+      const opt = {
+        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
+        body: {
+          organismId: this.$route.query.organismId,
+          groupActivity: this.departamentos,
+          organismFatherName: this.congregationName
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.show()
+        if (r.error) return;
+        this.$q.notify("Atividades salvas com sucesso!");
         this.$router.back()
         this.getGroupActivitiesByOrganismId()
       });

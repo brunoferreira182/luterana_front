@@ -113,6 +113,11 @@ const useUtils = {
         {
           label: "Lista de solicitações",
           route: "/admin/admSolicitationsList",
+          icon: "checklist",
+        },
+        {
+          label: "Lista de sugestões",
+          route: "/admin/admSugestionsList",
           icon: "format_list_bulleted",
         },
       ],

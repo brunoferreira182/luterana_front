@@ -46,6 +46,10 @@
           <q-item-section >
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
+          <q-chip>
+            {{ cardOrganismName.organismParentLocal }}
+            {{ cardOrganismName.organismParentName}}
+          </q-chip>
           <q-chip
             color="green"
             label="Etapa finalizada"
@@ -91,11 +95,9 @@
           </q-item-section>
         </q-item>
       </div>
-      <div 
-        v-else
-      >
+      <div v-else>
         <div class="text-center text-h6 text-wrap q-pa-md">
-          Você não faz parte de nenhuma paróquia. Portanto não precisa responder nenhum dado referente a estatística 2023!
+          Por favor peça para o pastor validar a composição para prosseguir com a estatística
         </div>
         <div class="text-center">
           <q-btn
@@ -197,6 +199,7 @@ export default defineComponent({
       isSIPAR: false,
       isPastor: null,
       status: null,
+      cardOrganismName: [],
       dialogNotifystatus: {
         open: false
       },
@@ -208,6 +211,7 @@ export default defineComponent({
   },
   beforeMount(){
     this.verifyIfIsPastor()
+    this.getCardName()
     this.getStatusPreStatistic()
   },
   methods: {
@@ -219,13 +223,20 @@ export default defineComponent({
         open: false
       }
     },
+    getCardName() {
+      const opt = {
+        route: '/desktop/statistics/getCompositionByUserId'
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) return 
+        this.cardOrganismName = r.data
+        console.log(this.cardOrganismName, 'dkjasndkasjnd');
+      })
+    },
     goToStatistic() {
       let chk = true
-      this.status.pastors.forEach((pastor) => {
-        if (!pastor.preStatistic || pastor.preStatistic.status.value !== 'sent') {
-          chk = false
-        }
-      })
       if (!chk) {
         this.dialogPastors.open = true
         return

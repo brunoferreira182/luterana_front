@@ -4,27 +4,33 @@
       <q-table
         flat
         class="bg-accent"
-        title="Lista de solicitações"
-        :columns="solicitationsData"
-        :rows="solicitationsList"
+        title="Lista de sugestões"
+        :columns="suggestionData"
+        :rows="suggestionList"
         row-key="_id"
         virtual-scroll
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="clkGoToFunctionInOrganismDetail"
         :selected-rows-label="getSelectedString"
         v-model:pagination="pagination"
         @request="nextPage"
       >
         <template #top-right>
         </template>
-        <template #body-cell-status="props">
+        <template #body-cell-document="props">
           <q-td :props="props">
-            {{ props.row.status }}
+            <div v-if="!props.row.document || props.row.document === ''">
+              Não informado
+            </div>
+            <div v-else-if="props.row.document !== ''">
+              {{props.row.document}}
+            </div>
           </q-td>
         </template>
-        <!-- <template #body-cell-status="props">
+        <template #body-cell-status="props">
           <q-td :props="props">
             <q-chip
               outline
@@ -43,9 +49,36 @@
               Inativo
             </q-chip>
           </q-td>
-        </template> -->
+        </template>
       </q-table>
-
+      <q-dialog v-model="dialogNewSugestion.open" @hide="clearDialog()">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <div class="text-h6 text-center q-pa-md ">Escreva</div>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Título"
+              v-model="dialogNewSugestion.suggestionTitle"
+            />
+            <q-input
+              outlined
+              label="Descrição"
+              autogrow
+              v-model="dialogNewSugestion.suggestionText"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              rounded
+              @click="dialogNewSugestion.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -55,11 +88,11 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
-  name: "SolicitationList",
+  name: "SuggestionList",
   data() {
     return {
-      solicitationsData: useTableColumns().solicitationsList,
-      solicitationsList: [],
+      suggestionData: useTableColumns().suggestionList,
+      suggestionList: [],
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -75,7 +108,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getSolicitationsList();
+    this.getSuggestionsList();
   },
   methods: {
       clkGoToFunctionInOrganismDetail(e, r) {
@@ -94,11 +127,11 @@ export default defineComponent({
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getSolicitationsList();
+      this.getSuggestionsList();
     },
-    getSolicitationsList() {
+    getSuggestionsList() {
       const opt = {
-        route: "/desktop/adm/getSolicitationsList",
+        route: "/desktop/adm/getSuggestionsList",
         body: {
           page: this.pagination.page,
           rowsPerPage: this.pagination.rowsPerPage,
@@ -106,7 +139,7 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.solicitationsList = r.data.list
+        this.suggestionList = r.data.list
         this.pagination.rowsNumber = r.data.count[0].count
       });
     },

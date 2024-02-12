@@ -81,7 +81,7 @@ const useFetch = async ({
     Loading.hide();
     console.log("AQUI ERRO CATCH", e);
   }
-  // if (!route.includes('/download')) console.log("retorno fetch " + route, ret.data);
+  console.log("retorno fetch " + route, ret.data)
   Loading.hide();
   if (ret.data.error && ret.data.errorFetch)
     Notify.create(ret.data.errorFetch.message);

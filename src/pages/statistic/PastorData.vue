@@ -269,7 +269,7 @@
                 flat
                 rounded
                 icon="add"
-                label="Adicionar relação"
+                label="Adicionar"
                 @click="addMaritalRelation"
               >
                 <q-tooltip>Adicionar cônjuge</q-tooltip>
@@ -467,6 +467,7 @@
           </div> -->
           <div>
             <q-btn
+              v-if="!status || (status && status.value !== 'sent')"
               label="Preencher dados da  congregação anterior"
               unelevated
               icon="description"
@@ -515,7 +516,7 @@
             @click="saveDraft"
           >
             <q-tooltip>
-              Salvar rascunho
+              Salvar rascunhor
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -727,6 +728,7 @@
         </q-card>
       </q-dialog>
       <q-dialog
+        @hide="clearDialogAddNewChild()"
         v-model="dialogAddNewChild.open"
       >
         <q-card style="width: 300px;border-radius: 1rem;">
@@ -745,6 +747,7 @@
               color="primary"
               flat
               no-caps
+              @click="clearDialogAddNewChild"
               unelevated
               rounded
             />
@@ -765,7 +768,7 @@
       >
         <q-card style="width: 300px;border-radius: 1rem;">
           <q-card-section class="text-h6 text-center">
-            Adicionar relação conjugal
+            Adicionar estado civil
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-input
@@ -1259,11 +1262,12 @@
             <div class="text-center text-h6">
               Selecione a congregação
             </div>
-            <!-- <q-input
-              label="Informe a cidade cidade"
+            <q-input
+              label="Informe a cidade"
               v-model="dialogLastPastoralActivity.selectedCity"
-            /> -->
-            <q-select 
+            />
+            <q-select   
+              v-if="dialogLastPastoralActivity.selectedCity !== ''"
               label="selecione a congregação"
               v-model="dialogLastPastoralActivity.selectedOrganism"
               hint="Busque pelo nome"
@@ -1469,6 +1473,8 @@ export default defineComponent({
       validated: false,
       status: null,
       validatePastorActivities: true,
+      canSaveDraft: true,
+      saveOnUnmount: true
     }
   },
 
@@ -1479,7 +1485,8 @@ export default defineComponent({
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
-    // this.saveDraftOnBeforeUnmount()
+    if (!this.canSaveDraft) return
+    if (this.saveOnUnmount) this.saveDraftOnBeforeUnmount()
   },
   methods: {
     cancelChangeChild () {
@@ -1504,7 +1511,7 @@ export default defineComponent({
       })
     },
     async saveOficial() {
-      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ){
+      if(this.pastorData.name.value === '' || this.pastorData.contact.value === '' ) {
         this.$q.notify('Preencha seu nome e fone para contato')
         return
       }
@@ -1515,7 +1522,7 @@ export default defineComponent({
           this.$q.notify('Preencha todos os campos de visitas em Atividade pastoral');
           return;
         }
-        else{
+        else {
           activity.validatePastorActivities = false
         }
       }
@@ -1588,9 +1595,14 @@ export default defineComponent({
             organismId: this.paroquiaId
           }
         }
-        useFetch(opt).then((r) => {
-          if  (r.error) return
-        })
+        this.$q.loading.show()
+        console.log('aqui 1')
+        let r = await useFetch(opt)
+        this.$q.loading.hide()
+        if  (r.error) {
+          this.$q.notify('Ocorreu um erro. Tente novamente.')
+          return
+        }
         opt = {
           route: '/desktop/statistics/insertPastoralStatisticsDone',
           body: {
@@ -1598,21 +1610,30 @@ export default defineComponent({
           }
         }
         this.$q.loading.show()
+        console.log('aqui 2')
         useFetch(opt).then((r) => {
-          if (r.error) return this.$q.loading.hide()
-          this.$q.notify('Finalizando etapa...')
-        })
-        const promisses = [
-          this.getPastorDataTabs(),
-          this.getMyOrganismsList(),
-          this.getParoquiaId()
-        ]
-        await Promise.all(promisses)
-        setTimeout(() => {
           this.$q.loading.hide()
-          this.$q.notify('Etapa finalizada.')
+          if (r.error) {
+            this.$q.notify('Ocorreu um erro. Tente novamente.')
+            return
+          }
+          this.$q.notify('Dados salvos com sucesso.')
+          this.saveOnUnmount = false
           this.$router.back();
-        }, 2000)
+          // this.$q.notify('Finalizando etapa...')
+        })
+        // this.canSaveDraft = false
+        // const promisses = [
+        //   this.getPastorDataTabs(),
+        //   this.getMyOrganismsList(),
+        //   this.getParoquiaId()
+        // ]
+        // await Promise.all(promisses)
+        // setTimeout(() => {
+        //   this.$q.loading.hide()
+        //   this.$q.notify('Etapa finalizada.')
+        //   this.$router.back();
+        // }, 2000)
       }
     },
     addLastPastoralActivity() {
@@ -1647,6 +1668,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCongregacoesByString',
         body:{
+          filterCity: this.dialogLastPastoralActivity.selectedCity,
           filterValue: val,
         }
       }
@@ -2272,22 +2294,23 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente')
-        } else {
-          this.validated = r.data.validated
-          this.status = r.data.status
-          this.pastorData = r.data.pastoralData.pastorData
-          if (r.data.pastoralData.pastorFormations) {
-            this.pastorFormations = r.data.pastoralData.pastorFormations
-          }
-          if (r.data.pastoralData.pastorActivities){
-            this.pastorActivities = r.data.pastoralData.pastorActivities
-          }
-          if (r.data.pastoralData.lastPastorActivities) {
-            this.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities
-          } if (r.data.pastoralData.pastorLinks) {
-            this.pastorLink = r.data.pastoralData.pastorLinks
-          }
+          return
         }
+        this.validated = r.data.validated
+        this.status = r.data.status
+        this.pastorData = r.data.pastoralData.pastorData
+        if (r.data.pastoralData.pastorFormations) {
+          this.pastorFormations = r.data.pastoralData.pastorFormations
+        }
+        if (r.data.pastoralData.pastorActivities){
+          this.pastorActivities = r.data.pastoralData.pastorActivities
+        }
+        if (r.data.pastoralData.lastPastorActivities) {
+          this.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities
+        } if (r.data.pastoralData.pastorLinks) {
+          this.pastorLink = r.data.pastoralData.pastorLinks
+        }
+        if (this.status.status === 'sent') this.saveOnUnmount = false
       })
     }
   }

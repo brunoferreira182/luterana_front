@@ -39,171 +39,226 @@
           ></q-separator>
         </div>
         </div>
-        <div class="text-center q-gutter-md"> 
-          <div class="text-h5">
+        <div class="text-left q-gutter-md"> 
+          <div class="text-h5 q-px-sm">
             Estatística 2023
             <div class="text-h6">Dados Financeiros</div>
           </div>
-          <q-checkbox 
+          <!-- <q-checkbox 
+            class="q-px-sm"
             dense
             label="Dados serão concentrados na congregação sede?"
             v-model="focusOnCongregation"
-          />
-          <div >
+          /> -->
+          <div class="q-ml-lg text-h6">
+            Se você só possuir dados da paróquia, insira os mesmos na congregação sede
+          </div>
+          <div class="text-left q-px-sm">
             <div>
-              Soma das entradas da paróquia: R$
-              {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }}
+              <!-- Soma das entradas da paróquia -->
+              <q-input
+                v-model="paroquiaData.contributionEntries"
+                prefix="R$"
+                readonly
+                label="Soma das entradas da paróquia"
+                reverse-fill-mask
+                mask="###.###.###,##"
+              />
+              <!-- {{ paroquiaData.contributionEntries ? paroquiaData.contributionEntries : 0 }} -->
             </div>
             <div>
-              Soma das saídas da paróquia: R$
-              {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }}
+              <!-- Soma das saídas da paróquia -->
+              <q-input
+                v-model="paroquiaData.contributionOutput"
+                prefix="R$"
+                readonly
+                label="Soma das saídas da paróquia"
+                reverse-fill-mask
+                mask="###.###.###,##"
+              />
+              <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
               
-                <div class="text-h5">
+                <div class="text-h5 text-left">
                   Entradas
                 </div>
-                <q-input 
+                <q-input
                   prefix="R$"
                   label="Saldo anterior"
                   reverse-fill-mask
                   mask="###.###.###,##"
-                  v-model="table.entries.saldoAnterior" 
+                  v-model="table.entries.saldoAnterior"
                 />
+
                 <div class="no-margin">
-                  <q-input 
+                  <q-input
                     prefix="R$"
                     label="Ofertas dominicais"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.ofertasDominicais" 
+                    mask="###.###.###,##"
+                    @blur="calculateOfferPercents()"
+                    v-model="table.entries.receitasRegulares.ofertasDominicais"
                   />
                 </div>
+
                 <div class="no-margin">
-                  <q-input 
-                    label="Ofertas mensais"
+                  <q-input
                     prefix="R$"
+                    label="Ofertas mensais"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.ofertasMensais" 
+                    mask="###.###.###,##"
+                    @blur="calculateOfferPercents()"
+                    v-model="table.entries.receitasRegulares.ofertasMensais"
                   />
                 </div>
+
                 <div class="no-margin">
-                  <q-input 
+                  <q-input
                     prefix="R$"
                     label="Receitas de aluguéis"
                     @blur="calculateOfferPercents()"
                     reverse-fill-mask
-                    mask="###.###.###,##" 
-                    v-model="table.entries.receitasRegulares.receitasAlugueis" 
+                    mask="###.###.###,##"
+                    v-model="table.entries.receitasRegulares.receitasAlugueis"
                   />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Ofertas especiais"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.ofertasEspeciais" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Ofertas especiais"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.ofertasEspeciais"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Campanhas específicas"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.campanhasEspecificas" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Campanhas específicas"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.campanhasEspecificas"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Auxílio"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.auxilio" 
-                />
+                  <q-input
+                    label="Auxílio"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.auxilio"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Empréstimos"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.emprestimos" 
-                />
+                  <q-input
+                    label="Empréstimos"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.emprestimos"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Todas as Outras receitas"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.entries.todasOutrasReceitas" 
-                /></div>
-              </div>
-              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+                  <q-input
+                    label="Todas as Outras receitas"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.entries.todasOutrasReceitas"
+                  />
+                </div>
+
                 <div class="text-h5">
                   Saídas
                 </div>
-                <div class="text-h6">
-                  Contribuição registrada na Administração Nacional <q-chip color="grey-8 text-white">R$ {{ contributionOutputSum }}</q-chip>
+
+                <!-- <q-input
+                  label="Contribuição registrada na Administração Nacional"
+                  v-model="table.output.contributionOnSgaLocal"
+                  readonly
+                  prefix="R$"
+                >
+                  <q-btn
+                    label="Reportar erro"
+                    icon="report"
+                    no-caps
+                    dense
+                    flat
+                    color="primary"
+                  />
+                </q-input> -->
+                <div>
+                  <q-banner
+                    :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
+                  >
+                    Contribuição registrada na Administração Nacional:<br>
+                    R$
+                    <strong class="text-h6">
+                      {{ table.output.contributionOnSgaLocal }}
+                    </strong><br>
+                    <div v-if="table.output.contributionOnSgaLocal && table.output.contributionOnSgaLocal !== '' && table.output.contributionOnSgaLocal > 0">
+                    Percentual: 
+                    <strong class="text-h6">
+                      {{ contributionPercent }}
+                    </strong>
+                    </div>
+                    
+                    <br>
+
+
+                    <template v-slot:action>
+                      <q-btn flat color="white" label="Reportar erro" />
+                    </template>
+                  </q-banner>
                 </div>
-                <div class="text-green" v-if="showContributionCalculatedMore">
+                <!-- <div class="text-green q-mt-lg" v-if="showContributionCalculatedMore">
                   Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
                 </div>
+
                 <div class="text-red" v-else-if="showContributionCalculatedLess">
                   Contribuição {{ contributionCalculatedLess }} <q-icon name="south"/> 
-                </div>
+                </div> -->
+
                 <div class="no-margin">
-                <q-input 
-                  label="Contribuição Distrito"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.output.contribuicaoDistrito" 
-                />
+                  <q-input
+                    label="Contribuição Distrito"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.output.contribuicaoDistrito"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  label="Devolução de empréstimos IELB"
-                  prefix="R$"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  @blur="calculateDiffBetweenEmprestimos()"
-                  v-model="table.output.devolucaoEmprestimoIELB" 
-                />
+                  <q-input
+                    label="Devolução de empréstimos IELB"
+                    prefix="R$"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.output.devolucaoEmprestimoIELB"
+                  />
                 </div>
+
                 <div class="no-margin">
-                <q-input 
-                  prefix="R$"
-                  label="Todas as outras saídas"
-                  reverse-fill-mask
-                  mask="###.###.###,##" 
-                  v-model="table.output.todasSaidas" 
-                />
+                  <q-input
+                    prefix="R$"
+                    label="Todas as outras saídas"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                    v-model="table.output.todasSaidas"
+                  />
                 </div>
-              </div>
-              <div v-if="showContribuitionNotify" class="text-subtitle1 text-bold q-px-md">
-                <div class="text-center">
-                  Atenção!
-                </div>
-                Há difença entre o valor de entrada de contribuição no SGA e saída das contribuições.
-                Envie um e-mail com os comprovantes para teste@teste.com
-              </div>
-              <div v-if="showEmprestimoNotify" class="text-subtitle1 text-bold q-px-md">
-                <div class="text-center">
-                  Atenção!
-                </div>
-                Há difença entre o valor do emprestimo no SGA e a devolução de empréstimo.
-                Por favor, envie um e-mail com os comprovantes para teste@teste.com
               </div>
               <div class="q-ma-sm text-center">
-                
                 <q-chip
                   v-if="validated"
                   color="green"
@@ -218,17 +273,48 @@
                   label="Não Validado"
                   text-color="white"
                   icon="warning"
-                /><br>
+                />
   
                 <q-btn
                   label="Salvar rascunho"
                   color="primary"
                   rounded
                   unelevated
-                  class="q-my-md full-width"
+                  class="q-my-sm full-width"
                   no-caps
                   @click="saveDraft()"
                 />
+                <q-btn
+                  label="Salvar Oficial"
+                  color="orange"
+                  rounded
+                  unelevated
+                  class="full-width q-my-sm"
+                  no-caps
+                  @click="saveOficial()"
+                />
+                <div class="row q-gutter-sm q-pt-xs">
+                  <q-btn
+                    label="Etapa anterior"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon="navigate_before"
+                    class="col items-start"
+                    no-caps
+                    @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+                  />
+                  <q-btn
+                    label="Próxima etapa"
+                    color="primary"
+                    rounded
+                    unelevated
+                    icon-right="navigate_next"
+                    class="col items-end"
+                    no-caps
+                    @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
+                  /> 
+                </div>
               </div>
             </div>
           </div>
@@ -245,6 +331,14 @@ export default defineComponent({
   name:"WriteFinanceStatisticData",
   data() {
     return {
+      moneyFormatForDirective: {
+        decimal: '.',
+        thousands: ',',
+        prefix: '$ ',
+        suffix: ' #',
+        precision: 2,
+        masked: false /* doesn't work with directive */
+      },
       congregationName:'',
       pagination: {
         sortBy: '',
@@ -258,37 +352,33 @@ export default defineComponent({
       validated: false,
       contributionCalculatedMore: '',
       contributionCalculatedLess: '',
-      contributionOutputSum: '',
+      contributionOutputSum: null,
       contributionOutputNum: null,
-      contributionEntriesSum: '',
+      contributionEntriesSum: null,
       table: {
         entries:{
-          saldoAnterior: '',
+          saldoAnterior: "",
           receitasRegulares: {
-            ofertasDominicais: null,
-            ofertasMensais: null,
-            receitasAlugueis: null,
+            ofertasDominicais: "",
+            ofertasMensais: "",
+            receitasAlugueis: "",
           },
-          ofertasEspeciais: '',
-          campanhasEspecificas: '',
-          auxilio: '',
-          emprestimos: '',
-          todasOutrasReceitas: '',
+          ofertasEspeciais: "",
+          campanhasEspecificas: "",
+          auxilio: "",
+          emprestimos: "",
+          todasOutrasReceitas: "",
         },
         output: {
-          contribuicaoIELB: {
-            ofertasDominicais: '',
-            ofertasMensais: '',
-            receitasAlugueis: '',
-          },
-          contribuicaoDistrito: '',
-          devolucaoEmprestimoIELB: '',
-          todasSaidas: ''
+          contributionOnSga: '',
+          contribuicaoDistrito: "",
+          devolucaoEmprestimoIELB: "",
+          todasSaidas: ""
         },
       },
       focusOnCongregation: false,
       showEmprestimoNotify: false,
-      showContribuitionNotify: false,
+      showContribuitionNotify: null,
       showContributionCalculatedMore: false,
       showContributionCalculatedLess: false,
       paroquiaData: {
@@ -296,6 +386,8 @@ export default defineComponent({
         contributionEntries: '',
       },
       otherOrganisms: [],
+      contributionPercent: '',
+      contributionNumber: 0
     }
   },
   watch: {
@@ -348,35 +440,74 @@ export default defineComponent({
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
+        return
+      }
+      r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
+      r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
     });
   },
-  calculateDiffBetweenEmprestimos() {
-    if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
-      this.showEmprestimoNotify = true
-    }
+  // calculateDiffBetweenEmprestimos() {
+  //   if(this.table.entries.emprestimos !== this.table.output.devolucaoEmprestimoIELB){
+  //     this.showEmprestimoNotify = true
+  //   }
+  // },
+  formatCurrency (d) {
+    return d.toString().replace('.', ',')
+    // return d
   },
   calculateOfferPercents(){
-    let total = 0
-    let contribution = 0
-    let contributionPercents = 0
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
-    total = ofertasDominicais + ofertasMensais + receitasAlugueis
-    contribution = (+this.contributionOutputNum/+total)
-    contributionPercents = Math.trunc(contribution*100) + '%' 
-    
-    if(contributionPercents >= '11%'){
-      this.contributionCalculatedMore = contributionPercents
-      this.showContributionCalculatedMore = true
-      this.showContributionCalculatedLess = false
-    }else if(contributionPercents < '11%'){
-      this.contributionCalculatedLess = contributionPercents
-      this.showContribuitionNotify = true
-      this.showContributionCalculatedMore = false
-      this.showContributionCalculatedLess = true
+    let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
+    this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
+    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
+  },
+  async saveOficial() {
+    const validated = this.validateForm()
+    if (!validated) {
+      this.$q.notify('Há dados a serem preenchidos. Passe os campos um a um')
+      return
     }
+    let opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDraft",
+      body: {
+        organismId: this.$route.query.organismId,
+        financeData: this.table,
+        contribuitionOutput: this.contributionOutputSum
+      },
+    };
+    opt.body.financeData.totais = this.calculateTotals()
+    if (Object.keys(this.table.output).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.entry).length > 0) {
+      opt.body.financeData = this.table;
+    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+      opt.body.financeData = this.table
+    }
+    this.$q.loading.show()
+    let r = await useFetch(opt)
+    this.$q.loading.hide()
+    if (r.error) {
+      this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+      return
+    }
+    opt = {
+      route: "/desktop/statistics/insertFinanceStatisticsDone",
+      body: {
+        organismId: this.$route.query.organismId,
+      },
+    };
+    r = await useFetch(opt)
+    if (r.error) {
+      this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+      return
+    }
+    this.$q.notify('Etapa finalizada com sucesso')
+    this.$router.back()
   },
   saveDraft() {
     const opt = {
@@ -387,11 +518,12 @@ export default defineComponent({
         contribuitionOutput: this.contributionOutputSum
       },
     };
+    opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
       opt.body.financeData = this.table;
-    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
       opt.body.financeData = this.table
     }
     this.$q.loading.show()
@@ -403,8 +535,45 @@ export default defineComponent({
       }
       this.$q.notify('Rascunho salvo com sucesso!')
       this.$router.back()
-      this.getFinanceStatisticByOrganismId()
     });
+  },
+  validateForm () {
+    let validated = true
+    if (this.table.entries.saldoAnterior === '') validated = false
+    else if (this.table.entries.receitasRegulares.ofertasDominicais === '') validated = false
+    else if (this.table.entries.receitasRegulares.ofertasMensais === '') validated = false
+    else if (this.table.entries.receitasRegulares.receitasAlugueis === '') validated = false
+    else if (this.table.entries.ofertasEspeciais === '') validated = false
+    else if (this.table.entries.campanhasEspecificas === '') validated = false
+    else if (this.table.entries.auxilio === '') validated = false
+    else if (this.table.entries.emprestimos === '') validated = false
+    else if (this.table.entries.todasOutrasReceitas === '') validated = false
+
+    else if (this.table.output.contribuicaoDistrito === '') validated = false
+    else if (this.table.output.devolucaoEmprestimoIELB === '') validated = false
+    else if (this.table.output.todasSaidas === '') validated = false
+    
+    return validated
+  },
+  calculateTotals () {
+    const totalEntradas = 
+      +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.ofertasEspeciais.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.auxilio.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.emprestimos.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replaceAll(',', '.')
+    
+    const totalSaidas = 
+      +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
+
+    return { totalSaidas, totalEntradas }
+
   },
   saveDraftOnBeforeUnmount() {
     const opt = {
@@ -415,6 +584,7 @@ export default defineComponent({
         contribuitionOutput: this.contributionOutputSum
       },
     };
+    opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -456,7 +626,6 @@ export default defineComponent({
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
-      console.log(r, 'kkkkkkkkkk ')
       if (r.error || !r.data) return
       this.validated = r.data.validated
       this.contributionOutputSum = r.data.contributionOutput
@@ -464,14 +633,9 @@ export default defineComponent({
       this.contributionEntriesSum = r.data.contributionEntries
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
-        contribuicaoIELB: {
-          ofertasDominicais: null,
-          ofertasMensais: null,
-          receitasAlugueis: null,
-        },
-        contribuicaoDistrito: '',
-        devolucaoEmprestimoIELB: '',
-        todasSaidas: ''
+        contribuicaoDistrito: null,
+        devolucaoEmprestimoIELB: null,
+        todasSaidas: null
       },
       r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
       this.table.entries = {
@@ -481,11 +645,11 @@ export default defineComponent({
           ofertasMensais: null,
           receitasAlugueis: null,
         },
-        ofertasEspeciais: '',
-        campanhasEspecificas: '',
-        auxilio: '',
-        emprestimos: '',
-        todasOutrasReceitas: '',
+        ofertasEspeciais: null,
+        campanhasEspecificas: null,
+        auxilio: null,
+        emprestimos: null,
+        todasOutrasReceitas: null,
       }
     });
   },
