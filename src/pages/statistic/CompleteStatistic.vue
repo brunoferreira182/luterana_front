@@ -171,6 +171,8 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return
+        this.$q.notify('Estatística enviada com sucesso')
+        this.$router.back()
       })
     },
     getValidationResumeByOrganism () {
