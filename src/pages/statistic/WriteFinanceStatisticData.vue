@@ -216,10 +216,20 @@
 
 
                     <template v-slot:action>
-                      <q-btn flat color="white" label="Reportar erro" />
+                      <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
                     </template>
                   </q-banner>
                 </div>
+                <q-dialog v-model="dialogReportValueSGAError">
+                  <q-card style="border-radius: 1rem; width: 400px;">
+                    <q-card-section class="text-subtitle1 text-center">
+                      Se houver diferença no valor, envie o comprovante para o e-mail da IELB.
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn flat label="Entendi" no-caps color="primary" @click="dialogReportValueSGAError = false"/>
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
                 <!-- <div class="text-green q-mt-lg" v-if="showContributionCalculatedMore">
                   Contribuição {{ contributionCalculatedMore }} <q-icon name="north"/>
                 </div>
@@ -331,6 +341,7 @@ export default defineComponent({
   name:"WriteFinanceStatisticData",
   data() {
     return {
+      dialogReportValueSGAError: false,
       moneyFormatForDirective: {
         decimal: '.',
         thousands: ',',
@@ -403,9 +414,9 @@ export default defineComponent({
       immediate: true
     }
   },
-  beforeUnmount(){
-    this.saveDraftOnBeforeUnmount()
-  },
+  // beforeUnmount(){
+  //   this.saveDraftOnBeforeUnmount()
+  // },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
     this.getFinanceTotalValueFromParoquia()
