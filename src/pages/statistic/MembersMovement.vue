@@ -452,10 +452,11 @@ export default defineComponent({
           message: 'Rascunho salvo com sucesso!',
         })
         this.$router.back()
-        this.getMovimentoMembrosPorCongregacao()
+        // this.getMovimentoMembrosPorCongregacao()
       })
     },
     saveOficial(){
+      // this.saveDraft()
       for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
         if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
             return this.$q.notify('Preencha todos os campos obrigatórios!')
@@ -465,18 +466,22 @@ export default defineComponent({
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {
           organismId: this.$route.query.organismId,
-          membersMovement: this.membersMovement
+          membersMovement: this.membersMovement,
+          status: 'sent'
         }
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (r.error) return
+        if (r.error) {
+          // this.$q.notify('Dados incompletos. Verifique e tente novamente')
+          return
+        }
         this.$q.notify({
           message: 'Movimento de Membros salvo com sucesso!',
         })
         this.$router.back()
-        this.getMovimentoMembrosPorCongregacao()
+        // this.getMovimentoMembrosPorCongregacao()
       })
     },
     getMovimentoMembrosPorCongregacao () {
