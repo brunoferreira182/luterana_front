@@ -435,7 +435,7 @@ export default defineComponent({
       opt.body.financeData = this.table;
     } else if (Object.keys(this.table.entry).length > 0) {
       opt.body.financeData = this.table;
-    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
+    } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0) {
       opt.body.financeData = this.table
     }
     this.$q.loading.show()
