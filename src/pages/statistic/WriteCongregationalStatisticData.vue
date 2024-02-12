@@ -473,7 +473,7 @@
                 <q-input
                   v-if="org.paroquialManagement === 'outro'"
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
-                  label="Outro"
+                  label="Digite"
                   class="q-pa-sm"
                   v-model="composition.congregations[iOrg].other"
                 />
@@ -2116,7 +2116,7 @@ export default defineComponent({
         { label: 'Inchurch', value: 'Inchurch', color: 'red' },
         { label: 'F5 Sapi', value: 'F5 Sapi', color: 'yellow-8' },
         { label: 'Não possuo', value: 'Não possuo', color: 'pink-8' },
-        { label: 'Outro: Qual', value: 'outro', color: 'purple' }
+        { label: 'Outro', value: 'outro', color: 'purple' }
       ],
       other: '',
       group: null,
@@ -2204,7 +2204,7 @@ export default defineComponent({
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
-    filiadoNaooConfereIntoCompositionOrg(iOrg){
+    filiadoNaoConfereIntoCompositionOrg(iOrg){
       this.composition.congregations[iOrg].filiadoNaoConfere = this.filiadoNaoConfere
     },
     removeDepartamentFromList(iExistsDept) {
