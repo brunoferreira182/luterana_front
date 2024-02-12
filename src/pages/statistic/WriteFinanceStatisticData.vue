@@ -441,7 +441,7 @@ export default defineComponent({
       return
     }
     opt = {
-      route: "/desktop/statistics/insertFinanceStatisticsDone",
+      route: "/desktop/statistics/insertFinanceStatisticDone",
       body: {
         organismId: this.$route.query.organismId,
       },
