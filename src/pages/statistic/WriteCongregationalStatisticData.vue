@@ -2196,15 +2196,11 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        console.log(r, ' ai meu cu')
-        if(r.data && r.data.status.label === 'Aguardando aprovação'){
+        if(r.data.status.value==='waitingApproval'){
           this.hasModificationRequest = true
-        } else { 
-          this.hasModificationRequest = false
-        }
+        } else if(r.data.status.value==='approved') this.hasModificationRequest = false
       })
     },
-    
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
     },
@@ -2633,7 +2629,8 @@ export default defineComponent({
     async saveFinal () {
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
-        this.$q.notify('Todas as congregações devem estar completas')
+        if (!congregation.paroquialManagement) this.$q.notify('Todas as congregações devem estar completas')
+        
       }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
