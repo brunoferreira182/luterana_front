@@ -47,12 +47,14 @@
               </q-banner>
             </div>
             <div v-else>
-              <div class="q-mt-md">Progresso:</div>
-              <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
-                <div class="absolute-full flex flex-center">
-                  <q-badge color="white" :text-color="organism.percentualEstatistica.color" :label="organism.percentualEstatistica.label" />
-                </div>
-              </q-linear-progress>
+              <div v-if="organism && organism.percentualEstatistica && organism.percentualEstatistica.value && organism.percentualEstatistica.color && organism.percentualEstatistica.label">
+                <div class="q-mt-md">Progresso:</div>
+                <q-linear-progress  size="15px" :value="organism.percentualEstatistica.value" :color="organism.percentualEstatistica.color">
+                  <div class="absolute-full flex flex-center">
+                    <q-badge color="white" :text-color="organism.percentualEstatistica.color" :label="organism.percentualEstatistica.label" />
+                  </div>
+                </q-linear-progress>
+              </div>
             </div>
           </q-item-section>
         </q-item>
@@ -163,10 +165,14 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
-        for (let i =  0; i < this.userOrganismList.childData.length; i++) {
-          let org = this.userOrganismList.childData[i]
-          if (!org.usuarioEstaEmCongregacao) {
-            org.disable = true
+        if (this.userOrganismList.usuarioEstaEmParoquia) {
+          return
+        } else {
+          for (let i =  0; i < this.userOrganismList.childData.length; i++) {
+            let org = this.userOrganismList.childData[i]
+            if (!org.usuarioEstaEmCongregacao) {
+              org.disable = true
+            }
           }
         }
         let value, color

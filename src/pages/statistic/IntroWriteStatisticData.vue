@@ -215,7 +215,7 @@ export default defineComponent({
   beforeMount(){
     this.verifyIfIsPastor()
     this.getCardName()
-    // this.getStatusPreStatistic()
+    this.getStatusPreStatistic()
   },
   methods: {
     clearDialogSipar() {
@@ -235,7 +235,6 @@ export default defineComponent({
         this.$q.loading.hide()
         if (r.error) return 
         this.cardOrganismName = r.data
-        console.log(r.data, 'macacos me mordam');
         if (r.data.usuarioEstaEmParoquia) {
           this.hasParoquia = true
           this.paroquiaId = r.data.organismParentId
@@ -269,18 +268,18 @@ export default defineComponent({
       //   this.dialogNotifystatus.open = true
       // }
     },
-    // getStatusPreStatistic() {
-    //   const opt = {
-    //     route: '/desktop/statistics/getPreStatisticStatus',
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     if (r.error) return 
-    //     this.status = r.data
-    //     if (!this.status) {
-    //       this.hasParoquia = false
-    //     }
-    //   })
-    // },
+    getStatusPreStatistic() {
+      const opt = {
+        route: '/desktop/statistics/getPreStatisticStatus',
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return 
+        this.status = r.data
+        if (!this.status) {
+          this.hasParoquia = false
+        }
+      })
+    },
     verifyIfIsPastor() {
       const userInfo = utils.presentUserInfo()
       if (userInfo.userType === 'pastor') {

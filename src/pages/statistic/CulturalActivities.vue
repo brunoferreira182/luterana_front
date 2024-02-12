@@ -2,22 +2,22 @@
   <q-page-container class="no-padding">
     <q-page >
       <div class="q-pa-md q-gutter-sm">
-          <q-breadcrumbs align="center">
-            <q-breadcrumbs-el 
-              style="cursor: pointer" 
-              icon="home" 
-              label="Introdução" 
-              @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
-            />
-            <q-breadcrumbs-el 
-              :label="congregationName" 
-              style="cursor: pointer" 
-              class="text-wrap"
-              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
-            />
-            <q-breadcrumbs-el label="Atividades cúlticas" />
-          </q-breadcrumbs>
-          <div
+        <q-breadcrumbs align="center">
+          <q-breadcrumbs-el 
+            style="cursor: pointer" 
+            icon="home" 
+            label="Introdução" 
+            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+          />
+          <q-breadcrumbs-el 
+            :label="congregationName" 
+            style="cursor: pointer" 
+            class="text-wrap"
+            @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+          />
+          <q-breadcrumbs-el label="Atividades cúlticas" />
+        </q-breadcrumbs>
+        <div
           class="text-center q-mt-lg"
           v-if="otherOrganisms && otherOrganisms.length > 0"
         >
@@ -36,9 +36,9 @@
           </div>
           <q-separator
             class="q-mt-md q-mx-md"
-          ></q-separator>
-        </div>
-        </div>
+          />
+      </div>
+      </div>
       <div class="q-ma-lg q-gutter-sm text-h6 text-center">
         Atividades Cúlticas
       </div>
