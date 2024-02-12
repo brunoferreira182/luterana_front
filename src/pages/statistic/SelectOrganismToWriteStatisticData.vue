@@ -20,27 +20,9 @@
         >
           <q-item-section>
             <q-item-label class="text-h6">{{ organism.organismName }}</q-item-label>
-            <!-- <q-item-label>
-              <q-chip v-if="!organism.status.atividadeCulticaStatus || organism.status.atividadeCulticaStatus === 'notSent'">
-                Atividades cúlticas não enviado
-              </q-chip>
-            </q-item-label>
-            <q-item-label>
-              <q-chip :color="organism.status.groupsActivitiesStatus === null && organism.status.groupsActivitiesStatus === 'notSend' ? 'primary' : 'grey'">
-                Atividades de grupos {{ organism.status.groupsActivitiesStatus === null || organism.status.groupsActivitiesStatus === 'notSend' ? 'enviado' : 'rascunho' }}
-              </q-chip>
-            </q-item-label>
-            <q-item-label>
-              <q-chip >
-                Movimento de membros {{ organism.status.membersMovementStatus }}
-              </q-chip>
-            </q-item-label>
-            <q-item-label>
-              <q-chip >
-                Financeiro {{ organism.status.financeStatus }}
-              </q-chip>
-            </q-item-label> -->
-            
+            <div v-if="organism.entregaEstatistica.status && organism.entregaEstatistica.status.value === 'sent'" class="q-mt-md">
+              <q-icon name="star" size="sm" color="yellow-8"/>   Estatística entregue
+            </div>
             <div class="q-mt-md" v-if="organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR'">
               <q-banner rounded class="bg-purple-8 text-white">
                 Esta congregação usa SIPAR, não é necessário preencher estatística
