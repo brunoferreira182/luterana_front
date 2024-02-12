@@ -2629,7 +2629,10 @@ export default defineComponent({
     async saveFinal () {
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
-        if (!congregation.paroquialManagement) this.$q.notify('Todas as congregações devem estar completas')
+        if (!congregation.paroquialManagement) {
+          this.$q.notify('Todas as congregações devem estar completas')
+          return
+        } 
         
       }
       let opt = {
