@@ -2636,7 +2636,6 @@ export default defineComponent({
           this.$q.notify('Todas as congregações devem estar completas')
           return
         } 
-        
       }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
