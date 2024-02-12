@@ -414,9 +414,9 @@ export default defineComponent({
       immediate: true
     }
   },
-  beforeUnmount(){
-    this.saveDraftOnBeforeUnmount()
-  },
+  // beforeUnmount(){
+  //   this.saveDraftOnBeforeUnmount()
+  // },
   beforeMount() {
     this.getFinanceStatisticByOrganismId()
     this.getFinanceTotalValueFromParoquia()
