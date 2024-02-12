@@ -596,7 +596,7 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:after-options>
+              <template v-slot:before-options>
                 <q-item> 
                   <q-item-section>
                     <q-btn
@@ -680,7 +680,7 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:after-options>
+              <template v-slot:before-options>
                 <q-item> 
                   <q-item-section>
                     <q-btn
@@ -888,7 +888,7 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:after-options>
+              <template v-slot:before-options>
                 <q-item> 
                   <q-item-section>
                     <q-btn
@@ -1186,7 +1186,7 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:after-options>
+              <template v-slot:before-options>
                 <q-item> 
                   <q-item-section>
                     <q-btn
@@ -1632,7 +1632,7 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:after-options>
+              <template v-slot:before-options>
                 <q-item> 
                   <q-item-section>
                     <q-btn
@@ -1789,7 +1789,7 @@
               </q-item-section>
             </q-item>
           </template>
-          <template v-slot:after-options>
+          <template v-slot:before-options>
             <q-item> 
               <q-item-section>
                 <q-btn

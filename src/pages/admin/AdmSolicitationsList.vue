@@ -21,29 +21,23 @@
         </template>
         <template #body-cell-status="props">
           <q-td :props="props">
-            {{ props.row.status }}
+            {{ props.row.status.label }}
+          </q-td>
+          <q-td :props="props">
+            <q-btn
+              v-if="props.row.status.value  === 'waitingApproval'"
+              color="green"
+              rounded
+              unelevated
+              size="15px"
+              class="no-padding"
+              @click="approveRequest(props.row.organismId)"
+              label="Aprovar"
+              flat
+              >
+            </q-btn>
           </q-td>
         </template>
-        <!-- <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
-        </template> -->
       </q-table>
 
     </q-page>
@@ -78,6 +72,18 @@ export default defineComponent({
     this.getSolicitationsList();
   },
   methods: {
+    approveRequest(id) {
+      const opt = {
+        route: '/desktop/adm/updateModificationRequest',
+        body: {
+          organismId: id 
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.getSolicitationsList()
+      })
+    },
       clkGoToFunctionInOrganismDetail(e, r) {
       this.dialogNewSugestion.open = true
       this.dialogNewSugestion.suggestionText = r.suggestionText

@@ -1402,7 +1402,7 @@ export default defineComponent({
       pastorActivities: [
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
-        { title:'Visitas Enfermos', quantity:'', people:'' }
+        { title:'Visitas a Enfermos', quantity:'', people:'' }
       ],
       dialogEditParentName: {
         open: false,
