@@ -2132,6 +2132,7 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
+      modificationResquet: {},
       hasModificationRequest: false,
       dialogChangeParishName: {
         open: false,
@@ -2200,12 +2201,14 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if(r.data.status.value === 'waitingApproval'){
+        this.modificationResquet = r.data
+        if(r.data){
           this.hasModificationRequest = true
-        } else { 
-          this.hasModificationRequest = false
-        }
+        } else this.hasModificationRequest = false
       })
+      // if(this.modificationResquet.status.value==='approved'){
+      //   this.hasModificationRequest = false 
+      // }
     },
     
     insertCheckBoxNoFundationCompositionOrg(iOrg){
