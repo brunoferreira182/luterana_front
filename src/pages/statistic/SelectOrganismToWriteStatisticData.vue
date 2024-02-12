@@ -187,11 +187,6 @@ export default defineComponent({
             label: Math.trunc((org.statusEstatistica.length / this.stepsNum) * 100 ) + '%',
             color
           }
-          // if (org.gestaoParoquial && org.gestaoParoquial.managementType === 'SIPAR') {
-          //   this.allOrganismCompleteValidated = true;
-          // } else if (org.percentualEstatistica.value !== 1) {
-          //   this.allOrganismCompleteValidated = false;
-          // }
         })
       });
     },
