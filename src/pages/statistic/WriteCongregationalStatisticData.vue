@@ -2143,7 +2143,7 @@ export default defineComponent({
     this.getDaysOfWeek()
   },
   beforeUnmount() {
-    if (this.validated && (this.status && this.status.value === 'sent')) return
+    if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
