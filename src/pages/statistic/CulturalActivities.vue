@@ -274,7 +274,6 @@ export default defineComponent({
           return
         }
         this.$q.notify('Rascunho salvo com sucesso!')
-        this.$router.back()
         this.getAtividadesCulticas()
       });
     },
@@ -328,7 +327,7 @@ export default defineComponent({
           return
         }
         this.$q.notify('Atividades salvas com sucesso!')
-        this.$router.back()
+        this.$router.push('/statistic/introWriteStatisticData')
         this.getAtividadesCulticas()
       });
     },

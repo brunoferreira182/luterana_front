@@ -30,10 +30,13 @@
             v-model="focusOnCongregation"
           /> -->
           <div class="q-ml-lg text-h6">
-            Se você só possuir dados da paróquia, insira os mesmos na congregação sede
+            Os dados financeiros são individualizados por congregação. Caso só tenha as informações paroquiais, insira os valores na sede da paróquia e coloque 0 nas demais congregações..
           </div>
-          <div class="text-left q-px-sm">
+          <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
             <div>
+              <div class="text-h6">
+                Soma total preenchida na paróquia (automático)
+              </div>
               <!-- Soma das entradas da paróquia -->
               <q-input
                 v-model="paroquiaData.contributionEntries"
@@ -440,7 +443,7 @@ export default defineComponent({
       return
     }
     this.$q.notify('Etapa finalizada com sucesso')
-    this.$router.back()
+    this.$router.push('/statistic/introWriteStatisticData')
   },
   saveDraft() {
     const opt = {
@@ -466,8 +469,8 @@ export default defineComponent({
         this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
         return
       }
+     
       this.$q.notify('Rascunho salvo com sucesso!')
-      this.$router.back()
     });
   },
   validateForm () {

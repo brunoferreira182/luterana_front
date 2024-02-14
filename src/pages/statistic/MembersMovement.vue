@@ -456,7 +456,6 @@ export default defineComponent({
         this.$q.notify({
           message: 'Rascunho salvo com sucesso!',
         })
-        this.$router.back()
         // this.getMovimentoMembrosPorCongregacao()
       })
     },
@@ -485,7 +484,7 @@ export default defineComponent({
         this.$q.notify({
           message: 'Movimento de Membros salvo com sucesso!',
         })
-        this.$router.back()
+        this.$router.push('/statistic/introWriteStatisticData')
         // this.getMovimentoMembrosPorCongregacao()
       })
     },

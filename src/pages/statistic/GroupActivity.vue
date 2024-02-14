@@ -519,7 +519,6 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
-        this.$router.back()
         this.getGroupActivitiesByOrganismId()
       });
     },
@@ -561,7 +560,7 @@ export default defineComponent({
           return
         }
         this.$q.notify("Atividades salvas com sucesso!");
-        this.$router.back()
+        this.$router.push('/statistic/introWriteStatisticData')
         // this.getGroupActivitiesByOrganismId()
       });
     },
