@@ -275,7 +275,7 @@
                 <div v-else class="text-h6 q-ma-sm">
                   Etapa finalizada
                 </div>
-                <div class="row q-gutter-sm  q-pt-xs justify-center">
+                <div class="row q-gutter-sm  q-pt-xs justify-start">
                   <div class="col-6">
                     <q-btn
                       label="Etapa anterior"
@@ -283,7 +283,7 @@
                       rounded
                       unelevated
                       icon="navigate_before"
-                      class="col items-start"
+                      class="col items-start full-width"
                       no-caps
                       @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
                     />
