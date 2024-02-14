@@ -154,17 +154,15 @@ export default defineComponent({
     }
   },
 
-  // beforeUnmount(){
-  //   this.saveDraftOnBeforeUnmount()
-  // },
+  beforeUnmount(){
+    if (this.status && this.status.value === 'sent') return
+    this.saveDraftOnBeforeUnmount()
+  },
   beforeMount() {
     this.getAtividadesCulticas()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    goToNextStep() {
-      this.$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)
-    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
@@ -281,9 +279,6 @@ export default defineComponent({
       });
     },
     async saveOficial(){
-
-      
-      
       for(let i = 0; i < this.culturalActivities.length; i++){
         if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
         ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
@@ -330,9 +325,14 @@ export default defineComponent({
           return
         }
         this.$q.notify('Atividades salvas com sucesso!')
+<<<<<<< HEAD
+=======
         this.$router.push('/statistic/introWriteStatisticData')
         this.getAtividadesCulticas()
+>>>>>>> 78dba671e7db181ac80da4eec10efb96805e7c2c
       });
+      await this.getAtividadesCulticas()
+      this.$router.back()
     },
     handleBackNavigation() {
     if (this.canNavigateBack) {

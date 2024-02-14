@@ -48,7 +48,7 @@
                   "
                 />
               </q-item-label>
-              <q-item-label class="label-container">
+              <q-item-label class="label-container" v-if="item.organismConfigName !== item.organismName">
                 <div class="q-py-xs">
                   <q-chip>{{ item.organismName }}</q-chip>
                 </div>
@@ -442,9 +442,10 @@ export default defineComponent({
       status: null
     };
   },
-  // beforeUnmount(){
-  //   this.saveDraftOnBeforeUnmount()
-  // },
+  beforeUnmount(){
+    if (this.status && this.status.value === 'sent') return
+    this.saveDraftOnBeforeUnmount()
+  },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
   },
@@ -524,7 +525,7 @@ export default defineComponent({
     },
     async saveOficial(){
       for(let i = 0; i < this.departamentos.length; i++){
-        if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+        if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === '') {
           return this.$q.notify('Preencha todos os campos Obrigatórios!')
         }
       }
@@ -563,6 +564,10 @@ export default defineComponent({
         this.$router.push('/statistic/introWriteStatisticData')
         // this.getGroupActivitiesByOrganismId()
       });
+      this.getGroupActivitiesByOrganismId()
+      console.log(this.status, 'sem timeout')
+      this.$q.notify("Atividades salvas com sucesso!");
+      // this.$router.back()
     },
     goToStatistics() {
       const organismId = this.$route.query.organismId;
