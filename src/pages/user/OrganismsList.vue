@@ -25,7 +25,7 @@
                 class="q-mr-sm"
                 v-if="prop.node.type === 'Paróquia'"
               /> -->
-              <span class="text-weight-bold text-primary">{{ prop.node.label }}</span>
+              <span class="text-weight-bold text-primary">{{ prop.node.label}}</span>
               <q-btn
                 icon="navigate_next"
                 round
@@ -254,7 +254,7 @@ export default defineComponent({
         org.childrenData.forEach(child => {
           tree.children.push({
             type: child.organismChildConfig,
-            label: child.organismChildConfig + ' ' + child.organismChildName,
+            label: child.organismChildName,
             body: 'normal',
             organismId: child.organismChildId
           })
