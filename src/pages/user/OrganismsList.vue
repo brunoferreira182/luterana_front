@@ -246,7 +246,7 @@ export default defineComponent({
       list.forEach(org => {
         tree = {
           type: org.organismParentLocal,
-          label: org.organismParentLocal + ' ' + org.organismParentName,
+          label: org.organismParentName,
           header: 'generic',
           organismId: org.organismParentId,
           children: []
