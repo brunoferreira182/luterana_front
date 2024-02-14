@@ -254,7 +254,7 @@ export default defineComponent({
         org.childrenData.forEach(child => {
           tree.children.push({
             type: child.organismChildConfig,
-            label: child.organismChildConfig + ' ' + child.organismChildName,
+            label: child.organismChildName,
             body: 'normal',
             organismId: child.organismChildId
           })
