@@ -77,7 +77,7 @@
                 </div>
                 <q-input
                   prefix="R$"
-                  label="Saldo anterior"
+                  label="Saldo anterior (2022)"
                   reverse-fill-mask
                   mask="###.###.###,##"
                   v-model="table.entries.saldoAnterior"
@@ -275,27 +275,19 @@
                 <div v-else class="text-h6 q-ma-sm">
                   Etapa finalizada
                 </div>
-                <div class="row q-gutter-sm q-pt-xs">
-                  <q-btn
-                    label="Etapa anterior"
-                    color="primary"
-                    rounded
-                    unelevated
-                    icon="navigate_before"
-                    class="col items-start"
-                    no-caps
-                    @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
-                  />
-                  <q-btn
-                    label="Próxima etapa"
-                    color="primary"
-                    rounded
-                    unelevated
-                    icon-right="navigate_next"
-                    class="col items-end"
-                    no-caps
-                    @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)"
-                  /> 
+                <div class="row q-gutter-sm  q-pt-xs justify-center">
+                  <div class="col-6">
+                    <q-btn
+                      label="Etapa anterior"
+                      color="primary"
+                      rounded
+                      unelevated
+                      icon="navigate_before"
+                      class="col items-start"
+                      no-caps
+                      @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -314,14 +306,6 @@ export default defineComponent({
   data() {
     return {
       dialogReportValueSGAError: false,
-      moneyFormatForDirective: {
-        decimal: '.',
-        thousands: ',',
-        prefix: '$ ',
-        suffix: ' #',
-        precision: 2,
-        masked: false /* doesn't work with directive */
-      },
       congregationName:'',
       pagination: {
         sortBy: '',

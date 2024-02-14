@@ -119,27 +119,19 @@
         <div v-else class="text-h6 q-ma-sm">
           Etapa finalizada
         </div>
-        <div class="row q-gutter-sm q-pt-xs">
-          <q-btn
-            label="Etapa anterior"
-            color="primary"
-            rounded
-            unelevated
-            icon="navigate_before"
-            class="col items-start"
-            no-caps
-            @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)"
-          />
-          <q-btn
-            label="Próxima etapa"
-            color="primary"
-            rounded
-            unelevated
-            icon-right="navigate_next"
-            class="col items-end"
-            no-caps
-            @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
-          /> 
+        <div class="row q-gutter-sm q-pt-xs justify-center">
+          <div class="col-6">
+            <q-btn
+              label="Próxima etapa"
+              color="primary"
+              rounded
+              unelevated
+              icon-right="navigate_next"
+              class="col items-end"
+              no-caps
+              @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)"
+            /> 
+          </div>
         </div>
       </div>
     </q-page>
