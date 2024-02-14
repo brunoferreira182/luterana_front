@@ -189,12 +189,12 @@
                   v-for="(func, iFunc) in org.organismFunctions" 
                   :key="func"
                 >
-                  <div v-if="func.functionName !== 'Pastor'">
+                  <div v-if="func.functionName !== 'Pastor' && func.functionName!== 'Secretária Contratada'">
                     <strong>{{ func.functionName }}:</strong>
                     <q-btn
                       color="primary"
                       flat
-                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor'"
+                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor' "
                       rounded
                       icon="add"
                       @click="addFunctionUser(iFunc, iOrg, func.functionName)"
@@ -228,7 +228,55 @@
                   </div>
                 </div>
               </q-list>
-              <q-list bordered class="q-my-sm">
+              <q-list bordered class="q-mb-sm">
+                <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
+                  Secretária Contratada
+                </div>
+                <div 
+                  class="text-left q-ml-lg"
+                  v-for="(func, iFunc) in org.organismFunctions" 
+                  :key="func"
+                >
+                  <div v-if="func.functionName !== 'Pastor'  && func.functionName === 'Secretária Contratada'">
+                    <strong>{{ func.functionName }}:</strong>
+                    <q-btn
+                      color="primary"
+                      flat
+                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor' && func.functionName === 'Secretária Contratada'"
+                      rounded
+                      icon="add"
+                      @click="addFunctionUser(iFunc, iOrg, func.functionName)"
+                      size="12px"
+                    >
+                    </q-btn>
+                    <div
+                      v-for="(user, iUser) in func.functionUsers"
+                      :key="user"
+                    >
+                      <q-item
+                        class="no-padding"
+                        v-if="!user.action || user.action !== 'remove'"
+                      >
+                        <q-item-section class="no-padding" >
+                          <q-item-label>
+                            {{ user.userName }}
+                            <q-btn
+                              color="red"
+                              flat
+                              v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor' && func.functionName === 'Secretária Contratada'"
+                              rounded
+                              unelevated
+                              icon="delete"
+                              @click="deleteUserFromFunction(iOrg, iFunc, iUser)"
+                            ></q-btn>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </div>
+                  </div>
+                </div>
+              </q-list>
+              <!-- <q-list bordered class="q-my-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Secretária contratada
                 </div>
@@ -292,8 +340,8 @@
                       @click="addSecretaryToParoquia(iOrg)"
                     />
                   </div>
-                </div>
-              </q-list>
+                </div> 
+              </q-list> -->
               <q-list bordered class="q-mb-sm">
                 <div class="text-h6 q-ml-md q-mt-sm q-mb-md">
                   Departamentos
