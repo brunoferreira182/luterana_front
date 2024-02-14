@@ -383,9 +383,10 @@ export default defineComponent({
       instructionYears: null,
     }
   },
-  // beforeUnmount(){
-  //   this.saveDraftOnBeforeUnmount()
-  // },
+  beforeUnmount(){
+    if (this.status && this.status.value === 'sent') return
+    this.saveDraftOnBeforeUnmount()
+  },
   beforeMount() {
     this.getMovimentoMembrosPorCongregacao()
     this.getOrganismNameForBreadCrumbs()
