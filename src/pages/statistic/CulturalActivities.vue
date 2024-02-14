@@ -162,6 +162,9 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    goToNextStep() {
+      this.$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)
+    },
     getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
