@@ -460,14 +460,14 @@ export default defineComponent({
         // this.getMovimentoMembrosPorCongregacao()
       })
     },
-    saveOficial(){
+    async saveOficial() {
       // this.saveDraft()
       for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
         if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
             return this.$q.notify('Preencha todos os campos obrigatórios!')
         }
       }
-      const opt = {
+      let opt = {
         route: '/desktop/statistics/saveDraftMembersMovement',
         body: {
           organismId: this.$route.query.organismId,
@@ -476,18 +476,21 @@ export default defineComponent({
         }
       }
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          // this.$q.notify('Dados incompletos. Verifique e tente novamente')
-          return
+      let r = await useFetch(opt)
+      if (r.error) return
+
+      opt = { 
+        route: '/desktop/statistics/saveMembersMovementDone',
+        body: {
+          organismId: this.$route.query.organismId
         }
-        this.$q.notify({
-          message: 'Movimento de Membros salvo com sucesso!',
-        })
-        this.$router.push('/statistic/introWriteStatisticData')
-        // this.getMovimentoMembrosPorCongregacao()
-      })
+      }
+      let res = await useFetch(opt)
+      if (res.error) return this.$q.notify(res.errorMessage)
+      await this.getMovimentoMembrosPorCongregacao()
+      this.$q.notify('Etapa finalizada com sucesso')
+      this.$router.back()
+
     },
     getMovimentoMembrosPorCongregacao () {
       const opt = {
