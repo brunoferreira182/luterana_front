@@ -60,16 +60,7 @@
               />
               <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
-            <div>
-              <q-input
-                v-model="saldoCongregacao"
-                prefix="R$"
-                readonly
-                label="Saldo congregação"
-                reverse-fill-mask
-                mask="###.###.###,##"
-              />
-            </div>
+           
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -238,7 +229,21 @@
                   />
                 </div>
               </div>
-                
+              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+                <div class="text-h6">
+                  Saldo em 2023 calculado pelo sistema
+                </div>
+                <div>
+                  <q-input
+                    v-model="saldoCongregacao"
+                    prefix="R$"
+                    readonly
+                    label="Saldo congregação"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                  />
+                </div>
+              </div>
               <div class="q-ma-sm text-center">
                 <q-chip
                   v-if="validated"
@@ -297,6 +302,7 @@
           </div>
         </div>
       </div>
+   
     </q-page>
   </q-page-container>
 </template>
@@ -370,6 +376,7 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+   
   getFinanceTotalValueFromParoquia(){
     const opt = {
       route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -384,9 +391,9 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
-      const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
-      const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
-      this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+      // const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
+      // const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
+      // this.saldoCongregacao = saldoContribuicao - saldoDespesas;
 
     });
   },
@@ -404,6 +411,8 @@ export default defineComponent({
   },
   async saveOficial() {
     const validated = this.validateForm()
+    console.log(+this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'))
+    return
     if (!validated) {
       this.$q.notify('Há dados a serem preenchidos. Passe os campos um a um')
       return
@@ -469,7 +478,6 @@ export default defineComponent({
         this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
         return
       }
-     
       this.$q.notify('Rascunho salvo com sucesso!')
     });
   },
@@ -492,6 +500,7 @@ export default defineComponent({
     return validated
   },
   calculateTotals () {
+    
     const totalEntradas = 
       +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
@@ -507,7 +516,8 @@ export default defineComponent({
       +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
-
+      console.log(totalEntradas, 'totalEntradas')
+      console.log(totalSaidas, 'totalSaidas')
     return { totalSaidas, totalEntradas }
 
   },
@@ -568,25 +578,26 @@ export default defineComponent({
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries
+      this.calculateOfferPercents()
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
-        contribuicaoDistrito: null,
-        devolucaoEmprestimoIELB: null,
-        todasSaidas: null
+        contribuicaoDistrito: '',
+        devolucaoEmprestimoIELB: '',
+        todasSaidas: ''
       },
       r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
       this.table.entries = {
         saldoAnterior: '',
         receitasRegulares: {
-          ofertasDominicais: null,
-          ofertasMensais: null,
-          receitasAlugueis: null,
+          ofertasDominicais: '',
+          ofertasMensais: '',
+          receitasAlugueis: '',
         },
-        ofertasEspeciais: null,
-        campanhasEspecificas: null,
-        auxilio: null,
-        emprestimos: null,
-        todasOutrasReceitas: null,
+        ofertasEspeciais: '',
+        campanhasEspecificas: '',
+        auxilio: '',
+        emprestimos: '',
+        todasOutrasReceitas: '',
       }
     });
   },
