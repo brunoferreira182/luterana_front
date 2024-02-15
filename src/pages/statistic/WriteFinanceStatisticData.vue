@@ -173,16 +173,13 @@
                     <strong class="text-h6">
                       {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
-                    <div v-if="table.output.contributionOnSgaLocal && table.output.contributionOnSgaLocal !== '' && table.output.contributionOnSgaLocal > 0">
+                    <div >
                     Percentual: 
                     <strong class="text-h6">
                       {{ contributionPercent }}
                     </strong>
                     </div>
-                    
                     <br>
-
-
                     <template v-slot:action>
                       <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
                     </template>
@@ -232,6 +229,26 @@
               <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
                 <div class="text-h6">
                   Saldo em 2023 calculado pelo sistema
+                </div>
+                <div>
+                  <q-input
+                    v-model="contributionEntriesSum"
+                    prefix="R$"
+                    readonly
+                    label="Soma entradas da congregação"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                  />
+                </div>
+                <div>
+                  <q-input
+                    v-model="contributionOutputSum"
+                    prefix="R$"
+                    readonly
+                    label="Soma saídas da congregação"
+                    reverse-fill-mask
+                    mask="###.###.###,##"
+                  />
                 </div>
                 <div>
                   <q-input
@@ -391,9 +408,7 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
-      // const saldoContribuicao = +r.data.contributionEntries.replaceAll('.', '').replace(',', '');
-      // const saldoDespesas = +r.data.contributionOutput.replaceAll('.', '').replace(',', '');
-      // this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+ 
 
     });
   },
@@ -411,8 +426,28 @@ export default defineComponent({
   },
   async saveOficial() {
     const validated = this.validateForm()
-    console.log(+this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'))
-    return
+    const formatedEntriesAndOutput = {
+      entries: {
+        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
+        auxilio: +this.table.entries.auxilio.replaceAll('.', '').replace(',', '.'),
+        ofertasEspeciais: +this.table.entries.ofertasEspeciais.replaceAll('.', '').replace(',', '.'),
+        emprestimos: +this.table.entries.emprestimos.replaceAll('.', '').replace(',', '.'),
+        campanhasEspecificas: +this.table.entries.campanhasEspecificas.replaceAll('.', '').replace(',', '.'),
+        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
+        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replace(',', '.'),
+        receitasRegulares: {
+          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.'),
+          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.'),
+          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.'),
+        }
+      },
+      output: {
+        contribuicaoDistrito: +this.table.output.contribuicaoDistrito.replaceAll('.', '').replace(',', '.'),
+        devolucaoEmprestimoIELB: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
+        todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
+      }
+    }
+    console.log(formatedEntriesAndOutput)
     if (!validated) {
       this.$q.notify('Há dados a serem preenchidos. Passe os campos um a um')
       return
@@ -421,17 +456,17 @@ export default defineComponent({
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
         organismId: this.$route.query.organismId,
-        financeData: this.table,
+        financeData: formatedEntriesAndOutput,
         contribuitionOutput: this.contributionOutputSum
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
-      opt.body.financeData = this.table;
+      opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
-      opt.body.financeData = this.table;
+      opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0) {
-      opt.body.financeData = this.table
+      opt.body.financeData = formatedEntriesAndOutput
     }
     this.$q.loading.show()
     let r = await useFetch(opt)
@@ -455,21 +490,42 @@ export default defineComponent({
     this.$router.push('/statistic/introWriteStatisticData')
   },
   saveDraft() {
+    const formatedEntriesAndOutput = {
+      entries: {
+        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
+        auxilio: +this.table.entries.auxilio.replaceAll('.', '').replace(',', '.'),
+        ofertasEspeciais: +this.table.entries.ofertasEspeciais.replaceAll('.', '').replace(',', '.'),
+        emprestimos: +this.table.entries.emprestimos.replaceAll('.', '').replace(',', '.'),
+        campanhasEspecificas: +this.table.entries.campanhasEspecificas.replaceAll('.', '').replace(',', '.'),
+        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
+        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replace(',', '.'),
+        receitasRegulares: {
+          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.'),
+          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.'),
+          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.'),
+        }
+      },
+      output: {
+        contribuicaoDistrito: +this.table.output.contribuicaoDistrito.replaceAll('.', '').replace(',', '.'),
+        devolucaoEmprestimoIELB: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
+        todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
+      }
+    }
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
         organismId: this.$route.query.organismId,
-        financeData: this.table,
+        financeData: formatedEntriesAndOutput,
         contribuitionOutput: this.contributionOutputSum
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
     if (Object.keys(this.table.output).length > 0) {
-      opt.body.financeData = this.table;
+      opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
-      opt.body.financeData = this.table;
+      opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-      opt.body.financeData = this.table
+      opt.body.financeData = formatedEntriesAndOutput
     }
     this.$q.loading.show()
     useFetch(opt).then((r) => {
@@ -516,8 +572,6 @@ export default defineComponent({
       +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
-      console.log(totalEntradas, 'totalEntradas')
-      console.log(totalSaidas, 'totalSaidas')
     return { totalSaidas, totalEntradas }
 
   },
@@ -549,17 +603,17 @@ export default defineComponent({
     });
   },
   getOrganismNameForBreadCrumbs() {
-  const opt = {
-    route: "/desktop/statistics/getCongregacaoByOrganismId",
-    body: {
-      organismId: this.$route.query.organismId
-    },
-  };
-  useFetch(opt).then((r) => {
-    if (r.error) return;
-    this.congregationName = r.data.organismName 
-  });
-},
+    const opt = {
+      route: "/desktop/statistics/getCongregacaoByOrganismId",
+      body: {
+        organismId: this.$route.query.organismId
+      },
+    };
+    useFetch(opt).then((r) => {
+      if (r.error) return;
+      this.congregationName = r.data.organismName 
+    });
+  },
   getFinanceStatisticByOrganismId() {
     const opt = {
       route: "/desktop/statistics/getFinanceStatisticByOrganismId",
@@ -578,7 +632,11 @@ export default defineComponent({
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries
-      this.calculateOfferPercents()
+      this.table.output.contributionOnSga = r.data.contributionOutputSGANum
+      const saldoContribuicao = r.data.contributionEntriesNum
+      const saldoDespesas = r.data.contributionOutputNum
+      this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+      
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
         contribuicaoDistrito: '',
@@ -599,6 +657,7 @@ export default defineComponent({
         emprestimos: '',
         todasOutrasReceitas: '',
       }
+      this.calculateOfferPercents()
     });
   },
   }
