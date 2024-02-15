@@ -518,6 +518,7 @@ export default defineComponent({
         }
       },
       output: {
+        contributionOnSga: this.table.output.contributionOnSga,
         contribuicaoDistrito: +this.table.output.contribuicaoDistrito.replaceAll('.', '').replace(',', '.'),
         devolucaoEmprestimoIELB: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
         todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
@@ -537,7 +538,7 @@ export default defineComponent({
       body: {
         organismId: this.$route.query.organismId,
         financeData: formatedEntriesAndOutput,
-        contribuitionOutput: this.contributionOutputSum
+        contribuitionOutput: this.table.output.contributionOnSga
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
@@ -576,7 +577,7 @@ export default defineComponent({
       body: {
         organismId: this.$route.query.organismId,
         financeData: formatedEntriesAndOutput,
-        contribuitionOutput: this.contributionOutputSum
+        contribuitionOutput: this.table.output.contributionOnSga
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
