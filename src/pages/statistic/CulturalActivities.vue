@@ -154,16 +154,17 @@ export default defineComponent({
     }
   },
 
-  beforeUnmount(){
-    if (this.status && this.status.value === 'sent') return
-    this.saveDraftOnBeforeUnmount()
+  async beforeUnmount(){
+    const r = await this.getAtividadesCulticas()
+    if ((r.data && r.data.status && r.data.status.value === 'notSent') || r.data && !r.data.status) this.saveDraft()
   },
-  beforeMount() {
-    this.getAtividadesCulticas()
-    this.getOrganismNameForBreadCrumbs()
+  async beforeMount() {
+  const r = await this.getAtividadesCulticas()
+  this.putAtividadesCulticasOnData(r)
+  this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    getAtividadesCulticas() {
+    async getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
         body: {
@@ -171,23 +172,21 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        if (r.data.status) {
-          this.status = r.data.status
-        }
-        r.data.validated ? this.validated = r.data.validated : this.validated = false
-        if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
-          this.culturalActivities = r.data.activitiesData
-        } else {
-          this.culturalActivities = r.data
-        }
-        
-      });
+      let r = await useFetch(opt)
+      this.$q.loading.hide()
+      return r
+    },
+    putAtividadesCulticasOnData(r) {
+      if (r.error) return
+      if (r.data.status) {
+        this.status = r.data.status
+      }
+      r.data.validated ? this.validated = r.data.validated : this.validated = false
+      if (r.data.type && r.data.type === 'atividadesCulticasStatistics') {
+        this.culturalActivities = r.data.activitiesData
+      } else {
+        this.culturalActivities = r.data
+      }
     },
     getOrganismNameForBreadCrumbs() {
     const opt = {
@@ -199,45 +198,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return;
         this.congregationName = r.data.organismName 
-      });
-    },
-    saveDraftOnBeforeUnmount() {
-      for(let i = 0; i < this.culturalActivities.length; i++){
-        if (this.culturalActivities[i].activitiesData.cultoData.qtyDadosPastor === '' ||  this.culturalActivities[i].activitiesData.cultoData.qtyCultoLeitura === ''
-            ||  this.culturalActivities[i].activitiesData.cultoData.somaFrequenciaAnual === '' ||  this.culturalActivities[i].activitiesData.santaCeiaData.qtyOferecidaAnual === ''
-            ||  this.culturalActivities[i].activitiesData.santaCeiaData.somaTotalComungantes === '') {
-              return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
-            }
-          }
-      this.extractedData = [];
-      this.culturalActivities.forEach((item, index) => {
-        const extractedItem = {
-          organismName: item.organismName,
-          activitiesData: item.activitiesData,
-        };
-        if (index === 0) {
-          //a congregação precisa ser o primeiro índice sempre
-          extractedItem.congregationId = item.organismId;
-        } else {
-          extractedItem.organismId = item.childOrganismId;
-        }
-        this.extractedData.push(extractedItem);
-      });
-      const opt = {
-        route: "/desktop/statistics/insertAtividadesCulticasStatisticDraft",
-        body: {
-          organismId: this.$route.query.organismId,
-          activitiesData: this.extractedData
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.$q.notify('Rascunho salvo com sucesso!')
       });
     },
     saveDraft() {
@@ -276,6 +236,8 @@ export default defineComponent({
         }
         this.$q.notify('Rascunho salvo com sucesso!')
         this.getAtividadesCulticas()
+        this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId)
+        return
       });
     },
     async saveOficial(){
@@ -318,24 +280,22 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-          return
-        }
-        this.$q.notify('Atividades salvas com sucesso!')
-      });
-      await this.getAtividadesCulticas()
-      this.$router.push('/statistic/introWriteStatisticData')
+      r = await useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
+        return
+      }
+      this.$q.notify('Atividades salvas com sucesso!')
+      this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId)
     },
     handleBackNavigation() {
-    if (this.canNavigateBack) {
-      this.$router.back();
-    } else {
-      this.$q.notify('Complete todos os campos antes de salvar!');
+      if (this.canNavigateBack) {
+        this.$router.back();
+      } else {
+        this.$q.notify('Complete todos os campos antes de salvar!');
+      }
     }
-  }
   }
 })
 </script>
