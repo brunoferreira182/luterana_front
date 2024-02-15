@@ -529,8 +529,9 @@
               <q-checkbox
                 color="primary"
                 no-caps
+                @update:model-value="verifyAllIsOK(iOrg)"
                 label="Confirmo que revisei os dados e estão de acordo"
-                v-model="composition.congregations[iOrg].allCongregationalDataIsOk"
+                v-model="verifyAllData"
               />
             </q-expansion-item>
               </q-item-label>
@@ -541,7 +542,7 @@
       />
       <div 
         class="q-ma-lg" 
-        v-if="!status || (status && status.value !== 'sent')"
+        v-if="!status || (status && status.value !== 'sent') "
       >
         <q-btn
           class="full-width"
@@ -578,7 +579,7 @@
       >
         <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
         <div>
-          <q-btn v-if="hasModificationRequest === false"
+          <q-btn v-if="status.value === 'sent' && hasModificationRequest === false"
             color="red"
             class="q-mt-md"
             label="Solicitar alteração de dados"
@@ -2169,6 +2170,7 @@ export default defineComponent({
       other: '',
       group: null,
       pastorsList: [],
+      verifyAllData: false,
       missionPointsList: [],
       dialogReportPastorError: {
         open: false,
@@ -2176,7 +2178,7 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
-      hasModificationRequest: false,
+      hasModificationRequest: false ,
       dialogChangeParishName: {
         open: false,
         name: null
@@ -2223,6 +2225,7 @@ export default defineComponent({
       this.dialogChangeCongregationName.iOrg = iOrg
     },
     requestModifications () {
+      console.log(this.status)
       const opt = {
         route: '/desktop/statistics/requestModifications',
         body: {
@@ -2237,20 +2240,24 @@ export default defineComponent({
       })
     },
     getModificationsRequest () {
-      const opt = {
-        route: '/desktop/statistics/getModificationsRequest',
-        body: {
-          organismId: this.composition.organismParentId
+        console.log('chupando bala');
+        const opt = {
+          route: '/desktop/statistics/getModificationsRequest',
+          body: {
+            organismId: this.composition.organismParentId
+          },
         }
-      }
-      useFetch(opt).then((r) => {
-        if(r.data && r.data.status && r.data.status.value ==='waitingApproval'){
-          this.hasModificationRequest = true
-        } else if(r.data && r.data.status && r.data.status.value==='approved') {
-          this.hasModificationRequest = false
-          this.status = ''
-        }
-      })
+        useFetch(opt).then((r) => {
+          if(r.data && r.data.status ){
+            this.hasModificationRequest = true
+          } else if (!r.data && !r.data.status){
+            this.hasModificationRequest = false
+            this.status = null
+          }
+        })
+    },
+    verifyAllIsOK(iOrg){
+      this.composition.congregations[iOrg].allCongregationalDataIsOk = this.verifyAllData 
     },
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
@@ -2678,6 +2685,9 @@ export default defineComponent({
       this.dialogRemoveCongregation.iOrg = iOrg
     },
     async saveFinal () {
+      if (this.verifyAllData !== true){
+        return this.$q.notify('Confirme que revisou os dados')
+      }
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
         if (!congregation.paroquialManagement) {
