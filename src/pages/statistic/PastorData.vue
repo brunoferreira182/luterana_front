@@ -1257,12 +1257,13 @@
         v-model="dialogLastPastoralActivity.open"
         @hide="clearDialogLastPastoralActivity"
       >
-        <q-card style="width: 400px; border-radius: 1rem;">
-          <q-card-section>
+        <q-card style="width: 480px; border-radius: 1rem;">
+          <q-card-section> 
             <div class="text-center text-h6">
               Selecione a congregação
             </div>
             <q-input
+            class="q-px-md"
               label="Informe a cidade"
               v-model="dialogLastPastoralActivity.selectedCity"
             />
