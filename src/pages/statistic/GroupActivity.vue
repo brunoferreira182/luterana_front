@@ -442,15 +442,22 @@ export default defineComponent({
       status: null
     };
   },
+<<<<<<< HEAD
   beforeUnmount() {
     // this.getGroupActivitiesByOrganismId(true)
     this.saveDraft()
+=======
+  async beforeUnmount() {
+    const r = await this.getGroupActivitiesByOrganismId();
+    if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
+>>>>>>> 77dc5d5666d9ae0ecf2b6d0840285e07ac030c4d
   },
-  beforeMount() {
-    this.getGroupActivitiesByOrganismId();
+  async beforeMount() {
+    const r = await this.getGroupActivitiesByOrganismId();
+    this.putGroupActivitiesOnData(r)
   },
   methods: {
-    getGroupActivitiesByOrganismId(onUnmount) {
+    async getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
         body: {
@@ -458,31 +465,25 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) return;
-        this.validated = r.data.validated
-        this.congregationName = r.data.organismName;
-        this.departamentos = r.data.childData;
-        this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
-        if (r.data.status) {
-          this.status = r.data.status
-        }
-        if (onUnmount) {
-          if (this.status && this.status.value === 'sent') {
-            this.$router.push('/statistic/introWriteStatisticData')
-          } else {
-            this.saveDraft(true)
-            this.$router.push('/statistic/introWriteStatisticData')
-          }
-        }
-      });
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      return r
+    },
+    putGroupActivitiesOnData (r) {
+      if (r.error) return;
+      this.validated = r.data.validated
+      this.congregationName = r.data.organismName;
+      this.departamentos = r.data.childData;
+      this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
+      if (r.data.status) {
+        this.status = r.data.status
+      }
     },
     expand(item) {
       item.expanded = !item.expanded;
       // this.$q.notify("Salvo com sucesso!");
     },
-    saveDraft(onUnmount) { 
+    async saveDraft() { 
       for(let i = 0; i < this.departamentos.length; i++){
         if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
           return this.$q.notify('Preencha todos os campos Obrigatórios!')
@@ -500,12 +501,13 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.show()
-        if (r.error) return;
-        this.$q.notify("Rascunho salvo com sucesso!");
-        if (!onUnmount) this.getGroupActivitiesByOrganismId()
-      });
+      const r = useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) return;
+      this.$q.notify("Rascunho salvo com sucesso!");
+      
+      // ir para proxima etapa
+      return
     },
     async saveOficial(){
       for(let i = 0; i < this.departamentos.length; i++){
@@ -538,15 +540,16 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      let res = await useFetch(opt)
-      this.$q.loading.hide()
-      if (res.error) return
-      this.$q.notify('Atividades salvas com sucesso!')
-      this.getGroupActivitiesByOrganismId(true)
-    },
-    goToStatistics() {
-      const organismId = this.$route.query.organismId;
-      this.$router.push("/user/statistic?organismId=" + organismId);
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify('Estatística incompleta')
+          return
+        }
+        this.$q.notify("Atividades salvas com sucesso!");
+        this.$router.push('/statistic/introWriteStatisticData')
+        // ir para proxima etapa
+      });
     },
   },
 });
