@@ -498,17 +498,17 @@ export default defineComponent({
   formatFinanceData () {
     const formatted = {
       entries: {
-        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
-        auxilio: +this.table.entries.auxilio.replaceAll('.', '').replace(',', '.'),
-        ofertasEspeciais: +this.table.entries.ofertasEspeciais.replaceAll('.', '').replace(',', '.'),
-        emprestimos: +this.table.entries.emprestimos.replaceAll('.', '').replace(',', '.'),
-        campanhasEspecificas: +this.table.entries.campanhasEspecificas.replaceAll('.', '').replace(',', '.'),
-        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
-        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replace(',', '.'),
+        saldoAnterior: +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replace(',', '.'),
+        auxilio: +this.table.entries.auxilio.toString().replaceAll('.', '').replace(',', '.'),
+        ofertasEspeciais: +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replace(',', '.'),
+        emprestimos: +this.table.entries.emprestimos.toString().replaceAll('.', '').replace(',', '.'),
+        campanhasEspecificas: +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replace(',', '.'),
+        saldoAnterior: +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replace(',', '.'),
+        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replace(',', '.'),
         receitasRegulares: {
-          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.'),
-          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.'),
-          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.'),
+          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replace(',', '.'),
+          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replace(',', '.'),
+          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replace(',', '.'),
         }
       },
       output: {
