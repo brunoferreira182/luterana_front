@@ -442,15 +442,15 @@ export default defineComponent({
       status: null
     };
   },
-  beforeUnmount(){
-    if (this.status && this.status.value === 'sent') return
-    this.saveDraftOnBeforeUnmount()
+  beforeUnmount() {
+    // this.getGroupActivitiesByOrganismId(true)
+    // this.saveDraft()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
   },
   methods: {
-    getGroupActivitiesByOrganismId() {
+    getGroupActivitiesByOrganismId(onUnmount) {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
         body: {
@@ -468,17 +468,25 @@ export default defineComponent({
         if (r.data.status) {
           this.status = r.data.status
         }
+        if (onUnmount) {
+          if (this.status && this.status.value === 'sent') {
+            this.$router.push('/statistic/introWriteStatisticData')
+          } else {
+            this.saveDraft(true)
+            this.$router.push('/statistic/introWriteStatisticData')
+          }
+        }
       });
     },
     expand(item) {
       item.expanded = !item.expanded;
       // this.$q.notify("Salvo com sucesso!");
     },
-    saveDraftOnBeforeUnmount(){
+    saveDraft(onUnmount) { 
       for(let i = 0; i < this.departamentos.length; i++){
-          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
-            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
-          }
+        if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+          return this.$q.notify('Preencha todos os campos Obrigatórios!')
+        }
       }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
@@ -496,31 +504,7 @@ export default defineComponent({
         this.$q.loading.show()
         if (r.error) return;
         this.$q.notify("Rascunho salvo com sucesso!");
-      });
-    },
-    saveDraft(){
-      for(let i = 0; i < this.departamentos.length; i++){
-          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
-            return this.$q.notify('Preencha todos os campos Obrigatórios!')
-          }
-      }
-      this.departamentos.forEach((departamento) => {
-        departamento.expanded = false 
-      })
-      const opt = {
-        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
-        body: {
-          organismId: this.$route.query.organismId,
-          groupActivity: this.departamentos,
-          organismFatherName: this.congregationName
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.show()
-        if (r.error) return;
-        this.$q.notify("Rascunho salvo com sucesso!");
-        this.getGroupActivitiesByOrganismId()
+        if (!onUnmount) this.getGroupActivitiesByOrganismId()
       });
     },
     async saveOficial(){
@@ -554,20 +538,11 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Estatística incompleta')
-          return
-        }
-        this.$q.notify("Atividades salvas com sucesso!");
-        this.$router.push('/statistic/introWriteStatisticData')
-        // this.getGroupActivitiesByOrganismId()
-      });
-      this.getGroupActivitiesByOrganismId()
-      console.log(this.status, 'sem timeout')
-      this.$q.notify("Atividades salvas com sucesso!");
-      // this.$router.back()
+      let res = await useFetch(opt)
+      this.$q.loading.hide()
+      if (res.error) return
+      this.$q.notify('Atividades salvas com sucesso!')
+      this.getGroupActivitiesByOrganismId(true)
     },
     goToStatistics() {
       const organismId = this.$route.query.organismId;

@@ -492,7 +492,7 @@ export default defineComponent({
       this.$router.back()
 
     },
-    getMovimentoMembrosPorCongregacao () {
+    getMovimentoMembrosPorCongregacao () { 
       const opt = {
         route: '/desktop/statistics/getMovimentoMembrosPorCongregacao',
         body: {
