@@ -579,7 +579,7 @@
       >
         <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
         <div>
-          <q-btn v-if="status.value === 'sent' && hasModificationRequest === false"
+          <q-btn v-if="hasModificationRequest === false"
             color="red"
             class="q-mt-md"
             label="Solicitar alteração de dados"
@@ -1538,53 +1538,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <q-dialog
-        v-model="dialogAddEventsDayAndHour.open"
-        @hide="clearDialogAddEventsDayAndHour"
-      >
-        <q-card
-          style="width:400px;border-radius:1rem"
-        >
-          <q-card-section class="text-center text-h6">
-            <strong>Selecione o dia da semana e o horário</strong>
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              :options="daysOfWeek"
-              v-model="dialogAddEventsDayAndHour.day"
-              class="q-px-sm"
-              label="Dia da semana"
-            />
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              label="Informe o horário"
-              class="q-px-sm"
-              v-model="dialogAddEventsDayAndHour.hour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              label="Voltar"
-              no-caps
-              rounded
-              @click="clearDialogAddEventsDayAndHour"
-              flat
-              unelevated
-              color="primary"
-            />
-            <q-btn
-              label="Adicionar"
-              no-caps
-              @click="confirmAddEventsDayAndHour"
-              unelevated
-              rounded
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
       <q-dialog
         v-model="dialogAddEventsDayAndHourInDep.open"
         @hide="clearDialogAddDayAndHourInDept"
@@ -2248,11 +2201,11 @@ export default defineComponent({
           },
         }
         useFetch(opt).then((r) => {
-          if(r.data && r.data.status ){
+          if (r.data && r.data.status ) {
             this.hasModificationRequest = true
-          } else if (!r.data && !r.data.status){
+          } else if (!r.data && this.status === 'sent') {
             this.hasModificationRequest = false
-            this.status = null
+            this.status = ''
           }
         })
     },
