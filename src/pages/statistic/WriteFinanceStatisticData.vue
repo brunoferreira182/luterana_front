@@ -393,7 +393,6 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-   
   getFinanceTotalValueFromParoquia(){
     const opt = {
       route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
@@ -408,8 +407,6 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
- 
-
     });
   },
   formatCurrency (d) {

@@ -367,6 +367,7 @@
                     <q-item-section>{{dep.organismConfigName}}</q-item-section>
                     <q-item-section side v-if="!status || (status && status.value !== 'sent')">
                       <q-btn
+                        v-if="dep.organismConfigName !== 'Ponto de Missão'"
                         color="primary"
                         flat
                         rounded
