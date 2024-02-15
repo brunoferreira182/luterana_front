@@ -530,8 +530,9 @@
               <q-checkbox
                 color="primary"
                 no-caps
+                @update:model-value="verifyAllIsOK(iOrg)"
                 label="Confirmo que revisei os dados e estão de acordo"
-                v-model="composition.congregations[iOrg].allCongregationalDataIsOk"
+                v-model="verifyAllData"
               />
             </q-expansion-item>
               </q-item-label>
@@ -542,7 +543,7 @@
       />
       <div 
         class="q-ma-lg" 
-        v-if="!status || (status && status.value !== 'sent')"
+        v-if="!status || (status && status.value !== 'sent') "
       >
         <q-btn
           class="full-width"
@@ -1538,53 +1539,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <q-dialog
-        v-model="dialogAddEventsDayAndHour.open"
-        @hide="clearDialogAddEventsDayAndHour"
-      >
-        <q-card
-          style="width:400px;border-radius:1rem"
-        >
-          <q-card-section class="text-center text-h6">
-            <strong>Selecione o dia da semana e o horário</strong>
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              :options="daysOfWeek"
-              v-model="dialogAddEventsDayAndHour.day"
-              class="q-px-sm"
-              label="Dia da semana"
-            />
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              label="Informe o horário"
-              class="q-px-sm"
-              v-model="dialogAddEventsDayAndHour.hour"
-              type="time"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              label="Voltar"
-              no-caps
-              rounded
-              @click="clearDialogAddEventsDayAndHour"
-              flat
-              unelevated
-              color="primary"
-            />
-            <q-btn
-              label="Adicionar"
-              no-caps
-              @click="confirmAddEventsDayAndHour"
-              unelevated
-              rounded
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
       <q-dialog
         v-model="dialogAddEventsDayAndHourInDep.open"
         @hide="clearDialogAddDayAndHourInDept"
@@ -2170,6 +2124,7 @@ export default defineComponent({
       other: '',
       group: null,
       pastorsList: [],
+      verifyAllData: false,
       missionPointsList: [],
       dialogReportPastorError: {
         open: false,
@@ -2177,7 +2132,7 @@ export default defineComponent({
         userSelected: '',
         text: ''
       },
-      hasModificationRequest: false,
+      hasModificationRequest: false ,
       dialogChangeParishName: {
         open: false,
         name: null
@@ -2224,6 +2179,7 @@ export default defineComponent({
       this.dialogChangeCongregationName.iOrg = iOrg
     },
     requestModifications () {
+      console.log(this.status)
       const opt = {
         route: '/desktop/statistics/requestModifications',
         body: {
@@ -2238,20 +2194,24 @@ export default defineComponent({
       })
     },
     getModificationsRequest () {
-      const opt = {
-        route: '/desktop/statistics/getModificationsRequest',
-        body: {
-          organismId: this.composition.organismParentId
+        console.log('chupando bala');
+        const opt = {
+          route: '/desktop/statistics/getModificationsRequest',
+          body: {
+            organismId: this.composition.organismParentId
+          },
         }
-      }
-      useFetch(opt).then((r) => {
-        if(r.data && r.data.status && r.data.status.value ==='waitingApproval'){
-          this.hasModificationRequest = true
-        } else if(r.data && r.data.status && r.data.status.value==='approved') {
-          this.hasModificationRequest = false
-          this.status = ''
-        }
-      })
+        useFetch(opt).then((r) => {
+          if (r.data && r.data.status ) {
+            this.hasModificationRequest = true
+          } else if (!r.data && this.status === 'sent') {
+            this.hasModificationRequest = false
+            this.status = ''
+          }
+        })
+    },
+    verifyAllIsOK(iOrg){
+      this.composition.congregations[iOrg].allCongregationalDataIsOk = this.verifyAllData 
     },
     insertCheckBoxNoFundationCompositionOrg(iOrg){
       this.composition.congregations[iOrg].semFundacao = this.semFundacao
@@ -2679,6 +2639,9 @@ export default defineComponent({
       this.dialogRemoveCongregation.iOrg = iOrg
     },
     async saveFinal () {
+      if (this.verifyAllData !== true){
+        return this.$q.notify('Confirme que revisou os dados')
+      }
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
         if (!congregation.paroquialManagement) {
