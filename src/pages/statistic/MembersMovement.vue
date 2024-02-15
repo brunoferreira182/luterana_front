@@ -383,12 +383,15 @@ export default defineComponent({
       instructionYears: null,
     }
   },
-  beforeUnmount(){
-    if (this.status && this.status.value === 'sent') return
-    this.saveDraftOnBeforeUnmount()
+  async beforeUnmount() {
+    const r = await this.getMovimentoMembrosPorCongregacao()
+    if ((r.data && r.data.status && r.data.status.value === 'notSent') || (r.data && !r.data.status)) this.saveDraft()
   },
-  beforeMount() {
-    this.getMovimentoMembrosPorCongregacao()
+  async beforeMount() {
+    const r = await this.getMovimentoMembrosPorCongregacao()
+    if (r.data && r.data.membersMovement) {
+      this.putMembersMovementOnData(r)
+    }
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
@@ -415,29 +418,7 @@ export default defineComponent({
         }
       }
     },
-    saveDraftOnBeforeUnmount(){
-      for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
-        if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '' || !this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant) {
-            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
-        }
-      }
-      const opt = {
-        route: '/desktop/statistics/saveDraftMembersMovement',
-        body: {
-          organismId: this.$route.query.organismId,
-          membersMovement: this.membersMovement
-        }
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) return
-        this.$q.notify({
-          message: 'Rascunho salvo com sucesso',
-        })
-      })
-    },
-    saveDraft () {
+    async saveDraft () {
       for (let i = 0; i < this.membersMovement.instrucaoDeConfirmados.confirmados.length; i++) {
         if (this.membersMovement.instrucaoDeConfirmados.confirmados[i].Quant === '') {
             return this.$q.notify('Preencha todos os campos obrigatórios!')
@@ -451,14 +432,12 @@ export default defineComponent({
         }
       }
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) return
-        this.$q.notify({
-          message: 'Rascunho salvo com sucesso!',
-        })
-        // this.getMovimentoMembrosPorCongregacao()
-      })
+      let r = await useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) return
+      this.$q.notify('Rascunho salvo com sucesso!')
+      this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId)
+      return
     },
     async saveOficial() {
       // this.saveDraft()
@@ -475,7 +454,7 @@ export default defineComponent({
           status: 'sent'
         }
       }
-      this.$q.loading.show()
+      this.$q.loading.show() 
       let r = await useFetch(opt)
       if (r.error) return
 
@@ -485,14 +464,15 @@ export default defineComponent({
           organismId: this.$route.query.organismId
         }
       }
-      let res = await useFetch(opt)
-      if (res.error) return this.$q.notify(res.errorMessage)
-      await this.getMovimentoMembrosPorCongregacao()
+      r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        return
+      }
       this.$q.notify('Etapa finalizada com sucesso')
-      this.$router.back()
-
+      this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId)
     },
-    getMovimentoMembrosPorCongregacao () { 
+    async getMovimentoMembrosPorCongregacao () { 
       const opt = {
         route: '/desktop/statistics/getMovimentoMembrosPorCongregacao',
         body: {
@@ -500,19 +480,18 @@ export default defineComponent({
         }
       }
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error || !r.data) return
-        console.log(r.data, 'essa merda')
-        const keys = Object.keys(r.data.membersMovement)
-        console.log(keys)
-        keys.forEach((key) => {
-          this.membersMovement[key] = r.data.membersMovement[key]
-        })
-        this.validated = r.data.validated
-        this.status = r.data.status
-        this.calculateTotal()
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      return r
+    },
+    putMembersMovementOnData(r) {
+      const keys = Object.keys(r.data.membersMovement)
+      keys.forEach((key) => {
+        this.membersMovement[key] = r.data.membersMovement[key]
       })
+      this.validated = r.data.validated
+      this.status = r.data.status
+      this.calculateTotal()
     },
     calculateTotal() {
       this.totalComungantes = +this.membersMovement.totalMambrosComungantes2022 + this.getAcrescimosComungantes() - this.getDecrescimoComungantes()

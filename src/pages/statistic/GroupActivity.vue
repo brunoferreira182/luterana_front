@@ -442,15 +442,9 @@ export default defineComponent({
       status: null
     };
   },
-<<<<<<< HEAD
-  beforeUnmount() {
-    // this.getGroupActivitiesByOrganismId(true)
-    this.saveDraft()
-=======
   async beforeUnmount() {
     const r = await this.getGroupActivitiesByOrganismId();
     if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
->>>>>>> 77dc5d5666d9ae0ecf2b6d0840285e07ac030c4d
   },
   async beforeMount() {
     const r = await this.getGroupActivitiesByOrganismId();
@@ -505,8 +499,7 @@ export default defineComponent({
       this.$q.loading.hide()
       if (r.error) return;
       this.$q.notify("Rascunho salvo com sucesso!");
-      
-      // ir para proxima etapa
+      this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
       return
     },
     async saveOficial(){
@@ -540,16 +533,14 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Estatística incompleta')
-          return
-        }
-        this.$q.notify("Atividades salvas com sucesso!");
-        this.$router.push('/statistic/introWriteStatisticData')
-        // ir para proxima etapa
-      });
+      r = await useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Estatística incompleta')
+        return
+      }
+      this.$q.notify("Etapa finalizada com sucesso!");
+      this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
     },
   },
 });
