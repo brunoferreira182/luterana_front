@@ -75,6 +75,7 @@
                   reverse-fill-mask
                   mask="###.###.###,##"
                   v-model="table.entries.saldoAnterior"
+                  @blur="calculateTotals"
                 />
 
                 <div class="no-margin">
@@ -117,6 +118,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.entries.ofertasEspeciais"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -127,6 +129,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.entries.campanhasEspecificas"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -137,6 +140,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.entries.auxilio"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -147,6 +151,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.entries.emprestimos"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -157,6 +162,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.entries.todasOutrasReceitas"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -167,11 +173,12 @@
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
+                    v-if="table.output.contributionOnSgaLocal > 0"
                   >
                     Contribuição registrada na Administração Nacional:<br>
                     R$
                     <strong class="text-h6">
-                      {{ table.output.contributionOnSgaLocal ?  table.output.contributionOnSgaLocal : contributionOutputSum}}
+                      {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
                     <div v-if="contributionPercent">
                     Percentual: 
@@ -183,6 +190,9 @@
                     <template v-slot:action>
                       <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
                     </template>
+                  </q-banner>
+                  <q-banner v-else class="bg-orange text-white q-mb-lg">
+                    nao tem contrib no sga
                   </q-banner>
                 </div>
                 <q-dialog v-model="dialogReportValueSGAError">
@@ -203,6 +213,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.output.contribuicaoDistrito"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -213,6 +224,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.output.devolucaoEmprestimoIELB"
+                    @blur="calculateTotals"
                   />
                 </div>
 
@@ -223,6 +235,7 @@
                     reverse-fill-mask
                     mask="###.###.###,##"
                     v-model="table.output.todasSaidas"
+                    @blur="calculateTotals"
                   />
                 </div>
               </div>
@@ -253,12 +266,17 @@
                 <div>
                   <q-input
                     v-model="saldoCongregacao"
-                    prefix="R$"
                     readonly
                     label="Saldo congregação"
                     reverse-fill-mask
                     mask="###.###.###,##"
-                  />
+                    prefix="R$"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="arrow_upward" color="green" v-if="saldoCongregacaoNumber >= 0" />
+                      <q-icon name="arrow_downward" color="red" v-if="saldoCongregacaoNumber < 0" />
+                    </template>
+                  </q-input>
                 </div>
               </div>
               <div class="q-ma-sm text-center">
@@ -380,7 +398,8 @@ export default defineComponent({
       contributionPercent: '',
       contributionNumber: 0,
       saldoCongregacao: '',
-      status: null
+      status: null,
+      saldoCongregacaoNumber: 0
     }
   },
   // beforeUnmount(){
@@ -414,23 +433,22 @@ export default defineComponent({
     // return d
   },
   calculateOfferPercents(){
-    console.log('coaijsdiochanhouy')
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
-    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%' 
-    console.log(ofertasDominicais,' +this.table.output.contributionOnSga')
-    console.log(ofertasMensais,' +this.table.output.contributionOnSga')
-    console.log(receitasAlugueis,' +this.table.output.contributionOnSga')
-    console.log(totalReceitas,' +this.table.output.contributionOnSga')
-    console.log(+this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
-    console.log(this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
+    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
+    this.calculateTotals()
+    // console.log(ofertasDominicais,' +this.table.output.contributionOnSga')
+    // console.log(ofertasMensais,' +this.table.output.contributionOnSga')
+    // console.log(receitasAlugueis,' +this.table.output.contributionOnSga')
+    // console.log(totalReceitas,' +this.table.output.contributionOnSga')
+    // console.log(+this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
+    // console.log(this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
   },
-  async saveOficial() {
-    const validated = this.validateForm()
-    const formatedEntriesAndOutput = {
+  formatFinanceData () {
+    const formatted = {
       entries: {
         saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
         auxilio: +this.table.entries.auxilio.replaceAll('.', '').replace(',', '.'),
@@ -451,7 +469,11 @@ export default defineComponent({
         todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
       }
     }
-    console.log(formatedEntriesAndOutput)
+    return formatted
+  },
+  async saveOficial() {
+    const validated = this.validateForm()
+    const formatedEntriesAndOutput = this.formatFinanceData()
     if (!validated) {
       this.$q.notify('Há dados a serem preenchidos. Passe os campos um a um')
       return
@@ -494,27 +516,7 @@ export default defineComponent({
     this.$router.push('/statistic/introWriteStatisticData')
   },
   saveDraft() {
-    const formatedEntriesAndOutput = {
-      entries: {
-        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
-        auxilio: +this.table.entries.auxilio.replaceAll('.', '').replace(',', '.'),
-        ofertasEspeciais: +this.table.entries.ofertasEspeciais.replaceAll('.', '').replace(',', '.'),
-        emprestimos: +this.table.entries.emprestimos.replaceAll('.', '').replace(',', '.'),
-        campanhasEspecificas: +this.table.entries.campanhasEspecificas.replaceAll('.', '').replace(',', '.'),
-        saldoAnterior: +this.table.entries.saldoAnterior.replaceAll('.', '').replace(',', '.'),
-        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replace(',', '.'),
-        receitasRegulares: {
-          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.'),
-          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.'),
-          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.'),
-        }
-      },
-      output: {
-        contribuicaoDistrito: +this.table.output.contribuicaoDistrito.replaceAll('.', '').replace(',', '.'),
-        devolucaoEmprestimoIELB: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
-        todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
-      }
-    }
+    const formatedEntriesAndOutput = this.formatFinanceData()
     const opt = {
       route: "/desktop/statistics/insertFinanceStatisticsDraft",
       body: {
@@ -561,7 +563,7 @@ export default defineComponent({
   },
   calculateTotals () {
     
-    const totalEntradas = 
+    let totalEntradas = 
       +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replaceAll(',', '.')
@@ -572,12 +574,31 @@ export default defineComponent({
       + +this.table.entries.emprestimos.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replaceAll(',', '.')
     
-    const totalSaidas = 
+    let totalSaidas = 
       +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
+
+    this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
+    this.contributionOutputSum = this.formatToCurrency(totalSaidas)
+    this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas)
+    this.saldoCongregacaoNumber = totalEntradas - totalSaidas
     return { totalSaidas, totalEntradas }
 
+  },
+  formatToCurrency (v) {
+    let inteiro
+    let decimal
+    if (v % 1 === 0) {
+      inteiro = v
+      decimal = '00'
+    } else {
+      inteiro = Math.floor(v)
+      decimal = (v % 1).toFixed(2).toString().split('.')
+      decimal = decimal[1].length === 1 ? decimal[1] + '0' : decimal[1]
+    }
+
+    return inteiro + ',' + decimal
   },
   saveDraftOnBeforeUnmount() {
     const opt = {
