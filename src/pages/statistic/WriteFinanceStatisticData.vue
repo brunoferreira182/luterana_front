@@ -384,6 +384,7 @@ export default defineComponent({
         },
         output: {
           contributionOnSga: '',
+          contributionOnSgaLocal: '',
           contribuicaoDistrito: "",
           devolucaoEmprestimoIELB: "",
           todasSaidas: ""
@@ -460,6 +461,10 @@ export default defineComponent({
       auxilio: '',
       emprestimos: '',
       todasOutrasReceitas: '',
+    }
+    if (r.data.contributionOnSgaFirst) {
+      this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
+      this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
     }
     this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
     this.calculateOfferPercents()
