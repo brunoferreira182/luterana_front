@@ -446,11 +446,12 @@ export default defineComponent({
     if (this.status && this.status.value === 'sent') return
     this.saveDraftOnBeforeUnmount()
   },
-  beforeMount() {
-    this.getGroupActivitiesByOrganismId();
+  async beforeMount() {
+    const r = await this.getGroupActivitiesByOrganismId();
+    this.putGroupActivitiesOnData(r)
   },
   methods: {
-    getGroupActivitiesByOrganismId() {
+    async getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
         body: {
@@ -458,17 +459,19 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) return;
-        this.validated = r.data.validated
-        this.congregationName = r.data.organismName;
-        this.departamentos = r.data.childData;
-        this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
-        if (r.data.status) {
-          this.status = r.data.status
-        }
-      });
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      return r
+    },
+    putGroupActivitiesOnData (r) {
+      if (r.error) return;
+      this.validated = r.data.validated
+      this.congregationName = r.data.organismName;
+      this.departamentos = r.data.childData;
+      this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
+      if (r.data.status) {
+        this.status = r.data.status
+      }
     },
     expand(item) {
       item.expanded = !item.expanded;
@@ -562,7 +565,6 @@ export default defineComponent({
         }
         this.$q.notify("Atividades salvas com sucesso!");
         this.$router.push('/statistic/introWriteStatisticData')
-        // this.getGroupActivitiesByOrganismId()
       });
       this.getGroupActivitiesByOrganismId()
       console.log(this.status, 'sem timeout')

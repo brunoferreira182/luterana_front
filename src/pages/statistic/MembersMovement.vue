@@ -503,7 +503,9 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if (r.error || !r.data) return
+        console.log(r.data, 'essa merda')
         const keys = Object.keys(r.data.membersMovement)
+        console.log(keys)
         keys.forEach((key) => {
           this.membersMovement[key] = r.data.membersMovement[key]
         })
