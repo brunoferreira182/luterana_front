@@ -444,7 +444,7 @@ export default defineComponent({
   },
   beforeUnmount() {
     // this.getGroupActivitiesByOrganismId(true)
-    // this.saveDraft()
+    this.saveDraft()
   },
   beforeMount() {
     this.getGroupActivitiesByOrganismId();
