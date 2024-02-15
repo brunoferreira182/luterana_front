@@ -193,6 +193,9 @@
                   </q-banner>
                   <q-banner v-else class="bg-orange text-white q-mb-lg">
                     Não há contribuição registrada na Administração Nacional
+                    <template v-slot:action>
+                      <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
+                    </template>
                   </q-banner>
                 </div>
                 <q-dialog v-model="dialogReportValueSGAError">

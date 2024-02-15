@@ -25,15 +25,15 @@
           </q-td>
           <q-td :props="props">
             <q-btn
-              v-if="props.row.status.value  === 'waitingApproval'"
+              v-if="props.row.status.label  === 'Aguardando aprovação'"
               color="green"
+              outline
               rounded
-              unelevated
               size="15px"
-              class="no-padding"
+              class="q-pa-xs"
               @click="approveRequest(props.row.organismId)"
               label="Aprovar"
-              flat
+
               >
             </q-btn>
           </q-td>
