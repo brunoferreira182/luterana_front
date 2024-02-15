@@ -319,7 +319,6 @@
           </div>
         </div>
       </div>
-   
     </q-page>
   </q-page-container>
 </template>
@@ -408,8 +407,6 @@ export default defineComponent({
       r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
       r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
       this.paroquiaData = r.data
- 
-
     });
   },
   formatCurrency (d) {
