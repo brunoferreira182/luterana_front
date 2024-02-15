@@ -173,7 +173,7 @@
                     <strong class="text-h6">
                       {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
-                    <div >
+                    <div v-if="contributionPercent">
                     Percentual: 
                     <strong class="text-h6">
                       {{ contributionPercent }}
@@ -422,7 +422,8 @@ export default defineComponent({
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
-    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
+    this.contributionPercent === 'NaN%' ? this.contributionPercent = '0%' : this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%' 
+    // this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
   },
   async saveOficial() {
     const validated = this.validateForm()
@@ -632,10 +633,11 @@ export default defineComponent({
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries
-      this.table.output.contributionOnSga = r.data.contributionOutputSGANum
+      r.data.contributionOutputSGANum ? this.table.output.contributionOnSga = r.data.contributionOutputSGANum : this.table.output.contributionOnSga = 0
       const saldoContribuicao = r.data.contributionEntriesNum
       const saldoDespesas = r.data.contributionOutputNum
-      this.saldoCongregacao = saldoContribuicao - saldoDespesas;
+      const teste = saldoContribuicao - saldoDespesas;
+      this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       
       r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
       this.table.output = {
