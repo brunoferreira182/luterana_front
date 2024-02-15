@@ -418,8 +418,6 @@ export default defineComponent({
       this.getFinanceStatisticByOrganismId(),     
       this.getFinanceTotalValueFromParoquia()
     ])
-    console.log(statisticResult, 'statisticResult')
-    console.log(totalValueResult, 'totalValueResult')
 
     if (statisticResult && statisticResult.data) {
       this.putFinanceStatisticByOrganismId(statisticResult)
@@ -489,9 +487,9 @@ export default defineComponent({
     // return d
   },
   calculateOfferPercents(){
-    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
-    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
-    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
+    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replace(',', '.')
+    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replace(',', '.')
+    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replace(',', '.')
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
     this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
@@ -615,20 +613,20 @@ export default defineComponent({
   calculateTotals () {
     
     let totalEntradas = 
-      +this.table.entries.saldoAnterior.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.ofertasEspeciais.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.campanhasEspecificas.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.auxilio.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.emprestimos.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.todasOutrasReceitas.replaceAll('.', '').replaceAll(',', '.')
+      +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
     
     let totalSaidas = 
-      +this.table.output.contribuicaoDistrito.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.output.todasSaidas.replaceAll('.', '').replaceAll(',', '.')
+      +this.table.output.contribuicaoDistrito.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.devolucaoEmprestimoIELB.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.output.todasSaidas.toString().replaceAll('.', '').replaceAll(',', '.')
 
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
     this.contributionOutputSum = this.formatToCurrency(totalSaidas)
