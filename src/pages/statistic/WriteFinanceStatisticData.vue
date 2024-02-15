@@ -432,12 +432,12 @@ export default defineComponent({
     if (r.error) return
     this.validated = r.data.validated
     this.status = r.data.status
-    this.contributionOutputSum = r.data.contributionOutput
-    this.contributionOutputNum = r.data.contributionOutputNum
-    this.contributionEntriesSum = r.data.contributionEntries
+    this.contributionOutputSum = r.data.contributionOutput ? r.data.contributionOutput : ''
+    this.contributionOutputNum = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
+    this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
     r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
-    const saldoContribuicao = r.data.contributionEntriesNum
-    const saldoDespesas = r.data.contributionOutputNum
+    const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
+    const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
     const teste = saldoContribuicao - saldoDespesas;
     this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
@@ -446,7 +446,7 @@ export default defineComponent({
       contribuicaoDistrito: '',
       devolucaoEmprestimoIELB: '',
       todasSaidas: ''
-    },
+    }
     r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
     this.table.entries = {
       saldoAnterior: '',
@@ -461,6 +461,7 @@ export default defineComponent({
       emprestimos: '',
       todasOutrasReceitas: '',
     }
+    this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
     this.calculateOfferPercents()
   },
   putFinanceTotalValueFromParoquia(r) {
