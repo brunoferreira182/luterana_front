@@ -192,7 +192,7 @@
                     </template>
                   </q-banner>
                   <q-banner v-else class="bg-orange text-white q-mb-lg">
-                    nao tem contrib no sga
+                    Não há contribuição registrada na Administração Nacional
                   </q-banner>
                 </div>
                 <q-dialog v-model="dialogReportValueSGAError">
@@ -440,12 +440,6 @@ export default defineComponent({
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
     this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
     this.calculateTotals()
-    // console.log(ofertasDominicais,' +this.table.output.contributionOnSga')
-    // console.log(ofertasMensais,' +this.table.output.contributionOnSga')
-    // console.log(receitasAlugueis,' +this.table.output.contributionOnSga')
-    // console.log(totalReceitas,' +this.table.output.contributionOnSga')
-    // console.log(+this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
-    // console.log(this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
   },
   formatFinanceData () {
     const formatted = {
