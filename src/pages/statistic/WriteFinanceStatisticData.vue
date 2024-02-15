@@ -402,30 +402,84 @@ export default defineComponent({
       saldoCongregacaoNumber: 0
     }
   },
-  // beforeUnmount(){
-  //   this.saveDraftOnBeforeUnmount()
-  // },
-  beforeMount() {
-    this.getFinanceStatisticByOrganismId()
-    this.getFinanceTotalValueFromParoquia()
-    this.getOrganismNameForBreadCrumbs()
+  async beforeUnmount(){
+    const promisses = [
+      this.getFinanceStatisticByOrganismId(),
+      this.getFinanceTotalValueFromParoquia()
+    ]
+    await Promise.all(promisses)
+    if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
+  },
+  async beforeMount() {
+    const [statisticResult, totalValueResult] = await Promise.all([
+      this.getFinanceStatisticByOrganismId(),     
+      this.getFinanceTotalValueFromParoquia()
+    ])
+    console.log(statisticResult, 'statisticResult')
+    console.log(totalValueResult, 'totalValueResult')
+
+    if (statisticResult && statisticResult.data) {
+      this.putFinanceStatisticByOrganismId(statisticResult)
+    }
+    if (totalValueResult && totalValueResult.data) {
+      this.putFinanceTotalValueFromParoquia(totalValueResult)
+    }
   },
   methods: {
-  getFinanceTotalValueFromParoquia(){
+  putFinanceStatisticByOrganismId(r) {
+    
+    if (r.error) return
+    this.validated = r.data.validated
+    this.status = r.data.status
+    this.contributionOutputSum = r.data.contributionOutput
+    this.contributionOutputNum = r.data.contributionOutputNum
+    this.contributionEntriesSum = r.data.contributionEntries
+    r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
+    const saldoContribuicao = r.data.contributionEntriesNum
+    const saldoDespesas = r.data.contributionOutputNum
+    const teste = saldoContribuicao - saldoDespesas;
+    this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
+    this.table.output = {
+      contribuicaoDistrito: '',
+      devolucaoEmprestimoIELB: '',
+      todasSaidas: ''
+    },
+    r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
+    this.table.entries = {
+      saldoAnterior: '',
+      receitasRegulares: {
+        ofertasDominicais: '',
+        ofertasMensais: '',
+        receitasAlugueis: '',
+      },
+      ofertasEspeciais: '',
+      campanhasEspecificas: '',
+      auxilio: '',
+      emprestimos: '',
+      todasOutrasReceitas: '',
+    }
+    this.calculateOfferPercents()
+  },
+  putFinanceTotalValueFromParoquia(r) {
+    console.log(r, 'por que aqui não entra na data do vue?')
+    if (r.error) {
+      this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
+      return
+    }
+    r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
+    r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
+    this.paroquiaData = r.data
+  },
+  async getFinanceTotalValueFromParoquia(){
     const opt = {
       route: "/desktop/statistics/getFinanceTotalValueFromParoquia",
     }
     this.$q.loading.show()
-    useFetch(opt).then((r) => {
-      this.$q.loading.hide()
-      if (r.error) {
-        this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
-        return
-      }
-      r.data.contributionEntries = this.formatCurrency(r.data.totalEntradas)
-      r.data.contributionOutput = this.formatCurrency(r.data.totalSaidas)
-      this.paroquiaData = r.data
-    });
+    let r = await useFetch(opt)
+    this.$q.loading.hide()
+    return r
   },
   formatCurrency (d) {
     return d.toString().replace('.', ',')
@@ -534,6 +588,7 @@ export default defineComponent({
         return
       }
       this.$q.notify('Rascunho salvo com sucesso!')
+      this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId)
     });
   },
   validateForm () {
@@ -593,33 +648,6 @@ export default defineComponent({
 
     return inteiro + ',' + decimal
   },
-  saveDraftOnBeforeUnmount() {
-    const opt = {
-      route: "/desktop/statistics/insertFinanceStatisticsDraft",
-      body: {
-        organismId: this.$route.query.organismId,
-        financeData: this.table,
-        contribuitionOutput: this.contributionOutputSum
-      },
-    };
-    opt.body.financeData.totais = this.calculateTotals()
-    if (Object.keys(this.table.output).length > 0) {
-      opt.body.financeData = this.table;
-    } else if (Object.keys(this.table.entry).length > 0) {
-      opt.body.financeData = this.table;
-    }else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
-      opt.body.financeData = this.table
-    }
-    this.$q.loading.show()
-    useFetch(opt).then((r) => {
-      this.$q.loading.hide()
-      if (r.error) {
-        this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
-        return
-      }
-      this.$q.notify('Rascunho salvo com sucesso!')
-    });
-  },
   getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
@@ -632,7 +660,7 @@ export default defineComponent({
       this.congregationName = r.data.organismName 
     });
   },
-  getFinanceStatisticByOrganismId() {
+  async getFinanceStatisticByOrganismId() {
     const opt = {
       route: "/desktop/statistics/getFinanceStatisticByOrganismId",
       body: {
@@ -642,42 +670,9 @@ export default defineComponent({
       },
     };
     this.$q.loading.show()
-    useFetch(opt).then((r) => {
-      this.$q.loading.hide()
-      if (r.error || !r.data) return
-      this.validated = r.data.validated
-      this.status = r.data.status
-      this.contributionOutputSum = r.data.contributionOutput
-      this.contributionOutputNum = r.data.contributionOutputNum
-      this.contributionEntriesSum = r.data.contributionEntries
-      r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
-      const saldoContribuicao = r.data.contributionEntriesNum
-      const saldoDespesas = r.data.contributionOutputNum
-      const teste = saldoContribuicao - saldoDespesas;
-      this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      
-      r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
-      this.table.output = {
-        contribuicaoDistrito: '',
-        devolucaoEmprestimoIELB: '',
-        todasSaidas: ''
-      },
-      r.data.financeData && r.data.financeData.entries ? this.table.entries = r.data.financeData.entries :  
-      this.table.entries = {
-        saldoAnterior: '',
-        receitasRegulares: {
-          ofertasDominicais: '',
-          ofertasMensais: '',
-          receitasAlugueis: '',
-        },
-        ofertasEspeciais: '',
-        campanhasEspecificas: '',
-        auxilio: '',
-        emprestimos: '',
-        todasOutrasReceitas: '',
-      }
-      this.calculateOfferPercents()
-    });
+    let r = await useFetch(opt)
+    this.$q.loading.hide()
+    return r
   },
   }
 })

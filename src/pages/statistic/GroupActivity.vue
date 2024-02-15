@@ -444,7 +444,7 @@ export default defineComponent({
   },
   async beforeUnmount() {
     const r = await this.getGroupActivitiesByOrganismId();
-    if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
+    if ((r.data && r.data.status && r.data.status.value === 'notSent') || (r.data && !r.data.status)) this.saveDraft()
   },
   async beforeMount() {
     const r = await this.getGroupActivitiesByOrganismId();
