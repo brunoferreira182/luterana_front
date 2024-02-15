@@ -173,7 +173,7 @@
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
-                    v-if="table.output.contributionOnSgaLocal > 0"
+                    v-if="table.output.contributionOnSga > 0"
                   >
                     Contribuição registrada na Administração Nacional:<br>
                     R$
