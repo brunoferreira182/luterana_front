@@ -171,7 +171,7 @@
                     Contribuição registrada na Administração Nacional:<br>
                     R$
                     <strong class="text-h6">
-                      {{ table.output.contributionOnSgaLocal }}
+                      {{ table.output.contributionOnSgaLocal ?  table.output.contributionOnSgaLocal : contributionOutputSum}}
                     </strong><br>
                     <div v-if="contributionPercent">
                     Percentual: 
@@ -417,13 +417,19 @@ export default defineComponent({
     // return d
   },
   calculateOfferPercents(){
+    console.log('coaijsdiochanhouy')
     let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.replaceAll('.', '').replace(',', '.')
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.replaceAll('.', '').replace(',', '.')
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.replaceAll('.', '').replace(',', '.')
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
-    this.contributionPercent === 'NaN%' ? this.contributionPercent = '0%' : this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%' 
-    // this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
+    this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%' 
+    console.log(ofertasDominicais,' +this.table.output.contributionOnSga')
+    console.log(ofertasMensais,' +this.table.output.contributionOnSga')
+    console.log(receitasAlugueis,' +this.table.output.contributionOnSga')
+    console.log(totalReceitas,' +this.table.output.contributionOnSga')
+    console.log(+this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
+    console.log(this.table.output.contributionOnSga,' +this.table.output.contributionOnSga')
   },
   async saveOficial() {
     const validated = this.validateForm()
@@ -633,7 +639,7 @@ export default defineComponent({
       this.contributionOutputSum = r.data.contributionOutput
       this.contributionOutputNum = r.data.contributionOutputNum
       this.contributionEntriesSum = r.data.contributionEntries
-      r.data.contributionOutputSGANum ? this.table.output.contributionOnSga = r.data.contributionOutputSGANum : this.table.output.contributionOnSga = 0
+      r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
       const saldoContribuicao = r.data.contributionEntriesNum
       const saldoDespesas = r.data.contributionOutputNum
       const teste = saldoContribuicao - saldoDespesas;
