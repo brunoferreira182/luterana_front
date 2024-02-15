@@ -442,15 +442,16 @@ export default defineComponent({
       status: null
     };
   },
-  beforeUnmount(){
-    if (this.status && this.status.value === 'sent') return
-    this.saveDraftOnBeforeUnmount()
+  async beforeUnmount() {
+    const r = await this.getGroupActivitiesByOrganismId();
+    if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
   },
-  beforeMount() {
-    this.getGroupActivitiesByOrganismId();
+  async beforeMount() {
+    const r = await this.getGroupActivitiesByOrganismId();
+    this.putGroupActivitiesOnData(r)
   },
   methods: {
-    getGroupActivitiesByOrganismId() {
+    async getGroupActivitiesByOrganismId() {
       const opt = {
         route: "/desktop/statistics/getCongregacaoByOrganismId",
         body: {
@@ -458,27 +459,29 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) return;
-        this.validated = r.data.validated
-        this.congregationName = r.data.organismName;
-        this.departamentos = r.data.childData;
-        this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
-        if (r.data.status) {
-          this.status = r.data.status
-        }
-      });
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      return r
+    },
+    putGroupActivitiesOnData (r) {
+      if (r.error) return;
+      this.validated = r.data.validated
+      this.congregationName = r.data.organismName;
+      this.departamentos = r.data.childData;
+      this.departamentos = this.departamentos.filter( item => (item.organismConfigName !== 'Ponto de Missão'))
+      if (r.data.status) {
+        this.status = r.data.status
+      }
     },
     expand(item) {
       item.expanded = !item.expanded;
       // this.$q.notify("Salvo com sucesso!");
     },
-    saveDraftOnBeforeUnmount(){
+    async saveDraft() { 
       for(let i = 0; i < this.departamentos.length; i++){
-          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
-            return this.$q.notify('CAMPOS OBRIGATÓRIOS NÃO PREENCHIDOS!')
-          }
+        if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
+          return this.$q.notify('Preencha todos os campos Obrigatórios!')
+        }
       }
       this.departamentos.forEach((departamento) => {
         departamento.expanded = false 
@@ -492,36 +495,12 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.show()
-        if (r.error) return;
-        this.$q.notify("Rascunho salvo com sucesso!");
-      });
-    },
-    saveDraft(){
-      for(let i = 0; i < this.departamentos.length; i++){
-          if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
-            return this.$q.notify('Preencha todos os campos Obrigatórios!')
-          }
-      }
-      this.departamentos.forEach((departamento) => {
-        departamento.expanded = false 
-      })
-      const opt = {
-        route: "/desktop/statistics/insertGroupsActivitiesStatisticsDraft",
-        body: {
-          organismId: this.$route.query.organismId,
-          groupActivity: this.departamentos,
-          organismFatherName: this.congregationName
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.show()
-        if (r.error) return;
-        this.$q.notify("Rascunho salvo com sucesso!");
-        this.getGroupActivitiesByOrganismId()
-      });
+      const r = useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) return;
+      this.$q.notify("Rascunho salvo com sucesso!");
+      this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
+      return
     },
     async saveOficial(){
       for(let i = 0; i < this.departamentos.length; i++){
@@ -554,24 +533,14 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify('Estatística incompleta')
-          return
-        }
-        this.$q.notify("Atividades salvas com sucesso!");
-        this.$router.push('/statistic/introWriteStatisticData')
-        // this.getGroupActivitiesByOrganismId()
-      });
-      this.getGroupActivitiesByOrganismId()
-      console.log(this.status, 'sem timeout')
-      this.$q.notify("Atividades salvas com sucesso!");
-      // this.$router.back()
-    },
-    goToStatistics() {
-      const organismId = this.$route.query.organismId;
-      this.$router.push("/user/statistic?organismId=" + organismId);
+      r = await useFetch(opt)
+      this.$q.loading.hide()
+      if (r.error) {
+        this.$q.notify('Estatística incompleta')
+        return
+      }
+      this.$q.notify("Etapa finalizada com sucesso!");
+      this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
     },
   },
 });
