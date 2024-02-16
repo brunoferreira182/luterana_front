@@ -633,7 +633,8 @@
                     @remove="removeServicesData"
                   />
                 </div>
-                <div v-if="field.type.type === 'secretary'">
+                
+                <!-- <div v-if="field.type.type === 'secretary'">
                   <q-btn
                     v-if="!field.value || !field.value.length > 0"
                     label="Secretária"
@@ -655,7 +656,7 @@
                     @remove="removeSecretary"
                     @edit="editSecretary"
                   />
-                </div>
+                </div> -->
                 <div v-if="field.type.type === 'closeDate'">
                   <q-input
                     type="date"
@@ -674,6 +675,51 @@
                 :fieldIndex="0"
                 :disableButtons="true"
               />
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
+                <div
+                  v-for="func in functions"
+                  :key="func"
+                >
+                  <div v-if="func.functionName === 'Secretária Contratada'">
+                    <div class="text-h6">
+                      {{ func.functionName }}
+                    </div>
+                    <q-item
+                      style="border-radius: 1rem;"
+                      class="q-ml-sm bg-grey-2"
+                      v-for="user in func.users"
+                      :key="user"
+                    > 
+                      <q-item-section>
+                        {{ user.userName }}
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-btn
+                        icon="delete"
+                        dense
+                        flat
+                        color="red"
+                        rounded
+                        @click.stop="dialogOpenDeleteUserFromFunction(user)"
+                      >
+                        <q-tooltip>Remover secretária</q-tooltip>
+                      </q-btn>
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                </div>
+                <q-btn
+                  color="primary"
+                  flat
+                  rounded
+                  unelevated
+                  label="Secretária"
+                  icon="add"
+                  @click="linkSecretaryToFunction()"
+                >
+
+                </q-btn>
+              </div>
             </div>
             <q-separator vertical class="q-ma-md"/>
             <div class="col-4">
@@ -682,7 +728,7 @@
               </div>
               <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                 <CardFunction
-                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true && func.group === 'function'"   
+                  v-if="func.functionName !== 'Pastor' && func.functionName !== 'Secretária Contratada' && func.functionName !== 'Pastor em Paróquia' && !func.properties.data.properties.hideFunctionDetail === true && func.group === 'function'"   
                   :func="func"
                   :funcIndex="funcIndex"
                   @insertObservation="dialogInsertObservation"
@@ -1926,7 +1972,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
-import CardSecretary from '../../components/CardSecretary.vue'
+// import CardSecretary from '../../components/CardSecretary.vue'
 // import DialogAddServices from '../../components/DialogAddServices.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
@@ -1942,7 +1988,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
-    DialogAddPastoralStatus, CardSecretary, CardServices
+    DialogAddPastoralStatus, CardServices
   },
   data() {
     return {
@@ -3505,6 +3551,16 @@ export default defineComponent({
         if (func.functionName === 'Pastor') {
           this.dialogInsertUserInFunction.selectedFunc = func;
           this.dialogInsertUserInFunction.functionType = 'Pastor';
+          this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+          this.dialogInsertUserInFunction.open = true;
+        }
+      })
+    },
+    linkSecretaryToFunction() {
+      this.functions.forEach((func, ifunc) => {
+        if (func.functionName === 'Secretária Contratada') {
+          this.dialogInsertUserInFunction.selectedFunc = func;
+          this.dialogInsertUserInFunction.functionType = 'Secretária Contratada';
           this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
           this.dialogInsertUserInFunction.open = true;
         }
