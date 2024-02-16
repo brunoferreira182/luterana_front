@@ -173,7 +173,7 @@
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
-                    v-if="table.output.contributionOnSga > 0"
+                    v-if="table.output.contributionOnSga > 0 && totalReceitas > 0"
                   >
                     Contribuição registrada na Administração Nacional:<br>
                     R$
@@ -191,7 +191,7 @@
                       <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
                     </template>
                   </q-banner>
-                  <q-banner v-else class="bg-orange text-white q-mb-lg">
+                  <q-banner v-else-if="totalReceitas > 0" class="bg-orange text-white q-mb-lg">
                     Não há contribuição registrada na Administração Nacional
                     <template v-slot:action>
                       <q-btn flat color="white" label="Reportar erro" @click="dialogReportValueSGAError = true"/>
@@ -385,6 +385,7 @@ export default defineComponent({
         output: {
           contributionOnSga: '',
           contributionOnSgaLocal: '',
+          contributionOnSgaLocalNum: '',
           contribuicaoDistrito: "",
           devolucaoEmprestimoIELB: "",
           todasSaidas: ""
@@ -403,29 +404,26 @@ export default defineComponent({
       contributionNumber: 0,
       saldoCongregacao: '',
       status: null,
-      saldoCongregacaoNumber: 0
+      saldoCongregacaoNumber: 0,
+      totalReceitas: 0
     }
   },
   async beforeUnmount(){
-    const promisses = [
-      this.getFinanceStatisticByOrganismId(),
-      this.getFinanceTotalValueFromParoquia()
-    ]
-    await Promise.all(promisses)
-    if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
+    let r = await this.getFinanceStatisticByOrganismId()
+    if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
+
+    // const promisses = [
+    //   this.getFinanceStatisticByOrganismId(),
+    //   this.getFinanceTotalValueFromParoquia()
+    // ]
+    // await Promise.all(promisses)
+    // if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
   },
   async beforeMount() {
-    const [statisticResult, totalValueResult] = await Promise.all([
-      this.getFinanceStatisticByOrganismId(),     
-      this.getFinanceTotalValueFromParoquia()
-    ])
-
-    if (statisticResult && statisticResult.data) {
-      this.putFinanceStatisticByOrganismId(statisticResult)
-    }
-    if (totalValueResult && totalValueResult.data) {
-      this.putFinanceTotalValueFromParoquia(totalValueResult)
-    }
+    let r = await this.getFinanceStatisticByOrganismId()
+    this.putFinanceStatisticByOrganismId(r)
+    r = await this.getFinanceTotalValueFromParoquia()
+    this.putFinanceTotalValueFromParoquia(r)
   },
   methods: {
   putFinanceStatisticByOrganismId(r) {
@@ -436,7 +434,7 @@ export default defineComponent({
     this.contributionOutputSum = r.data.contributionOutput ? r.data.contributionOutput : ''
     this.contributionOutputNum = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
     this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
-    r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
+    // r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
     const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
     const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
     const teste = saldoContribuicao - saldoDespesas;
@@ -465,12 +463,15 @@ export default defineComponent({
     if (r.data.contributionOnSgaFirst) {
       this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
       this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
+    } else {
+      this.table.output.contributionOnSga = r.data.financeData.output.contributionOnSga
+      this.table.output.contributionOnSgaLocal = r.data.financeData.output.contributionOnSgaLocal
+      this.table.output.contributionOnSgaLocalNum = r.data.financeData.output.contributionOnSgaLocalNum
     }
-    this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
+    // this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
     this.calculateOfferPercents()
   },
   putFinanceTotalValueFromParoquia(r) {
-    console.log(r, 'por que aqui não entra na data do vue?')
     if (r.error) {
       this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
       return
@@ -497,6 +498,7 @@ export default defineComponent({
     let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replace(',', '.')
     let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replace(',', '.')
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
+    this.totalReceitas = totalReceitas
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
     this.contributionPercent = Math.trunc(this.contributionNumber * 100) + '%'
     this.calculateTotals()
@@ -568,7 +570,7 @@ export default defineComponent({
       return
     }
     this.$q.notify('Etapa finalizada com sucesso')
-    this.$router.push('/statistic/introWriteStatisticData')
+    this.$router.back()
   },
   saveDraft() {
     const formatedEntriesAndOutput = this.formatFinanceData()
@@ -581,6 +583,7 @@ export default defineComponent({
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
+    console.log(this.calculateTotals(), 'essa meme')
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -595,6 +598,7 @@ export default defineComponent({
         this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
         return
       }
+      this.calculateTotals()
       this.$q.notify('Rascunho salvo com sucesso!')
       this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId)
     });
@@ -625,15 +629,29 @@ export default defineComponent({
       + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.toString().replace(/./, '').replaceAll(',', '.')
       + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
+    // totalEntradas += (this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'))
     
     let totalSaidas = 
       +this.table.output.contribuicaoDistrito.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.toString().replaceAll('.', '').replaceAll(',', '.')
+
+      // console.log('entrou aqui?', totalEntradas, totalSaidas)
+      // console.log(+this.table.entries.saldoAnterior.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
+      // + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
+      // )
+      // console.log(+this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'), 'campanhasEspecificas')
 
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
     this.contributionOutputSum = this.formatToCurrency(totalSaidas)
@@ -680,6 +698,7 @@ export default defineComponent({
     this.$q.loading.show()
     let r = await useFetch(opt)
     this.$q.loading.hide()
+    this.calculateTotals()
     return r
   },
   }
