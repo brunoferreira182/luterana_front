@@ -578,7 +578,6 @@ export default defineComponent({
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
-    // console.log(this.calculateTotals(), 'essa meme')
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -644,7 +643,6 @@ export default defineComponent({
     return +val.toString().replace('.', '').replace('.', '').replace('.', '').replace(',', '.')
   },
   formatToCurrency (v) {
-    // console.log(v, 'v aqui')
     let inteiro
     let decimal
     if (v % 1 === 0) {
