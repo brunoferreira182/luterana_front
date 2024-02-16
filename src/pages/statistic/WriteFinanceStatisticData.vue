@@ -583,6 +583,7 @@ export default defineComponent({
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
+    console.log(this.calculateTotals(), 'essa meme')
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -628,11 +629,11 @@ export default defineComponent({
       + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.toString().replace(/./, '').replaceAll(',', '.')
       + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
-    totalEntradas += (this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'))
+    // totalEntradas += (this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'))
     
     let totalSaidas = 
       +this.table.output.contribuicaoDistrito.toString().replaceAll('.', '').replaceAll(',', '.')
