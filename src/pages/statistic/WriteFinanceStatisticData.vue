@@ -570,7 +570,7 @@ export default defineComponent({
       return
     }
     this.$q.notify('Etapa finalizada com sucesso')
-    this.$router.push('/statistic/introWriteStatisticData')
+    this.$router.back()
   },
   saveDraft() {
     const formatedEntriesAndOutput = this.formatFinanceData()
