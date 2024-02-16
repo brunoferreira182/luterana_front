@@ -409,33 +409,21 @@ export default defineComponent({
     }
   },
   async beforeUnmount(){
-    const promisses = [
-      this.getFinanceStatisticByOrganismId(),
-      this.getFinanceTotalValueFromParoquia()
-    ]
-    await Promise.all(promisses)
-    if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
+    let r = await this.getFinanceStatisticByOrganismId()
+    if (r.data.status.value === 'notSent') this.saveDraft()
+
+    // const promisses = [
+    //   this.getFinanceStatisticByOrganismId(),
+    //   this.getFinanceTotalValueFromParoquia()
+    // ]
+    // await Promise.all(promisses)
+    // if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
   },
   async beforeMount() {
     let r = await this.getFinanceStatisticByOrganismId()
     this.putFinanceStatisticByOrganismId(r)
-
     r = await this.getFinanceTotalValueFromParoquia()
     this.putFinanceTotalValueFromParoquia(r)
-
-
-
-    // const [statisticResult, totalValueResult] = await Promise.all([
-    //   this.getFinanceStatisticByOrganismId(),     
-    //   this.getFinanceTotalValueFromParoquia()
-    // ])
-
-    // if (statisticResult && statisticResult.data) {
-    //   this.putFinanceStatisticByOrganismId(statisticResult)
-    // }
-    // if (totalValueResult && totalValueResult.data) {
-    //   this.putFinanceTotalValueFromParoquia(totalValueResult)
-    // }
   },
   methods: {
   putFinanceStatisticByOrganismId(r) {
