@@ -131,6 +131,7 @@
                     v-model="table.entries.campanhasEspecificas"
                     @blur="calculateTotals"
                   />
+
                 </div>
 
                 <div class="no-margin">
@@ -149,7 +150,7 @@
                     label="Empréstimos"
                     prefix="R$"
                     reverse-fill-mask
-                    mask="###.###.###,##"
+                    mask="#.###.###,##"
                     v-model="table.entries.emprestimos"
                     @blur="calculateTotals"
                   />
@@ -378,6 +379,7 @@ export default defineComponent({
           },
           ofertasEspeciais: "",
           campanhasEspecificas: "",
+          campanhasEspecificas2: '',
           auxilio: "",
           emprestimos: "",
           todasOutrasReceitas: "",
@@ -411,13 +413,6 @@ export default defineComponent({
   async beforeUnmount(){
     let r = await this.getFinanceStatisticByOrganismId()
     if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
-
-    // const promisses = [
-    //   this.getFinanceStatisticByOrganismId(),
-    //   this.getFinanceTotalValueFromParoquia()
-    // ]
-    // await Promise.all(promisses)
-    // if ((!this.status) || (this.status && this.status.value === 'notSent')) this.saveDraft()
   },
   async beforeMount() {
     let r = await this.getFinanceStatisticByOrganismId()
@@ -431,9 +426,9 @@ export default defineComponent({
     if (r.error) return
     this.validated = r.data.validated
     this.status = r.data.status
-    this.contributionOutputSum = r.data.contributionOutput ? r.data.contributionOutput : ''
+    // this.contributionOutputSum = r.data.contributionOutput ? r.data.contributionOutput : ''
     this.contributionOutputNum = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
-    this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
+    // this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
     // r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
     const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
     const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
@@ -494,9 +489,9 @@ export default defineComponent({
     // return d
   },
   calculateOfferPercents(){
-    let ofertasDominicais = +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replace(',', '.')
-    let ofertasMensais = +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replace(',', '.')
-    let receitasAlugueis = +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replace(',', '.')
+    let ofertasDominicais = this.formatToNumber(this.table.entries.receitasRegulares.ofertasDominicais)
+    let ofertasMensais = this.formatToNumber(this.table.entries.receitasRegulares.ofertasMensais)
+    let receitasAlugueis = this.formatToNumber(this.table.entries.receitasRegulares.receitasAlugueis)
     let totalReceitas = ofertasDominicais + ofertasMensais + receitasAlugueis
     this.totalReceitas = totalReceitas
     this.contributionNumber = (+this.table.output.contributionOnSga / +totalReceitas)
@@ -506,24 +501,24 @@ export default defineComponent({
   formatFinanceData () {
     const formatted = {
       entries: {
-        saldoAnterior: +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replace(',', '.'),
-        auxilio: +this.table.entries.auxilio.toString().replaceAll('.', '').replace(',', '.'),
-        ofertasEspeciais: +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replace(',', '.'),
-        emprestimos: +this.table.entries.emprestimos.toString().replaceAll('.', '').replace(',', '.'),
-        campanhasEspecificas: +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replace(',', '.'),
-        saldoAnterior: +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replace(',', '.'),
-        todasOutrasReceitas: +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replace(',', '.'),
+        saldoAnterior: this.formatToNumber(this.table.entries.saldoAnterior),
+        auxilio: this.formatToNumber(this.table.entries.auxilio),
+        ofertasEspeciais: this.formatToNumber(this.table.entries.ofertasEspeciais),
+        emprestimos: this.formatToNumber(this.table.entries.emprestimos),
+        campanhasEspecificas: this.formatToNumber(this.table.entries.campanhasEspecificas),
+        saldoAnterior: this.formatToNumber(this.table.entries.saldoAnterior),
+        todasOutrasReceitas: this.formatToNumber(this.table.entries.todasOutrasReceitas),
         receitasRegulares: {
-          ofertasDominicais: +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replace(',', '.'),
-          ofertasMensais: +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replace(',', '.'),
-          receitasAlugueis: +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replace(',', '.'),
+          ofertasDominicais: this.formatToNumber(this.table.entries.receitasRegulares.ofertasDominicais),
+          ofertasMensais: this.formatToNumber(this.table.entries.receitasRegulares.ofertasMensais),
+          receitasAlugueis: this.formatToNumber(this.table.entries.receitasRegulares.receitasAlugueis),
         }
       },
       output: {
         contributionOnSga: this.table.output.contributionOnSga,
-        contribuicaoDistrito: +this.table.output.contribuicaoDistrito.replaceAll('.', '').replace(',', '.'),
-        devolucaoEmprestimoIELB: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
-        todasSaidas: +this.table.output.devolucaoEmprestimoIELB.replaceAll('.', '').replace(',', '.'),
+        contribuicaoDistrito: this.formatToNumber(this.table.output.contribuicaoDistrito),
+        devolucaoEmprestimoIELB: this.formatToNumber(this.table.output.devolucaoEmprestimoIELB),
+        todasSaidas: this.formatToNumber(this.table.output.devolucaoEmprestimoIELB),
       }
     }
     return formatted
@@ -583,7 +578,7 @@ export default defineComponent({
       },
     };
     opt.body.financeData.totais = this.calculateTotals()
-    console.log(this.calculateTotals(), 'essa meme')
+    // console.log(this.calculateTotals(), 'essa meme')
     if (Object.keys(this.table.output).length > 0) {
       opt.body.financeData = formatedEntriesAndOutput;
     } else if (Object.keys(this.table.entry).length > 0) {
@@ -622,37 +617,22 @@ export default defineComponent({
     return validated
   },
   calculateTotals () {
-    
     let totalEntradas = 
-      +this.table.entries.saldoAnterior.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.campanhasEspecificas.toString().replace(/./, '').replaceAll(',', '.')
-      + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
-    // totalEntradas += (this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'))
+      this.formatToNumber(this.table.entries.saldoAnterior)
+      + this.formatToNumber(this.table.entries.receitasRegulares.ofertasDominicais)
+      + this.formatToNumber(this.table.entries.receitasRegulares.ofertasMensais)
+      + this.formatToNumber(this.table.entries.receitasRegulares.receitasAlugueis)
+      + this.formatToNumber(this.table.entries.ofertasEspeciais)
+      + this.formatToNumber(this.table.entries.campanhasEspecificas)
+      + this.formatToNumber(this.table.entries.auxilio)
+      + this.formatToNumber(this.table.entries.emprestimos)
+      + this.formatToNumber(this.table.entries.todasOutrasReceitas)
     
     let totalSaidas = 
-      +this.table.output.contribuicaoDistrito.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.output.devolucaoEmprestimoIELB.toString().replaceAll('.', '').replaceAll(',', '.')
-      + +this.table.output.todasSaidas.toString().replaceAll('.', '').replaceAll(',', '.')
-
-      // console.log('entrou aqui?', totalEntradas, totalSaidas)
-      // console.log(+this.table.entries.saldoAnterior.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
-      // + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
-      // )
-      // console.log(+this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'), 'campanhasEspecificas')
-
+      this.formatToNumber(this.table.output.contribuicaoDistrito)
+      + this.formatToNumber(this.table.output.devolucaoEmprestimoIELB)
+      + this.formatToNumber(this.table.output.todasSaidas)
+    
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
     this.contributionOutputSum = this.formatToCurrency(totalSaidas)
     this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas)
@@ -660,7 +640,11 @@ export default defineComponent({
     return { totalSaidas, totalEntradas }
 
   },
+  formatToNumber (val) {
+    return +val.toString().replace('.', '').replace('.', '').replace('.', '').replace(',', '.')
+  },
   formatToCurrency (v) {
+    // console.log(v, 'v aqui')
     let inteiro
     let decimal
     if (v % 1 === 0) {
@@ -698,7 +682,7 @@ export default defineComponent({
     this.$q.loading.show()
     let r = await useFetch(opt)
     this.$q.loading.hide()
-    this.calculateTotals()
+    // this.calculateTotals()
     return r
   },
   }
