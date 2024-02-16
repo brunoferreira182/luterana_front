@@ -2366,29 +2366,18 @@ export default defineComponent({
       this.dialogAddTimeForDay.open = false
     },
     confirmAddEventsMonth() {
-      let allHaveTime = true;
-
       this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
         if (w.value && w.value.length > 0) {
           const eventsWithTime = w.value.filter((v) => v.time);
-          if (eventsWithTime.length > 0) {
-            if (!this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices) {
-              this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = [];
-            }
-            this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices.push({
-              ...this.dialogAddServices.selectedEventOption,
-              weeks: [{ value: eventsWithTime, label: w.label  }]  
-            });
-          } else {
-            allHaveTime = false;
+          if (eventsWithTime.length === 0) {
             this.$q.notify('Preencha o horário para pelo menos um evento.');
+            return
           }
         }
       });
-
-      if (allHaveTime) {
-        this.clearDialogAddServices();
-      }
+      this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = 
+      this.dialogAddServices.selectedEventOption
+      this.clearDialogAddServices();
     },
   
     // confirmAddEventsDayAndHour() {
