@@ -193,7 +193,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return
         this.validationResume = r.data
-        console.log(this.validationResume)
         if (
           this.validationResume &&
           this.validationResume.financeStatistics === 't' &&

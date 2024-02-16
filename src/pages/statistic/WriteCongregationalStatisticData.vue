@@ -2198,7 +2198,6 @@ export default defineComponent({
       this.dialogChangeCongregationName.iOrg = iOrg
     },
     requestModifications () {
-      console.log(this.status)
       const opt = {
         route: '/desktop/statistics/requestModifications',
         body: {
@@ -2213,7 +2212,6 @@ export default defineComponent({
       })
     },
     getModificationsRequest () {
-        console.log('chupando bala');
         const opt = {
           route: '/desktop/statistics/getModificationsRequest',
           body: {
