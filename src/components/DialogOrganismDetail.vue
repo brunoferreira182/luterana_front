@@ -275,35 +275,41 @@
       <div class="text-h6 q-pa-md">
         Funções
       </div>
-      <q-card
-        style="border-radius: 1rem"
-        class="bg-grey-3 q-ma-sm q-pa-sm q"
-        flat
+      <div
         v-for="func in props.orgFunc"
         :key="func"
       >
-        <div class="text-subtitle1 text-subtitle2 q-px-md">
-          {{ func.functionName }}
-        </div>
-        <div v-if="func.users && func.users.length">
-          <q-item
-            v-for="orgUser in func.users"
-            :key="orgUser"
-            style="border-radius: 0.5rem;"
-            class="bg-white q-ma-xs"
-          >
-            <q-item-section avatar>
-              <q-icon name="account_circle" size="38px" color="grey"/>
-            </q-item-section>
-            <q-item-section class="text-wrap" lines="2" v-if="orgUser.userName">
-              {{ orgUser.userName }}
-            </q-item-section>
-          </q-item>
-        </div>
-        <div class="q-px-md " v-else>
-          Nenhum usuário nesta função
-        </div>
-      </q-card>
+        <q-card
+          style="border-radius: 1rem"
+          class="bg-grey-3 q-ma-sm q-pa-sm q"
+          flat
+          v-if="func.functionName !== 'Secretária Contratada'"
+        >
+          <div >
+            <div class="text-subtitle1 text-subtitle2 q-px-md">
+              {{ func.functionName }}
+            </div>
+            <div v-if="func.users && func.users.length">
+              <q-item
+                v-for="orgUser in func.users"
+                :key="orgUser"
+                style="border-radius: 0.5rem;"
+                class="bg-white q-ma-xs"
+              >
+                <q-item-section avatar>
+                  <q-icon name="account_circle" size="38px" color="grey"/>
+                </q-item-section>
+                <q-item-section class="text-wrap" lines="2" v-if="orgUser.userName">
+                  {{ orgUser.userName }}
+                </q-item-section>
+              </q-item>
+            </div>
+            <div class="q-px-md " v-else>
+              Nenhum usuário nesta função
+            </div>
+          </div>
+        </q-card>
+      </div>
       <q-card-actions align="center">
         <q-btn
           flat
