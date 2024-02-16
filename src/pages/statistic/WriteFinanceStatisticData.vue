@@ -410,7 +410,7 @@ export default defineComponent({
   },
   async beforeUnmount(){
     let r = await this.getFinanceStatisticByOrganismId()
-    if (r.data.status.value === 'notSent') this.saveDraft()
+    if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
 
     // const promisses = [
     //   this.getFinanceStatisticByOrganismId(),
@@ -472,7 +472,6 @@ export default defineComponent({
     this.calculateOfferPercents()
   },
   putFinanceTotalValueFromParoquia(r) {
-    console.log(r, 'por que aqui não entra na data do vue?')
     if (r.error) {
       this.$q.notify('Ocorreu um erro ao trazer os dados financeiros da paróquia')
       return
@@ -598,6 +597,7 @@ export default defineComponent({
         this.$q.notify('Ocorreu um problema, tente novamente mais tarde')
         return
       }
+      this.calculateTotals()
       this.$q.notify('Rascunho salvo com sucesso!')
       this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId)
     });
@@ -637,6 +637,19 @@ export default defineComponent({
       +this.table.output.contribuicaoDistrito.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.devolucaoEmprestimoIELB.toString().replaceAll('.', '').replaceAll(',', '.')
       + +this.table.output.todasSaidas.toString().replaceAll('.', '').replaceAll(',', '.')
+
+      console.log('entrou aqui?', totalEntradas, totalSaidas)
+      console.log(+this.table.entries.saldoAnterior.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasDominicais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.ofertasMensais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.receitasRegulares.receitasAlugueis.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.ofertasEspeciais.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.auxilio.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.emprestimos.toString().replaceAll('.', '').replaceAll(',', '.')
+      + +this.table.entries.todasOutrasReceitas.toString().replaceAll('.', '').replaceAll(',', '.')
+      )
+      console.log(+this.table.entries.campanhasEspecificas.toString().replaceAll('.', '').replaceAll(',', '.'), 'campanhasEspecificas')
 
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
     this.contributionOutputSum = this.formatToCurrency(totalSaidas)
@@ -683,6 +696,7 @@ export default defineComponent({
     this.$q.loading.show()
     let r = await useFetch(opt)
     this.$q.loading.hide()
+    this.calculateTotals()
     return r
   },
   }
