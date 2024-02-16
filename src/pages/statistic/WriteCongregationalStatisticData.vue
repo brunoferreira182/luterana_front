@@ -437,15 +437,15 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices && composition.congregations[iOrg].frequencyServices.length > 0">
                     Quando ocorre os cultos:
                   </div>
                   <q-list
                     bordered
                     class="q-mt-sm"
-                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].value && composition.congregations[iOrg].value.length > 0"
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices && composition.congregations[iOrg].frequencyServices.length > 0"
                   >
-                  <q-item v-for="(day, iDay) in composition.congregations[iOrg].value" :key="day">
+                  <q-item v-for="(day, iDay) in composition.congregations[iOrg].frequencyServices" :key="day">
                     <q-item-section v-if="day.model === 'month'">
                       <q-item-label>
                         <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
@@ -480,7 +480,9 @@
                         :key="days"
                         class="q-ml-xs q-py-md row"
                       >
-                        {{ days.value.label }} às {{ days.value.times.initial }}
+                        <div v-if="days.value && days.value.label && days.value.times && days.value.times.initial">
+                          {{ days.value.label }} às {{ days.value.times.initial }}
+                        </div>
                       </div>
                     </q-item-section>
                     <q-item-section side>
@@ -532,7 +534,7 @@
                 no-caps
                 @update:model-value="verifyAllIsOK(iOrg)"
                 label="Confirmo que revisei os dados e estão de acordo"
-                v-model="verifyAllData"
+                v-model="org.verifyAllData"
               />
             </q-expansion-item>
               </q-item-label>
@@ -2370,10 +2372,10 @@ export default defineComponent({
         if (w.value && w.value.length > 0) {
           const eventsWithTime = w.value.filter((v) => v.time);
           if (eventsWithTime.length > 0) {
-            if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-              this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+            if (!this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices) {
+              this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = [];
             }
-            this.composition.congregations[this.dialogAddServices.iOrg].value.push({
+            this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices.push({
               ...this.dialogAddServices.selectedEventOption,
               weeks: [{ value: eventsWithTime, label: w.label  }]  
             });
@@ -2455,10 +2457,10 @@ export default defineComponent({
         }
       })
       if (allHaveTime) {
-        if (!this.composition.congregations[this.dialogAddServices.iOrg].value) {
-          this.composition.congregations[this.dialogAddServices.iOrg].value = [];
+        if (!this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices) {
+          this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = [];
         }
-        this.composition.congregations[this.dialogAddServices.iOrg].value.push(this.dialogAddServices.selectedEventOption);
+        this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices.push(this.dialogAddServices.selectedEventOption);
         this.clearDialogAddServices()
       }
     },
@@ -2639,15 +2641,20 @@ export default defineComponent({
       this.dialogRemoveCongregation.iOrg = iOrg
     },
     async saveFinal () {
-      if (this.verifyAllData !== true){
-        return this.$q.notify('Confirme que revisou os dados')
-      }
       for (let i = 0; i < this.composition.congregations.length; i++) {
         let congregation = this.composition.congregations[i];
         if (!congregation.paroquialManagement) {
           this.$q.notify('Todas as congregações devem estar completas')
           return
         } 
+        if (!congregation.frequencyServices || !congregation.frequencyServices.length > 0) {
+          this.$q.notify('Preencha o horário de culto de todas as congregações')
+          return
+        }
+        if (!congregation.verifyAllData) {
+          this.$q.notify('Confirme que revisou os dados de todas as congregações')
+          return
+        }
       }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
@@ -3122,6 +3129,7 @@ export default defineComponent({
               }
             })
           }
+          org.verifyAllData = false
         })
         if (!r.data.usuarioEstaEmParoquia) {
           r.data.congregations.forEach((org) => {
