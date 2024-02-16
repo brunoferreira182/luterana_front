@@ -417,6 +417,28 @@
                 />
               </div>
             </div>
+            <div
+              v-for="func in functions"
+              :key="func"
+            >
+              <div
+                v-if="func.functionName === 'Secretária Contratada'"
+              > 
+                <div class="text-h6">
+                  Secretária
+                </div>
+                <q-item
+                  style="border-radius: 1rem;"
+                  class="bg-grey-2"
+                  v-for="user in func.users"
+                  :key="user"
+                >
+                  <q-item-section>
+                    {{ user.userName }}
+                  </q-item-section>
+                </q-item>
+              </div>
+            </div>
             <div class="q-ma-lg justify-start" v-if="child && child.length > 0">
               <div class="q-gutter-md">
                 <div class="text-h5 col"> Vínculos</div>
@@ -1011,7 +1033,7 @@
                   @remove="removeServicesData"
                 />
               </div>
-              <div v-if="field.type.type === 'secretary'">
+              <!-- <div v-if="field.type.type === 'secretary'">
                 <CardSecretary
                   v-if="field.value"
                   :data="field.value"
@@ -1019,7 +1041,7 @@
                   :fieldIndex="fieldIndex"
                   @remove="removeSecretary"
                 />
-              </div>
+              </div> -->
               </div>
               <div class="q-px-sm justify-start" v-if="childOrganismsData">
                 <div class="q-gutter-md">
