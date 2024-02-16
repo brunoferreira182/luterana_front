@@ -437,68 +437,82 @@
                       />
                     </div>  
                   </div>
-                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices && composition.congregations[iOrg].frequencyServices.length > 0">
+                  <div class="text-h6 q-my-sm q-ml-sm" v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices">
                     Quando ocorre os cultos:
                   </div>
                   <q-list
+                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices"
                     bordered
                     class="q-mt-sm"
-                    v-if="composition.congregations[iOrg] && composition.congregations[iOrg].frequencyServices && composition.congregations[iOrg].frequencyServices.length > 0"
                   >
-                  <q-item v-for="(day, iDay) in composition.congregations[iOrg].frequencyServices" :key="day">
-                    <q-item-section v-if="day.model === 'month'">
-                      <q-item-label>
-                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
-                      </q-item-label>
-                      <div
-                        v-for="week in day.weeks"
-                        :key="week"
-                        class="q-ml-xs q-py-md row"
-                      >
-                        <div class="col-4">
-                          {{ week.label }}:
+                    <q-item v-if="composition.congregations[iOrg].frequencyServices.weeks && composition.congregations[iOrg].frequencyServices.weeks.length > 0">
+                      <q-item-section>
+                        <q-item-label>
+                          <strong class="q-mr-sm">
+                            Frequência:
+                          </strong>
+                          {{ composition.congregations[iOrg].frequencyServices.label }}
+                        </q-item-label>
+                        <div
+                          v-for="week in composition.congregations[iOrg].frequencyServices.weeks"
+                          :key="week"
+                          class="row q-mt-md"
+                        >
+                          <div class="col-4">
+                            {{ week.label }}:
+                          </div>
+                            <q-list class="col-8">
+                              <q-item
+                                class="no-padding"
+                                v-for="val in week.value"
+                                :key="val"
+                              >
+                                <q-item-label>
+                                  {{ val.day.label }} às {{ val.time }}
+                                </q-item-label>
+                              </q-item>
+                            </q-list>
+                          </div>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-btn
+                          color="red"
+                          flat
+                          rounded
+                          icon="delete"
+                          @click="removeEventDay(iOrg)"
+                        />
+                      </q-item-section>
+                    </q-item>
+                    <q-item v-else-if="composition.congregations[iOrg].frequencyServices && composition.congregations[iOrg].frequencyServices.days && composition.congregations[iOrg].frequencyServices.days.length > 0">
+                      <q-item-section>
+                        <q-item-label>
+                          <strong class="q-mr-sm">Frequência:</strong> {{composition.congregations[iOrg].frequencyServices.label }}
+                        </q-item-label>
+                        <div
+                          v-for="(days) in composition.congregations[iOrg].frequencyServices.days"
+                          :key="days"
+                          class="q-ml-xs q-py-md row"
+                        >
+                          <div v-if="days.value && days.value.label && days.value.times && days.value.times.initial">
+                            {{ days.value.label }} às {{ days.value.times.initial }}
+                          </div>
                         </div>
-                        <q-list class="col-8">
-                          <q-item
-                            class="no-padding"
-                            v-for="val in week.value"
-                            :key="val"
-                          >
-                            <q-item-label>
-                              {{ val.day.label }} às {{ val.time }}
-                            </q-item-label>
-                          </q-item>
-                        </q-list>
-                      </div>
-                    </q-item-section>
-                    <q-item-section v-else-if="day.model === 'week'">
-                      <q-item-label>
-                        <strong class="q-mr-sm">Frequência:</strong> {{ day.label }}
-                      </q-item-label>
-                      <div
-                        v-for="days in day.days"
-                        :key="days"
-                        class="q-ml-xs q-py-md row"
-                      >
-                        <div v-if="days.value && days.value.label && days.value.times && days.value.times.initial">
-                          {{ days.value.label }} às {{ days.value.times.initial }}
-                        </div>
-                      </div>
-                    </q-item-section>
-                    <q-item-section side>
-                      <q-btn
-                        color="red"
-                        flat
-                        rounded
-                        icon="delete"
-                        @click="removeDay(iOrg, iDay)"
-                      />
-                    </q-item-section>
-                  </q-item>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-btn
+                          color="red"
+                          flat
+                          rounded
+                          icon="delete"
+                          @click="removeEventDay(iOrg)"
+                        />
+                      </q-item-section>
+                    </q-item>
 
-                  </q-list>
+                  </q-list> 
                   <q-btn 
-                    v-if="!status || (status && status.value !== 'sent')"
+                    v-if="(!status || (status && status.value !== 'sent')) && !composition.congregations[iOrg].frequencyServices"
                     label="Adicionar dia e horário do culto"
                     dense
                     no-caps
@@ -2153,6 +2167,9 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
+    removeEventDay(iOrg) {
+      this.composition.congregations[iOrg].frequencyServices = null
+    },
     openDialogAddUser(param) {
       this.dialogAddUser.param = param
       this.dialogAddUser.open = true
@@ -2447,9 +2464,9 @@ export default defineComponent({
       })
       if (allHaveTime) {
         if (!this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices) {
-          this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = [];
+          this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = {};
         }
-        this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices.push(this.dialogAddServices.selectedEventOption);
+        this.composition.congregations[this.dialogAddServices.iOrg].frequencyServices = this.dialogAddServices.selectedEventOption
         this.clearDialogAddServices()
       }
     },
