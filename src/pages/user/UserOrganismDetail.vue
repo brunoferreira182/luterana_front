@@ -485,7 +485,7 @@
             </div>
             <div v-for="(func, funcIndex) in functions" :key="func">
               <CardFunction
-                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia'"
+                v-if="func.functionName !== 'Pastor' && func.functionName !== 'Pastor em Paróquia' && func.functionName !== 'Secretária Contratada'"
                 :func="func"
                 :funcIndex="funcIndex"
                 @clkOpenDialogSolicitation="clkOpenDialogSolicitation"
