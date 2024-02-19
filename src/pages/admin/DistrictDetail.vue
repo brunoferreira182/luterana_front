@@ -176,12 +176,31 @@ export default defineComponent({
           functionId: func.functionId,
           children: []
         }
-        func.users.forEach((user) => {
+        func.users.forEach((user, iUser) => {
           tree.children.push({
             type: 'user',
             label: user.userName,
             header: 'normal',
             userId: user.userId,
+            children: []
+          })
+          func.users.forEach((data) => {
+            tree.children[iUser].children.push({
+              type: 'userData',
+              label: 'E-mail:' + ' ' + data.userEmail,
+              header: 'normal',
+              userId: data.userId
+            })
+            if (data.userPhone) {
+              data.userPhone.forEach((num) => {
+                tree.children[iUser].children.push({
+                  type: 'userData',
+                  label: 'Contato:' + ' ' + num.value,
+                  header: 'normal',
+                  userId: data.userId
+                })
+              })
+            }
           })
         })
         this.functionsListTree.push(tree)
