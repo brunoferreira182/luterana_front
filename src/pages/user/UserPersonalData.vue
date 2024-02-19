@@ -101,7 +101,7 @@
                   </q-btn>
                   <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
                     <div  class="row justify-center">
-                      <q-item-section avatar>
+                      <q-item-section avatar class="no-padding">
                         <q-img 
                           style="border-radius: 1rem"
                           :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 

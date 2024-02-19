@@ -47,7 +47,7 @@
             <q-item-label class="text-h5">Composição</q-item-label>
           </q-item-section>
           <q-chip>
-            {{ cardOrganismName.organismParentLocal }}
+            {{ cardOrganismName.organismParentLocal === 'Paróquia' ?  '' : cardOrganismName.organismParentLocal }}
             {{ cardOrganismName.organismParentName}}
           </q-chip>
           <q-chip

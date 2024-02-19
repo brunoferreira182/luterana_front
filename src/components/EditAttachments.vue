@@ -294,15 +294,15 @@ export default defineComponent({
             priority: this.attachmentInfo.priority,
           },
         },
-        file: []
+        files: []
       };
       if(this.files !== null){
-        opt.file = file
+        opt.files = file
       }
       switch(this.receiverType){
         case 'specificDistrict':
           opt.body.subType = 'district'
-          opt.body.districtId = this.newReceiver._id
+          opt.body.receivers = this.newReceiver._id
         break;
         case 'pastors':
           opt.body.subType = 'pastors'

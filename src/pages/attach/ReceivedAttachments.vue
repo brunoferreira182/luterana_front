@@ -101,7 +101,8 @@ export default defineComponent({
   },
   methods: {
     downloadAttach(e, r) {
-      let arquivo = r;
+      const arquivo = r;
+      console.log(arquivo, 'arquivoarquivo')
       utils.downloadFile({
         filename: arquivo.attach.filename,
         originalname: arquivo.attach.originalname,

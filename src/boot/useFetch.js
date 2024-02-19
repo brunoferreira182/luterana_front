@@ -13,7 +13,7 @@ const useFetch = async ({
   body,
   destinationroute,
   destinationserver,
-  file,
+  files,
   destinationUrl,
 }) => {
   // verifica se o body tem 'project'. Se não tiver, coloca o padrão do .env
@@ -49,18 +49,16 @@ const useFetch = async ({
   let bodyToSend = newBody;
   /// ANEXOS ///////////////////////////////////////
   let form;
-  if (file && file.length > 0) {
+  if (files && files.length > 0) {
     newBody.destinationserver = destinationserver
     newBody.destinationroute = destinationroute
     form = new FormData();
     form.append("body", JSON.stringify(newBody));
-    file.forEach(f => {
-
+    files.forEach(f => {
       const fileName = f.file.name ? f.file.name : 'userFile.png';
       const blob = new Blob([f.file], { type: f.file.type });
-      console.log(blob, 'blob')
-      console.log([f.file], 'f.file')
-      console.log(f, 'fffff')
+      // console.log([f.file], 'f.file')
+      // console.log(f, 'fffff')
       form.append('file', blob, fileName);
     });
     bodyToSend = form;
