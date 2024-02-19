@@ -298,6 +298,22 @@ export default defineComponent({
     this.getOrganismDetailById()
   },
   methods: {
+    clearDialogCongregationDetail() {
+      this.dialogCongregationDetail = {
+        open: false,
+        data: null
+      }
+    },
+    clearDialogAddUserInFunction() {
+      this.dialogAddUserToCongregationFunction = {
+        open: false,
+        selectedUser: null,
+        orgId: null,
+        iFunc: null,
+        functionId: null,
+        initialDate: ''
+      }
+    },
     async addUserToFunction() {
       const organismFunctionId = this.dialogAddUserToCongregationFunction.functionId
       if (!this.dialogAddUserToCongregationFunction.selectedUser || this.dialogAddUserToCongregationFunction.initialDate === '') {
@@ -318,6 +334,8 @@ export default defineComponent({
       if (r.error) return
       this.$q.notify('Usuário inserido na função')
       this.getOrganismDetailById()
+      this.clearDialogAddUserInFunction()
+      this.clearDialogCongregationDetail()
       // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddUserToCongregationFunction.selectedUser.userId, )) {
       //   this.$q.notify('Usuário já incluído nesta função')
       //   return
@@ -482,6 +500,8 @@ export default defineComponent({
 
     },
     getOrganismDetailById() {
+      this.organismListTree = []
+      this.functionsListTree = []
       const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/getDistrictDetail",
