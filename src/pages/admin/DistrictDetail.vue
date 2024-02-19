@@ -35,7 +35,7 @@
                 <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn>
             </div>
-          <div class="items-center" v-else>
+            <div class="items-center" v-else>
               <q-icon
                 v-if="prop.node.type === 'Congregação'"
                 name="church"
@@ -52,8 +52,22 @@
               />
               <span
                 class="cursor-pointer"
-                @click="$router.push('/user/userOrganismDetail?organismId=' + prop.node.organismId)"
               >{{ prop.node.label }}</span>
+            </div>
+            <div
+              v-if="prop.node.type === 'Congregação'"
+              class="items-center"
+            >
+              <q-btn
+                icon="navigate_next"
+                round
+                unelevated
+                color="primary"
+                flat
+                v-on:click.stop="openCongregationDetail(prop.node.organismId)"
+              >
+                <q-tooltip>Abrir informações sobre a congregação {{ prop.node.type }}</q-tooltip>
+              </q-btn>
             </div>
           </template>
         </q-tree>
@@ -116,7 +130,120 @@
             </div>
           </q-card-section>
         </q-card>
-    </q-dialog>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogCongregationDetail.open"
+      >
+        <q-card
+          style="width: 500px;border-radius: 1rem;"
+        >
+          <q-card-section class="text-h6">
+            {{ dialogCongregationDetail.data.childName }}
+          </q-card-section>
+          <q-card-section>
+            <strong>Funções:</strong>
+          </q-card-section>
+          <q-card-section
+            class="q-ml-md"
+          >
+            <div
+              v-for="func, iFunc in dialogCongregationDetail.data.functions"
+              :key="func"
+            >
+              {{ func.functionName }}
+              <q-btn
+                icon="add"
+                color="primary"
+                flat
+                unelevated
+                rounded
+                @click="addUserToCongregationFunction(dialogCongregationDetail.data.childId, iFunc)"
+              />
+              <div
+                v-for="user in func.users"
+                :key="user"
+                class="q-ml-sm q-mt-sm"
+              >
+                {{ user.userName }}
+                <q-btn
+                  icon="delete"
+                  color="red"
+                  flat
+                  rounded
+                  unelevated
+                />
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddUserToCongregationFunction.open"
+      >
+        <q-card
+          style="width: 400px;border-radius: 1rem;"
+        >
+          <q-card-section class="text-center text-h6">
+            Informe o usuário que ocupará a função
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogAddUserToCongregationFunction.selectedUser"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Data início"
+              class="q-pa-sm"
+              filled
+              type="date"
+              v-model="dialogAddUserToCongregationFunction.initialDate"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Cancelar"
+              color="primary"
+              flat
+              unelevated
+              rounded
+              no-caps
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              unelevated
+              rounded
+              @click="addUserToFunction"
+              no-caps
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -151,13 +278,142 @@ export default defineComponent({
       dialogParishDetail: {
         open: false,
         data: null
-      }
+      },
+      dialogCongregationDetail: {
+        open: false,
+        data: null
+      },
+      dialogAddUserToCongregationFunction: {
+        open: false,
+        selectedUser: null,
+        orgId: null,
+        iFunc: null,
+        functionId: null,
+        initialDate: ''
+      },
+      usersOptions: null
     }
   },
   beforeMount() {
     this.getOrganismDetailById()
   },
   methods: {
+    clearDialogCongregationDetail() {
+      this.dialogCongregationDetail = {
+        open: false,
+        data: null
+      }
+    },
+    clearDialogAddUserInFunction() {
+      this.dialogAddUserToCongregationFunction = {
+        open: false,
+        selectedUser: null,
+        orgId: null,
+        iFunc: null,
+        functionId: null,
+        initialDate: ''
+      }
+    },
+    async addUserToFunction() {
+      const organismFunctionId = this.dialogAddUserToCongregationFunction.functionId
+      if (!this.dialogAddUserToCongregationFunction.selectedUser || this.dialogAddUserToCongregationFunction.initialDate === '') {
+        this.$q.notify('Preencha o usuário e a data de início')
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/addUserToFunction',
+        body: {
+          organismFunctionId,
+          userId: this.dialogAddUserToCongregationFunction.selectedUser.userId,
+          dates: {
+            initialDate: this.dialogAddUserToCongregationFunction.initialDate
+          }
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.$q.notify('Usuário inserido na função')
+      this.getOrganismDetailById()
+      this.clearDialogAddUserInFunction()
+      this.clearDialogCongregationDetail()
+      // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddUserToCongregationFunction.selectedUser.userId, )) {
+      //   this.$q.notify('Usuário já incluído nesta função')
+      //   return
+      // }
+    },
+    // verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
+    //   let ret = false
+    //   if ( this.functions && this.functions[functionIndex] && this.functions[functionIndex].functions) {
+    //     this.functions[functionIndex].functions.users.forEach(u => {
+    //       if (u.userId === userIdToVerify) ret = true
+    //     }) 
+    //   } else if (this.functions && this.functions[functionIndex] && this.functions[functionIndex].users) {
+    //     this.functions[functionIndex].users.forEach(u => {
+    //       if (u.userId === userIdToVerify) ret = true
+    //     }) 
+    //   }
+    //   return ret
+    // },
+    getUsers(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      let route
+      if (this.dialogAddUserToCongregationFunction.open = true) {
+        route = "/desktop/adm/getPastores" 
+      } else {
+        route = "/desktop/adm/getUsers" 
+      }
+      const opt = {
+        route: route,
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+
+        update(() => {
+          this.usersOptions = r.data.list;
+        })
+      });
+    },
+    addUserToCongregationFunction(orgId, iFunc) {
+      this.organismChildData.forEach((parish) => {
+        parish.organismChildData.forEach((congregation) => {
+          if (congregation.childId === orgId) {
+            congregation.functions.forEach((func, funcI) => {
+              if (funcI === iFunc) {
+                console.log(func, 'não se mate bruno')
+                this.dialogAddUserToCongregationFunction.functionId = func.functionId
+                return
+              }
+            })
+          }
+        })
+      })
+      this.dialogAddUserToCongregationFunction.orgId = orgId
+      this.dialogAddUserToCongregationFunction.iFunc = iFunc
+      this.dialogAddUserToCongregationFunction.open = true
+    },
+    openCongregationDetail(id) {
+      this.organismChildData.forEach((parish) => {
+        parish.organismChildData.forEach((congregation) => {
+          if (congregation.childId === id) {
+            this.dialogCongregationDetail.data = congregation
+            this.dialogCongregationDetail.open = true
+            return
+          }
+        })
+      })
+    },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
         if (parish.childId === id) {
@@ -176,13 +432,32 @@ export default defineComponent({
           functionId: func.functionId,
           children: []
         }
-        func.users.forEach((user) => {
+        func.users.forEach((user, iUser) => {
           tree.children.push({
             type: 'user',
             label: user.userName,
             header: 'normal',
             userId: user.userId,
+            children: []
           })
+          if (user.userEmail) {
+            tree.children[iUser].children.push({
+              type: 'userData',
+              label: 'E-mail:' + ' ' + user.userEmail,
+              header: 'normal',
+              userId: user.userId
+            })
+          }
+          if (user.userPhone) {
+            user.userPhone.forEach((num) => {
+              tree.children[iUser].children.push({
+                type: 'userData',
+                label: 'Contato:' + ' ' + num.value,
+                header: 'normal',
+                userId: user.userId
+              })
+            })
+          }
         })
         this.functionsListTree.push(tree)
       })
@@ -225,6 +500,8 @@ export default defineComponent({
 
     },
     getOrganismDetailById() {
+      this.organismListTree = []
+      this.functionsListTree = []
       const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/getDistrictDetail",
