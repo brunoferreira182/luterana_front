@@ -56,12 +56,13 @@ const useFetch = async ({
     form.append("body", JSON.stringify(newBody));
     files.forEach(f => {
       const fileName = f.file.name ? f.file.name : 'userFile.png';
+      console.log(f.file.type, 'fffff')
       const blob = new Blob([f.file], { type: f.file.type });
-      // console.log([f.file], 'f.file')
-      // console.log(f, 'fffff')
+      console.log([f.file], 'f.file')
       form.append('file', blob, fileName);
     });
     bodyToSend = form;
+    console.log(bodyToSend, 'PODKASOPKD')
   }
   //////////////////////////////////////////////////
 
