@@ -94,7 +94,7 @@
           style="width: 500px;"
         >
           <q-card-section class="text-h6 text-center">
-            {{ this.dialogParishDetail.data.organismConfigName + ' - ' + this.dialogParishDetail.data.childName }}
+            {{ dialogParishDetail.data.organismConfigName + ' - ' + dialogParishDetail.data.childName }}
           </q-card-section>
           <q-separator class="q-mx-md"/>
           <q-card-section>
@@ -102,30 +102,35 @@
               Funções:
             </div>
             <div class="q-ml-md">
-              <div>
-                <strong>{{ this.dialogParishDetail.data.functions.functionName }}:</strong>
+              <div
+                v-for="(func, iFunc) in dialogParishDetail.data.functions"
+                :key="func"
+              >
+                {{ func.functionName }}
                 <q-btn
                   color="primary"
                   icon="add"
                   rounded
                   unelevated
+                  @click="addUserToOrganismFunction(dialogParishDetail.data.childId, iFunc, true)"
                   class="q-pa-sm"
                   flat
                 />
-              </div>
-              <div 
-                class="q-ml-sm q-my-sm"
-                v-for="user in this.dialogParishDetail.data.functions.users"
-                :key="user"
-              >
-                {{ user.userName }}
-                <q-btn
-                  color="red"
-                  flat
-                  unelevated
-                  rounded
-                  icon="delete"
+                <div
+                  v-for="(user, iUser) in func.users"
+                  :key="user"
+                  class="q-ml-sm"
+                >
+                  {{ user.userName }}
+                  <q-btn
+                    color="red"
+                    flat
+                    unelevated
+                    rounded
+                    @click="removeUserFromFunction(iFunc, iUser, true)"
+                    icon="delete"
                   />
+                </div>
               </div>
             </div>
           </q-card-section>
@@ -147,7 +152,7 @@
             class="q-ml-md"
           >
             <div
-              v-for="func, iFunc in dialogCongregationDetail.data.functions"
+              v-for="(func, iFunc) in dialogCongregationDetail.data.functions"
               :key="func"
             >
               {{ func.functionName }}
@@ -157,10 +162,10 @@
                 flat
                 unelevated
                 rounded
-                @click="addUserToCongregationFunction(dialogCongregationDetail.data.childId, iFunc)"
+                @click="addUserToOrganismFunction(dialogCongregationDetail.data.childId, iFunc, false)"
               />
               <div
-                v-for="user in func.users"
+                v-for="(user, iUser) in func.users"
                 :key="user"
                 class="q-ml-sm q-mt-sm"
               >
@@ -170,6 +175,7 @@
                   color="red"
                   flat
                   rounded
+                  @click="removeUserFromFunction(iFunc, iUser, false)"
                   unelevated
                 />
               </div>
@@ -244,6 +250,52 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogDeleteUserFromFunction.open"
+        @hide="clearDialogRemoveUserFromFunction"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Tem certeza que deseja inativar
+              {{ dialogDeleteUserFromFunction.userData.userName }}?
+            </div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              filled
+              label="Observação"
+              v-model="dialogDeleteUserFromFunction.obsText"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              label="Data final"
+              v-model="dialogDeleteUserFromFunction.finalDate"
+              hint="Informe a data final de ocupação da função"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogDeleteUserFromFunction.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="inactivateUserFromFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -277,7 +329,8 @@ export default defineComponent({
       numOfPastor: 0,
       dialogParishDetail: {
         open: false,
-        data: null
+        data: null,
+        functionId: null
       },
       dialogCongregationDetail: {
         open: false,
@@ -291,13 +344,86 @@ export default defineComponent({
         functionId: null,
         initialDate: ''
       },
-      usersOptions: null
+      usersOptions: null,
+      dialogDeleteUserFromFunction: {
+        open: false,
+        userData: null,
+        obsText: '',
+        finalDate: ''
+      }
     }
   },
   beforeMount() {
     this.getOrganismDetailById()
   },
   methods: {
+    clearDialogParishDetail() {
+      this.dialogParishDetail = {
+        open: false,
+        data: null,
+        functionId: null
+      }
+    },
+    clearDialogRemoveUserFromFunction() {
+      this.dialogDeleteUserFromFunction = {
+        open: false,
+        userData: null,
+        obsText: '',
+        finalDate: ''
+      }
+    },
+    async inactivateUserFromFunction() {
+      if (
+        this.dialogDeleteUserFromFunction.obsText === "" ||
+        this.dialogDeleteUserFromFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivateUserFromFunction",
+        body: {
+          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
+          finalDate: this.dialogDeleteUserFromFunction.finalDate,
+          obsText: this.dialogDeleteUserFromFunction.obsText,
+        },
+      };
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro, tente novamnte mais tarde')
+        return
+      }
+      this.getOrganismDetailById()
+      this.clearDialogRemoveUserFromFunction()
+      this.clearDialogCongregationDetail()
+      this.clearDialogParishDetail()
+    },
+    removeUserFromFunction(iFunc, iUser, parish)  {
+      if (parish) {
+        this.dialogParishDetail.data.functions.forEach((func, i) => {
+          if (i === iFunc) {
+            func.users.forEach((user, j) => {
+              if (j === iUser) {
+                this.dialogDeleteUserFromFunction.userData = user
+              }
+            })
+          }
+        })
+      } else if (!parish) {
+        this.dialogCongregationDetail.data.functions.forEach((func, i) => {
+          if (i === iFunc) {
+            console.log(func, 'tilau se tu me quiseres')
+            func.users.forEach((user, j) => {
+              if (j === iUser) {
+                console.log(user, 'minhocas clandestinas infiltradas pelos fundos')
+                this.dialogDeleteUserFromFunction.userData = user
+              }
+            })
+          }
+        })
+      }
+      this.dialogDeleteUserFromFunction.open = true
+    },
     clearDialogCongregationDetail() {
       this.dialogCongregationDetail = {
         open: false,
@@ -315,7 +441,12 @@ export default defineComponent({
       }
     },
     async addUserToFunction() {
-      const organismFunctionId = this.dialogAddUserToCongregationFunction.functionId
+      let organismFunctionId
+      if (this.dialogAddUserToCongregationFunction) {
+        organismFunctionId = this.dialogAddUserToCongregationFunction.functionId
+      } else if (this.dialogParishDetail) {
+        organismFunctionId = this.dialogParishDetail.functionId
+      }
       if (!this.dialogAddUserToCongregationFunction.selectedUser || this.dialogAddUserToCongregationFunction.initialDate === '') {
         this.$q.notify('Preencha o usuário e a data de início')
         return
@@ -336,6 +467,7 @@ export default defineComponent({
       this.getOrganismDetailById()
       this.clearDialogAddUserInFunction()
       this.clearDialogCongregationDetail()
+      this.clearDialogParishDetail()
       // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddUserToCongregationFunction.selectedUser.userId, )) {
       //   this.$q.notify('Usuário já incluído nesta função')
       //   return
@@ -379,26 +511,28 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide();
         if(r.error){ this.$q.notify(r.errorMessage) }
-
         update(() => {
           this.usersOptions = r.data.list;
         })
       });
     },
-    addUserToCongregationFunction(orgId, iFunc) {
-      this.organismChildData.forEach((parish) => {
-        parish.organismChildData.forEach((congregation) => {
-          if (congregation.childId === orgId) {
-            congregation.functions.forEach((func, funcI) => {
-              if (funcI === iFunc) {
-                console.log(func, 'não se mate bruno')
-                this.dialogAddUserToCongregationFunction.functionId = func.functionId
-                return
-              }
-            })
-          }
+    addUserToOrganismFunction(orgId, iFunc, parish) {
+      if (parish) {
+        this.dialogAddUserToCongregationFunction.functionId = this.dialogParishDetail.data.functions[iFunc].functionId
+      } else if (!parish) {
+        this.organismChildData.forEach((parish) => {
+          parish.organismChildData.forEach((congregation) => {
+            if (congregation.childId === orgId) {
+              congregation.functions.forEach((func, funcI) => {
+                if (funcI === iFunc) {
+                  this.dialogAddUserToCongregationFunction.functionId = func.functionId
+                  return
+                }
+              })
+            }
+          })
         })
-      })
+      }
       this.dialogAddUserToCongregationFunction.orgId = orgId
       this.dialogAddUserToCongregationFunction.iFunc = iFunc
       this.dialogAddUserToCongregationFunction.open = true
@@ -497,7 +631,6 @@ export default defineComponent({
         })
         this.organismListTree.push(tree)
       })
-
     },
     getOrganismDetailById() {
       this.organismListTree = []
@@ -539,9 +672,9 @@ export default defineComponent({
           this.numOfParishs = this.organismChildData.length
           this.mountTree()
           this.mountTreeFunctions()
-          this.organismChildData.forEach((parish) => {
-            this.numOfPastor = this.numOfParishs + parish.functions.users.length
-          })
+          // this.organismChildData.forEach((parish) => {
+          //   this.numOfPastor = this.numOfParishs + parish.functions.users.length
+          // })
         }
       });
     },
