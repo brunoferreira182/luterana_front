@@ -17,6 +17,8 @@ const useUtils = {
   //   document.body.removeChild(link)
   // },
   
+  
+  
   downloadFile (options) {
     console.log(options, 'options dentro downloadfile')
     const opt = {
@@ -25,7 +27,7 @@ const useUtils = {
       // responseType: 'blob',
       route: '/download/' + options.filename
     }
-    useFetch(opt).then(async response => {
+    useFetch(opt).then(async (response) => {
       console.log('entrou', response)
       const blob = new Blob([response], {type: options.type})
       const link = URL.createObjectURL(blob)

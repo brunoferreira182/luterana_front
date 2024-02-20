@@ -103,6 +103,11 @@ export default defineComponent({
     downloadAttach(e, r) {
       const arquivo = r;
       console.log(arquivo, 'arquivoarquivo')
+      if(arquivo.linkForDownload){
+        window.open(arquivo.linkForDownload.includes('https://') ? 
+        arquivo.linkForDownload : 'https://' + arquivo.linkForDownload)
+        return
+      }
       utils.downloadFile({
         filename: arquivo.attach.filename,
         originalname: arquivo.attach.originalname,
