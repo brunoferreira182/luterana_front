@@ -226,7 +226,7 @@ export default defineComponent({
           num: 0,
           label: 'Pastores'
         },
-      ]
+      ],
     }
   },
   beforeMount() {
@@ -240,6 +240,7 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
+      this.getOrganismDetailById(r.data.districtId)
     },
     clearDialogParishDetail() {
       this.dialogParishDetail = {
@@ -357,14 +358,13 @@ export default defineComponent({
         this.organismListTree.push(tree)
       })
     },
-    getOrganismDetailById() {
+    getOrganismDetailById(id) {
       this.organismListTree = []
       this.functionsListTree = []
-      const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/getDistrictDetail",
         body: {
-          organismId: organismId,
+          organismId: id,
         },
       };
       this.$q.loading.show()
