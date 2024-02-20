@@ -231,6 +231,10 @@ const routes = [
         component: () => import("pages/orgs/UserDashboard.vue"),
       },
       {
+        path: "/user/userDistrict",
+        component: () => import("pages/user/UserDistrict.vue"),
+      },
+      {
         path: "/orgs/userOrganismsList",
         component: () => import("pages/orgs/UserOrganismsList.vue"),
       },
