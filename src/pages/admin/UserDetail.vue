@@ -69,7 +69,19 @@
       <div v-if="userData && userData.userDataTabs">
         <div>
           <div class="text-h6 q-ma-sm q-ml-md">
-            Vínculos:
+            Vínculos:  
+            <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="linkPastorToFunction"
+            >
+              <q-tooltip>Adicionar Vínculo</q-tooltip>
+            </q-btn>
           </div>
           <q-list v-if="userLinks && userLinks.length > 0">
             <q-item
@@ -701,10 +713,152 @@
           </q-card-actions>
         </q-card>
       </q-dialog> -->
-      <q-dialog v-model="dialogRemoveUserFromFunction.open">
-        <q-card style="border-radius: 1rem">
+      <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section align="center">
+            <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType !== 'Pastor'">
+              Informe o usuário que ocupará a função
+            </div>
+            <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+              Informe o pastor que ocupará a função
+            </div>
+            <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
+              <q-chip color="red-8" outline>
+                Esta função requer o título {{ dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName }}
+              </q-chip>
+            </div>
+          </q-card-section>
           <q-card-section>
-            <div class="text-h6 text-center">Confirma?</div>
+            <q-select
+              v-model="organismCallerSelected"
+              filled
+              use-input
+              label="Nome do organismo que chamou"
+              option-label="nome"
+              :options="organismList"
+              @filter="getOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="organismCalleeSelected"
+              filled
+              use-input
+              label="Nome do organismo que atende"
+              option-label="nome"
+              :readonly="sameOrganismCalled ? true : false"
+              :options="organismList"
+              @filter="getOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              
+            </q-select>
+            <q-checkbox
+              label="É o mesmo organismo que chamou"
+              @update:model-value="changeOrganismCaller()"
+              v-model="sameOrganismCalled"
+            />
+            <q-input
+              filled
+              label="Chave-ata"
+              mask="AAA-AAA-###-####-##-a"
+              v-model="dialogInsertUserInFunction.ataKey"
+              hint="Informe a chave-ata"
+            />
+            <q-select
+              v-model="dialogInsertUserInFunction.userSelected"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              hint="Usuário que ocupará a função"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              filled
+              type="date"
+              label="Data de instalação"
+              v-model="dialogInsertUserInFunction.installationDate"
+            />
+            <q-input
+              filled
+              type="date"
+              :readonly="undefinedCallee ? true : false"
+              label="Prazo do chamado"
+              v-model="dialogInsertUserInFunction.calleeDate"
+            />
+            <q-checkbox
+              label="Prazo chamado é indefinido"
+              @update:model-value="undefinedCalleeFunction()"
+              v-model="undefinedCallee"
+            />
+            <q-input
+              filled
+              label="Data do chamado"
+              type="date"
+              hint="Informe a data início de ocupação da função"
+              v-model="dialogInsertUserInFunction.initialDate"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogInsertUserInFunction.open = false"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="addUserToFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="dialogRemoveUserFromFunction.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section align="center">
+            <div class="text-h6">Confirma?</div>
             <div>O usuário será removido da função</div>
           </q-card-section>
           <q-card-section align="center" class="q-gutter-sm">
@@ -717,10 +871,44 @@
             <q-input
               filled
               type="date"
-              label="Data final"
+              label="Data de desinstalação"
               v-model="dialogRemoveUserFromFunction.finalDate"
-              hint="Informe a data final de ocupação da função"
+              hint="Informe a data de desinstalação de ocupação da função"
             />
+            <q-input
+              filled
+              label="Chave-ata"
+              mask="AAA-AAA-###-####-##-a"
+              v-model="dialogRemoveUserFromFunction.ataKey"
+              hint="Informe a chave-ata"
+            />
+            <q-select
+              v-model="dialogRemoveUserFromFunction.uninstallerUser"
+              filled
+              use-input
+              label="Nome do usuário que desinstalou"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1091,7 +1279,19 @@ export default defineComponent({
       },
       pastoralStatusData: null,
       inactiveStatus: null,
-      statusData: null
+      statusData: null,
+      dialogInsertUserInFunction:{
+        initialDate: '',
+        open: false,
+        functionType: '',
+        selectedFunc: null,
+        selectedFuncIndex: null,
+        userSelected: null
+      },
+      sameOrganismCalled: false,
+      undefinedCallee: false,
+      organismCallerSelected: '',
+      organismCalleeSelected: '',
     };
   },
   mounted() {
@@ -1104,6 +1304,69 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    linkPastorToFunction() {
+      this.dialogInsertUserInFunction.open = true;
+    },
+    addUserToFunction() {
+      let organismFunctionId
+      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
+      if(
+        this.dialogInsertUserInFunction.ataKey === '' ||
+        this.dialogInsertUserInFunction.installationDate === '' ||
+        this.organismCalleeSelected === '' ||
+        this.organismCallerSelected === '' 
+      ){
+        this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
+        return;
+      }
+      if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+        this.$q.notify("Preencha usuário e a data início");
+        return;
+      }
+      if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
+        this.$q.notify('Usuário já incluído nesta função')
+        return
+      }
+      if (this.dialogInsertUserInFunction.selectedFunc.functions) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functions._id
+      } else if (this.dialogInsertUserInFunction.selectedFunc.functionId) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functionId
+      }
+      const opt = {
+        route: "/desktop/adm/addUserToFunction",
+        body: {
+          organismFunctionId: organismFunctionId,
+          ataKey: this.dialogInsertUserInFunction.ataKey,
+          organismFunctionCallData: {
+            organismCalleeId: this.organismCalleeSelected.organismId,
+            organismCallerId: this.organismCallerSelected.organismId
+          },
+          userId:  this.dialogInsertUserInFunction.userSelected.userId,
+          dates: {
+            installationDate: this.dialogInsertUserInFunction.installationDate,
+            initialDate: this.dialogInsertUserInFunction.initialDate
+          }
+        }
+      };
+      if(this.undefinedCallee){
+        opt.body.undefinedCallee = true
+      }else{
+        opt.body.dates.calleeDate = this.dialogInsertUserInFunction.calleeDate
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(r.error){
+          this.$q.notify(r.errorMessage)
+          this.functions[selectedFuncIndex].users = []
+          return
+        } else{
+          this.$q.notify('Usuário inserido na função!')
+          this.getOrganismDetailById()
+          this.clearDialogAndFunctions();
+        }
+      });
+    },
     verifyLinks() {
       if (this.userLinks && this.userLinks.length === 2){
         this.userLinks.forEach((link, i) => {
@@ -1362,14 +1625,17 @@ export default defineComponent({
     clkConfirmRemoveUserFromFunction () {
       if (
         this.dialogRemoveUserFromFunction.obsText === "" ||
-        this.dialogRemoveUserFromFunction.finalDate === ""
+        this.dialogRemoveUserFromFunction.ataKey === "" || 
+        this.dialogRemoveUserFromFunction.uninstallerUser === ""
       ) {
-        this.$q.notify("Preencha observação e data final para prosseguir!");
+        this.$q.notify("Preencha observação, chave-ata e o usuário que desinstalou para prosseguir!");
         return;
       }
       const opt = {
         route: "/desktop/adm/inactivateUserFromFunction",
         body: {
+          ataKey: this.dialogRemoveUserFromFunction.ataKey,
+          uninstallerUserId: this.dialogRemoveUserFromFunction.uninstallerUser._id,
           userFunctionId: this.dialogRemoveUserFromFunction.organismFunctionUserId,
           finalDate: this.dialogRemoveUserFromFunction.finalDate,
           obsText: this.dialogRemoveUserFromFunction.obsText,
