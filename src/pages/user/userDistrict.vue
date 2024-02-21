@@ -4,12 +4,6 @@
       <div class="text-center q-mt-md">
         <div class="col text-capitalize"> 
           <div class="text-h4">Distrito {{ organismName }}</div>
-          <!-- <q-chip
-            :style="{background: organismConfigStyle}"
-            text-color="white"
-          >
-            {{ numOfParishs }} Paróquias | {{numOfCongregations}} Congregaçoes | {{ numOfMissionPoints }} Pontos de Missão | {{numOfPastor}} Pastores
-          </q-chip> -->
           <div class="fit row wrap justify-center items-start content-start q-mt-md">
             <q-list
               class="q-mx-md"
