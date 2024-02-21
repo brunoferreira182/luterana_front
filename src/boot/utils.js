@@ -215,11 +215,11 @@ const useUtils = {
           route: "/user/organismsList",
           icon: "diversity_2",
         },
-        {
-          label: "Meu distrito",
-          route: "/user/userDistrict",
-          icon: "church",
-        },
+        // {
+        //   label: "Meu distrito",
+        //   route: "/user/userDistrict",
+        //   icon: "church",
+        // },
         // {
         //   label: "Minhas pendências",
         //   route: "/user/pendingList",
