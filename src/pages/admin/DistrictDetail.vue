@@ -102,6 +102,37 @@
             node-key="label"
             ref="tree"
           >
+            <template v-slot:default-header="prop">
+              <div class="items-center" v-if="prop.node.type === 'function' || prop.node.type === 'coordination'">
+                <span class="text-weight-bold">{{ prop.node.label }}</span>
+                <q-btn
+                  icon="add"
+                  round
+                  unelevated
+                  color="primary"
+                  flat
+                  v-on:click.stop="addUserToDistrictFunction(prop.node.functionId)"
+                >
+                  <q-tooltip>Adicionar pessoa nesta função {{ prop.node.type }}</q-tooltip>
+                </q-btn>
+              </div>
+              <div class="items-center" v-else-if="prop.node.type === 'user'">
+                <span>{{ prop.node.label }}</span>
+                <q-btn
+                  icon="delete"
+                  round
+                  unelevated
+                  color="red"
+                  flat
+                  v-on:click.stop="removeUserFromDistrictFunction(prop.node)"
+                >
+                  <q-tooltip>Remover pessoa da função</q-tooltip>
+                </q-btn>
+              </div>
+              <div v-else-if="prop.node.type === 'userData'" class="items-center"> 
+                <span>{{ prop.node.label }}</span>
+              </div>
+            </template>
           </q-tree>
         </div>
       </div>
@@ -203,6 +234,7 @@
       </q-dialog>
       <q-dialog
         v-model="dialogAddUserToCongregationFunction.open"
+        @hide="clearDialogAddUserInFunction"
       >
         <q-card
           style="width: 400px;border-radius: 1rem;"
@@ -255,6 +287,7 @@
               flat
               unelevated
               rounded
+              @click="clearDialogAddUserInFunction"
               no-caps
             />
             <q-btn
@@ -310,6 +343,121 @@
               no-caps
               color="primary"
               @click="inactivateUserFromFunction"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogAddUserToDistrictFunction.open"
+        @hide="clearDialogAddUserToDistrictFunction"
+      >
+        <q-card
+          style="width: 400px;border-radius: 1rem;"
+        >
+          <q-card-section class="text-center text-h6">
+            Informe o usuário que ocupará a função
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogAddUserToDistrictFunction.selectedUser"
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Data início"
+              class="q-pa-sm"
+              filled
+              type="date"
+              v-model="dialogAddUserToDistrictFunction.initialDate"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Cancelar"
+              color="primary"
+              flat
+              unelevated
+              @click="clearDialogAddUserToDistrictFunction"
+              rounded
+              no-caps
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              unelevated
+              rounded
+              @click="confirmAddUserToDistrictFunction"
+              no-caps
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogRemoveUserFromDistrictFunction.open"
+        @hide="clearDialogRemoveUserFromDistrictFunction"
+      >
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Tem certeza que deseja inativar
+              {{ dialogDeleteUserFromFunction.userName }}?
+            </div>
+          </q-card-section>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              filled
+              label="Observação"
+              v-model="dialogRemoveUserFromDistrictFunction.obsText"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              label="Data final"
+              v-model="dialogRemoveUserFromDistrictFunction.finalDate"
+              hint="Informe a data final de ocupação da função"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Depois"
+              no-caps
+              rounded
+              color="primary"
+              @click="clearDialogRemoveUserFromDistrictFunction"
+            />
+            <q-btn
+              unelevated
+              rounded
+              label="Confirmar"
+              no-caps
+              color="primary"
+              @click="inactivateUserFromDistrictFunction"
             />
           </q-card-actions>
         </q-card>
@@ -386,7 +534,21 @@ export default defineComponent({
           num: 0,
           label: 'Pastores'
         },
-      ]
+      ],
+      dialogAddUserToDistrictFunction: {
+        open:false,
+        funcId: null,
+        selectedUser: null,
+        initialDate: null
+      },
+      dialogRemoveUserFromDistrictFunction: {
+        funcId: null,
+        userId: null,
+        userName: null,
+        obsText: '',
+        open: false,
+        finalDate: ''
+      }
     }
   },
   beforeMount() {
@@ -407,6 +569,40 @@ export default defineComponent({
         obsText: '',
         finalDate: ''
       }
+    },
+    clearDialogRemoveUserFromDistrictFunction() {
+      this.dialogRemoveUserFromDistrictFunction = {
+        funcId: null,
+        userId: null,
+        userName: null,
+        obsText: '',
+        open: false,
+        finalDate: ''
+      }
+    },
+    async inactivateUserFromDistrictFunction() {
+      if (
+        this.dialogRemoveUserFromDistrictFunction.obsText === "" ||
+        this.dialogRemoveUserFromDistrictFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivateUserFromFunction",
+        body: {
+          userFunctionId: this.dialogRemoveUserFromDistrictFunction.funcId,
+          finalDate: this.dialogRemoveUserFromDistrictFunction.finalDate,
+          obsText: this.dialogRemoveUserFromDistrictFunction.obsText,
+        },
+      };
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify('Ocorreu um erro, tente novamnte mais tarde')
+        return
+      }
+      this.getOrganismDetailById()
+      this.clearDialogRemoveUserFromDistrictFunction()
     },
     async inactivateUserFromFunction() {
       if (
@@ -465,6 +661,12 @@ export default defineComponent({
         open: false,
         data: null
       }
+    },
+    removeUserFromDistrictFunction(data) {
+      this.dialogRemoveUserFromDistrictFunction.funcId = data.userFunctionId
+      this.dialogRemoveUserFromDistrictFunction.userName = data.label
+      this.dialogRemoveUserFromDistrictFunction.userId = data.userId
+      this.dialogRemoveUserFromDistrictFunction.open = true
     },
     clearDialogAddUserInFunction() {
       this.dialogAddUserToCongregationFunction = {
@@ -529,10 +731,12 @@ export default defineComponent({
         return
       }
       let route
-      if (this.dialogAddUserToCongregationFunction.open = true) {
+      if (this.dialogAddUserToCongregationFunction.open === true) {
         route = "/desktop/adm/getPastores" 
-      } else {
+      } else if (this.dialogAddUserToDistrictFunction.open === true) {
         route = "/desktop/adm/getUsers" 
+      } else {
+        route = '/desktop/adm/getUsers'
       }
       const opt = {
         route: route,
@@ -551,6 +755,38 @@ export default defineComponent({
           this.usersOptions = r.data.list;
         })
       });
+    },
+    addUserToDistrictFunction(funcId) {
+      this.dialogAddUserToDistrictFunction.funcId = funcId
+      this.dialogAddUserToDistrictFunction.open = true
+    },
+    clearDialogAddUserToDistrictFunction() {
+      this.dialogAddUserToDistrictFunction = {
+        open:false,
+        funcId: null,
+        selectedUser: null,
+        initialDate: null
+      }
+    },
+    async confirmAddUserToDistrictFunction() {
+      if (!this.dialogAddUserToDistrictFunction.selectedUser || this.dialogAddUserToDistrictFunction.initialDate === '') {
+        this.$q.notify('Preencha todos os campos para prosseguir')
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/addUserToFunction',
+        body: {
+          organismFunctionId: this.dialogAddUserToDistrictFunction.funcId,
+          userId: this.dialogAddUserToDistrictFunction.selectedUser.userId,
+          dates: {
+            initialDate: this.dialogAddUserToDistrictFunction.initialDate
+          }
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getOrganismDetailById()
+      this.clearDialogAddUserToDistrictFunction()
     },
     addUserToOrganismFunction(orgId, iFunc, parish) {
       if (parish) {
@@ -608,6 +844,7 @@ export default defineComponent({
             label: user.userName,
             header: 'normal',
             userId: user.userId,
+            userFunctionId: user._id,
             children: []
           })
           if (user.userEmail) {
