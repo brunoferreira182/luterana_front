@@ -63,6 +63,12 @@
             hint="Anexos com maior prioridade aparecerão nas primeiras posições para se destacar. (3  será o primeiro da lista)"
             outlined
           ></q-select>
+          <q-input
+            outlined
+            label="Link para download"
+            v-model="linkForDownload"
+            hint="Copie e cole aqui o link para download"
+          />
           <q-file
             v-if="$route.path === '/attach/createAttachment'"
             v-model="files"
@@ -183,6 +189,8 @@ export default defineComponent({
   data() {
     return {
       files: null,
+      linkForDownload: null,
+      newReceiver: null,
       attachmentInfo: {
         title: "",
         description: "",
@@ -194,7 +202,6 @@ export default defineComponent({
       receiverOptions: [],
       districtOptions: [],
       organismsList: [],
-      newReceiver: null,
       currentTypeName: "",
       filename: "",
       fileUrl: "",
@@ -277,9 +284,7 @@ export default defineComponent({
         : this.createAttachment();
     },
     createAttachment() {
-      const file = [{file:this.files,name:this.files.name}]
-      console.log(file, 'file')
-      console.log(this.files, 'files')
+      
       // return
       if(this.attachmentInfo.title === '' || this.attachmentInfo.description === ''){
         this.$q.notify('Preencha título e descrição')
@@ -294,9 +299,13 @@ export default defineComponent({
             priority: this.attachmentInfo.priority,
           },
         },
-        files: []
+        files: [],
       };
+      if(this.linkForDownload !== null){
+        opt.body.linkForDownload = this.linkForDownload
+      }
       if(this.files !== null){
+        const file = [{file:this.files,name:this.files.name}]
         opt.files = file
       }
       switch(this.receiverType){
@@ -315,8 +324,12 @@ export default defineComponent({
           return
       }
       this.$q.loading.show();
-      useFetch(opt).then(() => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide();
+        if(r.errorMessage){
+          this.$q.notify(r.errorMessage)
+          return
+        }
         this.$q.notify("Enviado!");
       });
     },
