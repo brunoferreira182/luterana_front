@@ -3466,6 +3466,10 @@ export default defineComponent({
       this.dialogInsertUserInFunction.initialDate = '',
       this.dialogInsertUserInFunction.functionType = '',
       this.dialogInsertUserInFunction.open = false,
+      this.organismCalleeSelected = ''
+      this.organismCallerSelected = ''
+      this.dialogInsertUserInFunction.installationDate = ''
+      this.dialogInsertUserInFunction.calleeDate = ''
       this.dialogInsertUserInFunction.selectedFunc = null,
       this.dialogInsertUserInFunction.userSelected = null
     },
@@ -3501,6 +3505,15 @@ export default defineComponent({
     addUserToFunction() {
       let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
+      if(
+        this.dialogInsertUserInFunction.ataKey === '' ||
+        this.dialogInsertUserInFunction.installationDate === '' ||
+        this.organismCalleeSelected === '' ||
+        this.organismCallerSelected === '' 
+      ){
+        this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
+        return;
+      }
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");
         return;
