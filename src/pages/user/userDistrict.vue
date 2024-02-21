@@ -121,33 +121,16 @@
             </div>
             <div class="q-ml-md">
               <div
-                v-for="(func, iFunc) in dialogParishDetail.data.functions"
+                v-for="(func) in dialogParishDetail.data.functions"
                 :key="func"
               >
                 {{ func.functionName }}
-                <q-btn
-                  color="primary"
-                  icon="add"
-                  rounded
-                  unelevated
-                  @click="addUserToOrganismFunction(dialogParishDetail.data.childId, iFunc, true)"
-                  class="q-pa-sm"
-                  flat
-                />
                 <div
-                  v-for="(user, iUser) in func.users"
+                  v-for="(user) in func.users"
                   :key="user"
                   class="q-ml-sm"
                 >
                   {{ user.userName }}
-                  <q-btn
-                    color="red"
-                    flat
-                    unelevated
-                    rounded
-                    @click="removeUserFromFunction(iFunc, iUser, true)"
-                    icon="delete"
-                  />
                 </div>
               </div>
             </div>
@@ -170,148 +153,19 @@
             class="q-ml-md"
           >
             <div
-              v-for="(func, iFunc) in dialogCongregationDetail.data.functions"
+              v-for="(func) in dialogCongregationDetail.data.functions"
               :key="func"
             >
               {{ func.functionName }}
-              <q-btn
-                icon="add"
-                color="primary"
-                flat
-                unelevated
-                rounded
-                @click="addUserToOrganismFunction(dialogCongregationDetail.data.childId, iFunc, false)"
-              />
               <div
-                v-for="(user, iUser) in func.users"
+                v-for="(user) in func.users"
                 :key="user"
                 class="q-ml-sm q-mt-sm"
               >
                 {{ user.userName }}
-                <q-btn
-                  icon="delete"
-                  color="red"
-                  flat
-                  rounded
-                  @click="removeUserFromFunction(iFunc, iUser, false)"
-                  unelevated
-                />
               </div>
             </div>
           </q-card-section>
-        </q-card>
-      </q-dialog>
-      <q-dialog
-        v-model="dialogAddUserToCongregationFunction.open"
-      >
-        <q-card
-          style="width: 400px;border-radius: 1rem;"
-        >
-          <q-card-section class="text-center text-h6">
-            Informe o usuário que ocupará a função
-          </q-card-section>
-          <q-card-section>
-            <q-select
-              v-model="dialogAddUserToCongregationFunction.selectedUser"
-              filled
-              use-input
-              label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :loading="false"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-section>
-            <q-input
-              label="Data início"
-              class="q-pa-sm"
-              filled
-              type="date"
-              v-model="dialogAddUserToCongregationFunction.initialDate"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              label="Cancelar"
-              color="primary"
-              flat
-              unelevated
-              rounded
-              no-caps
-            />
-            <q-btn
-              label="Confirmar"
-              color="primary"
-              unelevated
-              rounded
-              @click="addUserToFunction"
-              no-caps
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <q-dialog
-        v-model="dialogDeleteUserFromFunction.open"
-        @hide="clearDialogRemoveUserFromFunction"
-      >
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Tem certeza que deseja inativar
-              {{ dialogDeleteUserFromFunction.userData.userName }}?
-            </div>
-          </q-card-section>
-          <q-card-section align="center" class="q-gutter-sm">
-            <q-input
-              filled
-              label="Observação"
-              v-model="dialogDeleteUserFromFunction.obsText"
-              hint="Informe o motivo"
-            />
-            <q-input
-              filled
-              type="date"
-              label="Data final"
-              v-model="dialogDeleteUserFromFunction.finalDate"
-              hint="Informe a data final de ocupação da função"
-            />
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Depois"
-              no-caps
-              rounded
-              color="primary"
-              @click="dialogDeleteUserFromFunction.open = false"
-            />
-            <q-btn
-              unelevated
-              rounded
-              label="Confirmar"
-              no-caps
-              color="primary"
-              @click="inactivateUserFromFunction"
-            />
-          </q-card-actions>
         </q-card>
       </q-dialog>
     </q-page>
@@ -354,21 +208,7 @@ export default defineComponent({
         open: false,
         data: null
       },
-      dialogAddUserToCongregationFunction: {
-        open: false,
-        selectedUser: null,
-        orgId: null,
-        iFunc: null,
-        functionId: null,
-        initialDate: ''
-      },
       usersOptions: null,
-      dialogDeleteUserFromFunction: {
-        open: false,
-        userData: null,
-        obsText: '',
-        finalDate: ''
-      },
       districtInfo: [
         {
           num: 0,
@@ -382,17 +222,26 @@ export default defineComponent({
           num: 0,
           label: 'Pontos de Missão'
         },
-        {
+        { 
           num: 0,
           label: 'Pastores'
         },
-      ]
+      ],
     }
   },
   beforeMount() {
-    this.getOrganismDetailById()
+    // this.getOrganismDetailById()
+    this.getDistrictId()
   },
   methods: {
+    async getDistrictId() {
+      const opt = {
+        route: '/desktop/users/getDistrictIdByUserId'
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getOrganismDetailById(r.data.districtId)
+    },
     clearDialogParishDetail() {
       this.dialogParishDetail = {
         open: false,
@@ -400,178 +249,11 @@ export default defineComponent({
         functionId: null
       }
     },
-    clearDialogRemoveUserFromFunction() {
-      this.dialogDeleteUserFromFunction = {
-        open: false,
-        userData: null,
-        obsText: '',
-        finalDate: ''
-      }
-    },
-    async inactivateUserFromFunction() {
-      if (
-        this.dialogDeleteUserFromFunction.obsText === "" ||
-        this.dialogDeleteUserFromFunction.finalDate === ""
-      ) {
-        this.$q.notify("Preencha observação e data final para prosseguir!");
-        return;
-      }
-      const opt = {
-        route: "/desktop/adm/inactivateUserFromFunction",
-        body: {
-          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
-          finalDate: this.dialogDeleteUserFromFunction.finalDate,
-          obsText: this.dialogDeleteUserFromFunction.obsText,
-        },
-      };
-      let r = await useFetch(opt)
-      if (r.error) {
-        this.$q.notify('Ocorreu um erro, tente novamnte mais tarde')
-        return
-      }
-      this.getOrganismDetailById()
-      this.clearDialogRemoveUserFromFunction()
-      this.clearDialogCongregationDetail()
-      this.clearDialogParishDetail()
-    },
-    removeUserFromFunction(iFunc, iUser, parish)  {
-      if (parish) {
-        this.dialogParishDetail.data.functions.forEach((func, i) => {
-          if (i === iFunc) {
-            func.users.forEach((user, j) => {
-              if (j === iUser) {
-                this.dialogDeleteUserFromFunction.userData = user
-              }
-            })
-          }
-        })
-      } else if (!parish) {
-        this.dialogCongregationDetail.data.functions.forEach((func, i) => {
-          if (i === iFunc) {
-            console.log(func, 'tilau se tu me quiseres')
-            func.users.forEach((user, j) => {
-              if (j === iUser) {
-                console.log(user, 'minhocas clandestinas infiltradas pelos fundos')
-                this.dialogDeleteUserFromFunction.userData = user
-              }
-            })
-          }
-        })
-      }
-      this.dialogDeleteUserFromFunction.open = true
-    },
     clearDialogCongregationDetail() {
       this.dialogCongregationDetail = {
         open: false,
         data: null
       }
-    },
-    clearDialogAddUserInFunction() {
-      this.dialogAddUserToCongregationFunction = {
-        open: false,
-        selectedUser: null,
-        orgId: null,
-        iFunc: null,
-        functionId: null,
-        initialDate: ''
-      }
-    },
-    async addUserToFunction() {
-      let organismFunctionId
-      if (this.dialogAddUserToCongregationFunction) {
-        organismFunctionId = this.dialogAddUserToCongregationFunction.functionId
-      } else if (this.dialogParishDetail) {
-        organismFunctionId = this.dialogParishDetail.functionId
-      }
-      if (!this.dialogAddUserToCongregationFunction.selectedUser || this.dialogAddUserToCongregationFunction.initialDate === '') {
-        this.$q.notify('Preencha o usuário e a data de início')
-        return
-      }
-      const opt = {
-        route: '/desktop/adm/addUserToFunction',
-        body: {
-          organismFunctionId,
-          userId: this.dialogAddUserToCongregationFunction.selectedUser.userId,
-          dates: {
-            initialDate: this.dialogAddUserToCongregationFunction.initialDate
-          }
-        }
-      }
-      let r = await useFetch(opt)
-      if (r.error) return
-      this.$q.notify('Usuário inserido na função')
-      this.getOrganismDetailById()
-      this.clearDialogAddUserInFunction()
-      this.clearDialogCongregationDetail()
-      this.clearDialogParishDetail()
-      // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddUserToCongregationFunction.selectedUser.userId, )) {
-      //   this.$q.notify('Usuário já incluído nesta função')
-      //   return
-      // }
-    },
-    // verifyIfUserIsAlreadyInFunction (functionIndex, userIdToVerify) {
-    //   let ret = false
-    //   if ( this.functions && this.functions[functionIndex] && this.functions[functionIndex].functions) {
-    //     this.functions[functionIndex].functions.users.forEach(u => {
-    //       if (u.userId === userIdToVerify) ret = true
-    //     }) 
-    //   } else if (this.functions && this.functions[functionIndex] && this.functions[functionIndex].users) {
-    //     this.functions[functionIndex].users.forEach(u => {
-    //       if (u.userId === userIdToVerify) ret = true
-    //     }) 
-    //   }
-    //   return ret
-    // },
-    getUsers(val, update, abort) {
-      if(val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres')
-        abort()
-        return
-      }
-      let route
-      if (this.dialogAddUserToCongregationFunction.open = true) {
-        route = "/desktop/adm/getPastores" 
-      } else {
-        route = "/desktop/adm/getUsers" 
-      }
-      const opt = {
-        route: route,
-        body: {
-          searchString: val,
-          isActive: 1,
-          page: 1,
-          rowsPerPage: 50
-        }
-      }
-      this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide();
-        if(r.error){ this.$q.notify(r.errorMessage) }
-        update(() => {
-          this.usersOptions = r.data.list;
-        })
-      });
-    },
-    addUserToOrganismFunction(orgId, iFunc, parish) {
-      if (parish) {
-        this.dialogAddUserToCongregationFunction.functionId = this.dialogParishDetail.data.functions[iFunc].functionId
-      } else if (!parish) {
-        this.organismChildData.forEach((parish) => {
-          parish.organismChildData.forEach((congregation) => {
-            if (congregation.childId === orgId) {
-              congregation.functions.forEach((func, funcI) => {
-                if (funcI === iFunc) {
-                  this.dialogAddUserToCongregationFunction.functionId = func.functionId
-                  return
-                }
-              })
-            }
-          })
-        })
-      }
-      this.dialogAddUserToCongregationFunction.orgId = orgId
-      this.dialogAddUserToCongregationFunction.iFunc = iFunc
-      this.dialogAddUserToCongregationFunction.open = true
     },
     openCongregationDetail(id) {
       this.organismChildData.forEach((parish) => {
@@ -676,14 +358,13 @@ export default defineComponent({
         this.organismListTree.push(tree)
       })
     },
-    getOrganismDetailById() {
+    getOrganismDetailById(id) {
       this.organismListTree = []
       this.functionsListTree = []
-      const organismId = this.$route.query.organismId
       const opt = {
         route: "/desktop/adm/getDistrictDetail",
         body: {
-          organismId: organismId,
+          organismId: id,
         },
       };
       this.$q.loading.show()

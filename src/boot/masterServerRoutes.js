@@ -5,7 +5,7 @@ const port = MODE_SERVER === 'master' ? 8000 : 8800
 function masterServerRoute () {
   let ret
   if (MODE_MASTER_SERVER === 'local') ret = 'http://localhost:' + port
-  else if (MODE_MASTER_SERVER === 'darta') ret = 'http://192.168.1.4:' + port
+  else if (MODE_MASTER_SERVER === 'darta') ret = 'http://192.168.1.8:' + port
   else if (MODE_MASTER_SERVER === 'tiago') ret = 'http://192.168.1.9:' + port
   else if (MODE_MASTER_SERVER === 'bruno') ret = 'http://192.168.1.99:' + port
 
