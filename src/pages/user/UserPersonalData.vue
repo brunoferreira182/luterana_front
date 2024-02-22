@@ -182,7 +182,6 @@
                             <q-icon name="attach_file" />
                           </template>
                         </q-file>
-    
                         <div class="text-right" v-if="field.type.type === 'options'">
                           <q-select
                             outlined
@@ -345,7 +344,6 @@
                             :disable="tabs.onlyAdm"
                           />
                         </div>
-    
                         <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value">
                             Dados Conjugais:
@@ -353,6 +351,7 @@
                               :data="field.value"  
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
+                              @edit="editMaritalStatus"
                             />
                           </div>
                           <q-btn
@@ -1073,7 +1072,6 @@
         @confirm="confirmAddSocialNetwork"
         @closeDialog="clearDialogSocialNetwork"
       />
-
       <DialogFormation
         :open="dialogFormation.open"
         :dataProp="dialogFormation.data"
@@ -1082,14 +1080,80 @@
         @confirm="confirmFormation"
         @closeDialog="clearFormationInputs"
       />
-
       <DialogAddPastoralData
         :open="dialogAddPastoralData.open"
         :dataProps="dialogAddPastoralData.data"
         @closeDialog="closeAddPastoralDataDialog"
         @confirm="savePastoralDataSugestion"
       />
-      
+      <q-dialog
+        v-model="dialogEditMaritalRelation.open"
+      >
+        <q-card style="width: 400px;border-radius: 1rem;">
+          <q-card-section>
+            <div class="q-px-sm text-h6">
+              Nome:
+            </div>
+            <div class="row">
+              <div class="col-9 q-pa-sm">
+                <q-input
+                  v-model="dialogEditMaritalRelation.data.name"
+                  filled
+                  disable
+                >
+    
+                </q-input>
+              </div>
+              <div class="col-3">
+                <q-btn
+                  flat
+                  class="q-pa-lg"
+                  rounded
+                  unelevated
+                  color="primary"
+                  icon="edit"
+                ></q-btn>
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6 q-ml-md">
+              Datas:
+            </div>
+            <div class="row">
+              <q-input
+                class="q-pa-sm col-6"
+                filled
+                label="Data inicial"
+                v-model="dialogEditMaritalRelation.data.dates.initialDate"
+              />
+              <q-input
+                class="q-pa-sm col-6"
+                filled
+                label="Data final"
+                v-model="dialogEditMaritalRelation.data.dates.finalDate"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              flat
+              rounded
+              unelevated
+              no-caps
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1270,6 +1334,10 @@ export default defineComponent({
         fieldIndex: null,
         iValue: null,
         action: 'add'
+      },
+      dialogEditMaritalRelation: {
+        open: false,
+        data: null
       }
     };
   },
@@ -1281,6 +1349,11 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    editMaritalStatus(fieldIndex, tabsIndex, i) {
+      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i])
+      this.dialogEditMaritalRelation.open = true
+      this.dialogEditMaritalRelation.data = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
+    },
     clkOpenFilePicker () {
       console.log(this.$refs.filePicker[0].pickFiles())
       // this.$refs.filePicker.pickFiles()
