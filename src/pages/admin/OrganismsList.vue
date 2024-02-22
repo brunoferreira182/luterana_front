@@ -167,7 +167,6 @@ export default defineComponent({
       return this.selectedChips.includes(index);
     },
     clkOpenOrganismDetail(e, r) {
-      console.log(r)
       const organismId = r.organismId;
       if (r.organismConfigName === 'Distrito') {
         this.$router.push("/admin/districtDetail?organismId=" + organismId)

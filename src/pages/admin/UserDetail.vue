@@ -1547,7 +1547,6 @@ export default defineComponent({
       });
     },
     getOrganisms (val, update, abort) {
-      console.log(val)
       if(val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
         abort()

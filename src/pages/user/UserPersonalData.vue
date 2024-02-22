@@ -352,6 +352,7 @@
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
                               @edit="editMaritalStatus"
+                              @remove="removeMaritalStatus"
                             />
                           </div>
                           <q-btn
@@ -869,6 +870,7 @@
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
         @closeDialog="clearMaritalStatus"
+        @addPerson="confirmAddMaritalRelation"
       />
       <DialogUserTitle
         :open="openDialogVinculateUserToTitle"
@@ -1100,9 +1102,7 @@
                   v-model="dialogEditMaritalRelation.data.name"
                   filled
                   disable
-                >
-    
-                </q-input>
+                />
               </div>
               <div class="col-3">
                 <q-btn
@@ -1112,7 +1112,10 @@
                   unelevated
                   color="primary"
                   icon="edit"
-                ></q-btn>
+                  @click="editUserInMaritalRelation"
+                >
+                  <q-tooltip>Alterar pessoa</q-tooltip>
+                </q-btn>
               </div>
             </div>
           </q-card-section>
@@ -1140,6 +1143,7 @@
               label="Voltar"
               color="primary"
               flat
+              @click="clearDialogMaritalStatusDetail"
               rounded
               unelevated
               no-caps
@@ -1150,6 +1154,46 @@
               rounded
               unelevated
               no-caps
+              @click="confirmChangeDatesMaritalStatus"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogEditUserInMaritalRelation.open"
+        @hide="clearDialogChangeUserInMaritalRelation"
+      >
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section>
+            <div class="text-h6">Selecione o usuário</div>
+            <q-select
+              v-model="dialogEditUserInMaritalRelation.userSelected"
+              @filter="getUserByString"
+              class="q-pa-sm"
+              outlined
+              :options="dialogEditUserInMaritalRelation.usersList"
+              :option-label="(item) => item.userName"
+              use-input
+              label="Nome do usuário"
+            />
+          </q-card-section>
+          <q-card-actions  align="center">
+            <q-btn
+              label="Sair"
+              flat
+              unelevated
+              rounded
+              no-caps
+              color="primary"
+              @click="clearDialogChangeUserInMaritalRelation"
+            />
+            <q-btn
+              label="Confirmar"
+              rounded
+              unelevated
+              no-caps
+              color="primary"
+              @click="confirmChangeUserInMaritalRelation()"
             />
           </q-card-actions>
         </q-card>
@@ -1338,6 +1382,14 @@ export default defineComponent({
       dialogEditMaritalRelation: {
         open: false,
         data: null
+      },
+      dialogEditUserInMaritalRelation: {
+        open: false,
+        userSelected: null,
+        fieldIndex: null,
+        tabsIndex: null,
+        i: null,
+        usersList: []
       }
     };
   },
@@ -1349,9 +1401,80 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    confirmAddMaritalRelation(data) {
+      console.log(data)
+      this.userData.userDataTabs.forEach((t) => {
+        if ( t.tabLabel === 'Familiar') {
+          t.fields.forEach((f, iF) => {
+            if (iF.label === 'Estado civil') {
+              if (!f.value) {
+                f.value = []
+              }
+              f.value.push({
+                partner: {
+                  dates: {
+                    initialDate: data.weddingDate,
+                    finalDate: data.separationDate,
+                    deathDate: data.deathDate
+                  } 
+                }
+              })
+            }
+          })
+        }
+      })
+    },
+    removeMaritalStatus(fieldIndex, tabsIndex, i) {
+      this.userData
+      .userDataTabs[tabsIndex]
+      .fields[fieldIndex]
+      .value.splice(i, 1)
+    },
+    confirmChangeDatesMaritalStatus() {
+      this.userData
+      .userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
+      .fields[this.dialogEditMaritalRelation.fieldIndex]
+      .value[this.dialogEditMaritalRelation.i]
+      .partner.dates.initialDate = this.dialogEditMaritalRelation.data.dates.initialDate
+      this.userData
+      .userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
+      .fields[this.dialogEditMaritalRelation.fieldIndex]
+      .value[this.dialogEditMaritalRelation.i]
+      .partner.dates.finalDate = this.dialogEditMaritalRelation.data.dates.finalDate
+      this.clearDialogMaritalStatusDetail()
+    },
+    clearDialogMaritalStatusDetail() {
+      this.dialogEditMaritalRelation = {
+        open: false,
+        data: null
+      }
+    },
+    confirmChangeUserInMaritalRelation() {
+      this
+      .userData.userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
+      .fields[this.dialogEditMaritalRelation.fieldIndex]
+      .value[this.dialogEditMaritalRelation.i].partner.name = this.dialogEditUserInMaritalRelation.userSelected.userName
+      this
+      .userData.userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
+      .fields[this.dialogEditMaritalRelation.fieldIndex]
+      .value[this.dialogEditMaritalRelation.i].partner.partnerId = this.dialogEditUserInMaritalRelation.userSelected._id
+      this.clearDialogChangeUserInMaritalRelation()
+    },
+    clearDialogChangeUserInMaritalRelation() {
+      this.dialogEditUserInMaritalRelation = {
+        open: false,
+        selectedUser: null,
+        usersList: []
+      }
+    },
+    editUserInMaritalRelation() {
+      this.dialogEditUserInMaritalRelation.open = true
+    },
     editMaritalStatus(fieldIndex, tabsIndex, i) {
-      console.log(this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i])
       this.dialogEditMaritalRelation.open = true
+      this.dialogEditMaritalRelation.fieldIndex = fieldIndex
+      this.dialogEditMaritalRelation.tabsIndex = tabsIndex
+      this.dialogEditMaritalRelation.i = i
       this.dialogEditMaritalRelation.data = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
     },
     clkOpenFilePicker () {
@@ -1846,7 +1969,10 @@ export default defineComponent({
       this.addPerson.dialogOpen = false
     },
     getUserByString (val, update) {
-      if (val < 2) return
+      if (val.length < 3) {
+        this.$q.notify('Escreva ao menos 3 letras')
+        return
+      } 
       const opt = {
         route: '/desktop/users/getUsersList',
         body: {
@@ -1856,7 +1982,7 @@ export default defineComponent({
       useFetch(opt).then(r => {
         if (r.error) return this.$q.notify(r.errorMessage)
         update(() => {
-          this.addPerson.usersOptions = r.data.list
+          this.dialogEditUserInMaritalRelation.usersList = r.data.list
         })
       })
     },

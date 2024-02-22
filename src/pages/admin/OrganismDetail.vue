@@ -2409,7 +2409,6 @@ export default defineComponent({
               allHaveTime = true; 
             }
             else if (!v.time) {
-              console.log(v);
               this.$q.notify('Preencha o horário');
               allHaveTime = false; 
               return;
@@ -2437,7 +2436,6 @@ export default defineComponent({
       this.dialogAddTimeForDay.open = false
     },
     clearDialogInserTimeInMonth() {
-      console.log('me chamou')
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
     },
