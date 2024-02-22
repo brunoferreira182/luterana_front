@@ -71,6 +71,7 @@
           <div class="text-h6 q-ma-sm q-ml-md">
             Vínculos:  
             <q-btn
+              v-if="userType === 'pastor'"
               icon="add"
               color="primary"
               size="12px"
@@ -728,13 +729,15 @@
               </q-chip>
             </div>
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-gutter-lg">
+            
             <q-select
               v-model="organismCallerSelected"
               filled
               use-input
               label="Nome do organismo que chamou"
               option-label="nome"
+              @update:model-value="getOrganismDetailById"
               :options="organismList"
               @filter="getOrganismsList"
               :option-value="(item) => item"
@@ -746,9 +749,20 @@
                   </q-item-section>
                 </q-item>
               </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
             </q-select>
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
+            <q-checkbox
+              label="É o mesmo organismo que chamou"
+              @update:model-value="changeOrganismCaller()"
+              v-model="sameOrganismCalled"
+            />
             <q-select
               v-model="organismCalleeSelected"
               filled
@@ -767,13 +781,33 @@
                   </q-item-section>
                 </q-item>
               </template>
-              
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
             </q-select>
-            <q-checkbox
-              label="É o mesmo organismo que chamou"
-              @update:model-value="changeOrganismCaller()"
-              v-model="sameOrganismCalled"
-            />
+            <q-select
+              v-model="functionSelected"
+              filled
+              use-input
+              label="Função"
+              option-label="functionName"
+              hint="Informe a função que o usuário ocupará"
+              :options="functions"
+              :option-value="(item) => item"
+            >
+              <!-- <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template> -->
+            </q-select>
             <q-input
               filled
               label="Chave-ata"
@@ -781,34 +815,13 @@
               v-model="dialogInsertUserInFunction.ataKey"
               hint="Informe a chave-ata"
             />
-            <q-select
-              v-model="dialogInsertUserInFunction.userSelected"
+            <q-input
               filled
-              use-input
+              v-model="userData.userDataTabs[0].fields[0].value"
               label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
               hint="Usuário que ocupará a função"
-              @filter="getUsers"
-              :loading="false"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              readonly
+            />
             <q-input
               filled
               type="date"
@@ -1200,6 +1213,7 @@ export default defineComponent({
       newEmail: "",
       allPermissions: [],
       userPermissions: [],
+      organismList: [],
       formattedPermissions: [],
       userId: null,
       userData: [],
@@ -1288,10 +1302,12 @@ export default defineComponent({
         selectedFuncIndex: null,
         userSelected: null
       },
+      functionSelected: '',
       sameOrganismCalled: false,
       undefinedCallee: false,
       organismCallerSelected: '',
       organismCalleeSelected: '',
+      functions: [],
     };
   },
   mounted() {
@@ -1304,12 +1320,58 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    clearDialogAndFunctions() {
+      this.dialogRemoveUserFromFunction.finalDate = "";
+      this.dialogRemoveUserFromFunction.functionUserId = "";
+      this.dialogRemoveUserFromFunction.obsText = "";
+      this.dialogRemoveUserFromFunction.data = {};
+      this.dialogRemoveUserFromFunction.finalDate = "";
+      this.functionSelected = ''
+      this.dialogRemoveUserFromFunction.functionUserId = "";
+      this.dialogRemoveUserFromFunction.open = false;
+      this.dialogInsertUserInFunction.open = false;
+      this.dialogInsertUserInFunction.initialDate = '',
+      this.dialogInsertUserInFunction.functionType = '',
+      this.dialogInsertUserInFunction.open = false,
+      this.organismCalleeSelected = ''
+      this.organismCallerSelected = ''
+      this.dialogInsertUserInFunction.open = false
+      this.dialogInsertUserInFunction.installationDate = ''
+      this.dialogInsertUserInFunction.calleeDate = ''
+      this.dialogInsertUserInFunction.ataKey = ''
+      this.dialogInsertUserInFunction.selectedFunc = null,
+      this.dialogInsertUserInFunction.userSelected = null
+      this.sameOrganismCalled = false
+      this.undefinedCallee = false
+    },
+    undefinedCalleeFunction(){
+      this.undefinedCallee ? this.undefinedCallee = false :this.dialogInsertUserInFunction.calleeDate = ''
+    },
+    changeOrganismCaller(){
+      this.sameOrganismCalled === true ? this.organismCalleeSelected = '' :this.organismCalleeSelected = this.organismCallerSelected
+    },
     linkPastorToFunction() {
       this.dialogInsertUserInFunction.open = true;
     },
+    getOrganismDetailById() {
+      const organismId = this.organismCallerSelected.organismId
+      const opt = {
+        route: "/desktop/adm/getOrganismDetailById",
+        body: {
+          organismId: organismId,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } else {
+          this.functions = r.data.functions
+        }
+      });
+    },
     addUserToFunction() {
-      let organismFunctionId
-      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if(
         this.dialogInsertUserInFunction.ataKey === '' ||
         this.dialogInsertUserInFunction.installationDate === '' ||
@@ -1319,29 +1381,16 @@ export default defineComponent({
         this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
         return;
       }
-      if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
-        this.$q.notify("Preencha usuário e a data início");
-        return;
-      }
-      if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
-        this.$q.notify('Usuário já incluído nesta função')
-        return
-      }
-      if (this.dialogInsertUserInFunction.selectedFunc.functions) {
-        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functions._id
-      } else if (this.dialogInsertUserInFunction.selectedFunc.functionId) {
-        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functionId
-      }
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismFunctionId: organismFunctionId,
+          organismFunctionId: this.functionSelected.functionId,
           ataKey: this.dialogInsertUserInFunction.ataKey,
           organismFunctionCallData: {
             organismCalleeId: this.organismCalleeSelected.organismId,
             organismCallerId: this.organismCallerSelected.organismId
           },
-          userId:  this.dialogInsertUserInFunction.userSelected.userId,
+          userIdMongo:  this.$route.query.userId,
           dates: {
             installationDate: this.dialogInsertUserInFunction.installationDate,
             initialDate: this.dialogInsertUserInFunction.initialDate
@@ -1358,11 +1407,10 @@ export default defineComponent({
         this.$q.loading.hide()
         if(r.error){
           this.$q.notify(r.errorMessage)
-          this.functions[selectedFuncIndex].users = []
           return
         } else{
-          this.$q.notify('Usuário inserido na função!')
-          this.getOrganismDetailById()
+          this.$q.notify('Usuário vinculado com sucesso!')
+          this.getUserDetailById()
           this.clearDialogAndFunctions();
         }
       });
@@ -1477,6 +1525,26 @@ export default defineComponent({
           }
         })
       }
+    },
+    getOrganismsList(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getOrganismsList",
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.organismList = r.data.list;
+        })
+      });
     },
     getOrganisms (val, update, abort) {
       console.log(val)

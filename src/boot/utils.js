@@ -23,14 +23,13 @@ const useUtils = {
     console.log(options, 'options dentro downloadfile')
     const opt = {
       method: 'get',
-      responseType: 'arraybuffer',
-      // responseType: 'blob',
+      responseType: 'ArrayBuffer',
       route: '/download/' + options.filename
     }
     useFetch(opt).then(async (response) => {
       console.log('entrou', response)
-      const blob = new Blob([response], {type: options.type})
-      const link = URL.createObjectURL(blob)
+      const link = window.URL.createObjectURL(new Blob([response], {type: 'arraybuffer'}))
+      // const link = URL.createObjectURL(blob)
       console.log('link', link)
       const a = document.createElement("a");
       document.body.appendChild(a);

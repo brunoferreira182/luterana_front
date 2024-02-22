@@ -3446,8 +3446,10 @@ export default defineComponent({
       });
     },
     clearDialogAndFunctions() {
+      this.undefinedCallee = false
       this.selectedFunc = {};
       this.userSelected = "";
+      this.dialogInsertUserInFunction.ataKey = ''
       this.functionSelected = "";
       this.dialogOpenObservation.data = {};
       this.dialogDeleteUserFromFunction.data = {};
@@ -3467,6 +3469,7 @@ export default defineComponent({
       this.dialogInsertUserInFunction.functionType = '',
       this.dialogInsertUserInFunction.open = false,
       this.organismCalleeSelected = ''
+      this.sameOrganismCalled = false
       this.organismCallerSelected = ''
       this.dialogInsertUserInFunction.installationDate = ''
       this.dialogInsertUserInFunction.calleeDate = ''
