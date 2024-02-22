@@ -31,7 +31,14 @@
         </div>
       </div>
       <div class="q-pa-sm q-ma-lg">
-        <div class="text-h6">Composição:</div>
+        <div class="text-h6">Composição:
+          <q-btn
+            flat
+            unelevated
+            rounded
+            @click="addNewParish()"
+          />
+        </div>
         <q-tree
           class="q-ml-sm"
           default-expand-all
@@ -820,6 +827,9 @@ export default defineComponent({
         })
       })
     },
+    addNewParish() {
+      console.log('HAHAHA, eu estava escondido!')
+    },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
         if (parish.childId === id) {
@@ -879,6 +889,7 @@ export default defineComponent({
           organismId: parish.childId,
           children: []
         }
+        console.log(parish, 'depois dessa linha, em algum momento está quebrando.')
         parish.organismChildData.forEach((congregation, iCongregation) => {
           this.districtInfo.forEach((info) => {
             if (info.label === 'Congregações') {
