@@ -731,7 +731,7 @@
                         />
                       </div>
                       <div v-if="field.type.type === 'maritalStatus'">
-                        <q-list
+                        <!-- <q-list
                             style="border-radius: 1rem"
                             class="bg-grey-3"
                             separator
@@ -743,13 +743,14 @@
                                 </q-item-label>
                               </q-item-section>
                             </q-item>
-                          </q-list>
+                          </q-list> -->
                         <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
                           <CardMaritalStatus
-                            :data="field"
+                            :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
+                            @edit="editMaritalStatus"
                             @remove="removeThisMaritalRelation"
                           />
                         </div>

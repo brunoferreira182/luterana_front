@@ -826,7 +826,7 @@ export default defineComponent({
       })
     },
     addNewParish() {
-      console.log('HAHAHA, eu estava escondido!')
+      // console.log('HAHAHA, eu estava escondido!')
     },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
