@@ -352,7 +352,7 @@
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
                               @edit="editMaritalStatus"
-                              @remove="removeMaritalStatus"
+                              @remove="removeThisMaritalRelation"
                             />
                           </div>
                           <q-btn
@@ -750,7 +750,7 @@
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @remove="removeThisPerson"
+                            @remove="removeThisMaritalRelation"
                           />
                         </div>
                         <q-btn
@@ -865,7 +865,6 @@
           </q-expansion-item>
         </q-list>
       </div>
-
       <DialogMaritalStatus
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
@@ -1154,7 +1153,7 @@
               rounded
               unelevated
               no-caps
-              @click="confirmChangeDatesMaritalStatus"
+              @click="confirmChangeUserInMaritalRelation"
             />
           </q-card-actions>
         </q-card>
@@ -1193,7 +1192,7 @@
               unelevated
               no-caps
               color="primary"
-              @click="confirmChangeUserInMaritalRelation()"
+              @click="confirmChangeSelectedUserFromMaritalRelation()"
             />
           </q-card-actions>
         </q-card>
@@ -1401,47 +1400,50 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
-    confirmAddMaritalRelation(data) {
-      console.log(data)
-      this.userData.userDataTabs.forEach((t) => {
-        if ( t.tabLabel === 'Familiar') {
-          t.fields.forEach((f, iF) => {
-            if (iF.label === 'Estado civil') {
-              if (!f.value) {
-                f.value = []
-              }
-              f.value.push({
-                partner: {
-                  dates: {
-                    initialDate: data.weddingDate,
-                    finalDate: data.separationDate,
-                    deathDate: data.deathDate
-                  } 
-                }
-              })
-            }
-          })
+    clearDialogEditMaritalRelation() {
+      this.dialogEditMaritalRelation = {
+        open: false,
+        data: null
+      }
+    },
+    async removeThisMaritalRelation(fieldIndex, tabsIndex, i) {
+      const opt = {
+        route: '/desktop/users/removeMaritalRelation',
+        body: {
+          relationId: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner.relationId
         }
-      })
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getUsersConfig()
     },
-    removeMaritalStatus(fieldIndex, tabsIndex, i) {
-      this.userData
-      .userDataTabs[tabsIndex]
-      .fields[fieldIndex]
-      .value.splice(i, 1)
+    async confirmAddMaritalRelation(data) {
+      if (this.maritalStatus.action === 'add') {
+        const opt = {
+          route: '/desktop/users/insertUserMaritalRelation',
+          body: {
+            partnerId: data.person._id,
+            dates: {
+              initialDate: data.weddingDate,
+            }
+          }
+        }
+
+        if (data.separationDate !== '') {
+          opt.body.dates.finalDate = data.separationDate
+        }
+
+        let r = await useFetch(opt)
+
+        if (r.error) return
+        this.clearMaritalStatus()
+        this.getUsersConfig()
+      } 
     },
-    confirmChangeDatesMaritalStatus() {
-      this.userData
-      .userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
-      .fields[this.dialogEditMaritalRelation.fieldIndex]
-      .value[this.dialogEditMaritalRelation.i]
-      .partner.dates.initialDate = this.dialogEditMaritalRelation.data.dates.initialDate
-      this.userData
-      .userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
-      .fields[this.dialogEditMaritalRelation.fieldIndex]
-      .value[this.dialogEditMaritalRelation.i]
-      .partner.dates.finalDate = this.dialogEditMaritalRelation.data.dates.finalDate
-      this.clearDialogMaritalStatusDetail()
+    confirmChangeSelectedUserFromMaritalRelation() {
+      this.dialogEditMaritalRelation.data.name = this.dialogEditUserInMaritalRelation.userSelected.userName
+      this.dialogEditMaritalRelation.data.partnerId = this.dialogEditUserInMaritalRelation.userSelected._id
+      this.clearDialogChangeUserInMaritalRelation()
     },
     clearDialogMaritalStatusDetail() {
       this.dialogEditMaritalRelation = {
@@ -1449,21 +1451,25 @@ export default defineComponent({
         data: null
       }
     },
-    confirmChangeUserInMaritalRelation() {
-      this
-      .userData.userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
-      .fields[this.dialogEditMaritalRelation.fieldIndex]
-      .value[this.dialogEditMaritalRelation.i].partner.name = this.dialogEditUserInMaritalRelation.userSelected.userName
-      this
-      .userData.userDataTabs[this.dialogEditMaritalRelation.tabsIndex]
-      .fields[this.dialogEditMaritalRelation.fieldIndex]
-      .value[this.dialogEditMaritalRelation.i].partner.partnerId = this.dialogEditUserInMaritalRelation.userSelected._id
-      this.clearDialogChangeUserInMaritalRelation()
+    async confirmChangeUserInMaritalRelation() {
+      let data = this.dialogEditMaritalRelation.data
+      const opt = {
+        route: '/desktop/users/updateUserMaritalRelation',
+        body: {
+          partnerId: data.partnerId,
+          relationId: data.relationId,
+          dates: data.dates
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogEditMaritalRelation()
+      this.getUsersConfig()
     },
     clearDialogChangeUserInMaritalRelation() {
       this.dialogEditUserInMaritalRelation = {
         open: false,
-        selectedUser: null,
+        userSelected: null,
         usersList: []
       }
     },
