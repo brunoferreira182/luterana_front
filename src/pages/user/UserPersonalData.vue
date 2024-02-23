@@ -182,7 +182,6 @@
                             <q-icon name="attach_file" />
                           </template>
                         </q-file>
-    
                         <div class="text-right" v-if="field.type.type === 'options'">
                           <q-select
                             outlined
@@ -345,7 +344,6 @@
                             :disable="tabs.onlyAdm"
                           />
                         </div>
-    
                         <div v-if="field.type.type === 'maritalStatus'">
                           <div v-if="field.value">
                             Dados Conjugais:
@@ -353,6 +351,8 @@
                               :data="field.value"  
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
+                              @edit="editMaritalStatus"
+                              @remove="removeThisMaritalRelation"
                             />
                           </div>
                           <q-btn
@@ -731,7 +731,7 @@
                         />
                       </div>
                       <div v-if="field.type.type === 'maritalStatus'">
-                        <q-list
+                        <!-- <q-list
                             style="border-radius: 1rem"
                             class="bg-grey-3"
                             separator
@@ -743,14 +743,15 @@
                                 </q-item-label>
                               </q-item-section>
                             </q-item>
-                          </q-list>
+                          </q-list> -->
                         <div v-if="field.value && field.value.length > 0">
                           <div class="text-body">{{ field.label }}</div>
                           <CardMaritalStatus
-                            :data="field"
+                            :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
-                            @remove="removeThisPerson"
+                            @edit="editMaritalStatus"
+                            @remove="removeThisMaritalRelation"
                           />
                         </div>
                         <q-btn
@@ -865,11 +866,11 @@
           </q-expansion-item>
         </q-list>
       </div>
-
       <DialogMaritalStatus
         :open="maritalStatus.open"
         :dataProp="maritalStatus.data"
         @closeDialog="clearMaritalStatus"
+        @addPerson="confirmAddMaritalRelation"
       />
       <DialogUserTitle
         :open="openDialogVinculateUserToTitle"
@@ -1073,7 +1074,6 @@
         @confirm="confirmAddSocialNetwork"
         @closeDialog="clearDialogSocialNetwork"
       />
-
       <DialogFormation
         :open="dialogFormation.open"
         :dataProp="dialogFormation.data"
@@ -1082,14 +1082,122 @@
         @confirm="confirmFormation"
         @closeDialog="clearFormationInputs"
       />
-
       <DialogAddPastoralData
         :open="dialogAddPastoralData.open"
         :dataProps="dialogAddPastoralData.data"
         @closeDialog="closeAddPastoralDataDialog"
         @confirm="savePastoralDataSugestion"
       />
-      
+      <q-dialog
+        v-model="dialogEditMaritalRelation.open"
+      >
+        <q-card style="width: 400px;border-radius: 1rem;">
+          <q-card-section>
+            <div class="q-px-sm text-h6">
+              Nome:
+            </div>
+            <div class="row">
+              <div class="col-9 q-pa-sm">
+                <q-input
+                  v-model="dialogEditMaritalRelation.data.name"
+                  filled
+                  disable
+                />
+              </div>
+              <div class="col-3">
+                <q-btn
+                  flat
+                  class="q-pa-lg"
+                  rounded
+                  unelevated
+                  color="primary"
+                  icon="edit"
+                  @click="editUserInMaritalRelation"
+                >
+                  <q-tooltip>Alterar pessoa</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <div class="text-h6 q-ml-md">
+              Datas:
+            </div>
+            <div class="row">
+              <q-input
+                class="q-pa-sm col-6"
+                filled
+                label="Data inicial"
+                v-model="dialogEditMaritalRelation.data.dates.initialDate"
+              />
+              <q-input
+                class="q-pa-sm col-6"
+                filled
+                label="Data final"
+                v-model="dialogEditMaritalRelation.data.dates.finalDate"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              flat
+              @click="clearDialogMaritalStatusDetail"
+              rounded
+              unelevated
+              no-caps
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              @click="confirmChangeUserInMaritalRelation"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogEditUserInMaritalRelation.open"
+        @hide="clearDialogChangeUserInMaritalRelation"
+      >
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section>
+            <div class="text-h6">Selecione o usuário</div>
+            <q-select
+              v-model="dialogEditUserInMaritalRelation.userSelected"
+              @filter="getUserByString"
+              class="q-pa-sm"
+              outlined
+              :options="dialogEditUserInMaritalRelation.usersList"
+              :option-label="(item) => item.userName"
+              use-input
+              label="Nome do usuário"
+            />
+          </q-card-section>
+          <q-card-actions  align="center">
+            <q-btn
+              label="Sair"
+              flat
+              unelevated
+              rounded
+              no-caps
+              color="primary"
+              @click="clearDialogChangeUserInMaritalRelation"
+            />
+            <q-btn
+              label="Confirmar"
+              rounded
+              unelevated
+              no-caps
+              color="primary"
+              @click="confirmChangeSelectedUserFromMaritalRelation()"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1270,6 +1378,18 @@ export default defineComponent({
         fieldIndex: null,
         iValue: null,
         action: 'add'
+      },
+      dialogEditMaritalRelation: {
+        open: false,
+        data: null
+      },
+      dialogEditUserInMaritalRelation: {
+        open: false,
+        userSelected: null,
+        fieldIndex: null,
+        tabsIndex: null,
+        i: null,
+        usersList: []
       }
     };
   },
@@ -1281,6 +1401,89 @@ export default defineComponent({
     this.isMobile = useScreenStore().isMobile
   },
   methods: {
+    clearDialogEditMaritalRelation() {
+      this.dialogEditMaritalRelation = {
+        open: false,
+        data: null
+      }
+    },
+    async removeThisMaritalRelation(fieldIndex, tabsIndex, i) {
+      const opt = {
+        route: '/desktop/users/removeMaritalRelation',
+        body: {
+          relationId: this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner.relationId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getUsersConfig()
+    },
+    async confirmAddMaritalRelation(data) {
+      if (this.maritalStatus.action === 'add') {
+        const opt = {
+          route: '/desktop/users/insertUserMaritalRelation',
+          body: {
+            partnerId: data.person._id,
+            dates: {
+              initialDate: data.weddingDate,
+            }
+          }
+        }
+
+        if (data.separationDate !== '') {
+          opt.body.dates.finalDate = data.separationDate
+        }
+
+        let r = await useFetch(opt)
+
+        if (r.error) return
+        this.clearMaritalStatus()
+        this.getUsersConfig()
+      } 
+    },
+    confirmChangeSelectedUserFromMaritalRelation() {
+      this.dialogEditMaritalRelation.data.name = this.dialogEditUserInMaritalRelation.userSelected.userName
+      this.dialogEditMaritalRelation.data.partnerId = this.dialogEditUserInMaritalRelation.userSelected._id
+      this.clearDialogChangeUserInMaritalRelation()
+    },
+    clearDialogMaritalStatusDetail() {
+      this.dialogEditMaritalRelation = {
+        open: false,
+        data: null
+      }
+    },
+    async confirmChangeUserInMaritalRelation() {
+      let data = this.dialogEditMaritalRelation.data
+      const opt = {
+        route: '/desktop/users/updateUserMaritalRelation',
+        body: {
+          partnerId: data.partnerId,
+          relationId: data.relationId,
+          dates: data.dates
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogEditMaritalRelation()
+      this.getUsersConfig()
+    },
+    clearDialogChangeUserInMaritalRelation() {
+      this.dialogEditUserInMaritalRelation = {
+        open: false,
+        userSelected: null,
+        usersList: []
+      }
+    },
+    editUserInMaritalRelation() {
+      this.dialogEditUserInMaritalRelation.open = true
+    },
+    editMaritalStatus(fieldIndex, tabsIndex, i) {
+      this.dialogEditMaritalRelation.open = true
+      this.dialogEditMaritalRelation.fieldIndex = fieldIndex
+      this.dialogEditMaritalRelation.tabsIndex = tabsIndex
+      this.dialogEditMaritalRelation.i = i
+      this.dialogEditMaritalRelation.data = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
+    },
     clkOpenFilePicker () {
       console.log(this.$refs.filePicker[0].pickFiles())
       // this.$refs.filePicker.pickFiles()
@@ -1773,7 +1976,10 @@ export default defineComponent({
       this.addPerson.dialogOpen = false
     },
     getUserByString (val, update) {
-      if (val < 2) return
+      if (val.length < 3) {
+        this.$q.notify('Escreva ao menos 3 letras')
+        return
+      } 
       const opt = {
         route: '/desktop/users/getUsersList',
         body: {
@@ -1783,7 +1989,7 @@ export default defineComponent({
       useFetch(opt).then(r => {
         if (r.error) return this.$q.notify(r.errorMessage)
         update(() => {
-          this.addPerson.usersOptions = r.data.list
+          this.dialogEditUserInMaritalRelation.usersList = r.data.list
         })
       })
     },

@@ -165,7 +165,6 @@
 
   watchEffect (() => {
     if (props.editStatus && data.value.edit !== true) {
-      console.log(props.editStatus.userData)
       data.value.organism = props.editStatus.organismData
       data.value.initialDate = props.editStatus.dates.initialDate
       data.value.finalDate = props.editStatus.dates.finalDate 

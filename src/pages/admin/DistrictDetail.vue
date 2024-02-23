@@ -651,10 +651,8 @@ export default defineComponent({
       } else if (!parish) {
         this.dialogCongregationDetail.data.functions.forEach((func, i) => {
           if (i === iFunc) {
-            console.log(func, 'tilau se tu me quiseres')
             func.users.forEach((user, j) => {
               if (j === iUser) {
-                console.log(user, 'minhocas clandestinas infiltradas pelos fundos')
                 this.dialogDeleteUserFromFunction.userData = user
               }
             })
@@ -828,7 +826,7 @@ export default defineComponent({
       })
     },
     addNewParish() {
-      console.log('HAHAHA, eu estava escondido!')
+      // console.log('HAHAHA, eu estava escondido!')
     },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
@@ -889,7 +887,6 @@ export default defineComponent({
           organismId: parish.childId,
           children: []
         }
-        console.log(parish, 'depois dessa linha, em algum momento está quebrando.')
         parish.organismChildData.forEach((congregation, iCongregation) => {
           this.districtInfo.forEach((info) => {
             if (info.label === 'Congregações') {

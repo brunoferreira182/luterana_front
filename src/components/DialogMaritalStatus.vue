@@ -118,7 +118,7 @@ const newSpouse = ref({
 
 const data = ref(null)
 const usersOptions = ref(null)
-const userSelected = ref(null)
+// const userSelected = ref(null)
 watch(() => props.dataProp, (nV) => {
   data.value = nV
 }, { deep: true })
@@ -130,7 +130,7 @@ function addSpouse() {
 }
 
 function confirmAddPerson () {
-  emits('addPerson', userSelected.value)
+  emits('addPerson', newSpouse.value)
 }
 
 function orderSpousessByDate () {

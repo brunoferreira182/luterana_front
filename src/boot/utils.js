@@ -18,7 +18,6 @@ const useUtils = {
   //   document.body.removeChild(link)
   // },
   downloadFile (options) {
-    console.log(options, 'options dentro downloadfile')
     const opt = {
       method: 'get',
       responseType: 'blob',

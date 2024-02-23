@@ -1667,7 +1667,6 @@ export default defineComponent({
     },
     saveAllEntriesAndOutputs() {
       this.allEntries = this.organismsFinancesStatistics.map(row => ({ ...row }));
-      console.log("Todas as Entradas Salvas:", this.allEntries);
     },
     getPastorFormations() {
       const opt = {
