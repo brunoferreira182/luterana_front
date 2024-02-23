@@ -101,16 +101,9 @@ export default defineComponent({
   },
   methods: {
     downloadAttach(e, r) {
-<<<<<<< HEAD
       if(r.linkForDownload){
         window.open(r.linkForDownload.includes('https://') ? 
         r.linkForDownload : 'https://' + r.linkForDownload)
-=======
-      const arquivo = r;
-      if(arquivo.linkForDownload){
-        window.open(arquivo.linkForDownload.includes('https://') ? 
-        arquivo.linkForDownload : 'https://' + arquivo.linkForDownload)
->>>>>>> 2288bbda8020df5ec8cc9fa488e4d59ab4cebf13
         return
       }
       utils.downloadFile({

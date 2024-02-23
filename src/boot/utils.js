@@ -2,7 +2,6 @@ import { MODE_AUTH_SERVER } from "./variables";
 import CryptoJS from "crypto-js";
 import { LocalStorage } from "quasar";
 import useFetch from "./useFetch";
-import download from 'downloadjs';
 import { calculateMasterServerAttachmentsRoute } from "./masterServerRoutes";
 
 const useUtils = {
@@ -27,7 +26,6 @@ const useUtils = {
       console.log('entrou', response)
       const blob = new Blob([response], {type: options.type})
       const link = URL.createObjectURL(blob)
-      download(link)
       // const a = document.createElement("a");
       // document.body.appendChild(a);
       // a.href = link;
