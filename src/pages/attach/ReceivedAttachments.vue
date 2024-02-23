@@ -101,17 +101,15 @@ export default defineComponent({
   },
   methods: {
     downloadAttach(e, r) {
-      const arquivo = r;
-      console.log(arquivo, 'arquivoarquivo')
-      if(arquivo.linkForDownload){
-        window.open(arquivo.linkForDownload.includes('https://') ? 
-        arquivo.linkForDownload : 'https://' + arquivo.linkForDownload)
+      if(r.linkForDownload){
+        window.open(r.linkForDownload.includes('https://') ? 
+        r.linkForDownload : 'https://' + r.linkForDownload)
         return
       }
       utils.downloadFile({
-        filename: arquivo.attach.filename,
-        originalname: arquivo.attach.originalname,
-        type: arquivo.attach.mimetype
+        filename: r.attach.filename,
+        originalname: r.attach.originalname,
+        type: r.attach.mimetype
       })
     },
     getSelectedString() {

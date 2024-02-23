@@ -752,7 +752,7 @@
                         </q-chip>
                       </div>
                     </q-card-section>
-                    <q-card-section>
+                    <q-card-section v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
                       <q-select
                         v-model="organismCallerSelected"
                         filled
@@ -772,7 +772,7 @@
                         </template>
                       </q-select>
                     </q-card-section>
-                    <q-card-section class="q-gutter-md">
+                    <q-card-section class="q-gutter-md" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
                       <q-select
                         v-model="organismCalleeSelected"
                         filled
@@ -805,6 +805,8 @@
                         v-model="dialogInsertUserInFunction.ataKey"
                         hint="Informe a chave-ata"
                       />
+                    </q-card-section>
+                    <q-card-section class="q-gutter-md">
                       <q-select
                         v-model="dialogInsertUserInFunction.userSelected"
                         filled
@@ -834,12 +836,14 @@
                         </template>
                       </q-select>
                       <q-input
+                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
                         filled
                         type="date"
                         label="Data de instalação"
                         v-model="dialogInsertUserInFunction.installationDate"
                       />
                       <q-input
+                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
                         filled
                         type="date"
                         :readonly="undefinedCallee ? true : false"
@@ -847,6 +851,7 @@
                         v-model="dialogInsertUserInFunction.calleeDate"
                       />
                       <q-checkbox
+                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
                         label="Prazo chamado é indefinido"
                         @update:model-value="undefinedCalleeFunction()"
                         v-model="undefinedCallee"

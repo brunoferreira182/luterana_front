@@ -60,7 +60,6 @@ const useFetch = async ({
       form.append('file', blob, fileName);
     });
     bodyToSend = form;
-    console.log(bodyToSend, 'bodyToSend')
   }
   //////////////////////////////////////////////////
 
