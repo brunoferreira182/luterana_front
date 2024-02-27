@@ -825,9 +825,12 @@ export default defineComponent({
         })
       })
     },
-    addNewParish() {
-      // console.log('HAHAHA, eu estava escondido!')
-    },
+    // addNewParish() {
+    //   const opt = {
+    //     route: '/desktop/adm/getOrganismConfigById'
+    //   }
+    //   console.log('HAHAHA, eu estava escondido!')
+    // },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
         if (parish.childId === id) {
