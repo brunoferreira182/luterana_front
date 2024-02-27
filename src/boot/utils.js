@@ -35,27 +35,44 @@ const useUtils = {
   //     URL.revokeObjectURL(url);
   //   })
   // },
-  
   downloadFile (options) {
-    console.log(options, 'options dentro downloadfile')
     const opt = {
       method: 'GET',
       responseType: 'blob',
       route: '/download/' + options.filename
     }
     useFetch(opt).then((response) => {
-      console.log('entrou', typeof response)
-      const blob = new Blob([response], {type: options.type})
-      console.log('blob', blob)
-      const link = URL.createObjectURL(blob)
-      const a = document.createElement("a");
-      document.body.appendChild(a);
-      a.href = link;
-      a.download = options.originalname;
-      a.click();
-      URL.revokeObjectURL(link);
-    })
+        console.log('entrou', typeof response)
+        const blob = new Blob([response], {type: options.type})
+        console.log('blob', blob)
+        const link = URL.createObjectURL(blob)
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = link;
+        a.download = options.originalname;
+        a.click();
+        URL.revokeObjectURL(link);
+      })
   },
+  // downloadFile (options) {
+  //   const opt = {
+  //     method: 'GET',
+  //     responseType: 'blob',
+  //     route: '/download/' + options.filename
+  //   }
+  //   useFetch(opt).then((response) => {
+  //     console.log('entrou', typeof response)
+  //     const blob = new Blob([response], {type: options.type})
+  //     console.log('blob', blob)
+  //     const link = URL.createObjectURL(blob)
+  //     const a = document.createElement("a");
+  //     document.body.appendChild(a);
+  //     a.href = link;
+  //     a.download = options.originalname;
+  //     a.click();
+  //     URL.revokeObjectURL(link);
+  //   })
+  // },
   makeFileUrl (filename) {
     // console.log(filename, 'quer ver que ta chegando')
     if (!filename) return '/assets/default_avatar.svg'
