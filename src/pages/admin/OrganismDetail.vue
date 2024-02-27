@@ -3516,7 +3516,6 @@ export default defineComponent({
         })
       });
     },
-
     addUserToFunction() {
       let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
