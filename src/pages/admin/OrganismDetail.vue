@@ -108,7 +108,7 @@
                       class="text-subtitle2" lines="3"
                     >
                       {{ pastor.userName }}
-                      <q-btn
+                      <!-- <q-btn
                         icon="sync"
                         flat
                         dense
@@ -118,7 +118,7 @@
                         @click.stop="swapPastorToFunctionInCongregacao(pastor)"
                       >
                         <q-tooltip>Trocar pastor</q-tooltip>
-                      </q-btn>
+                      </q-btn> -->
                       <q-btn
                         icon="delete"
                         dense
@@ -757,7 +757,7 @@
                         v-model="organismCallerSelected"
                         filled
                         use-input
-                        label="Nome do organismo que chamou"
+                        label="Nome do organismo de chamado"
                         option-label="nome"
                         :options="organismList"
                         @filter="getOrganismsList"
@@ -777,7 +777,7 @@
                         v-model="organismCalleeSelected"
                         filled
                         use-input
-                        label="Nome do organismo que atende"
+                        label="Nome do organismo de atuação"
                         option-label="nome"
                         :readonly="sameOrganismCalled ? true : false"
                         :options="organismList"
@@ -793,7 +793,7 @@
                         </template>
                       </q-select>
                       <q-checkbox
-                        label="É o mesmo organismo que chamou"
+                        label="É o mesmo organismo de chamado"
                         @update:model-value="changeOrganismCaller()"
                         v-model="sameOrganismCalled"
                       />
@@ -3520,7 +3520,7 @@ export default defineComponent({
       let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if(
-          this.dialogInsertUserInFunction.functionType === 'Pastor'
+        this.dialogInsertUserInFunction.functionType === 'Pastor'
       ){
         if(
           this.dialogInsertUserInFunction.ataKey === '' ||

@@ -22,7 +22,7 @@
             outlined
             label="Nome da configuração"
             option-label="organismConfigName"
-            :option-value="(item) => item._id"
+            :option-value="(item) => item"
             emit-value
             map-options
             hint="Informe qual o tipo de configuração que está aplicando"
@@ -30,6 +30,21 @@
             :options="organismConfigOptions"
             @update:modelValue="getOrganismConfigById"
           />
+          <q-dialog v-model="dialogOrganismNotCreatedInSGA">
+            <q-card class="text-center q-pa-md" style="border-radius: 1rem; width: 350px;">
+              <q-item-section>
+                <q-item-label class="text-h5">
+                  Aviso
+                </q-item-label>
+                <q-item-label class="text-subtitle1">
+                  O organismo não foi criado no SGA
+                </q-item-label>
+              </q-item-section>
+              <q-card-actions align="center">
+                <q-btn flat label="Entendi" no-caps @click="dialogOrganismNotCreatedInSGA = false"/>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
           <q-separator class="q-ma-md" v-if="organismList.length"/>
           <div v-if="organismList.length && $route.path.includes('/admin')">
             <q-btn
@@ -746,6 +761,7 @@ export default defineComponent({
         action: null,
         iValue: null
       },
+      dialogOrganismNotCreatedInSGA: false,
     };
   },
   mounted() {
@@ -1021,10 +1037,18 @@ export default defineComponent({
       });
     },
     getOrganismConfigById() {
+      if(
+        this.organismData.organismConfigId.organismConfigName === 'Congregação' || 
+        this.organismData.organismConfigId.organismConfigName === 'Ponto de Missão' ||
+        this.organismData.organismConfigId.organismConfigName === 'Paróquia'
+      ){
+        this.dialogOrganismNotCreatedInSGA = true
+        return
+      }
       const opt = {
         route: "/desktop/adm/getOrganismConfigById",
         body: {
-          _id: this.organismData.organismConfigId
+          _id: this.organismData.organismConfigId._id
         }
       };
       this.$q.loading.show()

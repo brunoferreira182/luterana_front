@@ -23,7 +23,7 @@
       </q-item-section>
       <q-item-section side>
         <q-item-label>
-          <q-btn
+          <!-- <q-btn
             v-if="canEditPastor"
             icon="sync"
             flat
@@ -34,7 +34,7 @@
             :disable="disableButtons"
           >
             <q-tooltip>Trocar pastor</q-tooltip>
-          </q-btn>
+          </q-btn> -->
           <q-btn
             v-if="canEditPastor"
             icon="delete"
@@ -58,15 +58,15 @@
 import avatar from '../assets/avatar.svg'
 import utils from '../boot/utils'
 const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'photo', 'canEditPastor', 'disableButtons'])
-const emits = defineEmits(['remove', 'deleteUserFromFunction', 'swapPastorToFunctionPastor'])
+const emits = defineEmits(['remove', 'deleteUserFromFunction'])
 
 
 
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
 }
-function swapPastorToFunctionPastor (user) {
-  emits('swapPastorToFunctionPastor', user)
-}
+// function swapPastorToFunctionPastor (user) {
+//   emits('swapPastorToFunctionPastor', user)
+// }
 
 </script>

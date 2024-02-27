@@ -735,7 +735,7 @@
               v-model="organismCallerSelected"
               filled
               use-input
-              label="Nome do organismo que chamou"
+              label="Nome do organismo de chamado"
               option-label="nome"
               @update:model-value="getOrganismDetailById"
               :options="organismList"
@@ -759,7 +759,7 @@
               </template>
             </q-select>
             <q-checkbox
-              label="É o mesmo organismo que chamou"
+              label="É o mesmo organismo de chamado"
               @update:model-value="changeOrganismCaller()"
               v-model="sameOrganismCalled"
             />
@@ -767,7 +767,7 @@
               v-model="organismCalleeSelected"
               filled
               use-input
-              label="Nome do organismo que atende"
+              label="Nome do organismo de atuação"
               option-label="nome"
               :readonly="sameOrganismCalled ? true : false"
               :options="organismList"
