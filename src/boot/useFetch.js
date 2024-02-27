@@ -55,6 +55,8 @@ const useFetch = async ({
     form = new FormData();
     form.append("body", JSON.stringify(newBody));
     files.forEach(f => {
+      console.log(f, 'fffff')
+      console.log(f.file, 'fffff')
       const fileName = f.file.name ? f.file.name : 'userFile.png';
       const blob = new Blob([f.file], { type: f.file.type });
       form.append('file', blob, fileName);

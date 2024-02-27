@@ -279,9 +279,10 @@ export default defineComponent({
       }else{ this.addReceiverDialog = false;}
     },
     clkSaveAttachment() {
-      this.$route.path === "/attach/attachmentDetail"
-        ? this.updateAttachment()
-        : this.createAttachment();
+      this.createAttachment();
+      // this.$route.path === "/attach/attachmentDetail"
+      //   ? this.updateAttachment()
+      //   : this.createAttachment();
     },
     createAttachment() {
       

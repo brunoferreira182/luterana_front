@@ -791,7 +791,6 @@
                             </q-item-section>
                           </q-item>
                         </template>
-                        
                       </q-select>
                       <q-checkbox
                         label="É o mesmo organismo que chamou"
@@ -802,6 +801,8 @@
                         filled
                         label="Chave-ata"
                         mask="AAA-AAA-###-####-##-a"
+                        :rules="[validateAtaKeyFormat]"
+                        lazy-rules
                         v-model="dialogInsertUserInFunction.ataKey"
                         hint="Informe a chave-ata"
                       />
@@ -2361,6 +2362,14 @@ export default defineComponent({
     }
   },
   methods: {
+    validateAtaKeyFormat(value) {
+      const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
+      if (regex.test(value)) {
+        return true;
+      }else{
+        return this.$q.notify('Formato inválido. Por favor, revise os dados digitados na chave-ata');
+      }
+    },
     undefinedCalleeFunction(){
       this.undefinedCallee ? this.undefinedCallee = false :this.dialogInsertUserInFunction.calleeDate = ''
     },
@@ -3511,13 +3520,17 @@ export default defineComponent({
       let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
       if(
-        this.dialogInsertUserInFunction.ataKey === '' ||
+          this.dialogInsertUserInFunction.functionType === 'Pastor'
+      ){
+        if(
+          this.dialogInsertUserInFunction.ataKey === '' ||
         this.dialogInsertUserInFunction.installationDate === '' ||
         this.organismCalleeSelected === '' ||
         this.organismCallerSelected === '' 
-      ){
-        this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
-        return;
+        ){
+          this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
+          return;
+        }
       }
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
         this.$q.notify("Preencha usuário e a data início");

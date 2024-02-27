@@ -67,6 +67,7 @@
           </q-td>
         </template> -->
       </q-table>
+        <embed :src="teste" type="application/pdf"  width="1000" height="720"/>
     </q-page>
   </q-page-container>
 </template>
@@ -84,6 +85,7 @@ export default defineComponent({
       attachFiles: [],
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
+      teste: '',
       selectFilter: "Ativos",
       pagination: {
         page: 1,
@@ -101,6 +103,12 @@ export default defineComponent({
   },
   methods: {
     downloadAttach(e, r) {
+      // console.log(r)
+      // const blob = new Blob([r.attach.filename], {type: 'application/pdf'});
+      // const url = URL.createObjectURL(blob);
+      // this.teste = url
+      // return
+      console.log(utils, 'oKPOkpodkaposd')
       if(r.linkForDownload){
         window.open(r.linkForDownload.includes('https://') ? 
         r.linkForDownload : 'https://' + r.linkForDownload)
