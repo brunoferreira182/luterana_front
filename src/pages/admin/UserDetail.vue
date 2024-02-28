@@ -69,9 +69,8 @@
       <div v-if="userData && userData.userDataTabs">
         <div>
           <div class="text-h6 q-ma-sm q-ml-md">
-            Vínculos:  
+            Chamados:
             <q-btn
-              v-if="userType === 'pastor'"
               icon="add"
               color="primary"
               size="12px"
@@ -79,143 +78,70 @@
               flat
               rounded
               no-caps
-              @click.stop="linkPastorToFunction"
-            >
-              <q-tooltip>Adicionar Vínculo</q-tooltip>
-            </q-btn>
+              @click.stop="openDialogAddCallToPastor"
+            />
           </div>
-          <q-list v-if="userLinks && userLinks.length > 0">
-            <q-item
-              clickable
-              v-for="link in userLinks"
-              :key="link"
-              style="border-radius: 1rem;"
-              class="bg-grey-3 q-ma-sm q-mx-md"
-            >
-              <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
-                <q-item-label class="text-subtitle1"> <strong>{{ link.organismName }} - {{ link.organismConfigName }}</strong></q-item-label>
-                <q-item-label v-if="link.organismCity && link.organismCity.city"><strong>Cidade: </strong>{{ link.organismCity.city }}</q-item-label>
-                <q-item-label><strong>Função: </strong>{{ link.functionConfigName }}</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>
-                  <q-btn
-                    icon="delete"
-                    color="red"
-                    round
-                    @click="removeUserFromFunction(link)"
-                    flat
-                  >
-                    <q-tooltip>Remover usuário</q-tooltip>
-                  </q-btn>
-                  <!-- <q-btn
-                    
-                    icon="refresh"
-                    color="primary"
-                    round
-                    @click="swapUserFromFunction(link)"
-                    flat
-                  >
-                    <q-tooltip>Trocar por outro usuário</q-tooltip>
-                  </q-btn> -->
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-list v-else>
-            <q-item>
-              Nenhum vínculo criado
-            </q-item>
-          </q-list>
+          <div>
+            <q-list>
+              <q-item
+                v-for="call in callList"
+                :key="call"
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ call.functionConfigName}} - {{ call.organismName }}
+                  </q-item-label>
+                  <q-item-label>
+                    <q-badge>
+                      {{ call.organismConfigName }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+        <div>
+          <div class="text-h6 q-ma-sm q-ml-md">
+            Atuações:
+            <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="addActingToPastor"
+            />
+          </div>
+          <div>
+            <q-list>
+              <q-item
+                v-for="act in actingList"
+                :key="act"
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ act.functionConfigName }} - {{ act.organismName }}
+                  </q-item-label>
+                  <q-item-label>
+                    <q-badge>
+                      {{ act.organismConfigName }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
         </div>
         <q-separator class="q-mx-md"/>
-        <!-- <div class="text-h6 q-ma-sm q-ml-md">
-          Histórico pastoral:
-          <q-btn
-            icon="add"
-            color="primary"
-            flat
-            @click="addPastoralStatus"
-          >
-            <q-tooltip>Adicionar histórico</q-tooltip>
-          </q-btn>
-        </div>
-        <div v-if="pastoralStatusData">
-          <q-list>
-            <q-item 
-              v-for="status in pastoralStatusData"
-              :key="status"
-              class="bg-grey-3 q-ma-sm q-mx-md"
-              style="border-radius: 1rem;"
-            >
-              <q-item-section>
-                <q-item-label lines="1" class="text-capitalize">
-                  <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
-                </q-item-label>
-                <q-item-label lines="2" class="text-capitalize">
-                  <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
-                </q-item-label>
-                <q-item-label lines="3" class="text-capitalize">
-                  <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
-                </q-item-label>
-                <q-item-label lines="4">
-                  <strong>{{ status.organismData.name }} - {{ status.organismData.config }}</strong>
-                </q-item-label>
-                <q-item-label lines="5">
-                  <div>
-                    <strong>Data inicial:</strong> {{ status.dates.initialDate }}
-                  </div>
-                  <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
-                    <strong>Data Final:</strong> {{ status.dates.finalDate }}
-                  </div>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-item-label>
-                  <q-btn 
-                    color="primary" 
-                    flat 
-                    round
-                    icon="edit" 
-                    rounded
-                    @click="editStatus(status)"
-                  >
-                    <q-tooltip>Editar status</q-tooltip>
-                  </q-btn>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item 
-              v-for="status in inactiveStatus"
-              :key="status"
-              class="bg-grey-3 q-ma-sm q-mx-md q-mb-sm"
-              style="border-radius: 1rem;"
-            >
-              <q-item-section>
-                <q-item-label lines="1" class="text-capitalize">
-                  <strong>Status:</strong> {{ status.pastoralStatusData.status.label }}
-                </q-item-label>
-                <q-item-label lines="2" class="text-capitalize">
-                  <strong>Sub-status:</strong> {{ status.pastoralStatusData.subStatus.label }}
-                </q-item-label>
-                <q-item-label lines="3" class="text-capitalize">
-                  <strong>Local:</strong> {{ status.pastoralStatusData.local.label }}
-                </q-item-label>
-                <q-item-label lines="4">
-                  <strong>{{ status.organismData.name }} - {{ status.organismData.config }}</strong>
-                </q-item-label>
-                <q-item-label lines="5">
-                  <div>
-                    <strong>Data inicial:</strong> {{ status.dates.initialDate }}
-                  </div>
-                  <div v-if="status.dates.finalDate && status.dates.finalDate !== '' ">
-                    <strong>Data Final:</strong> {{ status.dates.finalDate }}
-                  </div>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div> -->
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -715,30 +641,29 @@
           </q-card-actions>
         </q-card>
       </q-dialog> -->
-      <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
+      <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
-            <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType !== 'Pastor'">
+            <div class="text-h6" v-if="dialogAddCallToPastor.functionType !== 'Pastor'">
               Informe o usuário que ocupará a função
             </div>
-            <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+            <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
               Informe o pastor que ocupará a função
             </div>
-            <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
+            <div v-if="dialogAddCallToPastor.selectedFunc && dialogAddCallToPastor.selectedFunc.functionRequiredTitleName">
               <q-chip color="red-8" outline>
-                Esta função requer o título {{ dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName }}
+                Esta função requer o título {{ dialogAddCallToPastor.selectedFunc.functionRequiredTitleName }}
               </q-chip>
             </div>
           </q-card-section>
-          <q-card-section class="q-gutter-lg">
-            
+          <q-card-section v-if="dialogAddCallToPastor.functionType === 'Pastor'">
             <q-select
-              v-model="organismCallerSelected"
+              v-model="dialogAddCallToPastor.organismCallerSelected"
               filled
               use-input
               label="Nome do organismo de chamado"
-              option-label="nome"
               @update:model-value="getOrganismDetailById"
+              option-label="nome"
               :options="organismList"
               @filter="getOrganismsList"
               :option-value="(item) => item"
@@ -750,22 +675,11 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
             </q-select>
-            <q-checkbox
-              label="É o mesmo organismo de chamado"
-              @update:model-value="changeOrganismCaller()"
-              v-model="sameOrganismCalled"
-            />
+          </q-card-section>
+          <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
             <q-select
-              v-model="organismCalleeSelected"
+              v-model="dialogAddCallToPastor.organismCalleeSelected"
               filled
               use-input
               label="Nome do organismo de atuação"
@@ -782,17 +696,14 @@
                   </q-item-section>
                 </q-item>
               </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
             </q-select>
+            <q-checkbox
+              label="É o mesmo organismo de chamado"
+              @update:model-value="changeOrganismCaller()"
+              v-model="dialogAddCallToPastor.sameOrganismCalled"
+            />
             <q-select
-              v-model="functionSelected"
+              v-model="dialogAddCallToPastor.functionSelected"
               filled
               use-input
               label="Função"
@@ -813,30 +724,88 @@
               filled
               label="Chave-ata"
               mask="AAA-AAA-###-####-##-a"
-              v-model="dialogInsertUserInFunction.ataKey"
+              :rules="[validateAtaKeyFormat]"
+              lazy-rules
+              v-model="dialogAddCallToPastor.ataKey"
               hint="Informe a chave-ata"
             />
-            <q-input
-              filled
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
               v-model="userData.userDataTabs[0].fields[0].value"
-              label="Nome do usuário"
-              hint="Usuário que ocupará a função"
               readonly
-            />
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              hint="Usuário que ocupará a função"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-select
+              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
+              v-model="dialogAddCallToPastor.userInstallation"
+              filled
+              use-input
+              label="Nome do usuário que instalou"
+              option-label="userName"
+              :options="usersOptions"
+              hint="Usuário que instalou"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
             <q-input
+              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               filled
               type="date"
               label="Data de instalação"
-              v-model="dialogInsertUserInFunction.installationDate"
+              v-model="dialogAddCallToPastor.installationDate"
             />
             <q-input
+              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               filled
               type="date"
               :readonly="undefinedCallee ? true : false"
               label="Prazo do chamado"
-              v-model="dialogInsertUserInFunction.calleeDate"
+              v-model="dialogAddCallToPastor.calleeDate"
             />
             <q-checkbox
+              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               label="Prazo chamado é indefinido"
               @update:model-value="undefinedCalleeFunction()"
               v-model="undefinedCallee"
@@ -846,7 +815,7 @@
               label="Data do chamado"
               type="date"
               hint="Informe a data início de ocupação da função"
-              v-model="dialogInsertUserInFunction.initialDate"
+              v-model="dialogAddCallToPastor.initialDate"
             />
           </q-card-section>
           <q-card-actions align="center">
@@ -856,7 +825,7 @@
               no-caps
               rounded
               color="primary"
-              @click="dialogInsertUserInFunction.open = false"
+              @click="dialogAddCallToPastor.open = false"
             />
             <q-btn
               unelevated
@@ -1060,123 +1029,6 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <q-dialog
-        v-model="dialogAddPastoralStatus.open"
-        @hide="clearDialogAddPastoralStatus"
-      >
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Adicionar status pastoral: 
-            </div>
-          </q-card-section>
-          <q-card-section>
-            <strong>
-              Selecione o status:
-            </strong>
-            <q-select
-              class="q-pa-sm"
-              outlined
-              use-input
-              label="Status"
-              :option-label="(item) => item.label"
-              v-model="dialogAddPastoralStatus.status"
-              :options="pastoralStatusTypes.statusTypes"
-              :loading="false"
-              :option-value="(item) => item._id"
-            />
-            <strong>
-              Selecione o sub-status:
-            </strong>
-            <q-select
-              class="q-pa-sm"
-              outlined
-              use-input
-              label="Sub-status"
-              :option-label="(item) => item.label"
-              v-model="dialogAddPastoralStatus.subStatus"
-              :options="pastoralStatusTypes.subStatusTypes"
-              :loading="false"
-              :option-value="(item) => item._id"
-            />
-            <div>
-              <strong>
-                Selecione o local:
-              </strong>
-              <q-select
-                class="q-pa-sm"
-                outlined
-                use-input
-                label="Local"
-                :option-label="(item) => item.label"
-                v-model="dialogAddPastoralStatus.local"
-                :options="pastoralStatusTypes.localStatusTypes"
-                :loading="false"
-                :option-value="(item) => item._id"
-              />
-            </div>
-            <strong>
-              Selecione o organismo:
-            </strong>
-            <q-select
-              class="q-pa-sm"
-              outlined
-              use-input
-              label="Nome do organismo"
-              :option-label="(item) => item.name"
-              v-model="dialogAddPastoralStatus.organism"
-              :options="organismsOptions"
-              @filter="getOrganisms"
-              :loading="false"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-            <strong>
-              Datas:
-            </strong>
-            <div class="row">
-              <q-input 
-                type="date" 
-                outlined 
-                class="col-6 q-pa-sm" 
-                label="Ínicio"
-                v-model="dialogAddPastoralStatus.initialDate"
-              />
-              <q-input 
-                type="date" 
-                outlined 
-                v-model="dialogAddPastoralStatus.finalDate"
-                class="col-6 q-pa-sm"
-                label="Fim"
-              />
-            </div>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              no-caps
-              label="Sair"
-              flat
-              @click="clearDialogAddPastoralStatus"
-              color="primary"
-            />
-            <q-btn
-              no-caps
-              label="Confirmar"
-              unelevated
-              rounded
-              @click="clkConfirmAddPastoralStatus"
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
     </q-page>
   </q-page-container>
 </template>
@@ -1260,7 +1112,8 @@ export default defineComponent({
         data: {},
         open: false,
       },
-      userLinks: null,
+      callList: [],
+      actingList: [],
       dialogLinkDetail: {
         open: false,
         orgData: {},
@@ -1295,20 +1148,29 @@ export default defineComponent({
       pastoralStatusData: null,
       inactiveStatus: null,
       statusData: null,
-      dialogInsertUserInFunction:{
-        initialDate: '',
-        open: false,
-        functionType: '',
-        selectedFunc: null,
-        selectedFuncIndex: null,
-        userSelected: null
-      },
       functionSelected: '',
       sameOrganismCalled: false,
       undefinedCallee: false,
       organismCallerSelected: '',
       organismCalleeSelected: '',
       functions: [],
+      dialogAddCallToPastor: {
+        open: false,
+        pastorSelected: null,
+        initialDate: '',
+        functionType: '',
+        selectedFunc: null,
+        organismCallerSelected: null,
+        organismCalleeSelected: null,
+        ataKey: '',
+        userSelected: null,
+        sameOrganismCalled: false,
+        userInstallation: null,
+        installationDate: '',
+        calleeDate: '',
+        undefinedCallee: false,
+        initialDate: '',
+      }
     };
   },
   mounted() {
@@ -1321,6 +1183,27 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    validateAtaKeyFormat(value) {
+      const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
+      if (regex.test(value)) {
+        return true;
+      }else{
+        return this.$q.notify('Formato inválido. Por favor, revise os dados digitados na chave-ata');
+      }
+    },
+    undefinedCalleeFunction(){
+      this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
+    },
+    openDialogAddCallToPastor() {
+      this.dialogAddCallToPastor.open = true
+      this.dialogAddCallToPastor.functionType = 'Pastor'
+    },
+    addActingToPastor() {
+      console.log('aqui vamos adicionar uma atuação ao pastor')
+    },
+    addCallToPastor() {
+      console.log('aqui vamos adicionar um chamado ao pastor')
+    },
     clearDialogAndFunctions() {
       this.dialogRemoveUserFromFunction.finalDate = "";
       this.dialogRemoveUserFromFunction.functionUserId = "";
@@ -1330,32 +1213,29 @@ export default defineComponent({
       this.functionSelected = ''
       this.dialogRemoveUserFromFunction.functionUserId = "";
       this.dialogRemoveUserFromFunction.open = false;
-      this.dialogInsertUserInFunction.open = false;
-      this.dialogInsertUserInFunction.initialDate = '',
-      this.dialogInsertUserInFunction.functionType = '',
-      this.dialogInsertUserInFunction.open = false,
+      this.dialogAddCallToPastor.open = false;
+      this.dialogAddCallToPastor.initialDate = '',
+      this.dialogAddCallToPastor.functionType = '',
+      this.dialogAddCallToPastor.open = false,
       this.organismCalleeSelected = ''
       this.organismCallerSelected = ''
-      this.dialogInsertUserInFunction.open = false
-      this.dialogInsertUserInFunction.installationDate = ''
-      this.dialogInsertUserInFunction.calleeDate = ''
-      this.dialogInsertUserInFunction.ataKey = ''
-      this.dialogInsertUserInFunction.selectedFunc = null,
-      this.dialogInsertUserInFunction.userSelected = null
+      this.dialogAddCallToPastor.open = false
+      this.dialogAddCallToPastor.installationDate = ''
+      this.dialogAddCallToPastor.calleeDate = ''
+      this.dialogAddCallToPastor.ataKey = ''
+      this.dialogAddCallToPastor.selectedFunc = null,
+      this.dialogAddCallToPastor.userSelected = null
       this.sameOrganismCalled = false
       this.undefinedCallee = false
     },
-    undefinedCalleeFunction(){
-      this.undefinedCallee ? this.undefinedCallee = false :this.dialogInsertUserInFunction.calleeDate = ''
-    },
     changeOrganismCaller(){
-      this.sameOrganismCalled === true ? this.organismCalleeSelected = '' :this.organismCalleeSelected = this.organismCallerSelected
+      this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismCalleeSelected = '' :this.dialogAddCallToPastor.organismCalleeSelected = this.dialogAddCallToPastor.organismCallerSelected
     },
     linkPastorToFunction() {
-      this.dialogInsertUserInFunction.open = true;
+      this.dialogAddCallToPastor.open = true;
     },
     getOrganismDetailById() {
-      const organismId = this.organismCallerSelected.organismId
+      const organismId = this.dialogAddCallToPastor.organismCallerSelected.organismId
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
@@ -1374,44 +1254,59 @@ export default defineComponent({
     },
     addUserToFunction() {
       if(
-        this.dialogInsertUserInFunction.ataKey === '' ||
-        this.dialogInsertUserInFunction.installationDate === '' ||
-        this.organismCalleeSelected === '' ||
-        this.organismCallerSelected === '' 
+        this.dialogAddCallToPastor.ataKey === '' ||
+        this.dialogAddCallToPastor.installationDate === '' ||
+        this.dialogAddCallToPastor.organismCalleeSelected === '' ||
+        this.dialogAddCallToPastor.organismCallerSelected === '' 
       ){
-        this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
+        this.$q.notify("Preencha chave-ata, data de instalação e organismo que atende e quem chamou");
         return;
       }
+      // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddCallToPastor.userSelected.userId)) {
+      //   this.$q.notify('Usuário já incluído nesta função')
+      //   return
+      // }
+
+        if (!(this.dialogAddCallToPastor.functionSelected && this.dialogAddCallToPastor.functionSelected.functionId)) {
+          this.$q.notify('Selecione a função que o usuário ocupará')
+          return
+        }
+        
+
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismFunctionId: this.functionSelected.functionId,
-          ataKey: this.dialogInsertUserInFunction.ataKey,
-          organismFunctionCallData: {
-            organismCalleeId: this.organismCalleeSelected.organismId,
-            organismCallerId: this.organismCallerSelected.organismId
-          },
-          userIdMongo:  this.$route.query.userId,
+          organismFunctionId: this.dialogAddCallToPastor.functionSelected.functionId,
+          userIdMongo: this.$route.query.userId,
           dates: {
-            installationDate: this.dialogInsertUserInFunction.installationDate,
-            initialDate: this.dialogInsertUserInFunction.initialDate
+            initialDate: this.dialogAddCallToPastor.initialDate
           }
         }
       };
-      if (this.undefinedCallee) {
-        opt.body.undefinedCallee = true
-      } else {
-        opt.body.dates.calleeDate = this.dialogInsertUserInFunction.calleeDate
+      if(this.dialogAddCallToPastor.functionType === 'Pastor'){
+        opt.body.subtype = 'chamado'
+        opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
+        opt.body.organismCalleeId = this.dialogAddCallToPastor.organismCalleeSelected.organismId,
+        opt.body.ataKey = this.dialogAddCallToPastor.ataKey
+        opt.body.installation = {
+          date: this.dialogAddCallToPastor.installationDate,
+          userIdInstallation: this.dialogAddCallToPastor.userInstallation._id
+        }
+        opt.body.call = {
+          date: this.dialogAddCallToPastor.initialDate,
+          finalDate: this.undefinedCallee ? 'undefined' : this.dialogAddCallToPastor.calleeDate
+        }
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if (r.error) {
+        if(r.error){
           this.$q.notify(r.errorMessage)
+          this.functions[selectedFuncIndex].users = []
           return
-        } else {
-          this.$q.notify('Usuário vinculado com sucesso!')
-          this.getUserDetailById()
+        } else{
+          this.$q.notify('Usuário inserido na função!')
+          this.getOrganismDetailById()
           this.clearDialogAndFunctions();
         }
       });
@@ -1938,7 +1833,17 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        this.userLinks = r.data.userLinksToOrganisms.data
+        if (r.data.userLinksToOrganisms.data.length > 0) {
+          let links = r.data.userLinksToOrganisms.data
+          links.forEach((link) => {
+            if (link.functionSubtype === 'chamado') {
+              this.callList.push(link)
+            } else if (link.functionSubtype === 'atuacao') {
+              this.actingList.push(link)
+            }
+          })
+        }
+        // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.canUseSystem = r.data.canUseSystem
