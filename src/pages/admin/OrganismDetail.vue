@@ -759,14 +759,22 @@
                         use-input
                         label="Nome do organismo de chamado"
                         option-label="nome"
-                        :options="organismList"
-                        @filter="getOrganismsList"
+                        :options="filiatedOrganismsList"
+                        @filter="getFiliatedOrganismsList"
                         :option-value="(item) => item"
                       >
                         <template v-slot:no-option>
                           <q-item>
                             <q-item-section class="text-grey">
                               Nenhum resultado
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                              <q-item-label caption>{{ scope.opt.city }}</q-item-label>
                             </q-item-section>
                           </q-item>
                         </template>
@@ -2142,6 +2150,7 @@ export default defineComponent({
       tab: 'organismData',
       lastFuncIndex: -1,
       usersOptions: [],
+      filiatedOrganismsList: [],
       organismVinculated: '',
       organismTypeId: null,
       organismName: '',
@@ -3547,6 +3556,26 @@ export default defineComponent({
         })
       });
     },
+    getFiliatedOrganismsList(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getFiliatedOrganismsList",
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.filiatedOrganismsList = r.data.list;
+        })
+      });
+    },
     addUserToFunction() {
       let organismFunctionId
       const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
@@ -3587,7 +3616,7 @@ export default defineComponent({
         }
       };
       if(this.dialogInsertUserInFunction.functionType === 'Pastor'){
-        opt.body.subType = 'chamado'
+        opt.body.subtype = 'chamado'
         opt.body.organismCallerId = this.organismCallerSelected.organismId
         opt.body.organismCalleeId = this.organismCalleeSelected.organismId,
         opt.body.ataKey = this.dialogInsertUserInFunction.ataKey
