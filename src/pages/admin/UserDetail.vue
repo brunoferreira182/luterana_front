@@ -1284,7 +1284,7 @@ export default defineComponent({
         }
       };
       if(this.dialogAddCallToPastor.functionType === 'Pastor'){
-        opt.body.subType = 'chamado'
+        opt.body.subtype = 'chamado'
         opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
         opt.body.organismCalleeId = this.dialogAddCallToPastor.organismCalleeSelected.organismId,
         opt.body.ataKey = this.dialogAddCallToPastor.ataKey
