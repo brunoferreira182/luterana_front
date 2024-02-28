@@ -836,6 +836,35 @@
                           </q-item>
                         </template>
                       </q-select>
+                      <q-select
+                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
+                        v-model="dialogInsertUserInFunction.userInstallation"
+                        filled
+                        use-input
+                        label="Nome do usuário que instalou"
+                        option-label="userName"
+                        :options="usersOptions"
+                        hint="Usuário que instalou"
+                        @filter="getUsers"
+                        :loading="false"
+                        :option-value="(item) => item._id"
+                      >
+                        <template v-slot:no-option>
+                          <q-item>
+                            <q-item-section class="text-grey">
+                              Nenhum resultado
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                        <template v-slot:option="scope">
+                          <q-item v-bind="scope.itemProps">
+                            <q-item-section>
+                              <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                              <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-select>
                       <q-input
                         v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
                         filled
@@ -2141,7 +2170,8 @@ export default defineComponent({
         functionType: '',
         selectedFunc: null,
         selectedFuncIndex: null,
-        userSelected: null
+        userSelected: null,
+        userInstallation: ''
       },
       dialogConfirmAddress: {
         open: false,
@@ -3485,6 +3515,7 @@ export default defineComponent({
       this.organismCallerSelected = ''
       this.dialogInsertUserInFunction.installationDate = ''
       this.dialogInsertUserInFunction.calleeDate = ''
+      this.dialogInsertUserInFunction.userInstallation = ''
       this.dialogInsertUserInFunction.selectedFunc = null,
       this.dialogInsertUserInFunction.userSelected = null
     },
@@ -3533,7 +3564,7 @@ export default defineComponent({
         }
       }
       if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
-        this.$q.notify("Preencha usuário e a data início");
+        this.$q.notify("Preencha usuário e a data do chamado");
         return;
       }
       if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
@@ -3549,22 +3580,25 @@ export default defineComponent({
         route: "/desktop/adm/addUserToFunction",
         body: {
           organismFunctionId: organismFunctionId,
-          ataKey: this.dialogInsertUserInFunction.ataKey,
-          organismFunctionCallData: {
-            organismCalleeId: this.organismCalleeSelected.organismId,
-            organismCallerId: this.organismCallerSelected.organismId
-          },
           userId:  this.dialogInsertUserInFunction.userSelected.userId,
           dates: {
-            installationDate: this.dialogInsertUserInFunction.installationDate,
             initialDate: this.dialogInsertUserInFunction.initialDate
           }
         }
       };
-      if(this.undefinedCallee){
-        opt.body.undefinedCallee = true
-      }else{
-        opt.body.dates.calleeDate = this.dialogInsertUserInFunction.calleeDate
+      if(this.dialogInsertUserInFunction.functionType === 'Pastor'){
+        opt.body.subType = 'chamado'
+        opt.body.organismCallerId = this.organismCallerSelected.organismId
+        opt.body.organismCalleeId = this.organismCalleeSelected.organismId,
+        opt.body.ataKey = this.dialogInsertUserInFunction.ataKey
+        opt.body.installation = {
+          date: this.dialogInsertUserInFunction.installationDate,
+          userIdInstallation: this.dialogInsertUserInFunction.userInstallation._id
+        }
+        opt.body.call = {
+          date: this.dialogInsertUserInFunction.initialDate,
+          finalDate: this.undefinedCallee ? 'undefined' : this.dialogInsertUserInFunction.calleeDate
+        }
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {

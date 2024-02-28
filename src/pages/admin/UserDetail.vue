@@ -160,7 +160,8 @@
                   >
                     <q-tooltip>Remover usuário</q-tooltip>
                   </q-btn>
-                  <q-btn
+                  <!-- <q-btn
+                    
                     icon="refresh"
                     color="primary"
                     round
@@ -168,7 +169,7 @@
                     flat
                   >
                     <q-tooltip>Trocar por outro usuário</q-tooltip>
-                  </q-btn>
+                  </q-btn> -->
                 </q-item-label>
               </q-item-section>
             </q-item>
