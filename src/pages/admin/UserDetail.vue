@@ -1397,18 +1397,18 @@ export default defineComponent({
           }
         }
       };
-      if(this.undefinedCallee){
+      if (this.undefinedCallee) {
         opt.body.undefinedCallee = true
-      }else{
+      } else {
         opt.body.dates.calleeDate = this.dialogInsertUserInFunction.calleeDate
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(r.error){
+        if (r.error) {
           this.$q.notify(r.errorMessage)
           return
-        } else{
+        } else {
           this.$q.notify('Usuário vinculado com sucesso!')
           this.getUserDetailById()
           this.clearDialogAndFunctions();
@@ -1418,7 +1418,7 @@ export default defineComponent({
     verifyLinks() {
       let congregationLinks = []
       let parishLinks = []
-      if (this.userLinks && this.userLinks.length === 2){
+      if (this.userLinks && this.userLinks.length === 2) {
         this.userLinks.forEach((link, i) => {
           if (link.organismConfigName === 'Distrito') {
             this.userLinks.splice(i, 1)
