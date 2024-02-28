@@ -69,6 +69,58 @@
       <div v-if="userData && userData.userDataTabs">
         <div>
           <div class="text-h6 q-ma-sm q-ml-md">
+            Chamados:
+            <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="addCallToPastor"
+            />
+          </div>
+          <div>
+            <q-list>
+              <q-item
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                aqui teremos chamados lalalalala 123 kira da a patinha
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+        <div>
+          <div class="text-h6 q-ma-sm q-ml-md">
+            Atuações:
+            <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="addActingToPastor"
+            />
+          </div>
+          <div>
+            <q-list>
+              <q-item
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                aqui teremos atuações lalalalala 321 kirascrpt
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+        <!-- <div>
+          <div class="text-h6 q-ma-sm q-ml-md">
             Vínculos:  
             <q-btn
               v-if="userType === 'pastor'"
@@ -126,7 +178,7 @@
               Nenhum vínculo criado
             </q-item>
           </q-list>
-        </div>
+        </div> -->
         <q-separator class="q-mx-md"/>
         <!-- <div class="text-h6 q-ma-sm q-ml-md">
           Histórico pastoral:
