@@ -1416,10 +1416,30 @@ export default defineComponent({
       });
     },
     verifyLinks() {
+      let congregationLinks = []
+      let parishLinks = []
       if (this.userLinks && this.userLinks.length === 2){
         this.userLinks.forEach((link, i) => {
-          if (link.organismConfigName === 'Paróquia')
-          this.userLinks.splice(i, 1)
+          if (link.organismConfigName === 'Distrito') {
+            this.userLinks.splice(i, 1)
+          }
+          if (link.organismConfigName === 'Congregação') {
+            congregationLinks.push({
+              index: i
+            })
+          }
+          if (link.organismConfigName === 'Paróquia') {
+            parishLinks.push({
+              index: i
+            })
+          }
+          if (congregationLinks.length > 0) {
+            if (parishLinks.length > 0) {
+              parishLinks.forEach((pl) => {
+                this.userLinks.splice(pl.index, 1)
+              })
+            }
+          }
         })
       }
     },
