@@ -3609,7 +3609,7 @@ export default defineComponent({
         route: "/desktop/adm/addUserToFunction",
         body: {
           organismFunctionId: organismFunctionId,
-          userId:  this.dialogInsertUserInFunction.userSelected.userId,
+          userIdMongo:  this.dialogInsertUserInFunction.userSelected._id,
           dates: {
             initialDate: this.dialogInsertUserInFunction.initialDate
           }
