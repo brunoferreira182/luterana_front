@@ -1,4 +1,5 @@
 <template>
+  {{ teste }}
   <q-card
     style="border-radius: 1rem"
     class="bg-white q-ma-sm q-pa-sm"
@@ -10,7 +11,16 @@
       style="border-radius: 0.5rem;"
       class="bg-grey-3 q-ma-xs"
     >
+    
       <q-item-section avatar>
+        <div class="text-capitalize" >
+          <div v-if="user.functionSubtype === 'atuacao'">
+            Atuação
+          </div>
+          <div v-if="user.functionSubtype === 'chamado'">
+            Chamado
+          </div>
+        </div>
         <q-img 
           style="border-radius: 1rem"
           :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
@@ -36,7 +46,7 @@
             <q-tooltip>Trocar pastor</q-tooltip>
           </q-btn> -->
           <q-btn
-            v-if="canEditPastor"
+            v-if="canEditPastor && user.functionSubtype === 'chamado'"
             icon="delete"
             flat
             dense
