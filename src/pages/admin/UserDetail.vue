@@ -67,94 +67,100 @@
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
-        <div v-if="userData.userDataTabs && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
-          <div>
-            <div class="text-h6 q-ma-sm q-ml-md">
-              Chamados:
-              <q-btn
-                icon="add"
-                color="primary"
-                size="12px"
-                dense
-                flat
-                rounded
-                no-caps
-                @click.stop="openDialogAddCallToPastor"
-              />
-            </div>
-            <div>
-              <q-list>
-                <q-item
-                  v-for="call in callList"
-                  :key="call"
-                  clickable
-                  style="border-radius: 1rem;"
-                  @click="console.log(call)"
-                  class="bg-grey-3 q-ma-sm q-mx-md"
-                >
-                  <q-item-section>
-                    <q-item-label>
-                      {{ call.functionConfigName}} - {{ call.organismName }}
-                    </q-item-label>
-                    <q-item-label>
-                      <q-badge>
-                        {{ call.organismConfigName }}
-                      </q-badge>
-                    </q-item-label>
-                  </q-item-section>
-                  <q-btn
-                    icon="edit"
-                    dense
-                    flat
-                    color="red"
-                    size="16px"
-                    rounded
-                    @click.stop="dialogOpenDeleteUserFromFunction(pastor)"
-                  >
-                    <q-tooltip>Remover pastor</q-tooltip>
-                  </q-btn>
-                </q-item>
-              </q-list>
-            </div>
+        <div>
+          <div class="text-h6 q-ma-sm q-ml-md">
+            Chamados:
+            <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="openDialogAddCallToPastor"
+            />
           </div>
-          <div >
-            <div class="text-h6 q-ma-sm q-ml-md">
-              Atuações:
-              <q-btn
-                icon="add"
-                color="primary"
-                size="12px"
-                dense
-                flat
-                rounded
-                no-caps
-                @click.stop="addActingToPastor"
-              />
-            </div>
-            <div>
-              <q-list>
-                <q-item
-                  v-for="act in actingList"
-                  :key="act"
-                  clickable
-                  style="border-radius: 1rem;"
-                  class="bg-grey-3 q-ma-sm q-mx-md"
-                >
-                  <q-item-section>
-                    <q-item-label>
-                      {{ act.functionConfigName }} - {{ act.organismName }}
-                    </q-item-label>
-                    <q-item-label>
-                      <q-badge>
-                        {{ act.organismConfigName }}
-                      </q-badge>
-                    </q-item-label>
-                    
-                  </q-item-section>
-                
-                </q-item>
-              </q-list>
-            </div>
+          <div>
+            <q-list>
+              <q-item
+                v-for="(call, i) in callList"
+                :key="call"
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ call.functionConfigName}} - {{ call.organismName }}
+                  </q-item-label>
+                  <q-item-label>
+                    <q-badge>
+                      {{ call.organismConfigName }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="primary"
+                      icon="edit"
+                      @click.stop="changeCall(call)"
+                    />
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="red"
+                      icon="delete"
+                      @click.stop="removeCall(call, i)"
+                    />
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </div>
+        <div>
+          <div class="text-h6 q-ma-sm q-ml-md">
+            Atuações:
+            <!-- <q-btn
+              icon="add"
+              color="primary"
+              size="12px"
+              dense
+              flat
+              rounded
+              no-caps
+              @click.stop="addActingToPastor"
+            /> -->
+          </div>
+          <div>
+            <q-list>
+              <q-item
+                v-for="act in actingList"
+                :key="act"
+                clickable
+                style="border-radius: 1rem;"
+                class="bg-grey-3 q-ma-sm q-mx-md"
+              >
+                <q-item-section>
+                  <q-item-label>
+                    {{ act.functionConfigName }} - {{ act.organismName }}
+                  </q-item-label>
+                  <q-item-label>
+                    <q-badge>
+                      {{ act.organismConfigName }}
+                    </q-badge>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </div>
         </div>
         <q-separator class="q-mx-md"/>
@@ -599,11 +605,72 @@
         </q-card>
       </q-dialog>
 
+
+      <!-- <q-dialog v-model="dialogShowLinks.open">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Vínculos:
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-list v-if="userLinks">
+              <q-item
+                clickable
+                v-for="link in userLinks"
+                :key="link"
+                style="border-radius: 1rem;"
+                class="bg-blue-grey-2 q-ma-sm"
+              >
+                <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
+                  <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
+                  <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label>
+                  <q-btn
+                    icon="delete"
+                    color="red"
+                    round
+                    @click="removeUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Remover usuário</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    icon="refresh"
+                    color="primary"
+                    round
+                    @click="swapUserFromFunction(link)"
+                    flat
+                  >
+                    <q-tooltip>Trocar por outro usuário</q-tooltip>
+                  </q-btn>
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Sair"
+              no-caps
+              rounded
+              color="primary"
+              @click="dialogShowLinks.open = false"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog> -->
       <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
+            <div class="text-h6" v-if="dialogAddCallToPastor.functionType !== 'Pastor'">
+              Informe o usuário que ocupará a função
+            </div>
             <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
-              {{ userData.userDataTabs[0].fields[0].value }}
+              Informe o pastor que ocupará a função
             </div>
             <div v-if="dialogAddCallToPastor.selectedFunc && dialogAddCallToPastor.selectedFunc.functionRequiredTitleName">
               <q-chip color="red-8" outline>
@@ -686,6 +753,35 @@
             />
           </q-card-section>
           <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="userData.userDataTabs[0].fields[0].value"
+              readonly
+              filled
+              use-input
+              label="Nome do usuário"
+              option-label="userName"
+              :options="usersOptions"
+              hint="Usuário que ocupará a função"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
             <q-select
               v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               v-model="dialogAddCallToPastor.userInstallation"
@@ -839,7 +935,7 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="dialogEditUserFromFunction.open" @hide="clearDialogSwapData">
+      <q-dialog v-model="dialogSwapUserFromFunction.open" @hide="clearDialogSwapData">
         <q-card style="border-radius: 1rem">
           <q-card-section>
             <div class="text-h6 text-center">Substituição</div>
@@ -847,7 +943,7 @@
           </q-card-section>
           <q-card-section align="center" class="q-gutter-sm">
             <q-input
-              v-model="dialogEditUserFromFunction.observation"
+              v-model="dialogSwapUserFromFunction.observation"
               filled
               label="Observação"
               hint="Informe o motivo"
@@ -856,7 +952,7 @@
             <q-input
               filled
               type="date"
-              v-model="dialogEditUserFromFunction.finalDate"
+              v-model="dialogSwapUserFromFunction.finalDate"
               label="Data final"
               hint="Informe a data final de ocupação da função"
               class="q-pa-sm q-mb-lg"
@@ -867,7 +963,7 @@
               use-input
               label="Nome do usuário"
               option-label="userName"
-              v-model="dialogEditUserFromFunction.newUser"
+              v-model="dialogSwapUserFromFunction.newUser"
               :options="usersOptions"
               @filter="getUsers"
               :loading="false"
@@ -1091,7 +1187,7 @@ export default defineComponent({
         obsText: null,
         finalDate: null
       },
-      dialogEditUserFromFunction: {
+      dialogSwapUserFromFunction: {
         open: false,
         data: null,
         observation: null,
@@ -1584,12 +1680,12 @@ export default defineComponent({
         }
       })
     },
-    clearDialogEditUserData(){
-      this.dialogEditUserFromFunction.open = false
-      this.dialogEditUserFromFunction.data = null
-      this.dialogEditUserFromFunction.observation = null
-      this.dialogEditUserFromFunction.finalDate = null
-      this.dialogEditUserFromFunction.newUser = null
+    clearDialogSwapData(){
+      this.dialogSwapUserFromFunction.open = false
+      this.dialogSwapUserFromFunction.data = null
+      this.dialogSwapUserFromFunction.observation = null
+      this.dialogSwapUserFromFunction.finalDate = null
+      this.dialogSwapUserFromFunction.newUser = null
     },
     getUsers(val, update, abort) {
       if(val.length < 3) {
