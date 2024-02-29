@@ -84,7 +84,7 @@
           <div>
             <q-list>
               <q-item
-                v-for="call in callList"
+                v-for="(call, i) in callList"
                 :key="call"
                 clickable
                 style="border-radius: 1rem;"
@@ -100,6 +100,28 @@
                     </q-badge>
                   </q-item-label>
                 </q-item-section>
+                <q-item-section side>
+                  <q-item-label>
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="primary"
+                      icon="edit"
+                      @click.stop="changeCall(call)"
+                    />
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="red"
+                      icon="delete"
+                      @click.stop="removeCall(call, i)"
+                    />
+                  </q-item-label>
+                </q-item-section>
               </q-item>
             </q-list>
           </div>
@@ -107,7 +129,7 @@
         <div>
           <div class="text-h6 q-ma-sm q-ml-md">
             Atuações:
-            <q-btn
+            <!-- <q-btn
               icon="add"
               color="primary"
               size="12px"
@@ -116,7 +138,7 @@
               rounded
               no-caps
               @click.stop="addActingToPastor"
-            />
+            /> -->
           </div>
           <div>
             <q-list>
@@ -664,8 +686,8 @@
               label="Nome do organismo de chamado"
               @update:model-value="getOrganismDetailById"
               option-label="nome"
-              :options="organismList"
-              @filter="getOrganismsList"
+              :options="filiatedOrganismsList"
+              @filter="getFiliatedOrganismsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -1029,6 +1051,43 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogInitRemoveCall.open"
+      >
+        <q-card
+          style="width:350px;border-radius: 1rem;"
+        >
+          <q-card-section class="text-h6 text-center">
+            Deseja remover este chamado?
+          </q-card-section>
+          <q-card-section class="q-pa-lg">
+            <div>
+              <strong>{{ this.dialogInitRemoveCall.data.functionConfigName }}</strong>
+            </div>
+            <div class="q-mt-md">
+              <strong>{{ this.dialogInitRemoveCall.data.organismName }}</strong>
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Não"
+              color="primary"
+              flat
+              rounded
+              no-caps
+              unelevated
+            />
+            <q-btn
+              label="Sim"
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              @click.stop="confirmRemoveCall"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1106,6 +1165,7 @@ export default defineComponent({
         openDialog: false,
         titleId: null
       },
+      filiatedOrganismsList: [],
       userForms: {},
       userFormDialog: {
         formId: '',
@@ -1170,7 +1230,13 @@ export default defineComponent({
         calleeDate: '',
         undefinedCallee: false,
         initialDate: '',
-      }
+        action: 'add'
+      },
+      dialogInitRemoveCall: {
+        open: false,
+        i: null,
+        data: null
+      },
     };
   },
   mounted() {
@@ -1183,11 +1249,59 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    // changeCall(data) {
+    //   this.dialogAddCallToPastor.
+    // },
+    clearDialogRemoveCall() {
+      this.dialogInitRemoveCall = {
+        open: false,
+        i: null,
+        data: null
+      }
+    },
+    async confirmRemoveCall() {
+      const opt = {
+        route: '/desktop/adm/userInactivateCall',
+        body: {
+          functionUserId: this.dialogInitRemoveCall.data._id
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogRemoveCall()
+      this.getUserDetailById()
+      this.getPastoralStatusTypes()
+    },
+    removeCall(call, i) {
+      this.dialogInitRemoveCall.open = true
+      this.dialogInitRemoveCall.data = call
+      this.dialogInitRemoveCall.i = i
+    },
+    getFiliatedOrganismsList(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getFiliatedOrganismsList",
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.filiatedOrganismsList = r.data.list;
+        })
+      });
+    },
     validateAtaKeyFormat(value) {
       const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
       if (regex.test(value)) {
         return true;
-      }else{
+      } else{
         return this.$q.notify('Formato inválido. Por favor, revise os dados digitados na chave-ata');
       }
     },
@@ -1252,7 +1366,7 @@ export default defineComponent({
         }
       });
     },
-    addUserToFunction() {
+    async addUserToFunction() {
       if(
         this.dialogAddCallToPastor.ataKey === '' ||
         this.dialogAddCallToPastor.installationDate === '' ||
@@ -1298,18 +1412,16 @@ export default defineComponent({
         }
       }
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if(r.error){
-          this.$q.notify(r.errorMessage)
-          this.functions[selectedFuncIndex].users = []
-          return
-        } else{
-          this.$q.notify('Usuário inserido na função!')
-          this.getOrganismDetailById()
-          this.clearDialogAndFunctions();
-        }
-      });
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        this.functions[selectedFuncIndex].users = []
+        return
+      } else {
+        this.$q.notify('Usuário inserido na função!')
+        this.getOrganismDetailById()  
+        this.clearDialogAndFunctions();
+      }
     },
     verifyLinks() {
       let congregationLinks = []
