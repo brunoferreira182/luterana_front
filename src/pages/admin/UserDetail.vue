@@ -14,7 +14,6 @@
         </div>
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
-
           <div class="text-subtitle1" v-if="canUseSystem">
             Acesso ao sistema: 
             <q-badge color="green">Sim</q-badge>
@@ -1217,13 +1216,12 @@ export default defineComponent({
       dialogAddCallToPastor: {
         open: false,
         pastorSelected: null,
-        initialDate: '',
         functionType: '',
         selectedFunc: null,
         organismCallerSelected: null,
         organismCalleeSelected: null,
-        ataKey: '',
-        userSelected: null,
+        ataKey: '', 
+        userSelected: null, 
         sameOrganismCalled: false,
         userInstallation: null,
         installationDate: '',
@@ -1249,9 +1247,12 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
-    // changeCall(data) {
-    //   this.dialogAddCallToPastor.
-    // },
+    changeCall(data) {
+      this.dialogAddCallToPastor.ataKey = data.ataKey,
+      this.dialogAddCallToPastor.pastorSelected = userData.userDataTabs[0].fields[0].value,
+      this.dialogAddCallToPastor.functionType = 'Pastor'
+
+    },
     clearDialogRemoveCall() {
       this.dialogInitRemoveCall = {
         open: false,
