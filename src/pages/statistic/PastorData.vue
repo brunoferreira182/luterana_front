@@ -385,16 +385,13 @@
               >
                 <q-item-section class="q-pa-sm">
                   <q-item-label lines="1">
-                    {{ link.linkData.label }} - {{ link.organismData.name }}
+                    {{ link.functionData.name }} 
                   </q-item-label>
                   <q-item-label lines="2">
-                    {{ link.organismData.city }}/{{ link.organismData.state }}
+                    {{ link.organismData.name }} - {{ link.organismData.configName }}
                   </q-item-label>
                   <q-item-label lines="3">
-                    Data início: {{ link.linkData.dates.initialDate }}
-                  </q-item-label>
-                  <q-item-label lines="4">
-                    Data fim: {{ link.linkData.dates.finalDate }}
+                    Data início: {{ link.functionData.dates.initialDate }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -944,7 +941,7 @@
               </template>
             </q-select>
           </q-card-section>
-          <q-card-actions align="center">
+          <!-- <q-card-actions align="center">
             <q-btn
               label="Sair"
               color="primary"
@@ -959,7 +956,7 @@
               rounded
               unelevated
             />
-          </q-card-actions>
+          </q-card-actions> -->
         </q-card>
       </q-dialog>
       <q-dialog
@@ -1343,6 +1340,7 @@
 </template>
 
 <script>
+// import { format } from "quasar";
 import useFetch from "src/boot/useFetch";
 // import utils from "../../boot/utils";
 import { defineComponent } from "vue";
@@ -1398,8 +1396,8 @@ export default defineComponent({
           finalDate: ''
         }
       },
-      pastorLink: null,
-      pastorFormations: null,
+      pastorLink: [],
+      pastorFormations: [],
       pastorActivities: [
         { title:'Visitas Missionárias', quantity:'', people:'' },
         { title:'Visitas Pastorais', quantity:'', people:'' },
@@ -1483,6 +1481,7 @@ export default defineComponent({
     // this.getPastorDataTabs()
     this.getMyOrganismsList()
     this.getParoquiaId()
+    this.getPastorLinks()
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
@@ -1864,147 +1863,6 @@ export default defineComponent({
         })
       }
     },
-    clearDialogAddLink() {
-      this.dialogAddLink = {
-        open: false,
-        linkData: null,
-        organismData: null,
-        organismFunctionId: null,
-        dates: {
-          initialDate: null,
-          finalDate: null
-        }
-      }
-    },
-    confirmAddLink() {
-      if (!this.pastorLink) {
-        this.pastorLink = []
-      }
-      this.pastorLink.push({
-        organismId: this.dialogAddLink.organismData._id,
-        organismData: {
-          city: this.dialogAddLink.organismData.city,
-          name: this.dialogAddLink.organismData.name,
-          state: this.dialogAddLink.organismData.state
-        },
-        linkData: {
-          _id: this.dialogAddLink.linkData._id,
-          label: this.dialogAddLink.linkData.label,
-          dates: {
-            initialDate: this.dialogAddLink.dates.initialDate,
-            finalDate: this.dialogAddLink.dates.finalDate
-          }
-        }
-      })
-      this.clearDialogAddLink()
-    },
-    addNewLink() {
-      this.dialogAddLink.open = true
-      this.getStatusList()
-    },
-    clearDialogEditLink() {
-      this.dialogEditLink = { 
-        open: false,
-        linkData: null,
-        organismData: null,
-        organismFunctionId: null,
-        organismId: null,
-        dates: null,
-        index: null
-      }
-    },
-    confirmEditLink() {
-      this.pastorLink[this.dialogEditLink.index]  = {
-        linkData: {
-          _id: this.dialogEditLink.linkData._id,
-          label: this.dialogEditLink.label,
-          dates: {
-            initialDate: this.dialogEditLink.dates.initialDate,
-            finalDate: this.dialogEditLink.dates.finalDate
-          }
-        },
-        organismData: {
-          city: this.dialogEditLink.organismData.city,
-          name: this.dialogEditLink.organismData.name,
-          state: this.dialogEditLink.organismData.state
-        },
-        organismId: this.dialogEditLink.organismId
-      }
-      this.clearDialogEditLink()
-    },
-    clearDialogAddFormation() {
-      this.dialogAddFormation = {
-        open: false,
-        formation: null,
-        date: null,
-        course: null,
-      }
-    },
-    confirmAddFormation() {
-      this.pastorFormations.push({
-        formation: {
-          conclusionYear: this.dialogAddFormation.date,
-          course: this.dialogAddFormation.formation.label,
-          courseId: this.dialogAddFormation.formation._id,
-          level: this.dialogAddFormation.course.label,
-          levelId:  this.dialogAddFormation.course._id
-        }
-      })
-      this.clearDialogAddFormation()
-    },
-    clearDialogEditFormation() {
-      this.dialogEditFormation = {
-        open: false,
-        formation: null,
-        date: null,
-        course: null,
-        index: null
-      }
-    },
-    confirmEditFormation() {
-      this.pastorFormations[this.dialogEditFormation.index].formation.course = 
-      this.dialogEditFormation.formation.label
-      this.pastorFormations[this.dialogEditFormation.index].formation.courseId = 
-      this.dialogEditFormation.formation._id
-      this.pastorFormations[this.dialogEditFormation.index].formation.conclusionYear =
-      this.dialogEditFormation.date
-      this.pastorFormations[this.dialogEditFormation.index].formation.level =
-      this.dialogEditFormation.course.label
-      this.pastorFormations[this.dialogEditFormation.index].formation.levelId =
-      this.dialogEditFormation.course._id
-      this.clearDialogEditFormation()
-    },
-    editLink(link, i) {
-      this.getStatusList()
-      this.dialogEditLink.linkData = {
-        label: link.linkData.label,
-        _id: link.linkData._id
-      },
-      this.dialogEditLink.organismData = {
-        city: link.organismData.city,
-        name: link.organismData.name,
-        state: link.organismData.state
-      },
-      this.dialogEditLink.organismFunctionId = link.organismFunctionId,
-      this.dialogEditLink.organismId = link.organismId,
-      this.dialogEditLink.dates = {
-        initialDate: link.linkData.dates.initialDate,
-        finalDate: link.linkData.dates.finalDate
-      },
-      this.dialogEditLink.index = i
-      this.dialogEditLink.open = true
-    },
-    removeLink(i) {
-      this.pastorLink.splice(i, 1)
-    },
-    addFormation() {
-      this.getCoursesList()
-      this.getFormationLevelsList()
-      this.dialogAddFormation.open = true
-    },
-    removeFormation(i) {
-      this.pastorFormations.splice(i, 1)
-    },
     getFormationLevelsList() {
       const opt = {
         route: '/desktop/statistics/getFormationLevel',
@@ -2139,14 +1997,13 @@ export default defineComponent({
         this.pastorFormations = r.data
       })
     },
-    getPastorLinks() {
+    async getPastorLinks() {
       const opt = {
         route: '/desktop/statistics/getPastorLinkStatistic'
       }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.pastorLink = r.data
-      })
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.pastorLink = r.data
     },
     clkAddNewSocialNetwork() {
       this.dialogAddNewSocialNetwork.open = true
@@ -2304,8 +2161,10 @@ export default defineComponent({
         this.validated = r.data.validated
         this.status = r.data.status
         this.pastorData = r.data.pastoralData.pastorData
-        if (r.data.pastoralData.pastorFormations) {
-          this.pastorFormations = r.data.pastoralData.pastorFormations
+        if (r.data.pastorFormations && r.data.pastorFormations.length > 0) {
+          r.data.pastorFormations.forEach((formation) => {
+            this.pastorFormations.push(formation)
+          })
         }
         if (r.data.pastoralData.pastorActivities){
           this.pastorActivities = r.data.pastoralData.pastorActivities
