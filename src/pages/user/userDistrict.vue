@@ -184,6 +184,7 @@ export default defineComponent({
       functions: null,
       organismParentData: null,
       organismChildData: null,
+      paroquiasIds: null,
       parentData: null,
       idLegado: null,
       congregacaoSedeAddress: null,
@@ -410,7 +411,32 @@ export default defineComponent({
           })
         }
       });
+      this.getResumeStatisticByDistrict()
     },
-  }
+    getResumeStatisticByDistrict (){ 
+      if (!this.organismChildData) {
+        console.error("organismChildData is null or undefined");
+        return;
+    }
+      this.organismChildData.forEach((parish) => {
+        this.paroquiasIds.push(parish.childId) 
+      })
+      console.log('this.paroquiasIds',this.paroquiasIds);
+      const opt = {
+        route: "/desktop/adm/getDistrictResumeStatistic",
+        body: {
+          paroquiasIds: this.paroquiasIds,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if (r.error) {
+          this.coisas=r.data
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        } 
+    })
+  },
+}
 })
 </script>
