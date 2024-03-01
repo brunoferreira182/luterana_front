@@ -1484,6 +1484,7 @@ export default defineComponent({
     // this.getPastorDataTabs()
     this.getMyOrganismsList()
     this.getParoquiaId()
+    this.getPastorLinks()
   },
   beforeUnmount() {
     if (this.validated && (this.status && this.status.value === 'sent')) return
@@ -2164,11 +2165,11 @@ export default defineComponent({
         this.validated = r.data.validated
         this.status = r.data.status
         this.pastorData = r.data.pastoralData.pastorData
-        // if (r.data.pastorFormations && r.data.pastorFormations.length > 0) {
-        //   r.data.pastorFormations.forEach((formation) => {
-        //     console.log(formation)
-        //   })
-        // }
+        if (r.data.pastorFormations && r.data.pastorFormations.length > 0) {
+          r.data.pastorFormations.forEach((formation) => {
+            this.pastorFormations.push(formation)
+          })
+        }
         if (r.data.pastoralData.pastorActivities){
           this.pastorActivities = r.data.pastoralData.pastorActivities
         }
