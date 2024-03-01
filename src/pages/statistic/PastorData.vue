@@ -385,16 +385,13 @@
               >
                 <q-item-section class="q-pa-sm">
                   <q-item-label lines="1">
-                    {{ link.linkData.label }} - {{ link.organismData.name }}
+                    {{ link.functionData.name }} 
                   </q-item-label>
                   <q-item-label lines="2">
-                    {{ link.organismData.city }}/{{ link.organismData.state }}
+                    {{ link.organismData.name }} - {{ link.organismData.configName }}
                   </q-item-label>
                   <q-item-label lines="3">
-                    Data início: {{ link.linkData.dates.initialDate }}
-                  </q-item-label>
-                  <q-item-label lines="4">
-                    Data fim: {{ link.linkData.dates.finalDate }}
+                    Data início: {{ link.functionData.dates.initialDate }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -2000,14 +1997,13 @@ export default defineComponent({
         this.pastorFormations = r.data
       })
     },
-    getPastorLinks() {
+    async getPastorLinks() {
       const opt = {
         route: '/desktop/statistics/getPastorLinkStatistic'
       }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.pastorLink = r.data
-      })
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.pastorLink = r.data
     },
     clkAddNewSocialNetwork() {
       this.dialogAddNewSocialNetwork.open = true
