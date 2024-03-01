@@ -740,7 +740,7 @@
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 480px">
                     <q-card-section align="center">
-                      <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType !== 'Pastor'">
+                      <div class="text-h6" v-if="dialogInsertUserInFunction.functionType !== 'Pastor'">
                         Informe o usuário que ocupará a função
                       </div>
                       <div class="text-h6" v-if="dialogInsertUserInFunction.functionType === 'Pastor'">
@@ -752,7 +752,7 @@
                         </q-chip>
                       </div>
                     </q-card-section>
-                    <q-card-section v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'" class="q-gutter-y-md">
+                    <q-card-section v-if="dialogInsertUserInFunction.functionType === 'Pastor'" class="q-gutter-y-md">
                       <q-select
                         v-model="organismCallerSelected"
                         filled
@@ -782,7 +782,7 @@
                         </template>
                       </q-select>
                     </q-card-section>
-                    <q-card-section class="q-gutter-md" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+                    <q-card-section class="q-gutter-md" v-if="dialogInsertUserInFunction.functionType === 'Pastor'">
                       <q-select
                         v-model="organismCalleeSelected"
                         filled
@@ -847,7 +847,7 @@
                         </template>
                       </q-select>
                       <q-select
-                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
+                        v-if="dialogInsertUserInFunction.functionType === 'Pastor'"
                         v-model="dialogInsertUserInFunction.userInstallation"
                         filled
                         use-input
@@ -876,14 +876,14 @@
                         </template>
                       </q-select>
                       <q-input
-                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
+                        v-if="dialogInsertUserInFunction.functionType === 'Pastor'"
                         filled
                         type="date"
                         label="Data de instalação"
                         v-model="dialogInsertUserInFunction.installationDate"
                       />
                       <q-input
-                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
+                        v-if="dialogInsertUserInFunction.functionType === 'Pastor'"
                         filled
                         type="date"
                         :readonly="undefinedCallee ? true : false"
@@ -891,7 +891,7 @@
                         v-model="dialogInsertUserInFunction.calleeDate"
                       />
                       <q-checkbox
-                        v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'"
+                        v-if="dialogInsertUserInFunction.functionType === 'Pastor'"
                         label="Prazo chamado é indefinido"
                         @update:model-value="undefinedCalleeFunction()"
                         v-model="undefinedCallee"
