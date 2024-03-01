@@ -34,8 +34,9 @@
           ref="tree"
         >
           <template v-slot:default-header="prop">
-            <div class=" items-center" v-if="prop.node.header">
-              <span class="text-weight-bold">{{ prop.node.label }}</span>
+            <div class="items-center" v-if="prop.node.header">
+              <span class="q-pr-md text-weight-bold">{{ prop.node.label }} </span>
+              <q-badge>{{ prop.node.status }}</q-badge>
               <q-btn
                 icon="navigate_next"
                 round
@@ -184,7 +185,8 @@ export default defineComponent({
       functions: null,
       organismParentData: null,
       organismChildData: null,
-      paroquiasIds: null,
+      // paroquiasIds: [],
+      // lightsSignals: [],
       parentData: null,
       idLegado: null,
       congregacaoSedeAddress: null,
@@ -317,6 +319,7 @@ export default defineComponent({
           label: parish.organismConfigName + ' ' + parish.childName,
           header: 'generic',
           organismId: parish.childId,
+          status: parish.statusStatistic,
           children: []
         }
         parish.organismChildData.forEach((congregation, iCongregation) => {
@@ -329,6 +332,7 @@ export default defineComponent({
             type: congregation.organismConfigName,
             label: congregation.organismConfigName + ' ' + congregation.childName,
             body: 'normal',
+            // status: status,
             organismId: congregation.childId,
             children: []
           })
@@ -411,32 +415,31 @@ export default defineComponent({
           })
         }
       });
-      this.getResumeStatisticByDistrict()
+      // this.getResumeStatisticByDistrict()
     },
-    getResumeStatisticByDistrict (){ 
-      if (!this.organismChildData) {
-        console.error("organismChildData is null or undefined");
-        return;
-    }
-      this.organismChildData.forEach((parish) => {
-        this.paroquiasIds.push(parish.childId) 
-      })
-      console.log('this.paroquiasIds',this.paroquiasIds);
-      const opt = {
-        route: "/desktop/adm/getDistrictResumeStatistic",
-        body: {
-          paroquiasIds: this.paroquiasIds,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.coisas=r.data
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } 
-    })
-  },
-}
+    // async getResumeStatisticByDistrict (){ 
+    //   let completedRequests = 0
+    //   this.paroquiasIds.forEach(id => {
+    //     const opt = {
+    //       route: "/desktop/adm/getResumeByParish",
+    //       body: {
+    //         paroquiaId: id,
+    //       },
+    //     };
+    //     this.$q.loading.show()
+    //     useFetch(opt).then((r) => {
+    //     this.$q.loading.hide()
+    //       if (r.error) {
+    //         this.lightsSignals.push(r.data)
+    //         this.$q.notify("Ocorreu um erro, tente novamente por favor");
+    //       } 
+    //       completedRequests++
+    //       if (completedRequests === this.paroquiasIds.length) {
+    //         console.log(this.lightsSignals, 'haha coisa louca');
+    //       }
+    //     })
+    //   })//fim forEach
+    // },
+  }
 })
 </script>
