@@ -1248,10 +1248,14 @@ export default defineComponent({
   },
   methods: {
     changeCall(data) {
-      this.dialogAddCallToPastor.ataKey = data.ataKey,
-      this.dialogAddCallToPastor.pastorSelected = userData.userDataTabs[0].fields[0].value,
+      this.dialogAddCallToPastor.ataKey = data.ataKey
+      this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
-
+      this.dialogAddCallToPastor.installationDate = data.installation.date
+      this.dialogAddCallToPastor.initialDate = data.functionDates.initialDate
+      this.dialogAddCallToPastor.functionSelected = data.functionConfigName
+      this.dialogAddCallToPastor.open = true
+      
     },
     clearDialogRemoveCall() {
       this.dialogInitRemoveCall = {
@@ -1310,8 +1314,8 @@ export default defineComponent({
       this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
     },
     openDialogAddCallToPastor() {
-      this.dialogAddCallToPastor.open = true
       this.dialogAddCallToPastor.functionType = 'Pastor'
+      this.dialogAddCallToPastor.open = true
     },
     addActingToPastor() {
       console.log('aqui vamos adicionar uma atuação ao pastor')
