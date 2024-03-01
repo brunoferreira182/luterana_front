@@ -4,7 +4,7 @@
     class="bg-white q-ma-sm q-pa-sm"
     flat
   >
-    Chamados
+    {{ props.func.users.length ? 'Chamados' : ''}}
     <div
       v-for="(user) in props.func.users"
       :key="user"
@@ -48,7 +48,7 @@
               dense
               rounded
               color="red"
-              @click="deleteUserFromFunction(user)"
+              @click="dialogOpenDeletePastorFromFunction(user)"
               :disable="disableButtons"
             >
               <q-tooltip>Remover pastor</q-tooltip>
@@ -57,7 +57,7 @@
         </q-item-section>
       </q-item>
     </div>
-      Atuações
+    {{ props.func.users.length ? 'Atuações' : ''}}
     <div
       v-for="(user) in props.func.users"
       :key="user"
@@ -115,12 +115,12 @@ const props = defineProps([
 'canEditPastor', 
 'disableButtons', 
 ])
-const emits = defineEmits(['remove', 'deleteUserFromFunction'])
+const emits = defineEmits(['remove', 'dialogOpenDeletePastorFromFunction'])
 
 
 
-function deleteUserFromFunction (user) {
-  emits('deleteUserFromFunction', user)
+function dialogOpenDeletePastorFromFunction (user) {
+  emits('dialogOpenDeletePastorFromFunction', user)
 }
 // function swapPastorToFunctionPastor (user) {
 //   emits('swapPastorToFunctionPastor', user)

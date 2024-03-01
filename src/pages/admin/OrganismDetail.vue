@@ -24,7 +24,7 @@
             rounded
             icon="bookmark"
             unelevated
-            @click="updateOrganism"
+            @click="updateOrganismData"
             label="Salvar Edição"
           />
         </div>
@@ -126,7 +126,7 @@
                         color="red"
                         size="9px"
                         rounded
-                        @click.stop="dialogOpenDeleteUserFromFunction(pastor)"
+                        @click.stop="dialogOpenDeletePastorFromFunction(pastor)"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
                       </q-btn>
@@ -268,7 +268,7 @@
                   </q-item>
                 </q-list>
               </div>
-              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
+              <div v-if="organismConfigName === 'Congregação'">
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
@@ -293,7 +293,7 @@
                     v-if="func.functionName === 'Pastor'"
                     :func="func"
                     :funcIndex="funcIndex"
-                    @deleteUserFromFunction="dialogOpenDeletePastorFromFunction"
+                    @dialogOpenDeletePastorFromFunction="dialogOpenDeletePastorFromFunction"
                     @swapPastorToFunctionPastor="swapPastorToFunctionInCongregacao"
                     :showAddUserButton="false"
                     :canEditPastor="$route.path.includes('/admin') ? true : false"
@@ -738,12 +738,12 @@
                   :isPastor="func.functionName === 'Pastor' ? false : true"
                 />
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
-                  <q-card style="border-radius: 1rem; width: 400px">
+                  <q-card style="border-radius: 1rem; width: 480px">
                     <q-card-section align="center">
                       <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType !== 'Pastor'">
                         Informe o usuário que ocupará a função
                       </div>
-                      <div class="text-h6" v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+                      <div class="text-h6" v-if="dialogInsertUserInFunction.functionType === 'Pastor'">
                         Informe o pastor que ocupará a função
                       </div>
                       <div v-if="dialogInsertUserInFunction.selectedFunc && dialogInsertUserInFunction.selectedFunc.functionRequiredTitleName">
@@ -752,13 +752,15 @@
                         </q-chip>
                       </div>
                     </q-card-section>
-                    <q-card-section v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'">
+                    <q-card-section v-if="this.dialogInsertUserInFunction.functionType === 'Pastor'" class="q-gutter-y-md">
                       <q-select
                         v-model="organismCallerSelected"
                         filled
                         use-input
                         label="Nome do organismo de chamado"
                         option-label="nome"
+                        options-dense
+                        
                         :options="filiatedOrganismsList"
                         @filter="getFiliatedOrganismsList"
                         :option-value="(item) => item"
@@ -1043,7 +1045,7 @@
                         label="Confirmar"
                         no-caps
                         color="primary"
-                        @click="inactivateUserFromFunction"
+                        @click="deleteUserFromFunction"
                       />
                     </q-card-actions>
                   </q-card>
@@ -1073,13 +1075,7 @@
                         v-model="dialogDeletePastorFromFunction.finalDate"
                         hint="Informe a data de desinstalação de ocupação da função"
                       />
-                      <q-input
-                        filled
-                        label="Chave-ata"
-                        mask="AAA-AAA-###-####-##-a"
-                        v-model="dialogDeletePastorFromFunction.ataKey"
-                        hint="Informe a chave-ata"
-                      />
+                   
                       <q-select
                         v-model="dialogDeletePastorFromFunction.uninstallerUser"
                         filled
@@ -1123,7 +1119,7 @@
                         label="Confirmar"
                         no-caps
                         color="primary"
-                        @click="inactivatePastorFromFunction"
+                        @click="desinstallPastorFunction"
                       />
                     </q-card-actions>
                   </q-card>
@@ -3360,14 +3356,14 @@ export default defineComponent({
     },
     checkRequiredFields() {
       let allRight = true;
-      // this.organismData.fields.forEach((field) => {
-      //   if (field.required && (!field.value || field.value === "")) {
-      //     allRight = false;
-      //   }
-      // });
+      this.organismData.fields.forEach((field) => {
+        if (field.required && (!field.value || field.value === "")) {
+          allRight = false;
+        }
+      });
       return allRight;
     },
-    updateOrganism(){
+    updateOrganismData(){
       if (this.checkRequiredFields()) {
         const userData = [];
         for (const func of this.functions) {
@@ -3514,6 +3510,7 @@ export default defineComponent({
       this.dialogOpenObservation.obsText = "";
       this.dialogDeleteUserFromFunction.open = false;
       this.dialogDeletePastorFromFunction.open = false;
+      this.dialogDeletePastorFromFunction.uninstallerUser = ''
       this.dialogOpenObservation.open = false;
       this.dialogInsertUserInFunction.open = false;
       this.dialogInsertUserInFunction.initialDate = '',
@@ -3532,9 +3529,10 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.open = true;
       this.dialogDeleteUserFromFunction.userData = user;
     },
-    dialogOpenDeletePastorFromFunction(user) {
+    dialogOpenDeletePastorFromFunction(pastor) {
+      console.log(pastor, )
       this.dialogDeletePastorFromFunction.open = true;
-      this.dialogDeletePastorFromFunction.userData = user;
+      this.dialogDeletePastorFromFunction.userData = pastor;
     },
     getOrganismsList(val, update, abort) {
       if(val.length < 3) {
@@ -3583,12 +3581,11 @@ export default defineComponent({
         this.dialogInsertUserInFunction.functionType === 'Pastor'
       ){
         if(
-          this.dialogInsertUserInFunction.ataKey === '' ||
         this.dialogInsertUserInFunction.installationDate === '' ||
         this.organismCalleeSelected === '' ||
         this.organismCallerSelected === '' 
         ){
-          this.$q.notify("Preencha chave-ata, data de instalação, organismo que atende e quem chamou");
+          this.$q.notify("Preencha data de instalação, organismo que atende e quem chamou");
           return;
         }
       }
@@ -3596,7 +3593,7 @@ export default defineComponent({
         this.$q.notify("Preencha usuário e a data do chamado");
         return;
       }
-      if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userId)) {
+      if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogInsertUserInFunction.userSelected.userIdMongo) === true) {
         this.$q.notify('Usuário já incluído nesta função')
         return
       }
@@ -3618,7 +3615,7 @@ export default defineComponent({
       if(this.dialogInsertUserInFunction.functionType === 'Pastor'){
         opt.body.subtype = 'chamado'
         opt.body.organismCallerId = this.organismCallerSelected.organismId
-        opt.body.organismCalleeId = this.organismCalleeSelected.organismId,
+        opt.body.organismCalledId = this.organismCalleeSelected.organismId,
         opt.body.ataKey = this.dialogInsertUserInFunction.ataKey
         opt.body.installation = {
           date: this.dialogInsertUserInFunction.installationDate,
@@ -3668,20 +3665,21 @@ export default defineComponent({
         this.parentOrganism = r.data;
       });
     },
-    inactivateUserFromFunction() {
+    desinstallPastorFunction() {
       if (
-        this.dialogDeleteUserFromFunction.obsText === "" ||
-        this.dialogDeleteUserFromFunction.finalDate === ""
+        this.dialogDeletePastorFromFunction.uninstallerUser === ""
       ) {
-        this.$q.notify("Preencha observação e data final para prosseguir!");
+        this.$q.notify("Preencha o usuário que desinstalou para prosseguir!");
         return;
       }
       const opt = {
-        route: "/desktop/adm/inactivateUserFromFunction",
+        route: "/desktop/adm/desinstallPastorFunction",
         body: {
-          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
-          finalDate: this.dialogDeleteUserFromFunction.finalDate,
-          obsText: this.dialogDeleteUserFromFunction.obsText,
+          functionSubtype: 'chamado',
+          uninstallerUserId: this.dialogDeletePastorFromFunction.uninstallerUser._id,
+          userFunctionId: this.dialogDeletePastorFromFunction.userData._id,
+          desinstalationDate: this.dialogDeletePastorFromFunction.finalDate,
+          obs: this.dialogDeletePastorFromFunction.obsText,
           
         },
       };
@@ -3691,17 +3689,15 @@ export default defineComponent({
           return
         }
         this.getOrganismDetailById();
-        this.$q.notify("Usuário deletado com sucesso!");
+        this.$q.notify("Pastor deletado com sucesso!");
         this.clearDialogAndFunctions();
       });
     },
     inactivatePastorFromFunction() {
       if (
-        this.dialogDeletePastorFromFunction.obsText === "" ||
-        this.dialogDeletePastorFromFunction.ataKey === "" || 
         this.dialogDeletePastorFromFunction.uninstallerUser === ""
       ) {
-        this.$q.notify("Preencha observação, chave-ata e o usuário que desinstalou para prosseguir!");
+        this.$q.notify("Preencha o usuário que desinstalou para prosseguir!");
         return;
       }
       const organismId = this.$route.query.organismId
@@ -3712,7 +3708,6 @@ export default defineComponent({
           userFunctionId: this.dialogDeletePastorFromFunction.userData._id,
           finalDate: this.dialogDeletePastorFromFunction.finalDate,
           obsText: this.dialogDeletePastorFromFunction.obsText,
-          ataKey: this.dialogDeletePastorFromFunction.ataKey,
           uninstallerUserId: this.dialogDeletePastorFromFunction.uninstallerUser._id,
           organismId
         },

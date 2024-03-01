@@ -66,7 +66,7 @@
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
-        <div>
+        <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
             Chamados:
             <q-btn
@@ -85,7 +85,6 @@
               <q-item
                 v-for="(call, i) in callList"
                 :key="call"
-                clickable
                 style="border-radius: 1rem;"
                 class="bg-grey-3 q-ma-sm q-mx-md"
               >
@@ -125,10 +124,10 @@
             </q-list>
           </div>
         </div>
-        <div>
+        <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
             Atuações:
-            <!-- <q-btn
+            <q-btn
               icon="add"
               color="primary"
               size="12px"
@@ -137,7 +136,7 @@
               rounded
               no-caps
               @click.stop="addActingToPastor"
-            /> -->
+            />
           </div>
           <div>
             <q-list>
@@ -668,8 +667,18 @@
             <div class="text-h6" v-if="dialogAddCallToPastor.functionType !== 'Pastor'">
               Informe o usuário que ocupará a função
             </div>
-            <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
-              Informe o pastor que ocupará a função
+            <div v-if="dialogAddCallToPastor.functionType === 'Pastor'">
+              <div class="text-h6" >
+                Adicionando vínculo para {{ userData.userDataTabs[0].fields[0].value }}
+              </div>
+              <q-btn 
+                label="Adicionar organismo de chamado" 
+                no-caps 
+                flat 
+                color="primary" 
+                icon="add"
+                @click="addNewOrganismInput"
+              />
             </div>
             <div v-if="dialogAddCallToPastor.selectedFunc && dialogAddCallToPastor.selectedFunc.functionRequiredTitleName">
               <q-chip color="red-8" outline>
@@ -677,47 +686,97 @@
               </q-chip>
             </div>
           </q-card-section>
-          <q-card-section v-if="dialogAddCallToPastor.functionType === 'Pastor'">
-            <q-select
-              v-model="dialogAddCallToPastor.organismCallerSelected"
-              filled
-              use-input
-              label="Nome do organismo de chamado"
-              @update:model-value="getOrganismDetailById"
-              option-label="nome"
-              :options="filiatedOrganismsList"
-              @filter="getFiliatedOrganismsList"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+          <q-card-section v-if="this.dialogAddCallToPastor.functionType === 'Pastor'" class="q-gutter-y-md">
+            <div v-for="(orgCaller, index) in organismCallerList" :key="index">
+              <q-select
+                v-model="organismCallerModels[orgCaller, index]"
+                filled
+                use-input
+                label="Nome do organismo de chamado"
+                option-label="nome"
+                options-dense
+                :options="filiatedOrganismsList"
+                @update:model-value="getOrganismDetailD(orgCaller, index)"
+                @filter="getFiliatedOrganismsList"
+                :option-value="(item) => item.organismId"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                      <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
           </q-card-section>
           <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
             <q-select
-              v-model="dialogAddCallToPastor.organismCalleeSelected"
-              filled
-              use-input
-              label="Nome do organismo de atuação"
-              option-label="nome"
-              :readonly="sameOrganismCalled ? true : false"
-              :options="organismList"
-              @filter="getOrganismsList"
-              :option-value="(item) => item"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+                v-model="dialogAddCallToPastor.organismCalledSelected"
+                filled
+                use-input
+                label="Nome do organismo de atuação"
+                option-label="nome"
+                options-dense
+                :readonly="sameOrganismCalled ? true : false"
+                :options="organismList"
+                @filter="getOrganismsList"
+                :option-value="(item) => item"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                      <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            <!-- <div v-for="(org, calleeIndex) in organismCalleeList" :key="calleeIndex">
+              <q-select
+                v-model="organismCalleeModels[calleeIndex]"
+                filled
+                use-input
+                label="Nome do organismo de atuação"
+                option-label="nome"
+                options-dense
+                :readonly="sameOrganismCalled ? true : false"
+                :options="organismList"
+                @filter="getOrganismsList"
+                :option-value="(item) => item"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                    <q-item v-bind="scope.itemProps">
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                        <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+              </q-select>
+            </div> -->
             <q-checkbox
               label="É o mesmo organismo de chamado"
               @update:model-value="changeOrganismCaller()"
@@ -733,13 +792,13 @@
               :options="functions"
               :option-value="(item) => item"
             >
-              <!-- <template v-slot:no-option>
+              <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
                     Nenhum resultado
                   </q-item-section>
                 </q-item>
-              </template> -->
+              </template>
             </q-select>
             <q-input
               filled
@@ -752,35 +811,6 @@
             />
           </q-card-section>
           <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="userData.userDataTabs[0].fields[0].value"
-              readonly
-              filled
-              use-input
-              label="Nome do usuário"
-              option-label="userName"
-              :options="usersOptions"
-              hint="Usuário que ocupará a função"
-              @filter="getUsers"
-              :loading="false"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
             <q-select
               v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               v-model="dialogAddCallToPastor.userInstallation"
@@ -859,7 +889,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-dialog v-model="dialogRemoveUserFromFunction.open">
+      <q-dialog v-model="dialogRemoveUserFromFunction.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
             <div class="text-h6">Confirma?</div>
@@ -1165,6 +1195,10 @@ export default defineComponent({
         titleId: null
       },
       filiatedOrganismsList: [],
+      organismCallerList: [{}], 
+      organismCallerModels: [null],
+      organismCalleeModels:[],
+      organismCalleeList:[],
       userForms: {},
       userFormDialog: {
         formId: '',
@@ -1219,7 +1253,7 @@ export default defineComponent({
         functionType: '',
         selectedFunc: null,
         organismCallerSelected: null,
-        organismCalleeSelected: null,
+        organismCalledSelected: null,
         ataKey: '', 
         userSelected: null, 
         sameOrganismCalled: false,
@@ -1247,6 +1281,12 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    addNewOrganismInput() {
+      this.organismCallerList.push({});
+      this.organismCallerModels.push(null);
+      // this.organismCalleeList.push({})
+      // this.organismCalleeModels.push(null)
+    },
     changeCall(data) {
       this.dialogAddCallToPastor.ataKey = data.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
@@ -1318,6 +1358,7 @@ export default defineComponent({
       this.dialogAddCallToPastor.open = true
     },
     addActingToPastor() {
+      this.dialogAddAtuacaoFromPastor.open = true
       console.log('aqui vamos adicionar uma atuação ao pastor')
     },
     addCallToPastor() {
@@ -1336,6 +1377,8 @@ export default defineComponent({
       this.dialogAddCallToPastor.initialDate = '',
       this.dialogAddCallToPastor.functionType = '',
       this.dialogAddCallToPastor.open = false,
+      this.dialogAddCallToPastor.organismCalleeSelected = null
+      this.dialogAddCallToPastor.organismCallerSelected = null
       this.organismCalleeSelected = ''
       this.organismCallerSelected = ''
       this.dialogAddCallToPastor.open = false
@@ -1353,12 +1396,14 @@ export default defineComponent({
     linkPastorToFunction() {
       this.dialogAddCallToPastor.open = true;
     },
-    getOrganismDetailById() {
-      const organismId = this.dialogAddCallToPastor.organismCallerSelected.organismId
+    getOrganismDetailD(teste, organismId) {
+      console.log(teste, organismId)
+      return
+      const organismIdSelected = organismId
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
-          organismId: organismId,
+          organismId: organismIdSelected,
         },
       };
       this.$q.loading.show()
@@ -1374,9 +1419,7 @@ export default defineComponent({
     async addUserToFunction() {
       if(
         this.dialogAddCallToPastor.ataKey === '' ||
-        this.dialogAddCallToPastor.installationDate === '' ||
-        this.dialogAddCallToPastor.organismCalleeSelected === '' ||
-        this.dialogAddCallToPastor.organismCallerSelected === '' 
+        this.dialogAddCallToPastor.installationDate === ''
       ){
         this.$q.notify("Preencha chave-ata, data de instalação e organismo que atende e quem chamou");
         return;
@@ -1386,12 +1429,14 @@ export default defineComponent({
       //   return
       // }
 
-        if (!(this.dialogAddCallToPastor.functionSelected && this.dialogAddCallToPastor.functionSelected.functionId)) {
-          this.$q.notify('Selecione a função que o usuário ocupará')
-          return
+        // if (!(this.dialogAddCallToPastor.functionSelected && this.dialogAddCallToPastor.functionSelected.functionId)) {
+        //   this.$q.notify('Selecione a função que o usuário ocupará')
+        //   return
+        // }
+        const organismCallerIds = []
+        for (const org of this.organismCallerModels) {
+          organismCallerIds.push(org.organismId);
         }
-        
-
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
@@ -1404,8 +1449,8 @@ export default defineComponent({
       };
       if(this.dialogAddCallToPastor.functionType === 'Pastor'){
         opt.body.subtype = 'chamado'
-        opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
-        opt.body.organismCalleeId = this.dialogAddCallToPastor.organismCalleeSelected.organismId,
+        opt.body.organismsCallerIds = organismCallerIds
+        opt.body.organismCalledId = this.dialogAddCallToPastor.organismCalledSelected.organismId,
         opt.body.ataKey = this.dialogAddCallToPastor.ataKey
         opt.body.installation = {
           date: this.dialogAddCallToPastor.installationDate,

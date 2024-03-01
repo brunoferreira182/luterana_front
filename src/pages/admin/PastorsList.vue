@@ -115,7 +115,7 @@
   </q-page-container>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { savedPastorsList } from "stores/pastorsList";
@@ -145,10 +145,10 @@ export default defineComponent({
         descending: false,
       },
       loading: false,
-      pastorListTimer: null
-      // pagesNumber: computed(() => {
-      //   return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
-      // })
+      pastorListTimer: null,
+      pagesNumber: computed(() => {
+        return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
+      })
     };
   },
   mounted() {
