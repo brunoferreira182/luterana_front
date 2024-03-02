@@ -64,8 +64,9 @@
                 class="q-mr-sm"
               />
               <span
-                class="cursor-pointer"
+                class="cursor-pointer q-mr-md"
               >{{ prop.node.label }}</span>
+              <q-badge> {{ prop.node.statusCongregation }}</q-badge>
             </div>
             <div
               v-if="prop.node.type === 'Congregação'"
@@ -332,7 +333,7 @@ export default defineComponent({
             type: congregation.organismConfigName,
             label: congregation.organismConfigName + ' ' + congregation.childName,
             body: 'normal',
-            // status: status,
+            statusCongregation: congregation.status,
             organismId: congregation.childId,
             children: []
           })
