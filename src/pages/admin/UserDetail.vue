@@ -97,6 +97,9 @@
                       {{ call.organismConfigName }}
                     </q-badge>
                   </q-item-label>
+                  <q-item-label v-for="atuacao in call.functionsAtuacao" :key="atuacao">
+                    Atuação {{ atuacao.organismName }}
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label>
@@ -113,7 +116,7 @@
                         Adicionar atuação
                       </q-tooltip>
                     </q-btn>
-                    <q-btn
+                    <!-- <q-btn
                       class="q-pa-sm"
                       flat
                       rounded
@@ -121,7 +124,7 @@
                       color="primary"
                       icon="edit"
                       @click.stop="changeCall(call)"
-                    />
+                    /> -->
                     <q-btn
                       class="q-pa-sm"
                       flat
