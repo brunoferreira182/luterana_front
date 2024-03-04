@@ -106,6 +106,15 @@
                       rounded
                       unelevated
                       color="primary"
+                      icon="add"
+                      @click.stop="addActing"
+                    />
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="primary"
                       icon="edit"
                       @click.stop="changeCall(call)"
                     />
@@ -127,16 +136,6 @@
         <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
             Atuações:
-            <q-btn
-              icon="add"
-              color="primary"
-              size="12px"
-              dense
-              flat
-              rounded
-              no-caps
-              @click.stop="addActingToPastor"
-            />
           </div>
           <div>
             <q-list>
