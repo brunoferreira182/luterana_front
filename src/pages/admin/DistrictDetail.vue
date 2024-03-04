@@ -890,37 +890,39 @@ export default defineComponent({
           organismId: parish.childId,
           children: []
         }
-        parish.organismChildData.forEach((congregation, iCongregation) => {
-          this.districtInfo.forEach((info) => {
-            if (info.label === 'Congregações') {
-              info.num++
-            }
+        if (parish.organismChildData && parish.organismChildData.length > 0) {
+          parish.organismChildData.forEach((congregation, iCongregation) => {
+            this.districtInfo.forEach((info) => {
+              if (info.label === 'Congregações') {
+                info.num++
+              }
+            })
+            tree.children.push({
+              type: congregation.organismConfigName,
+              label: congregation.organismConfigName + ' ' + congregation.childName,
+              body: 'normal',
+              organismId: congregation.childId,
+              children: []
+            })
+            congregation.organismChildData.forEach((dept) => {
+              if (dept) {
+                tree.children[iCongregation].children.push({
+                  type: dept.organismChildConfig.organismConfigName,
+                  label: dept.organismChildConfig.organismConfigName + ' ' + dept.organismChildData.childName,
+                  body: 'normal',
+                  organismId: dept._id
+                })
+              }
+              if (dept && dept.organismChildConfig && dept.organismChildConfig.organismConfigName === 'Ponto de Missão') {
+                this.districtInfo.forEach((info) => {
+                  if (info.label === 'Pontos de Missão') {
+                    info.num++
+                  }
+                })
+              }
+            })
           })
-          tree.children.push({
-            type: congregation.organismConfigName,
-            label: congregation.organismConfigName + ' ' + congregation.childName,
-            body: 'normal',
-            organismId: congregation.childId,
-            children: []
-          })
-          congregation.organismChildData.forEach((dept) => {
-            if (dept) {
-              tree.children[iCongregation].children.push({
-                type: dept.organismChildConfig.organismConfigName,
-                label: dept.organismChildConfig.organismConfigName + ' ' + dept.organismChildData.childName,
-                body: 'normal',
-                organismId: dept._id
-              })
-            }
-            if (dept && dept.organismChildConfig && dept.organismChildConfig.organismConfigName === 'Ponto de Missão') {
-              this.districtInfo.forEach((info) => {
-                if (info.label === 'Pontos de Missão') {
-                  info.num++
-                }
-              })
-            }
-          })
-        })
+        }
         this.organismListTree.push(tree)
       })
     },
