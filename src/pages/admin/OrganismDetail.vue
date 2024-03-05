@@ -2369,18 +2369,12 @@ export default defineComponent({
     };
   },
   watch: {
-  $route(to, from) {
-    if (to.path === '/admin/organismDetail') {
-      const toQuery = to.query;
-      const fromQuery = from.query;
-
-      // Compare as partes relevantes da query string
-      if (toQuery !== fromQuery) {
+    $route(to) {
+      if (to.path === '/admin/organismDetail') {
         this.getOrganismDetailById();
       }
     }
-  }
-},
+  },
   mounted() {
     this.$q.loading.hide()
   },
