@@ -2651,7 +2651,7 @@ export default defineComponent({
           this.$q.notify('Todas as congregações devem estar completas')
           return
         } 
-        if (!congregation.frequencyServices || !congregation.frequencyServices.length > 0) {
+        if (!congregation.frequencyServices) {
           this.$q.notify('Preencha o horário de culto de todas as congregações')
           return
         }

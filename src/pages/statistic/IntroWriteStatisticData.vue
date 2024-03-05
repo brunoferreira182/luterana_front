@@ -215,8 +215,7 @@ export default defineComponent({
   beforeMount(){
     this.verifyIfIsPastor()
     this.getCardName()
-    this.getStatusPreStatistic()
-    this.getStatusPreStatistic()
+    this.getPreStatisticStatus()
   },
   methods: {
     clearDialogSipar() {
@@ -258,7 +257,7 @@ export default defineComponent({
       //   this.dialogNotifystatus.open = true
       // }
     },
-    getStatusPreStatistic() {
+    getPreStatisticStatus() {
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',
       }

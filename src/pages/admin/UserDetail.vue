@@ -97,9 +97,46 @@
                       {{ call.organismConfigName }}
                     </q-badge>
                   </q-item-label>
-                  <q-item-label v-for="atuacao in call.functionsAtuacao" :key="atuacao">
-                    Atuação {{ atuacao.organismName }}
-                  </q-item-label>
+                  <q-item
+                    class="q-pa-md"
+                    style=" border-radius: 1rem;"
+                    v-for="atuacao in call.functionsAtuacao" 
+                    :key="atuacao"
+                  >
+                    <q-item-label>
+                      {{ call.functionConfigName}} - Atuação em {{ atuacao.organismName }}
+                    </q-item-label>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                          flat
+                          rounded
+                          unelevated
+                          size="12px"
+                          color="primary"
+                          icon="edit"
+                          @click.stop="changeAtuation(atuacao, i)"
+                        >
+                          <q-tooltip>
+                            Remover atuação
+                          </q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          flat
+                          rounded
+                          unelevated
+                          size="12px"
+                          color="red"
+                          icon="delete"
+                          @click.stop="removeAtuation(atuacao, i)"
+                        >
+                          <q-tooltip>
+                            Remover atuação
+                          </q-tooltip>
+                        </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label>
@@ -116,7 +153,7 @@
                         Adicionar atuação
                       </q-tooltip>
                     </q-btn>
-                    <!-- <q-btn
+                    <q-btn
                       class="q-pa-sm"
                       flat
                       rounded
@@ -124,7 +161,11 @@
                       color="primary"
                       icon="edit"
                       @click.stop="changeCall(call)"
-                    /> -->
+                    >
+                      <q-tooltip>
+                        Editar vínculo
+                      </q-tooltip>
+                    </q-btn>
                     <q-btn
                       class="q-pa-sm"
                       flat
@@ -133,7 +174,11 @@
                       color="red"
                       icon="delete"
                       @click.stop="removeCall(call, i)"
-                    />
+                    >
+                      <q-tooltip>
+                        Remover chamado
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -612,9 +657,6 @@
       <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
-            <div class="text-h6" v-if="dialogAddCallToPastor.functionType !== 'Pastor'">
-              Informe o usuário que ocupará a função
-            </div>
             <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
               Adicionando {{ dialogAddCallToPastor.subtype === 'chamado' ? 'chamado' : 'atuação' }} para {{ userData.userDataTabs[0].fields[0].value }}
             </div>
@@ -902,7 +944,7 @@
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
             <div class="text-h6 text-center">
-              Tem certeza que deseja inativar
+              Tem certeza que deseja remover {{ dialogDeletePastorFromFunction.type === 'chamado' ? 'chamado' : 'atuação' }} de
               {{ userData.userDataTabs[0].fields[0].value }}?
             </div>
           </q-card-section>
@@ -1121,6 +1163,7 @@ export default defineComponent({
         uninstallerUser: '',
         open: false,
         userData: {},
+        type: ''
       },
       setReadOnlyOrganismCaller: false,
     };
@@ -1135,39 +1178,40 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
-    changeCall(data) {
-      this.dialogAddCallToPastor.ataKey = data.ataKey
+    changeAtuation(atuation){
+      console.log(atuation,'atuation')
+      return
+      this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.installationDate = data.installation.date
-      this.dialogAddCallToPastor.initialDate = data.functionDates.initialDate
-      this.dialogAddCallToPastor.functionSelected = data.functionConfigName
+      this.dialogAddCallToPastor.installationDate = call.installation.date
+      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
+      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
+      this.dialogAddCallToPastor.open = true
+      
+    },
+    changeCall(call) {
+      console.log(call,'call')
+      this.dialogAddCallToPastor.ataKey = call.ataKey
+      this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
+      this.dialogAddCallToPastor.functionType = 'Pastor'
+      this.dialogAddCallToPastor.installationDate = call.installation.date
+      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
+      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
       this.dialogAddCallToPastor.open = true
       
     },
     removeCall(call){
+      console.log(call, 'call')
       this.dialogDeletePastorFromFunction.open = true
       this.dialogDeletePastorFromFunction.userData = call.organismFunctionUserId
+      this.dialogDeletePastorFromFunction.type = 'chamado'
     },
-    clearDialogRemoveCall() {
-      this.dialogInitRemoveCall = {
-        open: false,
-        i: null,
-        data: null
-      }
-    },
-    async confirmRemoveCall() {
-      const opt = {
-        route: '/desktop/adm/userInactivateCall',
-        body: {
-          functionUserId: this.dialogInitRemoveCall.data._id
-        }
-      }
-      let r = await useFetch(opt)
-      if (r.error) return
-      this.clearDialogRemoveCall()
-      this.getUserDetailById()
-      this.getPastoralStatusTypes()
+    removeAtuation(atuacao){
+      console.log(atuacao, 'atuacao')
+      this.dialogDeletePastorFromFunction.open = true
+      this.dialogDeletePastorFromFunction.userData = atuacao.organismFunctionUserId
+      this.dialogDeletePastorFromFunction.type = 'atuation'
     },
     desinstallPastorFunction() {
       if (
@@ -1187,6 +1231,9 @@ export default defineComponent({
           
         },
       };
+      if(this.dialogDeletePastorFromFunction.type === 'atuation'){
+        opt.body.functionSubtype = 'atuacao'
+      }
       useFetch(opt).then((r) => {
         if (r.error) {
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
@@ -1249,6 +1296,7 @@ export default defineComponent({
       this.dialogRemoveUserFromFunction.functionUserId = "";
       this.dialogRemoveUserFromFunction.obsText = "";
       this.dialogRemoveUserFromFunction.data = {};
+      this.dialogDeletePastorFromFunction.type = ''
       this.dialogRemoveUserFromFunction.finalDate = "";
       this.functionSelected = ''
       this.dialogRemoveUserFromFunction.functionUserId = "";
@@ -1645,37 +1693,6 @@ export default defineComponent({
       console.log()
       this.dialogSwapUserFromFunction.open = true
     },
-    clkConfirmRemoveUserFromFunction () {
-      if (
-        this.dialogRemoveUserFromFunction.obsText === "" ||
-        this.dialogRemoveUserFromFunction.ataKey === "" || 
-        this.dialogRemoveUserFromFunction.uninstallerUser === ""
-      ) {
-        this.$q.notify("Preencha observação, chave-ata e o usuário que desinstalou para prosseguir!");
-        return;
-      }
-      const opt = {
-        route: "/desktop/adm/inactivateUserFromFunction",
-        body: {
-          ataKey: this.dialogRemoveUserFromFunction.ataKey,
-          uninstallerUserId: this.dialogRemoveUserFromFunction.uninstallerUser._id,
-          userFunctionId: this.dialogRemoveUserFromFunction.organismFunctionUserId,
-          finalDate: this.dialogRemoveUserFromFunction.finalDate,
-          obsText: this.dialogRemoveUserFromFunction.obsText,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-          return
-        }
-        this.getUserDetailById()
-        this.$q.notify("Usuário removido");
-        this.dialogRemoveUserFromFunction.open = false
-      });
-    },
     removeUserFromFunction (link) {
       this.dialogRemoveUserFromFunction.open = true
       this.dialogRemoveUserFromFunction.organismFunctionUserId = link.organismFunctionUserId
@@ -1873,16 +1890,12 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        if (r.data.userLinksToOrganisms.data.length > 0) {
-          let links = r.data.userLinksToOrganisms.data
-          links.forEach((link) => {
-            if (link.functionSubtype === 'chamado') {
-              this.callList.push(link)
-            } else if (link.functionSubtype === 'atuacao') {
-              this.actingList.push(link)
-            }
-          })
-        }
+        let links = r.data.userLinksToOrganisms.data
+        links.forEach((link) => {
+          if (link.functionSubtype === 'chamado') {
+            this.callList.push(link)
+          } 
+        })
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
