@@ -1045,7 +1045,7 @@
                         label="Confirmar"
                         no-caps
                         color="primary"
-                        @click="deleteUserFromFunction"
+                        @click="inactivateUserFromFunction"
                       />
                     </q-card-actions>
                   </q-card>
@@ -2395,6 +2395,32 @@ export default defineComponent({
     }
   },
   methods: {
+    inactivateUserFromFunction() {
+      if (
+        this.dialogDeleteUserFromFunction.obsText === "" ||
+        this.dialogDeleteUserFromFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivateUserFromFunction",
+        body: {
+          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
+          finalDate: this.dialogDeleteUserFromFunction.finalDate,
+          obsText: this.dialogDeleteUserFromFunction.obsText,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.getOrganismDetailById();
+          this.$q.notify("Usuário inativado com sucesso!");
+          this.clearDialogAndFunctions();
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
     validateAtaKeyFormat(value) {
       const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
       if (regex.test(value)) {
