@@ -536,9 +536,18 @@
                       hint="Digite o nome de quem você vai convidar"
                     >
                       <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
+                        <q-item> 
+                          <q-item-section>
+                            <q-btn
+                              icon="person_add"
+                              dense
+                              flat
+                              no-caps
+                              label="Novo usuário"
+                              color="primary"
+                              class="q-pa-sm"
+                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                            />
                           </q-item-section>
                         </q-item>
                       </template>
@@ -1119,9 +1128,18 @@
                       hint="Digite o nome de quem você vai convidar"
                     >
                       <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
+                        <q-item> 
+                          <q-item-section>
+                            <q-btn
+                              icon="person_add"
+                              dense
+                              flat
+                              no-caps
+                              label="Novo usuário"
+                              color="primary"
+                              class="q-pa-sm"
+                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                            />
                           </q-item-section>
                         </q-item>
                       </template>
@@ -1267,8 +1285,49 @@
             </div>
           </q-expansion-item>
         </q-list>
-  
       </div>
+      <q-dialog
+          v-model="dialogAddUser.open"
+        >
+          <q-card style="width: 400px; border-radius: 1rem">
+            <q-card-section
+              class="text-h6 text-center"
+            >
+              Informe os dados do novo usuário:
+            </q-card-section>
+            <q-card-section>
+              <q-input
+                label="Nome completo"
+                class="q-px-sm q-mt-sm"
+                v-model="dialogAddUser.data.name"
+              />
+              <q-input
+                label="Email do novo usuário"
+                class="q-px-sm q-mt-sm"
+                v-model="dialogAddUser.data.email"
+              />
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                rounded
+                color="primary"
+                label="Sair"
+                no-caps
+                unelevated
+                @click="clearDialogNewUser"
+              />
+              <q-btn
+                rounded
+                color="primary"
+                unelevated
+                label="Confirmar"
+                no-caps
+                @click="confirmCreateNewUser"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       <DialogOrganismDetail
         :open="dialogChildOrganism.open"
         :orgData="dialogChildOrganism.orgData"
@@ -1414,6 +1473,16 @@ export default defineComponent({
           agency: '',
           account: '',
           pix: ''
+        }
+      },
+      dialogAddUser: {
+        param: null,
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
         }
       },
       addOrganism: {
@@ -1643,6 +1712,55 @@ export default defineComponent({
           this.childOrganismsConfigData = r.data.childOrganismsConfigs
         }
       });
+    },
+    confirmCreateNewUser () {
+      const opt = {
+        route: '/desktop/statistics/createNewUser',
+        body: {
+          data: this.dialogAddUser.data,
+          userType: ''
+        }
+      }
+      // if(this.dialogAddFunction.functionName === 'Pastor'){
+      //   opt.body.userType = 'pastor'
+      // }
+
+      useFetch(opt).then(() => {
+        this.$q.notify('Usuário criado com sucesso')
+        if (this.dialogAddUser.param === 'func') {
+          this.dialogAddFunction.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'secretary') {
+          this.dialogAddSecretary.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'funcInDept') {
+          this.dialogAddFunctionToDept.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        }
+        this.dialogAddUser.open = false
+        this.dialogAddUser.data = {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
+      })
+    },
+    openDialogAddUser(param) {
+      this.dialogAddUser.param = param
+      this.dialogAddUser.open = true
+    },
+    clearDialogNewUser() {
+      this.dialogAddUser.open = false,
+      this.dialogAddUser.data = {
+        name: '',
+        email: '',
+        phone: '',
+        document: ''
+      }
     },
     clkOpenChildOrganismDetail(child){
       const childOrganismId = child.childOrganismId
