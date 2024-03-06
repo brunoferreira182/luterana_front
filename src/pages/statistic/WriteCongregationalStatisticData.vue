@@ -511,7 +511,7 @@
                     </q-item>
 
                   </q-list> 
-                  <q-btn 
+                  <!-- <q-btn 
                     v-if="(!status || (status && status.value !== 'sent')) && !composition.congregations[iOrg].frequencyServices"
                     label="Adicionar dia e horário do culto"
                     dense
@@ -522,7 +522,7 @@
                     icon="add"
                     class="q-pa-sm"
                     @click="clkAddServices(iOrg)"
-                  />
+                  /> -->
                 </div>
               </q-list>
               <q-list bordered class="q-mt-sm">
@@ -2651,10 +2651,10 @@ export default defineComponent({
           this.$q.notify('Todas as congregações devem estar completas')
           return
         } 
-        if (!congregation.frequencyServices || !congregation.frequencyServices.length > 0) {
-          this.$q.notify('Preencha o horário de culto de todas as congregações')
-          return
-        }
+        // if (!congregation.frequencyServices || !congregation.frequencyServices.length > 0) {
+        //   this.$q.notify('Preencha o horário de culto de todas as congregações')
+        //   return
+        // }
         if (!congregation.verifyAllData) {
           this.$q.notify('Confirme que revisou os dados de todas as congregações')
           return
