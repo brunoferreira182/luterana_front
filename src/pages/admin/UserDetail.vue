@@ -97,6 +97,46 @@
                       {{ call.organismConfigName }}
                     </q-badge>
                   </q-item-label>
+                  <q-item
+                    class="q-pa-md"
+                    style=" border-radius: 1rem;"
+                    v-for="atuacao in call.functionsAtuacao" 
+                    :key="atuacao"
+                  >
+                    <q-item-label>
+                      {{ call.functionConfigName}} - Atuação em {{ atuacao.organismName }}
+                    </q-item-label>
+                    <q-item-section side>
+                      <q-item-label>
+                        <q-btn
+                          flat
+                          rounded
+                          unelevated
+                          size="12px"
+                          color="primary"
+                          icon="edit"
+                          @click.stop="changeAtuation(atuacao, i)"
+                        >
+                          <q-tooltip>
+                            Remover atuação
+                          </q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          flat
+                          rounded
+                          unelevated
+                          size="12px"
+                          color="red"
+                          icon="delete"
+                          @click.stop="removeAtuation(atuacao, i)"
+                        >
+                          <q-tooltip>
+                            Remover atuação
+                          </q-tooltip>
+                        </q-btn>
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label>
@@ -106,9 +146,26 @@
                       rounded
                       unelevated
                       color="primary"
+                      icon="add"
+                      @click.stop="addAtuacaoToPastor(call)"
+                    >
+                      <q-tooltip>
+                        Adicionar atuação
+                      </q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      class="q-pa-sm"
+                      flat
+                      rounded
+                      unelevated
+                      color="primary"
                       icon="edit"
                       @click.stop="changeCall(call)"
-                    />
+                    >
+                      <q-tooltip>
+                        Editar vínculo
+                      </q-tooltip>
+                    </q-btn>
                     <q-btn
                       class="q-pa-sm"
                       flat
@@ -117,7 +174,11 @@
                       color="red"
                       icon="delete"
                       @click.stop="removeCall(call, i)"
-                    />
+                    >
+                      <q-tooltip>
+                        Remover chamado
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -127,16 +188,6 @@
         <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
             Atuações:
-            <q-btn
-              icon="add"
-              color="primary"
-              size="12px"
-              dense
-              flat
-              rounded
-              no-caps
-              @click.stop="addActingToPastor"
-            />
           </div>
           <div>
             <q-list>
@@ -603,82 +654,11 @@
         </q-card>
       </q-dialog>
 
-
-      <!-- <q-dialog v-model="dialogShowLinks.open">
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Vínculos:
-            </div>
-          </q-card-section>
-          <q-card-section>
-            <q-list v-if="userLinks">
-              <q-item
-                clickable
-                v-for="link in userLinks"
-                :key="link"
-                style="border-radius: 1rem;"
-                class="bg-blue-grey-2 q-ma-sm"
-              >
-                <q-item-section class="cursor-pointer" @click="goToOrganismDetail(link.organismId)">
-                  <q-item-label class="text-subtitle1"> {{ link.organismName }}</q-item-label>
-                  <q-item-label>Função: {{ link.functionConfigName }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-item-label>
-                  <q-btn
-                    icon="delete"
-                    color="red"
-                    round
-                    @click="removeUserFromFunction(link)"
-                    flat
-                  >
-                    <q-tooltip>Remover usuário</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    icon="refresh"
-                    color="primary"
-                    round
-                    @click="swapUserFromFunction(link)"
-                    flat
-                  >
-                    <q-tooltip>Trocar por outro usuário</q-tooltip>
-                  </q-btn>
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Sair"
-              no-caps
-              rounded
-              color="primary"
-              @click="dialogShowLinks.open = false"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog> -->
       <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
-            <div class="text-h6" v-if="dialogAddCallToPastor.functionType !== 'Pastor'">
-              Informe o usuário que ocupará a função
-            </div>
-            <div v-if="dialogAddCallToPastor.functionType === 'Pastor'">
-              <div class="text-h6" >
-                Adicionando vínculo para {{ userData.userDataTabs[0].fields[0].value }}
-              </div>
-              <q-btn 
-                label="Adicionar organismo de chamado" 
-                no-caps 
-                flat 
-                color="primary" 
-                icon="add"
-                @click="addNewOrganismInput"
-              />
+            <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
+              Adicionando {{ dialogAddCallToPastor.subtype === 'chamado' ? 'chamado' : 'atuação' }} para {{ userData.userDataTabs[0].fields[0].value }}
             </div>
             <div v-if="dialogAddCallToPastor.selectedFunc && dialogAddCallToPastor.selectedFunc.functionRequiredTitleName">
               <q-chip color="red-8" outline>
@@ -686,110 +666,18 @@
               </q-chip>
             </div>
           </q-card-section>
-          <q-card-section v-if="this.dialogAddCallToPastor.functionType === 'Pastor'" class="q-gutter-y-md">
-            <div v-for="(orgCaller, index) in organismCallerList" :key="index">
-              <q-select
-                v-model="organismCallerModels[orgCaller, index]"
-                filled
-                use-input
-                label="Nome do organismo de chamado"
-                option-label="nome"
-                options-dense
-                :options="filiatedOrganismsList"
-                @update:model-value="getOrganismDetailD(orgCaller, index)"
-                @filter="getFiliatedOrganismsList"
-                :option-value="(item) => item.organismId"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.nome }}</q-item-label>
-                      <q-item-label caption>{{ scope.opt.city }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
-          </q-card-section>
-          <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
+          <q-card-section v-if="dialogAddCallToPastor.functionType === 'Pastor'" class="q-gutter-y-md">
             <q-select
-                v-model="dialogAddCallToPastor.organismCalledSelected"
-                filled
-                use-input
-                label="Nome do organismo de atuação"
-                option-label="nome"
-                options-dense
-                :readonly="sameOrganismCalled ? true : false"
-                :options="organismList"
-                @filter="getOrganismsList"
-                :option-value="(item) => item"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template v-slot:option="scope">
-                  <q-item v-bind="scope.itemProps">
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.nome }}</q-item-label>
-                      <q-item-label caption>{{ scope.opt.city }}</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            <!-- <div v-for="(org, calleeIndex) in organismCalleeList" :key="calleeIndex">
-              <q-select
-                v-model="organismCalleeModels[calleeIndex]"
-                filled
-                use-input
-                label="Nome do organismo de atuação"
-                option-label="nome"
-                options-dense
-                :readonly="sameOrganismCalled ? true : false"
-                :options="organismList"
-                @filter="getOrganismsList"
-                :option-value="(item) => item"
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Nenhum resultado
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template v-slot:option="scope">
-                    <q-item v-bind="scope.itemProps">
-                      <q-item-section>
-                        <q-item-label>{{ scope.opt.nome }}</q-item-label>
-                        <q-item-label caption>{{ scope.opt.city }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-              </q-select>
-            </div> -->
-            <q-checkbox
-              label="É o mesmo organismo de chamado"
-              @update:model-value="changeOrganismCaller()"
-              v-model="dialogAddCallToPastor.sameOrganismCalled"
-            />
-            <q-select
-              v-model="dialogAddCallToPastor.functionSelected"
+              v-model="dialogAddCallToPastor.organismCallerSelected"
               filled
               use-input
-              label="Função"
-              option-label="functionName"
-              hint="Informe a função que o usuário ocupará"
-              :options="functions"
+              label="Nome do organismo de chamado"
+              option-label="nome"
+              options-dense
+              :readonly="setReadOnlyOrganismCaller ? true : false"
+              @update:model-value="getOrganismDetailD()"
+              :options="filiatedOrganismsList"
+              @filter="getFiliatedOrganismsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -799,7 +687,50 @@
                   </q-item-section>
                 </q-item>
               </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
             </q-select>
+          </q-card-section>
+          <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
+          <q-select
+              v-model="dialogAddCallToPastor.organismAtuationSelected"
+              filled
+              use-input
+              label="Nome do organismo de atuação"
+              option-label="nome"
+              options-dense
+              :readonly="sameOrganismCalled ? true : false"
+              :options="organismList"
+              @filter="getOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-checkbox
+              label="É o mesmo organismo de chamado"
+              @update:model-value="changeOrganismCaller()"
+              v-model="dialogAddCallToPastor.sameOrganismCalled"
+            />
             <q-input
               filled
               label="Chave-ata"
@@ -885,80 +816,6 @@
               no-caps
               color="primary"
               @click="addUserToFunction"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <q-dialog v-model="dialogRemoveUserFromFunction.open" @hide="clearDialogAndFunctions">
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section align="center">
-            <div class="text-h6">Confirma?</div>
-            <div>O usuário será removido da função</div>
-          </q-card-section>
-          <q-card-section align="center" class="q-gutter-sm">
-            <q-input
-              filled
-              label="Observação"
-              v-model="dialogRemoveUserFromFunction.obsText"
-              hint="Informe o motivo"
-            />
-            <q-input
-              filled
-              type="date"
-              label="Data de desinstalação"
-              v-model="dialogRemoveUserFromFunction.finalDate"
-              hint="Informe a data de desinstalação de ocupação da função"
-            />
-            <q-input
-              filled
-              label="Chave-ata"
-              mask="AAA-AAA-###-####-##-a"
-              v-model="dialogRemoveUserFromFunction.ataKey"
-              hint="Informe a chave-ata"
-            />
-            <q-select
-              v-model="dialogRemoveUserFromFunction.uninstallerUser"
-              filled
-              use-input
-              label="Nome do usuário que desinstalou"
-              option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
-              :loading="false"
-              :option-value="(item) => item._id"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Voltar"
-              no-caps
-              rounded
-              color="primary"
-              @click="dialogRemoveUserFromFunction.open = false"
-            />
-            <q-btn
-              label="Confirma"
-              no-caps
-              rounded
-              color="primary"
-              @click="clkConfirmRemoveUserFromFunction"
             />
           </q-card-actions>
         </q-card>
@@ -1081,38 +938,75 @@
         </q-card>
       </q-dialog>
       <q-dialog
-        v-model="dialogInitRemoveCall.open"
+        v-model="dialogDeletePastorFromFunction.open"
+        @hide="clearDialogAndFunctions"
       >
-        <q-card
-          style="width:350px;border-radius: 1rem;"
-        >
-          <q-card-section class="text-h6 text-center">
-            Deseja remover este chamado?
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Tem certeza que deseja remover {{ dialogDeletePastorFromFunction.type === 'chamado' ? 'chamado' : 'atuação' }} de
+              {{ userData.userDataTabs[0].fields[0].value }}?
+            </div>
           </q-card-section>
-          <q-card-section class="q-pa-lg">
-            <div>
-              <strong>{{ this.dialogInitRemoveCall.data.functionConfigName }}</strong>
-            </div>
-            <div class="q-mt-md">
-              <strong>{{ this.dialogInitRemoveCall.data.organismName }}</strong>
-            </div>
+          <q-card-section align="center" class="q-gutter-sm">
+            <q-input
+              filled
+              label="Observação"
+              v-model="dialogDeletePastorFromFunction.obsText"
+              hint="Informe o motivo"
+            />
+            <q-input
+              filled
+              type="date"
+              label="Data de desinstalação"
+              v-model="dialogDeletePastorFromFunction.finalDate"
+              hint="Informe a data de desinstalação de ocupação da função"
+            />
+          
+            <q-select
+              v-model="dialogDeletePastorFromFunction.uninstallerUser"
+              filled
+              use-input
+              label="Nome do usuário que desinstalou"
+              option-label="userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :loading="false"
+              :option-value="(item) => item._id"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
-              label="Não"
-              color="primary"
               flat
-              rounded
+              label="Depois"
               no-caps
-              unelevated
+              rounded
+              color="primary"
+              @click="dialogDeletePastorFromFunction.open = false"
             />
             <q-btn
-              label="Sim"
-              color="primary"
-              rounded
               unelevated
+              rounded
+              label="Confirmar"
               no-caps
-              @click.stop="confirmRemoveCall"
+              color="primary"
+              @click="desinstallPastorFunction"
             />
           </q-card-actions>
         </q-card>
@@ -1195,10 +1089,6 @@ export default defineComponent({
         titleId: null
       },
       filiatedOrganismsList: [],
-      organismCallerList: [{}], 
-      organismCallerModels: [null],
-      organismCalleeModels:[],
-      organismCalleeList:[],
       userForms: {},
       userFormDialog: {
         formId: '',
@@ -1253,7 +1143,7 @@ export default defineComponent({
         functionType: '',
         selectedFunc: null,
         organismCallerSelected: null,
-        organismCalledSelected: null,
+        organismAtuationSelected: null,
         ataKey: '', 
         userSelected: null, 
         sameOrganismCalled: false,
@@ -1262,13 +1152,20 @@ export default defineComponent({
         calleeDate: '',
         undefinedCallee: false,
         initialDate: '',
-        action: 'add'
+        action: 'add',
+        subtype: ''
       },
-      dialogInitRemoveCall: {
+      dialogDeletePastorFromFunction: {
+        obsText: "",
+        finalDate: "",
+        functionUserId: "",
+        ataKey: '',
+        uninstallerUser: '',
         open: false,
-        i: null,
-        data: null
+        userData: {},
+        type: ''
       },
+      setReadOnlyOrganismCaller: false,
     };
   },
   mounted() {
@@ -1281,46 +1178,71 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
-    addNewOrganismInput() {
-      this.organismCallerList.push({});
-      this.organismCallerModels.push(null);
-      // this.organismCalleeList.push({})
-      // this.organismCalleeModels.push(null)
-    },
-    changeCall(data) {
-      this.dialogAddCallToPastor.ataKey = data.ataKey
+    changeAtuation(atuation){
+      console.log(atuation,'atuation')
+      return
+      this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.installationDate = data.installation.date
-      this.dialogAddCallToPastor.initialDate = data.functionDates.initialDate
-      this.dialogAddCallToPastor.functionSelected = data.functionConfigName
+      this.dialogAddCallToPastor.installationDate = call.installation.date
+      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
+      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
       this.dialogAddCallToPastor.open = true
       
     },
-    clearDialogRemoveCall() {
-      this.dialogInitRemoveCall = {
-        open: false,
-        i: null,
-        data: null
-      }
+    changeCall(call) {
+      console.log(call,'call')
+      this.dialogAddCallToPastor.ataKey = call.ataKey
+      this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
+      this.dialogAddCallToPastor.functionType = 'Pastor'
+      this.dialogAddCallToPastor.installationDate = call.installation.date
+      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
+      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
+      this.dialogAddCallToPastor.open = true
+      
     },
-    async confirmRemoveCall() {
+    removeCall(call){
+      console.log(call, 'call')
+      this.dialogDeletePastorFromFunction.open = true
+      this.dialogDeletePastorFromFunction.userData = call.organismFunctionUserId
+      this.dialogDeletePastorFromFunction.type = 'chamado'
+    },
+    removeAtuation(atuacao){
+      console.log(atuacao, 'atuacao')
+      this.dialogDeletePastorFromFunction.open = true
+      this.dialogDeletePastorFromFunction.userData = atuacao.organismFunctionUserId
+      this.dialogDeletePastorFromFunction.type = 'atuation'
+    },
+    desinstallPastorFunction() {
+      if (
+        this.dialogDeletePastorFromFunction.uninstallerUser === ""
+      ) {
+        this.$q.notify("Preencha o usuário que desinstalou para prosseguir!");
+        return;
+      }
       const opt = {
-        route: '/desktop/adm/userInactivateCall',
+        route: "/desktop/adm/desinstallPastorFunction",
         body: {
-          functionUserId: this.dialogInitRemoveCall.data._id
-        }
+          functionSubtype: 'chamado',
+          uninstallerUserId: this.dialogDeletePastorFromFunction.uninstallerUser._id,
+          userFunctionId: this.dialogDeletePastorFromFunction.userData,
+          desinstalationDate: this.dialogDeletePastorFromFunction.finalDate,
+          obs: this.dialogDeletePastorFromFunction.obsText,
+          
+        },
+      };
+      if(this.dialogDeletePastorFromFunction.type === 'atuation'){
+        opt.body.functionSubtype = 'atuacao'
       }
-      let r = await useFetch(opt)
-      if (r.error) return
-      this.clearDialogRemoveCall()
-      this.getUserDetailById()
-      this.getPastoralStatusTypes()
-    },
-    removeCall(call, i) {
-      this.dialogInitRemoveCall.open = true
-      this.dialogInitRemoveCall.data = call
-      this.dialogInitRemoveCall.i = i
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+          return
+        }
+        this.getUserDetailById();
+        this.$q.notify("Pastor deletado com sucesso!");
+        this.clearDialogAndFunctions();
+      });
     },
     getFiliatedOrganismsList(val, update, abort) {
       if(val.length < 3) {
@@ -1355,20 +1277,26 @@ export default defineComponent({
     },
     openDialogAddCallToPastor() {
       this.dialogAddCallToPastor.functionType = 'Pastor'
+      this.dialogAddCallToPastor.subtype = 'chamado'
       this.dialogAddCallToPastor.open = true
     },
-    addActingToPastor() {
-      this.dialogAddAtuacaoFromPastor.open = true
-      console.log('aqui vamos adicionar uma atuação ao pastor')
-    },
-    addCallToPastor() {
-      console.log('aqui vamos adicionar um chamado ao pastor')
+    addAtuacaoToPastor(call) {
+      this.dialogAddCallToPastor.open = true
+      this.dialogAddCallToPastor.functionType = 'Pastor'
+      this.dialogAddCallToPastor.organismCallerSelected = {
+        nome: call.organismName,
+        organismId: call.organismId,
+      }
+      this.setReadOnlyOrganismCaller = true
+      this.dialogAddCallToPastor.subtype = 'atuacao'
+      this.getOrganismDetailD()
     },
     clearDialogAndFunctions() {
       this.dialogRemoveUserFromFunction.finalDate = "";
       this.dialogRemoveUserFromFunction.functionUserId = "";
       this.dialogRemoveUserFromFunction.obsText = "";
       this.dialogRemoveUserFromFunction.data = {};
+      this.dialogDeletePastorFromFunction.type = ''
       this.dialogRemoveUserFromFunction.finalDate = "";
       this.functionSelected = ''
       this.dialogRemoveUserFromFunction.functionUserId = "";
@@ -1377,29 +1305,33 @@ export default defineComponent({
       this.dialogAddCallToPastor.initialDate = '',
       this.dialogAddCallToPastor.functionType = '',
       this.dialogAddCallToPastor.open = false,
-      this.dialogAddCallToPastor.organismCalleeSelected = null
+      this.dialogAddCallToPastor.organismAtuationSelected = null
       this.dialogAddCallToPastor.organismCallerSelected = null
-      this.organismCalleeSelected = ''
-      this.organismCallerSelected = ''
       this.dialogAddCallToPastor.open = false
+      this.dialogAddCallToPastor.subtype = ''
       this.dialogAddCallToPastor.installationDate = ''
       this.dialogAddCallToPastor.calleeDate = ''
       this.dialogAddCallToPastor.ataKey = ''
       this.dialogAddCallToPastor.selectedFunc = null,
+      this.dialogDeletePastorFromFunction.open = false
+      this.dialogDeletePastorFromFunction.obsText = ''
+      this.dialogDeletePastorFromFunction.finalDate = ''
+      this.dialogDeletePastorFromFunction.userData = {}
+      this.dialogDeletePastorFromFunction.uninstallerUser = ''
       this.dialogAddCallToPastor.userSelected = null
       this.sameOrganismCalled = false
       this.undefinedCallee = false
+      this.setReadOnlyOrganismCaller = false
     },
     changeOrganismCaller(){
-      this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismCalleeSelected = '' :this.dialogAddCallToPastor.organismCalleeSelected = this.dialogAddCallToPastor.organismCallerSelected
+      this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismAtuationSelected = '' : 
+      this.dialogAddCallToPastor.organismAtuationSelected = this.dialogAddCallToPastor.organismCallerSelected
     },
     linkPastorToFunction() {
       this.dialogAddCallToPastor.open = true;
     },
-    getOrganismDetailD(teste, organismId) {
-      console.log(teste, organismId)
-      return
-      const organismIdSelected = organismId
+    getOrganismDetailD() {
+      const organismIdSelected = this.dialogAddCallToPastor.organismCallerSelected.organismId
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
         body: {
@@ -1413,6 +1345,12 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
         } else {
           this.functions = r.data.functions
+          for (const func of this.functions) {
+            if (func.functionName && func.functionName.toLowerCase() === this.dialogAddCallToPastor.functionType.toLowerCase()) {
+              this.dialogAddCallToPastor.selectedfunc = func.functionId;
+              break;
+            }
+          }
         }
       });
     },
@@ -1424,23 +1362,11 @@ export default defineComponent({
         this.$q.notify("Preencha chave-ata, data de instalação e organismo que atende e quem chamou");
         return;
       }
-      // if (this.verifyIfUserIsAlreadyInFunction(selectedFuncIndex, this.dialogAddCallToPastor.userSelected.userId)) {
-      //   this.$q.notify('Usuário já incluído nesta função')
-      //   return
-      // }
 
-        // if (!(this.dialogAddCallToPastor.functionSelected && this.dialogAddCallToPastor.functionSelected.functionId)) {
-        //   this.$q.notify('Selecione a função que o usuário ocupará')
-        //   return
-        // }
-        const organismCallerIds = []
-        for (const org of this.organismCallerModels) {
-          organismCallerIds.push(org.organismId);
-        }
       const opt = {
         route: "/desktop/adm/addUserToFunction",
         body: {
-          organismFunctionId: this.dialogAddCallToPastor.functionSelected.functionId,
+          organismFunctionId: this.dialogAddCallToPastor.selectedfunc,
           userIdMongo: this.$route.query.userId,
           dates: {
             initialDate: this.dialogAddCallToPastor.initialDate
@@ -1448,9 +1374,9 @@ export default defineComponent({
         }
       };
       if(this.dialogAddCallToPastor.functionType === 'Pastor'){
-        opt.body.subtype = 'chamado'
-        opt.body.organismsCallerIds = organismCallerIds
-        opt.body.organismCalledId = this.dialogAddCallToPastor.organismCalledSelected.organismId,
+        this.dialogAddCallToPastor.subtype === 'chamado' ? opt.body.subtype = 'chamado' : opt.body.subtype = 'atuacao'
+        opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
+        opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId,
         opt.body.ataKey = this.dialogAddCallToPastor.ataKey
         opt.body.installation = {
           date: this.dialogAddCallToPastor.installationDate,
@@ -1469,7 +1395,7 @@ export default defineComponent({
         return
       } else {
         this.$q.notify('Usuário inserido na função!')
-        this.getOrganismDetailById()  
+        this.getUserDetailById()  
         this.clearDialogAndFunctions();
       }
     },
@@ -1767,37 +1693,6 @@ export default defineComponent({
       console.log()
       this.dialogSwapUserFromFunction.open = true
     },
-    clkConfirmRemoveUserFromFunction () {
-      if (
-        this.dialogRemoveUserFromFunction.obsText === "" ||
-        this.dialogRemoveUserFromFunction.ataKey === "" || 
-        this.dialogRemoveUserFromFunction.uninstallerUser === ""
-      ) {
-        this.$q.notify("Preencha observação, chave-ata e o usuário que desinstalou para prosseguir!");
-        return;
-      }
-      const opt = {
-        route: "/desktop/adm/inactivateUserFromFunction",
-        body: {
-          ataKey: this.dialogRemoveUserFromFunction.ataKey,
-          uninstallerUserId: this.dialogRemoveUserFromFunction.uninstallerUser._id,
-          userFunctionId: this.dialogRemoveUserFromFunction.organismFunctionUserId,
-          finalDate: this.dialogRemoveUserFromFunction.finalDate,
-          obsText: this.dialogRemoveUserFromFunction.obsText,
-        },
-      };
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-          return
-        }
-        this.getUserDetailById()
-        this.$q.notify("Usuário removido");
-        this.dialogRemoveUserFromFunction.open = false
-      });
-    },
     removeUserFromFunction (link) {
       this.dialogRemoveUserFromFunction.open = true
       this.dialogRemoveUserFromFunction.organismFunctionUserId = link.organismFunctionUserId
@@ -1995,16 +1890,12 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        if (r.data.userLinksToOrganisms.data.length > 0) {
-          let links = r.data.userLinksToOrganisms.data
-          links.forEach((link) => {
-            if (link.functionSubtype === 'chamado') {
-              this.callList.push(link)
-            } else if (link.functionSubtype === 'atuacao') {
-              this.actingList.push(link)
-            }
-          })
-        }
+        let links = r.data.userLinksToOrganisms.data
+        links.forEach((link) => {
+          if (link.functionSubtype === 'chamado') {
+            this.callList.push(link)
+          } 
+        })
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType

@@ -194,7 +194,7 @@
                     <q-btn
                       color="primary"
                       flat
-                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor' "
+                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent' && func.functionName !== 'Pastor')"
                       rounded
                       icon="add"
                       @click="addFunctionUser(iFunc, iOrg, func.functionName)"
@@ -237,18 +237,17 @@
                   v-for="(func, iFunc) in org.organismFunctions" 
                   :key="func"
                 >
-                  <div v-if="func.functionName !== 'Pastor'  && func.functionName === 'Secretária Contratada'">
+                  <div v-if="func.functionName === 'Secretária Contratada'">
                     <strong>{{ func.functionName }}:</strong>
                     <q-btn
                       color="primary"
                       flat
-                      v-if="(!status &&  func.functionName !== 'Pastor') || (status && status.value !== 'sent') && func.functionName !== 'Pastor' && func.functionName === 'Secretária Contratada'"
+                      v-if="((!status) || (status && status.value !== 'sent')) && func.functionName === 'Secretária Contratada'"
                       rounded
                       icon="add"
                       @click="addFunctionUser(iFunc, iOrg, func.functionName)"
                       size="12px"
-                    >
-                    </q-btn>
+                    />
                     <div
                       v-for="(user, iUser) in func.functionUsers"
                       :key="user"

@@ -469,6 +469,88 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogAddParish.open"
+      >
+        <q-card
+          style="width: 500px;"
+        >
+          <q-card-section class="text-center text-h6">
+            Criar nova paróquia
+          </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Campos obrigatórios:</strong>
+            </div>
+            <div
+              v-for="(field) in dialogAddParish.configData.organismConfigData.organismFields"
+              :key="field"
+            >
+              <q-input
+                v-if="
+                  field.type.type === 'string'
+                  || field.type.type === 'int'
+                  || field.type.type === 'date'
+                  || field.type.type === 'cpf'
+                  || field.type.type === 'cnpj'
+                  || field.type.type === 'money'
+                  || field.type.type === 'textarea'
+                "
+                :label="field.label"
+                :hint="field.hint"
+                class="q-pa-sm q-my-md"
+                :mask="field.type.mask"
+                v-model="field.value"
+                outlined
+                :readonly="field.onlyAdm"
+              >
+              </q-input>
+            </div>
+          </q-card-section>
+          <!-- <q-card-section>
+            <div>
+              <strong>Funções:</strong>
+            </div>
+            <div
+              v-for="(func, iFunc) in dialogAddParish.configData.organismConfigData.functions"  
+              :key="func"
+              class="q-my-md"
+            >
+              {{ func.name }}
+              <q-btn
+                icon="add"
+                color="primary"
+                rounded
+                unelvated
+                flat
+                size="md"
+                @click="addUserToFunctionInNewParish(iFunc)"
+              >
+              </q-btn>
+              o campo é users, deve ser um array vem jogar futebol
+            </div>
+          </q-card-section> -->
+          <q-card-actions align="center">
+            <q-btn
+              no-caps
+              flat
+              rounded
+              unelevated
+              color="primary"
+              label="Cancelar"
+              @click="clearDialogAddParish"
+            />
+            <q-btn
+              no-caps
+              rounded
+              unelevated
+              color="primary"
+              label="Confirmar"
+              @click="confirmAddParishInComposition"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -555,6 +637,11 @@ export default defineComponent({
         obsText: '',
         open: false,
         finalDate: ''
+      },
+      dialogAddParish: {
+        configId: null,
+        configData: null,
+        open: false
       }
     }
   },
@@ -562,6 +649,15 @@ export default defineComponent({
     this.getOrganismDetailById()
   },
   methods: {
+    addUserToFunctionInNewParish(iFunc) {
+      let selectedFunc = this.dialogAddParish.configData.organismConfigData.functions[iFunc]
+
+      if (!selectedFunc.users) {
+        selectedFunc.users = []
+      }
+
+      console.log(selectedFunc, 'vem jogar futebol')
+    },
     clearDialogParishDetail() {
       this.dialogParishDetail = {
         open: false,
@@ -666,6 +762,24 @@ export default defineComponent({
         open: false,
         data: null
       }
+    },
+    confirmAddParishInComposition() {
+      this.dialogAddParish.configData.organismConfigData.organismFields.forEach((field) => {
+        if (!field.value || field.value === '') {
+          this.$q.notify('Preencha todos os campos para prosseguir')
+          return
+        }
+        // const opt = {
+        //   route: 'alguma coisa no back lalala',
+        //   body: {
+        //   }
+        // }
+      })
+    },
+    clearDialogAddParish() {
+      this.dialogAddParish.open = false,
+      this.dialogAddParish.configData = null,
+      this.dialogAddParish.configId = null
     },
     removeUserFromDistrictFunction(data) {
       this.dialogRemoveUserFromDistrictFunction.funcId = data.userFunctionId
@@ -825,12 +939,32 @@ export default defineComponent({
         })
       })
     },
-    // addNewParish() {
-    //   const opt = {
-    //     route: '/desktop/adm/getOrganismConfigById'
-    //   }
-    //   console.log('HAHAHA, eu estava escondido!')
-    // },
+    async addNewParish() {
+      const opt = {
+        route: '/desktop/adm/getOrganismsConfigs',
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      r.data.forEach((type) => {
+        if (type.organismConfigName === 'Paróquia') {
+          this.dialogAddParish.configId = type._id
+        }
+      })
+      this.getParishConfig()
+    },
+    async getParishConfig() {
+      const opt = {
+        route: '/desktop/adm/getOrganismConfigById',
+        body: {
+          _id: this.dialogAddParish.configId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.dialogAddParish.configData = r.data
+      // this.dialogAddParish.organismConfig
+      this.dialogAddParish.open = true
+    },
     clkParent(id) {
       this.organismChildData.forEach((parish) => {
         if (parish.childId === id) {

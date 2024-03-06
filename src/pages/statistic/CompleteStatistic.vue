@@ -146,6 +146,18 @@
           
         </div>
       </div>
+      <q-dialog v-model="dialogErrorSendStatistic.open">
+        <q-card style="border-radius: 1rem;">
+          <q-card-section class="text-h6 text-center">
+            {{ dialogErrorSendStatistic.msg }}
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn color="primary" no-caps flat @click="dialogErrorSendStatistic.open = false">
+              Entendi
+            </q-btn>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -160,6 +172,10 @@ export default defineComponent({
       statisticStatus: null,
       congregationName:'',
       validationResume: {},
+      dialogErrorSendStatistic: {
+        open: false,
+        msg: '',
+      },
       canSendStatistic: null,
     }
   },
@@ -178,7 +194,11 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if (r.error) return
+        if (r.error){
+          this.dialogErrorSendStatistic.msg = r.errorMessage
+          this.dialogErrorSendStatistic.open = true
+          return
+        }
         this.$q.notify('Estatística enviada com sucesso')
         this.$router.back()
       })
