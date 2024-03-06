@@ -77,6 +77,7 @@
                 :mask="field.type.mask"
                 v-model="field.value"
                 outlined
+                :rules="field.type.mask ? [validateAtaKeyFormat] : []"
                 :readonly="field.onlyAdm"
               >
               </q-input>
@@ -377,6 +378,18 @@ export default defineComponent({
     this.getOrganismsConfigs()
   },
   methods: {
+    validateAtaKeyFormat(value) {
+      const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
+      if (regex.test(value)) {
+        this.$q.notify({
+          message: 'Chave ata validada!',
+          color: 'green-8'
+        })
+        return true;
+      }else{
+        return this.$q.notify('Formato inválido. Por favor, revise os dados digitados na chave-ata');
+      }
+    },
     clearAddressInputs(){
       this.dialogConfirmAddress.data = {
         addressType: '',
@@ -649,7 +662,6 @@ export default defineComponent({
         this.organismData.organismConfigId.organismConfigName === 'Paróquia'
       ){
         this.dialogOrganismNotCreatedInSGA = true
-        return
       }
       const opt = {
         route: "/desktop/adm/getOrganismConfigById",

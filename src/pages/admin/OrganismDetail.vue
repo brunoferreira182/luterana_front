@@ -2369,12 +2369,12 @@ export default defineComponent({
     };
   },
   watch: {
-    $route(to) {
-      if (to.path === '/admin/organismDetail') {
-        this.getOrganismDetailById();
-      }
+  $route(to, from) {
+    if (to.path === '/admin/organismDetail' && to.query.organismId !== from.query.organismId) {
+      this.getOrganismDetailById();
     }
-  },
+  }
+},
   mounted() {
     this.$q.loading.hide()
   },
@@ -2400,6 +2400,7 @@ export default defineComponent({
     validateAtaKeyFormat(value) {
       const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
       if (regex.test(value)) {
+       
         return true;
       }else{
         return this.$q.notify('Formato inválido. Por favor, revise os dados digitados na chave-ata');
