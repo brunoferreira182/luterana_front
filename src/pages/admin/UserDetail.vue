@@ -1460,14 +1460,16 @@ export default defineComponent({
     verifyInactiveStatus() {
       this.inactiveStatus = []
       let activeStatus = []
-      this.pastoralStatusData.forEach((status) => {
-        if (status.dates.finalDate && status.dates.finalDate !== '') {
-          this.inactiveStatus.push(status)
-        } else if (!status.dates.finalDate || status.dates.finalDate === "") {
-          activeStatus.push(status)
-          this.pastoralStatusData = activeStatus
-        }
-      })
+      if (this.pastoralStatusData && this.pastoralStatusData.length > 0) {
+        this.pastoralStatusData.forEach((status) => {
+          if (status.dates.finalDate && status.dates.finalDate !== '') {
+            this.inactiveStatus.push(status)
+          } else if (!status.dates.finalDate || status.dates.finalDate === "") {
+            activeStatus.push(status)
+            this.pastoralStatusData = activeStatus
+          }
+        })
+      }
     },
     clkConfirmAddPastoralStatus () {
       if (!this.dialogAddPastoralStatus.organism
@@ -1863,17 +1865,21 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        let links = r.data.userLinksToOrganisms.data
-        links.forEach((link) => {
-          if (link.functionSubtype === 'chamado') {
-            this.callList.push(link)
-          } 
-        })
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.length > 0) {
+          let links = r.data.userLinksToOrganisms
+          links.forEach((link) => {
+            if (link.functionSubtype === 'chamado') {
+              this.callList.push(link)
+            } 
+          })
+        }
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.canUseSystem = r.data.canUseSystem
-        this.pastoralStatusData = r.data.pastoralStatus.data
+        if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
+          this.pastoralStatusData = r.data.pastoralStatus.data
+        }
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.verifyLinks()
