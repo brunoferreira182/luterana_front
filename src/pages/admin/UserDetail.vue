@@ -185,33 +185,6 @@
             </q-list>
           </div>
         </div>
-        <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
-          <div class="text-h6 q-ma-sm q-ml-md">
-            Atuações:
-          </div>
-          <div>
-            <q-list>
-              <q-item
-                v-for="act in actingList"
-                :key="act"
-                clickable
-                style="border-radius: 1rem;"
-                class="bg-grey-3 q-ma-sm q-mx-md"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    {{ act.functionConfigName }} - {{ act.organismName }}
-                  </q-item-label>
-                  <q-item-label>
-                    <q-badge>
-                      {{ act.organismConfigName }}
-                    </q-badge>
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </div>
-        </div>
         <q-separator class="q-mx-md"/>
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
