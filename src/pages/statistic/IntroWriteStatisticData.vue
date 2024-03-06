@@ -279,6 +279,7 @@ export default defineComponent({
     },
     verifyIfIsPastor() {
       const userInfo = utils.presentUserInfo()
+      console.log(userInfo.userType, 'money')
       if (userInfo.userType === 'pastor') {
         this.isPastor = false
         // this.getPastorDataTabs()} else {
