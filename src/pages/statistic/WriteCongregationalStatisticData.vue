@@ -843,7 +843,7 @@
                 :key="func"
               >
                 <q-item-section>
-                  <q-item-label>
+                  <q-item-label v-if = "dialogAddCongregation.functions[iFunc].description !== 'Pastor'">
                     <strong>{{ func.description }}</strong>
                     <q-btn
                       color="primary"
@@ -2454,7 +2454,7 @@ export default defineComponent({
           }
           if (!d.value.times || !d.value.times.initial) {
             allHaveTime = false
-            this.$q.notify('preencha todo o formulário para compeltar')
+            this.$q.notify('preencha todo o formulário para completar')
             return
           }
         }
