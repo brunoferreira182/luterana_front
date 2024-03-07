@@ -125,26 +125,7 @@
             text-color="white"
           /> -->
         </q-item>
-        <div class="q-px-md">
-          <div 
-            v-if="validationResume.congregationStatistic && validationResume.congregationStatistic === 't'"
-            class="text-h5"
-          >
-            Estatística enviada!
-          </div>
-          <q-btn 
-            v-else
-            label="Enviar estatística" 
-            rounded 
-            color="primary" 
-            class="full-width"
-            unelevated 
-            :disable="canSendStatistic ? false : true"
-            @click="insertCongregationalStatisticsDone"
-            no-caps 
-          />
-          
-        </div>
+        
       </div>
       <q-dialog v-model="dialogErrorSendStatistic.open">
         <q-card style="border-radius: 1rem;">
@@ -171,59 +152,23 @@ export default defineComponent({
     return {
       statisticStatus: null,
       congregationName:'',
-      validationResume: {},
+      
       dialogErrorSendStatistic: {
         open: false,
         msg: '',
       },
-      canSendStatistic: null,
+      
     }
   },
   beforeMount() {
     this.getMyOrganismsToChooseOne()
     this.getStatisticStatusByOrganismId()
-    this.getValidationResumeByOrganism()
+   
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    insertCongregationalStatisticsDone() {
-      const opt = {
-        route: '/desktop/statistics/insertCongregationalStatisticsDone',
-        body: {
-          organismId: this.$route.query.organismId,
-        }
-      }
-      useFetch(opt).then((r) => {
-        if (r.error){
-          this.dialogErrorSendStatistic.msg = r.errorMessage
-          this.dialogErrorSendStatistic.open = true
-          return
-        }
-        this.$q.notify('Estatística enviada com sucesso')
-        this.$router.back()
-      })
-    },
-    getValidationResumeByOrganism () {
-      const opt = {
-        route: '/desktop/statistics/getValidationResumeByOrganism',
-        body: {
-          organismId: this.$route.query.organismId,
-        }
-      }
-      useFetch(opt).then((r) => {
-        if (r.error) return
-        this.validationResume = r.data
-        if (
-          this.validationResume &&
-          this.validationResume.financeStatistics === 't' &&
-          this.validationResume.membersMovement === 't' &&
-          this.validationResume.groupActivity === 't' &&
-          this.validationResume.atividadesCulticasStatistics === 't'
-        ) {
-          this.canSendStatistic = true;
-        }
-      })
-    },
+    
+   
     getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",

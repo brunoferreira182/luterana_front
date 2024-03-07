@@ -179,6 +179,26 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <div class="q-px-md">
+        <div 
+          v-if="validationResume.congregationStatistic && validationResume.congregationStatistic === 't'"
+          class="text-h5"
+        >
+          Estatística enviada!
+        </div>
+        <q-btn 
+          v-else
+          label="Enviar estatística" 
+          rounded 
+          color="primary" 
+          class="full-width"
+          unelevated 
+          :disable="canSendStatistic ? false : true"
+          @click="insertCongregationalStatisticsDone"
+          no-caps 
+        />
+        
+      </div>
     </q-page>
   </q-page-container>
 </template>
@@ -195,6 +215,7 @@ export default defineComponent({
       dialogPastors: {
         open: false
       },
+      validationResume: {},
       userOrganismList:[],
       isSIPAR: false,
       isPastor: null,
@@ -209,15 +230,55 @@ export default defineComponent({
       hasParoquia: false,
       hasCongregacao: false,
       paroquiaId: null,
-      congregationsId: []
+      congregationsId: [],
+      canSendStatistic: null,
     }
   },
   beforeMount(){
     this.verifyIfIsPastor()
     this.getCardName()
     this.getPreStatisticStatus()
+    this.getValidationResumeByOrganism()
   },
   methods: {
+    insertCongregationalStatisticsDone() {
+      const opt = {
+        route: '/desktop/statistics/insertCongregationalStatisticsDone',
+        body: {
+          organismId: this.$route.query.organismId,
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error){
+          this.dialogErrorSendStatistic.msg = r.errorMessage
+          this.dialogErrorSendStatistic.open = true
+          return
+        }
+        this.$q.notify('Estatística enviada com sucesso')
+        this.$router.back()
+      })
+    },
+    getValidationResumeByOrganism () {
+      const opt = {
+        route: '/desktop/statistics/getValidationResumeByOrganism',
+        body: {
+          organismId: this.$route.query.organismId,
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.validationResume = r.data
+        if (
+          this.validationResume &&
+          this.validationResume.financeStatistics === 't' &&
+          this.validationResume.membersMovement === 't' &&
+          this.validationResume.groupActivity === 't' &&
+          this.validationResume.atividadesCulticasStatistics === 't'
+        ) {
+          this.canSendStatistic = true;
+        }
+      })
+    },
     clearDialogSipar() {
       this.dialogSipar.open = false
     },
