@@ -2,7 +2,7 @@ import axios from 'axios'
 import { LocalStorage, Loading, Notify } from 'quasar'
 import CryptoJS from 'crypto-js'
 import { masterServerRoute } from './masterServerRoutes.js'
-import { PROJECT_NAME, MODE_APP_SERVER, DEFAULT_SERVER_NAME, COMPANY_ID, MODE_SERVER } from './variables.js'
+import { PROJECT_NAME, MODE_APP_SERVER, DEFAULT_SERVER_NAME, COMPANY_ID, MODE_SERVER, VERSION, BUILD } from './variables.js'
 
 const useFetch = async ({
   project,
@@ -44,6 +44,8 @@ const useFetch = async ({
   }
   axios.defaults.headers.common["cid"] = COMPANY_ID;
   axios.defaults.headers.common["pid"] = 18;
+  axios.defaults.headers.common["version"] = VERSION;
+  axios.defaults.headers.common["build"] = BUILD;
 
   let routeMasterServer = masterServerRoute();
   let bodyToSend = newBody;

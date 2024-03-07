@@ -15,7 +15,7 @@
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
           <div class="text-subtitle1" v-if="canUseSystem">
-            Acesso ao sistema: 
+            Acesso ao sistema: ch
             <q-badge color="green">Sim</q-badge>
             <q-btn
               icon="sync"
@@ -1152,8 +1152,8 @@ export default defineComponent({
   },
   methods: {
     changeAtuation(atuation){
-      console.log(atuation,'atuation')
       return
+      console.log(atuation)
       this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
@@ -1164,7 +1164,6 @@ export default defineComponent({
       
     },
     changeCall(call) {
-      console.log(call,'call')
       this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
@@ -1175,13 +1174,11 @@ export default defineComponent({
       
     },
     removeCall(call){
-      console.log(call, 'call')
       this.dialogDeletePastorFromFunction.open = true
       this.dialogDeletePastorFromFunction.userData = call.organismFunctionUserId
       this.dialogDeletePastorFromFunction.type = 'chamado'
     },
     removeAtuation(atuacao){
-      console.log(atuacao, 'atuacao')
       this.dialogDeletePastorFromFunction.open = true
       this.dialogDeletePastorFromFunction.userData = atuacao.organismFunctionUserId
       this.dialogDeletePastorFromFunction.type = 'atuation'
@@ -1212,9 +1209,9 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
           return
         }
-        this.getUserDetailById();
         this.$q.notify("Pastor deletado com sucesso!");
         this.clearDialogAndFunctions();
+        this.getUserDetailById();
       });
     },
     getFiliatedOrganismsList(val, update, abort) {
@@ -1460,14 +1457,16 @@ export default defineComponent({
     verifyInactiveStatus() {
       this.inactiveStatus = []
       let activeStatus = []
-      this.pastoralStatusData.forEach((status) => {
-        if (status.dates.finalDate && status.dates.finalDate !== '') {
-          this.inactiveStatus.push(status)
-        } else if (!status.dates.finalDate || status.dates.finalDate === "") {
-          activeStatus.push(status)
-          this.pastoralStatusData = activeStatus
-        }
-      })
+      if (this.pastoralStatusData && this.pastoralStatusData.length > 0) {
+        this.pastoralStatusData.forEach((status) => {
+          if (status.dates.finalDate && status.dates.finalDate !== '') {
+            this.inactiveStatus.push(status)
+          } else if (!status.dates.finalDate || status.dates.finalDate === "") {
+            activeStatus.push(status)
+            this.pastoralStatusData = activeStatus
+          }
+        })
+      }
     },
     clkConfirmAddPastoralStatus () {
       if (!this.dialogAddPastoralStatus.organism
@@ -1663,7 +1662,6 @@ export default defineComponent({
     },
     swapUserFromFunction(link) {
       this.dialogSwapUserFromFunction.data = link
-      console.log()
       this.dialogSwapUserFromFunction.open = true
     },
     removeUserFromFunction (link) {
@@ -1863,17 +1861,21 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        let links = r.data.userLinksToOrganisms.data
-        links.forEach((link) => {
-          if (link.functionSubtype === 'chamado') {
-            this.callList.push(link)
-          } 
-        })
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.length > 0) {
+          let links = r.data.userLinksToOrganisms
+          links.forEach((link) => {
+            if (link.functionSubtype === 'chamado') {
+              this.callList.push(link)
+            } 
+          })
+        }
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
         this.canUseSystem = r.data.canUseSystem
-        this.pastoralStatusData = r.data.pastoralStatus.data
+        if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
+          this.pastoralStatusData = r.data.pastoralStatus.data
+        }
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue
         this.verifyLinks()
