@@ -97,7 +97,7 @@
             v-for="organism in userOrganismList.childData"
             :key="organism._id"
             :label="organism.organismName"
-            :outline="!organism.preStatistic || organism.preStatistic.status.value !== 'sent'"
+            :outline="organism.allValidated ?  false : true"
             color="green"
             text-color="white"
             :icon="organism.preStatistic && organism.preStatistic.status.value === 'sent' ? 'check' : ''"
@@ -260,16 +260,15 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
-        for (const userOrganism of this.userorganismList) {
-          // Iterar sobre o array childData dentro de cada objeto
-          for (const childDataItem of userOrganism.childData) {
-            // Verificar se todos os validated são true
-            const allValidated = childDataItem.statusestatistica.every(item => item.validated === true);
+        for (const childDataItem of this.userOrganismList.childData) {
+          console.log(childDataItem, 'childDataItem');
 
-            // Adicionar uma variável no objeto com base na condição
-            childDataItem.allValidated = allValidated;
-          }
+          const allValidated = childDataItem.statusEstatistica.length > 0 &&
+            childDataItem.statusEstatistica.every(item => item.validated === true);
+
+          childDataItem.allValidated = allValidated;
         }
+
       });
     },
     insertCongregationalStatisticsDone() {
