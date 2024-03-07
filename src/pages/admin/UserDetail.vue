@@ -1152,8 +1152,8 @@ export default defineComponent({
   },
   methods: {
     changeAtuation(atuation){
-      console.log(atuation,'atuation')
       return
+      console.log(atuation)
       this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
@@ -1164,7 +1164,6 @@ export default defineComponent({
       
     },
     changeCall(call) {
-      console.log(call,'call')
       this.dialogAddCallToPastor.ataKey = call.ataKey
       this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
       this.dialogAddCallToPastor.functionType = 'Pastor'
@@ -1175,13 +1174,11 @@ export default defineComponent({
       
     },
     removeCall(call){
-      console.log(call, 'call')
       this.dialogDeletePastorFromFunction.open = true
       this.dialogDeletePastorFromFunction.userData = call.organismFunctionUserId
       this.dialogDeletePastorFromFunction.type = 'chamado'
     },
     removeAtuation(atuacao){
-      console.log(atuacao, 'atuacao')
       this.dialogDeletePastorFromFunction.open = true
       this.dialogDeletePastorFromFunction.userData = atuacao.organismFunctionUserId
       this.dialogDeletePastorFromFunction.type = 'atuation'
@@ -1665,7 +1662,6 @@ export default defineComponent({
     },
     swapUserFromFunction(link) {
       this.dialogSwapUserFromFunction.data = link
-      console.log()
       this.dialogSwapUserFromFunction.open = true
     },
     removeUserFromFunction (link) {

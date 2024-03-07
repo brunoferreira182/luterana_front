@@ -3528,7 +3528,6 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.userData = user;
     },
     dialogOpenDeletePastorFromFunction(pastor) {
-      console.log(pastor, )
       this.dialogDeletePastorFromFunction.open = true;
       this.dialogDeletePastorFromFunction.userData = pastor;
     },
