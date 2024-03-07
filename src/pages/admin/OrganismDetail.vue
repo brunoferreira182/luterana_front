@@ -682,6 +682,15 @@
                   <div v-if="func.functionName === 'Secretária Contratada'">
                     <div class="text-h6">
                       {{ func.functionName }}
+                      <q-btn
+                        color="primary"
+                        flat
+                        rounded
+                        unelevated
+                        label="Secretária"
+                        icon="add"
+                        @click="linkSecretaryToFunction()"
+                      />
                     </div>
                     <q-item
                       style="border-radius: 1rem;"
@@ -707,17 +716,7 @@
                     </q-item>
                   </div>
                 </div>
-                <q-btn
-                  color="primary"
-                  flat
-                  rounded
-                  unelevated
-                  label="Secretária"
-                  icon="add"
-                  @click="linkSecretaryToFunction()"
-                >
-
-                </q-btn>
+                
               </div>
             </div>
             <q-separator vertical class="q-ma-md"/>
