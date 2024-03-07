@@ -618,7 +618,7 @@
                       use-input
                       label="Quem convidar"
                       option-label="userName"
-                      :options="usersOptions.list"
+                      :options="usersOptions"
                       @filter="getUsers"
                       :option-value="(item) => item._id"
                       hint="Digite o nome de quem você vai convidar"

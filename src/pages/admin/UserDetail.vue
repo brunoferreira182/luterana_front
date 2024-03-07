@@ -1209,9 +1209,9 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
           return
         }
-        this.getUserDetailById();
         this.$q.notify("Pastor deletado com sucesso!");
         this.clearDialogAndFunctions();
+        this.getUserDetailById();
       });
     },
     getFiliatedOrganismsList(val, update, abort) {
