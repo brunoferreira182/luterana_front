@@ -93,6 +93,15 @@
           <q-item-section>
             <q-item-label class="text-h5">Preenchimento</q-item-label>
           </q-item-section>
+          <q-chip
+            v-for="organism in userOrganismList.childData"
+            :key="organism._id"
+            :label="organism.organismName"
+            :outline="!organism.preStatistic || organism.preStatistic.status.value !== 'sent'"
+            color="green"
+            text-color="white"
+            :icon="organism.preStatistic && organism.preStatistic.status.value === 'sent' ? 'check' : ''"
+          />
         </q-item>
       </div>
       <div v-else>
@@ -187,7 +196,7 @@
           Estatística enviada!
         </div>
         <q-btn 
-          v-else
+          v-else-if="!validationResume.congregationStatistic && validationResume.congregationStatistic !== 't' && status"
           label="Enviar estatística" 
           rounded 
           color="primary" 
@@ -231,6 +240,7 @@ export default defineComponent({
       hasCongregacao: false,
       paroquiaId: null,
       congregationsId: [],
+      
       canSendStatistic: null,
     }
   },
@@ -238,9 +248,30 @@ export default defineComponent({
     this.verifyIfIsPastor()
     this.getCardName()
     this.getPreStatisticStatus()
+    this.getParoquiasByUserId()
     this.getValidationResumeByOrganism()
   },
   methods: {
+    getParoquiasByUserId(){
+      const opt = {
+        route: "/desktop/statistics/getParoquiasByUserId",
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        this.userOrganismList = r.data
+        for (const userOrganism of this.userorganismList) {
+          // Iterar sobre o array childData dentro de cada objeto
+          for (const childDataItem of userOrganism.childData) {
+            // Verificar se todos os validated são true
+            const allValidated = childDataItem.statusestatistica.every(item => item.validated === true);
+
+            // Adicionar uma variável no objeto com base na condição
+            childDataItem.allValidated = allValidated;
+          }
+        }
+      });
+    },
     insertCongregationalStatisticsDone() {
       const opt = {
         route: '/desktop/statistics/insertCongregationalStatisticsDone',
@@ -349,16 +380,6 @@ export default defineComponent({
     goToIntroductionStatistic(organismId) {
       this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
     },
-    // getParoquiasByUserId(){
-    //   const opt = {
-    //     route: "/desktop/statistics/getParoquiasByUserId",
-    //   };
-    //   this.$q.loading.show()
-    //   useFetch(opt).then((r) => {
-    //     this.$q.loading.hide()
-    //     this.userOrganismList = r.data.list
-    //   });
-    // },
   }
 })
 </script>

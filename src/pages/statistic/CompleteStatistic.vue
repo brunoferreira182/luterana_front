@@ -152,23 +152,42 @@ export default defineComponent({
     return {
       statisticStatus: null,
       congregationName:'',
-      
+      validationResume: {},
       dialogErrorSendStatistic: {
         open: false,
         msg: '',
       },
-      
+      canSendStatistic: null,
     }
   },
   beforeMount() {
     this.getMyOrganismsToChooseOne()
     this.getStatisticStatusByOrganismId()
-   
+    this.getValidationResumeByOrganism()
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
-    
-   
+    getValidationResumeByOrganism () {
+      const opt = {
+        route: '/desktop/statistics/getValidationResumeByOrganism',
+        body: {
+          organismId: this.$route.query.organismId,
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) return
+        this.validationResume = r.data
+        if (
+          this.validationResume &&
+          this.validationResume.financeStatistics === 't' &&
+          this.validationResume.membersMovement === 't' &&
+          this.validationResume.groupActivity === 't' &&
+          this.validationResume.atividadesCulticasStatistics === 't'
+        ) {
+          this.canSendStatistic = true;
+        }
+      })
+    },
     getOrganismNameForBreadCrumbs() {
     const opt = {
       route: "/desktop/statistics/getCongregacaoByOrganismId",
