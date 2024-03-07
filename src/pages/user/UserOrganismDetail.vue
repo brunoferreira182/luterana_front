@@ -417,15 +417,26 @@
                 />
               </div>
             </div>
+            
             <div
               v-for="func in functions"
               :key="func"
             >
+            
               <div
                 v-if="func.functionName === 'Secretária Contratada'"
               > 
                 <div class="text-h6">
                   Secretária
+                  <q-btn
+                    color="primary"
+                    flat
+                    rounded
+                    unelevated
+                    label="Secretária"
+                    icon="add"
+                    @click="linkSecretaryToFunction()"
+                  />
                 </div>
                 <q-item
                   style="border-radius: 1rem;"
@@ -436,9 +447,86 @@
                   <q-item-section>
                     {{ user.userName }}
                   </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      icon="delete"
+                      dense
+                      flat
+                      color="red"
+                      rounded
+                      @click.stop="dialogOpenDeleteUserFromFunction(user)"
+                    >
+                      <q-tooltip>Remover secretária</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
                 </q-item>
               </div>
             </div>
+            
+            <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
+              <q-card style="border-radius: 1rem; width: 480px">
+                <q-card-section align="center">
+                  <div class="text-h6">
+                    Informe o usuário que ocupará a função
+                  </div>
+                </q-card-section>
+                <q-card-section class="q-gutter-md">
+                  <q-select
+                    v-model="dialogInsertUserInFunction.userSelected"
+                    filled
+                    use-input
+                    label="Nome do usuário"
+                    option-label="userName"
+                    :options="usersOptions"
+                    hint="Usuário que ocupará a função"
+                    @filter="getUsers"
+                    :loading="false"
+                    :option-value="(item) => item._id"
+                  >
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          Nenhum resultado
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                    <template v-slot:option="scope">
+                      <q-item v-bind="scope.itemProps">
+                        <q-item-section>
+                          <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                          <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                  <q-input
+                    filled
+                    label="Data do chamado"
+                    type="date"
+                    hint="Informe a data início de ocupação da função"
+                    v-model="dialogInsertUserInFunction.initialDate"
+                  />
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn
+                    flat
+                    label="Depois"
+                    no-caps
+                    rounded
+                    color="primary"
+                    @click="dialogInsertUserInFunction.open = false"
+                  />
+                  <q-btn
+                    unelevated
+                    rounded
+                    label="Confirmar"
+                    no-caps
+                    color="primary"
+                    @click="addUserToFunction"
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
             <div class="q-ma-lg justify-start" v-if="child && child.length > 0">
               <div class="q-gutter-md">
                 <div class="text-h5 col"> Vínculos</div>
@@ -530,15 +618,24 @@
                       use-input
                       label="Quem convidar"
                       option-label="userName"
-                      :options="usersOptions.list"
+                      :options="usersOptions"
                       @filter="getUsers"
                       :option-value="(item) => item._id"
                       hint="Digite o nome de quem você vai convidar"
                     >
                       <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
+                        <q-item> 
+                          <q-item-section>
+                            <q-btn
+                              icon="person_add"
+                              dense
+                              flat
+                              no-caps
+                              label="Novo usuário"
+                              color="primary"
+                              class="q-pa-sm"
+                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                            />
                           </q-item-section>
                         </q-item>
                       </template>
@@ -1119,9 +1216,18 @@
                       hint="Digite o nome de quem você vai convidar"
                     >
                       <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
+                        <q-item> 
+                          <q-item-section>
+                            <q-btn
+                              icon="person_add"
+                              dense
+                              flat
+                              no-caps
+                              label="Novo usuário"
+                              color="primary"
+                              class="q-pa-sm"
+                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                            />
                           </q-item-section>
                         </q-item>
                       </template>
@@ -1267,8 +1373,96 @@
             </div>
           </q-expansion-item>
         </q-list>
-  
       </div>
+      <q-dialog
+          v-model="dialogAddUser.open"
+        >
+          <q-card style="width: 400px; border-radius: 1rem">
+            <q-card-section
+              class="text-h6 text-center"
+            >
+              Informe os dados do novo usuário:
+            </q-card-section>
+            <q-card-section>
+              <q-input
+                label="Nome completo"
+                class="q-px-sm q-mt-sm"
+                v-model="dialogAddUser.data.name"
+              />
+              <q-input
+                label="Email do novo usuário"
+                class="q-px-sm q-mt-sm"
+                v-model="dialogAddUser.data.email"
+              />
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                rounded
+                color="primary"
+                label="Sair"
+                no-caps
+                unelevated
+                @click="clearDialogNewUser"
+              />
+              <q-btn
+                rounded
+                color="primary"
+                unelevated
+                label="Confirmar"
+                no-caps
+                @click="confirmCreateNewUser"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-dialog
+          v-model="dialogDeleteUserFromFunction.open"
+          @hide="clearDialogAndFunctions"
+        >
+          <q-card style="border-radius: 1rem; width: 400px">
+            <q-card-section>
+              <div class="text-h6 text-center">
+                Tem certeza que deseja inativar
+                {{ dialogDeleteUserFromFunction.userData.userName }}?
+              </div>
+            </q-card-section>
+            <q-card-section align="center" class="q-gutter-sm">
+              <q-input
+                filled
+                label="Observação"
+                v-model="dialogDeleteUserFromFunction.obsText"
+                hint="Informe o motivo"
+              />
+              <q-input
+                filled
+                type="date"
+                label="Data final"
+                v-model="dialogDeleteUserFromFunction.finalDate"
+                hint="Informe a data final de ocupação da função"
+              />
+            
+            </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                flat
+                label="Depois"
+                no-caps
+                rounded
+                color="primary"
+                @click="dialogDeleteUserFromFunction.open = false"
+              />
+              <q-btn
+                unelevated
+                rounded
+                label="Confirmar"
+                no-caps
+                color="primary"
+                @click="inactivateUserFromFunction"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       <DialogOrganismDetail
         :open="dialogChildOrganism.open"
         :orgData="dialogChildOrganism.orgData"
@@ -1416,6 +1610,16 @@ export default defineComponent({
           pix: ''
         }
       },
+      dialogAddUser: {
+        param: null,
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
+      },
       addOrganism: {
         dialogOpen: false,
         fieldIndex: null,
@@ -1495,9 +1699,24 @@ export default defineComponent({
         orgFunc: [],
         orgFields: [],
       },
+      dialogInsertUserInFunction:{
+        initialDate: '',
+        open: false,
+        functionType: '',
+        selectedFunc: null,
+        selectedFuncIndex: null,
+        userSelected: null,
+        userInstallation: ''
+      },
       idLegado: null,
       child: null,
-      parent: null
+      parent: null,
+      dialogDeleteUserFromFunction: {
+        obsText: "",
+        finalDate: "",
+        open: false,
+        userData: {},
+      },
     };
   },
   beforeMount() {
@@ -1510,6 +1729,93 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
+    inactivateUserFromFunction() {
+      if (
+        this.dialogDeleteUserFromFunction.obsText === "" ||
+        this.dialogDeleteUserFromFunction.finalDate === ""
+      ) {
+        this.$q.notify("Preencha observação e data final para prosseguir!");
+        return;
+      }
+      const opt = {
+        route: "/desktop/adm/inactivateUserFromFunction",
+        body: {
+          userFunctionId: this.dialogDeleteUserFromFunction.userData._id,
+          finalDate: this.dialogDeleteUserFromFunction.finalDate,
+          obsText: this.dialogDeleteUserFromFunction.obsText,
+        },
+      };
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.getOrganismDetailById();
+          this.$q.notify("Usuário inativado com sucesso!");
+          this.clearDialogAndFunctions();
+        } else {
+          this.$q.notify("Ocorreu um erro, tente novamente por favor");
+        }
+      });
+    },
+    dialogOpenDeleteUserFromFunction(user) {
+      this.dialogDeleteUserFromFunction.open = true;
+      this.dialogDeleteUserFromFunction.userData = user;
+    },
+    addUserToFunction() {
+      let organismFunctionId
+      const selectedFuncIndex = this.dialogInsertUserInFunction.selectedFunc;
+      if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+        this.$q.notify("Preencha usuário e a data do chamado");
+        return;
+      }
+      if (this.dialogInsertUserInFunction.selectedFunc.functions) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functions._id
+      } else if (this.dialogInsertUserInFunction.selectedFunc.functionId) {
+        organismFunctionId = this.dialogInsertUserInFunction.selectedFunc.functionId
+      }
+      const opt = {
+        route: "/desktop/adm/addUserToFunction",
+        body: {
+          organismFunctionId: organismFunctionId,
+          userIdMongo:  this.dialogInsertUserInFunction.userSelected._id,
+          dates: {
+            initialDate: this.dialogInsertUserInFunction.initialDate
+          }
+        }
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(r.error){
+          this.$q.notify(r.errorMessage)
+          this.functions[selectedFuncIndex].users = []
+          return
+        } else{
+          this.$q.notify('Usuário inserido na função!')
+          this.getOrganismDetailById()
+          this.clearDialogAndFunctions();
+        }
+      });
+    },
+    linkSecretaryToFunction() {
+      this.functions.forEach((func, ifunc) => {
+        if (func.functionName === 'Secretária Contratada') {
+          this.dialogInsertUserInFunction.selectedFunc = func;
+          this.dialogInsertUserInFunction.functionType = 'Secretária Contratada';
+          this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
+          this.dialogInsertUserInFunction.open = true;
+        }
+      })
+    },
+    clearDialogAndFunctions() {
+      this.dialogInsertUserInFunction.selectedFuncIndex = null
+      this.dialogInsertUserInFunction.selectedFunc = null,
+      this.dialogInsertUserInFunction.userSelected = null
+      this.dialogInsertUserInFunction.open = false
+      this.dialogDeleteUserFromFunction.open = false
+      this.dialogDeleteUserFromFunction.finalDate = ''
+      this.dialogDeleteUserFromFunction.userData = {}
+      this.dialogDeleteUserFromFunction.obsText = ''
+      this.dialogInsertUserInFunction.initialDate = ''
+    },
     clkShowDialogParentDetail(user) {
       this.dialogChildOrganism.data = user
       this.clkShowDetailOrganism(user.parentId)
@@ -1644,6 +1950,55 @@ export default defineComponent({
         }
       });
     },
+    confirmCreateNewUser () {
+      const opt = {
+        route: '/desktop/statistics/createNewUser',
+        body: {
+          data: this.dialogAddUser.data,
+          userType: ''
+        }
+      }
+      // if(this.dialogAddFunction.functionName === 'Pastor'){
+      //   opt.body.userType = 'pastor'
+      // }
+
+      useFetch(opt).then(() => {
+        this.$q.notify('Usuário criado com sucesso')
+        if (this.dialogAddUser.param === 'func') {
+          this.dialogAddFunction.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'secretary') {
+          this.dialogAddSecretary.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } else if (this.dialogAddUser.param === 'funcInDept') {
+          this.dialogAddFunctionToDept.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        }
+        this.dialogAddUser.open = false
+        this.dialogAddUser.data = {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
+      })
+    },
+    openDialogAddUser(param) {
+      this.dialogAddUser.param = param
+      this.dialogAddUser.open = true
+    },
+    clearDialogNewUser() {
+      this.dialogAddUser.open = false,
+      this.dialogAddUser.data = {
+        name: '',
+        email: '',
+        phone: '',
+        document: ''
+      }
+    },
     clkOpenChildOrganismDetail(child){
       const childOrganismId = child.childOrganismId
       const opt = {
@@ -1739,7 +2094,7 @@ export default defineComponent({
           return
         }
         update(() => {
-          this.usersOptions = r.data;
+          this.usersOptions = r.data.list;
         })
       });
     },
