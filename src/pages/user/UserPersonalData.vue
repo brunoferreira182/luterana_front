@@ -99,8 +99,8 @@
                   >
                     Solicitar alterações
                   </q-btn>
-                  <div style="display: flex; flex-direction: column; align-items: center;" v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                      <q-item-section avatar class="no-padding">
+                  <div class="text-center" v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                      <q-item-section avatar class="items-center no-padding">
                         <q-img 
                           style="border-radius: 1rem"
                           :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
