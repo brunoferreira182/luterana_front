@@ -99,9 +99,8 @@
                   >
                     Solicitar alterações
                   </q-btn>
-                  <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                    <div  class="row justify-center">
-                      <q-item-section avatar class="no-padding">
+                  <div class="text-center" v-if="tabs.tabLabel === 'Dados obrigatórios'">
+                      <q-item-section avatar class="items-center no-padding">
                         <q-img 
                           style="border-radius: 1rem"
                           :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
@@ -109,9 +108,6 @@
                           height="208px"
                         />
                       </q-item-section>
-                    </div>
-                    <div class="row justify-center q-pa-md">
-                      <div class="col-4 q-px-lg">
                         <q-btn
                           label="Trocar foto"
                           @click="clkOpenFilePicker"
@@ -137,8 +133,6 @@
                             <q-icon name="photo_camera" />
                           </template>
                         </q-file>
-                      </div>
-                    </div>
                   </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
