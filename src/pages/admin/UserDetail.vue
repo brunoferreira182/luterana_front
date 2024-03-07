@@ -15,7 +15,7 @@
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
           <div class="text-subtitle1" v-if="canUseSystem">
-            Acesso ao sistema: 
+            Acesso ao sistema: ch
             <q-badge color="green">Sim</q-badge>
             <q-btn
               icon="sync"
