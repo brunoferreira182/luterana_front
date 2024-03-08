@@ -1,8 +1,8 @@
 //////////// VARIAVEIS DA APLICACAO //////
 const MODE_MASTER_SERVER = "local";
 const COMPANY_ID = 10;
-const VERSION = "1.2 Beta"
-const BUILD = 22
+const VERSION = "1.3 Beta"
+const BUILD = 23
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;
 const MODE_AUTH_SERVER = "local";

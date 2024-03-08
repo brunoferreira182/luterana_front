@@ -127,7 +127,7 @@
                             Editar atuação
                           </q-tooltip>
                         </q-btn> -->
-                        <q-btn
+                        <!-- <q-btn
                           flat
                           rounded
                           unelevated
@@ -139,7 +139,7 @@
                           <q-tooltip>
                             Remover atuação
                           </q-tooltip>
-                        </q-btn>
+                        </q-btn> -->
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -1176,9 +1176,13 @@ export default defineComponent({
       this.dialogAddCallToPastor.installationDate = call.installation.date
       this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
       this.dialogAddCallToPastor.functionSelected = call.functionConfigName
+      this.dialogAddCallToPastor.userInstallation = call.userInstallationData
+      this.dialogAddCallToPastor.calleeDate = call.call.finalDate
       this.dialogAddCallToPastor.open = true
       this.dialogAddCallToPastor.action = 'edit'
-      
+      if(call.call.finalDate === 'undefined'){
+        this.dialogAddCallToPastor.undefinedCallee = true
+      }
     },
     removeCall(call){
       this.dialogDeletePastorFromFunction.open = true
