@@ -411,16 +411,28 @@ export default defineComponent({
     }
   },
   async beforeUnmount(){
+    this.timerToSave = null
     let r = await this.getFinanceStatisticByOrganismId()
     if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
   },
   async beforeMount() {
+    this.methodToSaveTimerDraft()
     let r = await this.getFinanceStatisticByOrganismId()
     this.putFinanceStatisticByOrganismId(r)
     r = await this.getFinanceTotalValueFromParoquia()
     this.putFinanceTotalValueFromParoquia(r)
   },
   methods: {
+    methodToSaveTimerDraft(){
+      console.log('snKJNSKJAnksjnaKJN')
+      this.timerToSave = true
+      
+      if (this.timerToSave){
+      setTimeout(() => {
+        this.saveDraft()
+      }, 300000);
+    }
+  },
   putFinanceStatisticByOrganismId(r) {
     
     if (r.error) return

@@ -384,10 +384,12 @@ export default defineComponent({
     }
   },
   async beforeUnmount() {
+    this.timerToSave = null
     const r = await this.getMovimentoMembrosPorCongregacao()
     if ((r.data && r.data.status && r.data.status.value === 'notSent') || (r.data && !r.data.status)) this.saveDraft()
   },
   async beforeMount() {
+    this.methodToSaveTimerDraft()
     const r = await this.getMovimentoMembrosPorCongregacao()
     if (r.data && r.data.membersMovement) {
       this.putMembersMovementOnData(r)
@@ -395,6 +397,16 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    methodToSaveTimerDraft(){
+      console.log('snKJNSKJAnksjnaKJN')
+      this.timerToSave = true
+      
+      if (this.timerToSave){
+      setTimeout(() => {
+        this.saveDraft()
+      }, 300000);
+    }
+  },
     calculaAnosEstudo (ev) {
       this.instructionYears = ev
       this.membersMovement.instrucaoDeConfirmados.confirmados = []

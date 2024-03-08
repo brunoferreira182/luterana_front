@@ -154,16 +154,28 @@ export default defineComponent({
     }
   },
 
-  async beforeUnmount(){
+async beforeUnmount(){
+    this.timerToSave = null
     const r = await this.getAtividadesCulticas()
     if ((r.data && r.data.status && r.data.status.value === 'notSent') || r.data && !r.data.status) this.saveDraft()
   },
-  async beforeMount() {
+async beforeMount() {
+  this.methodToSaveTimerDraft()
   const r = await this.getAtividadesCulticas()
   this.putAtividadesCulticasOnData(r)
   this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    methodToSaveTimerDraft(){
+      console.log('snKJNSKJAnksjnaKJN')
+      this.timerToSave = true
+      
+      if (this.timerToSave){
+      setTimeout(() => {
+        this.saveDraft()
+      }, 300000);
+    }
+  },
     async getAtividadesCulticas() {
       const opt = {
         route: "/desktop/statistics/getAtividadesCulticas",
