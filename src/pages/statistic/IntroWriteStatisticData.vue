@@ -252,7 +252,7 @@ export default defineComponent({
       congregationsId: [],
       
       canSendStatistic: null,
-      emManutencao: false
+      emManutencao: true
     }
   },
   beforeMount(){
