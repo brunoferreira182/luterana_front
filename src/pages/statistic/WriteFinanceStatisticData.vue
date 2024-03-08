@@ -407,34 +407,40 @@ export default defineComponent({
       saldoCongregacao: '',
       status: null,
       saldoCongregacaoNumber: 0,
-      totalReceitas: 0
+      totalReceitas: 0,
+      timerToSave: null, 
     }
   },
   async beforeUnmount(){
-    this.timerToSave = null
+    this.stopTimerToSaveDraft()
     let r = await this.getFinanceStatisticByOrganismId()
     if (r.data && r.data.status && r.data.status.value === 'notSent') this.saveDraft()
   },
   async beforeMount() {
-    this.methodToSaveTimerDraft()
+    this.startTimerToSaveDraft()
     let r = await this.getFinanceStatisticByOrganismId()
     this.putFinanceStatisticByOrganismId(r)
     r = await this.getFinanceTotalValueFromParoquia()
     this.putFinanceTotalValueFromParoquia(r)
   },
   methods: {
-    methodToSaveTimerDraft(){
-      console.log('snKJNSKJAnksjnaKJN')
-      this.timerToSave = true
-      
-      if (this.timerToSave){
-      setTimeout(() => {
-        this.saveDraft()
-      }, 300000);
-    }
-  },
+    startTimerToSaveDraft() {
+      this.timerToSave = true;
+      this.methodToSaveTimerDraft();
+    },
+    stopTimerToSaveDraft() {
+      this.timerToSave = false;
+      clearTimeout(this.timerId);
+    },
+    methodToSaveTimerDraft() {
+      if (this.timerToSave) {
+        this.timerId = setTimeout(() => {
+          this.saveDraft();
+          this.methodToSaveTimerDraft(); 
+        }, 300000);
+      }
+    },
   putFinanceStatisticByOrganismId(r) {
-    
     if (r.error) return
     this.validated = r.data.validated
     this.status = r.data.status

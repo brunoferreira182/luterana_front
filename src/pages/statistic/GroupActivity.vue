@@ -430,6 +430,7 @@ export default defineComponent({
   data() {
     return {
       departamentos: [],
+      timerToSave: null,
       congregationName: "",
       validated: false,
       statisticStatus: null,
@@ -443,23 +444,29 @@ export default defineComponent({
     };
   },
   async beforeUnmount() {
-    this.timerToSave = null
+    this.stopTimerToSaveDraft();
     const r = await this.getGroupActivitiesByOrganismId();
     if ((r.data && r.data.status && r.data.status.value === 'notSent') || (r.data && !r.data.status)) this.saveDraft()
   },
   async beforeMount() {
-    this.methodToSaveTimerDraft()
+    this.startTimerToSaveDraft()
     const r = await this.getGroupActivitiesByOrganismId();
     this.putGroupActivitiesOnData(r)
   },
   methods: {
+    startTimerToSaveDraft() {
+      this.timerToSave = true;
+      this.methodToSaveTimerDraft();
+    },
+    stopTimerToSaveDraft() {
+      this.timerToSave = false;
+      clearTimeout(this.timerId);
+    },
     methodToSaveTimerDraft(){
-      console.log('snKJNSKJAnksjnaKJN')
-      this.timerToSave = true
-      
       if (this.timerToSave){
-      setTimeout(() => {
+        this.timerId = setTimeout(() => {
         this.saveDraft()
+        this.methodToSaveTimerDraft()
       }, 300000);
     }
   },

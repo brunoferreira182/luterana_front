@@ -1481,26 +1481,32 @@ export default defineComponent({
     this.getMyOrganismsList()
     this.getParoquiaId()
     this.getPastorLinks()
-    this.methodToSaveTimerDraft();
+    this.startTimerToSaveDraft();
   },
 
   beforeUnmount() {
-    this.timerToSave = null
+    this.stopTimerToSaveDraft()
     if (this.validated && (this.status && this.status.value === 'sent')) return
     if (!this.canSaveDraft) return
     // if (this.saveOnUnmount) this.saveDraftOnBeforeUnmount()
   },
   methods: {
-    methodToSaveTimerDraft(){
-      console.log('snKJNSKJAnksjnaKJN')
-      this.timerToSave = true
-      
-      if (this.timerToSave){
-      setTimeout(() => {
-        this.saveDraft()
-      }, 300000);
-    }
-  },
+    startTimerToSaveDraft() {
+      this.timerToSave = true;
+      this.methodToSaveTimerDraft();
+    },
+    stopTimerToSaveDraft() {
+      this.timerToSave = false;
+      clearTimeout(this.timerId);
+    },
+    methodToSaveTimerDraft() {
+      if (this.timerToSave) {
+        this.timerId = setTimeout(() => {
+          this.saveDraft();
+          this.methodToSaveTimerDraft(); 
+        }, 300000);
+      }
+    },
     cancelChangeChild () {
       this.dialogEditChild = {
         open: false,
