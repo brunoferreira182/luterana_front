@@ -1957,6 +1957,35 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog
+    v-model="dialogInactivateUserFromFunction.open"
+  >
+    <q-card
+      style="width: 400px;border-radius: 1rem;"
+    >
+      <q-card-section class="text-h6 text-center">
+        Remover usuário da função?
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          unelevated
+          color="primary"
+          no-caps
+          rounded
+          flat
+        />
+        <q-btn
+          label="Continuar"
+          rounded
+          color="primary"
+          unelevated
+          no-caps
+          @click="confirmRemoveUserFromFunction"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -2153,7 +2182,13 @@ export default defineComponent({
         name: null
       },
       semFundacao: false,
-      myOrganismsIds: []
+      myOrganismsIds: [],
+      dialogInactivateUserFromFunction: {
+        iOrg: null,
+        iFunc: null,
+        iUser: null,
+        open: false
+      }
     }
   }, 
   beforeMount() {
@@ -3015,13 +3050,40 @@ export default defineComponent({
         this.$router.back()
       })
     },
-    deleteUserFromFunction(iOrg, iFunc, iUser) {
-      if (!this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action) {
-        this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
-      } else {
-        this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
+    async confirmRemoveUserFromFunction() {
+      let userFunctionId = this.composition
+        .congregations[this.dialogInactivateUserFromFunction.iOrg]
+        .organismFunctions[this.dialogInactivateUserFromFunction.iFunc]
+        .functionUsers[this.dialogInactivateUserFromFunction.iUser]
+        ._id
+      const opt = {
+        route: '/desktop/statistics/inactivateUserFromFunction',
+        body: {
+          userFunctionId,
+        }
       }
-      
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        return
+      }
+      this.$q.notify('Usuário removido com sucesso')
+      this.clearDialogRemoveFunction()
+      this.getCompositionByUserId()
+    },
+    clearDialogRemoveFunction() {
+      this.dialogInactivateUserFromFunction = {
+        iOrg: null,
+        iFunc: null,
+        iUser: null,
+        open: false
+      }
+    },
+    deleteUserFromFunction(iOrg, iFunc, iUser) {
+      this.dialogInactivateUserFromFunction.iUser = iUser
+      this.dialogInactivateUserFromFunction.iOrg = iOrg
+      this.dialogInactivateUserFromFunction.iFunc = iFunc
+      this.dialogInactivateUserFromFunction.open = true
     },
     clearDialogAddFunction() {
       this.dialogAddFunction= {
