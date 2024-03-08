@@ -2188,7 +2188,8 @@ export default defineComponent({
         iFunc: null,
         iUser: null,
         open: false
-      }
+      },
+      timerToSave: true
     }
   }, 
   beforeMount() {
@@ -2198,15 +2199,12 @@ export default defineComponent({
     this.methodToSaveTimerDraft();
   },
   beforeUnmount() {
-    this.timerToSave = null
+    this.timerToSave = false
     if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
     methodToSaveTimerDraft(){
-      console.log('snKJNSKJAnksjnaKJN')
-      this.timerToSave = true
-      
       if (this.timerToSave){
       setTimeout(() => {
         this.saveDraft()
