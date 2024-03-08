@@ -656,7 +656,6 @@ export default defineComponent({
         selectedFunc.users = []
       }
 
-      console.log(selectedFunc, 'vem jogar futebol')
     },
     clearDialogParishDetail() {
       this.dialogParishDetail = {

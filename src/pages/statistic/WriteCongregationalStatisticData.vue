@@ -372,7 +372,7 @@
                         rounded
                         icon="add"
                         label="Adicionar"
-                        @click="addNewDepartament(iOrg, iDep)"
+                        @click.stop="addNewDepartament(iOrg, iDep)"
                         no-caps
                       />
                     </q-item-section>
@@ -2269,7 +2269,11 @@ export default defineComponent({
         opt.body.userType = 'pastor'
       }
 
-      useFetch(opt).then(() => {
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify(r.errorMessage)
+          return
+        }
         this.$q.notify('Usuário criado com sucesso')
         if (this.dialogAddUser.param === 'func') {
           this.dialogAddFunction.userSelected = {
@@ -2291,6 +2295,9 @@ export default defineComponent({
           phone: '',
           document: ''
         }
+        this.usersOptions = []
+        this.clearDialogConfirmAddFunctionUserInNewDept()
+        this.$q.notify('Digite novamente o nome para adicionar')
       })
     },
     clearDialogNewUser() {
