@@ -2189,28 +2189,38 @@ export default defineComponent({
         iUser: null,
         open: false
       },
-      timerToSave: true
+      timerToSave: null,
+      timerId: null
     }
   }, 
   beforeMount() {
     this.getCompositionByUserId()
     this.getEventsOptions()
     this.getDaysOfWeek()
-    this.methodToSaveTimerDraft();
+    this.startTimerToSaveDraft();
   },
   beforeUnmount() {
-    this.timerToSave = false
-    if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return
-    this.saveDraftOnBeforeUnmount()
+    this.stopTimerToSaveDraft();
+    if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return;
+    this.saveDraftOnBeforeUnmount();
   },
   methods: {
-    methodToSaveTimerDraft(){
-      if (this.timerToSave){
-      setTimeout(() => {
-        this.saveDraft()
-      }, 300000);
-    }
-  },
+    startTimerToSaveDraft() {
+      this.timerToSave = true;
+      this.methodToSaveTimerDraft();
+    },
+    stopTimerToSaveDraft() {
+      this.timerToSave = false;
+      clearTimeout(this.timerId);
+    },
+    methodToSaveTimerDraft() {
+      if (this.timerToSave) {
+        this.timerId = setTimeout(() => {
+          this.saveDraft();
+          this.methodToSaveTimerDraft(); 
+        }, 300000);
+      }
+    },
     removeEventDay(iOrg) {
       this.composition.congregations[iOrg].frequencyServices = null
     },
