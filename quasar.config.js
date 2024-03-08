@@ -70,9 +70,9 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: '/',
       // publicPath: '/dev/luterana/desktop',
-      publicPath: '/prod/luterana/desktop_teste',
+      // publicPath: '/prod/luterana/desktop_teste',
       // analyze: true,
       // env: {},
       // rawDefine: {}
