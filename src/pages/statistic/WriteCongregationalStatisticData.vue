@@ -1957,6 +1957,35 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog
+    v-model="dialogInactivateUserFromFunction.open"
+  >
+    <q-card
+      style="width: 400px;border-radius: 1rem;"
+    >
+      <q-card-section class="text-h6 text-center">
+        Remover usuário da função?
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          unelevated
+          color="primary"
+          no-caps
+          rounded
+          flat
+        />
+        <q-btn
+          label="Continuar"
+          rounded
+          color="primary"
+          unelevated
+          no-caps
+          @click="confirmRemoveUserFromFunction"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -2153,7 +2182,14 @@ export default defineComponent({
         name: null
       },
       semFundacao: false,
-      myOrganismsIds: []
+      myOrganismsIds: [],
+      dialogInactivateUserFromFunction: {
+        iOrg: null,
+        iFunc: null,
+        iUser: null,
+        open: false
+      },
+      timerToSave: true
     }
   }, 
   beforeMount() {
@@ -2163,15 +2199,12 @@ export default defineComponent({
     this.methodToSaveTimerDraft();
   },
   beforeUnmount() {
-    this.timerToSave = null
+    this.timerToSave = false
     if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return
     this.saveDraftOnBeforeUnmount()
   },
   methods: {
     methodToSaveTimerDraft(){
-      console.log('snKJNSKJAnksjnaKJN')
-      this.timerToSave = true
-      
       if (this.timerToSave){
       setTimeout(() => {
         this.saveDraft()
@@ -3015,13 +3048,40 @@ export default defineComponent({
         this.$router.back()
       })
     },
-    deleteUserFromFunction(iOrg, iFunc, iUser) {
-      if (!this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action) {
-        this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
-      } else {
-        this.composition.congregations[iOrg].organismFunctions[iFunc].functionUsers[iUser].action = 'remove'
+    async confirmRemoveUserFromFunction() {
+      let userFunctionId = this.composition
+        .congregations[this.dialogInactivateUserFromFunction.iOrg]
+        .organismFunctions[this.dialogInactivateUserFromFunction.iFunc]
+        .functionUsers[this.dialogInactivateUserFromFunction.iUser]
+        ._id
+      const opt = {
+        route: '/desktop/statistics/inactivateUserFromFunction',
+        body: {
+          userFunctionId,
+        }
       }
-      
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        return
+      }
+      this.$q.notify('Usuário removido com sucesso')
+      this.clearDialogRemoveFunction()
+      this.getCompositionByUserId()
+    },
+    clearDialogRemoveFunction() {
+      this.dialogInactivateUserFromFunction = {
+        iOrg: null,
+        iFunc: null,
+        iUser: null,
+        open: false
+      }
+    },
+    deleteUserFromFunction(iOrg, iFunc, iUser) {
+      this.dialogInactivateUserFromFunction.iUser = iUser
+      this.dialogInactivateUserFromFunction.iOrg = iOrg
+      this.dialogInactivateUserFromFunction.iFunc = iFunc
+      this.dialogInactivateUserFromFunction.open = true
     },
     clearDialogAddFunction() {
       this.dialogAddFunction= {
@@ -3032,13 +3092,24 @@ export default defineComponent({
         userSelected: null
       }
     },
-    confirmAddUserToFunction() {
-      this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc].functionUsers.push({
-        userId:  this.dialogAddFunction.userSelected._id,
-        userName: this.dialogAddFunction.userSelected.userName,
-        action: 'add'
-      })
+    async confirmAddUserToFunction() {
+      let userId = this.dialogAddFunction.userSelected._id
+      let organismFunctionId = this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc]._id
+      const opt = {
+        route: '/desktop/statistics/addUserToFunction',
+        body: {
+          organismFunctionId,
+          userId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        return
+      }
+      this.$q.notify('Usuário adicionado com sucesso')
       this.clearDialogAddFunction()
+      this.getCompositionByUserId()
     },
     getUsers(val, update, abort) {
       if(val.length < 3) {
