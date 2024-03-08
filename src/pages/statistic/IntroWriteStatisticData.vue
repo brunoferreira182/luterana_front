@@ -1,6 +1,6 @@
 <template>
   <q-page-container class="no-padding">
-    <q-page>
+    <q-page v-if="!emManutencao">
       <div class="text-h5 q-ma-md">
         Bem-vindo(a) a Estatística 2023!
       </div>
@@ -209,6 +209,16 @@
         
       </div>
     </q-page>
+    <q-page
+      v-else-if="emManutencao"
+    >
+      <div class="text-h5 q-pa-sm q-ml-md">
+        Página em manutanção
+      </div>
+      <div class="text-h6 q-pa-sm text-center">
+        Estamos ajustando esta página e logo ela estará disponível novamente!
+      </div>
+    </q-page>
   </q-page-container>
 </template>
 
@@ -242,6 +252,7 @@ export default defineComponent({
       congregationsId: [],
       
       canSendStatistic: null,
+      emManutencao: true
     }
   },
   beforeMount(){
