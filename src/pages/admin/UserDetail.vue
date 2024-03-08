@@ -15,27 +15,27 @@
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
           <div class="text-subtitle1" v-if="canUseSystem">
-            Acesso ao sistema: ch
+            Acesso ao sistema: 
             <q-badge color="green">Sim</q-badge>
             <q-btn
               icon="sync"
               color="primary"
               rounded
-              size="9px"
+              size="12px"
               flat
               @click="updateCanUseSystem(false)"
             >
               <q-tooltip>Alterar status de acesso</q-tooltip>
             </q-btn>
           </div>
-          <div class="text-subtitle1" v-if="!canUseSystem">
+          <div class="text-subtitle1" v-else-if="!canUseSystem">
             Acesso ao sistema: 
             <q-badge color="red">Não</q-badge>
             <q-btn
               icon="sync"
               color="primary"
               rounded
-              size="9px"
+              size="12px"
               flat
               @click="updateCanUseSystem(true)"
             >
@@ -90,16 +90,22 @@
               >
                 <q-item-section>
                   <q-item-label>
-                    {{ call.functionConfigName}} - {{ call.organismName }}
-                  </q-item-label>
-                  <q-item-label>
                     <q-badge>
                       {{ call.organismConfigName }}
-                    </q-badge>
+                    </q-badge> 
+                      {{ call.functionConfigName}} - {{ call.organismName }}
+                    <div class="text-caption">
+                      Início em {{ call.functionDates.initialDate.split('-')[2] }}/{{ call.functionDates.initialDate.split('-')[1] }}/{{ call.functionDates.initialDate.split('-')[0] }}  
+                    
+                    </div>
+                    
+                    
+                  </q-item-label>
+                  <q-item-label>
                   </q-item-label>
                   <q-item
                     class="q-pa-md"
-                    style=" border-radius: 1rem;"
+                    style=" border-radius: 1rem; background-color: rgba(101, 121, 121, 0.336);"
                     v-for="atuacao in call.functionsAtuacao" 
                     :key="atuacao"
                   >
@@ -108,7 +114,7 @@
                     </q-item-label>
                     <q-item-section side>
                       <q-item-label>
-                        <q-btn
+                        <!-- <q-btn
                           flat
                           rounded
                           unelevated
@@ -118,9 +124,9 @@
                           @click.stop="changeAtuation(atuacao, i)"
                         >
                           <q-tooltip>
-                            Remover atuação
+                            Editar atuação
                           </q-tooltip>
-                        </q-btn>
+                        </q-btn> -->
                         <q-btn
                           flat
                           rounded
@@ -153,7 +159,7 @@
                         Adicionar atuação
                       </q-tooltip>
                     </q-btn>
-                    <q-btn
+                    <!-- <q-btn
                       class="q-pa-sm"
                       flat
                       rounded
@@ -163,9 +169,9 @@
                       @click.stop="changeCall(call)"
                     >
                       <q-tooltip>
-                        Editar vínculo
+                        Editar dados de chamado
                       </q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
                     <q-btn
                       class="q-pa-sm"
                       flat
@@ -639,7 +645,7 @@
               </q-chip>
             </div>
           </q-card-section>
-          <q-card-section v-if="dialogAddCallToPastor.functionType === 'Pastor'" class="q-gutter-y-md">
+          <q-card-section v-if="dialogAddCallToPastor.functionType === 'Pastor' && dialogAddCallToPastor.action !== 'edit'" class="q-gutter-y-md">
             <q-select
               v-model="dialogAddCallToPastor.organismCallerSelected"
               filled
@@ -671,14 +677,14 @@
             </q-select>
           </q-card-section>
           <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
-          <q-select
+            <q-select
+              v-if="dialogAddCallToPastor.action === 'add'"
               v-model="dialogAddCallToPastor.organismAtuationSelected"
               filled
               use-input
               label="Nome do organismo de atuação"
               option-label="nome"
               options-dense
-              :readonly="sameOrganismCalled ? true : false"
               :options="organismList"
               @filter="getOrganismsList"
               :option-value="(item) => item"
@@ -700,6 +706,7 @@
               </template>
             </q-select>
             <q-checkbox
+              v-if="dialogAddCallToPastor.action === 'add'"
               label="É o mesmo organismo de chamado"
               @update:model-value="changeOrganismCaller()"
               v-model="dialogAddCallToPastor.sameOrganismCalled"
@@ -755,7 +762,7 @@
               v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               filled
               type="date"
-              :readonly="undefinedCallee ? true : false"
+              :readonly="dialogAddCallToPastor.undefinedCallee ? true : false"
               label="Prazo do chamado"
               v-model="dialogAddCallToPastor.calleeDate"
             />
@@ -763,7 +770,7 @@
               v-if="dialogAddCallToPastor.functionType === 'Pastor'"
               label="Prazo chamado é indefinido"
               @update:model-value="undefinedCalleeFunction()"
-              v-model="undefinedCallee"
+              v-model="dialogAddCallToPastor.undefinedCallee"
             />
             <q-input
               filled
@@ -1104,8 +1111,6 @@ export default defineComponent({
       pastoralStatusData: null,
       inactiveStatus: null,
       statusData: null,
-      functionSelected: '',
-      sameOrganismCalled: false,
       undefinedCallee: false,
       organismCallerSelected: '',
       organismCalleeSelected: '',
@@ -1125,7 +1130,7 @@ export default defineComponent({
         calleeDate: '',
         undefinedCallee: false,
         initialDate: '',
-        action: 'add',
+        action: '',
         subtype: ''
       },
       dialogDeletePastorFromFunction: {
@@ -1139,6 +1144,7 @@ export default defineComponent({
         type: ''
       },
       setReadOnlyOrganismCaller: false,
+      setDisableOrganismCallerCheckbox: false,
     };
   },
   mounted() {
@@ -1171,6 +1177,7 @@ export default defineComponent({
       this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
       this.dialogAddCallToPastor.functionSelected = call.functionConfigName
       this.dialogAddCallToPastor.open = true
+      this.dialogAddCallToPastor.action = 'edit'
       
     },
     removeCall(call){
@@ -1209,7 +1216,9 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente por favor");
           return
         }
-        this.$q.notify("Pastor deletado com sucesso!");
+        this.$q.notify({
+          message: `${"Pastor removido da" + this.dialogDeletePastorFromFunction.type === 'atuation' ? 'Atuação' : 'Chamado' + "com sucesso!"}`
+        });
         this.clearDialogAndFunctions();
         this.getUserDetailById();
       });
@@ -1249,6 +1258,7 @@ export default defineComponent({
       this.dialogAddCallToPastor.functionType = 'Pastor'
       this.dialogAddCallToPastor.subtype = 'chamado'
       this.dialogAddCallToPastor.open = true
+      this.dialogAddCallToPastor.action = 'add'
     },
     addAtuacaoToPastor(call) {
       this.dialogAddCallToPastor.open = true
@@ -1259,6 +1269,7 @@ export default defineComponent({
       }
       this.setReadOnlyOrganismCaller = true
       this.dialogAddCallToPastor.subtype = 'atuacao'
+      this.dialogAddCallToPastor.action = 'add'
       this.getOrganismDetailD()
     },
     clearDialogAndFunctions() {
@@ -1268,7 +1279,7 @@ export default defineComponent({
       this.dialogRemoveUserFromFunction.data = {};
       this.dialogDeletePastorFromFunction.type = ''
       this.dialogRemoveUserFromFunction.finalDate = "";
-      this.functionSelected = ''
+      this.dialogAddCallToPastor.functionSelected = ''
       this.dialogRemoveUserFromFunction.functionUserId = "";
       this.dialogRemoveUserFromFunction.open = false;
       this.dialogAddCallToPastor.open = false;
@@ -1282,6 +1293,8 @@ export default defineComponent({
       this.dialogAddCallToPastor.installationDate = ''
       this.dialogAddCallToPastor.calleeDate = ''
       this.dialogAddCallToPastor.ataKey = ''
+      this.dialogAddCallToPastor.userInstallation = ''
+      this.dialogAddCallToPastor.action = ''
       this.dialogAddCallToPastor.selectedFunc = null,
       this.dialogDeletePastorFromFunction.open = false
       this.dialogDeletePastorFromFunction.obsText = ''
@@ -1289,9 +1302,10 @@ export default defineComponent({
       this.dialogDeletePastorFromFunction.userData = {}
       this.dialogDeletePastorFromFunction.uninstallerUser = ''
       this.dialogAddCallToPastor.userSelected = null
-      this.sameOrganismCalled = false
-      this.undefinedCallee = false
+      this.dialogAddCallToPastor.sameOrganismCalled = false
+      this.dialogAddCallToPastor.undefinedCallee = false
       this.setReadOnlyOrganismCaller = false
+      this.setDisableOrganismCallerCheckbox = false
     },
     changeOrganismCaller(){
       this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismAtuationSelected = '' : 
@@ -1354,7 +1368,7 @@ export default defineComponent({
         }
         opt.body.call = {
           date: this.dialogAddCallToPastor.initialDate,
-          finalDate: this.undefinedCallee ? 'undefined' : this.dialogAddCallToPastor.calleeDate
+          finalDate: this.dialogAddCallToPastor.undefinedCallee ? 'undefined' : this.dialogAddCallToPastor.calleeDate
         }
       }
       this.$q.loading.show()
@@ -1854,9 +1868,7 @@ export default defineComponent({
           return
         }
         // this.userDetail = r.data
-        this.$q.loading.show();
         const userConfig = await this.getUsersConfig(r.data.userType)
-        this.$q.loading.hide();
         if (userConfig.error) {
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
@@ -1869,6 +1881,7 @@ export default defineComponent({
             } 
           })
         }
+        this.callList = r.data.userLinksToOrganisms
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
@@ -1881,6 +1894,7 @@ export default defineComponent({
         this.verifyLinks()
         this.mountUserData(r.data)
         this.verifyInactiveStatus()
+        this.$q.loading.hide();
       });
     },
     mountUserData (userDetail) {
