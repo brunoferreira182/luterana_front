@@ -1,7 +1,7 @@
 //////////// VARIAVEIS DA APLICACAO //////
-const MODE_MASTER_SERVER = "darta";
+const MODE_MASTER_SERVER = "bruno";
 const COMPANY_ID = 10;
-const VERSION = "1.2 "
+const VERSION = "1.2 Beta"
 const BUILD = 22
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;
