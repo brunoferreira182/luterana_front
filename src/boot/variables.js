@@ -2,7 +2,7 @@
 const MODE_MASTER_SERVER = "darta";
 const COMPANY_ID = 10;
 const VERSION = "1.2 "
-const BUILD = 21
+const BUILD = 22
 // NAO ALTERAR //
 const MODE_IFRAME = MODE_MASTER_SERVER;
 const MODE_AUTH_SERVER = "local";
