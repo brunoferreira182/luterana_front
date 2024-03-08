@@ -3032,13 +3032,24 @@ export default defineComponent({
         userSelected: null
       }
     },
-    confirmAddUserToFunction() {
-      this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc].functionUsers.push({
-        userId:  this.dialogAddFunction.userSelected._id,
-        userName: this.dialogAddFunction.userSelected.userName,
-        action: 'add'
-      })
+    async confirmAddUserToFunction() {
+      let userId = this.dialogAddFunction.userSelected._id
+      let organismFunctionId = this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc]._id
+      const opt = {
+        route: '/desktop/statistics/addUserToFunction',
+        body: {
+          organismFunctionId,
+          userId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify(r.errorMessage)
+        return
+      }
+      this.$q.notify('Usuário adicionado com sucesso')
       this.clearDialogAddFunction()
+      this.getCompositionByUserId()
     },
     getUsers(val, update, abort) {
       if(val.length < 3) {
