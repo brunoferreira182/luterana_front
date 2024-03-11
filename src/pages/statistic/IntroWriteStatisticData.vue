@@ -237,7 +237,7 @@ export default defineComponent({
       validationResume: {},
       userOrganismList:[],
       isSIPAR: false,
-      isPastor: null,
+      isPastor: false,
       status: null,
       cardOrganismName: [],
       dialogNotifystatus: {
@@ -256,7 +256,7 @@ export default defineComponent({
     }
   },
   beforeMount(){
-    this.verifyIfIsPastor()
+    // this.verifyIfIsPastor()
     this.getCardName()
     this.getPreStatisticStatus()
     this.getParoquiasByUserId()
@@ -272,7 +272,6 @@ export default defineComponent({
         this.$q.loading.hide()
         this.userOrganismList = r.data
         for (const childDataItem of this.userOrganismList.childData) {
-          console.log(childDataItem, 'childDataItem');
 
           const allValidated = childDataItem.statusEstatistica.length > 0 &&
             childDataItem.statusEstatistica.every(item => item.validated === true);
@@ -360,12 +359,18 @@ export default defineComponent({
       // }
     },
     getPreStatisticStatus() {
+      const userInfo = utils.presentUserInfo()
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',
       }
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.status = r.data
+        this.status.pastors.forEach((pastor) => {
+          if (pastor.userId === userInfo.user_id) {
+            this.isPastor = true
+          }
+        })
         // if (r.data.usuarioEstaEmParoquia) {
         //   this.hasParoquia = true
         //   this.paroquiaId = r.data.organismParentId
@@ -379,14 +384,14 @@ export default defineComponent({
         // }
       })
     },
-    verifyIfIsPastor() {
-      const userInfo = utils.presentUserInfo()
-      if (userInfo.userType === 'pastor') {
-        this.isPastor = false
-        // this.getPastorDataTabs()} else {
-        this.isPastor = true
-      }
-    },
+    // verifyIfIsPastor() {
+    //   const userInfo = utils.presentUserInfo()
+    //   if (userInfo.userType === 'pastor') {
+    //     this.isPastor = false
+    //     // this.getPastorDataTabs()} else {
+    //     this.isPastor = true
+    //   }
+    // },
     goToIntroductionStatistic(organismId) {
       this.$router.push('/statistic/introductionStatistic?organismId=' + organismId)
     },
