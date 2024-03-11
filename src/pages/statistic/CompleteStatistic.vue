@@ -125,7 +125,18 @@
             text-color="white"
           /> -->
         </q-item>
-        
+      </div>
+      <div class="q-mx-lg">
+        <q-btn
+          label="Voltar"
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          dense
+          class="full-width"
+          @click="$router.back()"
+          />
       </div>
       <q-dialog v-model="dialogErrorSendStatistic.open">
         <q-card style="border-radius: 1rem;">

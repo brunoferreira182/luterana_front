@@ -40,6 +40,18 @@
             </div>
           </q-item-section>
         </q-item>
+        <div class="q-mx-lg">
+        <q-btn
+          label="Voltar"
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          dense
+          class="full-width"
+          @click="$router.back()"
+          />
+      </div>
         <q-dialog v-model="dialogSendStatistic.open">
           <q-item class="card">
             <q-item-section class="text-h6">
