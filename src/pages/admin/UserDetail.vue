@@ -734,13 +734,6 @@
             @update:model-value="undefinedCalleeFunction()"
             v-model="dialogAddCallToPastor.undefinedCallee"
             />
-            <q-input
-            filled
-            label="Data do chamado"
-            type="date"
-            hint="Informe a data início de ocupação da função"
-            v-model="dialogAddCallToPastor.initialDate"
-            />
           </q-card-section>
           <q-card-section class="q-gutter-md">
             <q-select
@@ -1362,9 +1355,11 @@ export default defineComponent({
     async addUserToFunction() {
       if(
         this.dialogAddCallToPastor.ataKey === '' ||
-        this.dialogAddCallToPastor.installationDate === ''
+        (this.dialogAddCallToPastor.calleeDate === '' && !this.dialogAddCallToPastor.undefinedCallee) ||
+        !this.dialogAddCallToPastor.organismCallerSelected ||
+        !this.dialogAddCallToPastor.organismAtuationSelected
       ){
-        this.$q.notify("Preencha chave-ata, data de instalação e organismo que atende e quem chamou");
+        this.$q.notify("Preencha chave-ata, prazo do chamado e organismo que atende e quem chamou");
         return;
       }
 
@@ -1384,11 +1379,14 @@ export default defineComponent({
         opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId,
         opt.body.ataKey = this.dialogAddCallToPastor.ataKey
         opt.body.installation = {
-          date: this.dialogAddCallToPastor.installationDate,
-          userIdInstallation: this.dialogAddCallToPastor.userInstallation._id
+          date: this.dialogAddCallToPastor.installationDate ? this.dialogAddCallToPastor.installationDate : null,
+        }
+        if (this.dialogAddCallToPastor.userInstallation && this.dialogAddCallToPastor.userInstallation._id) {
+          opt.body.installation.userIdInstallation = this.dialogAddCallToPastor.userInstallation._id
+        } else {
+          opt.body.installation.userIdInstallation = null
         }
         opt.body.call = {
-          date: this.dialogAddCallToPastor.initialDate,
           finalDate: this.dialogAddCallToPastor.undefinedCallee ? 'undefined' : this.dialogAddCallToPastor.calleeDate
         }
       }
