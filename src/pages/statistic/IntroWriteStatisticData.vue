@@ -256,7 +256,6 @@ export default defineComponent({
     }
   },
   beforeMount(){
-    // this.verifyIfIsPastor()
     this.getCardName()
     this.getPreStatisticStatus()
     this.getParoquiasByUserId()

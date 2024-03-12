@@ -50,7 +50,7 @@
             <div class=" items-center" v-if="prop.node.header">
               <span class="text-weight-bold">{{ prop.node.label }}</span>
               <q-btn
-                icon="navigate_next"
+                icon="search"
                 round
                 unelevated
                 color="primary"
@@ -58,6 +58,16 @@
                 v-on:click.stop="clkParent(prop.node.organismId)"
               >
                 <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
+              </q-btn>
+              <q-btn
+                icon="navigate_next"
+                round
+                unelevated
+                color="primary"
+                flat
+                v-on:click.stop="$router.push('/admin/organismDetail?organismId=' + prop.node.organismId)"
+              >
+                <q-tooltip>Visitar paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn>
             </div>
             <div class="items-center" v-else>
@@ -690,6 +700,7 @@ export default defineComponent({
         this.$q.notify("Preencha observação e data final para prosseguir!");
         return;
       }
+      console.log(this.dialogRemoveUserFromDistrictFunction.funcId, this.dialogRemoveUserFromDistrictFunction.finalDate, this.dialogRemoveUserFromDistrictFunction.obsText)
       const opt = {
         route: "/desktop/adm/inactivateUserFromFunction",
         body: {
@@ -1018,7 +1029,7 @@ export default defineComponent({
       this.organismChildData.forEach((parish) => {
         tree = {
           type: parish.organismConfigName,
-          label: parish.organismConfigName + ' ' + parish.childName,
+          label:parish.childName,
           header: 'generic',
           organismId: parish.childId,
           children: []
@@ -1032,7 +1043,7 @@ export default defineComponent({
             })
             tree.children.push({
               type: congregation.organismConfigName,
-              label: congregation.organismConfigName + ' ' + congregation.childName,
+              label: congregation.childName,
               body: 'normal',
               organismId: congregation.childId,
               children: []
@@ -1041,7 +1052,7 @@ export default defineComponent({
               if (dept) {
                 tree.children[iCongregation].children.push({
                   type: dept.organismChildConfig.organismConfigName,
-                  label: dept.organismChildConfig.organismConfigName + ' ' + dept.organismChildData.childName,
+                  label: dept.organismChildData.childName,
                   body: 'normal',
                   organismId: dept._id
                 })

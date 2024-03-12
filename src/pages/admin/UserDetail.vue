@@ -681,12 +681,10 @@
               v-if="dialogAddCallToPastor.action === 'add'"
               v-model="dialogAddCallToPastor.organismAtuationSelected"
               filled
-              use-input
               label="Nome do organismo de atuação"
               option-label="nome"
               options-dense
-              :options="organismList"
-              @filter="getOrganismsList"
+              :options="actingOrganismsList"
               :option-value="(item) => item"
             >
               <template v-slot:no-option>
@@ -721,6 +719,29 @@
               hint="Informe a chave-ata"
             />
           </q-card-section>
+          <q-card-section>
+            <q-input
+            v-if="dialogAddCallToPastor.functionType === 'Pastor'"
+            filled
+            type="date"
+            :readonly="dialogAddCallToPastor.undefinedCallee ? true : false"
+            label="Prazo do chamado"
+            v-model="dialogAddCallToPastor.calleeDate"
+            />
+            <q-checkbox
+            v-if="dialogAddCallToPastor.functionType === 'Pastor'"
+            label="Prazo chamado é indefinido"
+            @update:model-value="undefinedCalleeFunction()"
+            v-model="dialogAddCallToPastor.undefinedCallee"
+            />
+            <q-input
+            filled
+            label="Data do chamado"
+            type="date"
+            hint="Informe a data início de ocupação da função"
+            v-model="dialogAddCallToPastor.initialDate"
+            />
+          </q-card-section>
           <q-card-section class="q-gutter-md">
             <q-select
               v-if="dialogAddCallToPastor.functionType === 'Pastor'"
@@ -729,9 +750,9 @@
               use-input
               label="Nome do usuário que instalou"
               option-label="userName"
-              :options="usersOptions"
+              :options="pastorsOptions"
               hint="Usuário que instalou"
-              @filter="getUsers"
+              @filter="getPastors"
               :loading="false"
               :option-value="(item) => item._id"
             >
@@ -757,27 +778,6 @@
               type="date"
               label="Data de instalação"
               v-model="dialogAddCallToPastor.installationDate"
-            />
-            <q-input
-              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
-              filled
-              type="date"
-              :readonly="dialogAddCallToPastor.undefinedCallee ? true : false"
-              label="Prazo do chamado"
-              v-model="dialogAddCallToPastor.calleeDate"
-            />
-            <q-checkbox
-              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
-              label="Prazo chamado é indefinido"
-              @update:model-value="undefinedCalleeFunction()"
-              v-model="dialogAddCallToPastor.undefinedCallee"
-            />
-            <q-input
-              filled
-              label="Data do chamado"
-              type="date"
-              hint="Informe a data início de ocupação da função"
-              v-model="dialogAddCallToPastor.initialDate"
             />
           </q-card-section>
           <q-card-actions align="center">
@@ -949,8 +949,8 @@
               use-input
               label="Nome do usuário que desinstalou"
               option-label="userName"
-              :options="usersOptions"
-              @filter="getUsers"
+              :options="pastorsOptions"
+              @filter="getPastors"
               :loading="false"
               :option-value="(item) => item._id"
             >
@@ -1145,6 +1145,8 @@ export default defineComponent({
       },
       setReadOnlyOrganismCaller: false,
       setDisableOrganismCallerCheckbox: false,
+      pastorsOptions: [],
+      actingOrganismsList: []
     };
   },
   mounted() {
@@ -1318,7 +1320,22 @@ export default defineComponent({
     linkPastorToFunction() {
       this.dialogAddCallToPastor.open = true;
     },
+    async getActingOptions() {
+      if (!this.dialogAddCallToPastor.organismCallerSelected.organismId) return
+      const callerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
+      const opt = {
+        route: '/desktop/adm/getActingOrganismsByParishId',
+        body: {
+          callerId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.actingOrganismsList = r.data
+    },
     getOrganismDetailD() {
+      this.getActingOptions()
+      if (!this.dialogAddCallToPastor.organismCallerSelected.organismId) return
       const organismIdSelected = this.dialogAddCallToPastor.organismCallerSelected.organismId
       const opt = {
         route: "/desktop/adm/getOrganismDetailById",
@@ -1652,6 +1669,31 @@ export default defineComponent({
       this.dialogSwapUserFromFunction.observation = null
       this.dialogSwapUserFromFunction.finalDate = null
       this.dialogSwapUserFromFunction.newUser = null
+    },
+    getPastors(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getPastores",
+        body: {
+          searchString: val,
+          isActive: 1,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      this.$q.loading.show();
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide();
+        if(r.error){ this.$q.notify(r.errorMessage) }
+
+        update(() => {
+          this.pastorsOptions = r.data.list;
+        })
+      });
     },
     getUsers(val, update, abort) {
       if(val.length < 3) {
