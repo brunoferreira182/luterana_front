@@ -59,8 +59,8 @@
             rounded
             unelevated
             no-caps
-            label="Atualizar email"
-            @click="updateUserEmail"
+            label="Atualizar Dados"
+            @click="updateUserData"
           />
         </div>
       </div>
@@ -237,7 +237,6 @@
                             :mask="field.type.mask"
                             v-model="field.value"
                             outlined
-                            :readonly="!tabs.onlyAdm"
                             >
                           </q-input>
                         </div>
@@ -249,7 +248,6 @@
                           label="Clique aqui para adicionar imagem de perfil"
                           outlined
                           @input="saveProfilePhoto()"
-                          :readonly="!tabs.onlyAdm"
                         >
                           <template #append>
                             <q-icon name="attach_file" />
@@ -265,7 +263,6 @@
                             :hint="field.hint"
                             v-model="field.value"
                             :options="field.options"
-                            :readonly="!tabs.onlyAdm"
                           >
                           </q-select>
                         </div>
@@ -286,7 +283,6 @@
                                   outlined
                                   use-chips
                                   multiple
-                                  :readonly="!tabs.onlyAdm"
                                 >
                                   <template v-slot:prepend>
                                     <q-icon name="attach_file" />
@@ -302,7 +298,6 @@
                           :label="field.label"
                           :hint="field.hint"
                           v-model="field.value"
-                          :readonly="!tabs.onlyAdm"
                         />
                         <div v-if="field.type.type === 'multiple_select'">
                           <div class="text-h5 q-pa-sm bg-grey-3" style="border-radius: 1rem">
@@ -316,7 +311,6 @@
                                 rounded
                                 @click="addDoubleSelection(i, fieldIndex)"
                                 no-caps
-                                :disable="!tabs.onlyAdm"
                               >
                                 Adicionar nova seleção dupla
                               </q-btn>
@@ -363,7 +357,6 @@
                               icon="add"
                               v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                               @click="clkOpenAddOrganismDialog(fieldIndex, i)"
-                              :disable="!tabs.onlyAdm"
                             />
                             <CardOrganism
                               :data="field"
@@ -384,13 +377,12 @@
                             icon="add"
                             @click="clkOpenAddressDialog(fieldIndex, i)"
                             class="q-mt-xs"
-                            :disable="!tabs.onlyAdm"
                           />
                           <CardAddress
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="i"
-                            :disableButtons="!tabs.onlyAdm"
+                            @remove="removeAddress"
                           />
                         </div>
                         <div v-if="field.type.type === 'person'">
@@ -400,7 +392,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
-                              :disableButtons="!tabs.onlyAdm"
+                              @remove="removePerson"
                             />
                           </div>
                           <q-btn
@@ -412,7 +404,6 @@
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkOpenAddPersonDialog(fieldIndex, i)"
-                            :disable="!tabs.onlyAdm"
                           />
                         </div>
                         <div v-if="field.type.type === 'maritalStatus'">
@@ -422,7 +413,7 @@
                               :data="field.value"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
-                              :disableButtons="!tabs.onlyAdm"
+                              @remove="removeMaritalStatus"
                             />
                           </div>
                           <q-btn
@@ -434,7 +425,6 @@
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
                             @click="clkAddMaritalStatus(fieldIndex, i)"
-                            :disable="!tabs.onlyAdm"
                           />
                         </div>
                         <div v-if="field.type.type === 'bank_data'">
@@ -446,13 +436,11 @@
                             color="primary"
                             @click="clkAddBankData(fieldIndex, i)"
                             icon="add"
-                            :disable="!tabs.onlyAdm"
                           />
                           <CardBankData
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="i"
-                            :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
                         <div v-if="
@@ -469,15 +457,14 @@
                             icon="add"
                             color="primary"
                             rounded
-                            @click="addPhoneMobileEmail(fieldIndex, i, field)"
+                            @click="addDialogPhoneMobileEmail(fieldIndex, i, field)"
                             class="q-mt-xs"
-                            :disable="!tabs.onlyAdm"
                           />
                           <CardPhoneMobileEmail
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="i"
-                            :disableButtons="!tabs.onlyAdm"
+                            @remove="removePhoneMobileEmail"
                             />
                         </div>
                         <div v-if="field.type.type === 'formation'">
@@ -490,13 +477,11 @@
                             color="primary"
                             icon="add"
                             class="q-mt-xs"
-                            :disable="!tabs.onlyAdm"
                           />
                           <CardFormation
                             :data="field"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="i"
-                            :disableButtons="!tabs.onlyAdm"
                           />
                         </div>
                       </div>
@@ -653,7 +638,6 @@
               label="Nome do organismo de chamado"
               option-label="nome"
               options-dense
-              :readonly="setReadOnlyOrganismCaller ? true : false"
               @update:model-value="getOrganismDetailD()"
               :options="filiatedOrganismsList"
               @filter="getFiliatedOrganismsList"
@@ -724,7 +708,6 @@
             v-if="dialogAddCallToPastor.functionType === 'Pastor'"
             filled
             type="date"
-            :readonly="dialogAddCallToPastor.undefinedCallee ? true : false"
             label="Prazo do chamado"
             v-model="dialogAddCallToPastor.calleeDate"
             />
@@ -984,13 +967,42 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <DialogAddPerson
+        :open="dialogAddPerson.open"
+        @addPerson="confirmAddPerson"
+        @closeDialog="clearDialogAddPerson"
+      />
+      <DialogMaritalStatus
+        :open="dialogAddMaritalStatus.open"
+        :dataProp="dialogAddMaritalStatus.data"
+        @addPerson="addMaritalStatus"
+        @closeDialog="clearDialogAddMaritalStatus"
+      />
+      <DialogPhoneMobileEmail
+        :open="dialogPhoneMobileEmail.open"
+        :dataProp="dialogPhoneMobileEmail.dataProp"
+        :type="dialogPhoneMobileEmail.type"
+        :label="dialogPhoneMobileEmail.label"
+        :hint="dialogPhoneMobileEmail.hint"
+        @confirm="confirmAddPhoneEmail"
+        @closeDialog="clearDdialogAddPhoneEmail"
+      />
+      <DialogAddAddress
+        :open="dialogAddAddress.open"
+        @confirmAddress="confirmAddAddress"
+        @closeDialog="clearDialogAddAddress"
+      />
     </q-page>
   </q-page-container>
 </template>
 
 <script setup>
 import CardAddress from '../../components/CardAddress.vue'
-import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue';
+import DialogAddAddress from '../../components/DialogAddress.vue'
+import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
+import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
+import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
+import DialogAddPerson from '../../components/DialogAddPerson.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
@@ -1139,7 +1151,33 @@ export default defineComponent({
       setReadOnlyOrganismCaller: false,
       setDisableOrganismCallerCheckbox: false,
       pastorsOptions: [],
-      actingOrganismsList: []
+      actingOrganismsList: [],
+      dialogAddPerson: {
+        open: false,
+        fieldIndex: null,
+        tabsIndex: null,
+        selectedPerson: null
+      },
+      dialogAddMaritalStatus: {
+        open:false,
+        fieldIndex: null,
+        tabsIndex: null,
+        data: null
+      },
+      dialogPhoneMobileEmail: {
+        open: false,
+        type: '',
+        label: '',
+        hint: '',
+        dataProp: null,
+        fieldIndex: null,
+        tabsIndex: null
+      },
+      dialogAddAddress: {
+        open: false,
+        fieldIndex: null,
+        tabsIndex: null
+      }
     };
   },
   mounted() {
@@ -1152,6 +1190,126 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    clearDialogAddAddress() {
+      this.dialogAddAddress = {
+        open: false,
+        fieldIndex: null,
+        tabsIndex: null
+      }
+    },
+    confirmAddAddress(value) {
+      if (!this.userData.userDataTabs[this.dialogAddAddress.tabsIndex].fields[this.dialogAddAddress.fieldIndex].value) {
+        this.userData.userDataTabs[this.dialogAddAddress.tabsIndex].fields[this.dialogAddAddress.fieldIndex].value = []
+      }
+      this.userData.userDataTabs[this.dialogAddAddress.tabsIndex].fields[this.dialogAddAddress.fieldIndex].value.push({
+        cep: value.cep,
+        city: value.city,
+        complement: value.complement,
+        number: value.number,
+        state: value.state,
+        street: value.street
+      })
+      this.clearDialogAddAddress()
+    },
+    clkOpenAddressDialog(fieldIndex, tabsIndex) {
+      this.dialogAddAddress.open = true
+      this.dialogAddAddress.fieldIndex = fieldIndex
+      this.dialogAddAddress.tabsIndex = tabsIndex
+    },
+    clearDdialogAddPhoneEmail() {
+      this.dialogPhoneMobileEmail = {
+        open: false,
+        type: '',
+        label: '',
+        hint: '',
+        dataProp: null,
+        fieldIndex: null,
+        tabsIndex: null
+      }
+    },
+    confirmAddPhoneEmail(value) {
+      if (!this.userData.userDataTabs[this.dialogPhoneMobileEmail.tabsIndex].fields[this.dialogPhoneMobileEmail.fieldIndex].value) {
+        this.userData.userDataTabs[this.dialogPhoneMobileEmail.tabsIndex].fields[this.dialogPhoneMobileEmail.fieldIndex].value = []
+      }
+      this.userData.userDataTabs[this.dialogPhoneMobileEmail.tabsIndex].fields[this.dialogPhoneMobileEmail.fieldIndex].value.push({
+        allowPublication: value.allowPublication,
+        type: value.type,
+        value: value.value
+      })
+      this.clearDdialogAddPhoneEmail()
+    },
+    addDialogPhoneMobileEmail(fieldIndex, tabsIndex, field) {
+      this.dialogPhoneMobileEmail.open = true
+      this.dialogPhoneMobileEmail.fieldIndex = fieldIndex
+      this.dialogPhoneMobileEmail.tabsIndex = tabsIndex
+      this.dialogPhoneMobileEmail.type = field.type
+    },
+    clearDialogAddMaritalStatus() {
+      this.dialogAddMaritalStatus.open = false,
+      this.dialogAddMaritalStatus.fieldIndex = null,
+      this.dialogAddMaritalStatus.tabsIndex = null,
+      this.dialogAddMaritalStatus.data = null
+    },
+    addMaritalStatus(value) {
+      if (!this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value) {
+        this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value = []
+      }
+      this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value.push({
+        partner: {
+          dates: {
+            finalDate: value.separationDate,
+            initialDate: value.weddingDate
+          },
+          name: value.person.userName,
+          partnerId: value.person._id,
+          deathDate: value.deathDate
+        }
+      })
+      //Aqui eu tenho que chamar a rota para criar a relação em users relation
+      this.clearDialogAddMaritalStatus()
+    },
+    clkAddMaritalStatus(fieldIndex, tabsIndex) {
+      this.dialogAddMaritalStatus.fieldIndex = fieldIndex
+      this.dialogAddMaritalStatus.tabsIndex = tabsIndex
+      this.dialogAddMaritalStatus.data = this.userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+      this.dialogAddMaritalStatus.open = true
+    },
+    clearDialogAddPerson() {
+      this.dialogAddPerson.open = false
+      this.dialogAddPerson.fieldIndex = null
+      this.dialogAddPerson.tabsIndex = null
+      this.dialogAddPerson.selectedPerson = null
+    },
+    confirmAddPerson(value) {
+      if (!this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value) {
+        this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value = []
+      }
+      this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value.push({
+        userName: value.userName,
+        userId: value._id
+      })
+      this.clearDialogAddPerson()
+    },
+    clkOpenAddPersonDialog(fieldIndex, tabsIndex) {
+      this.dialogAddPerson.fieldIndex = fieldIndex
+      this.dialogAddPerson.tabsIndex = tabsIndex
+      this.dialogAddPerson.open = true
+    },
+    removeAddress(fieldIndex, tabsIndex, i) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
+    },
+    removePhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue) { 
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(iValue, 1)
+    },  
+    removePerson(fieldIndex, tabsIndex, i) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
+    },
+    removeMaritalStatus(fieldIndex, tabsIndex, i) {
+      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
+    },
     changeAtuation(atuation){
       return
       console.log(atuation)
@@ -1621,9 +1779,9 @@ export default defineComponent({
     closeDialogOrganismDetail() {
       this.dialogLinkDetail.open = false
     },
-    updateUserEmail() {
+    updateUserData() {
       const opt = {
-        route: '/desktop/adm/updateUserEmail',
+        route: '/desktop/adm/updateUserData',
         body: {
           userDataTabs: this.userData.userDataTabs,
           userId: this.$route.query.userId

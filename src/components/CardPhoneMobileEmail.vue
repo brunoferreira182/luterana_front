@@ -22,14 +22,14 @@
       </q-item-section>
       <q-item-section side>
         <q-item-label>
-        <q-btn
+        <!-- <q-btn
           icon="edit"
           flat
           round
           color="primary"
           @click="edit(fieldIndex, tabsIndex, props.data, value, iValue)"
           :disable="disableButtons"
-        ><q-tooltip>Editar este {{ props.data[0].type.label }}</q-tooltip></q-btn>
+        ><q-tooltip>Editar este {{ props.data[0].type.label }}</q-tooltip></q-btn> -->
         <q-btn
           icon="delete"
           flat
@@ -48,9 +48,9 @@
 const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
 const emits = defineEmits(['edit', 'remove'])
 
-function edit(fieldIndex, tabsIndex, field, value, iValue) {
-  emits('edit', fieldIndex, tabsIndex, field, value, iValue)
-}
+// function edit(fieldIndex, tabsIndex, field, value, iValue) {
+//   emits('edit', fieldIndex, tabsIndex, field, value, iValue)
+// }
 
 function remove(fieldIndex, tabsIndex, field, value, iValue) {
   emits('remove', fieldIndex, tabsIndex, field, value, iValue)
