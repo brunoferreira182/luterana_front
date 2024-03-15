@@ -61,6 +61,7 @@
             no-caps
             label="Atualizar Dados"
             @click="updateUserData"
+            disable
           />
         </div>
       </div>
@@ -403,7 +404,7 @@
                             color="primary"
                             icon="add"
                             v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
-                            @click="clkOpenAddPersonDialog(fieldIndex, i)"
+                            @click="clkOpenAddPersonDialog(fieldIndex, i, field.label)"
                           />
                         </div>
                         <div v-if="field.type.type === 'maritalStatus'">
@@ -1156,7 +1157,8 @@ export default defineComponent({
         open: false,
         fieldIndex: null,
         tabsIndex: null,
-        selectedPerson: null
+        selectedPerson: null,
+        label: null
       },
       dialogAddMaritalStatus: {
         open:false,
@@ -1283,7 +1285,36 @@ export default defineComponent({
       this.dialogAddPerson.tabsIndex = null
       this.dialogAddPerson.selectedPerson = null
     },
-    confirmAddPerson(value) {
+    async confirmAddPerson(value) {
+      let type
+      console.log(type)
+      if (this.dialogAddPerson.label === 'Pai' || this.dialogAddPerson.label === 'Mãe') {
+        let gender
+        console.log(gender)
+        if (this.dialogAddPerson.label === 'Pai') gender = 'M'
+        else if (this.dialogAddPerson.label === 'Mãe') gender = 'F'
+        // const opt = {
+        //   route: '/desktop/adm/addUserParentRelation',
+        //   body: {
+        //     parentId: value._id,
+        //     gender,
+        //     type
+        //   }
+        // }
+        // let r = await useFetch(opt)
+        // if (r.error) return
+      } else if (this.dialogAddPerson.label === 'Filho(s)') {
+        type = 'parentalRelation'
+        // const opt = {
+        //   route: '/desktop/adm/addUserParentRelation',
+        //   body: {
+        //     childId: value._id,
+        //     type
+        //   }
+        // }
+        // let r = await useFetch(opt)
+        // if (r.error) return
+      }
       if (!this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value) {
         this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value = []
       }
@@ -1293,9 +1324,10 @@ export default defineComponent({
       })
       this.clearDialogAddPerson()
     },
-    clkOpenAddPersonDialog(fieldIndex, tabsIndex) {
+    clkOpenAddPersonDialog(fieldIndex, tabsIndex, label) {
       this.dialogAddPerson.fieldIndex = fieldIndex
       this.dialogAddPerson.tabsIndex = tabsIndex
+      this.dialogAddPerson.label = label
       this.dialogAddPerson.open = true
     },
     removeAddress(fieldIndex, tabsIndex, i) {
@@ -1304,8 +1336,19 @@ export default defineComponent({
     removePhoneMobileEmail(fieldIndex, tabsIndex, field, value, iValue) { 
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(iValue, 1)
     },  
-    removePerson(fieldIndex, tabsIndex, i) {
+    async removePerson(fieldIndex, tabsIndex, i) {
+      let field = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i]
+      console.log(field)
+      // const opt = {
+      //   route: '/desktop/adm/removeParentalRelation',
+      //   body: {
+      //     parentId: field.userId
+      //   }
+      // }
+      // let r = await useFetch(opt)
+      // if (r.error) return
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
+      // this.updateUserData()
     },
     removeMaritalStatus(fieldIndex, tabsIndex, i) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
@@ -1791,7 +1834,7 @@ export default defineComponent({
         if (r.error) {
           this.$q.notify('Ocorreu um erro, tente novamente.')
         } else {
-          this.$q.notify('Email atualizado.')
+          this.$q.notify('Dados atualizados.')
           this.getUserDetailById()
         }
       })
