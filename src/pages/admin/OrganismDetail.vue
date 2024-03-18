@@ -759,7 +759,7 @@
                         label="Nome do organismo de chamado"
                         option-label="nome"
                         options-dense
-                        
+                        readonly
                         :options="filiatedOrganismsList"
                         @filter="getFiliatedOrganismsList"
                         :option-value="(item) => item"
@@ -2394,6 +2394,18 @@ export default defineComponent({
     }
   },
   methods: {
+    getOrganismCallerData() {
+      this.organismCallerSelected = {
+        city: this.organismData.fields[7].value[0].city,
+        organismId: this.$route.query.organismId,
+        organismConfigName: this.organismConfigName,
+        organismStyle: this.organismConfigStyle,
+        organismConfigId: this.organismConfigId,
+        nome: this.organismData.fields[0].value,
+        apelido: this.organismData.fields[1].value,
+        endereco: this.organismData.fields[7].value
+      }
+    },
     inactivateUserFromFunction() {
       if (
         this.dialogDeleteUserFromFunction.obsText === "" ||
@@ -3793,6 +3805,7 @@ export default defineComponent({
         this.dialogInsertUserInFunction.selectedFuncIndex = ichild;  
         this.dialogInsertUserInFunction.functionType = 'Pastor'
         this.dialogInsertUserInFunction.open = true;
+        this.getOrganismCallerData()
     },
     linkPastorToFunction() {
       this.functions.forEach((func, ifunc) => {
@@ -3803,6 +3816,7 @@ export default defineComponent({
           this.dialogInsertUserInFunction.open = true;
         }
       })
+      this.getOrganismCallerData()
     },
     linkSecretaryToFunction() {
       this.functions.forEach((func, ifunc) => {
@@ -3813,6 +3827,7 @@ export default defineComponent({
           this.dialogInsertUserInFunction.open = true;
         }
       })
+      this.getOrganismCallerData()
     },
     addPastorFunctionInParoquia() {
       this.dialogInserPastorInParoquia.open = true
@@ -3823,6 +3838,7 @@ export default defineComponent({
       this.dialogInsertUserInFunction.selectedFuncIndex = funcIndex;  
       this.dialogInsertUserInFunction.functionType = 'Usuário';
       this.dialogInsertUserInFunction.open = true;
+      this.getOrganismCallerData()
     },
     
     getInputType(type) {
