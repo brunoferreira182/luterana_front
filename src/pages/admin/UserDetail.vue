@@ -61,7 +61,6 @@
             no-caps
             label="Atualizar Dados"
             @click="updateUserData"
-            disable
           />
         </div>
       </div>
@@ -1287,42 +1286,38 @@ export default defineComponent({
     },
     async confirmAddPerson(value) {
       let type
-      console.log(type)
       if (this.dialogAddPerson.label === 'Pai' || this.dialogAddPerson.label === 'Mãe') {
         let gender
-        console.log(gender)
         if (this.dialogAddPerson.label === 'Pai') gender = 'M'
         else if (this.dialogAddPerson.label === 'Mãe') gender = 'F'
-        // const opt = {
-        //   route: '/desktop/adm/addUserParentRelation',
-        //   body: {
-        //     parentId: value._id,
-        //     gender,
-        //     type
-        //   }
-        // }
-        // let r = await useFetch(opt)
-        // if (r.error) return
+        const opt = {
+          route: '/desktop/adm/addUserParentRelation',
+          body: {
+            parentId: value._id,
+            childId: this.$route.query.userId,
+            gender,
+            type: 'parentalRelation',
+            label: 'Pais'
+          }
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
       } else if (this.dialogAddPerson.label === 'Filho(s)') {
         type = 'parentalRelation'
-        // const opt = {
-        //   route: '/desktop/adm/addUserParentRelation',
-        //   body: {
-        //     childId: value._id,
-        //     type
-        //   }
-        // }
-        // let r = await useFetch(opt)
-        // if (r.error) return
+        const opt = {
+          route: '/desktop/adm/addUserParentRelation',
+          body: {
+            childId: value._id,
+            parentId: this.$route.query.userId,
+            type,
+            label: 'Filho(s)'
+          }
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
       }
-      if (!this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value) {
-        this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value = []
-      }
-      this.userData.userDataTabs[this.dialogAddPerson.tabsIndex].fields[this.dialogAddPerson.fieldIndex].value.push({
-        userName: value.userName,
-        userId: value._id
-      })
       this.clearDialogAddPerson()
+      this.getUserDetailById()
     },
     clkOpenAddPersonDialog(fieldIndex, tabsIndex, label) {
       this.dialogAddPerson.fieldIndex = fieldIndex
@@ -1338,17 +1333,29 @@ export default defineComponent({
     },  
     async removePerson(fieldIndex, tabsIndex, i) {
       let field = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i]
-      console.log(field)
-      // const opt = {
-      //   route: '/desktop/adm/removeParentalRelation',
-      //   body: {
-      //     parentId: field.userId
-      //   }
-      // }
-      // let r = await useFetch(opt)
-      // if (r.error) return
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
-      // this.updateUserData()
+      let label = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].label
+      if (label === 'Pai' || label === 'Mãe') {
+        const opt = {
+          route: '/desktop/adm/removeParentalRelation',
+          body: {
+            relationId: field.relationId
+          }
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        this.getUserDetailById()
+      } else if (label === 'Filho(s)') {
+        const opt = {
+          route: '/desktop/adm/removeUserChildRelation',
+          body: {
+            relationId: field.relationId
+          }
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        // this.updateUserData()
+        this.getUserDetailById()
+      }
     },
     removeMaritalStatus(fieldIndex, tabsIndex, i) {
       this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
@@ -1405,7 +1412,6 @@ export default defineComponent({
           userFunctionId: this.dialogDeletePastorFromFunction.userData,
           desinstalationDate: this.dialogDeletePastorFromFunction.finalDate,
           obs: this.dialogDeletePastorFromFunction.obsText,
-          
         },
       };
       if(this.dialogDeletePastorFromFunction.type === 'atuation'){
