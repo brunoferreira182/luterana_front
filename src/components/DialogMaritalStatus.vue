@@ -55,7 +55,7 @@
           rounded
         />
       </q-card-section>
-      <q-card-section>
+      <q-card-section v-if="data && data.spouses && data.spouses.length > 0">
         <q-list separator>
           <q-item
             v-for="(item, i) in data.spouses"

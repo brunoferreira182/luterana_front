@@ -1191,6 +1191,11 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    editMaritalStatus(fieldIndex, tabsIndex, i) {
+      let field = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
+      this.dialogAddMaritalStatus.open = true
+      this.dialogAddMaritalStatus.data = field
+    },
     clearDialogAddAddress() {
       this.dialogAddAddress = {
         open: false,
@@ -1251,22 +1256,17 @@ export default defineComponent({
       this.dialogAddMaritalStatus.tabsIndex = null,
       this.dialogAddMaritalStatus.data = null
     },
-    addMaritalStatus(value) {
-      if (!this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value) {
-        this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value = []
+    async addMaritalStatus(value) {
+      const opt = {
+        route: '/desktop/adm/addMaritalRelation',
+        body: {
+          value: value,
+          userId: this.$route.query.userId
+        },
       }
-      this.userData.userDataTabs[this.dialogAddMaritalStatus.tabsIndex].fields[this.dialogAddMaritalStatus.fieldIndex].value.push({
-        partner: {
-          dates: {
-            finalDate: value.separationDate,
-            initialDate: value.weddingDate
-          },
-          name: value.person.userName,
-          partnerId: value.person._id,
-          deathDate: value.deathDate
-        }
-      })
-      //Aqui eu tenho que chamar a rota para criar a relação em users relation
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getUserDetailById()
       this.clearDialogAddMaritalStatus()
     },
     clkAddMaritalStatus(fieldIndex, tabsIndex) {
@@ -1357,8 +1357,17 @@ export default defineComponent({
         this.getUserDetailById()
       }
     },
-    removeMaritalStatus(fieldIndex, tabsIndex, i) {
-      this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value.splice(i, 1)
+    async removeMaritalStatus(fieldIndex, tabsIndex, i) {
+      let field = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
+      const opt = {
+        route: '/desktop/adm/removeMaritalRelation',
+        body: {
+          relationId: field.relationId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.getUserDetailById()
     },
     changeAtuation(atuation){
       return
