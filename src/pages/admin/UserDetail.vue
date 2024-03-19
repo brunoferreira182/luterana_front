@@ -153,7 +153,7 @@
                       unelevated
                       color="primary"
                       icon="add"
-                      @click.stop="addAtuacaoToPastor(call)"
+                      @click.stop="addAtuacaoToPastor(call, i)"
                     >
                       <q-tooltip>
                         Adicionar atuação
@@ -637,6 +637,7 @@
               use-input
               label="Nome do organismo de chamado"
               option-label="nome"
+              :readonly="dialogAddCallToPastor.subtype === 'atuacao' ? true : false"
               options-dense
               @update:model-value="getOrganismDetailD()"
               :options="filiatedOrganismsList"
@@ -694,6 +695,7 @@
               v-model="dialogAddCallToPastor.sameOrganismCalled"
             />
             <q-input
+              v-if="dialogAddCallToPastor.subtype !== 'atuacao'"
               filled
               label="Chave-ata"
               mask="AAA-AAA-###-####-##-a"
@@ -703,7 +705,9 @@
               hint="Informe a chave-ata"
             />
           </q-card-section>
-          <q-card-section>
+          <q-card-section
+            v-if="dialogAddCallToPastor.subtype !== 'atuacao'"
+          >
             <q-input
             v-if="dialogAddCallToPastor.functionType === 'Pastor'"
             filled
@@ -720,7 +724,7 @@
           </q-card-section>
           <q-card-section class="q-gutter-md">
             <q-select
-              v-if="dialogAddCallToPastor.functionType === 'Pastor'"
+              v-if="dialogAddCallToPastor.functionType === 'Pastor' && dialogAddCallToPastor.subtype !== 'atuacao'"
               v-model="dialogAddCallToPastor.userInstallation"
               filled
               use-input
@@ -1569,6 +1573,38 @@ export default defineComponent({
       });
     },
     async addUserToFunction() {
+      if (this.dialogAddCallToPastor.subtype === 'atuacao') {
+        const opt = {
+          route: "/desktop/adm/addUserToFunction",
+          body: {
+            organismFunctionId: this.dialogAddCallToPastor.selectedfunc,
+            userIdMongo: this.$route.query.userId,
+            dates: {
+              initialDate: this.dialogAddCallToPastor.initialDate
+            }
+          }
+        }
+        if (!this.dialogAddCallToPastor.organismCallerSelected.organismId || (!this.dialogAddCallToPastor.organismAtuationSelected.organismId && !this.dialogAddCallToPastor.sameOrganismCalled)) {
+          this.$q.notify('Preencha todos os dados para continuar')
+          return
+        }
+        opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
+        opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId ? this.dialogAddCallToPastor.organismAtuationSelected.organismId : this.dialogAddCallToPastor.sameOrganismCalled
+        this.$q.loading.show()
+        let r = await useFetch(opt)
+        if (r.error) {
+          this.$q.notify(r.errorMessage)
+          this.functions[selectedFuncIndex].users = []
+          return
+        } else {
+          this.$q.notify('Usuário inserido na função!')
+          this.getUserDetailById()  
+          this.clearDialogAndFunctions();
+          return
+        }
+      }
+
+
       if(
         this.dialogAddCallToPastor.ataKey === '' ||
         (this.dialogAddCallToPastor.calleeDate === '' && !this.dialogAddCallToPastor.undefinedCallee) ||
