@@ -613,7 +613,7 @@
                 <div v-if="field.type.type === 'services'">
                   <q-btn 
                     v-if="!field.value || !field.value.length > 0"
-                    label="Quantidade de cultos"
+                    label="Horário de cultos"
                     no-caps
                     rounded
                     unelevated
@@ -627,7 +627,6 @@
                     v-if="field.value && field.value.length"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
-                    :user="`false`"
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
@@ -1796,162 +1795,81 @@
   <q-dialog
     v-model="dialogAddServices.open"
   >
-    <q-card>
+    <q-card style="width: 300px;border-radius: 1rem;">
       <q-card-section>
-        <div>
-          <strong>Frequência:</strong>
-          <q-select
-            class="q-pa-sm"
-            filled
-            use-input
-            label="Selecione a Frequência"
-            option-label="label"
-            v-model="dialogAddServices.selectedEventOption"
-            :options="dialogAddServices.eventsOptions.map(option => ({ ...option }))"
-            :loading="false"
-            @update:model-value="resetDays"
-          />
+        <div class="text-center text-h6">
+          Adicionar horário de culto
         </div>
-        <div class=q-mt-md v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'week'">
-          <strong>Dias:</strong>
-          <div
-            v-for="(day, iDay) in dialogAddServices.selectedEventOption.days"
-            :key="iDay"
-          >
-            <div
-              class="row"
-            >
-              <q-select
-                class="q-pa-sm col-7"
-                filled
-                use-input
-                label="Selecione o dia"
-                option-label="label"
-                v-model="day.value"
-                :options="dialogAddServices.daysOfWeek"
-                :loading="false"
-              />
-              <q-chip 
-                class="col-2 q-ml-sm"
-                v-if="day.value && day.value.times && day.value.times.initial"
-                color="white"
-                model-value=false
-                flat
-                text-color="primary"
-              >
-                {{ day.value.times.initial }}
-                <q-tooltip>Horário inicial</q-tooltip>
-              </q-chip>
-              <q-btn
-                v-if="day.value && day.value.label"
-                class="col-2"
-                color="primary"
-                flat
-                icon="schedule"
-                rounded
-                @click="addTimeForDay(iDay)"
-              >
-                <q-tooltip>Selecione o horário</q-tooltip>
-              </q-btn>
-            </div>
-          </div>
-          <div
-            align="center"
-          >
-            <q-btn
-              color="primary"
-              rounded
-              unelevated
-              label="confirmar"
-              @click="confirmAddEventsWeek"
-            />
-          </div>
+        <q-select
+          outlined
+          label="Selecione o dia da semana"
+          class="q-pa-sm"
+          :options="dialogAddServices.daysOfWeek"
+          option-label="label"
+          v-model="dialogAddServices.selectedDay"
+        />
+        <q-input
+          label="Selecione o horário"
+          outlined
+          class="q-pa-sm"
+          mask="##:##"
+          v-model="dialogAddServices.selectedHour"
+        />
+        <div class="q-my-md">
+          <strong>Selecione uma ou mais opção</strong>
         </div>
-        <div
-          v-if="dialogAddServices.selectedEventOption && dialogAddServices.selectedEventOption.model === 'month'"
-        >
-          <div
-            v-for="(week, iWeek) in dialogAddServices.selectedEventOption.weeks"
-            :key="week"
-          >
-            <div class="q-pa-sm">
-              <strong>{{ week.label }}:</strong>
-              <q-btn 
-                v-if="(!week.value || !week.value.label) && dialogAddServices.selectedEventOption.num > dialogAddDayInMonth.count"
-                icon="add"
-                color="primary"
-                flat
-                rounded
-                size="12px"
-                @click="addDayInMonth(iWeek)"
-              >
-                <q-tooltip>Adicionar culto</q-tooltip>
-              </q-btn>
-              <div v-if="week.value">
-                <div 
-                  v-for="(value, iValue) in week.value"
-                  :key="value"
-                >
-                  <div class="row">
-                    <q-select
-                      class="col-5"
-                      filled
-                      use-input
-                      label="Selecione o dia"
-                      option-label="label"
-                      v-model="value.day"
-                      :options="dialogAddServices.daysOfWeek"
-                      :loading="false"
-                    />
-                    <q-chip
-                      class="col-2"
-                      v-if="value && value.time"
-                      color="white"
-                      text-color="primary"
-                    >
-                      {{ value.time }}
-                    </q-chip>
-                    <q-btn
-                      v-if="value.day"
-                      class="col-2 q-pa-sm"
-                      color="primary"
-                      flat
-                      icon="schedule"
-                      rounded
-                      @click="addTimeForDay(iWeek, iValue)"
-                    >
-                      <q-tooltip>Selecione o horário</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      class="col-2"
-                      color="red"
-                      flat
-                      icon="delete"
-                      rounded
-                      @click="removeMonthDay(iWeek, iValue)"
-                    >
-                      <q-tooltip>Excluir dia</q-tooltip>
-                    </q-btn>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
+        <q-checkbox
+          label="Toda semana"
+          v-model="dialogAddServices.everyWeek"
+          class="row"
+          @update:model-value="changeOtherStatus()"
+        />
+        <q-checkbox
+          label="1º semana"
+          v-model="dialogAddServices.firstWeek"
+          class="row"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="2° semana"
+          v-model="dialogAddServices.secondWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="3° semana"
+          v-model="dialogAddServices.thirdWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="4° semana"
+          v-model="dialogAddServices.fourthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="5° semana"
+          v-model="dialogAddServices.fifthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
       </q-card-section>
       <q-card-actions
         align="center"
-        v-if="dialogAddDayInMonth 
-        && dialogAddServices.selectedEventOption 
-        && dialogAddServices.selectedEventOption.num === dialogAddDayInMonth.count"
       >
         <q-btn
           color="primary"
           rounded
           unelevated
+          no-caps
+          flat
+          label="Voltar"
+          @click="clearDialogAddEvents"
+        />
+        <q-btn
+          color="primary"
+          rounded
+          unelevated
+          no-caps
           label="confirmar"
-          @click="confirmAddEventsMonth"
+          @click="confirmAddServiceConfig"
         />
       </q-card-actions>
     </q-card>
@@ -2340,12 +2258,24 @@ export default defineComponent({
       statusData: null,
       dialogAddServices: {
         open: false,
-        eventsOptions: null,
-        daysOfWeek: null,
-        selectedEventOption: null,
+        daysOfWeek: [
+          {label: 'Domingo', value: 'sunday' },
+          {label: 'Segunda-feira', value: 'monday' },
+          {label: 'Terça-feira', value: 'monday' },
+          {label: 'Quarta-feira', value: 'wednesday' },
+          {label: 'Quinta-feira', value: 'thursday' },
+          {label: 'Sexta-feira', value: 'friday' },
+          {label: 'Sábado', value: 'saturday' }
+        ],
         selectedDay: null,
-        selectedValue: null,
-        fieldIndex: null
+        selectedHour: null,
+        fieldIndex: null,
+        everyWeek: false,
+        firstWeek: false,
+        secondWeek: false,
+        thirdWeek: false,
+        fourthWeek: false,
+        fifthWeek: false
       },
       dialogAddTimeForDay: {
         open: false,
@@ -2394,6 +2324,60 @@ export default defineComponent({
     }
   },
   methods: {
+    confirmAddServiceConfig() {
+      if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
+      }
+      this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
+        dayOfWeek: this.dialogAddServices.selectedDay,
+        time: this.dialogAddServices.selectedHour,
+        configs: {
+          everyWeek: this.dialogAddServices.everyWeek,
+          firstWeek: this.dialogAddServices.firstWeek,
+          secondWeek: this.dialogAddServices.secondWeek,
+          thirdWeek: this.dialogAddServices.thirdWeek,
+          fourthWeek: this.dialogAddServices.fourthWeek,
+          fifthWeek: this.dialogAddServices.fifthWeek
+        }
+      })
+      this.clearDialogAddEvents()
+    },
+    clearDialogAddEvents() {
+      this.dialogAddServices.open = false
+      this.dialogAddServices.selectedDay = null
+      this.dialogAddServices.selectedHour = null
+      this.dialogAddServices.fieldIndex = null
+      this.dialogAddServices.everyWeek = false
+      this.dialogAddServices.firstWeek = false
+      this.dialogAddServices.secondWeek = false
+      this.dialogAddServices.thirdWeek = false
+      this.dialogAddServices.fourthWeek = false
+      this.dialogAddServices.fifthWeek = false
+    },
+    verifyIfChangeStatus() {
+      if (this.dialogAddServices.firstWeek === true
+        && this.dialogAddServices.secondWeek === true
+        && this.dialogAddServices.thirdWeek === true
+        && this.dialogAddServices.fourthWeek === true 
+        && this.dialogAddServices.fifthWeek === true ) {
+          this.dialogAddServices.everyWeek = true
+        } else {this.dialogAddServices.everyWeek = false}
+    },
+    changeOtherStatus() {
+      if (this.dialogAddServices.everyWeek === true) {
+        this.dialogAddServices.firstWeek = true
+        this.dialogAddServices.secondWeek = true
+        this.dialogAddServices.thirdWeek = true
+        this.dialogAddServices.fourthWeek = true 
+        this.dialogAddServices.fifthWeek = true
+      } else if (this.dialogAddServices.everyWeek === false) {
+        this.dialogAddServices.firstWeek = false
+        this.dialogAddServices.secondWeek = false
+        this.dialogAddServices.thirdWeek = false
+        this.dialogAddServices.fourthWeek = false 
+        this.dialogAddServices.fifthWeek = false
+      }
+    },
     getOrganismCallerData() {
       this.organismCallerSelected = {
         city: this.organismData.fields[7].value[0].city,
@@ -2449,65 +2433,6 @@ export default defineComponent({
     goToDetail() {
       this.$router.push('/admin/organismDetail?organismId=' + this.dialogShowOtherDetail.orgId )
     },
-    resetDays() {
-      this.dialogAddDayInMonth.count = 0
-      if (this.dialogAddServices.selectedEventOption.model === 'week') {
-        this.dialogAddServices.selectedEventOption.days.forEach((d) => {
-          d.value = null
-        })
-      } else if (this.dialogAddServices.selectedEventOption.model === 'month') {
-        this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
-          w.value = []
-        })
-      }
-    },
-    confirmAddEventsWeek() {
-      let allHaveTime = true
-      this.dialogAddServices.selectedEventOption.days.forEach((d) => {
-        if (d.value) {
-          if (d.value.times && d.value.times.initial) {
-            allHaveTime = true
-          }
-          if (!d.value.times || !d.value.times.initial) {
-            allHaveTime = false
-            this.$q.notify('Preencha os horários')
-            return
-          }
-        }
-      })
-      if (allHaveTime) {
-        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
-          this.organismData.fields[this.dialogAddServices.fieldIndex].value = [];
-        }
-        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push(this.dialogAddServices.selectedEventOption);
-        this.clearDialogAddServices()
-      }
-    },
-    confirmAddEventsMonth() {
-      let allHaveTime = true
-      this.dialogAddServices.selectedEventOption.weeks.forEach((w) => {
-        if (w.value && w.value.length > 0) {
-          
-          w.value.forEach((v) => {
-            if (v.time) {
-              allHaveTime = true; 
-            }
-            else if (!v.time) {
-              this.$q.notify('Preencha o horário');
-              allHaveTime = false; 
-              return;
-            }
-          });
-        }
-      });
-      if (allHaveTime) {
-        if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
-          this.organismData.fields[this.dialogAddServices.fieldIndex].value = [];
-        }
-        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push(this.dialogAddServices.selectedEventOption);
-        this.clearDialogAddServices()
-      }
-    },
     clearDialogAddServices() {
       this.dialogAddServices.open = false
       this.dialogAddServices.selectedEventOption = null
@@ -2522,10 +2447,6 @@ export default defineComponent({
     clearDialogInserTimeInMonth() {
       this.dialogInsertTimeInMonth.open = false
       this.dialogInsertTimeInMonth.initial = null
-    },
-    removeMonthDay(iWeek, iValue) {
-      this.dialogAddServices.selectedEventOption.weeks[iWeek].value.splice(iValue, 1)
-      this.dialogAddDayInMonth.count--
     },
     confirmAddDayInMonth() {
       this.dialogAddDayInMonth.count++
@@ -3013,7 +2934,7 @@ export default defineComponent({
       this.dialogLinks = false
       this.$q.notify("Vínculos criados com sucesso.")
     },
-    removeServicesData (fieldIndex, tabsIndex, field, value, iValue) {
+    removeServicesData (fieldIndex, iValue) {
       this.organismData.fields[fieldIndex].value.splice(iValue, 1)
     },
     // editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {

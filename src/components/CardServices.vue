@@ -5,72 +5,42 @@
     separator
     flat
   >
-    <q-item-label header v-if="props.data[0] && props.data[0].frequency" class="no-padding">
-      <div class="q-pl-md q-pt-sm">
-        Dados sobre os cultos:
-      </div>
-    </q-item-label>
-    
-    <q-item
-      v-for="(value, iValue) in props.data"
-      :key="iValue"
+    <q-item 
+      v-for="(data, iValue) in props.data"
+      :key="data"
     >
-      <q-item-section v-if="value.model === 'month'">
-        <q-item-label>
-          <strong class="q-mr-sm">Frequência:</strong> {{ value.label }}
-        </q-item-label>
+      <q-item-section>
         <div
-          v-for="week in value.weeks"
-          :key="week"
-          class="q-ml-xs q-py-md row"
+          
         >
-          <div class="col-4">
-            {{ week.label }}:
+          <div>
+            Dia da semana: {{ data.dayOfWeek.label }}
           </div>
-          <q-list class="col-8">
-            <q-item
-              class="no-padding"
-              v-for="val in week.value"
-              :key="val"
-            >
-              <q-item-label>
-                {{ val.day.label }} às {{ val.time }}
-              </q-item-label>
-            </q-item>
-          </q-list>
-        </div>
-      </q-item-section>
-      <q-item-section v-else-if="value.model === 'week'">
-        <q-item-label>
-          <strong class="q-mr-sm">Frequência:</strong> {{ value.label }}
-        </q-item-label>
-        <div
-          v-for="day in value.days"
-          :key="day"
-          class="q-ml-xs q-py-md row"
-        >
-          {{ day.value.label }} às {{ day.value.times.initial }}
+          <div>
+            Horário: {{ data.time }}
+          </div>
+          <div v-if="data.configLabel">
+            Semanas: {{ data.configLabel }}
+          </div>
         </div>
       </q-item-section>
       <q-item-section side>
         <q-item-label>
-          <q-btn 
-            icon="edit"
+          <q-btn
             color="primary"
-            flat
-            round
-            size="md"
+            icon="edit"
             rounded
-            @click="edit(fieldIndex)"
+            flat
+            unelevated
+            @click="edit"
           />
-          <q-btn 
-            icon="delete"
+          <q-btn
             color="red"
-            round
-            flat
-            size="md"
+            icon="delete"
             rounded
-            @click="remove(fieldIndex, isecretary)"
+            flat
+            unelevated
+            @click="remove(fieldIndex, iValue)"
           />
         </q-item-label>
       </q-item-section>
@@ -79,15 +49,54 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'user'])
+import { onBeforeMount, defineProps } from 'vue'
+onBeforeMount(() => {
+  nSeiONome()
+})
+const props = defineProps(['data', 'fieldIndex'])
 const emits = defineEmits(['edit', 'remove'])
+
+function nSeiONome() {
+  console.log('CUAHSUYIASHDSAHB')
+  for (let i = 0; i < props.data.length; i++) {
+    let data = props.data[i];
+    data.configLabel = '';
+    let configs = data.configs;
+    let firstConfig = true; 
+    if (configs.everyWeek) {
+      data.configLabel += 'Todas as semanas';
+      firstConfig = false;
+      return
+    }
+    if (configs.firstWeek) {
+      data.configLabel += (firstConfig ? '' : ', ') + 'Primeira semana';
+      firstConfig = false;
+    }
+    if (configs.secondWeek) {
+      data.configLabel += (firstConfig ? '' : ', ') + 'Segunda semana';
+      firstConfig = false;
+    }
+    if (configs.thirdWeek) {
+      data.configLabel += (firstConfig ? '' : ', ') + 'Terceira semana';
+      firstConfig = false;
+    }
+    if (configs.fourthWeek) {
+      data.configLabel += (firstConfig ? '' : ', ') + 'Quarta semana';
+      firstConfig = false;
+    }
+    if (configs.fifthWeek) {
+      data.configLabel += (firstConfig ? '' : ', ') + 'Quinta semana';
+      firstConfig = false;
+    }
+}
+}
 
 function edit(fieldIndex) {
   emits('edit', fieldIndex)
 }
 
-function remove(fieldIndex, tabsIndex, field, value, iValue) {
-  emits('remove', fieldIndex, tabsIndex, field, value, iValue)
+function remove(fieldIndex, iValue) {
+  emits('remove', fieldIndex, iValue)
 }
 
 

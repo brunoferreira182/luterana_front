@@ -279,6 +279,7 @@ export default defineComponent({
         }
 
       });
+      this.getValidationResumeByOrganism()
     },
     insertCongregationalStatisticsDone() {
       const opt = {
@@ -301,7 +302,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
         body: {
-          organismId: this.$route.query.organismId,
+          organismId: this.userOrganismList.organismId,
         }
       }
       useFetch(opt).then((r) => {
@@ -370,6 +371,7 @@ export default defineComponent({
             this.isPastor = true
           }
         })
+        // this.getValidationResumeByOrganism()
         // if (r.data.usuarioEstaEmParoquia) {
         //   this.hasParoquia = true
         //   this.paroquiaId = r.data.organismParentId

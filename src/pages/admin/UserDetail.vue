@@ -1574,19 +1574,22 @@ export default defineComponent({
     },
     async addUserToFunction() {
       if (this.dialogAddCallToPastor.subtype === 'atuacao') {
+        if (!this.dialogAddCallToPastor.organismCallerSelected.organismId || 
+            (!this.dialogAddCallToPastor.organismAtuationSelected.organismId && 
+            !this.dialogAddCallToPastor.sameOrganismCalled) || 
+          this.dialogAddCallToPastor.installationDate === '') {
+          this.$q.notify('Preencha todos os dados para continuar');
+          return;
+        }
         const opt = {
           route: "/desktop/adm/addUserToFunction",
           body: {
             organismFunctionId: this.dialogAddCallToPastor.selectedfunc,
             userIdMongo: this.$route.query.userId,
             dates: {
-              initialDate: this.dialogAddCallToPastor.initialDate
+              initialDate: this.dialogAddCallToPastor.installationDate
             }
           }
-        }
-        if (!this.dialogAddCallToPastor.organismCallerSelected.organismId || (!this.dialogAddCallToPastor.organismAtuationSelected.organismId && !this.dialogAddCallToPastor.sameOrganismCalled)) {
-          this.$q.notify('Preencha todos os dados para continuar')
-          return
         }
         opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
         opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId ? this.dialogAddCallToPastor.organismAtuationSelected.organismId : this.dialogAddCallToPastor.sameOrganismCalled
