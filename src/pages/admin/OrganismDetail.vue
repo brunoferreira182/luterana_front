@@ -3399,42 +3399,42 @@ export default defineComponent({
       return allRight;
     },
     updateOrganismData(){
-      if (this.checkRequiredFields()) {
-        const userData = [];
-        for (const func of this.functions) {
-          if (func.users && func.users.length > 0) {
-            for (const user of func.users) {
-              userData.push({
-                organismFunctionConfigId: user.organismFunctionConfigId,
-                userId: user.userId,
-                dates: {
-                  initialDate: user.initialDate
-                }
-              });
-            }
+      const userData = [];
+      for (const func of this.functions) {
+        if (func.users && func.users.length > 0) {
+          for (const user of func.users) {
+            userData.push({
+              organismFunctionConfigId: user.organismFunctionConfigId,
+              userId: user.userId,
+              dates: {
+                initialDate: user.initialDate
+              }
+            });
           }
         }
-        const organismId = this.$route.query.organismId
-        const opt = {
-          route: '/desktop/adm/updateOrganismData',
-          body: {
-            organismData: this.organismData,
-            organismId: organismId
-          }
-        }
-        this.$q.loading.show()
-        useFetch(opt).then(r => {
-          this.$q.loading.hide()
-          if(r.error){
-            this.$q.notify('Ocorreu um erro, tente novamente')
-          } else {
-            this.$q.notify('Organismo editado com sucesso!')
-            this.getOrganismDetailById()
-          }
-        })
-      } else {
-        this.$q.notify("Há campos obrigatórios não preenchidos");
       }
+      const organismId = this.$route.query.organismId
+      const opt = {
+        route: '/desktop/adm/updateOrganismData',
+        body: {
+          organismData: this.organismData,
+          organismId: organismId
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then(r => {
+        this.$q.loading.hide()
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Organismo editado com sucesso!')
+          this.getOrganismDetailById()
+        }
+      })
+      // if (this.checkRequiredFields()) {
+      // } else {
+      //   this.$q.notify("Há campos obrigatórios não preenchidos");
+      // }
     },
     removeParentRelation(chip){
       const organismParentId = chip._id
