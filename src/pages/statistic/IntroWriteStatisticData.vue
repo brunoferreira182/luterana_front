@@ -296,7 +296,6 @@ export default defineComponent({
     },
     getValidationResumeByOrganism () {
       let allSipar = true
-      console.log(this.userOrganismList)
       this.userOrganismList.childData.forEach((child) => {
         if (child.gestaoParoquial && !child.gestaoParoquial.managementType === 'SIPAR') {
           allSipar = false
