@@ -259,25 +259,21 @@ export default defineComponent({
     this.getCardName()
     this.getPreStatisticStatus()
     this.getParoquiasByUserId()
-    this.getValidationResumeByOrganism()
   },
   methods: {
-    getParoquiasByUserId(){
+    async getParoquiasByUserId(){
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      await useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
         for (const childDataItem of this.userOrganismList.childData) {
-
           const allValidated = childDataItem.statusEstatistica.length > 0 &&
             childDataItem.statusEstatistica.every(item => item.validated === true);
-
           childDataItem.allValidated = allValidated;
         }
-
       });
       this.getValidationResumeByOrganism()
     },
@@ -299,6 +295,17 @@ export default defineComponent({
       })
     },
     getValidationResumeByOrganism () {
+      let allSipar = true
+      console.log(this.userOrganismList)
+      this.userOrganismList.childData.forEach((child) => {
+        if (child.gestaoParoquial && !child.gestaoParoquial.managementType === 'SIPAR') {
+          allSipar = false
+        }
+      })
+      if (allSipar) {
+        this.canSendStatistic = true
+        return
+      }
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
         body: {
