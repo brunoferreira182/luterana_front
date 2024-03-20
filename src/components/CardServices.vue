@@ -10,9 +10,7 @@
       :key="data"
     >
       <q-item-section>
-        <div
-          
-        >
+        <div>
           <div>
             Dia da semana: {{ data.dayOfWeek.label }}
           </div>
@@ -32,7 +30,7 @@
             rounded
             flat
             unelevated
-            @click="edit"
+            @click="edit(fieldIndex, iValue)"
           />
           <q-btn
             color="red"
@@ -51,13 +49,12 @@
 <script setup>
 import { onBeforeMount, defineProps } from 'vue'
 onBeforeMount(() => {
-  nSeiONome()
+  setFrequency()
 })
-const props = defineProps(['data', 'fieldIndex'])
+const props = defineProps(['data', 'fieldIndex', 'editData'])
 const emits = defineEmits(['edit', 'remove'])
 
-function nSeiONome() {
-  console.log('CUAHSUYIASHDSAHB')
+function setFrequency() {
   for (let i = 0; i < props.data.length; i++) {
     let data = props.data[i];
     data.configLabel = '';
@@ -88,16 +85,15 @@ function nSeiONome() {
       data.configLabel += (firstConfig ? '' : ', ') + 'Quinta semana';
       firstConfig = false;
     }
-}
+  }
 }
 
-function edit(fieldIndex) {
-  emits('edit', fieldIndex)
+function edit(fieldIndex, iValue) {
+  emits('edit', fieldIndex, iValue)
 }
 
 function remove(fieldIndex, iValue) {
   emits('remove', fieldIndex, iValue)
 }
-
 
 </script>

@@ -1521,6 +1521,86 @@
           </div>
         </q-card>
       </q-dialog>
+      <q-dialog
+    v-model="dialogAddServices.open"
+  >
+    <q-card style="width: 300px;border-radius: 1rem;">
+      <q-card-section>
+        <div class="text-center text-h6">
+          Adicionar horário de culto
+        </div>
+        <q-select
+          outlined
+          label="Selecione o dia da semana"
+          class="q-pa-sm"
+          :options="dialogAddServices.daysOfWeek"
+          option-label="label"
+          v-model="dialogAddServices.selectedDay"
+        />
+        <q-input
+          label="Selecione o horário"
+          outlined
+          class="q-pa-sm"
+          mask="##:##"
+          v-model="dialogAddServices.selectedHour"
+        />
+        <div class="q-my-md">
+          <strong>Selecione uma ou mais opção</strong>
+        </div>
+        <q-checkbox
+          label="Toda semana"
+          v-model="dialogAddServices.everyWeek"
+          @update:model-value="changeOtherStatus()"
+        />
+        <q-checkbox
+          label="1º semana"
+          v-model="dialogAddServices.firstWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="2° semana"
+          v-model="dialogAddServices.secondWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="3° semana"
+          v-model="dialogAddServices.thirdWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="4° semana"
+          v-model="dialogAddServices.fourthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="5° semana"
+          v-model="dialogAddServices.fifthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+      </q-card-section>
+      <q-card-actions
+        align="center"
+      >
+        <q-btn
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          flat
+          label="Voltar"
+          @click="clearDialogAddEvents"
+        />
+        <q-btn
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          label="confirmar"
+          @click="confirmAddServiceConfig"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1642,6 +1722,29 @@ export default defineComponent({
           name: '',
         },
       },
+      dialogAddServices: {
+        open: false,
+        daysOfWeek: [
+          {label: 'Domingo', value: 'sunday' },
+          {label: 'Segunda-feira', value: 'monday' },
+          {label: 'Terça-feira', value: 'monday' },
+          {label: 'Quarta-feira', value: 'wednesday' },
+          {label: 'Quinta-feira', value: 'thursday' },
+          {label: 'Sexta-feira', value: 'friday' },
+          {label: 'Sábado', value: 'saturday' }
+        ],
+        edit: false,
+        selectedDay: null,
+        selectedHour: null,
+        fieldIndex: null,
+        iValue: null,
+        everyWeek: false,
+        firstWeek: false,
+        secondWeek: false,
+        thirdWeek: false,
+        fourthWeek: false,
+        fifthWeek: false,
+      },
       maritalStatus: {
         open: false,
         tabsIndex: null,
@@ -1729,6 +1832,95 @@ export default defineComponent({
     this.getChildOrganismsById()
   },
   methods: {
+    clearDialogAddEvents() {
+      this.dialogAddServices.open = false
+      this.dialogAddServices.selectedDay = null
+      this.dialogAddServices.selectedHour = null
+      this.dialogAddServices.fieldIndex = null
+      this.dialogAddServices.everyWeek = false
+      this.dialogAddServices.firstWeek = false
+      this.dialogAddServices.secondWeek = false
+      this.dialogAddServices.thirdWeek = false
+      this.dialogAddServices.fourthWeek = false
+      this.dialogAddServices.fifthWeek = false
+    },
+    confirmAddServiceConfig() {
+      if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
+      }
+      if (this.dialogAddServices.edit) {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value[this.dialogAddServices.iValue] = {
+          dayOfWeek: this.dialogAddServices.selectedDay,
+          time: this.dialogAddServices.selectedHour,
+          configs: {
+            everyWeek: this.dialogAddServices.everyWeek,
+            firstWeek: this.dialogAddServices.firstWeek,
+            secondWeek: this.dialogAddServices.secondWeek,
+            thirdWeek: this.dialogAddServices.thirdWeek,
+            fourthWeek: this.dialogAddServices.fourthWeek,
+            fifthWeek: this.dialogAddServices.fifthWeek
+          }
+        }
+        this.clearDialogAddEvents()
+        return 
+      } else {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
+          dayOfWeek: this.dialogAddServices.selectedDay,
+          time: this.dialogAddServices.selectedHour,
+          configs: {
+            everyWeek: this.dialogAddServices.everyWeek,
+            firstWeek: this.dialogAddServices.firstWeek,
+            secondWeek: this.dialogAddServices.secondWeek,
+            thirdWeek: this.dialogAddServices.thirdWeek,
+            fourthWeek: this.dialogAddServices.fourthWeek,
+            fifthWeek: this.dialogAddServices.fifthWeek
+          }
+        })
+        this.clearDialogAddEvents()
+      }
+    },
+    verifyIfChangeStatus() {
+      if (this.dialogAddServices.firstWeek === true
+        && this.dialogAddServices.secondWeek === true
+        && this.dialogAddServices.thirdWeek === true
+        && this.dialogAddServices.fourthWeek === true 
+        && this.dialogAddServices.fifthWeek === true ) {
+          this.dialogAddServices.everyWeek = true
+      } else {this.dialogAddServices.everyWeek = false}
+    },
+    changeOtherStatus() {
+      if (this.dialogAddServices.everyWeek === true) {
+        this.dialogAddServices.firstWeek = true
+        this.dialogAddServices.secondWeek = true
+        this.dialogAddServices.thirdWeek = true
+        this.dialogAddServices.fourthWeek = true 
+        this.dialogAddServices.fifthWeek = true
+      } else if (this.dialogAddServices.everyWeek === false) {
+        this.dialogAddServices.firstWeek = false
+        this.dialogAddServices.secondWeek = false
+        this.dialogAddServices.thirdWeek = false
+        this.dialogAddServices.fourthWeek = false 
+        this.dialogAddServices.fifthWeek = false
+      }
+    },
+    editServicesData(fieldIndex, iValue) {
+      this.dialogAddServices.edit = true
+      let editData = this.organismData.fields[fieldIndex].value[iValue]
+      this.dialogAddServices.fieldIndex = fieldIndex
+      this.dialogAddServices.iValue = iValue
+      this.dialogAddServices.selectedDay = editData.dayOfWeek
+      this.dialogAddServices.selectedHour = editData.time
+      this.dialogAddServices.everyWeek = editData.configs.everyWeek
+      this.dialogAddServices.firstWeek = editData.configs.firstWeek
+      this.dialogAddServices.secondWeek = editData.configs.secondWeek
+      this.dialogAddServices.thirdWeek = editData.configs.thirdWeek
+      this.dialogAddServices.fourthWeek = editData.configs.fourthWeek
+      this.dialogAddServices.fifthWeek = editData.configs.fifthWeek
+      this.dialogAddServices.open = true
+    },
+    removeServicesData(fieldIndex, iValue) {
+      this.organismData.fields[fieldIndex].value.splice(iValue, 1)
+    },
     inactivateUserFromFunction() {
       if (
         this.dialogDeleteUserFromFunction.obsText === "" ||

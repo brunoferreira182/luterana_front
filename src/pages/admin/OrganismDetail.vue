@@ -1821,13 +1821,11 @@
         <q-checkbox
           label="Toda semana"
           v-model="dialogAddServices.everyWeek"
-          class="row"
           @update:model-value="changeOtherStatus()"
         />
         <q-checkbox
           label="1º semana"
           v-model="dialogAddServices.firstWeek"
-          class="row"
           @update:model-value="verifyIfChangeStatus()"
         />
         <q-checkbox
@@ -2267,15 +2265,17 @@ export default defineComponent({
           {label: 'Sexta-feira', value: 'friday' },
           {label: 'Sábado', value: 'saturday' }
         ],
+        edit: false,
         selectedDay: null,
         selectedHour: null,
         fieldIndex: null,
+        iValue: null,
         everyWeek: false,
         firstWeek: false,
         secondWeek: false,
         thirdWeek: false,
         fourthWeek: false,
-        fifthWeek: false
+        fifthWeek: false,
       },
       dialogAddTimeForDay: {
         open: false,
@@ -2328,19 +2328,36 @@ export default defineComponent({
       if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
         this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
       }
-      this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
-        dayOfWeek: this.dialogAddServices.selectedDay,
-        time: this.dialogAddServices.selectedHour,
-        configs: {
-          everyWeek: this.dialogAddServices.everyWeek,
-          firstWeek: this.dialogAddServices.firstWeek,
-          secondWeek: this.dialogAddServices.secondWeek,
-          thirdWeek: this.dialogAddServices.thirdWeek,
-          fourthWeek: this.dialogAddServices.fourthWeek,
-          fifthWeek: this.dialogAddServices.fifthWeek
+      if (this.dialogAddServices.edit) {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value[this.dialogAddServices.iValue] = {
+          dayOfWeek: this.dialogAddServices.selectedDay,
+          time: this.dialogAddServices.selectedHour,
+          configs: {
+            everyWeek: this.dialogAddServices.everyWeek,
+            firstWeek: this.dialogAddServices.firstWeek,
+            secondWeek: this.dialogAddServices.secondWeek,
+            thirdWeek: this.dialogAddServices.thirdWeek,
+            fourthWeek: this.dialogAddServices.fourthWeek,
+            fifthWeek: this.dialogAddServices.fifthWeek
+          }
         }
-      })
-      this.clearDialogAddEvents()
+        this.clearDialogAddEvents()
+        return 
+      } else {
+        this.organismData.fields[this.dialogAddServices.fieldIndex].value.push({
+          dayOfWeek: this.dialogAddServices.selectedDay,
+          time: this.dialogAddServices.selectedHour,
+          configs: {
+            everyWeek: this.dialogAddServices.everyWeek,
+            firstWeek: this.dialogAddServices.firstWeek,
+            secondWeek: this.dialogAddServices.secondWeek,
+            thirdWeek: this.dialogAddServices.thirdWeek,
+            fourthWeek: this.dialogAddServices.fourthWeek,
+            fifthWeek: this.dialogAddServices.fifthWeek
+          }
+        })
+        this.clearDialogAddEvents()
+      }
     },
     clearDialogAddEvents() {
       this.dialogAddServices.open = false
@@ -2937,14 +2954,21 @@ export default defineComponent({
     removeServicesData (fieldIndex, iValue) {
       this.organismData.fields[fieldIndex].value.splice(iValue, 1)
     },
-    // editServicesData(fieldIndex, tabsIndex, field, value, ivalue) {
-    //   this.dialogAddServices.action = 'edit'
-    //   this.dialogAddServices.fieldIndex = fieldIndex
-    //   this.dialogAddServices.tabsIndex = tabsIndex
-    //   this.dialogAddServices.data = {...value}
-    //   this.dialogAddServices.ivalue = ivalue
-    //   this.dialogAddServices.open = true
-    // },
+    editServicesData(fieldIndex, iValue) {
+      this.dialogAddServices.edit = true
+      let editData = this.organismData.fields[fieldIndex].value[iValue]
+      this.dialogAddServices.fieldIndex = fieldIndex
+      this.dialogAddServices.iValue = iValue
+      this.dialogAddServices.selectedDay = editData.dayOfWeek
+      this.dialogAddServices.selectedHour = editData.time
+      this.dialogAddServices.everyWeek = editData.configs.everyWeek
+      this.dialogAddServices.firstWeek = editData.configs.firstWeek
+      this.dialogAddServices.secondWeek = editData.configs.secondWeek
+      this.dialogAddServices.thirdWeek = editData.configs.thirdWeek
+      this.dialogAddServices.fourthWeek = editData.configs.fourthWeek
+      this.dialogAddServices.fifthWeek = editData.configs.fifthWeek
+      this.dialogAddServices.open = true
+    },
     editThisAddress(fieldIndex, tabsIndex, valueIndex){
       this.dialogConfirmAddress = {
         open: true,
