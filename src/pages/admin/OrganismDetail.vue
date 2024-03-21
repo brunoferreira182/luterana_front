@@ -612,7 +612,6 @@
                 </div>     
                 <div v-if="field.type.type === 'services'">
                   <q-btn 
-                    v-if="!field.value || !field.value.length > 0"
                     label="Horário de cultos"
                     no-caps
                     rounded
