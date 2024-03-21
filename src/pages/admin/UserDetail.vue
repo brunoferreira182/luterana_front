@@ -1624,7 +1624,7 @@ export default defineComponent({
           organismFunctionId: this.dialogAddCallToPastor.selectedfunc,
           userIdMongo: this.$route.query.userId,
           dates: {
-            initialDate: this.dialogAddCallToPastor.initialDate
+            initialDate: this.dialogAddCallToPastor.installationDate
           }
         }
       };
