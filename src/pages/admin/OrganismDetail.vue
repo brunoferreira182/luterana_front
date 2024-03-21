@@ -3559,15 +3559,16 @@ export default defineComponent({
         this.dialogInsertUserInFunction.functionType === 'Pastor'
       ){
         if(
-        this.dialogInsertUserInFunction.installationDate === '' ||
+        (this.dialogInsertUserInFunction.calleeDate === '' && !this.undefinedCallee) ||
         this.organismCalleeSelected === '' ||
-        this.organismCallerSelected === '' 
+        this.organismCallerSelected === '' ||
+        !this.dialogInsertUserInFunction.userSelected
         ){
-          this.$q.notify("Preencha data de instalação, organismo que atende e quem chamou");
+          this.$q.notify("Preencha data de instalação, organismo que atende, o pastor e quem chamou");
           return;
         }
       }
-      if (this.dialogInsertUserInFunction.userSelected === "" || this.dialogInsertUserInFunction.initialDate === "") {
+      if (this.dialogInsertUserInFunction.userSelected === "") {
         this.$q.notify("Preencha usuário e a data do chamado");
         return;
       }
@@ -3594,7 +3595,7 @@ export default defineComponent({
         opt.body.subtype = 'chamado'
         opt.body.organismCallerId = this.organismCallerSelected.organismId
         opt.body.organismCalledId = this.organismCalleeSelected.organismId,
-        opt.body.ataKey = this.dialogInsertUserInFunction.ataKey
+        opt.body.ataKey = this.dialogInsertUserInFunction.ataKey ? this.dialogInsertUserInFunction.ataKey : ''
         opt.body.installation = {
           date: this.dialogInsertUserInFunction.installationDate,
           userIdInstallation: this.dialogInsertUserInFunction.userInstallation._id

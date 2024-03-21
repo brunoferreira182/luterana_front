@@ -1609,12 +1609,11 @@ export default defineComponent({
 
 
       if(
-        this.dialogAddCallToPastor.ataKey === '' ||
         (this.dialogAddCallToPastor.calleeDate === '' && !this.dialogAddCallToPastor.undefinedCallee) ||
         !this.dialogAddCallToPastor.organismCallerSelected ||
         !this.dialogAddCallToPastor.organismAtuationSelected
       ){
-        this.$q.notify("Preencha chave-ata, prazo do chamado e organismo que atende e quem chamou");
+        this.$q.notify("Preencha prazo do chamado e organismo que atende e quem chamou");
         return;
       }
 
@@ -1632,7 +1631,7 @@ export default defineComponent({
         this.dialogAddCallToPastor.subtype === 'chamado' ? opt.body.subtype = 'chamado' : opt.body.subtype = 'atuacao'
         opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
         opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId,
-        opt.body.ataKey = this.dialogAddCallToPastor.ataKey
+        opt.body.ataKey = this.dialogAddCallToPastor.ataKey ? this.dialogAddCallToPastor.ataKey : ''
         opt.body.installation = {
           date: this.dialogAddCallToPastor.installationDate ? this.dialogAddCallToPastor.installationDate : null,
         }
