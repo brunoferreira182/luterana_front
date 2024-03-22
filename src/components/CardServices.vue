@@ -60,11 +60,6 @@ function setFrequency() {
     data.configLabel = '';
     let configs = data.configs;
     let firstConfig = true; 
-    if (configs.everyWeek) {
-      data.configLabel += 'Todas as semanas';
-      firstConfig = false;
-      return
-    }
     if (configs.firstWeek) {
       data.configLabel += (firstConfig ? '' : ', ') + 'Primeira semana';
       firstConfig = false;
@@ -83,6 +78,10 @@ function setFrequency() {
     }
     if (configs.fifthWeek) {
       data.configLabel += (firstConfig ? '' : ', ') + 'Quinta semana';
+      firstConfig = false;
+    }
+    if (configs.everyWeek) {
+      data.configLabel = 'Todas as semanas';
       firstConfig = false;
     }
   }
