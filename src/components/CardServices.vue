@@ -47,12 +47,16 @@
 </template>
 
 <script setup>
-import { onBeforeMount, defineProps } from 'vue'
+import { onBeforeMount, defineProps, defineEmits, watchEffect } from 'vue'
 onBeforeMount(() => {
   setFrequency()
 })
 const props = defineProps(['data', 'fieldIndex', 'editData'])
 const emits = defineEmits(['edit', 'remove'])
+
+watchEffect(() =>  {
+  setFrequency();
+});
 
 function setFrequency() {
   for (let i = 0; i < props.data.length; i++) {
