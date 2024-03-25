@@ -728,7 +728,7 @@
               v-model="dialogAddCallToPastor.userInstallation"
               filled
               use-input
-              label="Nome do usuário que instalou"
+              label="nome do pastor que instalou"
               option-label="userName"
               :options="pastorsOptions"
               hint="Usuário que instalou"
