@@ -283,7 +283,6 @@ export default defineComponent({
       this.verifyHasSentStatistic()
     },
     async verifyHasSentStatistic() {
-      console.log('me chamaram aqui ó')
       const opt = {
         route: '/desktop/statistics/verifyHasAlreadySentStatistic',
         body: {
