@@ -666,6 +666,11 @@
                           <q-item-label>{{ item.userName }}</q-item-label>
                         </q-item-section>
                       </q-item>
+                      <div class="q-gutter-sm " style="display:flex;">
+                        <q-item-label header v-if="canBeDead && canBeDead!==false">Pesquisar entre os falecidos.</q-item-label>
+                        <q-item-label header v-else>Não pesquisar entre os falecidos.</q-item-label>
+                        <q-toggle v-model="canBeDead"> </q-toggle>
+                      </div>
                     </q-list>
                   </q-card-section>
                   <!-- <q-card-section>
@@ -1204,7 +1209,7 @@
                   </q-card-section>
                   <q-card-section>
                     <q-select
-                      v-model="userSelected"
+                    v-model="userSelected"
                       filled
                       clearable
                       use-input
@@ -1637,6 +1642,7 @@ export default defineComponent({
   data() {
     return {
       usersOptions: [],
+      canBeDead: false, 
       isReplacement: false,
       isMobile: false,
       disableIsReplacement: false,
@@ -2274,6 +2280,7 @@ export default defineComponent({
       const opt = {
         route: "/desktop/commonUsers/getUsers",
         body: {
+          canUseSystem: this.canBeDead,
           searchString: val,
           isActive: 1,
         },
