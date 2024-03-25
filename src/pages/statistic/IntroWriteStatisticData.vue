@@ -190,8 +190,8 @@
       </q-dialog>
       <div class="q-px-md">
         <div 
-          v-if="validationResume.congregationStatistic && validationResume.congregationStatistic === 't'"
-          class="text-h5"
+          v-if="(validationResume.congregationStatistic && validationResume.congregationStatistic === 't') || (alreadySentStatistic)"
+          class="text-h5 text-center"
         >
           Estatística enviada!
         </div>
@@ -252,7 +252,10 @@ export default defineComponent({
       congregationsId: [],
       
       canSendStatistic: null,
-      emManutencao: false
+      emManutencao: false,
+      parishId: '',
+      allSipar: false,
+      alreadySentStatistic: false
     }
   },
   beforeMount(){
@@ -269,6 +272,7 @@ export default defineComponent({
       await useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
+        this.parishId = r.data.organismId
         for (const childDataItem of this.userOrganismList.childData) {
           const allValidated = childDataItem.statusEstatistica.length > 0 &&
             childDataItem.statusEstatistica.every(item => item.validated === true);
@@ -276,12 +280,30 @@ export default defineComponent({
         }
       });
       this.getValidationResumeByOrganism()
+      this.verifyHasSentStatistic()
+    },
+    async verifyHasSentStatistic() {
+      console.log('me chamaram aqui ó')
+      const opt = {
+        route: '/desktop/statistics/verifyHasAlreadySentStatistic',
+        body: {
+          parishId: this.parishId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      if (r.data.alreadySent) this.alreadySentStatistic = true
     },
     insertCongregationalStatisticsDone() {
+      let sipar = false
+      if (this.allSipar) {
+        sipar = true
+      }
       const opt = {
         route: '/desktop/statistics/insertCongregationalStatisticsDone',
         body: {
-          organismId: this.$route.query.organismId,
+          organismId: this.parishId,
+          sipar
         }
       }
       useFetch(opt).then((r) => {
@@ -303,6 +325,7 @@ export default defineComponent({
       })
       if (allSipar) {
         this.canSendStatistic = true
+        this.allSipar = true
         return
       }
       const opt = {
@@ -372,6 +395,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.status = r.data
+        console.log(this.status.pastors)
         this.status.pastors.forEach((pastor) => {
           if (pastor.userId === userInfo.user_id) {
             this.isPastor = true

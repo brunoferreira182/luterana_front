@@ -780,15 +780,19 @@
                       </q-select>
                     </q-card-section>
                     <q-card-section class="q-gutter-md" v-if="dialogInsertUserInFunction.functionType === 'Pastor'">
+                      <q-checkbox
+                        v-model="otherOrganism"
+                        label="Buscar organismo de outra paróquia"
+                      />
                       <q-select
+                        v-show="!otherOrganism"
                         v-model="organismCalleeSelected"
                         filled
-                        use-input
+                        multiple
                         label="Nome do organismo de atuação"
                         option-label="nome"
                         :readonly="sameOrganismCalled ? true : false"
-                        :options="organismList"
-                        @filter="getOrganismsList"
+                        :options="organismsFromThisParish"
                         :option-value="(item) => item"
                       >
                         <template v-slot:no-option>
@@ -798,6 +802,35 @@
                             </q-item-section>
                           </q-item>
                         </template>
+                      </q-select>
+                      <q-select
+                        v-show="otherOrganism"
+                        v-model="organismCalleeSelected"
+                        filled
+                        multiple
+                        use-input
+                        label="Nome do organismo de atuação"
+                        option-label="nome"
+                        :readonly="sameOrganismCalled ? true : false"
+                        :options="filiatedOrganismsList"
+                        @filter="getFiliatedOrganismsList"
+                        :option-value="(item) => item"
+                      >
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Nenhum resultado
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps">
+                          <q-item-section>
+                            <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                            <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </template>
                       </q-select>
                       <q-checkbox
                         label="É o mesmo organismo de chamado"
@@ -819,10 +852,10 @@
                         v-model="dialogInsertUserInFunction.userSelected"
                         filled
                         use-input
-                        label="Nome do usuário"
+                        label="Nome do pastor"
                         option-label="userName"
                         :options="usersOptions"
-                        hint="Usuário que ocupará a função"
+                        hint="Pastor que ocupará a função"
                         @filter="getUsers"
                         :loading="false"
                         :option-value="(item) => item._id"
@@ -848,10 +881,10 @@
                         v-model="dialogInsertUserInFunction.userInstallation"
                         filled
                         use-input
-                        label="Nome do usuário que instalou"
+                        label="Nome do pastor que instalou"
                         option-label="userName"
                         :options="usersOptions"
-                        hint="Usuário que instalou"
+                        hint="Pastor que instalou"
                         @filter="getUsers"
                         :loading="false"
                         :option-value="(item) => item._id"
@@ -2060,6 +2093,7 @@ export default defineComponent({
       tab: 'organismData',
       lastFuncIndex: -1,
       usersOptions: [],
+      otherOrganism: false,
       filiatedOrganismsList: [],
       organismVinculated: '',
       organismTypeId: null,
@@ -2293,7 +2327,7 @@ export default defineComponent({
       sameOrganismCalled: false,
       undefinedCallee: false,
       organismCallerSelected: '',
-      organismCalleeSelected: '',
+      organismCalleeSelected: [],
     };
   },
   watch: {
@@ -2315,6 +2349,7 @@ export default defineComponent({
     this.getPastoralStatusTypes()
     this.getEventsOptions()
     this.getDaysOfWeek()
+    this.getParishChildOrganismsList()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -2323,6 +2358,36 @@ export default defineComponent({
     }
   },
   methods: {
+    async getParishChildOrganismsList() {
+      const opt = {
+        route: '/desktop/adm/getChildOrganismsFromParishByChildId',
+        body: {
+          organismChildId: this.$route.query.organismId
+        }
+      }
+      const r = await useFetch(opt)
+      if (r.error) return
+    },
+    getFiliatedOrganismsList(val, update, abort) {
+      if(val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: "/desktop/adm/getFiliatedOrganismsList",
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      };
+      useFetch(opt).then((r) => {
+        update(() => {
+          this.filiatedOrganismsList = r.data.list;
+        })
+      });
+    },
     confirmAddServiceConfig() {
       if (!this.organismData.fields[this.dialogAddServices.fieldIndex].value) {
         this.organismData.fields[this.dialogAddServices.fieldIndex].value = []
@@ -3528,27 +3593,8 @@ export default defineComponent({
       };
       useFetch(opt).then((r) => {
         update(() => {
+  
           this.organismList = r.data.list;
-        })
-      });
-    },
-    getFiliatedOrganismsList(val, update, abort) {
-      if(val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres')
-        abort()
-        return
-      }
-      const opt = {
-        route: "/desktop/adm/getFiliatedOrganismsList",
-        body: {
-          searchString: val,
-          page: 1,
-          rowsPerPage: 50
-        }
-      };
-      useFetch(opt).then((r) => {
-        update(() => {
-          this.filiatedOrganismsList = r.data.list;
         })
       });
     },
