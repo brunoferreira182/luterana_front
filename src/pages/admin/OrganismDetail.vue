@@ -2328,6 +2328,7 @@ export default defineComponent({
       undefinedCallee: false,
       organismCallerSelected: '',
       organismCalleeSelected: [],
+      organismsFromThisParish: []
     };
   },
   watch: {
@@ -2367,6 +2368,7 @@ export default defineComponent({
       }
       const r = await useFetch(opt)
       if (r.error) return
+      this.organismsFromThisParish = r.data
     },
     getFiliatedOrganismsList(val, update, abort) {
       if(val.length < 3) {

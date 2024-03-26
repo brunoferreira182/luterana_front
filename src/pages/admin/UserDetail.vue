@@ -662,10 +662,17 @@
             </q-select>
           </q-card-section>
           <q-card-section class="q-gutter-md" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
+            <q-checkbox
+              v-if="dialogAddCallToPastor.action === 'add'"
+              v-model="otherOrganism"
+              label="Buscar organismo de outra paróquia"
+            />
             <q-select
               v-if="dialogAddCallToPastor.action === 'add'"
+              v-show="!otherOrganism"
               v-model="dialogAddCallToPastor.organismAtuationSelected"
               filled
+              multiple
               label="Nome do organismo de atuação"
               option-label="nome"
               options-dense
@@ -687,6 +694,35 @@
                   </q-item-section>
                 </q-item>
               </template>
+            </q-select>
+            <q-select
+              v-show="otherOrganism"
+              v-model="organismCalleeSelected"
+              filled
+              multiple
+              use-input
+              label="Nome do organismo de atuação"
+              option-label="nome"
+              :readonly="sameOrganismCalled ? true : false"
+              :options="filiatedOrganismsList"
+              @filter="getFiliatedOrganismsList"
+              :option-value="(item) => item"
+            >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Nenhum resultado
+                </q-item-section>
+              </q-item>
+            </template>
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
             </q-select>
             <q-checkbox
               v-if="dialogAddCallToPastor.action === 'add'"
@@ -1122,7 +1158,7 @@ export default defineComponent({
       statusData: null,
       undefinedCallee: false,
       organismCallerSelected: '',
-      organismCalleeSelected: '',
+      organismCalleeSelected: [],
       functions: [],
       dialogAddCallToPastor: {
         open: false,
@@ -1182,7 +1218,8 @@ export default defineComponent({
         open: false,
         fieldIndex: null,
         tabsIndex: null
-      }
+      },
+      otherOrganism: false
     };
   },
   mounted() {
