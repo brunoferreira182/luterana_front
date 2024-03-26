@@ -3236,15 +3236,9 @@ export default defineComponent({
         })
         if (!r.data.usuarioEstaEmParoquia) {
           r.data.congregations.forEach((org) => {
-            if (org.usuarioEstaEmCongregacao) {
-              this.myOrganismsIds.push(org.organismChildId)
+            if (!org.usuarioEstaEmCongregacao) {
+              org.disable = true;
             }
-            this.myOrganismsIds.forEach((orgId) => {
-              console.log(orgId, '1')
-              console.log(org.organismChildId,  '2')
-              let exists = org.organismChildId.includes(orgId)
-              if (!exists) org.disable = true
-            })
           })
         }
         this.deptConfigs = depConfigList
