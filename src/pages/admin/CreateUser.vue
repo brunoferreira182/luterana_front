@@ -1034,22 +1034,6 @@ export default defineComponent({
       this.addPerson.userSelected = null
       this.addPerson.dialogOpen = false
     },
-    getUserByString (val, update) {
-      if (val < 2) return
-      const opt = {
-        route: '/desktop/users/getUsersList',
-        body: {
-          searchString: val
-        }
-      }
-      useFetch(opt).then(r => {
-        if (r.error) return this.$q.notify(r.errorMessage)
-        update(() => {
-          this.addPerson.usersOptions = r.data.list
-        })
-      })
-    },
-    
     confirmAddPerson (userSelected) {
       this.addPerson.userSelected = userSelected
       if (!this.userData.userDataTabs[this.addPerson.tabIndex].fields[this.addPerson.fieldIndex].multiple)

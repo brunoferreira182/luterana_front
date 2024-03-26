@@ -510,6 +510,11 @@
                 </q-item>
               </template>
             </q-select>
+            <div class="q-gutter-sm " style="display:flex;">
+              <q-item-label header v-if="canBeDead && canBeDead!==false">Pesquisar entre os falecidos.</q-item-label>
+              <q-item-label header v-else>Não pesquisar entre os falecidos.</q-item-label>
+              <q-toggle v-model="canBeDead"> </q-toggle>
+            </div>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -540,6 +545,7 @@ export default defineComponent({
   name: "UserFormDetail",
   data() {
     return {
+      canBeDead: false,
       addOrganism: {
         dialogOpen: false,
         fieldIndex: null,
@@ -726,6 +732,7 @@ export default defineComponent({
         route: "/desktop/commonUsers/getUsers",
         body: {
           searchString: val,
+          canUseSystem: this.canBeDead,
           isActive: 1,
         },
       };

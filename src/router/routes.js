@@ -291,10 +291,10 @@ const routes = [
         path: "/user/userSugestionsList",
         component: () => import("src/pages/user/UserSugestionsList.vue"),
       },
-      {
-        path: "/user/statistic",
-        component: () => import("src/pages/user/Statistic.vue"),
-      },
+      // {
+      //   path: "/user/statistic",
+      //   component: () => import("src/pages/user/Statistic.vue"),
+      // },
       
       //ESTATÍSTICA 2023 
       {
