@@ -3240,6 +3240,8 @@ export default defineComponent({
               this.myOrganismsIds.push(org.organismChildId)
             }
             this.myOrganismsIds.forEach((orgId) => {
+              console.log(orgId, '1')
+              console.log(org.organismChildId,  '2')
               let exists = org.organismChildId.includes(orgId)
               if (!exists) org.disable = true
             })

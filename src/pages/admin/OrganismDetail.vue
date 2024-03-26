@@ -2508,8 +2508,8 @@ export default defineComponent({
     undefinedCalleeFunction(){
       this.undefinedCallee ? this.undefinedCallee = false :this.dialogInsertUserInFunction.calleeDate = ''
     },
-    changeOrganismCaller(){
-      this.sameOrganismCalled === true ? this.organismCalleeSelected = '' :this.organismCalleeSelected = this.organismCallerSelected
+    changeOrganismCaller() {
+      this.sameOrganismCalled === true ? this.organismCalleeSelected = [] : this.organismCalleeSelected.push(this.organismCallerSelected) 
     },
     goToDetail() {
       this.$router.push('/admin/organismDetail?organismId=' + this.dialogShowOtherDetail.orgId )
@@ -3560,7 +3560,7 @@ export default defineComponent({
       this.dialogInsertUserInFunction.initialDate = '',
       this.dialogInsertUserInFunction.functionType = '',
       this.dialogInsertUserInFunction.open = false,
-      this.organismCalleeSelected = ''
+      this.organismCalleeSelected = []
       this.sameOrganismCalled = false
       this.organismCallerSelected = ''
       this.dialogInsertUserInFunction.installationDate = ''
@@ -3606,7 +3606,7 @@ export default defineComponent({
       ){
         if(
         (this.dialogInsertUserInFunction.calleeDate === '' && !this.undefinedCallee) ||
-        this.organismCalleeSelected === '' ||
+        !this.organismCalleeSelected.length > 0 ||
         this.organismCallerSelected === '' ||
         !this.dialogInsertUserInFunction.userSelected
         ){
@@ -3638,9 +3638,15 @@ export default defineComponent({
         }
       };
       if(this.dialogInsertUserInFunction.functionType === 'Pastor'){
+        let organismsCalledIds = []
+        this.organismCalleeSelected.forEach((organism) => {
+          organismsCalledIds.push({_id: organism.organismId})
+        })
+
         opt.body.subtype = 'chamado'
         opt.body.organismCallerId = this.organismCallerSelected.organismId
-        opt.body.organismCalledId = this.organismCalleeSelected.organismId,
+
+        opt.body.organismCalledId = organismsCalledIds,
         opt.body.ataKey = this.dialogInsertUserInFunction.ataKey ? this.dialogInsertUserInFunction.ataKey : ''
         opt.body.installation = {
           date: this.dialogInsertUserInFunction.installationDate,
@@ -3761,11 +3767,13 @@ export default defineComponent({
         route = "/desktop/adm/getUsers"
       } else if (this.dialogSwapPastorFromFunction.open === true) {
         route = "/desktop/adm/getPastores"
-      } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.functionType === 'Pastor'){
+      } else if (this.dialogInsertUserInFunction.selectedFunc && this.dialogInsertUserInFunction.functionType === 'Pastor') {
         route = "/desktop/adm/getPastores" 
       } else if (this.dialogInserPastorInParoquia.open = true && this.dialogInserPastorInParoquia.user === 'Pastor') {
         route = "/desktop/adm/getPastores" 
-      } 
+      } else if (this.dialogInsertUserInFunction.open && this.dialogInsertUserInFunction.functionType === 'Pastor') {
+        route = "/desktop/adm/getPastores" 
+      }
       const opt = {
         route: route,
         body: {

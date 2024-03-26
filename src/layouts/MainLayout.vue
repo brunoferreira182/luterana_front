@@ -321,6 +321,9 @@ export default defineComponent({
     // this.getStatusNotifications()
     this.drawerData = this.drawer;
   },
+  beforeUnmount() {
+    localStorage.clear();
+  },
   watch: {
     $route() {
       let existe = false;
