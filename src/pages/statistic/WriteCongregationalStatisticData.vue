@@ -2190,7 +2190,8 @@ export default defineComponent({
         open: false
       },
       timerToSave: null,
-      timerId: null
+      timerId: null,
+      savedFinal: false
     }
   }, 
   beforeMount() {
@@ -2201,7 +2202,7 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.stopTimerToSaveDraft();
-    if (this.validated && (this.composition.status && this.composition.status.value === 'sent')) return;
+    if ((this.savedFinal) || (this.validated && (this.status && this.status.value === 'sent'))) return;
     this.saveDraftOnBeforeUnmount();
   },
   methods: {
@@ -2741,14 +2742,15 @@ export default defineComponent({
         this.$q.notify('Ocorreu um erro. Tente novamente')
         return
       }
+      this.savedFinal = true
       this.$q.notify('Finalizando etapa...')
       this.$q.loading.show();
-      await this.getCompositionByUserId();
-      setTimeout(() => {
+      let canReturn = await this.getCompositionByUserId();
+      if (canReturn) {
         this.$q.loading.hide();
         this.$q.notify('Etapa finalizada com sucesso')
         this.$router.back();
-      }, 2000);
+      }
     },
     discardDraft () {
       const opt = {
@@ -3186,6 +3188,12 @@ export default defineComponent({
         if (r.data.status) {
           this.status = r.data.status
         }
+        if (r.draftComposition && r.draftComposition.status) {
+          this.status = r.draftComposition.status
+        }
+        if (r.draftComposition && r.draftComposition.validated) {
+          this.validated = r.draftComposition.status
+        }
         let depConfigList = []
         this.composition.congregations[0].depts.forEach((dep) => {
           depConfigList.push({
@@ -3244,6 +3252,7 @@ export default defineComponent({
         this.deptConfigs = depConfigList
         this.inserVerifyCheckboxInCongregations()
       })
+      return true
     },
     clkCheckboxDate(org){
       if(org.foundationDate || org.foundationDate === null ){
