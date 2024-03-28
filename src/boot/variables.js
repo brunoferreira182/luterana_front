@@ -1,9 +1,5 @@
 //////////// VARIAVEIS DA APLICACAO //////
-<<<<<<< HEAD
-const MODE_MASTER_SERVER = "prod";
-=======
-const MODE_MASTER_SERVER = "dev";
->>>>>>> ff0553d3871ec8e9a27c4f3c8c6491e2d1998ee0
+const MODE_MASTER_SERVER = "local";
 const COMPANY_ID = 10;
 const VERSION = "1.11 Beta"
 const BUILD = 32
