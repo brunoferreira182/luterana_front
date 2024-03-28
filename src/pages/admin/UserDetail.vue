@@ -45,13 +45,14 @@
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
+            v-if="userType && userType === 'pastor'"
             color="secondary"
             rounded
             outline
             size="md"
             no-caps
             label="Tornar ex-pastor"
-            @click="dialogchangeUserType = true"
+            @click="dialogchangeUserType.open = true"
           />
             <q-btn
             icon="delete"
@@ -1023,12 +1024,54 @@
         </q-card>
       </q-dialog>
       <q-dialog
-        v-model="dialogchangeUserType"
+        v-model="dialogchangeUserType.open"
       >
-        <q-card>
+        <q-card style="width: 300px; border-radius: 1rem;">
           <q-card-section>
-            
+            <div
+              class="text-center text-h6" 
+            >
+              Tornar ex-pastor
+            </div>      
           </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Motivo:</strong>
+            </div>
+            <q-input
+              type="textarea"
+              v-model="dialogchangeUserType.reason"
+              outlined
+            />
+          </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Data:</strong>
+            </div>
+            <q-input
+              mask="##/##/####"
+              v-model="dialogchangeUserType.date"
+              outlined
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              color="primary"
+              flat
+              rounded
+              unelevated
+              label="Voltar"
+              no-caps
+            />
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              label="Confirmar"
+              no-caps
+              @click="confirmChangeUserType"
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <DialogAddPerson
@@ -1264,6 +1307,31 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    clearDialogChangeUserType() {
+      this.dialogchangeUserType = {
+        open: false,
+        reason: '',
+        date: ''
+      }
+    },
+    async confirmChangeUserType() {
+      if (this.dialogchangeUserType.reason === '' || this.dialogchangeUserType.date === '') {
+        this.$q.notify('Preencha o motivo e a data para prosseguir')
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/changeUserTypeFromPastorToUser',
+        body: {
+          userId: this.$route.query.userId,
+          reason: this.dialogchangeUserType.reason,
+          date: this.dialogchangeUserType.date
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogChangeUserType()
+      this.getUserDetailById()
+    },
     editMaritalStatus(fieldIndex, tabsIndex, i) {
       let field = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
       this.dialogAddMaritalStatus.open = true
