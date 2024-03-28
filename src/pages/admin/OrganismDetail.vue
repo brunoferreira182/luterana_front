@@ -237,6 +237,15 @@
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
+                  <q-btn
+                    icon="edit"
+                    flat
+                    color="primary"
+                    rounded
+                    unelevated
+                  >
+                    <q-tooltip>Alterar Vínculo</q-tooltip>
+                  </q-btn>
                 </div>
                 <q-list class="q-px-xs" v-if="organismParentData && organismParentData.length > 0">
                   <q-item 
@@ -300,6 +309,50 @@
                     :showInviteUserButton="func.functionName === 'Pastor' ? false : true && this.$route.query.e === 'f' ? false : true"
                   />
                 </div>
+              </div>
+              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
+                <div
+                  v-for="func in functions"
+                  :key="func"
+                >
+                  <div v-if="func.functionName === 'Secretária Contratada'">
+                    <div class="text-h6">
+                      {{ func.functionName }}
+                      <q-btn
+                        color="primary"
+                        flat
+                        rounded
+                        unelevated
+                        label="Secretária"
+                        icon="add"
+                        @click="linkSecretaryToFunction()"
+                      />
+                    </div>
+                    <q-item
+                      style="border-radius: 1rem;"
+                      class="q-ml-sm bg-grey-2"
+                      v-for="user in func.users"
+                      :key="user"
+                    > 
+                      <q-item-section>
+                        {{ user.userName }}
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-btn
+                        icon="delete"
+                        dense
+                        flat
+                        color="red"
+                        rounded
+                        @click.stop="dialogOpenDeleteUserFromFunction(user)"
+                      >
+                        <q-tooltip>Remover secretária</q-tooltip>
+                      </q-btn>
+                      </q-item-section>
+                    </q-item>
+                  </div>
+                </div>
+                
               </div>
               <div  v-if="organismConfigName === 'Paróquia' && hidePastorInParoquia === false">
                 <!-- <q-separator class="q-mx-md q-mb-md" /> -->
@@ -672,50 +725,7 @@
                 :fieldIndex="0"
                 :disableButtons="true"
               />
-              <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Ponto de Missão'">
-                <div
-                  v-for="func in functions"
-                  :key="func"
-                >
-                  <div v-if="func.functionName === 'Secretária Contratada'">
-                    <div class="text-h6">
-                      {{ func.functionName }}
-                      <q-btn
-                        color="primary"
-                        flat
-                        rounded
-                        unelevated
-                        label="Secretária"
-                        icon="add"
-                        @click="linkSecretaryToFunction()"
-                      />
-                    </div>
-                    <q-item
-                      style="border-radius: 1rem;"
-                      class="q-ml-sm bg-grey-2"
-                      v-for="user in func.users"
-                      :key="user"
-                    > 
-                      <q-item-section>
-                        {{ user.userName }}
-                      </q-item-section>
-                      <q-item-section side>
-                        <q-btn
-                        icon="delete"
-                        dense
-                        flat
-                        color="red"
-                        rounded
-                        @click.stop="dialogOpenDeleteUserFromFunction(user)"
-                      >
-                        <q-tooltip>Remover secretária</q-tooltip>
-                      </q-btn>
-                      </q-item-section>
-                    </q-item>
-                  </div>
-                </div>
-                
-              </div>
+              
             </div>
             <q-separator vertical class="q-ma-md"/>
             <div class="col-4">

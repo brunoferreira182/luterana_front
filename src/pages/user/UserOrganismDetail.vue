@@ -139,6 +139,51 @@
               </div>
               <q-separator class="q-ma-sm"/>
             </div>
+            <div
+              v-for="func in functions"
+              :key="func"
+              class="q-mb-md"
+            >
+            
+              <div
+                v-if="func.functionName === 'Secretária Contratada'"
+              > 
+                <div class="text-h6">
+                  Secretária
+                  <q-btn
+                    color="primary"
+                    flat
+                    rounded
+                    unelevated
+                    label="Secretária"
+                    icon="add"
+                    @click="linkSecretaryToFunction()"
+                  />
+                </div>
+                <q-item
+                  style="border-radius: 1rem;"
+                  class="bg-grey-2"
+                  v-for="user in func.users"
+                  :key="user"
+                >
+                  <q-item-section>
+                    {{ user.userName }}
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      icon="delete"
+                      dense
+                      flat
+                      color="red"
+                      rounded
+                      @click.stop="dialogOpenDeleteUserFromFunction(user)"
+                    >
+                      <q-tooltip>Remover secretária</q-tooltip>
+                    </q-btn>
+                  </q-item-section>
+                </q-item>
+              </div>
+            </div>
             <div class="text-h5 no-margin q-px-md">
               Dados:
             </div>
@@ -427,50 +472,7 @@
               </div>
             </div>
             
-            <div
-              v-for="func in functions"
-              :key="func"
-            >
             
-              <div
-                v-if="func.functionName === 'Secretária Contratada'"
-              > 
-                <div class="text-h6">
-                  Secretária
-                  <q-btn
-                    color="primary"
-                    flat
-                    rounded
-                    unelevated
-                    label="Secretária"
-                    icon="add"
-                    @click="linkSecretaryToFunction()"
-                  />
-                </div>
-                <q-item
-                  style="border-radius: 1rem;"
-                  class="bg-grey-2"
-                  v-for="user in func.users"
-                  :key="user"
-                >
-                  <q-item-section>
-                    {{ user.userName }}
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-btn
-                      icon="delete"
-                      dense
-                      flat
-                      color="red"
-                      rounded
-                      @click.stop="dialogOpenDeleteUserFromFunction(user)"
-                    >
-                      <q-tooltip>Remover secretária</q-tooltip>
-                    </q-btn>
-                  </q-item-section>
-                </q-item>
-              </div>
-            </div>
             
             <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
               <q-card style="border-radius: 1rem; width: 480px">
