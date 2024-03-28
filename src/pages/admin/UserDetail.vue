@@ -45,10 +45,19 @@
         </div>
         <div class="col q-gutter-sm text-right">
           <q-btn
+            color="secondary"
+            rounded
+            outline
+            size="md"
+            no-caps
+            label="Tornar ex-pastor"
+            @click="dialogchangeUserType = true"
+          />
+            <q-btn
+            icon="delete"
             color="red-8"
             rounded
             outline
-            icon="delete"
             size="md"
             no-caps
             label="Inativar"
@@ -1034,6 +1043,15 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogchangeUserType"
+      >
+        <q-card>
+          <q-card-section>
+            
+          </q-card-section>
+        </q-card>
+      </q-dialog>
       <DialogAddPerson
         :open="dialogAddPerson.open"
         @addPerson="confirmAddPerson"
@@ -1087,6 +1105,11 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      dialogchangeUserType: {
+        open: false,
+        reason: '',
+        date: ''
+      },
       canUseSystem: null,
       selectIndex: null,
       tab: "",
@@ -1593,7 +1616,7 @@ export default defineComponent({
       this.setDisableOrganismCallerCheckbox = false
     },
     changeOrganismCaller(){
-      this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismAtuationSelected = '' : 
+      this.dialogAddCallToPastor.sameOrganismCalled === true ? this.dialogAddCallToPastor.organismAtuationSelected = [] : 
       this.dialogAddCallToPastor.organismAtuationSelected = this.dialogAddCallToPastor.organismCallerSelected
     },
     linkPastorToFunction() {
@@ -1719,7 +1742,11 @@ export default defineComponent({
       if(this.dialogAddCallToPastor.functionType === 'Pastor'){
         this.dialogAddCallToPastor.subtype === 'chamado' ? opt.body.subtype = 'chamado' : opt.body.subtype = 'atuacao'
         opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
-        opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId,
+        let calledList = []
+        await this.dialogAddCallToPastor.organismAtuationSelected.forEach((org) => {
+          calledList.push({orgId: org.organismId})
+        })
+        opt.body.organismCalledId = calledList,
         opt.body.ataKey = this.dialogAddCallToPastor.ataKey ? this.dialogAddCallToPastor.ataKey : ''
         opt.body.installation = {
           date: this.dialogAddCallToPastor.installationDate ? this.dialogAddCallToPastor.installationDate : null,
