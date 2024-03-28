@@ -697,7 +697,7 @@
             </q-select>
             <q-select
               v-show="otherOrganism"
-              v-model="organismCalleeSelected"
+              v-model="dialogAddCallToPastor.organismAtuationSelected"
               filled
               multiple
               use-input
@@ -1677,7 +1677,11 @@ export default defineComponent({
           }
         }
         opt.body.organismCallerId = this.dialogAddCallToPastor.organismCallerSelected.organismId
-        opt.body.organismCalledId = this.dialogAddCallToPastor.organismAtuationSelected.organismId ? this.dialogAddCallToPastor.organismAtuationSelected.organismId : this.dialogAddCallToPastor.sameOrganismCalled
+        let calledList = []
+        await this.dialogAddCallToPastor.organismAtuationSelected.forEach((org) => {
+          calledList.push({orgId: org.organismId})
+        })
+        opt.body.organismCalledId = calledList
         this.$q.loading.show()
         let r = await useFetch(opt)
         if (r.error) {
