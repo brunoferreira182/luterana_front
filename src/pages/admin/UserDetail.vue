@@ -920,8 +920,14 @@
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section>
             <div class="text-h6 text-center">
-              Tem certeza que deseja remover este usuário? 
+              Tem certeza que deseja inativar este usuário? 
             </div>
+            <div class = "q-px-sm">
+              Causa da morte:
+              <q-checkbox rounded v-if="otherDead===false" v-model="isDeadbyDeath">Falecimento</q-checkbox>
+              <q-checkbox rounded v-if="isDeadbyDeath===false" v-model="otherDead">Outro</q-checkbox>
+            </div>
+            <q-input :readonly= "isDeadbyDeath===false"  v-model="dateOfDead" label="Data de falecimento" outlined type="date"></q-input>
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -936,34 +942,7 @@
               label="Confirmar"
               unelevated
               rounded
-              @click="openDialogInactivateWhenDead = true"
-              color="primary"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <q-dialog v-model="openDialogInactivateWhenDead">
-        <q-card style="border-radius: 1rem; width: 400px">
-          <q-card-section>
-            <div class="text-h6 text-center">
-              Este usuário esta sendo inativo por falecimento? 
-            </div>
-            <q-input v-model="dateOfDead" label="Data de falecimento" outlined type="date"></q-input>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              no-caps
-              label="Não"
-              flat
-              @click="removeUser"
-              color="primary"
-            />
-            <q-btn
-              no-caps
-              label="Sim"
-              unelevated
-              rounded
-              @click="InactivateUserWhenDead"
+              @click="InactivateUser"
               color="primary"
             />
           </q-card-actions>
@@ -1115,7 +1094,8 @@ export default defineComponent({
       tab: "",
       openDialogRemoveUser: false,
       dateOfDead: '',
-      openDialogInactivateWhenDead: false, 
+      isDeadbyDeath: false, 
+      otherDead: false,
       tabTitles: "",
       userType: '',
       isSaving: false,
@@ -1661,17 +1641,21 @@ export default defineComponent({
         }
       });
     },
-    InactivateUserWhenDead(){
-      if (!this.dateOfDead || this.dateOfDead===''){
-        return this.$q.notify('insira a data de falecimento!')
+    InactivateUser(){
+      if (this.isDeadbyDeath===true && this.isDeadbyDeath){
+        if (!this.dateOfDead || this.dateOfDead===''){
+          return this.$q.notify('insira a data de falecimento!')
+        }
       }
       const opt = {
         route: '/desktop/adm/inactivateUserWhenDead',
         body: {
-          userId: this.$route.userId,
-          date: this.dateOfDead
+          userId: this.$route.query.userId,
         }
       } 
+      if (this.isDeadbyDeath===true && this.isDeadbyDeath){
+        opt.body.date = this.dateOfDead
+      }
       useFetch(opt).then((r) => {
         if (!r.error) {
           this.$q.notify('Usuário inativo com sucesso!')
