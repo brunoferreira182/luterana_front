@@ -46,6 +46,15 @@
             @click="visionSelected = 'groups'"
             :outline="visionSelected === 'groups' ? false : true"
           />
+          <q-btn
+            v-if="canEdit"
+            label="Salvar dados"
+            color="primary"
+            unelevated
+            rounded
+            no-caps
+            @click="updateOrganism"
+          />
         </div>
         <div class="row text-right q-gutter-sm q-mt-sm " v-if="!$route.query.isChild && isMobile">
           <q-btn
@@ -1171,16 +1180,7 @@
                 </div>
               </div>
               <div class="text-right">
-                <q-btn
-                  v-if="canEdit"
-                  label="Salvar dados"
-                  color="primary"
-                  unelevated
-                  rounded
-                  no-caps
-                  class="q-mt-md full-width"
-                  @click="updateOrganism"
-                />
+                
               </div>
             </div>
           </q-expansion-item>
