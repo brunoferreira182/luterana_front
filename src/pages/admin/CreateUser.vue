@@ -649,14 +649,12 @@ export default defineComponent({
       })
     },
     addUserImage() {
-      const file = [{file:this.userImg,name:'userPhoto'}]
       const opt = {
         route: "/desktop/user/addUserImage",
-        file: null
       };
-      if(this.userImg !== null){
-        opt.file = file
-        // this.userPhoto = URL.createObjectURL(this.userImg);
+      if(this.userImg){
+
+        opt.files = [{file:this.userImg, name:'userPhoto'}]
       }
       this.$q.loading.show();
       useFetch(opt).then((r) => {
