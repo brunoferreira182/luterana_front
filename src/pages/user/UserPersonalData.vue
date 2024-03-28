@@ -1549,7 +1549,7 @@ export default defineComponent({
       })
     },
     addUserImage() {
-      const file = [{file:this.userImg,name:'userPhoto'}]
+      const file = [{file:this.userImg, name:'userPhoto'}]
       const opt = {
         route: "/desktop/user/addUserImage",
         file: null

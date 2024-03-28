@@ -927,7 +927,34 @@
               label="Confirmar"
               unelevated
               rounded
+              @click="openDialogInactivateWhenDead = true"
+              color="primary"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="openDialogInactivateWhenDead">
+        <q-card style="border-radius: 1rem; width: 400px">
+          <q-card-section>
+            <div class="text-h6 text-center">
+              Este usuário esta sendo inativo por falecimento? 
+            </div>
+            <q-input v-model="dateOfDead" label="Data de falecimento" outlined type="date"></q-input>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              no-caps
+              label="Não"
+              flat
               @click="removeUser"
+              color="primary"
+            />
+            <q-btn
+              no-caps
+              label="Sim"
+              unelevated
+              rounded
+              @click="InactivateUserWhenDead"
               color="primary"
             />
           </q-card-actions>
@@ -1064,6 +1091,8 @@ export default defineComponent({
       selectIndex: null,
       tab: "",
       openDialogRemoveUser: false,
+      dateOfDead: '',
+      openDialogInactivateWhenDead: false, 
       tabTitles: "",
       userType: '',
       isSaving: false,
@@ -1608,6 +1637,25 @@ export default defineComponent({
           }
         }
       });
+    },
+    InactivateUserWhenDead(){
+      if (!this.dateOfDead || this.dateOfDead===''){
+        return this.$q.notify('insira a data de falecimento!')
+      }
+      const opt = {
+        route: '/desktop/adm/inactivateUserWhenDead',
+        body: {
+          userId: this.$route.userId,
+          date: this.dateOfDead
+        }
+      } 
+      useFetch(opt).then((r) => {
+        if (!r.error) {
+          this.$q.notify('Usuário inativo com sucesso!')
+          this.openDialogRemoveUser = false
+          this.openDialogInactivateWhenDead = false
+        } 
+      })
     },
     async addUserToFunction() {
       if (this.dialogAddCallToPastor.subtype === 'atuacao') {
