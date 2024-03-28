@@ -11,11 +11,12 @@
 
     >
       <q-item
+        clickable
         v-if="user.functionSubtype === 'chamado'"
         style="border-radius: 0.5rem;"
         class="bg-grey-3 q-ma-xs"
+        @click="$router.push('/admin/userDetail?userId=' + user.userId)"
       > 
-      
         <q-item-section avatar>
           <q-img 
             style="border-radius: 1rem"
@@ -48,7 +49,7 @@
               dense
               rounded
               color="red"
-              @click="dialogOpenDeletePastorFromFunction(user)"
+              @click.stop="dialogOpenDeletePastorFromFunction(user)"
               :disable="disableButtons"
             >
               <q-tooltip>Remover pastor</q-tooltip>

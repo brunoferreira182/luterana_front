@@ -97,6 +97,8 @@
                 :key="call"
                 style="border-radius: 1rem;"
                 class="bg-grey-3 q-ma-sm q-mx-md"
+                @click="$router.push('/admin/organismDetail?organismId=' + call.organismId)"
+                clickable
               >
                 <q-item-section>
                   <q-item-label>
