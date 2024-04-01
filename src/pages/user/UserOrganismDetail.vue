@@ -677,11 +677,11 @@
                           <q-item-label>{{ item.userName }}</q-item-label>
                         </q-item-section>
                       </q-item>
-                      <div class="q-gutter-sm " style="display:flex;">
+                      <!-- <div class="q-gutter-sm " style="display:flex;">
                         <q-item-label header v-if="canBeDead && canBeDead!==false">Pesquisar entre os falecidos.</q-item-label>
                         <q-item-label header v-else>Não pesquisar entre os falecidos.</q-item-label>
                         <q-toggle v-model="canBeDead"> </q-toggle>
-                      </div>
+                      </div> -->
                     </q-list>
                   </q-card-section>
                   <!-- <q-card-section>

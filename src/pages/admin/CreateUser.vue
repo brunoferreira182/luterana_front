@@ -2,8 +2,9 @@
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-ml-sm row justify-between">
-        <div class="col-6 text-h5 text-capitalize" v-if="userType === 'user'">novo usuário</div>
-        <div class="col-6 text-h5 text-capitalize" v-if="userType === 'pastor'">novo pastor</div>
+        <div class="col-6 text-h5 text-capitalize" >
+          {{ userType === 'user' ? 'novo usuário' : 'novo pastor'}}
+        </div>
         <div class="col text-right">
           <q-btn
             no-caps
@@ -17,6 +18,9 @@
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
           </q-btn>
         </div>
+      </div>
+      <div class="q-px-md">
+        <q-checkbox v-model="canEdit" label="Usuário de consulta no sistema?" />
       </div>
       <q-separator class="q-mx-md" />
       <q-list bordered>
@@ -448,6 +452,7 @@ export default defineComponent({
       typeSelectedPhone: null,
       typeSelectedAddress: null,
       typeSelectedEmail: null,
+      canEdit: false,
       dialogConfirmPhone: {
         open: false,
       },
@@ -1236,7 +1241,8 @@ export default defineComponent({
         route: "/desktop/adm/createNewUser",
         body: {
           userDataTabs: this.userData.userDataTabs,
-          userType: this.$route.query.userType
+          userType: this.$route.query.userType,
+          canEdit: this.canEdit
         },
       };
       this.$q.loading.show();
@@ -1251,7 +1257,7 @@ export default defineComponent({
           if (this.selectedType === 'pastor') {
             this.$q.notify("Pastor cadastrado com sucesso!");
           }
-          this.$router.push("/admin/usersList");
+          this.$router.back()
         }
       });
     },
