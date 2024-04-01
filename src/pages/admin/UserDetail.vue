@@ -2372,6 +2372,7 @@ export default defineComponent({
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
+        this.canEdit = r.data.canEdit
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data
