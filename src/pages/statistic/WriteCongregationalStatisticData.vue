@@ -3180,7 +3180,22 @@ export default defineComponent({
             }
           }
         }
-        this.composition = r.data
+        if (r.draftComposition && !r.draftComposition._id) {
+          for (let i = 0; i < r.draftComposition.congregations.length; i++) {
+            for (let j = 0; j < r.draftComposition.congregations[i].depts.length; j++) {
+              for (let k = 0; k < r.draftComposition.congregations[i].depts[j].existingDepartaments.length; k++) {
+                if (r.draftComposition.congregations[i].depts[j].existingDepartaments[k].organismParentId !== r.data.congregations[i].organismChildId) {
+                  r.draftComposition.congregations[i].depts[j].existingDepartaments[k].action = 'naoExiste'
+                }
+              }
+            }
+          }
+        }
+        if (r.draftComposition) {
+          this.composition = r.draftComposition
+        } else {
+          this.composition = r.data
+        }
         if (r.data.validated) {
           this.validated = r.data.validated
           this.getModificationsRequest()

@@ -97,6 +97,8 @@
                 :key="call"
                 style="border-radius: 1rem;"
                 class="bg-grey-3 q-ma-sm q-mx-md"
+                @click="$router.push('/admin/organismDetail?organismId=' + call.organismId)"
+                clickable
               >
                 <q-item-section>
                   <q-item-label>
@@ -106,12 +108,7 @@
                       {{ call.functionConfigName}} - {{ call.organismName }}
                     <div class="text-caption">
                       Início em {{ call.functionDates.initialDate.split('-')[2] }}/{{ call.functionDates.initialDate.split('-')[1] }}/{{ call.functionDates.initialDate.split('-')[0] }}  
-                    
                     </div>
-                    
-                    
-                  </q-item-label>
-                  <q-item-label>
                   </q-item-label>
                   <q-item
                     class="q-pa-md"
