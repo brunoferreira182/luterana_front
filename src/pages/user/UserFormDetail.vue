@@ -510,11 +510,11 @@
                 </q-item>
               </template>
             </q-select>
-            <div class="q-gutter-sm " style="display:flex;">
+            <!-- <div class="q-gutter-sm " style="display:flex;">
               <q-item-label header v-if="canBeDead && canBeDead!==false">Pesquisar entre os falecidos.</q-item-label>
               <q-item-label header v-else>Não pesquisar entre os falecidos.</q-item-label>
               <q-toggle v-model="canBeDead"> </q-toggle>
-            </div>
+            </div> -->
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
