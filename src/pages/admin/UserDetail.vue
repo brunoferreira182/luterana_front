@@ -70,7 +70,7 @@
             unelevated
             no-caps
             label="Atualizar Dados"
-            @click="updateUserData"
+            @click="updateUserData()"
           />
         </div>
       </div>
