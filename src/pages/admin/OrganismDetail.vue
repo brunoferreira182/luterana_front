@@ -294,6 +294,10 @@
                     >
                       <q-tooltip>Adicionar pastor</q-tooltip>
                     </q-btn>
+                    <q-btn
+                      color="red"
+                      @click="testDialog"
+                    />
                   </span>
                 </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
@@ -2056,6 +2060,9 @@
     @closeDialog="closeDialogPastoralStatus"
     @confirm="clkCreatePastoralStatus"
   />
+  <DialogAddStatus
+    :open="dialogAddStatus.open"
+  />
 
 </template>
 <script>
@@ -2070,6 +2077,7 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
+import DialogAddStatus from '../../components/DialogAddStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
 // import CardSecretary from '../../components/CardSecretary.vue'
 // import DialogAddServices from '../../components/DialogAddServices.vue'
@@ -2087,10 +2095,13 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
-    DialogAddPastoralStatus, CardServices
+    DialogAddPastoralStatus, CardServices, DialogAddStatus
   },
   data() {
     return {
+      dialogAddStatus: {
+        open: false
+      },
       diasDaSemana: [
         { label: 'Domingo', value: 'domingo' },
         { label: 'Segunda-feira', value: 'segunda-feira' },
@@ -2369,6 +2380,9 @@ export default defineComponent({
     }
   },
   methods: {
+    testDialog() {
+      this.dialogAddStatus.open = true
+    },
     async getParishChildOrganismsList() {
       const opt = {
         route: '/desktop/adm/getChildOrganismsFromParishByChildId',
