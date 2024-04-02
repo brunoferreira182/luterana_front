@@ -2382,7 +2382,66 @@ export default defineComponent({
   },
   methods: {
     confirmAddStatus(status, data) {
-      console.log(status, data, 'cupeludoos')
+      let qry
+      console.log(data, status)
+      if (status === 'license' ) {
+        qry = {
+          subtype: status,
+          licenseOption: data.selectedlicenseOption,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+          isActive: 1
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'trainee') {
+        qry = {
+          subtype: status,
+          organismSelected: data.organismSelected.organismId,
+          guildingPastor: data.guildingPastor.userIdString,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+          isActive: 1
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'ceded') {
+        qry = {
+          subtype: status,
+          local: data.local,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+          isActive: 1
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'retired') {
+        qry = {
+          subtype: status,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+          isActive: 1
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      }
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false
