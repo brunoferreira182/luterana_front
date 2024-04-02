@@ -1119,7 +1119,6 @@
                         v-model="dialogDeletePastorFromFunction.finalDate"
                         hint="Informe a data de desinstalação de ocupação da função"
                       />
-                   
                       <q-select
                         v-model="dialogDeletePastorFromFunction.uninstallerUser"
                         filled
@@ -2062,6 +2061,8 @@
   />
   <DialogAddStatus
     :open="dialogAddStatus.open"
+    @closeDialog="clearDialogAddStatus"
+    @confirm="confirmAddStatus"
   />
 
 </template>
@@ -2380,6 +2381,12 @@ export default defineComponent({
     }
   },
   methods: {
+    confirmAddStatus(status, data) {
+      console.log(status, data, 'cupeludoos')
+    },
+    clearDialogAddStatus() {
+      this.dialogAddStatus.open = false
+    },
     testDialog() {
       this.dialogAddStatus.open = true
     },

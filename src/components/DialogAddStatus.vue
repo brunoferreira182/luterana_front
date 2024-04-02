@@ -1,5 +1,5 @@
 <template>
-  <q-dialog :model-value="props.open" v-if="data.statusOptions">
+  <q-dialog :model-value="props.open" v-if="data.statusOptions" @hide="closeDialog">
     <q-card style="border-radius: 1rem;width: 300px;">
       <q-card-section>
         <div class="text-center text-h6 q-mb-sm">
@@ -36,7 +36,7 @@
           v-model="retiredData.deadline"
         />
         <q-checkbox
-          v-model="retiredData.noDeadLine"
+          v-model="retiredData.noDeadline"
           label="Prazo final indefinido"
           @update:model-value="changeRetiredDeadline"
         />
@@ -83,7 +83,7 @@
           v-model="licenseData.deadline"
         />
         <q-checkbox
-          v-model="licenseData.noDeadLine"
+          v-model="licenseData.noDeadline"
           label="Prazo final indefinido"
           @update:model-value="changeLicenseDeadline"
         />
@@ -134,7 +134,7 @@
           v-model="traineeData.deadline"
         />
         <q-checkbox
-          v-model="traineeData.noDeadLine"
+          v-model="traineeData.noDeadline"
           label="Prazo final indefinido"
           @update:model-value="changeTraineeDeadline"
         />
@@ -169,7 +169,7 @@
           label="Prazo final"
         />
         <q-checkbox
-          v-model="withoutCallData.noDeadLine"
+          v-model="withoutCallData.noDeadline"
           label="Prazo final indefinido"
           @update:model-value="changewithoutCallDeadline"
         />
@@ -210,15 +210,151 @@
           :disable="studentData.disable"
         />
         <q-checkbox
-          v-model="studentData.noDeadLine"
+          v-model="studentData.noDeadline"
           label="Prazo final indefinido"
           @update:model-value="changeStudentDeadline"
         />
       </q-card-section>
       <q-card-section
+        v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'withCall'"
+      > 
+        <q-select
+          class="q-mb-md"
+          v-model="withCallData.selectedCallOption"       
+          :options="withCallData.callOptions"   
+          outlined
+          options-dense
+          label="Quem chamou"
+        />
+        <q-select
+          v-if="withCallData.selectedCallOption === 'Congregação'"
+          class="q-mb-md"
+          v-model="withCallData.selectedOrgamism"
+          outlined
+          use-input
+          label="Nome do organismo de chamado"
+          option-label="nome"
+          options-dense
+          :options="filiatedOrganismsList.data"
+          @filter="getFiliatedOrganismsList"
+          :option-value="(item) => item"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
+          v-model="withCallData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Data de início"
+          v-model="withCallData.initialDate"
+        />
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Data de término"
+          v-model="withCallData.finalDate"
+        />
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Prazo final"
+          v-model="withCallData.deadline"
+          :disable="withCallData.disable"
+        />
+        <q-checkbox
+          v-model="withCallData.noDeadline"
+          label="Prazo final indefinido"
+          @update:model-value="changewithCallDeadline"
+        />
+      </q-card-section>
+      <q-card-section
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'ceded'"
       >
-        Aguardando importação para ajustar de acordo a lista de organismos que podem ser selecionaos aqui hauhauhau
+        <q-select
+          label="Qual igreja"
+          :options="cededData.localOptions"
+          v-model="cededData.local"
+          outlined
+          class="q-mb-md"
+        />
+        <q-input
+          label="Onde"
+          v-model="cededData.where"
+          class="q-mb-md"
+          outlined
+        />
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Data de início"
+          v-model="cededData.initialDate"
+        />
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Data de término"
+          v-model="cededData.finalDate"
+        />
+        <q-input
+          class="q-mb-md"
+          outlined
+          mask="##/##/####"
+          label="Prazo final"
+          v-model="cededData.deadline"
+          :disable="cededData.disable"
+        />
+        <q-checkbox
+          v-model="cededData.noDeadline"
+          label="Prazo final indefinido"
+          @update:model-value="changeCededDeadline"
+        />
       </q-card-section>
       <q-card-actions align="center">
         <q-btn
@@ -253,7 +389,12 @@ const organismsList = ref({
 const pastorList = ref({
   data: ''
 })
+const filiatedOrganismsList = ref({
+  data: ''
+})
 
+
+const emits = defineEmits(['confirm', 'closeDialog'])
 
 const data = ref({
   statusOptions: null,
@@ -264,17 +405,20 @@ const retiredData = ref({
   initialDate: '',
   finalDate: '',
   deadline: null,
-  noDeadLine: false,
+  noDeadline: false,
   disable: false
 })
 
-// const cededData = ref({
-//   local: null,
-//   where: null,
-//   initialDate: '',
-//   finalDate: '',
-//   deadline: ''
-// })
+const cededData = ref({
+  localOptions: ['Outra denominação', 'Igreja irmã'],
+  local: null,
+  where: null,
+  initialDate: '',
+  finalDate: '',
+  deadline: '',
+  noDeadline: false,
+  disable: false
+})
 
 const traineeData = ref({
   organismSelected: null,
@@ -282,7 +426,7 @@ const traineeData = ref({
   initialDate: '',
   finalDate: '',
   deadline: null,
-  noDeadLine: false,
+  noDeadline: false,
   disable: false
 })
 
@@ -294,7 +438,7 @@ const licenseData = ref({
   finalDate: '',
   deadline: '',
   disable: false,
-  noDeadLine: false
+  noDeadline: false
 })
 
 const studentData = ref({
@@ -304,7 +448,7 @@ const studentData = ref({
   initialDate: '',
   finalDate: '',
   deadline: '',
-  noDeadLine: false,
+  noDeadline: false,
   disable: false
 })
 
@@ -314,7 +458,19 @@ const withoutCallData = ref({
   initialDate: '',
   finalDate: '',
   deadline: '',
-  noDeadLine: false,
+  noDeadline: false,
+  disable: false
+})
+
+const withCallData = ref({
+  selectedOrgamism: null,
+  selectedPastor: null,
+  callOptions: ['Diretoria Nacional', 'Congregação'],
+  selectedCallOption: null,
+  initialDate: '',
+  finalDate: '',
+  deadline: '',
+  noDeadline: false,
   disable: false
 })
 
@@ -333,8 +489,24 @@ async function getStatusOptions() {
   data.value.statusOptions = r.data
 }
 
+function changeCededDeadline() {
+  if (cededData.value.noDeadline) {
+    cededData.value.deadline = '',
+    cededData.value.disable = true
+  } else {
+    cededData.value.disable = false
+  }
+}
+function changewithCallDeadline() {
+  if (withCallData.value.noDeadline) {
+    withCallData.value.deadline = '',
+    withCallData.value.disable = true
+  } else {
+    withCallData.value.disable = false
+  }
+}
 function changeStudentDeadline() {
-  if (studentData.value.noDeadLine) {
+  if (studentData.value.noDeadline) {
     studentData.value.deadline = '',
     studentData.value.disable = true
   } else {
@@ -342,7 +514,7 @@ function changeStudentDeadline() {
   }
 }
 function changewithoutCallDeadline() {
-  if (withoutCallData.value.noDeadLine) {
+  if (withoutCallData.value.noDeadline) {
     withoutCallData.value.deadline = '',
     withoutCallData.value.disable = true
   } else {
@@ -350,7 +522,7 @@ function changewithoutCallDeadline() {
   }
 }
 function changeTraineeDeadline() {
-  if (traineeData.value.noDeadLine) {
+  if (traineeData.value.noDeadline) {
     traineeData.value.deadline = '',
     traineeData.value.disable = true
   } else {
@@ -358,7 +530,7 @@ function changeTraineeDeadline() {
   }
 }
 function changeRetiredDeadline() {
-  if (retiredData.value.noDeadLine) {
+  if (retiredData.value.noDeadline) {
     retiredData.value.deadline = '',
     retiredData.value.disable = true
   } else {
@@ -366,7 +538,7 @@ function changeRetiredDeadline() {
   }
 }
 function changeLicenseDeadline() {
-  if (licenseData.value.noDeadLine) {
+  if (licenseData.value.noDeadline) {
     licenseData.value.deadline = '',
     licenseData.value.disable = true
   } else {
@@ -376,26 +548,73 @@ function changeLicenseDeadline() {
 
 function verifyIfCanAddStatus() {
   if (data.value.selectedStatusOption.value === 'retired') {
-    if (retiredData.value.initialDate === '' || (retiredData.value.deadline === '' && !retiredData.value.noDeadLine)) {
-      Notify.create('Preencha a data inicial e o prazo.')
+    if ((retiredData.value.deadline === '' && !retiredData.value.noDeadline)) {
+      Notify.create('Preencha o prazo.')
       return
     }
+    emits('confirm', data.value.selectedStatusOption.value, retiredData.value)
   } else if (data.value.selectedStatusOption.value === 'license') {
-    if (!licenseData.value.selectedlicenseOption || (licenseData.value.selectedlicenseOption === 'Outro' && licenseData.value.otherReason === '') || (licenseData.value.deadline === '' && !licenseData.value.noDeadLine)) {
-      Notify.create('Preencha a data inicial e o motivo')
+    if (!licenseData.value.selectedlicenseOption || (licenseData.value.selectedlicenseOption === 'Outro' && licenseData.value.otherReason === '') || (licenseData.value.deadline === '' && !licenseData.value.noDeadline)) {
+      Notify.create('Preencha o motivo')
       return
     }
+    emits('confirm', data.value.selectedStatusOption.value, licenseData.value)
   } else if (data.value.selectedStatusOption.value === 'trainee') {
-    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || traineeData.value.initialDate === '' || (traineeData.value.deadline && !traineeData.value.noDeadLine)) {
-      Notify.create('Preencha a congregação, o pastor orientador, a data de início e o prazo para prosseguir')
+    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || (traineeData.value.deadline && !traineeData.value.noDeadline)) {
+      Notify.create('Preencha a congregação, o pastor orientador e o prazo para prosseguir')
       return
     } 
+    emits('confirm', data.value.selectedStatusOption.value, traineeData.value)
   } else if (data.value.selectedStatusOption.value === 'withoutCall') {
-    if (!withoutCallData.value.optionSelected || withoutCallData.value.initialDate === '' || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadLine)) {
+    if (!withoutCallData.value.optionSelected || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadline)) {
+      Notify.create('Preencha a posição do chamado  e o prazo final')
       return
     }
+    emits('confirm', data.value.selectedStatusOption.value, withoutCallData.value)
+  } else if (data.value.selectedStatusOption.value === 'student') {
+    if (!studentData.value.selectedGoal || studentData.value.where === '' || (studentData.value.deadline === '' && ! studentData.value.noDeadline)) {
+      Notify.create('Preencha a finalidade, o local e o prazo final')
+      return
+    }
+    emits('confirm', data.value.selectedStatusOption.value, studentData.value)
+  } else if (data.value.selectedStatusOption.value === 'withCall') {
+    if ((withCallData.value.selectedCallOption === 'Congregação' && !withCallData.value.selectedOrgamism) || !withCallData.value.selectedPastor || (withCallData.value.deadline === '' && !withCallData.value.noDeadline)) {
+      Notify.create('Preencha quem chamou, o pastor e o prazo final')
+      return
+    }
+    emits('confirm', data.value.selectedStatusOption.value, withCallData.value)
+  } else if (data.value.selectedStatusOption.value === 'ceded') {
+    if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline)) {
+      Notify.create('Preencha qual a igreja, onde e o prazo final')
+    }
+    emits('confirm', data.value.selectedStatusOption.value, cededData.value)
   }
   
+}
+
+function closeDialog() {
+  emits('closeDialog')
+}
+
+function getFiliatedOrganismsList(val, update, abort) {
+  if(val.length < 3) {
+    Notify.create('Digite no mínimo 3 caracteres')
+    abort()
+    return
+  }
+  const opt = {
+    route: "/desktop/adm/getFiliatedOrganismsList",
+    body: {
+      searchString: val,
+      page: 1,
+      rowsPerPage: 50
+    }
+  };
+  useFetch(opt).then((r) => {
+    update(() => {
+      filiatedOrganismsList.value.data = r.data.list;
+    })
+  });
 }
 
 function getOrganismsList(val, update, abort) {
