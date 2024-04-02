@@ -32,10 +32,14 @@
           label="Prazo final"
           mask="##/##/####"
           outlined
+          :disable="retiredData.disable"
           v-model="retiredData.deadline"
-        >
-
-        </q-input>
+        />
+        <q-checkbox
+          v-model="retiredData.noDeadLine"
+          label="Prazo final indefinido"
+          @update:model-value="changeRetiredDeadline"
+        />
       </q-card-section>
       <q-card-section
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'license'"
@@ -74,8 +78,14 @@
           class="q-mb-md"
           label="Prazo final"
           outlined
+          :disable="licenseData.disable"
           mask="##/##/####"
           v-model="licenseData.deadline"
+        />
+        <q-checkbox
+          v-model="licenseData.noDeadLine"
+          label="Prazo final indefinido"
+          @update:model-value="changeLicenseDeadline"
         />
       </q-card-section>
       <q-card-section
@@ -120,7 +130,13 @@
           label="Prazo final"
           outlined
           mask="##/##/####"
+          :disable="traineeData.disable"
           v-model="traineeData.deadline"
+        />
+        <q-checkbox
+          v-model="traineeData.noDeadLine"
+          label="Prazo final indefinido"
+          @update:model-value="changeTraineeDeadline"
         />
       </q-card-section>
       <q-card-section
@@ -149,7 +165,13 @@
           v-model="withoutCallData.deadline"
           outlined
           class="q-mb-md"
+          :disable="withoutCallData.disable"
           label="Prazo final"
+        />
+        <q-checkbox
+          v-model="withoutCallData.noDeadLine"
+          label="Prazo final indefinido"
+          @update:model-value="changewithoutCallDeadline"
         />
       </q-card-section>
       <q-card-section
@@ -185,8 +207,37 @@
           outlined
           class="q-mb-md"
           label="Prazo final"
+          :disable="studentData.disable"
+        />
+        <q-checkbox
+          v-model="studentData.noDeadLine"
+          label="Prazo final indefinido"
+          @update:model-value="changeStudentDeadline"
         />
       </q-card-section>
+      <q-card-section
+        v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'ceded'"
+      >
+        Aguardando importação para ajustar de acordo a lista de organismos que podem ser selecionaos aqui hauhauhau
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          color="primary"
+          rounded
+          unelevated
+          flat
+          no-caps
+        />
+        <q-btn
+          label="Adicionar status"
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          @click="verifyIfCanAddStatus"
+        />
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -194,7 +245,7 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue';
 import useFetch from "../boot/useFetch";
-// import { Notify, Loading } from 'quasar'; // Importe apenas os métodos necessários do Quasar
+import { Notify } from 'quasar';
 
 const organismsList = ref({
   data: ''
@@ -212,15 +263,27 @@ const data = ref({
 const retiredData = ref({
   initialDate: '',
   finalDate: '',
-  deadline: null
+  deadline: null,
+  noDeadLine: false,
+  disable: false
 })
+
+// const cededData = ref({
+//   local: null,
+//   where: null,
+//   initialDate: '',
+//   finalDate: '',
+//   deadline: ''
+// })
 
 const traineeData = ref({
   organismSelected: null,
   guildingPastor: null,
   initialDate: '',
   finalDate: '',
-  deadline: null
+  deadline: null,
+  noDeadLine: false,
+  disable: false
 })
 
 const licenseData = ref({
@@ -229,7 +292,9 @@ const licenseData = ref({
   otherReason: '',
   initialDate: '',
   finalDate: '',
-  deadline: ''
+  deadline: '',
+  disable: false,
+  noDeadLine: false
 })
 
 const studentData = ref({
@@ -238,7 +303,9 @@ const studentData = ref({
   where: '',
   initialDate: '',
   finalDate: '',
-  deadline: ''
+  deadline: '',
+  noDeadLine: false,
+  disable: false
 })
 
 const withoutCallData = ref({
@@ -246,7 +313,9 @@ const withoutCallData = ref({
   optionSelected: null,
   initialDate: '',
   finalDate: '',
-  deadline: ''
+  deadline: '',
+  noDeadLine: false,
+  disable: false
 })
 
 const props = defineProps(['open'])
@@ -260,9 +329,73 @@ async function getStatusOptions() {
     route: '/desktop/adm/getStatusTypes'
   }
   let r = await useFetch(opt)
-  console.log(r, 'fhasuhfuahuhuh')
   if (r.error) return
   data.value.statusOptions = r.data
+}
+
+function changeStudentDeadline() {
+  if (studentData.value.noDeadLine) {
+    studentData.value.deadline = '',
+    studentData.value.disable = true
+  } else {
+    studentData.value.disable = false
+  }
+}
+function changewithoutCallDeadline() {
+  if (withoutCallData.value.noDeadLine) {
+    withoutCallData.value.deadline = '',
+    withoutCallData.value.disable = true
+  } else {
+    withoutCallData.value.disable = false
+  }
+}
+function changeTraineeDeadline() {
+  if (traineeData.value.noDeadLine) {
+    traineeData.value.deadline = '',
+    traineeData.value.disable = true
+  } else {
+    traineeData.value.disable = false
+  }
+}
+function changeRetiredDeadline() {
+  if (retiredData.value.noDeadLine) {
+    retiredData.value.deadline = '',
+    retiredData.value.disable = true
+  } else {
+    retiredData.value.disable = false
+  }
+}
+function changeLicenseDeadline() {
+  if (licenseData.value.noDeadLine) {
+    licenseData.value.deadline = '',
+    licenseData.value.disable = true
+  } else {
+    licenseData.value.disable = false
+  }
+}
+
+function verifyIfCanAddStatus() {
+  if (data.value.selectedStatusOption.value === 'retired') {
+    if (retiredData.value.initialDate === '' || (retiredData.value.deadline === '' && !retiredData.value.noDeadLine)) {
+      Notify.create('Preencha a data inicial e o prazo.')
+      return
+    }
+  } else if (data.value.selectedStatusOption.value === 'license') {
+    if (!licenseData.value.selectedlicenseOption || (licenseData.value.selectedlicenseOption === 'Outro' && licenseData.value.otherReason === '') || (licenseData.value.deadline === '' && !licenseData.value.noDeadLine)) {
+      Notify.create('Preencha a data inicial e o motivo')
+      return
+    }
+  } else if (data.value.selectedStatusOption.value === 'trainee') {
+    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || traineeData.value.initialDate === '' || (traineeData.value.deadline && !traineeData.value.noDeadLine)) {
+      Notify.create('Preencha a congregação, o pastor orientador, a data de início e o prazo para prosseguir')
+      return
+    } 
+  } else if (data.value.selectedStatusOption.value === 'withoutCall') {
+    if (!withoutCallData.value.optionSelected || withoutCallData.value.initialDate === '' || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadLine)) {
+      return
+    }
+  }
+  
 }
 
 function getOrganismsList(val, update, abort) {
