@@ -294,10 +294,6 @@
                     >
                       <q-tooltip>Adicionar pastor</q-tooltip>
                     </q-btn>
-                    <q-btn
-                      color="red"
-                      @click="testDialog"
-                    />
                   </span>
                 </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
@@ -2101,7 +2097,8 @@ export default defineComponent({
   data() {
     return {
       dialogAddStatus: {
-        open: false
+        open: false,
+        functionId: null
       },
       diasDaSemana: [
         { label: 'Domingo', value: 'domingo' },
@@ -2381,7 +2378,7 @@ export default defineComponent({
     }
   },
   methods: {
-    confirmAddStatus(status, data) {
+    async confirmAddStatus(status, data) {
       let qry
       console.log(data, status)
       if (status === 'license' ) {
@@ -2479,11 +2476,27 @@ export default defineComponent({
           qry.deadline = data.deadline
         }
       }
+      const opt = {
+        route: '/desktop/adm/insertPastorStatus',
+        body: {
+          status,
+          data,
+          functionId: this.dialogAddStatus.functionId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false
     },
-    testDialog() {
+    linkPastorToFunction() {
+      this.functions.forEach((func) => {
+        if (func.functionName === 'Pastor') {
+          console.log(func)
+          this.dialogAddStatus.functionId = func.functionId
+        }
+      })
       this.dialogAddStatus.open = true
     },
     async getParishChildOrganismsList() {
@@ -3934,17 +3947,6 @@ export default defineComponent({
         this.dialogInsertUserInFunction.functionType = 'Pastor'
         this.dialogInsertUserInFunction.open = true;
         this.getOrganismCallerData()
-    },
-    linkPastorToFunction() {
-      this.functions.forEach((func, ifunc) => {
-        if (func.functionName === 'Pastor') {
-          this.dialogInsertUserInFunction.selectedFunc = func;
-          this.dialogInsertUserInFunction.functionType = 'Pastor';
-          this.dialogInsertUserInFunction.selectedFuncIndex = ifunc;  
-          this.dialogInsertUserInFunction.open = true;
-        }
-      })
-      this.getOrganismCallerData()
     },
     linkSecretaryToFunction() {
       this.functions.forEach((func, ifunc) => {
