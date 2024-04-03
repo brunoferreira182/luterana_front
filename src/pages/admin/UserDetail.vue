@@ -11,6 +11,7 @@
               height="74px"
             />
           </q-item-section>
+          
         </div>
         <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
           {{ userData.userDataTabs[0].fields[0].value }} 
@@ -43,6 +44,7 @@
             </q-btn>
           </div>
         </div>
+        
         <div class="col q-gutter-sm text-right">
           <q-btn
             v-if="userType && userType === 'pastor'"
@@ -73,6 +75,9 @@
             @click="updateUserData()"
           />
         </div>
+      </div>
+      <div class="q-px-md">
+        <q-checkbox v-model="canEdit" @update:model-value="updateCanEdit(canEdit)" label="Usuário de consulta no sistema?" />
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
@@ -1133,6 +1138,7 @@ export default defineComponent({
       selectIndex: null,
       tab: "",
       openDialogRemoveUser: false,
+      canEdit:false,
       dateOfDead: '',
       isDeadbyDeath: false, 
       otherDead: false,
@@ -2017,6 +2023,23 @@ export default defineComponent({
         }
       })
     },
+    updateCanEdit(canEdit){
+      const opt = {
+        route: '/desktop/adm/updateCanEdit',
+        body: {
+          userId : this.$route.query.userId,
+          canEdit: canEdit
+        }
+      }
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify('Ocorreu um erro, tente novamente')
+        } else {
+          this.$q.notify('Status de acesso alterado')
+          this.getUserDetailById()
+        }
+      })
+    },
     updateCanUseSystem (status) {
       const opt = {
         route: '/desktop/adm/updateCanUseSystem',
@@ -2045,7 +2068,8 @@ export default defineComponent({
         route: '/desktop/adm/updateUserData',
         body: {
           userDataTabs: this.userData.userDataTabs,
-          userId: this.$route.query.userId
+          userId: this.$route.query.userId,
+          canEdit: this.canEdit
         }
       }
       useFetch(opt).then((r) => {
@@ -2348,6 +2372,7 @@ export default defineComponent({
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
+        this.canEdit = r.data.canEdit
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data
