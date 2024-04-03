@@ -866,10 +866,10 @@
                         v-model="dialogInsertUserInFunction.userSelected"
                         filled
                         use-input
-                        label="Nome do pastor"
+                        label="Nome do usuário"
                         option-label="userName"
                         :options="usersOptions"
-                        hint="Pastor que ocupará a função"
+                        hint="usuário que ocupará a função"
                         @filter="getUsers"
                         :loading="false"
                         :option-value="(item) => item._id"
@@ -942,7 +942,7 @@
                       />
                       <q-input
                         filled
-                        label="Data do chamado"
+                        :label="`${dialogInsertUserInFunction.functionType === 'Pastor' ? 'Data do chamado' : 'Data início'}` "
                         type="date"
                         hint="Informe a data início de ocupação da função"
                         v-model="dialogInsertUserInFunction.initialDate"
