@@ -154,17 +154,20 @@
           outlined
           class="q-mb-md"
           label="Data de início"
+          mask="##/##/####"
         />
         <q-input
           v-model="withoutCallData.finalDate"
           outlined
           class="q-mb-md"
           label="Data de término"
+          mask="##/##/####"
         />
         <q-input
           v-model="withoutCallData.deadline"
           outlined
           class="q-mb-md"
+          mask="##/##/####"
           :disable="withoutCallData.disable"
           label="Prazo final"
         />
@@ -195,18 +198,21 @@
           outlined
           class="q-mb-md"
           label="Data de início"
+          mask="##/##/####"
         />
         <q-input
           v-model="studentData.finalDate"
           outlined
           class="q-mb-md"
           label="Data de término"
+          mask="##/##/####"
         />
         <q-input
           v-model="studentData.deadline"
           outlined
           class="q-mb-md"
           label="Prazo final"
+          mask="##/##/####"
           :disable="studentData.disable"
         />
         <q-checkbox
@@ -224,6 +230,7 @@
           :options="withCallData.callOptions"   
           outlined
           options-dense
+          @update:model-value="resetOrganismName"
           label="Quem chamou"
         />
         <q-select
@@ -250,6 +257,33 @@
             <q-item v-bind="scope.itemProps">
               <q-item-section>
                 <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
+          v-if="withCallData.selectedCallOption === 'Diretoria Nacional'"
+          class="q-mb-md"
+          v-model="withCallData.selectedOrgamism"
+          outlined
+          label="Nome do organismo de chamado"
+          option-label="organismName"
+          options-dense
+          :options="nacionalBoard.data"
+          :option-value="(item) => item"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.organismName }}</q-item-label>
                 <q-item-label caption>{{ scope.opt.city }}</q-item-label>
               </q-item-section>
             </q-item>
@@ -322,12 +356,25 @@
           outlined
           class="q-mb-md"
         />
-        <q-input
-          label="Onde"
-          v-model="cededData.where"
-          class="q-mb-md"
+        <q-select
+          v-if="cededData.local === 'Igreja irmã'"
+          :options="sisterChurch.data"
           outlined
+          class="q-mb-md"
+          label="Selecione a igreja"
+          option-label="organismName"
+          v-model="cededData.where"
         />
+        <q-select
+          v-if="cededData.local === 'Outra denominação'"
+          :options="otherDenomination.data"
+          outlined
+          class="q-mb-md"
+          label="Selecione a igreja"
+          option-label="organismName"
+          v-model="cededData.where"
+        />
+        
         <q-input
           class="q-mb-md"
           outlined
@@ -390,6 +437,15 @@ const pastorList = ref({
   data: ''
 })
 const filiatedOrganismsList = ref({
+  data: ''
+})
+const nacionalBoard = ref({
+  data: ''
+})
+const sisterChurch = ref({
+  data: ''
+})
+const otherDenomination = ref({
   data: ''
 })
 
@@ -478,6 +534,9 @@ const props = defineProps(['open'])
 
 onBeforeMount(async () => {
   await getStatusOptions()
+  await getNacionalBoardOrganisms()
+  await getSisterChurchOrganisms()
+  await getOtherDenominationOrganisms()
 })
 
 async function getStatusOptions() {
@@ -594,6 +653,35 @@ function verifyIfCanAddStatus() {
 
 function closeDialog() {
   emits('closeDialog')
+}
+
+function resetOrganismName() {
+  withCallData.value.selectedOrgamism = null
+}
+
+async function getOtherDenominationOrganisms() {
+  const opt = {
+    route: "/desktop/adm/getOtherDenomination",
+  };
+  let r = await useFetch(opt)
+  if (r.error) return
+  otherDenomination.value.data = r.data
+}
+async function getNacionalBoardOrganisms() {
+  const opt = {
+    route: "/desktop/adm/getNacionalBoardOrganisms",
+  };
+  let r = await useFetch(opt)
+  if (r.error) return
+  nacionalBoard.value.data = r.data
+}
+async function getSisterChurchOrganisms() {
+  const opt = {
+    route: "/desktop/adm/getSisterChurch",
+  };
+  let r = await useFetch(opt)
+  if (r.error) return
+  sisterChurch.value.data = r.data
 }
 
 function getFiliatedOrganismsList(val, update, abort) {

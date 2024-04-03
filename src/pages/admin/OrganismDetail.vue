@@ -2393,7 +2393,6 @@ export default defineComponent({
             finalDate: data.finalDate
           },
           deadline: null,
-          isActive: 1
         }
         if (!data.noDeadline) {
           qry.deadline = data.deadline
@@ -2408,7 +2407,6 @@ export default defineComponent({
             finalDate: data.finalDate
           },
           deadline: null,
-          isActive: 1
         }
         if (!data.noDeadline) {
           qry.deadline = data.deadline
@@ -2423,7 +2421,6 @@ export default defineComponent({
             finalDate: data.finalDate
           },
           deadline: null,
-          isActive: 1
         }
         if (!data.noDeadline) {
           qry.deadline = data.deadline
@@ -2436,7 +2433,47 @@ export default defineComponent({
             finalDate: data.finalDate
           },
           deadline: null,
-          isActive: 1
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'student') {
+        qry = {
+          subtype: status,
+          selectedGoal: data.selectedGoal,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withoutCall') {
+        qry = {
+          subtype: status,
+          position: data.optionSelected,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withCall') {
+        qry = {
+          caller: data.selectedCallOption,
+          selectedPastor: data.selectedPastor,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          organism: data.selectedOrganism,
+          deadline: null
         }
         if (!data.noDeadline) {
           qry.deadline = data.deadline
