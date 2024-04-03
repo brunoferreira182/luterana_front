@@ -512,7 +512,7 @@
                   </q-select>
                   <q-input
                     filled
-                    label="Data do chamado"
+                    :label="`${this.dialogInsertUserInFunction.functionType = 'Secretária Contratada' ? 'Data início' : 'Data do chamado'  }`"
                     type="date"
                     hint="Informe a data início de ocupação da função"
                     v-model="dialogInsertUserInFunction.initialDate"

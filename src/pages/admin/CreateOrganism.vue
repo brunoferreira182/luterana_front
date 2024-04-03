@@ -10,6 +10,8 @@
             color="primary"
             rounded
             unelevated
+            :disable="canEdit"
+
             label="Criar organismo"
           />
         </div>
@@ -368,6 +370,7 @@ export default defineComponent({
         action: null,
         iValue: null
       },
+      canEdit: false,
       dialogOrganismNotCreatedInSGA: false,
     };
   },
@@ -375,9 +378,19 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount(){
+    this.getUserCanEditStatus()
     this.getOrganismsConfigs()
   },
   methods: {
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit = r.data
+      })
+    },
+
     validateAtaKeyFormat(value) {
       const regex = /^([A-Z]{3}-[A-Z]{3}-\d{3}-\d{4}-\d{2}-[a-z])$/;
       if (regex.test(value)) {

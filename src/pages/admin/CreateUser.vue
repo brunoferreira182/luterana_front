@@ -12,8 +12,8 @@
             unelevated
             color="primary"
             :label="isSaving ? '' : 'Salvar'"
-            @click="salvar"
-            :disable="isSaving"
+            @click="clkCreateUser"
+            :disable="canEditStatus"
           >
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
           </q-btn>
@@ -577,16 +577,27 @@ export default defineComponent({
       state: "",
       district: "",
       userData: {},
-      userType: null
+      userType: null,
+      canEditStatus: false,
     };
   },
   mounted() {
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.getUserCanEditStatus()
     this.getUsersConfig()
   },
   methods: {
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEditStatus = r.data
+      })
+    },
+
     editAttach(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddAttach.open = true,
       this.dialogAddAttach.fieldIndex = fieldIndex
@@ -1082,13 +1093,6 @@ export default defineComponent({
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
       this.dialogConfirmAddress.tabsIndex = tabIndex
-    },
-    salvar() {
-      this.isSaving = true;
-      this.clkCreateUser()
-      setTimeout(() => {
-        this.isSaving = false;
-      }, 1000);
     },
     addPhoneMobileEmail(fieldIndex, tabsIndex, field) {
       this.dialogAddPhoneMobileEmail.action = 'add'
