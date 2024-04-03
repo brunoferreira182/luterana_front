@@ -2380,7 +2380,6 @@ export default defineComponent({
   methods: {
     async confirmAddStatus(status, data) {
       let qry
-      console.log(data, status)
       if (status === 'license' ) {
         qry = {
           subtype: status,

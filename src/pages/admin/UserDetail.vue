@@ -1142,6 +1142,8 @@
         :open="dialogAddStatus.open"
         :userId="$route.query.userId"
         :userName="userData.userDataTabs[0].fields[0].value"
+        @closeDialog="clearDialogAddStatus"
+        @confirm="confirmAddStatus"
       />
     </q-page>
   </q-page-container>
@@ -1359,6 +1361,118 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    async confirmAddStatus(status, data) {
+      let qry
+      if (status === 'license' ) {
+        qry = {
+          subtype: status,
+          licenseOption: data.selectedlicenseOption,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'trainee') {
+        qry = {
+          subtype: status,
+          organismSelected: data.organismSelected.organismId,
+          guildingPastor: data.guildingPastor.userIdString,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'ceded') {
+        qry = {
+          subtype: status,
+          local: data.local,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'retired') {
+        qry = {
+          subtype: status,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'student') {
+        qry = {
+          subtype: status,
+          selectedGoal: data.selectedGoal,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withoutCall') {
+        qry = {
+          subtype: status,
+          position: data.optionSelected,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withCall') {
+        qry = {
+          caller: data.selectedCallOption,
+          selectedPastor: data.selectedPastor,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          organism: data.selectedOrganism,
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      }
+      const opt = {
+        route: '/desktop/adm/insertPastorStatus',
+        body: {
+          status,
+          data,
+          functionId: this.dialogAddStatus.functionId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogAddStatus()
+    },
+    clearDialogAddStatus() {
+      this.dialogAddStatus.open = false
+    },
     getUserCanEditStatus(){
       const opt = {
         route: '/desktop/users/getUserCanEditStatus'
