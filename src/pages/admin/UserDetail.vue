@@ -13,8 +13,10 @@
           </q-item-section>
           
         </div>
-        <div class="col text-h5 text-capitalize" v-if="userData && userData.userDataTabs">
-          {{ userData.userDataTabs[0].fields[0].value }} 
+        <div class="col" v-if="userData && userData.userDataTabs">
+          <div class="text-capitalize  text-h5 ">
+            {{ userData.userDataTabs[0].fields[0].value }} 
+          </div>
           <div class="text-subtitle1" v-if="canUseSystem">
             Acesso ao sistema: 
             <q-badge color="green">Sim</q-badge>
@@ -41,6 +43,34 @@
               @click="updateCanUseSystem(true)"
             >
               <q-tooltip>Alterar status de acesso</q-tooltip>
+            </q-btn>
+          </div>
+          <div class="text-subtitle1" v-if="canEdit">
+            Usuário de consulta no sistema?
+            <q-badge color="green">Sim</q-badge>
+            <q-btn
+              icon="sync"
+              color="primary"
+              rounded
+              size="12px"
+              flat
+              @click="updateCanEdit(false)"
+            >
+              <q-tooltip>Alterar status de usuário</q-tooltip>
+            </q-btn>
+          </div>
+          <div class="text-subtitle1" v-else-if="!canEdit">
+            Usuário de consulta no sistema? 
+            <q-badge color="red">Não</q-badge>
+            <q-btn
+              icon="sync"
+              color="primary"
+              rounded
+              size="12px"
+              flat
+              @click="updateCanEdit(true)"
+            >
+              <q-tooltip>Alterar status de usuário</q-tooltip>
             </q-btn>
           </div>
         </div>
@@ -77,13 +107,7 @@
           />
         </div>
       </div>
-      <div class="q-px-md">
-        <q-checkbox 
-          v-model="canEdit" 
-          @update:model-value="updateCanEdit(canEdit)" 
-          label="Usuário de consulta no sistema?" 
-        />
-      </div>
+     
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
         <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
@@ -2046,12 +2070,12 @@ export default defineComponent({
         }
       })
     },
-    updateCanEdit(canEdit){
+    updateCanEdit(status){
       const opt = {
         route: '/desktop/adm/updateCanEdit',
         body: {
           userId : this.$route.query.userId,
-          canEdit: canEdit
+          canEdit: status
         }
       }
       useFetch(opt).then((r) => {
