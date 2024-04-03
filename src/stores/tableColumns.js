@@ -608,7 +608,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "canUseSystem",
         align: "left",
         label: "Situação",
-        field: (row) => (row.canUseSystem ? "Falecido": "Vivo"),
+        field: (row) => (row.canUseSystem ? "Vivo": "Falecido"),
         sortable: true,
       },
       {

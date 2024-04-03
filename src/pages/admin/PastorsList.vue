@@ -176,6 +176,9 @@ export default defineComponent({
       this.clearPastorStore()
     }
   },
+  // watch:{
+  //   canBeDead: 'getPastorList'
+  // },
   methods: {
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
