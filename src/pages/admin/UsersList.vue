@@ -41,6 +41,7 @@
                 unelevated
                 no-caps
                 rounded
+                :disable="canEdit"
                 icon="add"
                 class="q-pa-sm"
               >
@@ -144,7 +145,9 @@ export default defineComponent({
         descending: false,
       },
       loading: false,
-      usersListTimer: null
+      usersListTimer: null,
+      
+      canEdit: false,
     };
   },
   mounted() {
@@ -152,6 +155,7 @@ export default defineComponent({
   },
   beforeMount() {
     // this.getUsersList();
+    this.getUserCanEditStatus()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -160,6 +164,15 @@ export default defineComponent({
     }
   },
   methods: {
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit= r.data
+      })
+    },
+
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
     },

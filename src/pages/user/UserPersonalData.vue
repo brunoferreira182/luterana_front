@@ -18,8 +18,7 @@
             color="primary"
             icon="bookmark"
             :label="isSaving ? '' : 'Salvar Dados'"
-            @click="salvar"
-            :disable="isSaving"
+            @click="updateUserData()"
           >
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
           </q-btn>
@@ -64,8 +63,7 @@
                   color="primary"
                   icon="bookmark"
                   :label="isSaving ? '' : 'Salvar Dados'"
-                  @click="salvar"
-                  :disable="isSaving"
+                  @click="updateUserData()"
                 >
                   <q-spinner-dots v-if="isSaving" color="white" size="1em" />
                 </q-btn>
@@ -1383,11 +1381,12 @@ export default defineComponent({
         fieldIndex: null,
         tabsIndex: null,
         i: null,
-        usersList: []
+        usersList: [],
       }
     };
   },
   mounted() {
+    
     this.$q.loading.hide();
   },
   beforeMount() {
@@ -2048,13 +2047,6 @@ export default defineComponent({
       this.dialogConfirmAddress.open = true
       this.dialogConfirmAddress.fieldIndex = fieldIndex
       this.dialogConfirmAddress.tabsIndex = tabIndex
-    },
-    salvar() {
-      this.isSaving = true;
-      this.updateUserData();
-      setTimeout(() => {
-        this.isSaving = false;
-      }, 1000);
     },
     addPhoneMobileEmail(fieldIndex, tabsIndex, field) {
       this.dialogAddPhoneMobileEmail.action = 'add'

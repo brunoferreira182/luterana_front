@@ -70,6 +70,7 @@
             color="primary"
             rounded
             unelevated
+            :disable="canEdit"
             no-caps
             label="Atualizar Dados"
             @click="updateUserData()"
@@ -77,7 +78,11 @@
         </div>
       </div>
       <div class="q-px-md">
-        <q-checkbox v-model="canEdit" @update:model-value="updateCanEdit(canEdit)" label="Usuário de consulta no sistema?" />
+        <q-checkbox 
+          v-model="canEdit" 
+          @update:model-value="updateCanEdit(canEdit)" 
+          label="Usuário de consulta no sistema?" 
+        />
       </div>
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
@@ -595,6 +600,7 @@
               rounded
               label="Confirmar"
               no-caps
+              :disable="canEdit"
               color="primary"
               @click="createUserTitle"
             />
@@ -623,6 +629,7 @@
               rounded
               label="Confirmar"
               no-caps
+              :disable="canEdit"
               color="primary"
               @click="clkConfirmDeleteTitle"
             />
@@ -820,6 +827,7 @@
             <q-btn
               unelevated
               rounded
+              :disable="canEdit"
               label="Confirmar"
               no-caps
               color="primary"
@@ -894,6 +902,7 @@
               no-caps
               @click="clkConfirmSwapUser"
               rounded
+              :disable="canEdit"
               color="primary"
             />
           </q-card-actions>
@@ -945,6 +954,7 @@
               label="Confirmar"
               unelevated
               rounded
+              :disable="canEdit"
               @click="InactivateUser"
               color="primary"
             />
@@ -1017,6 +1027,7 @@
             <q-btn
               unelevated
               rounded
+              :disable="canEdit"
               label="Confirmar"
               no-caps
               color="primary"
@@ -1071,6 +1082,7 @@
               unelevated
               label="Confirmar"
               no-caps
+              :disable="canEdit"
               @click="confirmChangeUserType"
             />
           </q-card-actions>
@@ -1138,7 +1150,7 @@ export default defineComponent({
       selectIndex: null,
       tab: "",
       openDialogRemoveUser: false,
-      canEdit:false,
+      canEdit: false,
       dateOfDead: '',
       isDeadbyDeath: false, 
       otherDead: false,
@@ -1297,7 +1309,7 @@ export default defineComponent({
         fieldIndex: null,
         tabsIndex: null
       },
-      otherOrganism: false
+      otherOrganism: false,
     };
   },
   mounted() {
@@ -1305,11 +1317,22 @@ export default defineComponent({
     this.chkVisionSelected()
   },
   beforeMount() {
+    this.getUserCanEditStatus()
+    
     // this.getUsersConfig()
     this.getUserDetailById();
     this.getPastoralStatusTypes()
   },
   methods: {
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit = r.data
+      })
+    },
+
     clearDialogChangeUserType() {
       this.dialogchangeUserType = {
         open: false,
@@ -2372,7 +2395,7 @@ export default defineComponent({
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
-        this.canEdit = r.data.canEdit
+        r.data.canEdit ? this.canEdit = r.data.canEdit : this.canEdit = false
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data

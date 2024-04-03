@@ -146,6 +146,8 @@ export default defineComponent({
       },
       loading: false,
       pastorListTimer: null,
+      canEdit: false,
+
       pagesNumber: computed(() => {
         return Math.ceil(rows.length / this.pagination.value.rowsPerPage)
       })
@@ -155,6 +157,8 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
+    this.getUserCanEditStatus()
+
     // this.getPastorList();
   },
   unmounted() {
@@ -164,6 +168,15 @@ export default defineComponent({
     }
   },
   methods: {
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit = r.data
+      })
+    },
+
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
     },

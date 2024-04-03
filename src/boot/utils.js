@@ -1,4 +1,4 @@
-import { MODE_AUTH_SERVER } from "./variables";
+// import { MODE_AUTH_SERVER } from "./variables";
 import CryptoJS from "crypto-js";
 import { LocalStorage } from "quasar";
 import useFetch from "./useFetch";
@@ -105,13 +105,14 @@ const useUtils = {
     };
     return useFetch(opt);
   },
-  getUserInfoByToken() {
-    const opt = {
-      mode: MODE_AUTH_SERVER,
-      route: "/getUserInfoByToken",
-    };
-    return useFetch(opt);
-  },
+  //api quebrada no backend não utilizar
+  // getUserInfoByToken() {
+  //   const opt = {
+  //     mode: MODE_AUTH_SERVER,
+  //     route: "/getUserInfoByToken",
+  //   };
+  //   return useFetch(opt);
+  // },
   getDrawerOptions(type) {
     const obj = {
       admin: [
