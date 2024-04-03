@@ -294,6 +294,10 @@
                     >
                       <q-tooltip>Adicionar pastor</q-tooltip>
                     </q-btn>
+                    <q-btn
+                      color="red"
+                      @click="testDialog"
+                    />
                   </span>
                 </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
@@ -1115,7 +1119,6 @@
                         v-model="dialogDeletePastorFromFunction.finalDate"
                         hint="Informe a data de desinstalação de ocupação da função"
                       />
-                   
                       <q-select
                         v-model="dialogDeletePastorFromFunction.uninstallerUser"
                         filled
@@ -2056,6 +2059,11 @@
     @closeDialog="closeDialogPastoralStatus"
     @confirm="clkCreatePastoralStatus"
   />
+  <DialogAddStatus
+    :open="dialogAddStatus.open"
+    @closeDialog="clearDialogAddStatus"
+    @confirm="confirmAddStatus"
+  />
 
 </template>
 <script>
@@ -2070,6 +2078,7 @@ import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
+import DialogAddStatus from '../../components/DialogAddStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
 // import CardSecretary from '../../components/CardSecretary.vue'
 // import DialogAddServices from '../../components/DialogAddServices.vue'
@@ -2087,10 +2096,13 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
-    DialogAddPastoralStatus, CardServices
+    DialogAddPastoralStatus, CardServices, DialogAddStatus
   },
   data() {
     return {
+      dialogAddStatus: {
+        open: false
+      },
       diasDaSemana: [
         { label: 'Domingo', value: 'domingo' },
         { label: 'Segunda-feira', value: 'segunda-feira' },
@@ -2369,6 +2381,111 @@ export default defineComponent({
     }
   },
   methods: {
+    confirmAddStatus(status, data) {
+      let qry
+      console.log(data, status)
+      if (status === 'license' ) {
+        qry = {
+          subtype: status,
+          licenseOption: data.selectedlicenseOption,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'trainee') {
+        qry = {
+          subtype: status,
+          organismSelected: data.organismSelected.organismId,
+          guildingPastor: data.guildingPastor.userIdString,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'ceded') {
+        qry = {
+          subtype: status,
+          local: data.local,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'retired') {
+        qry = {
+          subtype: status,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'student') {
+        qry = {
+          subtype: status,
+          selectedGoal: data.selectedGoal,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withoutCall') {
+        qry = {
+          subtype: status,
+          position: data.optionSelected,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withCall') {
+        qry = {
+          caller: data.selectedCallOption,
+          selectedPastor: data.selectedPastor,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          organism: data.selectedOrganism,
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      }
+    },
+    clearDialogAddStatus() {
+      this.dialogAddStatus.open = false
+    },
+    testDialog() {
+      this.dialogAddStatus.open = true
+    },
     async getParishChildOrganismsList() {
       const opt = {
         route: '/desktop/adm/getChildOrganismsFromParishByChildId',

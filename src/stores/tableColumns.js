@@ -605,6 +605,13 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
       {
+        name: "canUseSystem",
+        align: "left",
+        label: "Situação",
+        field: (row) => (row.canUseSystem ? "Vivo": "Falecido"),
+        sortable: true,
+      },
+      {
         name: "userType",
         align: "left",
         label: "Tipo",
