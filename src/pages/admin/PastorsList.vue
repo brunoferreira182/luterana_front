@@ -19,34 +19,46 @@
         @request="nextPage"
       >
         <template #top-right>
-          <div class="flex row justify-end">
-            <div class="col">
-              <q-input
-                @keyup="getPastorList"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
-              >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </div>
-            <div class="col text-right">
-              <q-btn
-                @click="$router.push('/admin/createUser?userType=pastor')"
-                color="primary"
-                unelevated
-                no-caps
-                rounded
-                icon="add"
-                class="q-pa-sm"
-              >
-                Criar pastor
-              </q-btn>
-            </div>
+        <div class="flex row justify-end q-gutter-sm">
+          <div class="col">
+            <q-input
+            @keyup="getPastorList"
+            outlined
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Procurar"
+            >
+              <template #append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </div>
+          <div class="background-radio flex q-gutter-xs">
+            <q-radio 
+              dense dark color="white" 
+              v-model="canBeDead" val="true" 
+              label="Falecidos" 
+              style="color: white;">
+            </q-radio>
+            <q-radio 
+              dense dark color="white" 
+              v-model="canBeDead" val="false" 
+              label="Não Falecidos" 
+              style="color: white;">
+            </q-radio>
+          </div>
+            <q-btn
+              @click="$router.push('/admin/createUser?userType=pastor')"
+              color="primary"
+              unelevated
+              no-caps
+              rounded
+              icon="add"
+              class="q-pa-sm"
+            >
+              Criar pastor
+            </q-btn>
           </div>
         </template>
         <template v-slot:header="props">
@@ -129,6 +141,7 @@ export default defineComponent({
       selectStatus: ["Ativos", "Inativos"],
       filter: "",
       selectFilter: "Selecionar",
+      canBeDead: "false",  
       initialPagination: {
         sortBy: 'desc',
         descending: false,
@@ -221,6 +234,7 @@ export default defineComponent({
           descending: this.pagination.descending
         },
       };
+      if (this.canBeDead === 'true' && this.canBeDead !== '') opt.body.canUseSystem = false 
       if (this.selectFilter === "Ativos") {
         opt.body.isActive = 1;
       } else if (this.selectFilter === "Inativos") {
@@ -251,7 +265,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.pointer-cursor {
-  cursor: pointer;
+.background-radio {
+  padding-right:12px; 
+  padding-bottom:5px;
+  padding-left:8px; 
+  background-color: #2a46a1; 
+  border-radius: 20px;
+  z-index: 0;
 }
 </style>
