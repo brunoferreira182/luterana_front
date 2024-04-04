@@ -725,7 +725,7 @@ const withCallData = ref({
   pastorDisable: false
 })
 
-const props = defineProps(['open', 'userId', 'userName'])
+const props = defineProps(['open', 'userId', 'userName', 'organismId', 'organismName'])
 
 onBeforeMount(async () => {
   await getStatusOptions()
@@ -733,6 +733,7 @@ onBeforeMount(async () => {
   await getSisterChurchOrganisms()
   await getOtherDenominationOrganisms()
   await verifyIfIsUserScreen()
+  await verifiyCongregation()
 })
 
 function verifyIfIsUserScreen() {
@@ -776,6 +777,12 @@ async function getStatusOptions() {
   let r = await useFetch(opt)
   if (r.error) return
   data.value.statusOptions = r.data
+}
+
+function verifiyCongregation() {
+if (props.organismId && props.organismName){
+  console.log('é por aqui mano')
+}
 }
 
 function changeCededDeadline() {

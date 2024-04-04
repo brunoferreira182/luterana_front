@@ -2056,7 +2056,10 @@
     @confirm="clkCreatePastoralStatus"
   />
   <DialogAddStatus
+    v-if="organismName"
     :open="dialogAddStatus.open"
+    :organismId="$route.query.organismId"
+    :organismName="organismName"
     @closeDialog="clearDialogAddStatus"
     @confirm="confirmAddStatus"
   />
@@ -2485,6 +2488,7 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
+      this.clearDialogAddStatus()
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false
