@@ -146,7 +146,6 @@ export default defineComponent({
       },
       loading: false,
       usersListTimer: null,
-      
       canEdit: false,
     };
   },

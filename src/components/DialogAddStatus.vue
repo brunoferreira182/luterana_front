@@ -14,6 +14,36 @@
       <q-card-section
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'retired'"
       >
+        <q-select
+          v-model="retiredData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-input
           class="q-mb-md"
           label="Data de início"
@@ -45,16 +75,46 @@
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'license'"
       >
         <q-select
+          v-model="licenseData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
           class="q-mb-md"
           outlined
           options-dense
           label="Motivo da lincença"
           :options="licenseData.licenseOptions"
           :option-value="(item) => item"
-          v-model="licenseData.selectedlicenseOption"
+          v-model="licenseData.selectedLicenseOption"
         />
         <q-input
-          v-if="licenseData && licenseData.selectedlicenseOption === 'Outro'"
+          v-if="licenseData && licenseData.selectedLicenseOption === 'Outro'"
           v-model="licenseData.otherReason"
           outlined
           label="Motivo da licença"
@@ -91,6 +151,36 @@
       <q-card-section
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'trainee'"
       > 
+        <q-select
+          v-model="traineeData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           class="q-mb-md"
           label="Qual congregação"
@@ -143,6 +233,36 @@
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'withoutCall'"
       >
         <q-select
+          v-model="withoutCallData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
           label="Posição do chamado"
           :options="withoutCallData.optionsType"
           v-model="withoutCallData.optionSelected"
@@ -180,6 +300,36 @@
       <q-card-section
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'student'"
       >
+        <q-select
+          v-model="studentData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           :options="studentData.goalOptions"
           v-model="studentData.selectedGoal"
@@ -232,6 +382,7 @@
           options-dense
           @update:model-value="resetOrganismName"
           label="Quem chamou"
+          :disable="withCallData.selectOrganismDisable"
         />
         <q-select
           v-if="withCallData.selectedCallOption === 'Congregação'"
@@ -239,12 +390,14 @@
           v-model="withCallData.selectedOrgamism"
           outlined
           use-input
+          multiple
           label="Nome do organismo de chamado"
           option-label="nome"
           options-dense
           :options="filiatedOrganismsList.data"
           @filter="getFiliatedOrganismsList"
           :option-value="(item) => item"
+          :disable="withCallData.selectOrganismDisable"
         >
           <template v-slot:no-option>
             <q-item>
@@ -266,12 +419,14 @@
           v-if="withCallData.selectedCallOption === 'Diretoria Nacional'"
           class="q-mb-md"
           v-model="withCallData.selectedOrgamism"
+          multiple
           outlined
           label="Nome do organismo de chamado"
           option-label="organismName"
           options-dense
           :options="nacionalBoard.data"
           :option-value="(item) => item"
+          :disable="withCallData.selectOrganismDisable"
         >
           <template v-slot:no-option>
             <q-item>
@@ -301,6 +456,7 @@
           @filter="getUsers"
           :loading="false"
           :option-value="(item) => item._id"
+          :disable="pastorDisable"
         >
           <template v-slot:no-option>
             <q-item>
@@ -350,6 +506,36 @@
         v-if="data.selectedStatusOption && data.selectedStatusOption.value === 'ceded'"
       >
         <q-select
+          v-model="cededData.selectedPastor"
+          outlined
+          use-input
+          label="Nome do pastor"
+          class="q-mb-md"
+          option-label="userName"
+          :options="pastorList.data"
+          hint="Pastor que ocupará a função"
+          @filter="getUsers"
+          :loading="false"
+          :option-value="(item) => item._id"
+          :disable="pastorDisable"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-select
           label="Qual igreja"
           :options="cededData.localOptions"
           v-model="cededData.local"
@@ -374,7 +560,6 @@
           option-label="organismName"
           v-model="cededData.where"
         />
-        
         <q-input
           class="q-mb-md"
           outlined
@@ -456,70 +641,82 @@ const data = ref({
   statusOptions: null,
   selectedStatusOption: null,
 })
-
+let pastorDisable = false
 const retiredData = ref({
   initialDate: '',
   finalDate: '',
+  selectedPastor: null,
   deadline: null,
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false
 })
 
 const cededData = ref({
   localOptions: ['Outra denominação', 'Igreja irmã'],
   local: null,
   where: null,
+  selectedPastor: null,
   initialDate: '',
   finalDate: '',
   deadline: '',
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false
 })
 
 const traineeData = ref({
   organismSelected: null,
   guildingPastor: null,
+  selectedPastor: null,
   initialDate: '',
   finalDate: '',
   deadline: null,
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false
 })
 
 const licenseData = ref({
   licenseOptions: ['Saúde', 'Estudos', 'Interesse', 'Outro'],
-  selectedlicenseOption: null,
+  selectedLicenseOption: null,
+  selectedPastor: null,
   otherReason: '',
   initialDate: '',
   finalDate: '',
   deadline: '',
   disable: false,
-  noDeadline: false
+  noDeadline: false,
+  pastorDisable: false
 })
 
 const studentData = ref({
   goalOptions: ['Intercâmbio', 'Pós-pastoral'],
   selectedGoal: null,
+  selectedPastor: null,
   where: '',
   initialDate: '',
   finalDate: '',
   deadline: '',
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false
 })
 
 const withoutCallData = ref({
   optionsType: ['Em colóquio', 'Aguardando chamado'],
+  selectedPastor: null,
   optionSelected: null,
   initialDate: '',
   finalDate: '',
   deadline: '',
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false
 })
 
 const withCallData = ref({
-  selectedOrgamism: null,
+  selectedOrgamism: [],
   selectedPastor: null,
   callOptions: ['Diretoria Nacional', 'Congregação'],
   selectedCallOption: null,
@@ -527,17 +724,66 @@ const withCallData = ref({
   finalDate: '',
   deadline: '',
   noDeadline: false,
-  disable: false
+  disable: false,
+  pastorDisable: false,
+  selectOrganismDisable: false
 })
 
-const props = defineProps(['open'])
+const props = defineProps(['open', 'userId', 'userName', 'organismId', 'organismName'])
 
 onBeforeMount(async () => {
   await getStatusOptions()
   await getNacionalBoardOrganisms()
   await getSisterChurchOrganisms()
   await getOtherDenominationOrganisms()
+  await verifyIfIsUserScreen()
+  await getOrganismData()
 })
+
+function getOrganismData() {
+  if( props.organismId && props.organismName) {
+    withCallData.value.selectedCallOption = 'Congregação'
+    withCallData.value.selectedOrgamism.push({
+      nome: props.organismName,
+      organismId: props.organismId
+    })
+    withCallData.value.selectOrganismDisable = true
+  }
+}
+
+function verifyIfIsUserScreen() {
+  if (props.userId && props.userName) {
+    pastorDisable = true
+    retiredData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+    cededData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+    traineeData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+    licenseData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+      pastorDisable: true    }
+    studentData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+    withoutCallData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+    withCallData.value.selectedPastor = {
+      userIdString: props.userId,
+      userName: props.userName,
+    }
+  }
+}
 
 async function getStatusOptions() {
   const opt = {
@@ -546,6 +792,12 @@ async function getStatusOptions() {
   let r = await useFetch(opt)
   if (r.error) return
   data.value.statusOptions = r.data
+}
+
+function verifiyCongregation() {
+if (props.organismId && props.organismName){
+  console.log('é por aqui mano')
+}
 }
 
 function changeCededDeadline() {
@@ -607,48 +859,47 @@ function changeLicenseDeadline() {
 
 function verifyIfCanAddStatus() {
   if (data.value.selectedStatusOption.value === 'retired') {
-    if ((retiredData.value.deadline === '' && !retiredData.value.noDeadline)) {
+    if ((retiredData.value.deadline === '' && !retiredData.value.noDeadline) || !retiredData.value.selectedPastor) {
       Notify.create('Preencha o prazo.')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, retiredData.value)
   } else if (data.value.selectedStatusOption.value === 'license') {
-    if (!licenseData.value.selectedlicenseOption || (licenseData.value.selectedlicenseOption === 'Outro' && licenseData.value.otherReason === '') || (licenseData.value.deadline === '' && !licenseData.value.noDeadline)) {
+    if (!licenseData.value.selectedLicenseOption || (licenseData.value.selectedLicenseOption === 'Outro' && licenseData.value.otherReason === '') || (licenseData.value.deadline === '' && !licenseData.value.noDeadline) || !licenseData.value.selectedPastor) {
       Notify.create('Preencha o motivo')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, licenseData.value)
   } else if (data.value.selectedStatusOption.value === 'trainee') {
-    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || (traineeData.value.deadline && !traineeData.value.noDeadline)) {
+    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || (traineeData.value.deadline === '' && !traineeData.value.noDeadline) || !traineeData.value.selectedPastor) {
       Notify.create('Preencha a congregação, o pastor orientador e o prazo para prosseguir')
       return
     } 
     emits('confirm', data.value.selectedStatusOption.value, traineeData.value)
   } else if (data.value.selectedStatusOption.value === 'withoutCall') {
-    if (!withoutCallData.value.optionSelected || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadline)) {
+    if (!withoutCallData.value.optionSelected || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadline) || !withCallData.value.selectedPastor) {
       Notify.create('Preencha a posição do chamado  e o prazo final')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, withoutCallData.value)
   } else if (data.value.selectedStatusOption.value === 'student') {
-    if (!studentData.value.selectedGoal || studentData.value.where === '' || (studentData.value.deadline === '' && ! studentData.value.noDeadline)) {
+    if (!studentData.value.selectedGoal || studentData.value.where === '' || (studentData.value.deadline === '' && ! studentData.value.noDeadline) || !studentData.value.selectedPastor) {
       Notify.create('Preencha a finalidade, o local e o prazo final')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, studentData.value)
   } else if (data.value.selectedStatusOption.value === 'withCall') {
-    if ((withCallData.value.selectedCallOption === 'Congregação' && !withCallData.value.selectedOrgamism) || !withCallData.value.selectedPastor || (withCallData.value.deadline === '' && !withCallData.value.noDeadline)) {
+    if ((withCallData.value.selectedCallOption === 'Congregação' && withCallData.value.selectedOrgamism.length < 0) || !withCallData.value.selectedPastor || (withCallData.value.deadline === '' && !withCallData.value.noDeadline)) {
       Notify.create('Preencha quem chamou, o pastor e o prazo final')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, withCallData.value)
   } else if (data.value.selectedStatusOption.value === 'ceded') {
-    if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline)) {
+    if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline) || !cededData.value.selectedPastor) {
       Notify.create('Preencha qual a igreja, onde e o prazo final')
     }
     emits('confirm', data.value.selectedStatusOption.value, cededData.value)
   }
-  
 }
 
 function closeDialog() {

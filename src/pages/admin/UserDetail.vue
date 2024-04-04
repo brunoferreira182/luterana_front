@@ -1137,6 +1137,14 @@
         @confirmAddress="confirmAddAddress"
         @closeDialog="clearDialogAddAddress"
       />
+      <DialogAddStatus
+        v-if="userData && userData.userDataTabs && userData.userDataTabs[0].fields[0].value"
+        :open="dialogAddStatus.open"
+        :userId="$route.query.userId"
+        :userName="userData.userDataTabs[0].fields[0].value"
+        @closeDialog="clearDialogAddStatus"
+        @confirm="confirmAddStatus"
+      />
     </q-page>
   </q-page-container>
 </template>
@@ -1149,6 +1157,7 @@ import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPerson from '../../components/DialogAddPerson.vue'
 import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
+import DialogAddStatus from '../../components/DialogAddStatus.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import CardPerson from '../../components/CardPerson.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
@@ -1165,6 +1174,10 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      dialogAddStatus: {
+        open: false,
+        functionId: null
+      },
       dialogchangeUserType: {
         open: false,
         reason: '',
@@ -1348,6 +1361,118 @@ export default defineComponent({
     this.getPastoralStatusTypes()
   },
   methods: {
+    async confirmAddStatus(status, data) {
+      let qry
+      if (status === 'license' ) {
+        qry = {
+          subtype: status,
+          licenseOption: data.selectedlicenseOption,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'trainee') {
+        qry = {
+          subtype: status,
+          organismSelected: data.organismSelected.organismId,
+          guildingPastor: data.guildingPastor.userIdString,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'ceded') {
+        qry = {
+          subtype: status,
+          local: data.local,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'retired') {
+        qry = {
+          subtype: status,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'student') {
+        qry = {
+          subtype: status,
+          selectedGoal: data.selectedGoal,
+          where: data.where,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null,
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withoutCall') {
+        qry = {
+          subtype: status,
+          position: data.optionSelected,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      } else if (status === 'withCall') {
+        qry = {
+          caller: data.selectedCallOption,
+          selectedPastor: data.selectedPastor,
+          dates: {
+            initialDate: data.initialDate,
+            finalDate: data.finalDate
+          },
+          organism: data.selectedOrganism,
+          deadline: null
+        }
+        if (!data.noDeadline) {
+          qry.deadline = data.deadline
+        }
+      }
+      const opt = {
+        route: '/desktop/adm/insertPastorStatus',
+        body: {
+          status,
+          data,
+          functionId: this.dialogAddStatus.functionId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogAddStatus()
+    },
+    clearDialogAddStatus() {
+      this.dialogAddStatus.open = false
+    },
     getUserCanEditStatus(){
       const opt = {
         route: '/desktop/users/getUserCanEditStatus'
@@ -1356,7 +1481,6 @@ export default defineComponent({
         this.canEdit = r.data
       })
     },
-
     clearDialogChangeUserType() {
       this.dialogchangeUserType = {
         open: false,
@@ -1661,10 +1785,11 @@ export default defineComponent({
       this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
     },
     openDialogAddCallToPastor() {
-      this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.subtype = 'chamado'
-      this.dialogAddCallToPastor.open = true
-      this.dialogAddCallToPastor.action = 'add'
+      this.dialogAddStatus.open = true
+      // this.dialogAddCallToPastor.functionType = 'Pastor'
+      // this.dialogAddCallToPastor.subtype = 'chamado'
+      // this.dialogAddCallToPastor.open = true
+      // this.dialogAddCallToPastor.action = 'add'
     },
     addAtuacaoToPastor(call) {
       this.dialogAddCallToPastor.open = true

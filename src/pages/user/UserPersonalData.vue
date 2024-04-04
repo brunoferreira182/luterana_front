@@ -1386,14 +1386,21 @@ export default defineComponent({
     };
   },
   mounted() {
-    
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getUsersConfig()
-    this.isMobile = useScreenStore().isMobile
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUsersConfig()
+      this.isMobile = useScreenStore().isMobile
+    },
     clearDialogEditMaritalRelation() {
       this.dialogEditMaritalRelation = {
         open: false,
