@@ -51,6 +51,7 @@
 <script>
   import { defineComponent } from "vue";
   import useFetch from "../../boot/useFetch";
+  import utils from "../../boot/utils";
   export default defineComponent({
     name: "CreateNewAttach",
     data() {
@@ -62,7 +63,17 @@
         onlyPastor: false
       };
     },
+    beforeMount(){
+      this.startView()
+    },
     methods: {
+      async startView () {
+        const permStatus = await utils.getPermissionStatus('ADMIN')
+        if (permStatus.data === 'onMaitenance') {
+          this.$router.push('/maitenancePage')
+          return
+        }
+      },
       addDocument() {
         if (this.documentName === '' || this.documentDescription === '' || this.documentFiles.lenght > 0) {
         this.$q.notify("Preencha todos os campos antes de enviar")

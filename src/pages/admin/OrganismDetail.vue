@@ -330,7 +330,7 @@
                     </div>
                     <q-item
                       style="border-radius: 1rem;"
-                      class="q-ml-sm bg-grey-2"
+                      class="q-ml-sm bg-grey-2 q-ma-sm"
                       v-for="user in func.users"
                       :key="user"
                     > 
@@ -1271,48 +1271,6 @@
                     </q-card-actions>
                   </q-card>
                 </q-dialog>
-                <q-dialog
-                  v-model="dialogAddUser.open"
-                >
-                  <q-card style="width: 400px; border-radius: 1rem">
-                    <q-card-section
-                      class="text-h6 text-center"
-                    >
-                      Informe os dados do novo usuário:
-                    </q-card-section>
-                    <q-card-section>
-                      <q-input
-                        label="Nome completo"
-                        class="q-px-sm q-mt-sm"
-                        v-model="dialogAddUser.data.name"
-                      />
-                      <q-input
-                        label="Email do novo usuário"
-                        class="q-px-sm q-mt-sm"
-                        v-model="dialogAddUser.data.email"
-                      />
-                    </q-card-section>
-                    <q-card-actions align="center">
-                      <q-btn
-                        flat
-                        rounded
-                        color="primary"
-                        label="Sair"
-                        no-caps
-                        unelevated
-                        @click="clearDialogNewUser"
-                      />
-                      <q-btn
-                        rounded
-                        color="primary"
-                        unelevated
-                        label="Confirmar"
-                        no-caps
-                        @click="confirmCreateNewUser"
-                      />
-                    </q-card-actions>
-                  </q-card>
-                </q-dialog>
                 <!-- <q-dialog full-height full-width v-model="dialogLinks" @hide="clearDialogAndFunctions">
                   <q-card>
                     <q-card-section>
@@ -2090,6 +2048,12 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <DialogAddNewUserToUseEverywhere
+    :param="dialogAddUser.param"
+    :open="dialogAddUser.open"
+    @clear="clearDialogNewUser"
+    @confirm="confirmCreateNewUser"
+  />
   <DialogOrganismDetail
     :open="dialogShowOtherDetail.open"
     :orgData="dialogShowOtherDetail.orgData"
@@ -2126,8 +2090,9 @@ import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardFunction from '../../components/CardFunction.vue'
-// import DialogAddPerson from '../../components/DialogAddPerson.vue'
 import CardFormation from '../../components/CardFormation.vue'
+import DialogAddNewUserToUseEverywhere from '../../components/DialogAddNewUserToUseEverywhere.vue'
+
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import DialogAddStatus from '../../components/DialogAddStatus.vue'
@@ -2138,6 +2103,7 @@ import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "OrganismDetail",
   components: {
@@ -2145,7 +2111,7 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
-    DialogAddPastoralStatus, CardServices, DialogAddStatus
+    DialogAddPastoralStatus, CardServices, DialogAddStatus, DialogAddNewUserToUseEverywhere
   },
   data() {
     return {
@@ -2195,8 +2161,6 @@ export default defineComponent({
         data: {
           name: '',
           email: '',
-          phone: '',
-          document: ''
         }
       },
       dialogInsertUserInFunction:{
@@ -2424,15 +2388,7 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount(){
-    this.getOrganismDetailById();
-    this.getOrganismsConfigs()
-    this.getParentOrganismsById()
-    this.getChildOrganismsConfigsByOrganismId()
-    this.getChildOrganismsById()
-    this.getPastoralStatusTypes()
-    this.getEventsOptions()
-    this.getDaysOfWeek()
-    this.getParishChildOrganismsList()
+    this.startView()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -2441,11 +2397,27 @@ export default defineComponent({
     }
   },
   methods: {
-    confirmCreateNewUser () {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getOrganismDetailById();
+      this.getOrganismsConfigs()
+      this.getParentOrganismsById()
+      this.getChildOrganismsConfigsByOrganismId()
+      this.getChildOrganismsById()
+      this.getPastoralStatusTypes()
+      this.getEventsOptions()
+      this.getDaysOfWeek()
+      this.getParishChildOrganismsList()
+    },
+    confirmCreateNewUser(userData) {
       const opt = {
         route: '/desktop/statistics/createNewUser',
         body: {
-          data: this.dialogAddUser.data,
+          data: userData,
           userType: ''
         }
       }
@@ -2461,17 +2433,20 @@ export default defineComponent({
             userName: this.dialogAddUser.data.name
           }
         } 
-        this.dialogAddUser.open = false
-        this.dialogAddUser.data = {
-          name: '',
-          email: '',
-          phone: '',
-          document: ''
-        }
+      
         this.usersOptions = []
-        this.clearDialogConfirmAddFunctionUser()
+        this.clearDialogNewUser()
+        this.getOrganismDetailById()
         this.$q.notify('Digite novamente o nome para adicionar')
       })
+    },
+    clearDialogNewUser(){
+      this.dialogAddUser.param = null
+      this.dialogAddUser.open = false
+      this.dialogAddUser.data = {
+        name: '',
+        email: '',
+      }
     },
     openDialogAddUser(param) {
       this.dialogAddUser.param = param

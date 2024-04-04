@@ -136,10 +136,8 @@
     </q-page>
   </q-page-container>
 </template>
-<script setup>
-// import utils from '../../boot/utils'
-</script>
 <script>
+import utils from '../../boot/utils'
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
@@ -170,9 +168,17 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAllAttachedFiles();
+    this.startView();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getAllAttachedFiles();
+    },
     addNewAttach() {
       this.$router.push('/admin/createNewAttach')
     },

@@ -202,6 +202,14 @@ export default defineComponent({
     this.getAttachDetail();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getAttachDetail();
+    },
     addDocument() {
       this.documentFiles.forEach((file, ifile) => {
         this.filesToSend.push({ file: this.documentFiles[ifile], name: this.documentFiles[ifile].name})

@@ -87,6 +87,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
+import utils from '../../boot/utils'
 
 export default defineComponent({
   name: "UserSugestionsList",
@@ -115,9 +116,19 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getSuggestionsList();
+    this.startView();
+    
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getSuggestionsList()
+      this.isMobile = useScreenStore().isMobile
+    },
     clearDialog(){
       this.dialogNewSugestion.open = false
       this.dialogNewSugestion.suggestionText = ''

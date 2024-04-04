@@ -352,6 +352,7 @@ import useFetch from "../../boot/useFetch";
 import gif from 'assets/gif.gif'
 import { useTableColumns } from "stores/tableColumns";
 import { useScreenStore } from "stores/checkIsMobile";
+import utils from '../../boot/utils'
 
 export default defineComponent({
   name: "UserSolicitationsList",
@@ -391,11 +392,19 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.isMobile = useScreenStore().isMobile
-    this.getUserIdMongo()
-    this.getFunctionsSolicitationsByUserId();
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUserIdMongo()
+      this.getFunctionsSolicitationsByUserId();
+      this.isMobile = useScreenStore().isMobile
+    },
     getUserIdMongo() {
       const opt = {
         route: '/desktop/adm/getUserIdMongo',

@@ -436,6 +436,7 @@ import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
 import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
 </script>
 <script>
+import utils from "../../boot/utils";
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 export default defineComponent({
@@ -585,10 +586,18 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getUserCanEditStatus()
-    this.getUsersConfig()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUserCanEditStatus()
+      this.getUsersConfig()
+    },
     getUserCanEditStatus(){
       const opt = {
         route: '/desktop/users/getUserCanEditStatus'

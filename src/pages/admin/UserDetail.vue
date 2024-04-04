@@ -1369,41 +1369,20 @@ export default defineComponent({
     this.chkVisionSelected()
   },
   beforeMount() {
-    this.getUserCanEditStatus()
-    this.testeFodase()
-    // this.getUsersConfig()
-    this.getUserDetailById();
-    this.getPastoralStatusTypes()
+    this.startView()
   },
   methods: {
-    async testeFodase() {
-      const opt = {
-        route: '/desktop/adm/getStatusByUserId',
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
       }
-      let r = await useFetch(opt)
-      if (r.error) return
-    },
-    clearDialogAddActing() {
-      this.dialogActing = {
-        open: false,
-        organismCallerSelected: null,
-        call: null
-      }
-    },
-    async confirmAddActing(data) {
-      console.log(this.dialogActing.call, 'aqwerfdscxv')
-      const opt = {
-        route: '/desktop/adm/inserActingToCall',
-        body: {
-          callId: this.dialogActing.call._id,
-          callerData: data,
-          userId: this.$route.query.userId
-        }
-      }
-      let r = await useFetch(opt)
-      if (r.error) return
-      this.clearDialogAddActing()
-      this.getUserDetailById()
+      this.getUserCanEditStatus()
+      this.testeFodase()
+      // this.getUsersConfig()
+      this.getUserDetailById();
+      this.getPastoralStatusTypes()
     },
     async confirmAddStatus(status, data) {
       let qry

@@ -116,7 +116,7 @@ import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { savedOrganismList } from "stores/organismList";
-
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "OrganismList",
   data() {
@@ -145,8 +145,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    // this.getOrganismsList();
-    this.getOrganismsConfigsNamesList();
+    this.startView()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -155,6 +154,15 @@ export default defineComponent({
     }
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      // this.getOrganismsList();
+      this.getOrganismsConfigsNamesList();
+    },
     toggleChipSelection(nameIndex) {
       if (this.isChipSelected(nameIndex)) {
         this.selectedChips = this.selectedChips.filter((item) => item !== nameIndex);

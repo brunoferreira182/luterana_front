@@ -568,6 +568,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "DistrictDetail",
   data() {
@@ -656,9 +657,17 @@ export default defineComponent({
     }
   },
   beforeMount() {
-    this.getOrganismDetailById()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getOrganismDetailById()
+    },
     addUserToFunctionInNewParish(iFunc) {
       let selectedFunc = this.dialogAddParish.configData.organismConfigData.functions[iFunc]
 

@@ -258,6 +258,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 import { date } from "quasar";
 export default defineComponent({
   name: "CreateChildOrganism",
@@ -304,9 +305,17 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount(){
-    this.getOrganismConfigById()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getOrganismConfigById()
+    },
     getOrganismsList() {
       const opt = {
         route: "/desktop/adm/getOrganismsList",

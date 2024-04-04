@@ -55,6 +55,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
@@ -78,9 +79,18 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getFunctionsByUserId();
+    this.startView();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getFunctionsByUserId();
+      this.isMobile = useScreenStore().isMobile
+    },
     clkGoToFunctionInOrganismDetail(e, r) {
       const organismId = r.organismId;
       this.$router.push("/user/userOrganismDetail?organismId=" + organismId);
