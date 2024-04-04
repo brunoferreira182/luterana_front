@@ -2,8 +2,8 @@
   <q-layout>
     <q-page-container>
       <q-page>
-        <div class="text-h5">
-          <div class="row justify-center" style="position:relative; top: 25ch;">
+        <div class="text-h4">
+          <div class="row justify-center" style="position:relative; top: 20ch;">
             Sistema em manutenção...
           </div>
         </div>
