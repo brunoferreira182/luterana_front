@@ -190,6 +190,7 @@
           @filter="getOrganismsList"
           :options="organismsList.data"
           v-model="traineeData.organismSelected"
+          :disable="traineeData.selectOrganismDisable"
         />
         <q-select
           class="q-mb-md"
@@ -674,7 +675,8 @@ const traineeData = ref({
   deadline: null,
   noDeadline: false,
   disable: false,
-  pastorDisable: false
+  pastorDisable: false,
+  selectOrganismDisable: false
 })
 
 const licenseData = ref({
@@ -748,6 +750,12 @@ function getOrganismData() {
       organismId: props.organismId
     })
     withCallData.value.selectOrganismDisable = true
+
+    traineeData.value.organismSelected = {
+      nome: props.organismName,
+      organismId: props.organismId
+    }
+    traineeData.value.selectOrganismDisable = true
   }
 }
 
