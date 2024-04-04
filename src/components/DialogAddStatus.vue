@@ -382,6 +382,7 @@
           options-dense
           @update:model-value="resetOrganismName"
           label="Quem chamou"
+          :disable="withCallData.selectOrganismDisable"
         />
         <q-select
           v-if="withCallData.selectedCallOption === 'Congregação'"
@@ -396,6 +397,7 @@
           :options="filiatedOrganismsList.data"
           @filter="getFiliatedOrganismsList"
           :option-value="(item) => item"
+          :disable="withCallData.selectOrganismDisable"
         >
           <template v-slot:no-option>
             <q-item>
@@ -424,6 +426,7 @@
           options-dense
           :options="nacionalBoard.data"
           :option-value="(item) => item"
+          :disable="withCallData.selectOrganismDisable"
         >
           <template v-slot:no-option>
             <q-item>
@@ -722,7 +725,8 @@ const withCallData = ref({
   deadline: '',
   noDeadline: false,
   disable: false,
-  pastorDisable: false
+  pastorDisable: false,
+  selectOrganismDisable: false
 })
 
 const props = defineProps(['open', 'userId', 'userName', 'organismId', 'organismName'])
@@ -733,8 +737,19 @@ onBeforeMount(async () => {
   await getSisterChurchOrganisms()
   await getOtherDenominationOrganisms()
   await verifyIfIsUserScreen()
-  await verifiyCongregation()
+  await getOrganismData()
 })
+
+function getOrganismData() {
+  if( props.organismId && props.organismName) {
+    withCallData.value.selectedCallOption = 'Congregação'
+    withCallData.value.selectedOrgamism.push({
+      nome: props.organismName,
+      organismId: props.organismId
+    })
+    withCallData.value.selectOrganismDisable = true
+  }
+}
 
 function verifyIfIsUserScreen() {
   if (props.userId && props.userName) {
