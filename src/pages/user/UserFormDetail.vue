@@ -541,6 +541,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "UserFormDetail",
   data() {
@@ -587,16 +588,25 @@ export default defineComponent({
     };
   },
   beforeMount() {
-    if (this.$route.query.savedFormId !== undefined) {
-      this.getSavedFormById()
-    } else {
-      this.getFormDetailById();
-    }
+    this.startView()
   },
   mounted(){
     this.$q.loading.hide();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      if (this.$route.query.savedFormId !== undefined) {
+        this.getSavedFormById()
+      } else {
+        this.getFormDetailById();
+      }
+      this.isMobile = useScreenStore().isMobile
+    },
     checkFileType (files) {
       return files.filter(file => file.type === 'image/png' || file.type === 'image/jpeg')
     },
