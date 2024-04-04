@@ -330,7 +330,7 @@
                     </div>
                     <q-item
                       style="border-radius: 1rem;"
-                      class="q-ml-sm bg-grey-2"
+                      class="q-ml-sm bg-grey-2 q-ma-sm"
                       v-for="user in func.users"
                       :key="user"
                     > 
@@ -2478,9 +2478,19 @@ export default defineComponent({
           document: ''
         }
         this.usersOptions = []
-        this.clearDialogConfirmAddFunctionUser()
+        this.clearDialogNewUser()
         this.$q.notify('Digite novamente o nome para adicionar')
       })
+    },
+    clearDialogNewUser(){
+      this.dialogAddUser.param = null
+      this.dialogAddUser.open = false
+      this.dialogAddUser.data = {
+        name: '',
+        email: '',
+        phone: '',
+        document: ''
+      }
     },
     openDialogAddUser(param) {
       this.dialogAddUser.param = param
