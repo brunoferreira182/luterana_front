@@ -105,6 +105,15 @@ const useUtils = {
     };
     return useFetch(opt);
   },
+  getPermissionStatus(permissionRole) {
+    const opt = {
+      route: "/auth/getPermissionStatus",
+      body: {
+        permissionRole
+      }
+    };
+    return useFetch(opt);
+  },
   //api quebrada no backend não utilizar
   // getUserInfoByToken() {
   //   const opt = {
