@@ -348,7 +348,8 @@ const routes = [
   // Always leave this as last one,
   // but you can also remove it
   { path: "/login", component: () => import("pages/Login.vue") },
-  { path: "/userCreateLogin", component: () => import("pages/userCreateLogin.vue") },
+  { path: "/userCreateLogin", component: () => import("pages/UserCreateLogin.vue") },
+  { path: "/maitenancePage", component: () => import("pages/MaitenancePage.vue") },
 
   
   {

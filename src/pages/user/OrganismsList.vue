@@ -194,7 +194,6 @@ export default defineComponent({
   },
   beforeMount() {
     this.startView()
-    
   },
   methods: {
     async startView () {
