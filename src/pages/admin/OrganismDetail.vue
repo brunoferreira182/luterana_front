@@ -2138,6 +2138,7 @@ import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "OrganismDetail",
   components: {
@@ -2424,15 +2425,7 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount(){
-    this.getOrganismDetailById();
-    this.getOrganismsConfigs()
-    this.getParentOrganismsById()
-    this.getChildOrganismsConfigsByOrganismId()
-    this.getChildOrganismsById()
-    this.getPastoralStatusTypes()
-    this.getEventsOptions()
-    this.getDaysOfWeek()
-    this.getParishChildOrganismsList()
+    this.startView()
   },
   unmounted() {
     const currentRoute = this.$route
@@ -2441,6 +2434,22 @@ export default defineComponent({
     }
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getOrganismDetailById();
+      this.getOrganismsConfigs()
+      this.getParentOrganismsById()
+      this.getChildOrganismsConfigsByOrganismId()
+      this.getChildOrganismsById()
+      this.getPastoralStatusTypes()
+      this.getEventsOptions()
+      this.getDaysOfWeek()
+      this.getParishChildOrganismsList()
+    },
     confirmCreateNewUser () {
       const opt = {
         route: '/desktop/statistics/createNewUser',

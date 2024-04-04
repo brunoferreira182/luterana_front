@@ -477,6 +477,7 @@
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { date } from "quasar";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "ChildOrganismDetail",
   data() {
@@ -532,13 +533,21 @@ export default defineComponent({
     this.getOrganismDetailById();
   },
   beforeMount(){
-    this.getOrganismsList()
-    this.getOrganismsConfigs()
-    this.getParentOrganismsById()
-    this.getLinkedOrganismConfig()
-    // this.getChildOrganismsById()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getOrganismsList()
+      this.getOrganismsConfigs()
+      this.getParentOrganismsById()
+      this.getLinkedOrganismConfig()
+      // this.getChildOrganismsById()
+    },
     getOrganismDetailById() {
       const organismId = this.$route.query.organismId
       const opt = {

@@ -119,6 +119,7 @@
 </template>
 <script>
 import { defineComponent } from 'vue'
+import utils from '../../boot/utils'
 import useFetch from '../../boot/useFetch'
 export default defineComponent({
   name: 'UserTitleDetail',
@@ -132,9 +133,17 @@ export default defineComponent({
     this.$q.loading.hide()
   },
   beforeMount() {
-    this.getTitleConfigsDetailById()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getTitleConfigsDetailById()
+    },
     updateUserTitle(){
       const titleId = this.$route.query.titleId
       const opt = {

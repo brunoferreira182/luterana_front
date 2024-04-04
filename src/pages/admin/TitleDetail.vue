@@ -88,6 +88,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 export default defineComponent({
   name: "TitleDetail",
   data() {
@@ -125,10 +126,18 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getFieldTypes();
-    this.getTitleConfigsDetailById();
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getFieldTypes();
+      this.getTitleConfigsDetailById();
+    },
     addField() {
       if (this.newField.label && this.newField.hint && this.newField.type) {
         this.fields.push({ ...this.newField });

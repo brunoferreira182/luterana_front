@@ -1354,13 +1354,21 @@ export default defineComponent({
     this.chkVisionSelected()
   },
   beforeMount() {
-    this.getUserCanEditStatus()
-    
-    // this.getUsersConfig()
-    this.getUserDetailById();
-    this.getPastoralStatusTypes()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUserCanEditStatus()
+      
+      // this.getUsersConfig()
+      this.getUserDetailById();
+      this.getPastoralStatusTypes()
+    },
     async confirmAddStatus(status, data) {
       let qry
       if (status === 'license' ) {

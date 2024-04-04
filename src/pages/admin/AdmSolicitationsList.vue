@@ -45,6 +45,7 @@
 </template>
 <script>
 import { defineComponent } from "vue";
+import utils from '../../boot/utils'
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 
@@ -69,9 +70,17 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getSolicitationsList();
+    this.startView();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('ADMIN')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getSolicitationsList();
+    },
     approveRequest(id) {
       const opt = {
         route: '/desktop/adm/updateModificationRequest',
