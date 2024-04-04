@@ -147,6 +147,7 @@ import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { useScreenStore } from "stores/checkIsMobile";
+import utils from '../../boot/utils'
 
 export default defineComponent({
   name: "OrganismsList",
