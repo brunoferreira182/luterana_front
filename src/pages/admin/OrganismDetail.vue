@@ -2056,7 +2056,10 @@
     @confirm="clkCreatePastoralStatus"
   />
   <DialogAddStatus
+    v-if="organismName"
     :open="dialogAddStatus.open"
+    :organismId="$route.query.organismId"
+    :organismName="organismName"
     @closeDialog="clearDialogAddStatus"
     @confirm="confirmAddStatus"
   />
