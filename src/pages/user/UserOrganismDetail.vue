@@ -1631,6 +1631,7 @@ import CardPerson from '../../components/CardPerson.vue';
 import useFetch from "../../boot/useFetch";
 import { useScreenStore } from "stores/checkIsMobile";
 import { date } from "quasar";
+
 export default defineComponent({
   name: "UserOrganismDetail",
   components: {
@@ -1831,15 +1832,23 @@ export default defineComponent({
     };
   },
   beforeMount() {
-    this.isMobile = useScreenStore().isMobile
-    this.getUserIdMongo()
-    this.getOrganismDetailById();
-    // this.getOrganismsConfigs()
-    // this.getFunctionsSolicitationsByOrganismId()
-    this.getChildOrganismsConfigsByOrganismId()
-    this.getChildOrganismsById()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUserIdMongo()
+      this.getOrganismDetailById();
+      // this.getOrganismsConfigs()
+      // this.getFunctionsSolicitationsByOrganismId()
+      this.getChildOrganismsConfigsByOrganismId()
+      this.getChildOrganismsById()
+      this.isMobile = useScreenStore().isMobile
+    },
     clearDialogAddEvents() {
       this.dialogAddServices.open = false
       this.dialogAddServices.selectedDay = null

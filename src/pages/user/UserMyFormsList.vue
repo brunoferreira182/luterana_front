@@ -79,6 +79,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
@@ -116,9 +117,18 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getSavedFormsByUserId();
+    this.startView();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getSavedFormsByUserId();
+      this.isMobile = useScreenStore().isMobile
+    },
     clkOpenFormDetail(e, r,) {
       const savedFormId = r._id;
       this.$router.push("/user/userFormDetail?savedFormId=" + savedFormId);
