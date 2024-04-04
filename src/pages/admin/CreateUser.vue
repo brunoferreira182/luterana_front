@@ -1064,6 +1064,11 @@ export default defineComponent({
       this.closeAddPersonDialog()
       this.addPerson.dialogOpen = false
     },
+    clkOpenAddPersonDialog (fieldIndex, tabIndex) {
+      this.addPerson.fieldIndex = fieldIndex
+      this.addPerson.tabIndex = tabIndex
+      this.addPerson.dialogOpen = true
+    },
     confirmAddOrganism(organismSelected) {
       if (!this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].multiple)
         this.userData.userDataTabs[this.addOrganism.tabIndex].fields[this.addOrganism.fieldIndex].value = [ organismSelected ]
@@ -1077,11 +1082,6 @@ export default defineComponent({
         }
       }
       this.clearOrganismInputs()
-    },
-    clkOpenAddPersonDialog (fieldIndex, tabIndex) {
-      this.addPerson.fieldIndex = fieldIndex
-      this.addPerson.tabIndex = tabIndex
-      this.addPerson.dialogOpen = true
     },
     clkOpenAddOrganismDialog(fieldIndex, tabIndex) {
       this.addOrganism.fieldIndex = fieldIndex

@@ -748,6 +748,7 @@
                   :showInviteUserButton="false"
                   :isPastor="func.functionName === 'Pastor' ? false : true"
                 />
+                
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
                   <q-card style="border-radius: 1rem; width: 480px">
                     <q-card-section align="center">
@@ -875,9 +876,18 @@
                         :option-value="(item) => item._id"
                       >
                         <template v-slot:no-option>
-                          <q-item>
-                            <q-item-section class="text-grey">
-                              Nenhum resultado
+                          <q-item> 
+                            <q-item-section>
+                              <q-btn
+                                icon="person_add"
+                                dense
+                                flat
+                                no-caps
+                                label="Novo usuário"
+                                color="primary"
+                                class="q-pa-sm"
+                                @click="openDialogAddUser('secretary')"
+                              />
                             </q-item-section>
                           </q-item>
                         </template>
@@ -1261,6 +1271,48 @@
                         rounded
                         @click="clkSaveLink"
                         color="primary"
+                      />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+                <q-dialog
+                  v-model="dialogAddUser.open"
+                >
+                  <q-card style="width: 400px; border-radius: 1rem">
+                    <q-card-section
+                      class="text-h6 text-center"
+                    >
+                      Informe os dados do novo usuário:
+                    </q-card-section>
+                    <q-card-section>
+                      <q-input
+                        label="Nome completo"
+                        class="q-px-sm q-mt-sm"
+                        v-model="dialogAddUser.data.name"
+                      />
+                      <q-input
+                        label="Email do novo usuário"
+                        class="q-px-sm q-mt-sm"
+                        v-model="dialogAddUser.data.email"
+                      />
+                    </q-card-section>
+                    <q-card-actions align="center">
+                      <q-btn
+                        flat
+                        rounded
+                        color="primary"
+                        label="Sair"
+                        no-caps
+                        unelevated
+                        @click="clearDialogNewUser"
+                      />
+                      <q-btn
+                        rounded
+                        color="primary"
+                        unelevated
+                        label="Confirmar"
+                        no-caps
+                        @click="confirmCreateNewUser"
                       />
                     </q-card-actions>
                   </q-card>
@@ -2075,16 +2127,14 @@ import CardPhoneMobileEmail from '../../components/CardPhoneMobileEmail.vue'
 import CardBankData from '../../components/CardBankData.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardFunction from '../../components/CardFunction.vue'
+// import DialogAddPerson from '../../components/DialogAddPerson.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import DialogAddStatus from '../../components/DialogAddStatus.vue'
 import CardPerson from '../../components/CardPerson.vue'
-// import CardSecretary from '../../components/CardSecretary.vue'
-// import DialogAddServices from '../../components/DialogAddServices.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogAddress from '../../components/DialogAddress.vue'
-// import utils from '../../boot/utils'
 import { savedOrganismList } from "stores/organismList";
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import useFetch from "../../boot/useFetch";
@@ -2138,6 +2188,16 @@ export default defineComponent({
         data: {
           name: '',
         },
+      },
+      dialogAddUser: {
+        param: null,
+        open: false,
+        data: {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
       },
       dialogInsertUserInFunction:{
         initialDate: '',
@@ -2350,7 +2410,7 @@ export default defineComponent({
       undefinedCallee: false,
       organismCallerSelected: '',
       organismCalleeSelected: [],
-      organismsFromThisParish: []
+      organismsFromThisParish: [],
     };
   },
   watch: {
@@ -2381,6 +2441,42 @@ export default defineComponent({
     }
   },
   methods: {
+    confirmCreateNewUser () {
+      const opt = {
+        route: '/desktop/statistics/createNewUser',
+        body: {
+          data: this.dialogAddUser.data,
+          userType: ''
+        }
+      }
+
+      useFetch(opt).then((r) => {
+        if (r.error) {
+          this.$q.notify(r.errorMessage)
+          return
+        }
+        this.$q.notify('Usuário criado com sucesso')
+        if (this.dialogAddUser.param === 'secretary') {
+          this.dialogAddSecretary.userSelected = {
+            userName: this.dialogAddUser.data.name
+          }
+        } 
+        this.dialogAddUser.open = false
+        this.dialogAddUser.data = {
+          name: '',
+          email: '',
+          phone: '',
+          document: ''
+        }
+        this.usersOptions = []
+        this.clearDialogConfirmAddFunctionUser()
+        this.$q.notify('Digite novamente o nome para adicionar')
+      })
+    },
+    openDialogAddUser(param) {
+      this.dialogAddUser.param = param
+      this.dialogAddUser.open = true
+    },
     confirmAddStatus(status, data) {
       let qry
       console.log(data, status)
@@ -3921,7 +4017,7 @@ export default defineComponent({
         if(r.error){ this.$q.notify(r.errorMessage) }
 
         update(() => {
-          this.usersOptions = r.data.list;
+          this.usersOptions = r.data.list
         })
       });
     },
