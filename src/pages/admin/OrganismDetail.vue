@@ -2488,6 +2488,7 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
+      this.clearDialogAddStatus()
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false

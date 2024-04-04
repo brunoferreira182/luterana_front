@@ -1481,7 +1481,6 @@ export default defineComponent({
         this.canEdit = r.data
       })
     },
-
     clearDialogChangeUserType() {
       this.dialogchangeUserType = {
         open: false,

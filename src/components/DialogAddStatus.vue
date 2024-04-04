@@ -794,6 +794,12 @@ async function getStatusOptions() {
   data.value.statusOptions = r.data
 }
 
+function verifiyCongregation() {
+if (props.organismId && props.organismName){
+  console.log('é por aqui mano')
+}
+}
+
 function changeCededDeadline() {
   if (cededData.value.noDeadline) {
     cededData.value.deadline = '',
