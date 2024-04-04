@@ -1379,16 +1379,25 @@ export default defineComponent({
   },
 
   beforeMount() {
-    this.getUserData()
-    this.getPastorDataTabs()
-    this.verifyQuery()
-    // this.verifyIfIsPastor()
-    this.getPastorFormations()
-    this.getPastorDataTabs()
-    this.getPastorLinks()
-    this.getMyOrganismsList()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getUserData()
+      this.getPastorDataTabs()
+      this.verifyQuery()
+      // this.verifyIfIsPastor()
+      this.getPastorFormations()
+      this.getPastorDataTabs()
+      this.getPastorLinks()
+      this.getMyOrganismsList()
+      this.isMobile = useScreenStore().isMobile
+    },
     clearDialogAddLink() {
       this.dialogAddLink = {
         open: false,
