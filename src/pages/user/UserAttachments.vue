@@ -44,6 +44,7 @@
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
+import utils from "../../boot/utils";
 import { useTableColumns } from "stores/tableColumns";
 
 export default defineComponent({
@@ -63,9 +64,18 @@ export default defineComponent({
     };
   },
   beforeMount(){
-    this.getAttachedFilesByUserId()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getAttachedFilesByUserId()
+      this.isMobile = useScreenStore().isMobile
+    },
     clkGoToAttachDetail(e, r){
       const attachFileId = r._id;
       this.$router.push("/user/attachmentsDetail?attachFileId=" + attachFileId);

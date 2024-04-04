@@ -140,26 +140,6 @@ const useUtils = {
           route: "/admin/organismsList",
           icon: "diversity_2",
         },
-        // {
-        //   label: "Documentos",
-        //   route: "/admin/admDocuments",
-        //   icon: "description",
-        // },
-        // {
-        //   label: "Títulos",
-        //   route: "/admin/titlesList",
-        //   icon: "school",
-        // },
-        // {
-        //   label: "Solicitações de Títulos",
-        //   route: "/admin/titlesSolicitationsList",
-        //   icon: "list",
-        // },
-        // {
-        //   label: "Solicitações de Funções",
-        //   route: "/admin/functionsSolicitations",
-        //   icon: "list",
-        // },
         {
           label: "Lista de solicitações",
           route: "/admin/admSolicitationsList",
@@ -197,16 +177,6 @@ const useUtils = {
           route: "/config/createUserConfig?userType=pastor",
           icon: "group",
         },
-        // {
-        //   label: "Títulos",
-        //   route: "/config/titleConfigurationList",
-        //   icon: "import_contacts",
-        // },
-        // {
-        //   label: "Formação",
-        //   route: "/config/formationConfiguration",
-        //   icon: "import_contacts",
-        // },
         {
           label: "Visões",
           route: "/config/visionsList",
@@ -258,26 +228,6 @@ const useUtils = {
           route: "/user/organismsList",
           icon: "diversity_2",
         },
-        // {
-        //   label: "Meu distrito",
-        //   route: "/user/userDistrict",
-        //   icon: "church",
-        // },
-        // {
-        //   label: "Minhas pendências",
-        //   route: "/user/pendingList",
-        //   icon: "pending_actions",
-        // },
-        // {
-        //   label: "Lista das minhas funções",
-        //   route: "/user/userFunctionsList",
-        //   icon: "comment_bank",
-        // },
-        // {
-        //   label: "Documentos",
-        //   route: "/user/userAttachments",
-        //   icon: "description",
-        // },
         {
           label: "Lista de solicitações",
           route: "/user/userSolicitationsList",
@@ -293,21 +243,6 @@ const useUtils = {
           route: "/statistic/introWriteStatisticData",
           icon: "equalizer",
         },
-        // {
-        //   label: "Falar com admin",
-        //   route: "/user/talkToAdmin",
-        //   icon: "admin_panel_settings",
-        // },
-        // {
-        //   label: "Formulários",
-        //   route: "/user/userFormsList",
-        //   icon: "list_alt",
-        // },
-        // {
-        //   label: "Formulários enviados",
-        //   route: "/user/userMyFormsList",
-        //   icon: "collections_bookmark",
-        // },
       ],
     };
     return obj[type];

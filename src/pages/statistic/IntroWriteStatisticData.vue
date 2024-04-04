@@ -259,11 +259,19 @@ export default defineComponent({
     }
   },
   beforeMount(){
-    this.getCardName()
-    this.getPreStatisticStatus()
-    this.getParoquiasByUserId()
+    this.startView()
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getCardName()
+      this.getPreStatisticStatus()
+      this.getParoquiasByUserId()
+    },
     async getParoquiasByUserId(){
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",

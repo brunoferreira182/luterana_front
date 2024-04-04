@@ -64,9 +64,18 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAttachFileDetail();
+    this.startView();
   },
   methods: {
+    async startView () {
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
+      this.getAttachFileDetail();
+      this.isMobile = useScreenStore().isMobile
+    },
     getAttachFileDetail() {
       const opt = {
         route: "/desktop/commonUsers/getAttachFileDetail",
