@@ -263,11 +263,11 @@ export default defineComponent({
   },
   methods: {
     async startView () {
-      // const permStatus = await utils.getPermissionStatus('USER')
-      // if (permStatus.data === 'onMaitenance') {
-      //   this.$router.push('/maitenancePage')
-      //   return
-      // }
+      const permStatus = await utils.getPermissionStatus('USER')
+      if (permStatus.data === 'onMaitenance') {
+        this.$router.push('/maitenancePage')
+        return
+      }
       this.getCardName()
       this.getPreStatisticStatus()
       this.getParoquiasByUserId()
