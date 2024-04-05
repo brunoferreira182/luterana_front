@@ -661,7 +661,7 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
+      <!-- <q-dialog v-model="dialogAddCallToPastor.open" @hide="clearDialogAndFunctions">
         <q-card style="border-radius: 1rem; width: 400px">
           <q-card-section align="center">
             <div class="text-h6" v-if="dialogAddCallToPastor.functionType === 'Pastor'">
@@ -859,7 +859,7 @@
             />
           </q-card-actions>
         </q-card>
-      </q-dialog>
+      </q-dialog> -->
 
       <q-dialog v-model="dialogSwapUserFromFunction.open" @hide="clearDialogSwapData">
         <q-card style="border-radius: 1rem">
@@ -1145,6 +1145,15 @@
         @closeDialog="clearDialogAddStatus"
         @confirm="confirmAddStatus"
       />
+      <DialogAddActing
+        v-if="userData && userData.userDataTabs && userData.userDataTabs[0] && dialogActing.organismCallerSelected "
+        :open="dialogActing.open"
+        :userName="userData.userDataTabs[0].fields[0].value"
+        :userId="$route.query.userId"
+        :organismName="dialogActing.organismCallerSelected.nome"
+        :organismId="dialogActing.organismCallerSelected.organismId"
+        @confirm="confirmAddActing"
+      />
     </q-page>
   </q-page-container>
 </template>
@@ -1153,6 +1162,7 @@
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddAddress from '../../components/DialogAddress.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
+import DialogAddActing from '../../components/DialogAddActing.vue'
 import DialogOrganismDetail from '../../components/DialogOrganismDetail.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPerson from '../../components/DialogAddPerson.vue'
@@ -1174,6 +1184,11 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      dialogActing: {
+        open: false,
+        organismCallerSelected: null,
+        call: null
+      },
       dialogAddStatus: {
         open: false,
         functionId: null
@@ -1364,7 +1379,7 @@ export default defineComponent({
         return
       }
       this.getUserCanEditStatus()
-      
+      this.testeFodase()
       // this.getUsersConfig()
       this.getUserDetailById();
       this.getPastoralStatusTypes()
@@ -1387,7 +1402,7 @@ export default defineComponent({
       } else if (status === 'trainee') {
         qry = {
           subtype: status,
-          organismSelected: data.organismSelected.organismId,
+          selectedOrganism: data.selectedOrganism.organismId,
           guildingPastor: data.guildingPastor.userIdString,
           dates: {
             initialDate: data.initialDate,
@@ -1800,16 +1815,12 @@ export default defineComponent({
       // this.dialogAddCallToPastor.action = 'add'
     },
     addAtuacaoToPastor(call) {
-      this.dialogAddCallToPastor.open = true
-      this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.organismCallerSelected = {
+      this.dialogActing.organismCallerSelected = {
         nome: call.organismName,
         organismId: call.organismId,
       }
-      this.setReadOnlyOrganismCaller = true
-      this.dialogAddCallToPastor.subtype = 'atuacao'
-      this.dialogAddCallToPastor.action = 'add'
-      this.getOrganismDetailD()
+      this.dialogActing.open = true
+      this.dialogActing.call = call
     },
     clearDialogAndFunctions() {
       this.dialogRemoveUserFromFunction.finalDate = "";

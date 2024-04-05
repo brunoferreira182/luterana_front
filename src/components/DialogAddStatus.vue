@@ -189,7 +189,7 @@
           outlined
           @filter="getOrganismsList"
           :options="organismsList.data"
-          v-model="traineeData.organismSelected"
+          v-model="traineeData.selectedOrganism"
           :disable="traineeData.selectOrganismDisable"
         />
         <q-select
@@ -391,7 +391,6 @@
           v-model="withCallData.selectedOrgamism"
           outlined
           use-input
-          multiple
           label="Nome do organismo de chamado"
           option-label="nome"
           options-dense
@@ -420,7 +419,6 @@
           v-if="withCallData.selectedCallOption === 'Diretoria Nacional'"
           class="q-mb-md"
           v-model="withCallData.selectedOrgamism"
-          multiple
           outlined
           label="Nome do organismo de chamado"
           option-label="organismName"
@@ -667,7 +665,7 @@ const cededData = ref({
 })
 
 const traineeData = ref({
-  organismSelected: null,
+  selectedOrganism: null,
   guildingPastor: null,
   selectedPastor: null,
   initialDate: '',
@@ -718,7 +716,7 @@ const withoutCallData = ref({
 })
 
 const withCallData = ref({
-  selectedOrgamism: [],
+  selectedOrgamism: null,
   selectedPastor: null,
   callOptions: ['Diretoria Nacional', 'Congregação'],
   selectedCallOption: null,
@@ -751,7 +749,7 @@ function getOrganismData() {
     })
     withCallData.value.selectOrganismDisable = true
 
-    traineeData.value.organismSelected = {
+    traineeData.value.selectedOrganism = {
       nome: props.organismName,
       organismId: props.organismId
     }
@@ -874,7 +872,7 @@ function verifyIfCanAddStatus() {
     }
     emits('confirm', data.value.selectedStatusOption.value, licenseData.value)
   } else if (data.value.selectedStatusOption.value === 'trainee') {
-    if (!traineeData.value.organismSelected || !traineeData.value.guildingPastor || (traineeData.value.deadline === '' && !traineeData.value.noDeadline) || !traineeData.value.selectedPastor) {
+    if (!traineeData.value.selectedOrganism || !traineeData.value.guildingPastor || (traineeData.value.deadline === '' && !traineeData.value.noDeadline) || !traineeData.value.selectedPastor) {
       Notify.create('Preencha a congregação, o pastor orientador e o prazo para prosseguir')
       return
     } 
