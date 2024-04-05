@@ -2032,7 +2032,7 @@
         <q-btn
           flat
           label="Voltar"
-          no-caps
+          no-capsd
           rounded
           color="primary"
           @click="clearTimeForDayDialog"
