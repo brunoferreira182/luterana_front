@@ -147,7 +147,7 @@ import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { useScreenStore } from "stores/checkIsMobile";
-import utils from '../../boot/utils'
+// import utils from '../../boot/utils'
 
 export default defineComponent({
   name: "OrganismsList",
@@ -198,11 +198,11 @@ export default defineComponent({
   },
   methods: {
     async startView () {
-      const permStatus = await utils.getPermissionStatus('USER')
-      if (permStatus.data === 'onMaitenance') {
-        this.$router.push('/maitenancePage')
-        return
-      }
+      // const permStatus = await utils.getPermissionStatus('USER')
+      // if (permStatus.data === 'onMaitenance') {
+      //   this.$router.push('/maitenancePage')
+      //   return
+      // }
       this.getMyOrganisms();
       this.isMobile = useScreenStore().isMobile
     },

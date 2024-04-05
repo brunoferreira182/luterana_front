@@ -107,12 +107,11 @@
           />
         </div>
       </div>
-     
       <q-separator class="q-mx-md"/>
       <div v-if="userData && userData.userDataTabs">
         <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
-            Chamados:
+            Histórico:
             <q-btn
               icon="add"
               color="primary"
@@ -127,7 +126,7 @@
           <div>
             <q-list>
               <q-item
-                v-for="(call, i) in callList"
+                v-for="(call) in callList"
                 :key="call"
                 style="border-radius: 1rem;"
                 class="bg-grey-3 q-ma-sm q-mx-md"
@@ -187,7 +186,7 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label>
-                    <q-btn
+                    <!-- <q-btn
                       class="q-pa-sm"
                       flat
                       rounded
@@ -199,7 +198,9 @@
                       <q-tooltip>
                         Adicionar atuação
                       </q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
+
+
                     <!-- <q-btn
                       class="q-pa-sm"
                       flat
@@ -213,7 +214,9 @@
                         Editar dados de chamado
                       </q-tooltip>
                     </q-btn> -->
-                    <q-btn
+
+
+                    <!-- <q-btn
                       class="q-pa-sm"
                       flat
                       rounded
@@ -225,7 +228,7 @@
                       <q-tooltip>
                         Remover chamado
                       </q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -1372,6 +1375,19 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    //aqui que ta o cuzinho secreto
+    async confirmAddActing(data) {
+      data = data._value
+      const opt = {
+        route: '',
+        body: {
+          data: data
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      console.log(data)
+    },
     async startView () {
       const permStatus = await utils.getPermissionStatus('ADMIN')
       if (permStatus.data === 'onMaitenance') {
@@ -1383,6 +1399,13 @@ export default defineComponent({
       // this.getUsersConfig()
       this.getUserDetailById();
       this.getPastoralStatusTypes()
+    },
+    async testeFodase() {
+      const opt = {
+        route: '/desktop/adm/getStatusByUserId'
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
     },
     async confirmAddStatus(status, data) {
       let qry

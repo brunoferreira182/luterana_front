@@ -3210,12 +3210,14 @@ export default defineComponent({
           this.validated = r.draftComposition.status
         }
         let depConfigList = []
-        this.composition.congregations[0].depts.forEach((dep) => {
-          depConfigList.push({
-            organismConfigName: dep.organismConfigName,
-            organismConfigId: dep.organismConfigId
+        if (this.composition && this.composition.congregations && this.composition.congregations[0] && this.composition.congregations[0].depts) {
+          this.composition.congregations[0].depts.forEach((dep) => {
+            depConfigList.push({
+              organismConfigName: dep.organismConfigName,
+              organismConfigId: dep.organismConfigId
+            })
           })
-        })
+        }
         this.composition.congregations.forEach((org)=> {
           org.organismFunctions.forEach((func) => {
             if (func.functionName === 'Pastor' && func.functionUsers.length > 0) {
