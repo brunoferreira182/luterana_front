@@ -39,7 +39,7 @@
   </q-dialog>
 </template>
 <script setup>
-const props = defineProps(['open', 'param'])
+  const props = defineProps(['open', 'param'])
 </script>
 <script>
 export default {

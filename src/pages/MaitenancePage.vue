@@ -1,8 +1,8 @@
 <template>
       <q-page>
         <div class="text-h4">
-          <div class="row justify-center" style="position:relative; top: 20ch;">
-            Em manutenção...
+          <div class="row justify-center text-capitalize" style="position:relative; top: 20ch;">
+            Em manutenção. Previsão de retorno dia 06/04, às 14h.
           </div>
         </div>
       </q-page>
