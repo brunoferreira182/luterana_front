@@ -123,116 +123,62 @@
               @click.stop="openDialogAddCallToPastor"
             />
           </div>
-          <div>
-            <q-list>
-              <q-item
-                v-for="(call) in callList"
-                :key="call"
-                style="border-radius: 1rem;"
-                class="bg-grey-3 q-ma-sm q-mx-md"
-                @click="$router.push('/admin/organismDetail?organismId=' + call.organismId)"
-                clickable
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <q-badge>
-                      {{ call.organismConfigName }}
-                    </q-badge> 
-                      {{ call.functionConfigName}} - {{ call.organismName }}
-                    <div class="text-caption">
-                      Início em {{ call.functionDates.initialDate.split('-')[2] }}/{{ call.functionDates.initialDate.split('-')[1] }}/{{ call.functionDates.initialDate.split('-')[0] }}  
-                    </div>
-                  </q-item-label>
-                  <q-item
-                    class="q-pa-md"
-                    style=" border-radius: 1rem; background-color: rgba(101, 121, 121, 0.336);"
-                    v-for="atuacao in call.functionsAtuacao" 
-                    :key="atuacao"
-                  >
-                    <q-item-label>
-                      {{ call.functionConfigName}} - Atuação em {{ atuacao.organismName }}
-                    </q-item-label>
-                    <q-item-section side>
-                      <q-item-label>
-                        <!-- <q-btn
-                          flat
-                          rounded
-                          unelevated
-                          size="12px"
-                          color="primary"
-                          icon="edit"
-                          @click.stop="changeAtuation(atuacao, i)"
-                        >
-                          <q-tooltip>
-                            Editar atuação
-                          </q-tooltip>
-                        </q-btn> -->
-                        <!-- <q-btn
-                          flat
-                          rounded
-                          unelevated
-                          size="12px"
-                          color="red"
-                          icon="delete"
-                          @click.stop="removeAtuation(atuacao, i)"
-                        >
-                          <q-tooltip>
-                            Remover atuação
-                          </q-tooltip>
-                        </q-btn> -->
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-item-section>
-                <q-item-section side>
-                  <q-item-label>
-                    <!-- <q-btn
-                      class="q-pa-sm"
-                      flat
-                      rounded
-                      unelevated
-                      color="primary"
-                      icon="add"
-                      @click.stop="addAtuacaoToPastor(call, i)"
-                    >
-                      <q-tooltip>
-                        Adicionar atuação
-                      </q-tooltip>
-                    </q-btn> -->
-
-
-                    <!-- <q-btn
-                      class="q-pa-sm"
-                      flat
-                      rounded
-                      unelevated
-                      color="primary"
-                      icon="edit"
-                      @click.stop="changeCall(call)"
-                    >
-                      <q-tooltip>
-                        Editar dados de chamado
-                      </q-tooltip>
-                    </q-btn> -->
-
-
-                    <!-- <q-btn
-                      class="q-pa-sm"
-                      flat
-                      rounded
-                      unelevated
-                      color="red"
-                      icon="delete"
-                      @click.stop="removeCall(call, i)"
-                    >
-                      <q-tooltip>
-                        Remover chamado
-                      </q-tooltip>
-                    </q-btn> -->
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
+          <div class="q-ml-sm">
+            <q-tree
+              v-if="statusTree"
+              class="q-ml-sm"
+              :nodes="statusTree"
+              node-key="label"
+              ref="tree"
+            >
+              <template v-slot:default-header="prop">
+                <div v-if="prop.node.type === 'Chamado'">
+                  <span class="text-weight-bold">{{ prop.node.label }}</span>
+                  <q-btn
+                    color="primary"
+                    icon="edit"
+                    flat
+                    rounded
+                  />
+                  <q-btn
+                    color="red"
+                    rounded
+                    icon="delete"
+                    flat
+                  />
+                </div>
+                <div v-if="prop.node.type === 'Atuação'">
+                  <span class="text-weight-bold">{{ prop.node.label }}</span>
+                  <q-btn
+                    color="primary"
+                    icon="add"
+                    flat
+                    round
+                    rounded
+                  />
+                  <q-btn
+                    color="primary"
+                    rounded
+                    icon="edit"
+                    flat
+                  /> 
+                  <q-btn
+                    color="red"
+                    rounded
+                    icon="delete"
+                    flat
+                  />
+                </div>
+              </template>
+            </q-tree>
+            <q-tree
+              v-if="teste"
+              class="q-ml-sm"
+              :nodes="teste"
+              node-key="label"
+              ref="tree"
+            >
+            </q-tree>
           </div>
         </div>
         <q-separator class="q-mx-md"/>
@@ -1365,6 +1311,8 @@ export default defineComponent({
         tabsIndex: null
       },
       otherOrganism: false,
+      statusTree: null,
+      teste: null
     };
   },
   mounted() {
@@ -1373,9 +1321,50 @@ export default defineComponent({
   },
   beforeMount() {
     this.startView()
+    this.mountTest()
   },
   methods: {
-    //aqui que ta o cuzinho secreto
+    mountTest() {
+      let tree = []
+      tree.push({
+        label: 'montando o teste através de uma função',
+        children: []
+      })
+      tree[0].children.push({
+        label: 'aqui vai funcionar pq eu to louco'
+      })
+      this.teste = tree
+    },
+    mountTree() {
+      let tree = []
+      this.callList.forEach((item, i) => {
+        tree.push({
+          label: item.functionConfigName + ' - ' + item.organismName,
+          children: [],
+          type: 'Chamado'
+        })
+        if (item.functionsAtuacao && item.functionsAtuacao.length > 0) {
+          item.functionsAtuacao.forEach((act) => {
+            tree[i].children.push({
+              label: act.organismName,
+              type: 'Atuação'
+            })
+            console.log(act)
+          })
+        }
+      })
+      // console.log('entrouaqui', item)
+      // if (item.functionsAtuacao && item.functionsAtuacao.length > 0) {
+      //   item.functionsAtuacao.forEach((act) => {
+      //     console.log(act, 'dsadsasda')
+      //     tree[i].children.push({
+      //       label: act.functionConfigName + ' - ' + act.organismName
+      //     })
+      //   })
+      // }
+      console.log(tree, 'tree aqui')
+      this.statusTree = tree
+    },
     async confirmAddActing(data) {
       data = data._value
       const opt = {
@@ -2597,6 +2586,7 @@ export default defineComponent({
         this.mountUserData(r.data)
         this.verifyInactiveStatus()
         this.$q.loading.hide();
+        this.mountTree()
       });
     },
     mountUserData (userDetail) {
