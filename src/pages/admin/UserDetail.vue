@@ -136,6 +136,14 @@
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
                   <q-btn
                     color="primary"
+                    icon="add"
+                    flat
+                    round
+                    rounded
+                    @click.stop="addAtuacaoToPastor(prop.node)"
+                  />
+                  <q-btn
+                    color="primary"
                     icon="edit"
                     flat
                     rounded
@@ -151,13 +159,6 @@
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
                   <q-btn
                     color="primary"
-                    icon="add"
-                    flat
-                    round
-                    rounded
-                  />
-                  <q-btn
-                    color="primary"
                     rounded
                     icon="edit"
                     flat
@@ -170,14 +171,6 @@
                   />
                 </div>
               </template>
-            </q-tree>
-            <q-tree
-              v-if="teste"
-              class="q-ml-sm"
-              :nodes="teste"
-              node-key="label"
-              ref="tree"
-            >
             </q-tree>
           </div>
         </div>
@@ -1136,7 +1129,8 @@ export default defineComponent({
       dialogActing: {
         open: false,
         organismCallerSelected: null,
-        call: null
+        call: null,
+        callId: null
       },
       dialogAddStatus: {
         open: false,
@@ -1312,7 +1306,6 @@ export default defineComponent({
       },
       otherOrganism: false,
       statusTree: null,
-      teste: null
     };
   },
   mounted() {
@@ -1321,61 +1314,52 @@ export default defineComponent({
   },
   beforeMount() {
     this.startView()
-    this.mountTest()
   },
   methods: {
-    mountTest() {
-      let tree = []
-      tree.push({
-        label: 'montando o teste através de uma função',
-        children: []
-      })
-      tree[0].children.push({
-        label: 'aqui vai funcionar pq eu to louco'
-      })
-      this.teste = tree
-    },
     mountTree() {
       let tree = []
       this.callList.forEach((item, i) => {
         tree.push({
           label: item.functionConfigName + ' - ' + item.organismName,
           children: [],
-          type: 'Chamado'
+          type: 'Chamado',
+          callId: item._id,
+          dates: {
+            initialDate: item.functionDates.initialDate
+          },
+          organismFunctionUserId: item.organismFunctionUserId,
+          organismId: item.organismId,
+          organismName: item.organismName
         })
         if (item.functionsAtuacao && item.functionsAtuacao.length > 0) {
           item.functionsAtuacao.forEach((act) => {
             tree[i].children.push({
               label: act.organismName,
-              type: 'Atuação'
+              type: 'Atuação',
+              organismId: act.organismId,
+              organismName: act.organismName,
+              dates: {
+                initialDate: act.functionDates.initialDate
+              }
             })
-            console.log(act)
           })
         }
       })
-      // console.log('entrouaqui', item)
-      // if (item.functionsAtuacao && item.functionsAtuacao.length > 0) {
-      //   item.functionsAtuacao.forEach((act) => {
-      //     console.log(act, 'dsadsasda')
-      //     tree[i].children.push({
-      //       label: act.functionConfigName + ' - ' + act.organismName
-      //     })
-      //   })
-      // }
-      console.log(tree, 'tree aqui')
       this.statusTree = tree
     },
     async confirmAddActing(data) {
       data = data._value
       const opt = {
-        route: '',
+        route: '/desktop/adm/insertActingToCall',
         body: {
-          data: data
+          data: data,
+          callId: this.dialogActing.callId,
+          userId: this.$route.query.userId
         }
       }
       let r = await useFetch(opt)
       if (r.error) return
-      console.log(data)
+      // this.startView()
     },
     async startView () {
       const permStatus = await utils.getPermissionStatus('ADMIN')
@@ -1827,12 +1811,14 @@ export default defineComponent({
       // this.dialogAddCallToPastor.action = 'add'
     },
     addAtuacaoToPastor(call) {
+      console.log(call, 'luquinhas dengoso')
       this.dialogActing.organismCallerSelected = {
         nome: call.organismName,
         organismId: call.organismId,
       }
       this.dialogActing.open = true
       this.dialogActing.call = call
+      this.dialogActing.callId = call.callId
     },
     clearDialogAndFunctions() {
       this.dialogRemoveUserFromFunction.finalDate = "";

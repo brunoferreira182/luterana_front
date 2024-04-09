@@ -34,7 +34,6 @@ module.exports = configure(function (/* ctx */) {
       // 'mixins',
       // 'useFetch',
       // 'variables',
-      
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
