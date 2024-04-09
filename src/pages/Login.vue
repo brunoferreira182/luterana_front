@@ -125,7 +125,7 @@ export default defineComponent({
   name: "Login",
   data() {
     return {
-      maintenance: true,
+      maintenance: false,
       btnNextLoading: false,
       btnEnterLoading: false,
       btncheckEmailLoading: false,
