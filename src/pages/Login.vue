@@ -1,6 +1,6 @@
 <template>
   <q-layout class="app-font">
-    <div class="fixed-center font-montserrat" style="min-width: 500px">
+    <div class="fixed-center font-montserrat" style="min-width: 500px" >
       <div class="text-center">
         <q-img
           src="../assets/logo.png"
@@ -14,7 +14,7 @@
         </div>
         <div>Versão {{ VERSION }} - {{ BUILD }}</div>
       </div>
-      <div class="">
+      <div class="" v-if="!maintenance">
         <q-carousel
           v-model="loginStep"
           transition-prev="slide-right"
@@ -29,25 +29,25 @@
           class="q-pa-md q-mx-md"
           style=""
         >
-          <q-carousel-slide name="login" class="no-wrap flex-center">
+          <q-carousel-slide name="login" class="no-wrap flex-center" >
             <div class="q-gutter-md q-mt-none">
               <InputEmail
-                class="full-width q-mb-sm"
-                label="Login"
-                field-hint="email@email.com"
-                id-field="user"
-                @onChange="inputChange"
-                :value-field="formData.user"
-                @onEnter="clkNext"
+              class="full-width q-mb-sm"
+              label="Login"
+              field-hint="email@email.com"
+              id-field="user"
+              @onChange="inputChange"
+              :value-field="formData.user"
+              @onEnter="clkNext"
               ></InputEmail>
               <q-btn
-                class="full-width"
-                color="primary"
-                label="Próximo"
-                @click="clkNext"
-                :loading="btnNextLoading"
-                unelevated
-                no-caps
+              class="full-width"
+              color="primary"
+              label="Próximo"
+              @click="clkNext"
+              :loading="btnNextLoading"
+              unelevated
+              no-caps
               />
               <div class="flex flex-center full-width q-mt-md">
               <div class="divider" />
@@ -90,6 +90,19 @@
           </q-carousel-slide>
         </q-carousel>
       </div>
+      <div v-if="maintenance" class="text-center text-h5 text-primary">
+        <q-avatar 
+          class="text-center" 
+          color="white" 
+          size="200px"
+          text-color="primary" 
+          icon="engineering"
+          flat
+        />
+        <div class="text-h4">
+          Página em manutenção
+        </div>
+      </div>  
     </div>
     <q-footer flat class="bg-transparent text-primary q-pa-md">
       
@@ -112,6 +125,7 @@ export default defineComponent({
   name: "Login",
   data() {
     return {
+      maintenance: true,
       btnNextLoading: false,
       btnEnterLoading: false,
       btncheckEmailLoading: false,
