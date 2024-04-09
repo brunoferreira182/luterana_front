@@ -1240,11 +1240,70 @@
       </q-dialog>
       <q-dialog
         v-model="dialogEditAct.open"
+        @hide="clearDialogEditAct"
       >
         <q-card
           style="width:300px;border-radius:1rem"
         >
-
+          <q-card-section class="text-h6 text-center">
+            Editar Atuação
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogEditAct.selectedOrganism"
+              outlined
+              use-input
+              label="Nome do organismo de chamado"
+              option-label="nome"
+              options-dense
+              class="q-pa-sm"
+              :options="filiatedOrganismsList"
+              @filter="getFiliatedOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              label="Data inicial"
+              v-model="dialogEditAct.data.dates.initialDate"
+              class="q-pa-sm"
+              outlined
+              mask="##/##/####"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogEditAct"            
+              color="primary"
+              label="Voltar"
+              flat
+              no-caps
+              unelevated
+              rounded
+            />
+            <q-btn
+              unelevated
+              color="primary"
+              rounded
+              label="Confirmar"
+              no-caps
+              @click="confirmEditAct"
+            />
+          </q-card-actions>
         </q-card>
       </q-dialog>
       <DialogAddPerson
@@ -1531,9 +1590,37 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    async confirmEditAct() {
+      if (!this.dialogEditAct.selectedOrganism 
+      || this.dialogEditAct.selectedOrganism ==='' 
+      || this.dialogEditAct.data.dates.initialDate === '' 
+      ) {
+        this.$q.notify('Preencha todos os dados antes de contiuar')
+        return
+      }
+      this.dialogEditAct.data.organismId = this.dialogEditAct.selectedOrganism.organismId
+      this.dialogEditAct.data.organismName = this.dialogEditAct.selectedOrganism.nome
+      const opt = {
+        route: '/desktop/adm/editActing',
+        body: {
+          actData: this.dialogEditAct.data
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogEditAct()
+      this.startView()
+    },
+    clearDialogEditAct() {
+      this.dialogEditAct = {
+        open: false,
+        selectedOrganism: null,
+        data: null
+      }
+    },
     editAct(data) {
       console.log(data)
-      this.dialogEditAct.data = data
+      this.dialogEditAct.data = {...data}
       this.dialogEditAct.selectedOrganism = {
         nome: data.organismName,
         organismId: data.organismId
