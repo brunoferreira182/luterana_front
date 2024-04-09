@@ -180,6 +180,7 @@
                     icon="edit"
                     flat
                     size="8px"
+                    @click.stop="editAct(prop.node)"
                   /> 
                   <q-btn
                     size="8px"
@@ -194,6 +195,7 @@
               <template v-slot:default-body="prop">
                 <div v-if="prop.node.type === 'Chamado'">
                   <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
+                  <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
                 </div>
               </template>
             </q-tree>
@@ -1236,6 +1238,15 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogEditAct.open"
+      >
+        <q-card
+          style="width:300px;border-radius:1rem"
+        >
+
+        </q-card>
+      </q-dialog>
       <DialogAddPerson
         :open="dialogAddPerson.open"
         @addPerson="confirmAddPerson"
@@ -1504,6 +1515,11 @@ export default defineComponent({
         selectedOrganism: null,
         noDeadline: false,
         disable: false
+      },
+      dialogEditAct: {
+        open: false,
+        selectedOrganism: null,
+        data: null
       }
     };
   },
@@ -1515,6 +1531,15 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    editAct(data) {
+      console.log(data)
+      this.dialogEditAct.data = data
+      this.dialogEditAct.selectedOrganism = {
+        nome: data.organismName,
+        organismId: data.organismId
+      }
+      this.dialogEditAct.open = true
+    },
     changeDeadlineStatus() {
       if (this.dialogEditCall.noDeadline) {
         this.dialogEditCall.data.deadline = null
