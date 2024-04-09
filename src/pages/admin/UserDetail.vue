@@ -133,13 +133,19 @@
             >
               <template v-slot:default-header="prop">
                 <div v-if="prop.node.type === 'Chamado'">
+                  <q-icon
+                    name="donut_small"
+                    color="primary"
+                    size="20px"
+                    class="q-mr-sm"
+                  />
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
                   <q-btn
                     color="primary"
                     icon="add"
                     flat
-                    round
                     rounded
+                    size="8px"
                     @click.stop="addAtuacaoToPastor(prop.node)"
                   />
                   <q-btn
@@ -147,27 +153,39 @@
                     icon="edit"
                     flat
                     rounded
+                    size="8px"
                   />
                   <q-btn
+                    @click.stop="removeCall(prop.node)"
                     color="red"
                     rounded
                     icon="delete"
                     flat
+                    size="8px"
                   />
                 </div>
                 <div v-if="prop.node.type === 'Atuação'">
-                  <span class="text-weight-bold">{{ prop.node.label }}</span>
+                  <q-icon
+                    name="my_location"
+                    color="primary"
+                    size="20px"
+                    class="q-mr-sm"
+                  />
+                  <span class="">{{ prop.node.label }}</span>
                   <q-btn
                     color="primary"
                     rounded
                     icon="edit"
                     flat
+                    size="8px"
                   /> 
                   <q-btn
+                    size="8px"
                     color="red"
                     rounded
                     icon="delete"
                     flat
+                    @click.stop="removeAct(prop.node)"
                   />
                 </div>
               </template>
@@ -1054,6 +1072,82 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogRemoveCall.open"
+      >
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section class="text-h6 text-center">
+            Deseja excluir este chamado?
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Data fim"
+              outlined
+              mask="##/##/####"
+              class="q-pa-sm"
+              v-model="dialogRemoveCall.finalDate"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogRemoveCall"            
+              color="primary"
+              label="Voltar"
+              flat
+              no-caps
+              unelevated
+              rounded
+            />
+            <q-btn
+              unelevated
+              color="primary"
+              rounded
+              label="Confirmar"
+              no-caps
+              @click="confirmRemoveCall"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
+        v-model="dialogRemoveActing.open"
+      >
+        <q-card
+          style="width: 300px;border-radius: 1rem"
+        >
+          <q-card-section class="text-h6 text-center">
+            Remover Atuação
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              label="Data fim"
+              outlined
+              mask="##/##/####"
+              class="q-pa-sm"
+              v-model="dialogRemoveActing.finalDate"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogRemoveActing"            
+              color="primary"
+              label="Voltar"
+              flat
+              no-caps
+              unelevated
+              rounded
+            />
+            <q-btn
+              unelevated
+              color="primary"
+              rounded
+              label="Confirmar"
+              no-caps
+              @click="confirmRemoveActing"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <DialogAddPerson
         :open="dialogAddPerson.open"
         @addPerson="confirmAddPerson"
@@ -1126,6 +1220,11 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      dialogRemoveCall: {
+        open: false,
+        data: null,
+        finalDate: ''
+      },
       dialogActing: {
         open: false,
         organismCallerSelected: null,
@@ -1306,6 +1405,11 @@ export default defineComponent({
       },
       otherOrganism: false,
       statusTree: null,
+      dialogRemoveActing: {
+        open: false,
+        data: null,
+        finalDate: ''
+      }
     };
   },
   mounted() {
@@ -1316,6 +1420,71 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    async confirmRemoveActing() {
+      console.log(this.dialogRemoveActing.data)
+      if (this.dialogRemoveActing.finalDate === '') {
+        this.$q.notify('Preencha a data fim para prosseguir')
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/inactivateActing',
+        body: {
+          actId: this.dialogRemoveActing.data.actId,
+          finalDate: this.dialogRemoveActing.finalDate
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogRemoveActing()
+      this.startView()
+    },
+    clearDialogRemoveActing() {
+      this.dialogRemoveActing = {
+        open: false,
+        data: null,
+        finalDate: '' 
+      }
+    },
+    removeAct(data) {
+      this.dialogRemoveActing.data = data
+      this.dialogRemoveActing.open = true
+    },
+    clearDialogACting() {
+      this.dialogActing = {
+        open: false,
+        organismCallerSelected: null,
+        call: null,
+        callId: null
+      }
+    },
+    async confirmRemoveCall() {
+      if (this.dialogRemoveCall.finalDate === '') {
+        this.$q.notify('Preencha a data fim para prosseguir.')
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/inactivateCall',
+        body: {
+          callId: this.dialogRemoveCall.data.callId,
+          finalDate: this.dialogRemoveCall.finalDate
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogRemoveCall()
+      this.startView()
+    },
+    clearDialogRemoveCall() {
+      this.dialogRemoveCall = {
+        open: false,
+        data: null,
+        finalDate: ''
+      }
+    },
+    removeCall(data) {
+      this.dialogRemoveCall.data = data
+      this.dialogRemoveCall.open = true
+    },  
     mountTree() {
       let tree = []
       this.callList.forEach((item, i) => {
@@ -1337,6 +1506,7 @@ export default defineComponent({
               label: act.organismName,
               type: 'Atuação',
               organismId: act.organismId,
+              actId: act._id,
               organismName: act.organismName,
               dates: {
                 initialDate: act.functionDates.initialDate
@@ -1359,7 +1529,8 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
-      // this.startView()
+      this.clearDialogACting()
+      this.startView()
     },
     async startView () {
       const permStatus = await utils.getPermissionStatus('ADMIN')
@@ -1729,11 +1900,6 @@ export default defineComponent({
       if(call.call.finalDate === 'undefined'){
         this.dialogAddCallToPastor.undefinedCallee = true
       }
-    },
-    removeCall(call){
-      this.dialogDeletePastorFromFunction.open = true
-      this.dialogDeletePastorFromFunction.userData = call.organismFunctionUserId
-      this.dialogDeletePastorFromFunction.type = 'chamado'
     },
     removeAtuation(atuacao){
       this.dialogDeletePastorFromFunction.open = true
