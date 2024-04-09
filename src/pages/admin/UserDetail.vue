@@ -128,6 +128,7 @@
               v-if="statusTree"
               class="q-ml-sm"
               :nodes="statusTree"
+              accordion
               node-key="label"
               ref="tree"
             >
@@ -154,6 +155,7 @@
                     flat
                     rounded
                     size="8px"
+                    @click.stop="editCall(prop.node)"
                   />
                   <q-btn
                     @click.stop="removeCall(prop.node)"
@@ -187,6 +189,11 @@
                     flat
                     @click.stop="removeAct(prop.node)"
                   />
+                </div>
+              </template>
+              <template v-slot:default-body="prop">
+                <div v-if="prop.node.type === 'Chamado'">
+                  <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
                 </div>
               </template>
             </q-tree>
@@ -1148,6 +1155,87 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog 
+        v-model="dialogEditCall.open"
+        @hide="clearDialogEditCall"
+      >
+        <q-card
+          style="width: 300px;border-radius: 1rem"
+        >
+          <q-card-section class="text-h6 text-center">
+            Editar dados do chamado
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="dialogEditCall.selectedOrganism"
+              outlined
+              use-input
+              label="Nome do organismo de chamado"
+              option-label="nome"
+              options-dense
+              class="q-pa-sm"
+              :options="filiatedOrganismsList"
+              @filter="getFiliatedOrganismsList"
+              :option-value="(item) => item"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-input
+              outlined
+              v-model="dialogEditCall.data.dates.initialDate"
+              mask="##/##/####"
+              label="Data inicial"
+              class="q-pa-sm"
+            />
+            <q-input
+              label="Prazo do chamado"
+              mask="##/##/####"
+              class="q-pa-sm"
+              outlined
+              :disable="dialogEditCall.disable"
+              v-model="dialogEditCall.data.deadline"
+            />
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditCall.noDeadline"
+              @update:model-value="changeDeadlineStatus"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              @click="clearDialogEditCall"            
+              color="primary"
+              label="Voltar"
+              flat
+              no-caps
+              unelevated
+              rounded
+            />
+            <q-btn
+              unelevated
+              color="primary"
+              rounded
+              label="Confirmar"
+              no-caps
+              @click="confirmEditCall"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <DialogAddPerson
         :open="dialogAddPerson.open"
         @addPerson="confirmAddPerson"
@@ -1409,6 +1497,13 @@ export default defineComponent({
         open: false,
         data: null,
         finalDate: ''
+      },
+      dialogEditCall: {
+        open: false,
+        data: null,
+        selectedOrganism: null,
+        noDeadline: false,
+        disable: false
       }
     };
   },
@@ -1420,6 +1515,56 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    changeDeadlineStatus() {
+      if (this.dialogEditCall.noDeadline) {
+        this.dialogEditCall.data.deadline = null
+        this.dialogEditCall.disable = true
+        this.dialogEditCall.noDeadline = true
+      } else {
+        this.dialogEditCall.noDeadline = false
+        this.dialogEditCall.disable = false
+      } 
+    },
+    async confirmEditCall() {
+      if (!this.dialogEditCall.selectedOrganism 
+      || this.dialogEditCall.selectedOrganism ==='' 
+      || this.dialogEditCall.data.dates.initialDate === '' 
+      || (!this.dialogEditCall.data.deadline && !this.dialogEditCall.noDeadline)) {
+        this.$q.notify('Preencha todos os dados antes de contiuar')
+        return
+      }
+      this.dialogEditCall.data.organismId = this.dialogEditCall.selectedOrganism.organismId
+      this.dialogEditCall.data.organismName = this.dialogEditCall.selectedOrganism.nome
+      const opt = {
+        route: '/desktop/adm/editCallData',
+        body: {
+          callData: this.dialogEditCall.data
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogEditCall()
+      this.startView()
+    },
+    clearDialogEditCall() {
+      this.dialogEditCall = {
+        open: false,
+        data: null,
+        selectedOrganism: null
+      }
+    },
+    editCall(data) {
+      if (data.deadline) {
+        this.dialogEditCall.noDeadline = false
+      }
+      console.log(data)
+      this.dialogEditCall.data = {...data}
+      this.dialogEditCall.selectedOrganism = {
+        nome: data.organismName,
+        organismId: data.organismId
+      }
+      this.dialogEditCall.open = true
+    },
     async confirmRemoveActing() {
       console.log(this.dialogRemoveActing.data)
       if (this.dialogRemoveActing.finalDate === '') {
@@ -1493,6 +1638,7 @@ export default defineComponent({
           children: [],
           type: 'Chamado',
           callId: item._id,
+          deadline: item.deadline,
           dates: {
             initialDate: item.functionDates.initialDate
           },
