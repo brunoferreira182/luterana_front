@@ -163,7 +163,6 @@ async function getActingOptionsByCallerId() {
   let r = await useFetch(opt)
   if (r.error) return
   actingOptionsByCallerId.value.data = r.data
-  console.log(r.data, 'aiaiaiai')
 }
 
 function putCongregationName() {

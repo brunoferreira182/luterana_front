@@ -971,7 +971,6 @@ function getOrganismsList(val, update, abort) {
     }
   };
   useFetch(opt).then((r) => {
-    console.log(r)
     update(() => {
       organismsList.value.data = r.data.list
     })
@@ -995,7 +994,6 @@ function getUsers(val, update, abort) {
     }
   }
   useFetch(opt).then((r) => {
-    console.log(r, 'fuwhu')
     update(() => {
       pastorList.value.data = r.data.list
     })

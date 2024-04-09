@@ -402,7 +402,6 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         if (r.error) return 
         this.status = r.data
-        console.log(this.status.pastors)
         this.status.pastors.forEach((pastor) => {
           if (pastor.userId === userInfo.user_id) {
             this.isPastor = true

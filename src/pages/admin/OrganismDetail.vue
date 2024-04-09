@@ -2567,7 +2567,6 @@ export default defineComponent({
     linkPastorToFunction() {
       this.functions.forEach((func) => {
         if (func.functionName === 'Pastor') {
-          console.log(func)
           this.dialogAddStatus.functionId = func.functionId
         }
       })

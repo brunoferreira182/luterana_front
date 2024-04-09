@@ -1619,7 +1619,6 @@ export default defineComponent({
       }
     },
     editAct(data) {
-      console.log(data)
       this.dialogEditAct.data = {...data}
       this.dialogEditAct.selectedOrganism = {
         nome: data.organismName,
@@ -1669,7 +1668,6 @@ export default defineComponent({
       if (data.deadline) {
         this.dialogEditCall.noDeadline = false
       }
-      console.log(data)
       this.dialogEditCall.data = {...data}
       this.dialogEditCall.selectedOrganism = {
         nome: data.organismName,
@@ -1678,7 +1676,6 @@ export default defineComponent({
       this.dialogEditCall.open = true
     },
     async confirmRemoveActing() {
-      console.log(this.dialogRemoveActing.data)
       if (this.dialogRemoveActing.finalDate === '') {
         this.$q.notify('Preencha a data fim para prosseguir')
         return
@@ -2132,38 +2129,6 @@ export default defineComponent({
       if (r.error) return
       this.getUserDetailById()
     },
-    changeAtuation(atuation){
-      return
-      console.log(atuation)
-      this.dialogAddCallToPastor.ataKey = call.ataKey
-      this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
-      this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.installationDate = call.installation.date
-      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
-      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
-      this.dialogAddCallToPastor.open = true
-      
-    },
-    changeCall(call) {
-      this.dialogAddCallToPastor.ataKey = call.ataKey
-      this.dialogAddCallToPastor.pastorSelected = this.userData.userDataTabs[0].fields[0].value
-      this.dialogAddCallToPastor.functionType = 'Pastor'
-      this.dialogAddCallToPastor.installationDate = call.installation.date
-      this.dialogAddCallToPastor.initialDate = call.functionDates.initialDate
-      this.dialogAddCallToPastor.functionSelected = call.functionConfigName
-      this.dialogAddCallToPastor.userInstallation = call.userInstallationData
-      this.dialogAddCallToPastor.calleeDate = call.call.finalDate
-      this.dialogAddCallToPastor.open = true
-      this.dialogAddCallToPastor.action = 'edit'
-      if(call.call.finalDate === 'undefined'){
-        this.dialogAddCallToPastor.undefinedCallee = true
-      }
-    },
-    removeAtuation(atuacao){
-      this.dialogDeletePastorFromFunction.open = true
-      this.dialogDeletePastorFromFunction.userData = atuacao.organismFunctionUserId
-      this.dialogDeletePastorFromFunction.type = 'atuation'
-    },
     desinstallPastorFunction() {
       if (
         this.dialogDeletePastorFromFunction.uninstallerUser === ""
@@ -2235,7 +2200,6 @@ export default defineComponent({
       // this.dialogAddCallToPastor.action = 'add'
     },
     addAtuacaoToPastor(call) {
-      console.log(call, 'luquinhas dengoso')
       this.dialogActing.organismCallerSelected = {
         nome: call.organismName,
         organismId: call.organismId,
