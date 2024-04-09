@@ -105,6 +105,7 @@
           flat
           unelevated
           no-caps
+          @click="clearDialog"
         />
         <q-btn
           label="Confirmar"
@@ -120,7 +121,7 @@
 </template>
 <script setup>
 
-const emits =  defineEmits(['confirm'])
+const emits =  defineEmits(['confirm', 'clearDialog'])
 const props = defineProps(['open', 'userName','userId', 'organismName', 'organismId'])
 
 import { onBeforeMount, ref} from 'vue';
@@ -131,6 +132,8 @@ onBeforeMount(async () => {
   await putCongregationName()
   await getActingOptionsByCallerId()
 })
+
+
 
 function confirmAddActing() {
   if (!actingData.value.organismSelected || !actingData.value.selectedActingOrganism) {
@@ -151,6 +154,7 @@ function clearDialog() {
     initialDate: '',
     finalDate: ''
   }
+  emits('clearDialog', true)
 }
 
 async function getActingOptionsByCallerId() {

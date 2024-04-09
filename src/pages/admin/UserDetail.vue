@@ -1347,6 +1347,7 @@
         :organismName="dialogActing.organismCallerSelected.nome"
         :organismId="dialogActing.organismCallerSelected.organismId"
         @confirm="confirmAddActing"
+        @clearDialog="clearDialogAddActing"
       />
     </q-page>
   </q-page-container>
@@ -1590,6 +1591,14 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    clearDialogAddActing() {
+      this.dialogActing = {
+        open: false,
+        organismCallerSelected: null,
+        call: null,
+        callId: null
+      }
+    },
     async confirmEditAct() {
       if (!this.dialogEditAct.selectedOrganism 
       || this.dialogEditAct.selectedOrganism ==='' 
