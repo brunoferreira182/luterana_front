@@ -891,7 +891,7 @@ function verifyIfCanAddStatus() {
     emits('confirm', data.value.selectedStatusOption.value, studentData.value)
   } else if (data.value.selectedStatusOption.value === 'withCall') {
     if ((withCallData.value.selectedCallOption === 'Congregação' && withCallData.value.selectedOrgamism.length < 0) || !withCallData.value.selectedPastor || (withCallData.value.deadline === '' && !withCallData.value.noDeadline)) {
-      Notify.create('Preencha quem chamou, o pastor e o prazo final')
+      Notify.create('Preencha quem chamou o pastor e o prazo final')
       return
     }
     emits('confirm', data.value.selectedStatusOption.value, withCallData.value)

@@ -4,7 +4,7 @@
     class="bg-white q-ma-sm q-pa-sm"
     flat
   >
-    {{ props.func.users.length ? 'Chamados' : ''}}
+    {{ props.func.users.length ? 'Chamados:' : ''}}
     <div
       v-for="(user) in props.func.users"
       :key="user"
@@ -45,7 +45,7 @@
         </q-item-section>
       </q-item>
     </div>
-    {{ props.func.users.length ? 'Atuações' : ''}}
+    {{ props.func.users.length ? 'Atuações:' : ''}}
     <div
       v-for="(user) in props.func.users"
       :key="user"
@@ -70,7 +70,7 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label>
-            <!-- <q-btn
+            <q-btn
               v-if="canEditPastor"
               icon="sync"
               flat
@@ -81,7 +81,7 @@
               :disable="disableButtons"
             >
               <q-tooltip>Trocar pastor</q-tooltip>
-            </q-btn> -->
+            </q-btn>
           </q-item-label>
         </q-item-section>
       </q-item>
