@@ -8,11 +8,10 @@
     <div
       v-for="(user) in props.func.users"
       :key="user"
-
     >
       <q-item
         clickable
-        v-if="user.functionSubtype === 'chamado'"
+        v-if="user.functionSubtype === 'Com chamado'"
         style="border-radius: 0.5rem;"
         class="bg-grey-3 q-ma-xs"
         @click="$router.push('/admin/userDetail?userId=' + user.userId)"
@@ -32,18 +31,6 @@
           <q-item-label>
             <!-- <q-btn
               v-if="canEditPastor"
-              icon="sync"
-              flat
-              dense
-              rounded
-              color="primary"
-              @click="swapPastorToFunctionPastor(user)"
-              :disable="disableButtons"
-            >
-              <q-tooltip>Trocar pastor</q-tooltip>
-            </q-btn> -->
-            <q-btn
-              v-if="canEditPastor"
               icon="delete"
               flat
               dense
@@ -53,7 +40,7 @@
               :disable="disableButtons"
             >
               <q-tooltip>Remover pastor</q-tooltip>
-            </q-btn>
+            </q-btn> -->
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -65,7 +52,7 @@
 
     >
       <q-item
-        v-if="user.functionSubtype === 'atuacao'"
+        v-if="user.functionSubtype === 'Atuação'"
         style="border-radius: 0.5rem;"
         class="bg-grey-3 q-ma-xs"
       > 
@@ -116,13 +103,15 @@ const props = defineProps([
 'canEditPastor', 
 'disableButtons', 
 ])
-const emits = defineEmits(['remove', 'dialogOpenDeletePastorFromFunction'])
+// const emits = defineEmits(['remove'])
 
 
 
-function dialogOpenDeletePastorFromFunction (user) {
-  emits('dialogOpenDeletePastorFromFunction', user)
-}
+// function dialogOpenDeletePastorFromFunction (user) {
+//   emits('dialogOpenDeletePastorFromFunction', user)
+// }
+
+
 // function swapPastorToFunctionPastor (user) {
 //   emits('swapPastorToFunctionPastor', user)
 // }

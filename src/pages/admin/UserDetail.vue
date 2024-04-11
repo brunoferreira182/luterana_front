@@ -165,6 +165,18 @@
                     flat
                     size="8px"
                   />
+                  <q-btn
+                    @click.stop="goToOrganismDetailFromTree(prop.node)"
+                    color="primary"
+                    rounded
+                    icon="arrow_forward"
+                    flat
+                    size="8px"
+                  >
+                    <q-tooltip>
+                      Ir para o organismo
+                    </q-tooltip>
+                  </q-btn>
                 </div>
                 <div v-if="prop.node.type === 'Atuação'">
                   <q-icon
@@ -190,6 +202,18 @@
                     flat
                     @click.stop="removeAct(prop.node)"
                   />
+                  <!-- <q-btn
+                    @click.stop="goToOrganismDetailFromTree(prop.node)"
+                    color="primary"
+                    rounded
+                    icon="arrow_forward"
+                    flat
+                    size="8px"
+                  >
+                    <q-tooltip>
+                      Ir para o organismo
+                    </q-tooltip>
+                  </q-btn> -->
                 </div>
               </template>
               <template v-slot:default-body="prop">
@@ -1591,6 +1615,10 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    goToOrganismDetailFromTree(data) {
+      console.log(data)
+      this.$router.push('/admin/organismDetail?organismId=' + data.organismId)
+    },
     clearDialogAddActing() {
       this.dialogActing = {
         open: false,

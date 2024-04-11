@@ -281,7 +281,7 @@
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores
                   <span>
-                    <q-btn
+                    <!-- <q-btn
                       icon="add"
                       color="primary"
                       align="center"
@@ -293,7 +293,7 @@
                       @click="linkPastorToFunction()"
                     >
                       <q-tooltip>Adicionar pastor</q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
                   </span>
                 </div>
                 <div v-for="(func, funcIndex) in functions" :key="func">
@@ -3789,6 +3789,7 @@ export default defineComponent({
       this.dialogDeleteUserFromFunction.userData = user;
     },
     dialogOpenDeletePastorFromFunction(pastor) {
+      console.log(pastor)
       this.dialogDeletePastorFromFunction.open = true;
       this.dialogDeletePastorFromFunction.userData = pastor;
     },

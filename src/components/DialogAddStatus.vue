@@ -716,7 +716,7 @@ const withoutCallData = ref({
 })
 
 const withCallData = ref({
-  selectedOrgamism: null,
+  selectedOrgamism: [],
   selectedPastor: null,
   callOptions: ['Diretoria Nacional', 'Congregação'],
   selectedCallOption: null,
