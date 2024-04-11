@@ -184,7 +184,7 @@
         Mudança de pastor é via administrativa
       </div> -->
       <q-btn
-        v-if="showAddUserButton"
+        v-if="showAddUserButton && props.canEdit"
         label="Adicionar pessoa"
         color="primary"
         dense
@@ -202,7 +202,7 @@
 // import { defineComponent } from "vue";
 import utils from '../boot/utils'
 import avatar from '../assets/avatar.svg'
-const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor'])
+const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor', 'canEdit'])
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 

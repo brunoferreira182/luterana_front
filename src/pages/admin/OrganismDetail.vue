@@ -26,6 +26,7 @@
             unelevated
             @click="updateOrganismData"
             label="Salvar Edição"
+            v-if="canEdit"
           />
         </div>
       </div>
@@ -238,6 +239,7 @@
                 <div class="text-h6">
                   Vinculado a
                   <q-btn
+                    v-if="canEdit"
                     icon="edit"
                     flat
                     color="primary"
@@ -319,6 +321,7 @@
                     <div class="text-h6">
                       {{ func.functionName }}
                       <q-btn
+                        v-if="canEdit"
                         color="primary"
                         flat
                         rounded
@@ -544,6 +547,7 @@
                 </div> 
                 <div v-if="field.type.type === 'address'">
                   <q-btn
+                    v-if="canEdit"
                     label="Endereço"
                     no-caps
                     rounded
@@ -556,6 +560,7 @@
                     :disable="field.onlyAdm"
                   />
                   <CardAddress
+                    :canEdit="canEdit"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
                     :disableButtons="true"
@@ -628,7 +633,7 @@
                     :label="`${field.type.label}` + ' ' + `${ organismConfigName}`"
                     no-caps
                     flat
-                    v-if="field.multiple || (!field.multiple && (!field.value || field.value.length === 0))"
+                    v-if="(field.multiple || (!field.multiple && (!field.value || field.value.length === 0))) && canEdit"
                     icon="add"
                     color="primary"
                     rounded
@@ -641,6 +646,7 @@
                     :fieldIndex="fieldIndex"
                     :disableButtons="true"
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
+                    :canEdit="canEdit"
                   />
                 </div> 
                 <div v-if="field.type.type === 'formation'">
@@ -665,6 +671,7 @@
                 </div>     
                 <div v-if="field.type.type === 'services'">
                   <q-btn 
+                    v-if="canEdit"
                     label="Horário de cultos"
                     no-caps
                     rounded
@@ -679,6 +686,7 @@
                     v-if="field.value && field.value.length"
                     :data="field.value"
                     :fieldIndex="fieldIndex"
+                    :canEdit="canEdit"
                     @edit="editServicesData"
                     @remove="removeServicesData"
                   />
@@ -721,6 +729,7 @@
                 </div>
               </div>
               <CardAddress v-if="congregacaoSedeAddress.length > 0"
+                :canEdit="canEdit"
                 :data="congregacaoSedeAddress"
                 :fieldIndex="0"
                 :disableButtons="true"
@@ -743,6 +752,7 @@
                   :showAddUserButton="true"
                   :showInviteUserButton="false"
                   :isPastor="func.functionName === 'Pastor' ? false : true"
+                  :canEdit="canEdit"
                 />
                 
                 <q-dialog v-model="dialogInsertUserInFunction.open" @hide="clearDialogAndFunctions">
@@ -1430,6 +1440,7 @@
                   <div class="text-h6">Coordenação/Representação</div>
                   <div v-for="(func, funcIndex) in functions" :key="funcIndex">
                     <CardFunction
+                      :canEdit="canEdit"
                       v-if="func.group === 'coordination'"   
                       :func="func"
                       :funcIndex="funcIndex"
@@ -2375,6 +2386,7 @@ export default defineComponent({
       organismCallerSelected: '',
       organismCalleeSelected: [],
       organismsFromThisParish: [],
+      canEdit: false
     };
   },
   watch: {
@@ -2412,6 +2424,14 @@ export default defineComponent({
       this.getEventsOptions()
       this.getDaysOfWeek()
       this.getParishChildOrganismsList()
+      this.verifyCanEdit()
+    },
+    async verifyCanEdit() {
+      const userInfo = await utils.presentUserInfo()
+      console.log(userInfo)
+      if (userInfo.can_edit === 1) {
+        this.canEdit = true
+      }
     },
     confirmCreateNewUser(userData) {
       const opt = {

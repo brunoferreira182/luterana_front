@@ -22,7 +22,7 @@
           </div>
         </div>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="props.canEdit">
         <q-item-label>
           <q-btn
             color="primary"
@@ -51,7 +51,7 @@ import { onBeforeMount, defineProps, defineEmits, watchEffect } from 'vue'
 onBeforeMount(() => {
   setFrequency()
 })
-const props = defineProps(['data', 'fieldIndex', 'editData'])
+const props = defineProps(['data', 'fieldIndex', 'editData', 'canEdit'])
 const emits = defineEmits(['edit', 'remove'])
 
 watchEffect(() =>  {

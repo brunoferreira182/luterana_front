@@ -21,6 +21,7 @@
             Acesso ao sistema: 
             <q-badge color="green">Sim</q-badge>
             <q-btn
+              v-if="canEditUserData"
               icon="sync"
               color="primary"
               rounded
@@ -35,6 +36,7 @@
             Acesso ao sistema: 
             <q-badge color="red">Não</q-badge>
             <q-btn
+            v-if="canEditUserData"
               icon="sync"
               color="primary"
               rounded
@@ -49,6 +51,7 @@
             Usuário de consulta no sistema?
             <q-badge color="green">Sim</q-badge>
             <q-btn
+              v-if="canEditUserData"
               icon="sync"
               color="primary"
               rounded
@@ -63,6 +66,7 @@
             Usuário de consulta no sistema? 
             <q-badge color="red">Não</q-badge>
             <q-btn
+              v-if="canEditUserData"
               icon="sync"
               color="primary"
               rounded
@@ -77,7 +81,7 @@
         
         <div class="col q-gutter-sm text-right">
           <q-btn
-            v-if="userType && userType === 'pastor'"
+            v-if="userType && userType === 'pastor' && canEditUserData"
             color="secondary"
             rounded
             outline
@@ -86,7 +90,8 @@
             label="Tornar ex-pastor"
             @click="dialogchangeUserType.open = true"
           />
-            <q-btn
+          <q-btn
+            v-if="canEditUserData"
             icon="delete"
             color="red-8"
             rounded
@@ -97,6 +102,7 @@
             @click="openDialogRemoveUser = true"
           />
           <q-btn
+            v-if="canEditUserData"
             color="primary"
             rounded
             unelevated
@@ -113,6 +119,7 @@
           <div class="text-h6 q-ma-sm q-ml-md">
             Histórico:
             <q-btn
+              v-if="canEditUserData"            
               icon="add"
               color="primary"
               size="12px"
@@ -142,6 +149,7 @@
                   />
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
                   <q-btn
+                    v-if="canEditUserData"
                     color="primary"
                     icon="add"
                     flat
@@ -150,6 +158,7 @@
                     @click.stop="addAtuacaoToPastor(prop.node)"
                   />
                   <q-btn
+                    v-if="canEditUserData"
                     color="primary"
                     icon="edit"
                     flat
@@ -158,6 +167,7 @@
                     @click.stop="editCall(prop.node)"
                   />
                   <q-btn
+                    v-if="canEditUserData"
                     @click.stop="removeCall(prop.node)"
                     color="red"
                     rounded
@@ -166,6 +176,7 @@
                     size="8px"
                   />
                   <q-btn
+                    v-if="canEditUserData"
                     @click.stop="goToOrganismDetailFromTree(prop.node)"
                     color="primary"
                     rounded
@@ -187,6 +198,7 @@
                   />
                   <span class="">{{ prop.node.label }}</span>
                   <q-btn
+                    v-if="canEditUserData"
                     color="primary"
                     rounded
                     icon="edit"
@@ -195,6 +207,7 @@
                     @click.stop="editAct(prop.node)"
                   /> 
                   <q-btn
+                    v-if="canEditUserData"
                     size="8px"
                     color="red"
                     rounded
@@ -389,7 +402,7 @@
                               flat
                               color="primary"
                               icon="add"
-                              v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                              v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && canEditUserData"
                               @click="clkOpenAddOrganismDialog(fieldIndex, i)"
                             />
                             <CardOrganism
@@ -426,6 +439,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
+                              :canEdit="canEditUserData"
                               @remove="removePerson"
                             />
                           </div>
@@ -436,7 +450,7 @@
                             flat
                             color="primary"
                             icon="add"
-                            v-if="field.multiple || !field.value || field.value ==='' || field.value.length === 0"
+                            v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && canEditUserData"
                             @click="clkOpenAddPersonDialog(fieldIndex, i, field.label)"
                           />
                         </div>
@@ -447,6 +461,7 @@
                               :data="field.value"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
+                              :canEdit="canEditUserData"
                               @remove="removeMaritalStatus"
                             />
                           </div>
@@ -1604,7 +1619,8 @@ export default defineComponent({
         open: false,
         selectedOrganism: null,
         data: null
-      }
+      },
+      canEditUserData: false
     };
   },
   mounted() {
@@ -1831,12 +1847,20 @@ export default defineComponent({
         return
       }
       this.getUserCanEditStatus()
-      this.testeFodase()
+      this.getStatusByUserId()
       // this.getUsersConfig()
       this.getUserDetailById();
       this.getPastoralStatusTypes()
+      this.verifyIfCanEdit()
     },
-    async testeFodase() {
+    async verifyIfCanEdit() {
+      const userInfo = await utils.presentUserInfo()
+      console.log(userInfo)
+      if (userInfo.can_edit === 1) {
+        this.canEditUserData = true
+      }
+    },  
+    async getStatusByUserId() {
       const opt = {
         route: '/desktop/adm/getStatusByUserId'
       }

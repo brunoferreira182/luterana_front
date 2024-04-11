@@ -1035,15 +1035,22 @@ export default defineComponent({
     },
     mountTree() {
       let tree = []
-      this.organismChildData.forEach((parish) => {
-        tree = {
-          type: parish.organismConfigName,
-          label:parish.childName,
-          header: 'generic',
-          organismId: parish.childId,
-          children: []
+      for (let i = 0; i < this.organismChildData.length; i++) {
+        let parish = this.organismChildData[i]
+        if (parish.organismChildData && parish.organismChildData.length >= 2) {
+          console.log('oi')
         }
-        if (parish.organismChildData && parish.organismChildData.length > 0) {
+      }
+      return
+      this.organismChildData.forEach((parish) => {
+        if (parish.organismChildData && parish.organismChildData.length >= 2) {
+          tree = {
+            type: parish.organismConfigName,
+            label:parish.childName,
+            header: 'generic',
+            organismId: parish.childId,
+            children: []
+          }
           parish.organismChildData.forEach((congregation, iCongregation) => {
             this.districtInfo.forEach((info) => {
               if (info.label === 'Congregações') {
@@ -1075,11 +1082,13 @@ export default defineComponent({
               }
             })
           })
+        } else if (parish.organismChildData && parish.organismChildData.length === 1) {
+          console.log('PARÓQUIA FAKE', parish)
         }
         this.organismListTree.push(tree)
       })
     },
-    getOrganismDetailById() {
+    async getOrganismDetailById() {
       this.organismListTree = []
       this.functionsListTree = []
       const organismId = this.$route.query.organismId
@@ -1090,54 +1099,52 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if (r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente por favor");
-        } else {
-          this.parentOrganismId = r.data.organismData.organismParentId
-          this.organismConfigId = r.data.organismData.organismConfigId
-          this.organismName = r.data.organismData.organismName
-          this.organismConfigStyle = r.data.organismData.organismConfigStyle
-          this.organismData.fields = r.data.organismData.fields
-          this.organismConfigName = r.data.organismData.organismConfigName
-          this.functions = r.data.functions
-          this.organismParentData = r.data.relations.parent
-          this.organismChildData = r.data.relations.child
-          if (this.organismConfigName === 'Paróquia') {
-            if (this.organismChildData.length === 1) {
-              this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
-            }
+      let r = await useFetch(opt)
+      if (r.error) {
+        this.$q.notify("Ocorreu um erro, tente novamente por favor");
+      } else {
+        this.parentOrganismId = r.data.organismData.organismParentId
+        this.organismConfigId = r.data.organismData.organismConfigId
+        this.organismName = r.data.organismData.organismName
+        this.organismConfigStyle = r.data.organismData.organismConfigStyle
+        this.organismData.fields = r.data.organismData.fields
+        this.organismConfigName = r.data.organismData.organismConfigName
+        this.functions = r.data.functions
+        this.organismParentData = r.data.relations.parent
+        this.organismChildData = r.data.relations.child
+        if (this.organismConfigName === 'Paróquia') {
+          if (this.organismChildData.length === 1) {
+            this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
           }
-          this.parentData = r.data.parentData
-          this.idLegado = r.data.idLegado
-          for(let i = 0; r.data.relations.length > i; i++) {
-            if(r.data.relations[i].organismRelationIsMain === 'SIM') {
-              this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
-            }
-          }
-          this.districtInfo.forEach((info) => {
-            if (info.label === 'Paróquias') {
-              info.num = this.organismChildData.length
-            }
-          })
-          this.mountTree()
-          this.mountTreeFunctions()
-          this.organismChildData.forEach((parish) => {
-            parish.functions.forEach((func) => {
-              if (func.functionName === 'Pastor em Paróquia') {
-                func.users.forEach(() => {
-                  this.districtInfo.forEach((info) => {
-                    if (info.label === 'Pastores') {
-                      info.num++
-                    }
-                  })
-                })
-              }
-            })
-          })
         }
-      });
+        this.parentData = r.data.parentData
+        this.idLegado = r.data.idLegado
+        for(let i = 0; r.data.relations.length > i; i++) {
+          if(r.data.relations[i].organismRelationIsMain === 'SIM') {
+            this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
+          }
+        }
+        this.districtInfo.forEach((info) => {
+          if (info.label === 'Paróquias') {
+            info.num = this.organismChildData.length
+          }
+        })
+        this.mountTree()
+        this.mountTreeFunctions()
+        this.organismChildData.forEach((parish) => {
+          parish.functions.forEach((func) => {
+            if (func.functionName === 'Pastor em Paróquia') {
+              func.users.forEach(() => {
+                this.districtInfo.forEach((info) => {
+                  if (info.label === 'Pastores') {
+                    info.num++
+                  }
+                })
+              })
+            }
+          })
+        })
+      }
     },
   }
 })

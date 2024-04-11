@@ -30,7 +30,7 @@
           <q-badge>{{ item.type }}</q-badge>
         </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="props.canEdit">
         <q-item-label>
           <q-btn
             icon="edit"
@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'canEdit'])
 const emits = defineEmits(['edit', 'remove'])
 
 
