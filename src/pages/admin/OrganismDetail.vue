@@ -2424,14 +2424,15 @@ export default defineComponent({
       this.getEventsOptions()
       this.getDaysOfWeek()
       this.getParishChildOrganismsList()
-      this.verifyCanEdit()
+      this.getUserCanEditStatus()
     },
-    async verifyCanEdit() {
-      // const userInfo = await utils.presentUserInfo()
-      // console.log(userInfo)
-      // if (userInfo.can_edit === 1) {
-      //   this.canEdit = true
-      // }
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit = r.data
+      })
     },
     confirmCreateNewUser(userData) {
       const opt = {
