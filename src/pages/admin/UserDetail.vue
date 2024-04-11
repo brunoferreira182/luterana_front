@@ -1620,7 +1620,7 @@ export default defineComponent({
         selectedOrganism: null,
         data: null
       },
-      canEditUserData: false
+      canEditUserData: true
     };
   },
   mounted() {
@@ -1854,11 +1854,11 @@ export default defineComponent({
       this.verifyIfCanEdit()
     },
     async verifyIfCanEdit() {
-      const userInfo = await utils.presentUserInfo()
-      console.log(userInfo)
-      if (userInfo.can_edit === 1) {
-        this.canEditUserData = true
-      }
+      // const userInfo = await utils.presentUserInfo()
+        // console.log(userInfo)
+      // if (userInfo.can_edit === 1) {
+      //   this.canEditUserData = true
+      // }
     },  
     async getStatusByUserId() {
       const opt = {

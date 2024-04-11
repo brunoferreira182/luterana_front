@@ -2386,7 +2386,7 @@ export default defineComponent({
       organismCallerSelected: '',
       organismCalleeSelected: [],
       organismsFromThisParish: [],
-      canEdit: false
+      canEdit: true
     };
   },
   watch: {
@@ -2427,11 +2427,11 @@ export default defineComponent({
       this.verifyCanEdit()
     },
     async verifyCanEdit() {
-      const userInfo = await utils.presentUserInfo()
-      console.log(userInfo)
-      if (userInfo.can_edit === 1) {
-        this.canEdit = true
-      }
+      // const userInfo = await utils.presentUserInfo()
+      // console.log(userInfo)
+      // if (userInfo.can_edit === 1) {
+      //   this.canEdit = true
+      // }
     },
     confirmCreateNewUser(userData) {
       const opt = {
