@@ -41,7 +41,7 @@
                 unelevated
                 no-caps
                 rounded
-                :disable="canEdit"
+                v-if="canEdit"
                 icon="add"
                 class="q-pa-sm"
               >

@@ -56,6 +56,7 @@
           > 
           </q-select> -->
           <q-btn
+            v-if="canEdit"
             @click="$router.push('/admin/createUser?userType=pastor')"
             color="primary"
             unelevated

@@ -36,7 +36,7 @@
             Acesso ao sistema: 
             <q-badge color="red">Não</q-badge>
             <q-btn
-            v-if="canEdit"
+              v-if="canEdit"
               icon="sync"
               color="primary"
               rounded
@@ -48,8 +48,9 @@
             </q-btn>
           </div>
           <div class="text-subtitle1" v-if="canEdit">
-            Usuário de consulta no sistema?
-            <q-badge color="green">Sim</q-badge>
+            Pode editar dados?
+            <q-badge v-if="userCanEdit" color="green">Sim</q-badge>
+            <q-badge v-else color="red">Não</q-badge>
             <q-btn
               v-if="canEdit"
               icon="sync"
@@ -57,13 +58,13 @@
               rounded
               size="12px"
               flat
-              @click="updateCanEdit(false)"
+              @click="updateCanEdit(userCanEdit)"
             >
               <q-tooltip>Alterar status de usuário</q-tooltip>
             </q-btn>
           </div>
-          <div class="text-subtitle1" v-else-if="!canEdit">
-            Usuário de consulta no sistema? 
+          <!-- <div class="text-subtitle1" v-else-if="!canEdit">
+            Pode editar dados?
             <q-badge color="red">Não</q-badge>
             <q-btn
               v-if="canEdit"
@@ -76,7 +77,7 @@
             >
               <q-tooltip>Alterar status de usuário</q-tooltip>
             </q-btn>
-          </div>
+          </div> -->
         </div>
         
         <div class="col q-gutter-sm text-right">
@@ -106,7 +107,7 @@
             color="primary"
             rounded
             unelevated
-            :disable="canEdit"
+            :disable="canEdit ? false : true"
             no-caps
             label="Atualizar Dados"
             @click="updateUserData()"
@@ -1418,6 +1419,7 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      userCanEdit: false,
       dialogRemoveCall: {
         open: false,
         data: null,
@@ -1850,7 +1852,6 @@ export default defineComponent({
       // this.getUsersConfig()
       this.getUserDetailById();
       this.getPastoralStatusTypes()
-      this.verifyIfCanEdit()
     },
     async getStatusByUserId() {
       const opt = {
@@ -2654,11 +2655,15 @@ export default defineComponent({
       })
     },
     updateCanEdit(status){
+      let  canEdit = true
+      if (status) {
+        canEdit = false
+      }
       const opt = {
         route: '/desktop/adm/updateCanEdit',
         body: {
           userId : this.$route.query.userId,
-          canEdit: status
+          canEdit: canEdit
         }
       }
       useFetch(opt).then((r) => {
@@ -2998,11 +3003,11 @@ export default defineComponent({
             } 
           })
         }
+        this.userCanEdit = r.data.canEdit
         this.callList = r.data.userLinksToOrganisms
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
-        r.data.canEdit ? this.canEdit = r.data.canEdit : this.canEdit = false
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data

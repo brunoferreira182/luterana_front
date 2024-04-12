@@ -326,7 +326,7 @@ export default defineComponent({
     getValidationResumeByOrganism () {
       let allSipar = true
       this.userOrganismList.childData.forEach((child) => {
-        if (child.gestaoParoquial && !child.gestaoParoquial.managementType === 'SIPAR') {
+        if (!child.gestaoParoquial || !child.gestaoParoquial.managementType === 'SIPAR') {
           allSipar = false
         }
       })
@@ -407,6 +407,19 @@ export default defineComponent({
             this.isPastor = true
           }
         })
+        const pastorIds = new Set();
+
+        for (let i = this.status.pastors.length - 1; i >= 0; i--) {
+          const pastor = this.status.pastors[i];
+          if (pastorIds.has(pastor.userId)) {
+            this.status.pastors.splice(i, 1);
+          } else {
+            pastorIds.add(pastor.userId);
+            if (pastor.userId === userInfo.user_id) {
+              this.isPastor = true;
+            }
+          }
+        }
         // this.getValidationResumeByOrganism()
         // if (r.data.usuarioEstaEmParoquia) {
         //   this.hasParoquia = true
