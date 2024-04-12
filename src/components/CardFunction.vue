@@ -6,9 +6,9 @@
   >
     <q-item>
       <q-item-section top>
-        <div class="text-subtitle2 text-capitalize">{{ props.func.functionName }}</div>
-        <div  v-if="!props.isMobile">Descrição: {{ props.func.functionDescription }}</div>
-        <div  v-if="!props.isMobile" class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div>
+        <div class="text-capitalize">{{ props.func.functionName }}</div>
+        <!-- <div  v-if="!props.isMobile">Descrição: {{ props.func.functionDescription }}</div> -->
+        <!-- <div  v-if="!props.isMobile" class="text-caption text-grey-7">Título necessário: {{ props.func.functionRequiredTitleName ? props.func.functionRequiredTitleName : 'nenhum' }}</div> -->
       </q-item-section>
       <q-item-section top side>
         <div class="text-subtitle2">
@@ -18,7 +18,7 @@
         </div>
       </q-item-section>
     </q-item>
-    <q-expansion-item
+    <!-- <q-expansion-item
       v-if="!props.isMobile"
       color="primary"
       icon="visibility"
@@ -33,7 +33,7 @@
         class="text-caption text-grey-7"
         v-if="!props.func.visions || !props.func.visions.length"
       >Nenhuma visão</span>
-    </q-expansion-item>
+    </q-expansion-item> -->
     <q-expansion-item
       default-opened
       color="primary"
@@ -112,14 +112,14 @@
           <q-img 
             style="border-radius: 1rem"
             :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
-            width="208px" 
-            height="208px"
+            width="46px" 
+            height="46px"
           />
         </q-item-section>
         <q-item-section class="text-wrap" lines="2">
-          Enviado por {{ user.sendBy }}
+          <!-- Enviado por {{ user.sendBy }} -->
           <div>
-            para {{ user.sendTo }}
+            {{ user.sendTo }}
           </div>
           <div class="text-caption text-grey-7" v-if="user.createdAt">
             Data de envio:
