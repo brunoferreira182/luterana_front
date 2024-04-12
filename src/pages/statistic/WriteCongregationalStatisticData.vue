@@ -2332,9 +2332,14 @@ export default defineComponent({
         }
         this.$q.notify('Usuário criado com sucesso')
         if (this.dialogAddUser.param === 'func') {
+          // this.dialogAddFunction.userSelected = {
+          //   userName: this.dialogAddUser.data.name
+          // }
           this.dialogAddFunction.userSelected = {
+            _id: r.data.userId,
             userName: this.dialogAddUser.data.name
           }
+          this.confirmAddUserToFunction()
         } else if (this.dialogAddUser.param === 'secretary') {
           this.dialogAddSecretary.userSelected = {
             userName: this.dialogAddUser.data.name
@@ -2353,7 +2358,7 @@ export default defineComponent({
         }
         this.usersOptions = []
         this.clearDialogConfirmAddFunctionUserInNewDept()
-        this.$q.notify('Digite novamente o nome para adicionar')
+        // this.$q.notify('Digite novamente o nome para adicionar')
       })
     },
     clearDialogNewUser() {

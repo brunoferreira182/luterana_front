@@ -614,132 +614,7 @@
                 :showInviteUserButton="canEdit"
                 :isPastor="func.functionName === 'Pastor' ? false : true"
               />
-              <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
-                <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                  <q-card-section align="center">
-                    <div class="text-h6">
-                      Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
-                    </div>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-select
-                      v-model="userSelected"
-                      filled
-                      clearable
-                      use-input
-                      label="Quem convidar"
-                      option-label="userName"
-                      :options="usersOptions"
-                      @filter="getUsers"
-                      :option-value="(item) => item._id"
-                      hint="Digite o nome de quem você vai convidar"
-                    >
-                      <template v-slot:no-option>
-                        <q-item> 
-                          <q-item-section>
-                            <q-btn
-                              icon="person_add"
-                              dense
-                              flat
-                              no-caps
-                              label="Novo usuário"
-                              color="primary"
-                              class="q-pa-sm"
-                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
-                            />
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                      <template v-slot:option="scope">
-                        <q-item v-bind="scope.itemProps">
-                          <q-item-section>
-                            <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                            <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-select>
-                    <q-list class="q-mt-md">
-                      <q-item-label header>Irá substituir algúem que já está na função?</q-item-label>
-                      <q-item
-                        tag="label"
-                        v-ripple
-                        v-for="item in dialogOpenSolicitation.data.users"
-                        :key="item._id"
-                      >
-                        <q-item-section avatar>
-                          <q-radio
-                            v-model="dialogOpenSolicitation.userToReplace"
-                            :val="item"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>{{ item.userName }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                      <!-- <div class="q-gutter-sm " style="display:flex;">
-                        <q-item-label header v-if="canBeDead && canBeDead!==false">Pesquisar entre os falecidos.</q-item-label>
-                        <q-item-label header v-else>Não pesquisar entre os falecidos.</q-item-label>
-                        <q-toggle v-model="canBeDead"> </q-toggle>
-                      </div> -->
-                    </q-list>
-                  </q-card-section>
-                  <!-- <q-card-section>
-                    <q-select
-                      v-model="userSelected"
-                      filled
-                      clearable
-                      use-input
-                      label="Nome do usuário"
-                      option-label="userName"
-                      :options="usersOptions"
-                      @filter="getUsers"
-                      :option-value="(item) => item._id"
-                    >
-                      <template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            Nenhum resultado
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                      <template v-slot:option="scope">
-                        <q-item v-bind="scope.itemProps">
-                          <q-item-section>
-                            <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                            <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                    </q-select>
-                  </q-card-section> -->
-                  <!-- <q-card-section align="center">
-                    <q-input filled label="Observação"
-                      hint="Escreva uma breve descrição explicando o motivo para participar desta função"
-                      v-model="dialogOpenSolicitation.obs" />
-                      <q-checkbox 
-                        :disable="disableIsReplacement"
-                        class="q-pt-lg full-width" 
-                        v-model="isReplacement"
-                        label="Substituir por outro usuário nessa função?" 
-                      />
-                      <div class="text-caption">
-                        Quando marcada, o usuário selecionado estará substituindo a sua posição nesta função
-                      </div>
-                  </q-card-section> -->
-                  <q-card-actions align="center">
-                    <q-btn flat label="Depois" no-caps rounded color="primary"
-                      @click="dialogOpenSolicitation.open = false" />
-                    <q-btn
-                      unelevated
-                      rounded
-                      label="Enviar"
-                      no-caps
-                      color="primary"
-                      @click="sendFunctionSolicitation" />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
+              
             </div>
             <q-separator class="q-mt-lg" v-if="organismConfigName === 'Distrito'"/>
               <div class="q-mt-sm text-left" v-if="organismConfigName === 'Distrito'">
@@ -1202,86 +1077,6 @@
                 :isMobile="isMobile"
                 :showInviteUserButton="canEdit"
               />
-              <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
-                <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
-                  <q-card-section align="center">
-                    <div class="text-h6">
-                      Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
-                    </div>
-                  </q-card-section>
-                  <q-card-section>
-                    <q-select
-                    v-model="userSelected"
-                      filled
-                      clearable
-                      use-input
-                      label="Quem convidar"
-                      option-label="userName"
-                      :options="usersOptions.list"
-                      @filter="getUsers"
-                      :option-value="(item) => item._id"
-                      hint="Digite o nome de quem você vai convidar"
-                    >
-                      <template v-slot:no-option>
-                        <q-item> 
-                          <q-item-section>
-                            <q-btn
-                              icon="person_add"
-                              dense
-                              flat
-                              no-caps
-                              label="Novo usuário"
-                              color="primary"
-                              class="q-pa-sm"
-                              @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
-                            />
-                          </q-item-section>
-                        </q-item>
-                      </template>
-                      <template v-slot:option="scope">
-                        <q-item v-bind="scope.itemProps">
-                          <q-item-section>
-                            <q-item-label>{{ scope.opt.userName }}</q-item-label>
-                            <q-item-label caption>{{ scope.opt.email }}</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                        
-                      </template>
-                    </q-select>
-                    <q-list class="q-mt-md">
-                      <q-item-label header>Irá substituir algúem que já está na função?</q-item-label>
-                      <q-item
-                        tag="label"
-                        v-ripple
-                        v-for="item in dialogOpenSolicitation.data.users"
-                        :key="item._id"
-                      >
-                        <q-item-section avatar>
-                          <q-radio
-                            v-model="dialogOpenSolicitation.userToReplace"
-                            :val="item"
-                          />
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>{{ item.userName }}</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-card-section>
-                  <q-card-actions align="center">
-                    <q-btn flat label="Depois" no-caps rounded color="primary"
-                      @click="dialogOpenSolicitation.open = false" />
-                    <q-btn
-                      unelevated
-                      rounded
-                      label="Enviar"
-                      no-caps
-                      color="primary"
-                      @click="sendFunctionSolicitation" 
-                    />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
             </div>
           </q-expansion-item>
           <q-expansion-item
@@ -1528,86 +1323,180 @@
           </div>
         </q-card>
       </q-dialog>
-      <q-dialog
-    v-model="dialogAddServices.open"
-  >
-    <q-card style="width: 300px;border-radius: 1rem;">
-      <q-card-section>
-        <div class="text-center text-h6">
-          Adicionar horário de culto
-        </div>
-        <q-select
-          outlined
-          label="Selecione o dia da semana"
-          class="q-pa-sm"
-          :options="dialogAddServices.daysOfWeek"
-          option-label="label"
-          v-model="dialogAddServices.selectedDay"
-        />
-        <q-input
-          label="Selecione o horário"
-          outlined
-          class="q-pa-sm"
-          mask="##:##"
-          v-model="dialogAddServices.selectedHour"
-        />
-        <div class="q-my-md">
-          <strong>Selecione uma ou mais opção</strong>
-        </div>
-        <q-checkbox
-          label="Toda semana"
-          v-model="dialogAddServices.everyWeek"
-          @update:model-value="changeOtherStatus()"
-        />
-        <q-checkbox
-          label="1º semana"
-          v-model="dialogAddServices.firstWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="2° semana"
-          v-model="dialogAddServices.secondWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="3° semana"
-          v-model="dialogAddServices.thirdWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="4° semana"
-          v-model="dialogAddServices.fourthWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="5° semana"
-          v-model="dialogAddServices.fifthWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-      </q-card-section>
-      <q-card-actions
-        align="center"
-      >
-        <q-btn
-          color="primary"
-          rounded
-          unelevated
-          no-caps
-          flat
-          label="Voltar"
-          @click="clearDialogAddEvents"
-        />
-        <q-btn
-          color="primary"
-          rounded
-          unelevated
-          no-caps
-          label="confirmar"
-          @click="confirmAddServiceConfig"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+
+      <q-dialog v-model="dialogAddServices.open">
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <q-card-section>
+            <div class="text-center text-h6">
+              Adicionar horário de culto
+            </div>
+            <q-select
+              outlined
+              label="Selecione o dia da semana"
+              class="q-pa-sm"
+              :options="dialogAddServices.daysOfWeek"
+              option-label="label"
+              v-model="dialogAddServices.selectedDay"
+            />
+            <q-input
+              label="Selecione o horário"
+              outlined
+              class="q-pa-sm"
+              mask="##:##"
+              v-model="dialogAddServices.selectedHour"
+            />
+            <div class="q-my-md">
+              <strong>Selecione uma ou mais opção</strong>
+            </div>
+            <q-checkbox
+              label="Toda semana"
+              v-model="dialogAddServices.everyWeek"
+              @update:model-value="changeOtherStatus()"
+            />
+            <q-checkbox
+              label="1º semana"
+              v-model="dialogAddServices.firstWeek"
+              @update:model-value="verifyIfChangeStatus()"
+            />
+            <q-checkbox
+              label="2° semana"
+              v-model="dialogAddServices.secondWeek"
+              @update:model-value="verifyIfChangeStatus()"
+            />
+            <q-checkbox
+              label="3° semana"
+              v-model="dialogAddServices.thirdWeek"
+              @update:model-value="verifyIfChangeStatus()"
+            />
+            <q-checkbox
+              label="4° semana"
+              v-model="dialogAddServices.fourthWeek"
+              @update:model-value="verifyIfChangeStatus()"
+            />
+            <q-checkbox
+              label="5° semana"
+              v-model="dialogAddServices.fifthWeek"
+              @update:model-value="verifyIfChangeStatus()"
+            />
+          </q-card-section>
+          <q-card-actions
+            align="center"
+          >
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              flat
+              label="Voltar"
+              @click="clearDialogAddEvents"
+            />
+            <q-btn
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              label="confirmar"
+              @click="confirmAddServiceConfig"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="dialogOpenSolicitation.open" @hide="clearDialogSolicitation">
+        <q-card style="border-radius: 1rem; width: 456px; padding: 10px">
+          <q-card-section align="center">
+            <div class="text-h6">
+              Solicitação de participação na função {{ dialogOpenSolicitation.data.functionName }}
+            </div>
+          </q-card-section>
+          <q-card-section>
+            <q-select
+              v-model="userSelected"
+              filled
+              clearable
+              use-input
+              label="Quem convidar"
+              :option-label="(item) => item.userName"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item._id"
+              hint="Digite pelo menos 3 caracteres"
+            >
+              <template v-slot:no-option>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:before-options>
+                <q-item> 
+                  <q-item-section>
+                    <q-btn
+                      icon="person_add"
+                      dense
+                      flat
+                      no-caps
+                      label="Novo usuário"
+                      color="primary"
+                      class="q-pa-sm"
+                      @click="openDialogAddUser(dialogOpenSolicitation.data.functionName)"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.userName }}</q-item-label>
+                    <q-item-label caption>{{ scope.opt.email }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-list class="q-mt-md">
+              <q-item-label header>Irá substituir algúem que já está na função?</q-item-label>
+              <q-item
+                tag="label"
+                v-ripple
+                v-for="item in dialogOpenSolicitation.data.users"
+                :key="item._id"
+              >
+                <q-item-section avatar>
+                  <q-radio
+                    v-model="dialogOpenSolicitation.userToReplace"
+                    :val="item"
+                  />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ item.userName }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn flat label="Depois" no-caps rounded color="primary"
+              @click="dialogOpenSolicitation.open = false" />
+            <q-btn
+              unelevated
+              rounded
+              label="Enviar"
+              no-caps
+              color="primary"
+              @click="sendFunctionSolicitation" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -2167,24 +2056,15 @@ export default defineComponent({
           userType: ''
         }
       }
-      // if(this.dialogAddFunction.functionName === 'Pastor'){
-      //   opt.body.userType = 'pastor'
-      // }
 
-      useFetch(opt).then(() => {
+      useFetch(opt).then((r) => {
+
         this.$q.notify('Usuário criado com sucesso')
-        if (this.dialogAddUser.param === 'func') {
-          this.dialogAddFunction.userSelected = {
-            userName: this.dialogAddUser.data.name
-          }
-        } else if (this.dialogAddUser.param === 'secretary') {
-          this.dialogAddSecretary.userSelected = {
-            userName: this.dialogAddUser.data.name
-          }
-        } else if (this.dialogAddUser.param === 'funcInDept') {
-          this.dialogAddFunctionToDept.userSelected = {
-            userName: this.dialogAddUser.data.name
-          }
+
+        this.userSelected = {
+          userName: r.data.name,
+          _id: r.data.userId,
+          email: r.data.email
         }
         this.dialogAddUser.open = false
         this.dialogAddUser.data = {
@@ -2284,7 +2164,7 @@ export default defineComponent({
     },
     getUsers(val, update, abort) {
       if(val.length < 3) {
-        this.$q.notify('Digite no mínimo 3 caracteres')
+        // this.$q.notify('Digite no mínimo 3 caracteres')
         abort()
         return
       }
