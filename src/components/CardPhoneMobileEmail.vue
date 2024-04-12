@@ -20,7 +20,7 @@
           <q-badge class="q-ml-xs" color="green" v-if="value.allowPublication">Publicável</q-badge>
         </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="props.canEdit">
         <q-item-label>
         <!-- <q-btn
           icon="edit"
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'canEdit'])
 const emits = defineEmits(['edit', 'remove'])
 
 // function edit(fieldIndex, tabsIndex, field, value, iValue) {

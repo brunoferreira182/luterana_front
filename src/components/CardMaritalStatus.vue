@@ -22,7 +22,7 @@
           Motivo: {{ item.partner.endReason }}
         </q-item-label>
       </q-item-section>
-      <q-item-section side>
+      <q-item-section side v-if="canEdit">
         <q-item-label>
           <!-- <q-btn
             icon="edit"
@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'canEdit'])
 const emits = defineEmits(['remove'])
 // function edit(fieldIndex, tabsIndex, i) {
 //   emits('edit', fieldIndex, tabsIndex, i)
