@@ -13,14 +13,14 @@
             color="primary"
             :label="isSaving ? '' : 'Salvar'"
             @click="clkCreateUser"
-            :disable="canEditStatus"
+            v-if="canEditStatus"
           >
             <q-spinner-dots v-if="isSaving" color="white" size="1em" />
           </q-btn>
         </div>
       </div>
       <div class="q-px-md">
-        <q-checkbox v-model="canEdit" label="Usuário de consulta no sistema?" />
+        <q-checkbox v-model="canEdit" label="Pode editar dados no sistema?" />
       </div>
       <q-separator class="q-mx-md" />
       <q-list bordered>
@@ -598,13 +598,13 @@ export default defineComponent({
       this.getUserCanEditStatus()
       this.getUsersConfig()
     },
-    getUserCanEditStatus(){
+    async getUserCanEditStatus(){
       const opt = {
         route: '/desktop/users/getUserCanEditStatus'
       }
-      useFetch(opt).then(r => {
-        this.canEditStatus = r.data
-      })
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.canEditStatus = r.data
     },
 
     editAttach(fieldIndex, tabsIndex, field, value, iValue) {

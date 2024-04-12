@@ -36,7 +36,7 @@
             Acesso ao sistema: 
             <q-badge color="red">Não</q-badge>
             <q-btn
-            v-if="canEdit"
+              v-if="canEdit"
               icon="sync"
               color="primary"
               rounded
@@ -48,7 +48,7 @@
             </q-btn>
           </div>
           <div class="text-subtitle1" v-if="canEdit">
-            Usuário de consulta no sistema?
+            Pode editar dados?
             <q-badge color="green">Sim</q-badge>
             <q-btn
               v-if="canEdit"
@@ -63,7 +63,7 @@
             </q-btn>
           </div>
           <div class="text-subtitle1" v-else-if="!canEdit">
-            Usuário de consulta no sistema? 
+            Pode editar dados?
             <q-badge color="red">Não</q-badge>
             <q-btn
               v-if="canEdit"
