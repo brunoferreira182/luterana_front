@@ -32,7 +32,21 @@
               <q-icon name="search" />
             </template>
           </q-input>
-          <q-select
+          <div class="background-radio flex q-gutter-xs">
+            <q-radio 
+              dense dark color="white" 
+              v-model="canBeDead" val="true" 
+              label="Falecidos" 
+              style="color: white;">
+            </q-radio>
+            <q-radio 
+              dense dark color="white" 
+              v-model="canBeDead" val="false" 
+              label="Não Falecidos" 
+              style="color: white;">
+            </q-radio>
+          </div>
+          <!-- <q-select
             no-caps
             dark
             dense
@@ -40,7 +54,7 @@
             v-model="optionValueFilter" 
             :options="optionsFilter" label="Filtro"
           > 
-          </q-select>
+          </q-select> -->
           <q-btn
             v-if="canEdit"
             @click="$router.push('/admin/createUser?userType=pastor')"
@@ -177,7 +191,8 @@ export default defineComponent({
           label: 'Atuação',
           value:  'acting'
         },
-      ],  
+      ],
+      canBeDead: "false",
       initialPagination: {
         sortBy: 'desc',
         descending: false,
@@ -294,6 +309,7 @@ export default defineComponent({
           descending: this.pagination.descending
         },
       };
+      if (this.canBeDead === 'true' && this.canBeDead !== '') opt.body.canUseSystem = false
       if (this.optionValueFilter && this.optionValueFilter !== '') opt.body.optionValueFilter = false 
       if (this.selectFilter === "Ativos") {
         opt.body.isActive = 1;
