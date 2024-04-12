@@ -49,7 +49,7 @@
           <template v-slot:default-header="prop">
             <div class=" items-center" v-if="prop.node.header">
               <span class="text-weight-bold">{{ prop.node.label }}</span>
-              <q-btn
+              <!-- <q-btn
                 icon="search"
                 round
                 unelevated
@@ -58,7 +58,7 @@
                 v-on:click.stop="clkParent(prop.node.organismId)"
               >
                 <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
-              </q-btn>
+              </q-btn> -->
               <q-btn
                 icon="navigate_next"
                 round
@@ -70,9 +70,18 @@
                 <q-tooltip>Visitar paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn>
             </div>
+            <div v-else-if="prop.node.subtype && prop.node.subtype === 'congregation'">
+              <q-icon
+                name="church"
+                color="blue"
+                size="20px"
+                class="q-mr-sm"
+              />
+              <span class="text-weight-bold">{{ prop.node.label }}</span>
+            </div>
             <div class="items-center" v-else>
               <q-icon
-                v-if="prop.node.type === 'Congregação'"
+                v-if="prop.node.type === 'Congregação' && !prop.node.subtype"
                 name="church"
                 color="blue"
                 size="20px"
@@ -103,6 +112,18 @@
               >
                 <q-tooltip>Abrir informações sobre a congregação {{ prop.node.type }}</q-tooltip>
               </q-btn>
+            </div>
+          </template>
+          <template v-slot:default-body="prop">
+            <div v-if="prop.node.type === 'Congregação'">
+              <div>
+                <span>Pastores:</span>
+              </div>
+              <div v-for="func in prop.node.functions" :key="func">
+                <div v-for="user in func.users" :key="user">
+                  {{user.userName}}
+                </div>
+              </div>
             </div>
           </template>
         </q-tree>
@@ -1033,58 +1054,88 @@ export default defineComponent({
       })
     },
     mountTree() {
-      let tree = []
+      let tree
       for (let i = 0; i < this.organismChildData.length; i++) {
+        tree = {}
         let parish = this.organismChildData[i]
         if (parish.organismChildData && parish.organismChildData.length >= 2) {
-        }
-      }
-      return
-      this.organismChildData.forEach((parish) => {
-        if (parish.organismChildData && parish.organismChildData.length >= 2) {
+          this.districtInfo.forEach((info) => {
+          if (info.label === 'Paróquias') {
+            info.num ++
+          }
+          })
           tree = {
+            subtype: 'parish',
             type: parish.organismConfigName,
             label:parish.childName,
             header: 'generic',
             organismId: parish.childId,
             children: []
           }
-          parish.organismChildData.forEach((congregation, iCongregation) => {
+          for (let j = 0; j < parish.organismChildData.length; j++) {
             this.districtInfo.forEach((info) => {
               if (info.label === 'Congregações') {
                 info.num++
               }
             })
+            let congregation = parish.organismChildData[j]
             tree.children.push({
               type: congregation.organismConfigName,
               label: congregation.childName,
               body: 'normal',
               organismId: congregation.childId,
+              functions: congregation.functions,
               children: []
             })
-            congregation.organismChildData.forEach((dept) => {
-              if (dept) {
-                tree.children[iCongregation].children.push({
-                  type: dept.organismChildConfig.organismConfigName,
-                  label: dept.organismChildData.childName,
-                  body: 'normal',
-                  organismId: dept._id
-                })
+            if (congregation.organismChildData && congregation.organismChildData.length > 0) {
+              for (let k = 0; k < congregation.organismChildData.length; k++) {
+                let dept = congregation.organismChildData[k]
+                if (dept && dept.organismChildConfig && dept.organismChildConfig.organismConfigName === 'Ponto de Missão') {
+                  this.districtInfo.forEach((info) => {
+                    if (info.label === 'Pontos de Missão') {
+                      info.num++
+                    }
+                  })
+                }
+                if (dept) {
+                  tree.children[j].children.push({
+                    type: dept.organismChildConfig.organismConfigName,
+                    label: dept.organismChildData.childName,
+                    body: 'normal',
+                    organismId: dept._id
+                  })
+                }
               }
-              if (dept && dept.organismChildConfig && dept.organismChildConfig.organismConfigName === 'Ponto de Missão') {
-                this.districtInfo.forEach((info) => {
-                  if (info.label === 'Pontos de Missão') {
-                    info.num++
-                  }
-                })
-              }
-            })
-          })
+            }
+          }
         } else if (parish.organismChildData && parish.organismChildData.length === 1) {
-          console.log('PARÓQUIA FAKE', parish)
+          for (let j = 0; j < parish.organismChildData.length; j++) {
+            let congregation = parish.organismChildData[j]
+            tree = {
+              subtype: 'congregation',
+              type: congregation.organismConfigName,
+              label: congregation.childName,
+              functions: congregation.functions,
+              body: 'normal',
+              organismId: congregation.childId
+            }
+          }
         }
         this.organismListTree.push(tree)
+      }
+      this.organizeTree()
+    },
+    organizeTree() {
+      let parishList = []
+      let congregationsList = []
+      this.organismListTree.forEach((org) => {
+        if (org.subtype === 'parish') {
+          parishList.push(org)
+        } else if (org.subtype === 'congregation') {
+          congregationsList.push(org)
+        }
       })
+      this.organismListTree = [...parishList, ...congregationsList]
     },
     async getOrganismDetailById() {
       this.organismListTree = []
@@ -1122,11 +1173,7 @@ export default defineComponent({
             this.congregacaoSedeAddress = r.data.relations[i].organismRelationAddress
           }
         }
-        this.districtInfo.forEach((info) => {
-          if (info.label === 'Paróquias') {
-            info.num = this.organismChildData.length
-          }
-        })
+        
         this.mountTree()
         this.mountTreeFunctions()
         this.organismChildData.forEach((parish) => {
