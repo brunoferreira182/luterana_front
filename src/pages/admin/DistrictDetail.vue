@@ -709,7 +709,6 @@ export default defineComponent({
         this.$q.notify("Preencha observação e data final para prosseguir!");
         return;
       }
-      console.log(this.dialogRemoveUserFromDistrictFunction.funcId, this.dialogRemoveUserFromDistrictFunction.finalDate, this.dialogRemoveUserFromDistrictFunction.obsText)
       const opt = {
         route: "/desktop/adm/inactivateUserFromFunction",
         body: {
@@ -1038,7 +1037,6 @@ export default defineComponent({
       for (let i = 0; i < this.organismChildData.length; i++) {
         let parish = this.organismChildData[i]
         if (parish.organismChildData && parish.organismChildData.length >= 2) {
-          console.log('oi')
         }
       }
       return
