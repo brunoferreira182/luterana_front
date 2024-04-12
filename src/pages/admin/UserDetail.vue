@@ -1633,7 +1633,6 @@ export default defineComponent({
   },
   methods: {
     goToOrganismDetailFromTree(data) {
-      console.log(data)
       this.$router.push('/admin/organismDetail?organismId=' + data.organismId)
     },
     clearDialogAddActing() {
