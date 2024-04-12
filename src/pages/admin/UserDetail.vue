@@ -106,7 +106,7 @@
             color="primary"
             rounded
             unelevated
-            :disable="canEdit"
+            :disable="canEdit ? false : true"
             no-caps
             label="Atualizar Dados"
             @click="updateUserData()"
@@ -1850,7 +1850,6 @@ export default defineComponent({
       // this.getUsersConfig()
       this.getUserDetailById();
       this.getPastoralStatusTypes()
-      this.verifyIfCanEdit()
     },
     async getStatusByUserId() {
       const opt = {
@@ -3002,7 +3001,6 @@ export default defineComponent({
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType
-        r.data.canEdit ? this.canEdit = r.data.canEdit : this.canEdit = false
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data
