@@ -309,7 +309,7 @@ export default defineComponent({
           descending: this.pagination.descending
         },
       };
-      if (this.canBeDead === 'true' && this.canBeDead !== '') opt.body.canUseSystem = false
+      if (this.canBeDead === 'true' && this.canBeDead !== '') opt.body.canUseSystem = "true"
       if (this.optionValueFilter && this.optionValueFilter !== '') opt.body.optionValueFilter = false 
       if (this.selectFilter === "Ativos") {
         opt.body.isActive = 1;
