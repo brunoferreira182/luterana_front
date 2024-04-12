@@ -66,7 +66,7 @@
                 </template>
               </q-input>
             </div>
-            <div>
+            <div v-if="canEdit">
               <q-btn @click="$router.push('/admin/createOrganism')" color="primary" unelevated class="q-pa-sm" no-caps
                 rounded dense icon="add">
                 Criar Organismo
@@ -138,7 +138,8 @@ export default defineComponent({
         rowsNumber: 0,
         sortBy: "",
       },
-      organismListTimer: null
+      organismListTimer: null,
+      canEdit: null
     };
   },
   mounted() {
@@ -160,8 +161,16 @@ export default defineComponent({
         this.$router.push('/maitenancePage')
         return
       }
-      // this.getOrganismsList();
+      this.getUserCanEditStatus();
       this.getOrganismsConfigsNamesList();
+    },
+    getUserCanEditStatus(){
+      const opt = {
+        route: '/desktop/users/getUserCanEditStatus'
+      }
+      useFetch(opt).then(r => {
+        this.canEdit= r.data
+      })
     },
     toggleChipSelection(nameIndex) {
       if (this.isChipSelected(nameIndex)) {

@@ -49,7 +49,8 @@
           </div>
           <div class="text-subtitle1" v-if="canEdit">
             Pode editar dados?
-            <q-badge color="green">Sim</q-badge>
+            <q-badge v-if="userCanEdit" color="green">Sim</q-badge>
+            <q-badge v-else color="red">Não</q-badge>
             <q-btn
               v-if="canEdit"
               icon="sync"
@@ -57,12 +58,12 @@
               rounded
               size="12px"
               flat
-              @click="updateCanEdit(false)"
+              @click="updateCanEdit(userCanEdit)"
             >
               <q-tooltip>Alterar status de usuário</q-tooltip>
             </q-btn>
           </div>
-          <div class="text-subtitle1" v-else-if="!canEdit">
+          <!-- <div class="text-subtitle1" v-else-if="!canEdit">
             Pode editar dados?
             <q-badge color="red">Não</q-badge>
             <q-btn
@@ -76,7 +77,7 @@
             >
               <q-tooltip>Alterar status de usuário</q-tooltip>
             </q-btn>
-          </div>
+          </div> -->
         </div>
         
         <div class="col q-gutter-sm text-right">
@@ -1418,6 +1419,7 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      userCanEdit: false,
       dialogRemoveCall: {
         open: false,
         data: null,
@@ -2653,11 +2655,15 @@ export default defineComponent({
       })
     },
     updateCanEdit(status){
+      let  canEdit = true
+      if (status) {
+        canEdit = false
+      }
       const opt = {
         route: '/desktop/adm/updateCanEdit',
         body: {
           userId : this.$route.query.userId,
-          canEdit: status
+          canEdit: canEdit
         }
       }
       useFetch(opt).then((r) => {
@@ -2997,6 +3003,7 @@ export default defineComponent({
             } 
           })
         }
+        this.userCanEdit = r.data.canEdit
         this.callList = r.data.userLinksToOrganisms
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
