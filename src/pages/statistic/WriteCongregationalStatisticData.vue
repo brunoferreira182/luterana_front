@@ -119,6 +119,7 @@
               header-class="text-primary text-h6"
               class="bg-grey-2 q-pa-sm text-left"
               style="border-radius: 1rem;"
+              :default-opened="org.disable ? false : true"
             >
             <template v-slot:header v-if="!org.paroquialManagement">
               <q-item-section>

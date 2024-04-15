@@ -59,6 +59,13 @@
               >
                 <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn> -->
+              <q-badge
+                class="q-mx-sm"
+                color="primary"
+                text-color="white"
+              >
+                Estatística: {{ prop.node.statusStatistic }}
+              </q-badge>
               <q-btn
                 icon="navigate_next"
                 round
@@ -67,7 +74,7 @@
                 flat
                 v-on:click.stop="$router.push('/admin/organismDetail?organismId=' + prop.node.organismId)"
               >
-                <q-tooltip>Visitar paróquia {{ prop.node.type }}</q-tooltip>
+                <q-tooltip>Visitar paróquia</q-tooltip>
               </q-btn>
             </div>
             <div v-else-if="prop.node.subtype && prop.node.subtype === 'congregation'">
@@ -102,15 +109,22 @@
               v-if="prop.node.type === 'Congregação'"
               class="items-center"
             >
+              <q-badge
+                class="q-mx-sm"
+                color="primary"
+                text-color="white"
+              >
+                Estatística: {{ prop.node.statusStatistic }}
+              </q-badge>
               <q-btn
                 icon="navigate_next"
                 round
                 unelevated
                 color="primary"
                 flat
-                v-on:click.stop="openCongregationDetail(prop.node.organismId)"
+                v-on:click.stop="$router.push('/admin/organismDetail?organismId=' + prop.node.organismId)"
               >
-                <q-tooltip>Abrir informações sobre a congregação {{ prop.node.type }}</q-tooltip>
+                <q-tooltip>Visitar Congregação</q-tooltip>
               </q-btn>
             </div>
           </template>
@@ -122,8 +136,19 @@
               <div v-for="func in prop.node.functions" :key="func">
                 <div v-for="user in func.users" :key="user">
                   {{user.userName}}
+                  <q-btn
+                    color="primary"
+                    icon="navigate_next"
+                    round
+                    unelevated
+                    flat
+                    @click="$router.push('/admin/userDetail?userId=' + user.userId)"
+                  />
                 </div>
               </div>
+              <!-- <div>
+                {{ prop.node.stringPastores }}
+              </div> -->
             </div>
           </template>
         </q-tree>
@@ -691,11 +716,9 @@ export default defineComponent({
     },
     addUserToFunctionInNewParish(iFunc) {
       let selectedFunc = this.dialogAddParish.configData.organismConfigData.functions[iFunc]
-
       if (!selectedFunc.users) {
         selectedFunc.users = []
       }
-
     },
     clearDialogParishDetail() {
       this.dialogParishDetail = {
@@ -1053,7 +1076,7 @@ export default defineComponent({
         this.functionsListTree.push(tree)
       })
     },
-    mountTree() {
+    async mountTree() {
       let tree
       for (let i = 0; i < this.organismChildData.length; i++) {
         tree = {}
@@ -1070,6 +1093,7 @@ export default defineComponent({
             label:parish.childName,
             header: 'generic',
             organismId: parish.childId,
+            statusStatistic: parish.statusStatistic,
             children: []
           }
           for (let j = 0; j < parish.organismChildData.length; j++) {
@@ -1079,12 +1103,24 @@ export default defineComponent({
               }
             })
             let congregation = parish.organismChildData[j]
+            let stringPastores = ''
+            congregation.functions.forEach((func) => {
+              func.users.forEach((user) => {
+                if (stringPastores === '') {
+                  stringPastores += user.userName  
+                } else {
+                  stringPastores += ' - ' + user.userName 
+                }
+              })
+            })
             tree.children.push({
               type: congregation.organismConfigName,
               label: congregation.childName,
+              statusStatistic: congregation.status,
               body: 'normal',
               organismId: congregation.childId,
               functions: congregation.functions,
+              stringPastores: stringPastores,
               children: []
             })
             if (congregation.organismChildData && congregation.organismChildData.length > 0) {
@@ -1111,11 +1147,23 @@ export default defineComponent({
         } else if (parish.organismChildData && parish.organismChildData.length === 1) {
           for (let j = 0; j < parish.organismChildData.length; j++) {
             let congregation = parish.organismChildData[j]
+            let stringPastores = ''
+            congregation.functions.forEach((func) => {
+              func.users.forEach((user) => {
+                if (stringPastores === '') {
+                  stringPastores += user.userName  
+                } else {
+                  stringPastores += ' - ' + user.userName 
+                }
+              })
+            })
             tree = {
               subtype: 'congregation',
               type: congregation.organismConfigName,
+              statusStatistic: congregation.status,
               label: congregation.childName,
               functions: congregation.functions,
+              stringPastores: stringPastores,
               body: 'normal',
               organismId: congregation.childId
             }

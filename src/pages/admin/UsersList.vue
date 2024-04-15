@@ -195,7 +195,7 @@ export default defineComponent({
       this.getUsersList();
     },
     clearUsersStore() {
-      savedUsersList().list =[],
+      savedUsersList().list = [],
       savedUsersList().page = 1,
       savedUsersList().rowsPerPage = 10,
       savedUsersList().rowsNumber = 0,
