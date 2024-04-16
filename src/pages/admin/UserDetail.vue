@@ -47,7 +47,7 @@
               <q-tooltip>Alterar status de acesso</q-tooltip>
             </q-btn>
           </div>
-          <div class="text-subtitle1" v-if="canEdit">
+          <div class="text-subtitle1" v-if="canEdit && userIsAdm">
             Pode editar dados?
             <q-badge v-if="userCanEdit" color="green">Sim</q-badge>
             <q-badge v-else color="red">Não</q-badge>
@@ -1622,6 +1622,7 @@ export default defineComponent({
         selectedOrganism: null,
         data: null
       },
+      userIsAdm: null
     };
   },
   mounted() {
@@ -1846,6 +1847,7 @@ export default defineComponent({
         this.$router.push('/maitenancePage')
         return
       }
+      this.verifyIfHAsAdmPermission()
       this.getUserCanEditStatus()
       this.getStatusByUserId()
       // this.getUsersConfig()
@@ -1858,6 +1860,17 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
+    },
+    async verifyIfHAsAdmPermission() {
+      const opt = {
+        route: '/desktop/adm/verifyIfUserHasAdmPermission',
+        body: {
+          userId: this.$route.query.userId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.userIsAdm = r.data
     },
     async confirmAddStatus(status, data) {
       let qry

@@ -314,7 +314,7 @@ export default defineComponent({
         }
       }
       useFetch(opt).then((r) => {
-        if (r.error){
+        if (r.error) {
           this.dialogErrorSendStatistic.msg = r.errorMessage
           this.dialogErrorSendStatistic.open = true
           return
