@@ -308,6 +308,7 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
+                            :canEdit="true"
                             @edit="editThisAddress"
                             @remove="removeThisAddress"
                           />
@@ -320,6 +321,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
+                              :canEdit="true"
                               @click="clkShowDetailPerson(field)"
                               @remove="removeThisPerson"
                             />
@@ -343,6 +345,7 @@
                               :data="field.value"  
                               :fieldIndex="fieldIndex"
                               :tabsIndex="tabsIndex"
+                              :canEdit="true"
                               @edit="editMaritalStatus"
                               @remove="removeThisMaritalRelation"
                             />
@@ -413,6 +416,7 @@
                             :data="field.value"
                             :fieldIndex="fieldIndex"
                             :tabsIndex="tabsIndex"
+                            :canEdit="true"
                             @edit="editPhoneMobileEmail"
                             @remove="removePhoneMobileEmail"
                           />
