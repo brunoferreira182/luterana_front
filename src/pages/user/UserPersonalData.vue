@@ -2034,6 +2034,7 @@ export default defineComponent({
       this.clearOrganismInputs()
     },
     clkOpenAddPersonDialog (fieldIndex, tabIndex) {
+      console.log(fieldIndex, tabIndex)
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true
