@@ -341,6 +341,10 @@ const routes = [
         path: "/statistic/paroquialManagement",
         component: () => import("src/pages/statistic/ParoquialManagement.vue"),
       },
+      {
+        path: "/statistic/ChooseParish",
+        component: () => import("src/pages/statistic/ChooseParish.vue"),
+      },
 
       { path: "/maitenancePage", component: () => import("pages/MaitenancePage.vue") },
       

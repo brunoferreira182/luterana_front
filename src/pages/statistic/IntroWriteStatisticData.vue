@@ -269,18 +269,43 @@ export default defineComponent({
         return
       }
       this.getCardName()
+      
+      //alteração para mais de uma paróquia
+      this.verifyParishLength()
+
       this.getPreStatisticStatus()
       this.getParoquiasByUserId()
+    },
+    async verifyParishLength() {
+      //alteração para mais de uma paróquia
+      if (!this.$route.query.parishId) {
+        const opt = {
+          route: '/desktop/statistics/verifyUserParishlength'
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        if (r.data.leng > 1) this.$router.push('/statistic/ChooseParish')
+      }
     },
     async getParoquiasByUserId(){
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",
       };
+      //alteração para mais de uma paróquia
+      if (this.$route.query.parishId) {
+        opt.body.parishId = this.$route.query.parishId
+      }
+
       this.$q.loading.show()
       await useFetch(opt).then((r) => {
         this.$q.loading.hide()
         this.userOrganismList = r.data
-        this.parishId = r.data.organismId
+
+        //alteração para mais de uma paróquia
+        if (!this.$router.query.parishId) {
+          this.parishId = r.data.organismId
+        } else this.parishId = this.$router.query.parishId
+
         for (const childDataItem of this.userOrganismList.childData) {
           const allValidated = childDataItem.statusEstatistica.length > 0 &&
             childDataItem.statusEstatistica.every(item => item.validated === true);
