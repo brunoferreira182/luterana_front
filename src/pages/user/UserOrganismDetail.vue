@@ -101,7 +101,31 @@
             <div class="text-h5">
               Vinculado a:
             </div>
-            <q-list class="text-h6" v-if="parent && parent.length > 0">
+            <q-list class="q-px-xs" v-if="organismParentData && organismParentData.length > 0">
+              <q-item 
+                class="bg-grey-3 q-ma-sm" 
+                style="border-radius: 0.5rem"
+                clickable
+                v-for="parent in organismParentData"
+                :key="parent"
+                @click="clkShowDialogParentDetail(parent)"
+              >
+                <q-item-section >
+                  <div class="row">
+                    <div class="q-mt-sm">{{ parent.parentName}}</div>
+                    <q-chip
+                      class="q-ml-sm"
+                      :style="{ color: parent.organismConfigStyle}" 
+                      size="15px" 
+                      outline
+                    >{{ parent.organismConfigName }}</q-chip>
+                    
+                  </div>
+                </q-item-section>
+                
+              </q-item>
+            </q-list>
+            <!-- <q-list class="text-h6" v-if="parent && parent.length > 0">
               <q-item 
                 v-for="(user, iuser) in parent"
                 :key="user"
@@ -117,7 +141,7 @@
                 </q-item-section>
                 
               </q-item>
-            </q-list>
+            </q-list> -->
             <q-list v-else class="text-h6">
               <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
                 Nenhum vínculo criado
@@ -613,6 +637,7 @@
                 :showAddUserButton="false"
                 :showInviteUserButton="canEdit"
                 :isPastor="func.functionName === 'Pastor' ? false : true"
+                @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
               />
               
             </div>
@@ -734,29 +759,43 @@
 
       <div v-if="isMobile" class="q-gutter-md">
         <div v-if="organismConfigName === 'Congregação'">
-          <div class="text-h6 q-ml-md">
-            Vinculado a:
+          
+          <div>
+            <div class="text-h6 q-ml-md">
+              Vinculado a:
+            </div>
+            <q-list class="q-px-xs" v-if="organismParentData && organismParentData.length > 0">
+              <q-item 
+                class="bg-grey-3 q-ma-sm" 
+                style="border-radius: 0.5rem"
+                clickable
+                v-for="parent in organismParentData"
+                :key="parent"
+                @click="clkShowDialogParentDetail(parent)"
+              >
+                <q-item-section >
+                  <div class="row">
+                    <div class="q-mt-sm">{{ parent.parentName}}</div>
+                    <q-chip
+                      class="q-ml-sm"
+                      :style="{ color: parent.organismConfigStyle}" 
+                      size="15px" 
+                      outline
+                    >{{ parent.organismConfigName }}</q-chip>
+                    
+                  </div>
+                </q-item-section>
+                
+              </q-item>
+            </q-list>
+            <q-list v-else class="text-h6">
+              <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
+                Nenhum vínculo criado
+              </q-item>
+            </q-list>
           </div>
-          <q-list class="text-h6" v-if="parentData">
-            <q-item 
-              class="bg-grey-3 q-ma-sm" 
-              style="border-radius: 1rem"
-              clickable
-              @click="clkShowDialogParentDetail()"
-            >
-              <q-item-section >
-                <div class="row">
-                  {{ parentData.parentName}} - {{ parentData.parentOrganismConfigName }}
-                </div>
-              </q-item-section>
-              
-            </q-item>
-          </q-list>
-          <q-list v-else class="text-h6">
-            <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
-              Nenhum vínculo criado
-            </q-item>
-          </q-list>
+
+
         </div>
         <q-list bordered v-show="visionSelected === 'data'">
           <q-expansion-item
@@ -1718,6 +1757,7 @@ export default defineComponent({
         open: false,
         userData: {},
       },
+      organismParentData: null
     };
   },
   beforeMount() {
@@ -1854,6 +1894,7 @@ export default defineComponent({
       });
     },
     dialogOpenDeleteUserFromFunction(user) {
+      console.log(user)
       this.dialogDeleteUserFromFunction.open = true;
       this.dialogDeleteUserFromFunction.userData = user;
     },
@@ -2404,6 +2445,7 @@ export default defineComponent({
         this.organismData.fields = r.data.organismData.fields;
         this.organismConfigName = r.data.organismData.organismConfigName
         this.relations = r.data.relations
+        this.organismParentData = r.data.relations.parent
         this.idLegado = r.data.idLegado
         this.child = r.data.relations.child
         this.parent = r.data.relations.parent
