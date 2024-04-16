@@ -40,6 +40,7 @@
       icon="group"
       :label="props.func.users ? `${props.func.users.length} Participantes` : '0 Participantes'"
     >
+      <q-list>
       <q-item
         v-for="user in props.func.users"
         :key="user"
@@ -67,9 +68,9 @@
             Data Fim: {{ formatDate(user.dates.finalDate) }}
           </div>
         </q-item-section>
-        <q-item-section side v-if="!props.isMobile">
-          <div class="text-grey-8 q-gutter-xs">
-            <q-btn
+        <q-item-section side>
+          <div>
+            <!-- <q-btn
               @click="insertObservation(user)"
               class="gt-xs"
               size="12px"
@@ -80,7 +81,7 @@
               icon="library_books"
             >
               <q-tooltip> Observações </q-tooltip>
-            </q-btn>
+            </q-btn> -->
             <q-btn
               @click="deleteUserFromFunction(user)"
               class="gt-xs"
@@ -91,70 +92,72 @@
               round
               icon="delete"
             >
-              <q-tooltip> Deletar usuário da função </q-tooltip>
+              <q-tooltip> Deletar usuário da função do caralho</q-tooltip>
             </q-btn>
           </div>
         </q-item-section>
       </q-item>
+      </q-list>
     </q-expansion-item>
     <q-expansion-item
       color="primary"
       icon="forward_to_inbox"
       :label="props.func.functionDescription.toLowerCase() === 'pastor' ? 'Convites' : `${props.func.functionsSolicitations.length} Convites`"
     >
-      <q-item
-        v-for="user in props.func.functionsSolicitations"
-        :key="user"
-        style="border-radius: 0.5rem;"
-        class="bg-white q-ma-xs"
-      >
-        <q-item-section avatar>
-          <q-img 
-            style="border-radius: 1rem"
-            :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
-            width="46px" 
-            height="46px"
-          />
-        </q-item-section>
-        <q-item-section class="text-wrap" lines="2">
-          <!-- Enviado por {{ user.sendBy }} -->
-          <div>
-            {{ user.sendTo }}
-          </div>
-          <div class="text-caption text-grey-7" v-if="user.createdAt">
-            Data de envio:
-            {{ user.createdAt }}
-          </div>
-        </q-item-section>
-        <q-item-section side v-if="!props.isMobile">
-          <div class="text-grey-8 q-gutter-xs">
-            <q-btn
-              @click="insertObservation(user)"
-              class="gt-xs"
-              size="12px"
-              color="secondary"
-              flat
-              dense
-              round
-              icon="library_books"
-            >
-              <q-tooltip> Observações </q-tooltip>
-            </q-btn>
-            <q-btn
-              @click="deleteUserFromFunction(user)"
-              class="gt-xs"
-              size="12px"
-              color="red-8"
-              flat
-              dense
-              round
-              icon="delete"
-            >
-              <q-tooltip> Deletar usuário da função </q-tooltip>
-            </q-btn>
-          </div>
-        </q-item-section>
-      </q-item>
+      <q-list>
+        <q-item
+          v-for="user in props.func.functionsSolicitations"
+          :key="user"
+          style="border-radius: 0.5rem;"
+          class="bg-white q-ma-xs"
+        >
+          <q-item-section avatar>
+            <q-img 
+              style="border-radius: 1rem"
+              :src="user.userImage ? utils.makeFileUrl(user.userImage) : avatar" 
+              width="46px" 
+              height="46px"
+            />
+          </q-item-section>
+          <!-- <q-item-section class="text-wrap" lines="2">
+            <div>
+              {{ user.sendTo }}
+            </div>
+            <div class="text-caption text-grey-7" v-if="user.createdAt">
+              Data de envio:
+              {{ user.createdAt }}
+            </div>
+          </q-item-section> -->
+          <q-item-section side>
+            <div class="text-grey-8 q-gutter-xs">
+              <!-- <q-btn
+                @click="insertObservation(user)"
+                class="gt-xs"
+                size="12px"
+                color="secondary"
+                flat
+                dense
+                round
+                icon="library_books"
+              >
+                <q-tooltip> Observações </q-tooltip>
+              </q-btn> -->
+              <q-btn
+                @click="deleteUserFromFunction(user)"
+                class="gt-xs"
+                size="12px"
+                color="red-8"
+                flat
+                dense
+                round
+                icon="delete"
+              >
+                <q-tooltip> Deletar usuário da função </q-tooltip>
+              </q-btn>
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
     </q-expansion-item>
     <div 
       class="text-caption text-grey-7 q-mx-md"
@@ -206,9 +209,9 @@ const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInvite
 
 const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
 
-function insertObservation(user) {
-  emits('insertObservation', user)
-}
+// function insertObservation(user) {
+//   emits('insertObservation', user)
+// }
 
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
