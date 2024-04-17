@@ -10,7 +10,7 @@
             color="primary"
             rounded
             unelevated
-            :disable="canEdit"
+            :disable="canEdit ? false : true"
 
             label="Criar organismo"
           />

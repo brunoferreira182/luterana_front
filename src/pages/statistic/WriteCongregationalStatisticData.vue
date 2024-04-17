@@ -3113,11 +3113,13 @@ export default defineComponent({
     async confirmAddUserToFunction() {
       let userId = this.dialogAddFunction.userSelected._id
       let organismFunctionId = this.composition.congregations[this.dialogAddFunction.iOrg].organismFunctions[this.dialogAddFunction.iFunc]._id
+      let organismId = this.composition.congregations[this.dialogAddFunction.iOrg].organismChildId
       const opt = {
         route: '/desktop/statistics/addUserToFunction',
         body: {
           organismFunctionId,
-          userId
+          userId,
+          organismId
         }
       }
       let r = await useFetch(opt)
