@@ -259,31 +259,37 @@ export default defineComponent({
         this.$router.push('/maitenancePage')
         return
       }
-      this.getCardName()
-      
       //alteração para mais de uma paróquia
       this.verifyParishLength()
-
-      this.getPreStatisticStatus()
-      this.getParoquiasByUserId()
     },
     async verifyParishLength() {
       //alteração para mais de uma paróquia
-      // if (!this.$route.query.parishId) {
+      // if (this.$route && this.$route.query && !this.$route.query.parishId) {
       //   const opt = {
       //     route: '/desktop/statistics/verifyUserParishlength'
       //   }
       //   let r = await useFetch(opt)
       //   if (r.error) return
-      //   if (r.data.leng > 1) this.$router.push('/statistic/ChooseParish')
+      //   if (r.data.leng > 1) {
+      //     this.$router.push('/statistic/ChooseParish')
+      //     return
+      //   } 
+      //   this.getCardName()
+      //   this.getPreStatisticStatus()
+      //   this.getParoquiasByUserId()
       // }
+      // teste
+      this.getCardName()
+      this.getPreStatisticStatus()
+      this.getParoquiasByUserId()
     },
-    async getParoquiasByUserId(){
+    async getParoquiasByUserId() {
       const opt = {
         route: "/desktop/statistics/getParoquiasByUserId",
       };
       //alteração para mais de uma paróquia
       if (this.$route.query.parishId) {
+        opt.body = {}
         opt.body.parishId = this.$route.query.parishId
       }
 
@@ -293,9 +299,9 @@ export default defineComponent({
         this.userOrganismList = r.data
 
         //alteração para mais de uma paróquia
-        if (!this.$router && !this.$router.query && !this.$router.query.parishId) {
+        if (!this.$route && !this.$route.query && !this.$route.query.parishId) {
           this.parishId = r.data.organismId
-        } else this.parishId = this.$router.query.parishId
+        } else this.parishId = this.$route.query.parishId
 
         for (const childDataItem of this.userOrganismList.childData) {
           const allValidated = childDataItem.statusEstatistica.length > 0 &&
@@ -383,6 +389,10 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
       }
+      if (this.$route.query.parishId) {
+        opt.body = {}
+        opt.body.parishId = this.$route.query.parishId
+      } 
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
