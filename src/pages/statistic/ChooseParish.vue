@@ -44,7 +44,6 @@ export default defineComponent({
       }
       let r = await useFetch(opt)
       if (r.error) return
-      console.log(r, 'cu cagado')
       r.data.parishsIds.forEach((parish) => {
         this.parishArray.push({
           name: parish.name,
