@@ -41,7 +41,7 @@
         <q-item 
           class="card" 
           clickable
-          @click="$router.push('/statistic/writeCongregationalStatisticData')"
+          @click="goToComposition"
         >
           <q-item-section >
             <q-item-label class="text-h5">Composição</q-item-label>
@@ -262,22 +262,28 @@ export default defineComponent({
       //alteração para mais de uma paróquia
       this.verifyParishLength()
     },
+    goToComposition() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/writeCongregationalStatisticData?parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/writeCongregationalStatisticData')
+    },
     async verifyParishLength() {
-      //alteração para mais de uma paróquia
-      // if (this.$route && this.$route.query && !this.$route.query.parishId) {
-      //   const opt = {
-      //     route: '/desktop/statistics/verifyUserParishlength'
-      //   }
-      //   let r = await useFetch(opt)
-      //   if (r.error) return
-      //   if (r.data.leng > 1) {
-      //     this.$router.push('/statistic/ChooseParish')
-      //     return
-      //   } 
-      //   this.getCardName()
-      //   this.getPreStatisticStatus()
-      //   this.getParoquiasByUserId()
-      // }
+      // alteração para mais de uma paróquia
+      if (this.$route && this.$route.query && !this.$route.query.parishId) {
+        const opt = {
+          route: '/desktop/statistics/verifyUserParishlength'
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        if (r.data.leng > 1) {
+          this.$router.push('/statistic/ChooseParish')
+          return
+        } 
+        this.getCardName()
+        this.getPreStatisticStatus()
+        //teste
+        this.getParoquiasByUserId()
+      }
       // teste
       this.getCardName()
       this.getPreStatisticStatus()
@@ -424,6 +430,10 @@ export default defineComponent({
       const userInfo = utils.presentUserInfo()
       const opt = {
         route: '/desktop/statistics/getPreStatisticStatus',
+      }
+      if (this.$route.query.parishId) {
+        opt.body = {}
+        opt.body.parishId = this.$route.query.parishId
       }
       useFetch(opt).then((r) => {
         if (r.error) return 

@@ -2196,10 +2196,7 @@ export default defineComponent({
     }
   }, 
   beforeMount() {
-    this.getCompositionByUserId()
-    this.getEventsOptions()
-    this.getDaysOfWeek()
-    this.startTimerToSaveDraft();
+    this.startView()
   },
   beforeUnmount() {
     this.stopTimerToSaveDraft();
@@ -2207,6 +2204,14 @@ export default defineComponent({
     this.saveDraftOnBeforeUnmount();
   },
   methods: {
+    startView() {
+      //aqui esta o coração da página
+      this.getCompositionByUserId()
+
+      this.getEventsOptions()
+      this.getDaysOfWeek()
+      this.startTimerToSaveDraft();
+    },
     startTimerToSaveDraft() {
       this.timerToSave = true;
       this.methodToSaveTimerDraft();
@@ -3171,6 +3176,10 @@ export default defineComponent({
     async getCompositionByUserId() {
       const opt = {
         route: '/desktop/statistics/getCompositionByUserId'
+      }
+      if (this.$route.query.parishId) {
+        opt.body = {}
+        opt.body.parishId = this.$route.query.parishId
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
