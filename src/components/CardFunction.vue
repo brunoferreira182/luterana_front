@@ -119,7 +119,7 @@
               height="46px"
             />
           </q-item-section>
-          <!-- <q-item-section class="text-wrap" lines="2">
+          <q-item-section class="text-wrap" lines="2">
             <div>
               {{ user.sendTo }}
             </div>
@@ -127,7 +127,7 @@
               Data de envio:
               {{ user.createdAt }}
             </div>
-          </q-item-section> -->
+          </q-item-section>
           <q-item-section side>
             <div class="text-grey-8 q-gutter-xs">
               <!-- <q-btn

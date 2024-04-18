@@ -386,6 +386,7 @@
                   :fieldIndex="fieldIndex"
                   @edit="editThisAddress"
                   @remove="removeThisAddress"
+                  :canEdit="canEdit"
                 />
               </div>
               <div v-if="field.type.type === 'person'">
@@ -473,6 +474,7 @@
                   @edit="editPhoneMobileEmail"
                   @remove="removePhoneMobileEmail"
                   :showHeader="field.value && field.value.length > 0 ? field.label : false"
+                  :canEdit="canEdit"
                 />
               </div>
               <div v-if="field.type.type === 'services'">
@@ -981,6 +983,7 @@
                     :fieldIndex="fieldIndex"
                     @edit="editThisAddress"
                     @remove="removeThisAddress"
+                    :canEdit="canEdit"
                   />
                 </div>
                 <div v-if="field.type.type === 'person'">
@@ -1048,6 +1051,7 @@
                     @edit="editPhoneMobileEmail"
                     @remove="removePhoneMobileEmail"
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
+                    :canEdit="canEdit"
                   />
                 </div>
                 <div v-if="field.type.type === 'services'">
