@@ -93,15 +93,6 @@
           <q-item-section>
             <q-item-label class="text-h5">Preenchimento</q-item-label>
           </q-item-section>
-          <q-chip
-            v-for="organism in userOrganismList.childData"
-            :key="organism._id"
-            :label="organism.organismName"
-            :outline="organism.allValidated ?  false : true"
-            color="green"
-            text-color="white"
-            :icon="organism.preStatistic && organism.preStatistic.status.value === 'sent' ? 'check' : ''"
-          />
         </q-item>
       </div>
       <div v-else>
@@ -278,14 +269,14 @@ export default defineComponent({
     },
     async verifyParishLength() {
       //alteração para mais de uma paróquia
-      if (!this.$route.query.parishId) {
-        const opt = {
-          route: '/desktop/statistics/verifyUserParishlength'
-        }
-        let r = await useFetch(opt)
-        if (r.error) return
-        if (r.data.leng > 1) this.$router.push('/statistic/ChooseParish')
-      }
+      // if (!this.$route.query.parishId) {
+      //   const opt = {
+      //     route: '/desktop/statistics/verifyUserParishlength'
+      //   }
+      //   let r = await useFetch(opt)
+      //   if (r.error) return
+      //   if (r.data.leng > 1) this.$router.push('/statistic/ChooseParish')
+      // }
     },
     async getParoquiasByUserId(){
       const opt = {
@@ -302,7 +293,7 @@ export default defineComponent({
         this.userOrganismList = r.data
 
         //alteração para mais de uma paróquia
-        if (!this.$router.query.parishId) {
+        if (!this.$router && !this.$router.query && !this.$router.query.parishId) {
           this.parishId = r.data.organismId
         } else this.parishId = this.$router.query.parishId
 
