@@ -1115,7 +1115,7 @@
               unelevated
               label="Confirmar"
               no-caps
-              :disable="canEdit"
+              :disable="canEdit ? false : true"
               @click="confirmChangeUserType"
             />
           </q-card-actions>
