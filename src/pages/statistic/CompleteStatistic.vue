@@ -17,7 +17,7 @@
         </q-breadcrumbs>
       </div>
       <div class="q-pa-sm text-center">
-        <q-item class="card" clickable @click="$router.push('/statistic/culturalActivities?organismId=' + $route.query.organismId)">
+        <q-item class="card" clickable @click="goToCulturalActivities">
           <q-item-section>
             <q-item-label class="text-h5" />Atividades cúlticas
           </q-item-section>
@@ -40,7 +40,7 @@
             text-color="white"
           />
         </q-item>
-        <q-item class="card" clickable @click="$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)" >
+        <q-item class="card" clickable @click="goToGroupActivity" >
           <q-item-section>
             Atividades de grupos
           </q-item-section>
@@ -68,7 +68,7 @@
             text-color="white"
           /> -->
         </q-item>
-        <q-item class="card" clickable @click="$router.push('/statistic/membersMovement?organismId=' + $route.query.organismId)">
+        <q-item class="card" clickable @click="goToMembersMovement">
           <q-item-section>
             <q-item-label class="text-h5"  />Movimento de membros
             
@@ -97,7 +97,7 @@
             text-color="white"
           /> -->
         </q-item>
-        <q-item class="card" clickable @click="$router.push('/statistic/writeFinanceStatisticData?organismId=' + $route.query.organismId)">
+        <q-item class="card" clickable @click="goToFinance">
           <q-item-section>
             <q-item-label class="text-h5" />Financeiro
           </q-item-section>
@@ -178,6 +178,26 @@ export default defineComponent({
     this.getOrganismNameForBreadCrumbs()
   },
   methods: {
+    goToCulturalActivities() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/culturalActivities?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/culturalActivities?organismId=' + this.$route.query.organismId)
+    },
+    goToGroupActivity() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)
+    },
+    goToMembersMovement() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
+    },
+    goToFinance() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/writeFinanceStatisticData?organismId=' + this.$route.query.organismId)
+    },
     getValidationResumeByOrganism () {
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',

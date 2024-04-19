@@ -140,7 +140,9 @@ export default defineComponent({
     },
     goToCompleteStatistic(organism) {
       if (organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR') return
-      this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId + '&parishId=' + this.$route.query.parishId)  
+      } else this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId)
     },
     //aqui
     getParoquiasByUserId(){

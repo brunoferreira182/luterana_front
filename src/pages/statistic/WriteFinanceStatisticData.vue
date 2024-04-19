@@ -8,12 +8,12 @@
               style="cursor: pointer;" 
               icon="home" 
               label="Introdução" 
-              @click="$router.back()"
+              @click="goToIntro"
               />
               <q-breadcrumbs-el 
               :label="congregationName" 
               style="cursor: pointer;" 
-              @click="$router.push('/statistic/completeStatistic?organismId=' + $route.query.organismId)"
+              @click="backToChoose"
             />
             <q-breadcrumbs-el label="Financeiro" />
           </q-breadcrumbs>
@@ -60,7 +60,6 @@
               />
               <!-- {{ paroquiaData.contributionOutput ? paroquiaData.contributionOutput : 0 }} -->
             </div>
-           
           </div>
           <div class="row">
             <div class="col q-gutter-y-md">
@@ -424,6 +423,18 @@ export default defineComponent({
     this.putFinanceTotalValueFromParoquia(r)
   },
   methods: {
+    backToChoose() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
+      } else this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId)
+    },
+    goToIntro() {
+      if (this.$route.query.parishId) {
+        this.$router.push('/statistic/IntroWriteStatisticData?parishId=' + this.$route.query.parishId)
+      } else {
+        this.$router.push('/statistic/IntroWriteStatisticData')
+      }
+    },
     startTimerToSaveDraft() {
       this.timerToSave = true;
       this.methodToSaveTimerDraft();
