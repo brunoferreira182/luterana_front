@@ -3083,7 +3083,6 @@ export default defineComponent({
       if (this.$route.query.parishId) {
         opt.body.parishId = this.$route.query.parishId
       }
-      console.log(opt.body, 'kikuzinho')
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
