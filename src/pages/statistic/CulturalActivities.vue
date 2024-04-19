@@ -7,7 +7,7 @@
             style="cursor: pointer" 
             icon="home" 
             label="Introdução" 
-            @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
+            @click="$router.back()"
           />
           <q-breadcrumbs-el 
             :label="congregationName" 

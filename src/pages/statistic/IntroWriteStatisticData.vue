@@ -416,7 +416,8 @@ export default defineComponent({
         this.dialogNotifystatus.open = true
         return
       }
-      this.$router.push('/statistic/selectOrganismToWriteStatisticData')
+      if (this.$route.query.parishId) this.$router.push('/statistic/selectOrganismToWriteStatisticData?parishId=' + this.$route.query.parishId)
+      else this.$router.push('/statistic/selectOrganismToWriteStatisticData')
 
       // if (this.status && this.status.statisticPermission) {
       //   this.$router.push('/statistic/selectOrganismToWriteStatisticData')
