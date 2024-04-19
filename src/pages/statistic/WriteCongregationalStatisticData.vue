@@ -2735,8 +2735,14 @@ export default defineComponent({
       }
       let opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: this.composition
+        body: {
+          composition: this.composition,
+        } 
       }
+      if (this.$route.query.parishId) {
+        opt.body.parishId = this.$route.query.parishId
+      }
+
       opt.body.status = 'sent'
       let r = await useFetch(opt)
       if (r.error) {
@@ -2745,6 +2751,10 @@ export default defineComponent({
       }
       opt = {
         route: '/desktop/statistics/saveCompositionFinal',
+      }
+      if (this.$route.query.parishId) {
+        opt.body = {}
+        opt.body.parishId = this.$route.query.parishId
       }
       this.$q.loading.show()
       r = await useFetch(opt)
@@ -3048,8 +3058,14 @@ export default defineComponent({
     saveDraftOnBeforeUnmount(){
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: this.composition
+        body: {
+          composition: this.composition,
+        } 
       }
+      if (this.$route.query.parishId) {
+        opt.body.parishId = this.$route.query.parishId
+      }
+
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -3060,8 +3076,14 @@ export default defineComponent({
     saveDraft() {
       const opt = {
         route: '/desktop/statistics/saveCompositionDraft',
-        body: this.composition
+        body: {
+          composition: this.composition,
+        } 
       }
+      if (this.$route.query.parishId) {
+        opt.body.parishId = this.$route.query.parishId
+      }
+      console.log(opt.body, 'kikuzinho')
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
