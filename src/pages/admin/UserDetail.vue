@@ -987,7 +987,7 @@
               label="Confirmar"
               unelevated
               rounded
-              :disable="canEdit"
+              :disable="canEdit ? false : true"
               @click="InactivateUser"
               color="primary"
             />

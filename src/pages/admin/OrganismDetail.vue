@@ -235,6 +235,27 @@
                   </q-item>
                 </q-list>
               </div> -->
+              <div v-if="organismConfigName === 'Ponto de Missão' && deptParentData">
+                <div class="text-h6">
+                  Vinculado a
+                </div>
+                <q-list class="q-px-sm">
+                  <q-item
+                    class="bg-grey-3 q-ma-sm"
+                    style="border-radius: 0.5rem;"
+                    clickable
+                    v-for="parent in deptParentData"
+                    :key="parent"
+                    @click="$router.push('/admin/organismDetail?organismId=' + parent.organismId)"
+                  >
+                    <q-item-section>
+                      <q-item-label>
+                        {{parent.organismName}} - {{parent.organismConfigName}}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
@@ -2386,7 +2407,8 @@ export default defineComponent({
       organismCallerSelected: '',
       organismCalleeSelected: [],
       organismsFromThisParish: [],
-      canEdit: true
+      canEdit: true,
+      deptParentData: null
     };
   },
   watch: {
@@ -3515,8 +3537,12 @@ export default defineComponent({
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
           // this.pastoralStatusData = r.data.pastoralStatus.data
+          console.log(r.data.relations, 'uwquierhwyquerhgqweuyigrewquygrqwytfrvqewytg')
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
+          if (r.data.relations.deptParent) {
+            this.deptParentData = r.data.relations.deptParent
+          }
           if (this.organismConfigName === 'Paróquia') {
             if (this.organismChildData.length === 1) {
               this.$router.push('/admin/organismDetail?organismId=' + this.organismChildData[0].childId)
