@@ -1898,7 +1898,6 @@ export default defineComponent({
       });
     },
     dialogOpenDeleteUserFromFunction(user) {
-      console.log(user)
       this.dialogDeleteUserFromFunction.open = true;
       this.dialogDeleteUserFromFunction.userData = user;
     },

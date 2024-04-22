@@ -3537,7 +3537,6 @@ export default defineComponent({
           this.organismConfigName = r.data.organismData.organismConfigName
           this.functions = r.data.functions
           // this.pastoralStatusData = r.data.pastoralStatus.data
-          console.log(r.data.relations, 'uwquierhwyquerhgqweuyigrewquygrqwytfrvqewytg')
           this.organismParentData = r.data.relations.parent
           this.organismChildData = r.data.relations.child
           if (r.data.relations.deptParent) {
