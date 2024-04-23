@@ -305,7 +305,7 @@ export default defineComponent({
         this.userOrganismList = r.data
 
         //alteração para mais de uma paróquia
-        if (!this.$route && !this.$route.query && !this.$route.query.parishId) {
+        if (!this.$route.query.parishId) {
           this.parishId = r.data.organismId
         } else this.parishId = this.$route.query.parishId
 
@@ -330,6 +330,7 @@ export default defineComponent({
       if (r.data.alreadySent) this.alreadySentStatistic = true
     },
     insertCongregationalStatisticsDone() {
+      console.log(this.parishId, '  OPKDASPOKDOPASKDOPSA')
       let sipar = false
       if (this.allSipar) {
         sipar = true
