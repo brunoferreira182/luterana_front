@@ -452,7 +452,6 @@ export default defineComponent({
       }
     },
   putFinanceStatisticByOrganismId(r) {
-    console.log(r, 'retorno da rota que pega os valores')
     if (r.error) return
     this.validated = r.data.validated
     this.status = r.data.status
@@ -489,9 +488,9 @@ export default defineComponent({
       this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
       this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
     } else {
-      this.table.output.contributionOnSga = r.data.contributionOnSga
-      this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
-      this.table.output.contributionOnSgaLocalNum = r.data.contributionOnSgaLocalNum
+      this.table.output.contributionOnSga = r.data.financeData.output.contributionOnSga
+      this.table.output.contributionOnSgaLocal = r.data.financeData.output.contributionOnSgaLocal
+      this.table.output.contributionOnSgaLocalNum = r.data.financeData.output.contributionOnSgaLocalNum
     }
     // this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
     this.calculateOfferPercents()
