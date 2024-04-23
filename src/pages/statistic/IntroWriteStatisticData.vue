@@ -354,17 +354,17 @@ export default defineComponent({
       })
     },
     getValidationResumeByOrganism () {
-      let allSipar = true
-      this.userOrganismList.childData.forEach((child) => {
-        console.log(child, 'qua qua qua')
-        if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
-          allSipar = false
-        }
-      })
-      if (allSipar) {
-        this.canSendStatistic = true
-        this.allSipar = true
-      }
+      // let allSipar = true
+      // this.userOrganismList.childData.forEach((child) => {
+      //   console.log(child, 'qua qua qua')
+      //   if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
+      //     allSipar = false
+      //   }
+      // })
+      // if (allSipar) {
+      //   this.canSendStatistic = true
+      //   this.allSipar = true
+      // }
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
         body: {
@@ -373,17 +373,18 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return
-        console.log(r.data, 'kika ralho')
-        this.validationResume = r.data
-        if (
-          this.validationResume &&
-          this.validationResume.financeStatistics === 't' &&
-          this.validationResume.membersMovement === 't' &&
-          this.validationResume.groupActivity === 't' &&
-          this.validationResume.atividadesCulticasStatistics === 't'
-        ) {
-          this.canSendStatistic = true;
-        }
+        this.canSendStatistic = r.data.canSend
+        // console.log(r.data, 'kika ralho')
+        // this.validationResume = r.data
+        // if (
+        //   this.validationResume &&
+        //   this.validationResume.financeStatistics === 't' &&
+        //   this.validationResume.membersMovement === 't' &&
+        //   this.validationResume.groupActivity === 't' &&
+        //   this.validationResume.atividadesCulticasStatistics === 't'
+        // ) {
+        //   this.canSendStatistic = true;
+        // }
       })
     },
     clearDialogSipar() {
