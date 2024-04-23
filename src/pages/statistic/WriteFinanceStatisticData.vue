@@ -484,7 +484,8 @@ export default defineComponent({
       emprestimos: '',
       todasOutrasReceitas: '',
     }
-    if (r.data.contributionOnSgaFirst) {
+    console.log(r.data, 'r.data aqui nessa merda')
+    if (r.data.contributionOnSgaFirst || r.data.contributionOnSgaFirst === 0) {
       this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
       this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
     } else {
@@ -594,7 +595,7 @@ export default defineComponent({
       return
     }
     this.$q.notify('Etapa finalizada com sucesso')
-    this.$router.back()
+    this.$router.push('/statistic/selectOrganismToWriteStatisticData')
   },
   saveDraft() {
     const formatedEntriesAndOutput = this.formatFinanceData()

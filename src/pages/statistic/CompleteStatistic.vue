@@ -135,7 +135,7 @@
           no-caps
           dense
           class="full-width"
-          @click="$router.back()"
+          @click="$router.push('/statistic/selectOrganismToWriteStatisticData')"
           />
       </div>
       <q-dialog v-model="dialogErrorSendStatistic.open">
