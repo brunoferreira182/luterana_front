@@ -544,13 +544,13 @@
                   v-model="composition.congregations[iOrg].other"
                 />
               </q-list>
-              <q-checkbox
+              <!-- <q-checkbox
                 color="primary"
                 no-caps
                 @update:model-value="verifyAllIsOK(iOrg)"
                 label="Confirmo que revisei os dados e estão de acordo"
                 v-model="org.verifyAllData"
-              />
+              /> -->
             </q-expansion-item>
               </q-item-label>
             </q-item-section>
@@ -558,6 +558,20 @@
       <q-separator 
         class='q-mx-md q-my-sm'
       />
+      <div>
+        <div
+          v-for="(org, iOrg) in composition.congregations"
+          :key="org"
+        >
+          <q-checkbox
+            color="primary"
+            no-caps
+            @update:model-value="verifyAllIsOK(iOrg)"
+            :label="`Confirmo que revisei os dados de ${org.organismChildName}`"
+            v-model="org.verifyAllData"
+          />
+        </div>
+      </div>
       <div 
         class="q-ma-lg" 
         v-if="!status || (status && status.value !== 'sent') "
@@ -3284,6 +3298,7 @@ export default defineComponent({
             })
           }
         })
+        this.missionPointsList = []
         this.composition.congregations.forEach((org) => {
           if (org.depts) {
             org.depts.forEach((dep) => {
