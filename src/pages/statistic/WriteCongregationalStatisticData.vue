@@ -95,7 +95,7 @@
           </div>
           <div class="q-mt-sm text-left text-h6">
             Congregações:
-            <q-btn
+            <!-- <q-btn
               v-if="!status || (status && status.value !== 'sent')"
               icon="add"
               color="primary"
@@ -104,7 +104,7 @@
               rounded
               @click="addCongregation"
             >
-            </q-btn>
+            </q-btn> -->
           </div>
           <q-item-label 
             class="bg-white q-mt-sm text-center"
