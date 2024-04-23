@@ -348,6 +348,7 @@ export default defineComponent({
           return
         }
         this.$q.notify('Estatística enviada com sucesso')
+        this.verifyHasSentStatistic()
         // this.$router.back()
       })
     },
