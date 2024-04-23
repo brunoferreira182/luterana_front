@@ -475,6 +475,13 @@
               color="primary"
               @click="openDialogLastPastoralActivity"
             />
+            <q-card class="q-mx-md" v-if="dialogLastPastoralActivity.selectedOrganism || dialogLastPastoralActivity.selectedOrganism !== ''">
+              <q-card-section>
+                <div class="text-h6">Dados anteriores</div>
+                <div class="text-subtitle2">{{ dialogLastPastoralActivity.selectedOrganism }}</div>
+                <div class="text-subtitle2">{{ dialogLastPastoralActivity.selectedCity }}</div>
+              </q-card-section>
+            </q-card>
           </div>
           <!-- <div v-if="checkbox">
             <div class="text-h6 q-mb-md q-mx-md q-pa-sm">
@@ -1260,11 +1267,12 @@
               Selecione a congregação
             </div>
             <q-input
-            class="q-px-md"
+              class="q-px-md"
               label="Informe a cidade"
               v-model="dialogLastPastoralActivity.selectedCity"
             />
             <q-select   
+              class="q-px-md"
               v-if="dialogLastPastoralActivity.selectedCity !== ''"
               label="selecione a congregação"
               v-model="dialogLastPastoralActivity.selectedOrganism"
@@ -2179,17 +2187,27 @@ export default defineComponent({
         this.validated = r.data.validated
         this.status = r.data.status
         this.pastorData = r.data.pastoralData.pastorData
+        
         if (r.data.pastorFormations && r.data.pastorFormations.length > 0) {
           r.data.pastorFormations.forEach((formation) => {
             this.pastorFormations.push(formation)
           })
         }
+        
         if (r.data.pastoralData.pastorActivities){
           this.pastorActivities = r.data.pastoralData.pastorActivities
         }
+        
         if (r.data.pastoralData.lastPastorActivities) {
           this.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities
-        } if (r.data.pastoralData.pastorLinks) {
+          this.dialogLastPastoralActivity.lastOrganismPastorActivities = r.data.pastoralData.lastPastorActivities.lastOrganismPastorActivities
+          this.dialogLastPastoralActivity.selectedOrganism = r.data.pastoralData.lastPastorActivities.selectedOrganismName
+          this.dialogLastPastoralActivity.selectedCity = r.data.pastoralData.lastPastorActivities.selectedOrganismCity
+          
+          
+        }
+        
+        if (r.data.pastoralData.pastorLinks) {
           this.pastorLink = r.data.pastoralData.pastorLinks
         }
         if (this.status && this.status.status === 'sent') this.saveOnUnmount = false

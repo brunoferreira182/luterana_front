@@ -186,7 +186,7 @@ export default defineComponent({
     goToGroupActivity() {
       if (this.$route.query.parishId) {
         this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId + '&parishId=' + this.$route.query.parishId)
-      } else this.$router.push('/statistic/groupActivity?organismId=' + $route.query.organismId)
+      } else this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId)
     },
     goToMembersMovement() {
       if (this.$route.query.parishId) {
