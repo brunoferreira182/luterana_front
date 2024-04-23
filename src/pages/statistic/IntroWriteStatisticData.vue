@@ -301,11 +301,12 @@ export default defineComponent({
 
       this.$q.loading.show()
       await useFetch(opt).then((r) => {
+        console.log(r.data, 'FSADFSAFASFSADFA')
         this.$q.loading.hide()
         this.userOrganismList = r.data
 
         //alteração para mais de uma paróquia
-        if (!this.$route && !this.$route.query && !this.$route.query.parishId) {
+        if (!this.$route.query.parishId) {
           this.parishId = r.data.organismId
         } else this.parishId = this.$route.query.parishId
 
@@ -330,6 +331,7 @@ export default defineComponent({
       if (r.data.alreadySent) this.alreadySentStatistic = true
     },
     insertCongregationalStatisticsDone() {
+      console.log(this.parishId, '  OPKDASPOKDOPASKDOPSA')
       let sipar = false
       if (this.allSipar) {
         sipar = true
@@ -354,14 +356,14 @@ export default defineComponent({
     getValidationResumeByOrganism () {
       let allSipar = true
       this.userOrganismList.childData.forEach((child) => {
-        if (!child.gestaoParoquial || !child.gestaoParoquial.managementType === 'SIPAR') {
+        console.log(child, 'qua qua qua')
+        if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
           allSipar = false
         }
       })
       if (allSipar) {
         this.canSendStatistic = true
         this.allSipar = true
-        return
       }
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -371,6 +373,7 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return
+        console.log(r.data, 'kika ralho')
         this.validationResume = r.data
         if (
           this.validationResume &&
