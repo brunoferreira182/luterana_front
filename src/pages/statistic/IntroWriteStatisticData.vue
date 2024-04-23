@@ -301,7 +301,6 @@ export default defineComponent({
 
       this.$q.loading.show()
       await useFetch(opt).then((r) => {
-        console.log(r.data, 'FSADFSAFASFSADFA')
         this.$q.loading.hide()
         this.userOrganismList = r.data
 
@@ -350,7 +349,7 @@ export default defineComponent({
           return
         }
         this.$q.notify('Estatística enviada com sucesso')
-        this.$router.back()
+        // this.$router.back()
       })
     },
     getValidationResumeByOrganism () {
@@ -366,25 +365,17 @@ export default defineComponent({
       //   this.allSipar = true
       // }
       const opt = {
-        route: '/desktop/statistics/getValidationResumeByOrganism',
+        route: '/desktop/statistics/getValidationResumeAllOrganisms',
         body: {
-          organismId: this.userOrganismList.organismId,
+          organismId: this.parishId,
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) return
-        this.canSendStatistic = r.data.canSend
+        // this.canSendStatistic = r.data.canSend
         // console.log(r.data, 'kika ralho')
-        // this.validationResume = r.data
-        // if (
-        //   this.validationResume &&
-        //   this.validationResume.financeStatistics === 't' &&
-        //   this.validationResume.membersMovement === 't' &&
-        //   this.validationResume.groupActivity === 't' &&
-        //   this.validationResume.atividadesCulticasStatistics === 't'
-        // ) {
-        //   this.canSendStatistic = true;
-        // }
+        this.validationResume = r.data
+        this.canSendStatistic = r.data.canSend
       })
     },
     clearDialogSipar() {
