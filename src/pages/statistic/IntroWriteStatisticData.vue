@@ -331,6 +331,7 @@ export default defineComponent({
       if (r.data.alreadySent) this.alreadySentStatistic = true
     },
     insertCongregationalStatisticsDone() {
+      console.log(this.parishId, '  OPKDASPOKDOPASKDOPSA')
       let sipar = false
       if (this.allSipar) {
         sipar = true

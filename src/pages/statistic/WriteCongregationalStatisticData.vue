@@ -532,6 +532,7 @@
                 <q-option-group
                   :options="options"
                   type="radio"
+                  :disable="status && status.value === 'sent'"
                   v-model="composition.congregations[iOrg].paroquialManagement"
                   @update:model-value="insertParoquialManagementType(iOrg, org)"
                 />
