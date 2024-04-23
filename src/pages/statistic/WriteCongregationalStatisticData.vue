@@ -558,7 +558,7 @@
       <q-separator 
         class='q-mx-md q-my-sm'
       />
-      <div v-if="composition">
+      <div v-if="composition" class="q-mx-md">
         <div
           v-for="(org, iOrg) in composition.congregations"
           :key="org"
