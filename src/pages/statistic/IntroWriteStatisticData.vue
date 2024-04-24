@@ -392,8 +392,9 @@ export default defineComponent({
         route: '/desktop/statistics/getCompositionByUserId'
       }
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       } 
       this.$q.loading.show()
       useFetch(opt).then((r) => {
@@ -429,8 +430,9 @@ export default defineComponent({
         route: '/desktop/statistics/getPreStatisticStatus',
       }
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       }
       useFetch(opt).then((r) => {
         if (r.error) return 

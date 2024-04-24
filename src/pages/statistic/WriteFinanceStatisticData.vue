@@ -130,7 +130,6 @@
                     v-model="table.entries.campanhasEspecificas"
                     @blur="calculateTotals"
                   />
-
                 </div>
 
                 <div class="no-margin">
@@ -614,6 +613,7 @@ export default defineComponent({
     } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
       opt.body.financeData = formatedEntriesAndOutput
     }
+    console.log(opt, 'vai se fude')
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
