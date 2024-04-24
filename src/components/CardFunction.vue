@@ -92,7 +92,7 @@
               round
               icon="delete"
             >
-              <q-tooltip> Deletar usuário da função do caralho</q-tooltip>
+              <q-tooltip> Deletar usuário da função</q-tooltip>
             </q-btn>
           </div>
         </q-item-section>
