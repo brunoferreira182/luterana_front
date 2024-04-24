@@ -295,8 +295,9 @@ export default defineComponent({
       };
       //alteração para mais de uma paróquia
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       }
 
       this.$q.loading.show()
@@ -368,7 +369,7 @@ export default defineComponent({
       const opt = {
         route: '/desktop/statistics/getValidationResumeAllOrganisms',
         body: {
-          organismId: this.parishId,
+          parishId: this.parishId,
         }
       }
       useFetch(opt).then((r) => {
