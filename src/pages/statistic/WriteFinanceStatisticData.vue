@@ -484,7 +484,6 @@ export default defineComponent({
       emprestimos: '',
       todasOutrasReceitas: '',
     }
-    console.log(r.data, 'r.data aqui nessa merda')
     if (r.data.contributionOnSgaFirst || r.data.contributionOnSgaFirst === 0) {
       this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
       this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
