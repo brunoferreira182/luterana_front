@@ -458,10 +458,11 @@ export default defineComponent({
     this.contributionOutputNum = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
     // this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
     // r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
-    const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
-    const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
-    const teste = saldoContribuicao - saldoDespesas;
-    this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    // const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
+    // const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
+    // const teste = saldoContribuicao - saldoDespesas;
+    // this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
     r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
     this.table.output = {
@@ -658,11 +659,12 @@ export default defineComponent({
     let totalSaidas = 
       this.formatToNumber(this.table.output.contribuicaoDistrito)
       + this.formatToNumber(this.table.output.devolucaoEmprestimoIELB)
+      + this.formatToNumber(this.table.output.todasSaidas)
     
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
-    this.contributionOutputSum = this.formatToCurrency(totalSaidas)
-    this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas)
-    this.saldoCongregacaoNumber = totalEntradas - totalSaidas
+    this.contributionOutputSum = this.formatToCurrency(totalSaidas + this.table.output.contributionOnSga)
+    this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas - this.table.output.contributionOnSga)
+    this.saldoCongregacaoNumber = totalEntradas - totalSaidas - this.table.output.contributionOnSga
     return { totalSaidas, totalEntradas }
 
   },
