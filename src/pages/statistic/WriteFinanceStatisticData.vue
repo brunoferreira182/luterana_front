@@ -613,7 +613,6 @@ export default defineComponent({
     } else if (Object.keys(this.table.output).length > 0 || Object.keys(this.table.entry).length > 0){
       opt.body.financeData = formatedEntriesAndOutput
     }
-    console.log(opt, 'vai se fude')
     this.$q.loading.show()
     useFetch(opt).then((r) => {
       this.$q.loading.hide()
@@ -659,7 +658,6 @@ export default defineComponent({
     let totalSaidas = 
       this.formatToNumber(this.table.output.contribuicaoDistrito)
       + this.formatToNumber(this.table.output.devolucaoEmprestimoIELB)
-      + this.formatToNumber(this.table.output.todasSaidas)
     
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
     this.contributionOutputSum = this.formatToCurrency(totalSaidas)
