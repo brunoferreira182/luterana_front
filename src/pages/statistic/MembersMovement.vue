@@ -50,9 +50,10 @@
               <q-item-label class=" q-pa-sm"> 
                 <div class="col-6 justify-between">
                   <q-input 
-                  type="number"
-                  :label="`${confirmado.turma}° ano de 2023`"
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
+                    type="number"
+                    :label="`${confirmado.turma}° ano de 2023`"
+                    v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
+
                   />
                 </div>
               </q-item-label>
@@ -63,8 +64,9 @@
               <q-item-label class=" q-pa-sm"> Quant. de confirmados em 2023
                 <div class="col-6 justify-between">
                   <q-input 
-                  type="number"
-                  v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
+                    type="number"
+                    v-model="membersMovement.instrucaoDeConfirmados.confirmados[index].Quant"
+                    @blur="calculateTotal()"
                   />
                 </div>
               </q-item-label>
@@ -525,8 +527,20 @@ export default defineComponent({
       this.calculateTotal()
     },
     calculateTotal() {
-      this.totalComungantes = +this.membersMovement.totalMambrosComungantes2022 + this.getAcrescimosComungantes() - this.getDecrescimoComungantes()
-      this.totalNaoComungantes = +this.membersMovement.totalMembrosNaoComungantes2022 + this.getAcrescimosNaoComungantes() - this.getDecrescimoNaoComungantes()
+      const confirmadosLengh = this.membersMovement.instrucaoDeConfirmados.confirmados.length
+      console.log(this.membersMovement.instrucaoDeConfirmados.confirmados[confirmadosLengh - 1].Quant)
+      this.totalComungantes = 
+        +this.membersMovement.totalMambrosComungantes2022 
+        + this.getAcrescimosComungantes() 
+        - this.getDecrescimoComungantes()
+        + +this.membersMovement.instrucaoDeConfirmados.confirmados[confirmadosLengh - 1].Quant
+      
+      this.totalNaoComungantes = 
+        +this.membersMovement.totalMembrosNaoComungantes2022 
+        + this.getAcrescimosNaoComungantes() 
+        - this.getDecrescimoNaoComungantes()
+        - +this.membersMovement.instrucaoDeConfirmados.confirmados[confirmadosLengh - 1].Quant
+      
       this.total = this.totalComungantes + this.totalNaoComungantes
     },
     getAcrescimosComungantes () {

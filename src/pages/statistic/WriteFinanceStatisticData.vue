@@ -172,18 +172,18 @@
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
-                    v-if="table.output.contributionOnSga > 0 && totalReceitas > 0"
+                    v-if="table.output.contributionOnSga > 0"
                   >
                     Contribuição registrada na Administração Nacional:<br>
                     R$
                     <strong class="text-h6">
                       {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
-                    <div v-if="contributionPercent">
-                    Percentual: 
-                    <strong class="text-h6">
-                      {{ contributionPercent }}
-                    </strong>
+                    <div v-if="contributionPercent  && totalReceitas > 0">
+                      Percentual: 
+                      <strong class="text-h6">
+                        {{ contributionPercent }}
+                      </strong>
                     </div>
                     <br>
                     <template v-slot:action>
@@ -197,6 +197,7 @@
                     </template>
                   </q-banner>
                 </div>
+
                 <q-dialog v-model="dialogReportValueSGAError">
                   <q-card style="border-radius: 1rem; width: 400px;">
                     <q-card-section class="text-subtitle1 text-center">
@@ -241,7 +242,10 @@
                   />
                 </div>
               </div>
-              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+              
+              <div
+                style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
+                class="q-gutter-y-md q-pa-md">
                 <div class="text-h6">
                   Saldo em 2023 calculado pelo sistema
                 </div>
