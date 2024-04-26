@@ -478,10 +478,23 @@
                 />
               </div>
               <div v-if="field.type.type === 'services'">
+                <q-btn 
+                  v-if="canEdit"
+                  label="Horário de cultos"
+                  no-caps
+                  rounded
+                  unelevated
+                  flat
+                  color="primary"
+                  icon="add"
+                  @click="clkAddServices(fieldIndex)"
+                  class="q-mt-xs"
+                />
                 <CardServices
                   v-if="field.value"
                   :data="field.value"
                   :fieldIndex="fieldIndex"
+                  :canEdit="canEdit"
                   :user="`true`"
                   @edit="editServicesData"
                   @remove="removeServicesData"
@@ -1781,6 +1794,10 @@ export default defineComponent({
       this.getChildOrganismsConfigsByOrganismId()
       this.getChildOrganismsById()
       this.isMobile = useScreenStore().isMobile
+    },
+    clkAddServices(fieldIndex) {
+      this.dialogAddServices.open = true
+      this.dialogAddServices.fieldIndex = fieldIndex
     },
     clearDialogAddEvents() {
       this.dialogAddServices.open = false
