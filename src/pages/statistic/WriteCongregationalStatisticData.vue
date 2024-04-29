@@ -1134,9 +1134,9 @@ h<template>
                 style="border-radius:1rem"
                 label="Outros dados"
               >
-                <div class="text-h6 q-my-sm q-ml-sm">
+                <!-- <div class="text-h6 q-my-sm q-ml-sm">
                   Quando ocorre o culto:
-                </div>
+                </div> -->
                 <div v-if="composition.congregations[this.dialogDepartamentDetail.iOrg].depts[this.dialogDepartamentDetail.iDep].existingDepartaments[this.dialogDepartamentDetail.iExistsDept].diaEHorario">
                   <q-list
                     bordered
