@@ -528,7 +528,6 @@ export default defineComponent({
     },
     calculateTotal() {
       const confirmadosLengh = this.membersMovement.instrucaoDeConfirmados.confirmados.length
-      console.log(this.membersMovement.instrucaoDeConfirmados.confirmados[confirmadosLengh - 1].Quant)
       this.totalComungantes = 
         +this.membersMovement.totalMambrosComungantes2022 
         + this.getAcrescimosComungantes() 

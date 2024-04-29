@@ -1,4 +1,4 @@
-<template>
+h<template>
   <q-page-container class="no-padding">
     <q-page>
       <div class="q-pa-md q-gutter-sm">
@@ -139,35 +139,6 @@
               </q-item-section>
             </template>
               <div class="q-ma-sm">
-                <q-btn
-                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent')) && myOrganismsIds.length === 0"
-                  color="red"
-                  rounded
-                  @click="openDialogRemoveCongregation(iOrg)"
-                  flat
-                  unelevated
-                  label="Inativar congregação"
-                  no-caps
-                />
-                <q-btn
-                  v-else-if="(org.action && org.action === 'remove') && (!status || (status && status.value !== 'sent'))"
-                  color="primary"
-                  rounded
-                  unelevated
-                  @click="activateCongregation(iOrg)"
-                  label="Ativar congregação"
-                  no-caps
-                />
-                <q-btn
-                  color="primary"
-                  rounded
-                  flat
-                  unelevated
-                  label="Adicionar ponto de missão"
-                  no-caps
-                  @click="addPontoDeMissão(iOrg)"
-                  v-if="((!org.action) || (org.action && org.action === 'add' || org.action && org.action === '')) && (!status || (status && status.value !== 'sent'))"
-                />
                 <q-btn
                   color="primary"
                   rounded
@@ -354,7 +325,7 @@
                     v-if="dep.action !== 'naoExiste'"
                     :clickable="dep.trueLength > 0 ? true : false"
                     v-ripple
-                    @click="openSelectDepartamentDetail(iOrg, iDep)"
+                    @click="openSelectDepartamentDetail(iOrg, iDep, dep)"
                   >
                     <q-item-section avatar>
                       <q-avatar
@@ -1092,6 +1063,7 @@
             <div class="text-h6">
               {{ dialogDepartamentDetail.data.departamentName }}
               <q-btn
+                v-if="dialogDepartamentDetail.organismConfigName !== 'Ponto de Missão'"
                 class="text-left"
                 unelevated  
                 icon="delete"
@@ -1357,6 +1329,7 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-btn
+                    v-if="dialogSelectDepartamentDetail.organismConfigName !== 'Ponto de Missão'"
                     color="red"
                     icon="delete"
                     flat
@@ -2093,7 +2066,8 @@ export default defineComponent({
         data: null,
         iOrg: null,
         iDep: null,
-        iExistsDept: null
+        iExistsDept: null,
+        organismConfigName: ''
       },
       filiadoNaoConfere: false,
       deptConfigs: null,
@@ -2116,7 +2090,8 @@ export default defineComponent({
       },
       dialogSelectDepartamentDetail: {
         open: false,
-        departaments: null
+        departaments: null,
+        organismConfigName: ''
       },
       validated: false,
       status: null,
@@ -2705,11 +2680,13 @@ export default defineComponent({
         departaments: null
       }
     },
-    openSelectDepartamentDetail(iOrg, iDep) {
+    openSelectDepartamentDetail(iOrg, iDep, dep) {
       this.dialogSelectDepartamentDetail.departaments = this.composition.congregations[iOrg].depts[iDep].existingDepartaments
       this.dialogSelectDepartamentDetail.open = true
+      this.dialogSelectDepartamentDetail.organismConfigName = dep.organismConfigName
       this.dialogDepartamentDetail.iOrg = iOrg
       this.dialogDepartamentDetail.iDep = iDep
+      this.dialogDepartamentDetail.organismConfigName = dep.organismConfigName
     },
     activateCongregation(iOrg) {
       this.composition.congregations[iOrg].action = ''
