@@ -354,19 +354,6 @@ export default defineComponent({
       })
     },
     getValidationResumeByOrganism () {
-<<<<<<< HEAD
-      let allSipar = true
-      this.userOrganismList.childData.forEach((child) => {
-        if (!child.gestaoParoquial || !child.gestaoParoquial.managementType === 'SIPAR') {
-          allSipar = false
-        }
-      })
-      if (allSipar) {
-        this.canSendStatistic = true
-        this.allSipar = true
-        return
-      }
-=======
       // let allSipar = true
       // this.userOrganismList.childData.forEach((child) => {
       //   console.log(child, 'qua qua qua')
@@ -378,7 +365,6 @@ export default defineComponent({
       //   this.canSendStatistic = true
       //   this.allSipar = true
       // }
->>>>>>> 4b1118fbe7061526f51d2eeede7f5c0f84a8bad6
       const opt = {
         route: '/desktop/statistics/getValidationResumeAllOrganisms',
         body: {
@@ -387,11 +373,8 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return
-<<<<<<< HEAD
-=======
         // this.canSendStatistic = r.data.canSend
         // console.log(r.data, 'kika ralho')
->>>>>>> 4b1118fbe7061526f51d2eeede7f5c0f84a8bad6
         this.validationResume = r.data
         this.canSendStatistic = r.data.canSend
       })
