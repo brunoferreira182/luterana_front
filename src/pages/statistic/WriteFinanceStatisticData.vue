@@ -130,7 +130,6 @@
                     v-model="table.entries.campanhasEspecificas"
                     @blur="calculateTotals"
                   />
-
                 </div>
 
                 <div class="no-margin">
@@ -173,18 +172,18 @@
                 <div>
                   <q-banner
                     :class="`${contributionNumber >= 0.11 ? 'bg-green' : 'bg-red-7'} text-white q-mb-lg`"
-                    v-if="table.output.contributionOnSga > 0 && totalReceitas > 0"
+                    v-if="table.output.contributionOnSga > 0"
                   >
                     Contribuição registrada na Administração Nacional:<br>
                     R$
                     <strong class="text-h6">
                       {{ table.output.contributionOnSgaLocal }}
                     </strong><br>
-                    <div v-if="contributionPercent">
-                    Percentual: 
-                    <strong class="text-h6">
-                      {{ contributionPercent }}
-                    </strong>
+                    <div v-if="contributionPercent  && totalReceitas > 0">
+                      Percentual: 
+                      <strong class="text-h6">
+                        {{ contributionPercent }}
+                      </strong>
                     </div>
                     <br>
                     <template v-slot:action>
@@ -198,6 +197,7 @@
                     </template>
                   </q-banner>
                 </div>
+
                 <q-dialog v-model="dialogReportValueSGAError">
                   <q-card style="border-radius: 1rem; width: 400px;">
                     <q-card-section class="text-subtitle1 text-center">
@@ -242,7 +242,10 @@
                   />
                 </div>
               </div>
-              <div style="border-radius: 1rem; background-color: rgb(245, 245, 245);" class="q-gutter-y-md q-pa-md">
+              
+              <div
+                style="border-radius: 1rem; background-color: rgb(245, 245, 245);"
+                class="q-gutter-y-md q-pa-md">
                 <div class="text-h6">
                   Saldo em 2023 calculado pelo sistema
                 </div>
@@ -452,7 +455,6 @@ export default defineComponent({
       }
     },
   putFinanceStatisticByOrganismId(r) {
-    console.log(r, 'retorno da rota que pega os valores')
     if (r.error) return
     this.validated = r.data.validated
     this.status = r.data.status
@@ -460,10 +462,11 @@ export default defineComponent({
     this.contributionOutputNum = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
     // this.contributionEntriesSum = r.data.contributionEntries ? r.data.contributionEntries : ''
     // r.data.contributionOutputNumSGA ? this.table.output.contributionOnSga = r.data.contributionOutputNumSGA : this.table.output.contributionOnSga = 0
-    const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
-    const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
-    const teste = saldoContribuicao - saldoDespesas;
-    this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    // const saldoContribuicao = r.data.contributionEntriesNum ? r.data.contributionEntriesNum : ''
+    // const saldoDespesas = r.data.contributionOutputNum ? r.data.contributionOutputNum : ''
+    // const teste = saldoContribuicao - saldoDespesas;
+    // this.saldoCongregacao = teste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
     r.data.financeData && r.data.financeData.output ? this.table.output = r.data.financeData.output :
     this.table.output = {
@@ -485,13 +488,13 @@ export default defineComponent({
       emprestimos: '',
       todasOutrasReceitas: '',
     }
-    if (r.data.contributionOnSgaFirst) {
+    if (r.data.contributionOnSgaFirst || r.data.contributionOnSgaFirst === 0) {
       this.table.output.contributionOnSga = r.data.contributionOnSgaFirst
       this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
     } else {
-      this.table.output.contributionOnSga = r.data.contributionOnSga
-      this.table.output.contributionOnSgaLocal = r.data.contributionOnSgaLocal
-      this.table.output.contributionOnSgaLocalNum = r.data.contributionOnSgaLocalNum
+      this.table.output.contributionOnSga = r.data.financeData.output.contributionOnSga
+      this.table.output.contributionOnSgaLocal = r.data.financeData.output.contributionOnSgaLocal
+      this.table.output.contributionOnSgaLocalNum = r.data.financeData.output.contributionOnSgaLocalNum
     }
     // this.table.output.contributionOnSga = r.data.contributionOnSgaFirst ? r.data.contributionOnSgaFirst : ''
     this.calculateOfferPercents()
@@ -595,7 +598,7 @@ export default defineComponent({
       return
     }
     this.$q.notify('Etapa finalizada com sucesso')
-    this.$router.back()
+    this.$router.push('/statistic/selectOrganismToWriteStatisticData')
   },
   saveDraft() {
     const formatedEntriesAndOutput = this.formatFinanceData()
@@ -663,9 +666,9 @@ export default defineComponent({
       + this.formatToNumber(this.table.output.todasSaidas)
     
     this.contributionEntriesSum = this.formatToCurrency(totalEntradas)
-    this.contributionOutputSum = this.formatToCurrency(totalSaidas)
-    this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas)
-    this.saldoCongregacaoNumber = totalEntradas - totalSaidas
+    this.contributionOutputSum = this.formatToCurrency(totalSaidas + this.table.output.contributionOnSga)
+    this.saldoCongregacao = this.formatToCurrency(totalEntradas - totalSaidas - this.table.output.contributionOnSga)
+    this.saldoCongregacaoNumber = totalEntradas - totalSaidas - this.table.output.contributionOnSga
     return { totalSaidas, totalEntradas }
 
   },

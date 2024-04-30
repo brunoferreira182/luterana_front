@@ -295,8 +295,9 @@ export default defineComponent({
       };
       //alteração para mais de uma paróquia
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       }
 
       this.$q.loading.show()
@@ -330,7 +331,6 @@ export default defineComponent({
       if (r.data.alreadySent) this.alreadySentStatistic = true
     },
     insertCongregationalStatisticsDone() {
-      console.log(this.parishId, '  OPKDASPOKDOPASKDOPSA')
       let sipar = false
       if (this.allSipar) {
         sipar = true
@@ -349,10 +349,12 @@ export default defineComponent({
           return
         }
         this.$q.notify('Estatística enviada com sucesso')
-        this.$router.back()
+        this.verifyHasSentStatistic()
+        // this.$router.back()
       })
     },
     getValidationResumeByOrganism () {
+<<<<<<< HEAD
       let allSipar = true
       this.userOrganismList.childData.forEach((child) => {
         if (!child.gestaoParoquial || !child.gestaoParoquial.managementType === 'SIPAR') {
@@ -364,24 +366,34 @@ export default defineComponent({
         this.allSipar = true
         return
       }
+=======
+      // let allSipar = true
+      // this.userOrganismList.childData.forEach((child) => {
+      //   console.log(child, 'qua qua qua')
+      //   if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
+      //     allSipar = false
+      //   }
+      // })
+      // if (allSipar) {
+      //   this.canSendStatistic = true
+      //   this.allSipar = true
+      // }
+>>>>>>> 4b1118fbe7061526f51d2eeede7f5c0f84a8bad6
       const opt = {
-        route: '/desktop/statistics/getValidationResumeByOrganism',
+        route: '/desktop/statistics/getValidationResumeAllOrganisms',
         body: {
-          organismId: this.userOrganismList.organismId,
+          parishId: this.parishId,
         }
       }
       useFetch(opt).then((r) => {
         if (r.error) return
+<<<<<<< HEAD
+=======
+        // this.canSendStatistic = r.data.canSend
+        // console.log(r.data, 'kika ralho')
+>>>>>>> 4b1118fbe7061526f51d2eeede7f5c0f84a8bad6
         this.validationResume = r.data
-        if (
-          this.validationResume &&
-          this.validationResume.financeStatistics === 't' &&
-          this.validationResume.membersMovement === 't' &&
-          this.validationResume.groupActivity === 't' &&
-          this.validationResume.atividadesCulticasStatistics === 't'
-        ) {
-          this.canSendStatistic = true;
-        }
+        this.canSendStatistic = r.data.canSend
       })
     },
     clearDialogSipar() {
@@ -397,8 +409,9 @@ export default defineComponent({
         route: '/desktop/statistics/getCompositionByUserId'
       }
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       } 
       this.$q.loading.show()
       useFetch(opt).then((r) => {
@@ -434,8 +447,9 @@ export default defineComponent({
         route: '/desktop/statistics/getPreStatisticStatus',
       }
       if (this.$route.query.parishId) {
-        opt.body = {}
-        opt.body.parishId = this.$route.query.parishId
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
       }
       useFetch(opt).then((r) => {
         if (r.error) return 

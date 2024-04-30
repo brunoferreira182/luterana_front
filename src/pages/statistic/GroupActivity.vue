@@ -502,7 +502,7 @@ export default defineComponent({
       // this.$q.notify("Salvo com sucesso!");
     },
     async saveDraft() { 
-      for(let i = 0; i < this.departamentos.length; i++){
+      for (let i = 0; i < this.departamentos.length; i++) {
         if(this.departamentos[i].departamentoData.finalidade === '' || this.departamentos[i].departamentoData.organizacao === ''){
           return this.$q.notify('Preencha todos os campos Obrigatórios!')
         }

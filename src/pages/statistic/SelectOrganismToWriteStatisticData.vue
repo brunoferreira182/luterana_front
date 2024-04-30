@@ -49,7 +49,7 @@
             no-caps
             dense
             class="full-width"
-            @click="$router.back()"
+            @click="$router.push('/statistic/introWriteStatisticData')"
           />
         </div>
         <q-dialog v-model="dialogSendStatistic.open">
