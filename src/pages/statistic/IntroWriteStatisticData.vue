@@ -301,7 +301,6 @@ export default defineComponent({
 
       this.$q.loading.show()
       await useFetch(opt).then((r) => {
-        console.log(r.data, 'FSADFSAFASFSADFA')
         this.$q.loading.hide()
         this.userOrganismList = r.data
 
@@ -356,14 +355,14 @@ export default defineComponent({
     getValidationResumeByOrganism () {
       let allSipar = true
       this.userOrganismList.childData.forEach((child) => {
-        console.log(child, 'qua qua qua')
-        if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
+        if (!child.gestaoParoquial || !child.gestaoParoquial.managementType === 'SIPAR') {
           allSipar = false
         }
       })
       if (allSipar) {
         this.canSendStatistic = true
         this.allSipar = true
+        return
       }
       const opt = {
         route: '/desktop/statistics/getValidationResumeByOrganism',
@@ -373,7 +372,6 @@ export default defineComponent({
       }
       useFetch(opt).then((r) => {
         if (r.error) return
-        console.log(r.data, 'kika ralho')
         this.validationResume = r.data
         if (
           this.validationResume &&
