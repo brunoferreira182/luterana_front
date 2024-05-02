@@ -627,7 +627,6 @@ export default defineComponent({
       }
       this.calculateTotals()
       this.$q.notify('Rascunho salvo com sucesso!')
-      this.$router.push('/statistic/completeStatistic?organismId=' + this.$route.query.organismId)
     });
   },
   validateForm () {

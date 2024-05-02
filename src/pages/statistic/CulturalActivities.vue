@@ -267,7 +267,6 @@ async beforeMount() {
         }
         this.$q.notify('Rascunho salvo com sucesso!')
         this.getAtividadesCulticas()
-        this.$router.push('/statistic/groupActivity?organismId=' + this.$route.query.organismId)
         return
       });
     },

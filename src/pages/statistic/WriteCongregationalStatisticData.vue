@@ -573,7 +573,7 @@ h<template>
           no-caps
           label="Finalizar Etapa"
           color="green"
-          @click="saveFinal"
+          @click="dialogSaveFinal"
         ></q-btn>
       </div>
       <div 
@@ -582,20 +582,13 @@ h<template>
       >
         <div>Esta etapa foi concluida. Os dados estão disponíveis somente para consulta. Se for necessário alteração faça uma solicitação abaixo</div>
         <div>
-          <q-btn v-if="hasModificationRequest === false"
+          <q-btn
             color="red"
             class="q-mt-md"
-            label="Solicitar alteração de dados"
+            label="Alterar dados novamente"
             rounded
             icon="report"
-            @click="requestModifications"
-          ></q-btn>
-          <q-btn v-else-if="hasModificationRequest === true"
-            color="orange"
-            class="q-mt-md"
-            label="Aguarde a aprovação da solicitaçao"
-            rounded
-            icon="schedule"
+            @click="checkModificationRequest"
           ></q-btn>
         </div>
       </div>
@@ -1507,6 +1500,50 @@ h<template>
         </q-card>
       </q-dialog>
       <q-dialog
+        v-model="dialogVerifyBeforeSaveFinal.open"
+        @hide="clearDialogVerifyBeforeSaveFinal"
+      >
+        <q-card style="width: 300px;border-radius: 1rem;">
+          <div class="text-center q-ma-sm text-h6">Confirme que revisou todos os dados:</div>
+          <q-card-section class="q-pa-sm">
+            <q-checkbox
+              v-model="dialogVerifyBeforeSaveFinal.gestao"
+              class="q-pa-sm"
+              label="Confirmo que revisei os dados de gestão paroquial"
+            />
+            <q-checkbox
+              v-model="dialogVerifyBeforeSaveFinal.depts"
+              class="q-pa-sm"
+              label="confirmo que inclui todos os grupos e departamentos"
+            />
+            <q-checkbox
+              v-model="dialogVerifyBeforeSaveFinal.other"
+              class="q-pa-sm"
+              label="Confirmo que revisei os demais dados"
+            />
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              flat
+              @click="clearDialogVerifyBeforeSaveFinal"
+            />
+            <q-btn
+              label="Finalizar etapa"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              @click="verifyIfCanSaveFinal"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog
         @hide="clearTimeForDayDialog"
         v-model="dialogAddTimeForDay.open"
       >
@@ -1882,6 +1919,43 @@ h<template>
     </q-card>
   </q-dialog>
   <q-dialog
+    v-model="dialogModificationRequest.open"
+  >
+    <q-card style="width: 300px;border-radius:1rem;">
+      <q-card-section>
+        <div class="text-h6 text-center">
+          Tem certeza que deseja refazer?
+        </div>
+        <div>
+          Ao refazer todos os rascunhos dentro do preenchimento serão <strong>apagados</strong>, isto inclui:
+        </div>
+        <span><strong> Atividades Cúlticas, Atividades de grupos, Movimento de membros e Financeiro</strong></span>
+        <q-checkbox
+          label="Confirmo que li e estou de acordo"
+          v-model="dialogModificationRequest.confirm"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          color="primary"
+          no-caps
+          rounded
+          unelevated
+          flat
+        />
+        <q-btn
+          label="Reiniciar etapa"
+          color="primary"
+          no-caps
+          rounded
+          unelevated
+          @click="restartComposition"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
     v-model="dialogChangeParishName.open"
     @hide="clearDialogChangeParishName"
   >
@@ -2182,7 +2256,17 @@ export default defineComponent({
       },
       timerToSave: null,
       timerId: null,
-      savedFinal: false
+      savedFinal: false,
+      dialogVerifyBeforeSaveFinal:{
+        open: false,
+        gestao: false,
+        depts: false,
+        other: false
+      },
+      dialogModificationRequest: {
+        open: false,
+        confirm: false
+      }
     }
   }, 
   beforeMount() {
@@ -2201,6 +2285,60 @@ export default defineComponent({
       this.getEventsOptions()
       this.getDaysOfWeek()
       this.startTimerToSaveDraft();
+    },
+    checkModificationRequest() {
+      this.dialogModificationRequest.open = true
+    },
+    verifyIfCanSaveFinal() {
+      if (
+        this.dialogVerifyBeforeSaveFinal.gestao   
+        && this.dialogVerifyBeforeSaveFinal.depts
+        && this.dialogVerifyBeforeSaveFinal.other
+      ) {
+        this.saveFinal()
+        this.clearDialogVerifyBeforeSaveFinal()
+        return
+      } else {
+        this.$q.notify('Confirme que revisou todos os dados para prosseguir')
+        this.clearDialogVerifyBeforeSaveFinal()
+        return
+      }
+    },
+    clearDialogModificationRequest() {
+      this.dialogModificationRequest = {
+        open: false,
+        confirm: false
+      }
+    },
+    async restartComposition() {
+      if (!this.dialogModificationRequest.confirm) {
+        this.$q.notify('Confirme que leu e está de acordo')
+        return
+      }
+      const opt = {
+        route: '/desktop/statistics/discardCompositionDraft',
+      }
+      if (this.$route.query.parishId) {
+        opt.body = {
+          parishId: this.$route.query.parishId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogModificationRequest()
+      this.$router.push('/statistic/introWriteStatisticData')
+    },
+    clearDialogVerifyBeforeSaveFinal() {
+      this.dialogVerifyBeforeSaveFinal = {
+        open: false,
+        cordenacao: false,
+        gestao: false,
+        depts: false,
+        other: false
+      }
+    },
+    dialogSaveFinal() {
+      this.dialogVerifyBeforeSaveFinal.open = true
     },
     startTimerToSaveDraft() {
       this.timerToSave = true;

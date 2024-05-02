@@ -523,7 +523,6 @@ export default defineComponent({
       this.$q.loading.hide()
       if (r.error) return;
       this.$q.notify("Rascunho salvo com sucesso!");
-      this.$router.push('/statistic/membersMovement?organismId=' + this.$route.query.organismId)
       return
     },
     async saveOficial(){
