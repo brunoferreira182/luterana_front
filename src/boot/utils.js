@@ -42,17 +42,17 @@ const useUtils = {
       route: '/download/' + options.filename
     }
     useFetch(opt).then((response) => {
-        console.log('entrou', typeof response)
-        const blob = new Blob([response], {type: options.type})
-        console.log('blob', blob)
-        const link = URL.createObjectURL(blob)
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.href = link;
-        a.download = options.originalname;
-        a.click();
-        URL.revokeObjectURL(link);
-      })
+      console.log('entrou', typeof response)
+      const blob = new Blob([response], {type: options.type})
+      console.log('blob', blob)
+      const link = URL.createObjectURL(blob)
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.href = link;
+      a.download = options.originalname;
+      a.click();
+      URL.revokeObjectURL(link);
+    })
   },
   // downloadFile (options) {
   //   const opt = {
