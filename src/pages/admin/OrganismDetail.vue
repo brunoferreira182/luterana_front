@@ -288,7 +288,9 @@
                           size="15px" 
                           outline
                         >{{ parent.organismConfigName }}</q-chip>
-                        
+                        <div class="q-mt-sm q-ml-sm" v-if="parent.districtName">
+                          -  Distrito: {{parent.districtName}}
+                        </div>
                       </div>
                     </q-item-section>
                     
