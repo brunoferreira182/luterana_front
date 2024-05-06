@@ -343,17 +343,17 @@
                   <div v-if="func.functionName === 'Secretária Contratada'">
                     <div class="text-h6">
                       {{ func.functionName }}
-                      <q-btn
-                        v-if="canEdit"
-                        color="primary"
-                        flat
-                        rounded
-                        unelevated
-                        label="Secretária"
-                        icon="add"
-                        @click="linkSecretaryToFunction()"
-                      />
                     </div>
+                    <q-btn
+                      v-if="canEdit"
+                      color="primary"
+                      flat
+                      rounded
+                      unelevated
+                      label="Secretária"
+                      icon="add"
+                      @click="linkSecretaryToFunction()"
+                    />
                     <q-item
                       style="border-radius: 1rem;"
                       class="q-ml-sm bg-grey-2 q-ma-sm"
@@ -377,6 +377,37 @@
                       </q-item-section>
                     </q-item>
                   </div>
+                </div>
+                <div 
+                  v-for="(field, fieldIndex) in organismData.fields" 
+                  :key="fieldIndex"
+                  class="q-mt-md"
+                >
+                  <div v-if="field.type.type === 'services'">
+                    <div class="text-h6">
+                      Horários de culto
+                    </div>
+                  <q-btn 
+                    v-if="canEdit"
+                    label="Horário de cultos"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkAddServices(fieldIndex)"
+                    class="q-mt-xs"
+                  />
+                  <CardServices
+                    v-if="field.value && field.value.length"
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    :canEdit="canEdit"
+                    @edit="editServicesData"
+                    @remove="removeServicesData"
+                  />
+                </div>
                 </div>
                 
               </div>
@@ -692,28 +723,7 @@
                     @remove="removeFormation"
                   />
                 </div>     
-                <div v-if="field.type.type === 'services'">
-                  <q-btn 
-                    v-if="canEdit"
-                    label="Horário de cultos"
-                    no-caps
-                    rounded
-                    unelevated
-                    flat
-                    color="primary"
-                    icon="add"
-                    @click="clkAddServices(fieldIndex)"
-                    class="q-mt-xs"
-                  />
-                  <CardServices
-                    v-if="field.value && field.value.length"
-                    :data="field.value"
-                    :fieldIndex="fieldIndex"
-                    :canEdit="canEdit"
-                    @edit="editServicesData"
-                    @remove="removeServicesData"
-                  />
-                </div>
+                
                 
                 <!-- <div v-if="field.type.type === 'secretary'">
                   <q-btn
@@ -1958,6 +1968,86 @@
     </q-card>
   </q-dialog>
   <q-dialog
+    v-model="dialogAddWorkHoursToSecretary.open"
+  >
+    <q-card style="width: 300px;border-radius: 1rem;">
+      <q-card-section>
+        <div class="text-center text-h6">
+          Adicionar horário de culto
+        </div>
+        <q-select
+          outlined
+          label="Selecione o dia da semana"
+          class="q-pa-sm"
+          :options="dialogAddServices.daysOfWeek"
+          option-label="label"
+          v-model="dialogAddServices.selectedDay"
+        />
+        <q-input
+          label="Selecione o horário"
+          outlined
+          class="q-pa-sm"
+          mask="##:##"
+          v-model="dialogAddServices.selectedHour"
+        />
+        <div class="q-my-md">
+          <strong>Selecione uma ou mais opção</strong>
+        </div>
+        <q-checkbox
+          label="Toda semana"
+          v-model="dialogAddServices.everyWeek"
+          @update:model-value="changeOtherStatus()"
+        />
+        <q-checkbox
+          label="1º semana"
+          v-model="dialogAddServices.firstWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="2° semana"
+          v-model="dialogAddServices.secondWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="3° semana"
+          v-model="dialogAddServices.thirdWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="4° semana"
+          v-model="dialogAddServices.fourthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+        <q-checkbox
+          label="5° semana"
+          v-model="dialogAddServices.fifthWeek"
+          @update:model-value="verifyIfChangeStatus()"
+        />
+      </q-card-section>
+      <q-card-actions
+        align="center"
+      >
+        <q-btn
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          flat
+          label="Voltar"
+          @click="clearDialogAddEvents"
+        />
+        <q-btn
+          color="primary"
+          rounded
+          unelevated
+          no-caps
+          label="confirmar"
+          @click="confirmAddServiceConfig"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog
     @hide="clearTimeForDayDialog"
     v-model="dialogAddTimeForDay.open"
   >
@@ -2081,6 +2171,38 @@
         />
       </q-card-actions>
     </q-card>
+  </q-dialog>
+  <q-dialog
+    v-model="dialogInviteAddWorkHours.open"
+  >
+    <q-card>
+      <q-card-section
+        style="width:300px;border-radius: 1rem"
+        class="text-center text-h6"
+      >
+        Gostaria de adicionar o horário de trabalho da(s) secretária(s)?
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Depois"
+          color="primary"
+          flat
+          rounded
+          no-caps
+          unelevated
+          @click="dialogInviteAddWorkHours.open = false"
+        />
+        <q-btn
+          label="Adicionar"
+          color="primary"
+          no-caps
+          rounded
+          unelevated
+          @click="dialogAddworkHoursToSecretary.open = true"
+        />
+      </q-card-actions>
+    </q-card>
+
   </q-dialog>
   <DialogAddNewUserToUseEverywhere
     :param="dialogAddUser.param"
@@ -2410,7 +2532,33 @@ export default defineComponent({
       organismCalleeSelected: [],
       organismsFromThisParish: [],
       canEdit: true,
-      deptParentData: null
+      deptParentData: null,
+      dialogInviteAddWorkHours: {
+        open: false
+      },
+      dialogAddWorkHoursToSecretary: {
+        open: false,
+        daysOfWeek: [
+          {label: 'Domingo', value: 'sunday' },
+          {label: 'Segunda-feira', value: 'monday' },
+          {label: 'Terça-feira', value: 'monday' },
+          {label: 'Quarta-feira', value: 'wednesday' },
+          {label: 'Quinta-feira', value: 'thursday' },
+          {label: 'Sexta-feira', value: 'friday' },
+          {label: 'Sábado', value: 'saturday' }
+        ],
+        edit: false,
+        selectedDay: null,
+        selectedHour: null,
+        fieldIndex: null,
+        iValue: null,
+        everyWeek: false,
+        firstWeek: false,
+        secondWeek: false,
+        thirdWeek: false,
+        fourthWeek: false,
+        fifthWeek: false,
+      }
     };
   },
   watch: {
@@ -3929,8 +4077,12 @@ export default defineComponent({
           return
         } else{
           this.$q.notify('Usuário inserido na função!')
+          if (this.dialogInsertUserInFunction.functionType === 'Secretária Contratada') {
+            this.dialogInviteAddWorkHours.open = true
+          }
           this.getOrganismDetailById()
           this.clearDialogAndFunctions();
+          
         }
       });
     },
