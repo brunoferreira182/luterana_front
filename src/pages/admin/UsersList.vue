@@ -13,41 +13,38 @@
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]"
+        :rows-per-page-options="[10, 20, 30, 50, 100, 1000]"
         :filter="filter"
         v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
-          <div class="flex row justify-end">
-            <div class="col">
-              <q-input
-                @keyup="getUsersList"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
-              >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </div>
-            <div class="col text-right">
-              <q-btn
-                @click="$router.push('/admin/createUser?userType=user')"
-                color="primary"
-                unelevated
-                no-caps
-                rounded
-                v-if="canEdit"
-                icon="add"
-                class="q-pa-sm"
-              >
-                Criar usuário
-              </q-btn>
-            </div>
+        <template #top>
+          <div class="row full-width">
+            <q-input
+              @keyup="getUsersList"
+              class="col-9 q-mr-xl"
+              outlined
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Procurar"
+            >
+              <template #append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+            <q-btn
+              @click="$router.push('/admin/createUser?userType=user')"
+              color="primary"
+              unelevated
+              no-caps
+              rounded
+              v-if="canEdit"
+              icon="add"
+              class="q-pa-sm col-2"
+            >
+              Criar usuário
+            </q-btn>
           </div>
         </template>
         <template v-slot:header="props">

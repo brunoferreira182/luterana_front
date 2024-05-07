@@ -25,19 +25,57 @@
         v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
-          <div class="flex row q-gutter-sm items-center text-right">
-            <!-- <div class="col">
-              <q-select 
+        <template #top>
+          <div class="row full-width">
+            <q-input 
+                @keyup="getOrganismsList" 
                 outlined 
                 dense 
-                label="Selecionar"
                 debounce="1000" 
-                v-model="selectFilter" 
-                :options="selectStatus"
-                @update:model-value="getOrganismsList"
+                v-model="filter"
+                placeholder="Procurar nome"
+                class="col-5 q-mx-sm"
+              >
+                <template #append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <q-input 
+                @keyup="getOrganismsList" 
+                outlined 
+                dense  
+                v-model="filterCity"
+                placeholder="Procurar cidade"
+                class="col-5"
+              >
+                <template #append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <q-btn 
+                @click="$router.push('/admin/createOrganism')" 
+                color="primary" 
+                unelevated 
+                class="q-ml-sm q-pa-sm" 
+                no-caps
+                rounded 
+                dense 
+                label="Organismo"
+                icon="add"
               />
-            </div> -->
+          </div>
+          <!-- <div class="col">
+            <q-select 
+              outlined 
+              dense 
+              label="Selecionar"
+              debounce="1000" 
+              v-model="selectFilter" 
+              :options="selectStatus"
+              @update:model-value="getOrganismsList"
+            />
+          </div> -->
+          <!-- <div class="flex row q-gutter-sm items-center text-right">
             <div class="col">
               <q-input 
                 @keyup="getOrganismsList" 
@@ -67,12 +105,9 @@
               </q-input>
             </div>
             <div v-if="canEdit">
-              <q-btn @click="$router.push('/admin/createOrganism')" color="primary" unelevated class="q-pa-sm" no-caps
-                rounded dense icon="add">
-                Criar Organismo
-              </q-btn>
+             
             </div>
-          </div>
+          </div> -->
         </template>
         <template #body-cell-city="props">
           <q-td :props="props">

@@ -1093,7 +1093,7 @@ export default defineComponent({
             label:parish.childName,
             header: 'generic',
             organismId: parish.childId,
-            statusStatistic: parish.statusStatistic,
+            statusStatistic: parish.preStatisticStatus,
             children: []
           }
           for (let j = 0; j < parish.organismChildData.length; j++) {
@@ -1116,7 +1116,7 @@ export default defineComponent({
             tree.children.push({
               type: congregation.organismConfigName,
               label: congregation.childName,
-              statusStatistic: congregation.status,
+              statusStatistic: congregation.statisticStatus ? congregation.statisticStatus : 'Não iniciado',
               body: 'normal',
               organismId: congregation.childId,
               functions: congregation.functions,
@@ -1160,7 +1160,7 @@ export default defineComponent({
             tree = {
               subtype: 'congregation',
               type: congregation.organismConfigName,
-              statusStatistic: congregation.status,
+              statusStatistic: congregation.statisticStatus ? congregation.statisticStatus : 'Não iniciado',
               label: congregation.childName,
               functions: congregation.functions,
               stringPastores: stringPastores,

@@ -13,25 +13,44 @@
         rows-per-page-label="Registros por página"
         no-data-label="Nenhum dado inserido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
-        :rows-per-page-options="[10, 20, 30, 50]"
+        :rows-per-page-options="[10, 20, 30, 50, 100, 1000]"
         :filter="filter"
         v-model:pagination="pagination"
         @request="nextPage"
       >
-        <template #top-right>
-        <div class="flex row justify-end q-gutter-sm">
+      <template #top>
+        <div class="row full-width">
           <q-input
-          @keyup="getPastorList"
-          outlined
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Procurar"
-          >
+            @keyup="getPastorList"
+            outlined
+            class="col-9 q-mr-lg"
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Procurar"
+            >
             <template #append>
               <q-icon name="search" />
             </template>
           </q-input>
+          <q-btn
+            v-if="canEdit"
+            @click="$router.push('/admin/createUser?userType=pastor')"
+            color="primary"
+            unelevated
+            no-caps
+            rounded
+            dense
+            icon="add"
+            class="col-2"
+          >
+            Criar pastor
+          </q-btn>
+        </div>
+      </template>
+        <!-- <template #top>
+        <div class="flex row justify-end q-gutter-sm">
+          
           <div class="background-radio flex q-gutter-xs">
             <q-radio 
               dense dark color="white" 
@@ -46,7 +65,7 @@
               style="color: white;">
             </q-radio>
           </div>
-          <!-- <q-select
+          <q-select
             no-caps
             dark
             dense
@@ -54,21 +73,9 @@
             v-model="optionValueFilter" 
             :options="optionsFilter" label="Filtro"
           > 
-          </q-select> -->
-          <q-btn
-            v-if="canEdit"
-            @click="$router.push('/admin/createUser?userType=pastor')"
-            color="primary"
-            unelevated
-            no-caps
-            rounded
-            dense
-            icon="add"
-          >
-            Criar pastor
-          </q-btn>
+          </q-select> 
           </div>
-        </template>
+        </template> -->
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width />
