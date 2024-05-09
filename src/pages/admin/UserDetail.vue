@@ -118,7 +118,7 @@
       <div v-if="userData && userData.userDataTabs">
         <div v-if="userData && userData.userDataTabs[7] && userData.userDataTabs[7].tabValue === 'dados_pastorais'">
           <div class="text-h6 q-ma-sm q-ml-md">
-            Histórico:
+            Vínculos:
             <q-btn
               v-if="canEdit"            
               icon="add"
@@ -237,6 +237,34 @@
                 </div>
               </template>
             </q-tree>
+          </div>
+          <q-separator class="q-mx-lg"/>
+          <div>
+            <q-expansion-item
+              label="Histórico de vínculos"
+              dense-toggle
+            >
+              <q-list>
+                <q-item
+                  v-for="link in legacyLinks"
+                  :key="link"
+                  class="bg-grey-2 q-my-sm q-mx-md"
+                  style="border-radius: 1rem"
+                >
+                  <q-item-section>
+                    <q-item-label lines="1">
+                      {{ link.functionConfigName }} - {{ link.organismName }}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Data inicial: {{ link.functionDates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data Final: {{ link.functionDates.finalDate }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </div>
         </div>
         <q-separator class="q-mx-md"/>
@@ -1622,7 +1650,8 @@ export default defineComponent({
         selectedOrganism: null,
         data: null
       },
-      userIsAdm: null
+      userIsAdm: null,
+      legacyLinks: null
     };
   },
   mounted() {
@@ -3023,6 +3052,9 @@ export default defineComponent({
         this.canUseSystem = r.data.canUseSystem
         if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
           this.pastoralStatusData = r.data.pastoralStatus.data
+        }
+        if (r.data.legacyLinks) {
+          this.legacyLinks = r.data.legacyLinks
         }
         this.userProfileImage = r.data.profileImage
         // this.tab = r.data.userDataTabs[0].tabValue

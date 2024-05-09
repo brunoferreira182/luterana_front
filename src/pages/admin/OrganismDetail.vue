@@ -376,6 +376,50 @@
                       </q-btn>
                       </q-item-section>
                     </q-item>
+                    <div
+                      v-for="field in organismData.fields"
+                      :key="field"
+                    >
+                      <q-list v-if="field.type.type === 'secretaryHour' && field.value && field.value.length > 0">
+                        <div class="text-h6">
+                          Horários da secretária
+                          <q-btn
+                            icon="add"
+                            color="primary"
+                            flat
+                            label="Horário"
+                            no-caps
+                            rounded
+                          />
+                        </div>
+                        <q-item
+                          v-for="(item, i) in field.value"
+                          :key="item"
+                          class="bg-grey-2 q-pa-md q-mx-sm q-my-sm"
+                          style="border-radius:1rem"
+                        > 
+                          <q-item-section>
+                            <q-item-label>
+                              Dia: {{item.day.label}}
+                            </q-item-label>
+                            <q-item-label>
+                              Horário inicial: {{item.initialHour}}
+                            </q-item-label>
+                            <q-item-label>
+                              Horário final: {{item.finalHour}}
+                            </q-item-label>
+                          </q-item-section>
+                          <q-item-section side>
+                            <q-btn
+                              color="red"
+                              flat
+                              icon="delete"
+                              @click="removeSecretaryHour(i)"
+                            />
+                          </q-item-section>
+                        </q-item>
+                      </q-list>
+                    </div>
                   </div>
                 </div>
                 <div 
@@ -396,7 +440,7 @@
                     flat
                     color="primary"
                     icon="add"
-                    @click="clkAddServices(fieldIndex)"
+                    @click="dialogShowSecretaryHourDetail.open = true"
                     class="q-mt-xs"
                   />
                   <CardServices
@@ -466,8 +510,7 @@
                     v-model="field.value"
                     outlined
                     :readonly="field.onlyAdm"
-                  >
-                  </q-input>
+                  />
                 </div>
                 
                 <q-file
@@ -1968,61 +2011,47 @@
     </q-card>
   </q-dialog>
   <q-dialog
-    v-model="dialogAddWorkHoursToSecretary.open"
+    v-model="dialogShowSecretaryHourDetail.open"
+    @hide="clearDialogShowSecretaryHourDetail"
   >
     <q-card style="width: 300px;border-radius: 1rem;">
       <q-card-section>
         <div class="text-center text-h6">
-          Adicionar horário de culto
+          Adicionar horário para a(as) secretária(as)
         </div>
-        <q-select
-          outlined
-          label="Selecione o dia da semana"
-          class="q-pa-sm"
-          :options="dialogAddServices.daysOfWeek"
-          option-label="label"
-          v-model="dialogAddServices.selectedDay"
-        />
-        <q-input
-          label="Selecione o horário"
-          outlined
-          class="q-pa-sm"
-          mask="##:##"
-          v-model="dialogAddServices.selectedHour"
-        />
-        <div class="q-my-md">
-          <strong>Selecione uma ou mais opção</strong>
+        <div
+          v-for="field in organismData.fields"
+          :key="field"
+        >
+          <q-list v-if="field.type.type === 'secretaryHour' && field.value && field.value.length > 0">
+            <q-item
+              v-for="item in field.value"
+              :key="item"
+              style="border-radius:1rem"
+              class="bg-grey-2 q-my-sm"
+            > 
+              <q-item-section>
+                <q-item-label>
+                  Dia: {{item.day.label}}
+                </q-item-label>
+                <q-item-label>
+                  Horário inicial: {{item.initialHour}}
+                </q-item-label>
+                <q-item-label>
+                  Horário final: {{item.finalHour}}
+                </q-item-label>
+              </q-item-section>
+          </q-item>
+          </q-list>
         </div>
-        <q-checkbox
-          label="Toda semana"
-          v-model="dialogAddServices.everyWeek"
-          @update:model-value="changeOtherStatus()"
-        />
-        <q-checkbox
-          label="1º semana"
-          v-model="dialogAddServices.firstWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="2° semana"
-          v-model="dialogAddServices.secondWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="3° semana"
-          v-model="dialogAddServices.thirdWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="4° semana"
-          v-model="dialogAddServices.fourthWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
-        <q-checkbox
-          label="5° semana"
-          v-model="dialogAddServices.fifthWeek"
-          @update:model-value="verifyIfChangeStatus()"
-        />
+        <q-btn
+          label="Adicionar novo horário"
+          icon="add"
+          rounded
+          flat
+          color="primary"
+          @click="addNewSecretaryHour"
+          />
       </q-card-section>
       <q-card-actions
         align="center"
@@ -2032,17 +2061,8 @@
           rounded
           unelevated
           no-caps
-          flat
           label="Voltar"
-          @click="clearDialogAddEvents"
-        />
-        <q-btn
-          color="primary"
-          rounded
-          unelevated
-          no-caps
-          label="confirmar"
-          @click="confirmAddServiceConfig"
+          @click="clearDialogShowSecretaryHourDetail"
         />
       </q-card-actions>
     </q-card>
@@ -2174,6 +2194,7 @@
   </q-dialog>
   <q-dialog
     v-model="dialogInviteAddWorkHours.open"
+    @hide="dialogInviteAddWorkHours.open = false"
   >
     <q-card>
       <q-card-section
@@ -2198,11 +2219,61 @@
           no-caps
           rounded
           unelevated
-          @click="dialogAddworkHoursToSecretary.open = true"
+          @click="openSecretaryHourDetail"
         />
       </q-card-actions>
     </q-card>
-
+  </q-dialog>
+  <q-dialog
+    v-model="dialogAddNewSecretaryHour.open"
+  >
+    <q-card
+      style="width:300px;border-radius: 1rem"
+      @hide="clearDialogAddSecretaryHour"
+    > 
+      <q-card-section>
+        <div class="text-h6 text-center q-mb-md">
+          Adicionar horário
+        </div>
+        <q-select
+          class="q-pa-sm"
+          outlined
+          :options="dialogAddNewSecretaryHour.daysOfWeek"
+          option-label="label"
+          v-model="dialogAddNewSecretaryHour.selectedDay"
+          label="Selecione o dia da semana"
+        />
+        <q-input
+          class="q-pa-sm"
+          outlined
+          label="Horário inicial"
+          v-model="dialogAddNewSecretaryHour.initialHour"
+          mask="##:##"
+        />
+        <q-input
+          class="q-pa-sm"
+          outlined
+          label="Horário final"
+          v-model="dialogAddNewSecretaryHour.finalHour"
+          mask="##:##"
+        />
+      </q-card-section>
+      <q-card-actions align="center">
+        <q-btn
+          label="Voltar"
+          color="primary"
+          rounded
+          flat
+          @click="clearDialogAddSecretaryHour"
+        />
+        <q-btn
+          label="Confirmar"
+          color="primary"
+          rounded
+          @click="confirmAddSecretaryHour"
+        />
+      </q-card-actions>
+    </q-card>
   </q-dialog>
   <DialogAddNewUserToUseEverywhere
     :param="dialogAddUser.param"
@@ -2536,7 +2607,10 @@ export default defineComponent({
       dialogInviteAddWorkHours: {
         open: false
       },
-      dialogAddWorkHoursToSecretary: {
+      dialogShowSecretaryHourDetail: {
+        open: false,
+      },
+      dialogAddNewSecretaryHour: {
         open: false,
         daysOfWeek: [
           {label: 'Domingo', value: 'sunday' },
@@ -2547,17 +2621,9 @@ export default defineComponent({
           {label: 'Sexta-feira', value: 'friday' },
           {label: 'Sábado', value: 'saturday' }
         ],
-        edit: false,
         selectedDay: null,
-        selectedHour: null,
-        fieldIndex: null,
-        iValue: null,
-        everyWeek: false,
-        firstWeek: false,
-        secondWeek: false,
-        thirdWeek: false,
-        fourthWeek: false,
-        fifthWeek: false,
+        initialHour: '',
+        finalHour: ''
       }
     };
   },
@@ -2597,6 +2663,51 @@ export default defineComponent({
       this.getDaysOfWeek()
       this.getParishChildOrganismsList()
       this.getUserCanEditStatus()
+    },
+    removeSecretaryHour(i) {
+      this.organismData.fields.forEach((field) => {
+        if (field.type.type === 'secretaryHour') {
+          field.value.splice(i, 1)
+        }
+      })
+    },
+    addNewSecretaryHour() {
+      this.dialogAddNewSecretaryHour.open = true
+    },
+    confirmAddSecretaryHour() {
+      if (!this.dialogAddNewSecretaryHour.selectedDay || this.dialogAddNewSecretaryHour.initialHour === '' || this.dialogAddNewSecretaryHour.finalHour === '') {
+        this.$q.notify('Preencha todos os dados para prosseguir')
+        return
+      }
+      this.organismData.fields.forEach((field) => {
+        if (field.type.type === 'secretaryHour') {
+          if (!field.value) field.value = []
+          field.value.push({
+            day: this.dialogAddNewSecretaryHour.selectedDay,
+            initialHour: this.dialogAddNewSecretaryHour.initialHour,
+            finalHour: this.dialogAddNewSecretaryHour.finalHour
+          })
+          this.$q.notify("Dia adicionado com sucesso")
+          this.clearDialogAddSecretaryHour()
+        }
+      })
+    },
+    clearDialogAddSecretaryHour() {
+      this.dialogAddNewSecretaryHour = {
+        open: false,
+        daysOfWeek: [
+          {label: 'Domingo', value: 'sunday' },
+          {label: 'Segunda-feira', value: 'monday' },
+          {label: 'Terça-feira', value: 'monday' },
+          {label: 'Quarta-feira', value: 'wednesday' },
+          {label: 'Quinta-feira', value: 'thursday' },
+          {label: 'Sexta-feira', value: 'friday' },
+          {label: 'Sábado', value: 'saturday' }
+        ],
+        selectedDay: null,
+        initialHour: '',
+        finalHour: ''
+      }
     },
     getUserCanEditStatus(){
       const opt = {
@@ -2830,6 +2941,13 @@ export default defineComponent({
         })
         this.clearDialogAddEvents()
       }
+    },
+    clearDialogShowSecretaryHourDetail() {
+      this.dialogShowSecretaryHourDetail.open = false
+    },
+    openSecretaryHourDetail() {
+      this.dialogInviteAddWorkHours.open = false
+      this.dialogShowSecretaryHourDetail.open = true
     },
     clearDialogAddEvents() {
       this.dialogAddServices.open = false
