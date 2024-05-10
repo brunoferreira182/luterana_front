@@ -653,6 +653,7 @@
                 :showInviteUserButton="canEdit"
                 :isPastor="func.functionName === 'Pastor' ? false : true"
                 @deleteUserFromFunction="dialogOpenDeleteUserFromFunction"
+                @cancelInviteUser="cancelInviteUser"
               />
               
             </div>
@@ -671,6 +672,7 @@
                       :showAddUserButton="true"
                       :showInviteUserButton="false"
                       :isPastor="func.functionName === 'Pastor' ? false : true"
+                      @cancelInviteUser="cancelInviteUser"
                     />
                   </div>
                 </div>
@@ -1132,6 +1134,7 @@
                 :showAddUserButton="false"
                 :isMobile="isMobile"
                 :showInviteUserButton="canEdit"
+                @cancelInviteUser="cancelInviteUser"
               />
             </div>
           </q-expansion-item>
@@ -1151,6 +1154,7 @@
                 :showAddUserButton="false"
                 :isMobile="isMobile"
                 :showInviteUserButton="canEdit"
+                @cancelInviteUser="cancelInviteUser"
               />
             </div>
           </q-expansion-item> 
@@ -1794,6 +1798,21 @@ export default defineComponent({
       this.getChildOrganismsConfigsByOrganismId()
       this.getChildOrganismsById()
       this.isMobile = useScreenStore().isMobile
+    },
+    async cancelInviteUser(user) {
+      console.log(user)
+      const opt = {
+        route: '/desktop/commonUsers/cancelFunctionSolicitation',
+        body: {
+          functionSolicitationId: user.solicitationId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      else {
+        this.startView()
+        this.$q.notify('Convite cancelado com sucesso')  
+      }
     },
     clkAddServices(fieldIndex) {
       this.dialogAddServices.open = true

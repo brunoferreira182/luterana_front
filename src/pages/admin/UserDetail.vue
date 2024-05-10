@@ -3037,7 +3037,7 @@ export default defineComponent({
           return
         }
         if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.length > 0) {
-          let links = r.data.userLinksToOrganisms
+          let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
             if (link.functionSubtype === 'chamado') {
               this.callList.push(link)
@@ -3045,7 +3045,7 @@ export default defineComponent({
           })
         }
         this.userCanEdit = r.data.canEdit
-        this.callList = r.data.userLinksToOrganisms
+        this.callList = r.data.userLinksToOrganisms.links
         // this.userLinks = r.data.userLinksToOrganisms.data
         this.userData = userConfig.data
         this.userType = r.data.userType

@@ -143,16 +143,16 @@
                 <q-tooltip> Observações </q-tooltip>
               </q-btn> -->
               <q-btn
-                @click="deleteUserFromFunction(user)"
+                @click="cancelInviteUser(user)"
                 class="gt-xs"
                 size="12px"
                 color="red-8"
                 flat
                 dense
                 round
-                icon="delete"
+                icon="close"
               >
-                <q-tooltip> Deletar usuário da função </q-tooltip>
+                <q-tooltip> Cancelar convite </q-tooltip>
               </q-btn>
             </div>
           </q-item-section>
@@ -207,7 +207,7 @@ import utils from '../boot/utils'
 import avatar from '../assets/avatar.svg'
 const props = defineProps(['func', 'funcIndex', 'showAddUserButton', 'showInviteUserButton', 'isMobile', 'isPastor', 'canEdit'])
 
-const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation'])
+const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkUserToFunction', 'clkOpenDialogSolicitation', 'cancelInviteUser'])
 
 // function insertObservation(user) {
 //   emits('insertObservation', user)
@@ -215,6 +215,9 @@ const emits = defineEmits(['insertObservation', 'deleteUserFromFunction', 'linkU
 
 function deleteUserFromFunction (user) {
   emits('deleteUserFromFunction', user)
+}
+function cancelInviteUser (user) {
+  emits("cancelInviteUser", user)
 }
 function clkOpenDialogSolicitation () {
   emits('clkOpenDialogSolicitation', props.func, props.funcIndex)
