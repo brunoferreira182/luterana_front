@@ -237,6 +237,80 @@
                 </div>
               </template>
             </q-tree>
+            <div v-if="otherLinks">
+              <q-list>
+                <q-item
+                  v-for="link in otherLinks"
+                  :key="link"
+                  class="bg-grey-2 q-ma-md"
+                  style="border-radius:1rem"
+                > 
+                  <q-item-section
+                    v-if="link.linkType === 'Licença'"
+                  >
+                    <q-item-label lines="1">
+                      Tipo: {{ link.linkType }}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Motivo: {{ link.reason }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="4" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Cedido'"
+                  > 
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Denominação: {{link.denomination}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Organismo: {{link.organismName}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Aposentado'">
+                    <item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </item-label>
+                    <q-item-label lines="2">
+                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="3" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estudante'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Motivo: {{link.goal}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Local: {{link.local}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
           </div>
           <q-separator class="q-mx-lg"/>
           <div>
@@ -1651,7 +1725,8 @@ export default defineComponent({
         data: null
       },
       userIsAdm: null,
-      legacyLinks: null
+      legacyLinks: null,
+      otherLinks: null
     };
   },
   mounted() {
@@ -3036,7 +3111,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.length > 0) {
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links && r.data.userLinksToOrganisms.links.length > 0) {
           let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
             if (link.functionSubtype === 'chamado') {
@@ -3044,6 +3119,10 @@ export default defineComponent({
             } 
           })
         }
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.otherLinks && r.data.userLinksToOrganisms.otherLinks.length > 0) {
+          this.otherLinks = r.data.userLinksToOrganisms.otherLinks
+        }
+        this.otherLinks = r.data.userLinksToOrganisms.otherLinks
         this.userCanEdit = r.data.canEdit
         this.callList = r.data.userLinksToOrganisms.links
         // this.userLinks = r.data.userLinksToOrganisms.data
