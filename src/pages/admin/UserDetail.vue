@@ -240,7 +240,7 @@
             <div v-if="otherLinks">
               <q-list>
                 <q-item
-                  v-for="link in otherLinks"
+                  v-for="(link, i) in otherLinks"
                   :key="link"
                   class="bg-grey-2 q-ma-md"
                   style="border-radius:1rem"
@@ -308,15 +308,38 @@
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
+                  <q-item-section side>
+                    <q-item-label>
+                      <q-btn
+                        icon="edit"
+                        color="primary"
+                        rounded
+                        flat
+                        unelevated
+                        class="q-mx-sm"
+                        @click="editLink(link)"
+                      />
+                      <q-btn
+                        icon="delete"
+                        color="red"
+                        rounded
+                        flat
+                        unelevated
+                        class="q-mx-sm"
+                        @click="removeLink(i)"
+                      />
+                    </q-item-label>
+                  </q-item-section>
                 </q-item>
               </q-list>
             </div>
           </div>
           <q-separator class="q-mx-lg"/>
-          <div>
+          <div class="q-my-sm">
             <q-expansion-item
               label="Histórico de vínculos"
               dense-toggle
+              class="q-mx-md"
             >
               <q-list>
                 <q-item
@@ -341,7 +364,6 @@
             </q-expansion-item>
           </div>
         </div>
-        <q-separator class="q-mx-md"/>
         <q-list bordered>
           <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
             <q-expansion-item
@@ -1491,6 +1513,195 @@
         @confirm="confirmAddActing"
         @clearDialog="clearDialogAddActing"
       />
+      <q-dialog
+        v-model="dialogEditLink.open"
+        @hide="clearDialogEditLink"
+      >
+        <q-card style="width: 300px;border-radius:1rem">
+          <q-card-section v-if="dialogEditLink.link.linkType === 'Licença'">
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div class="q-mb-sm">
+              <q-select
+                label="Motivo"
+                :options="['Saúde', 'Estudos', 'Interesse', 'Outro']"
+                v-model="dialogEditLink.link.reason"
+                outlined
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+          </q-card-section>
+          <q-card-section
+            v-if="dialogEditLink.link.linkType === 'Cedido'"
+          >
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div class="q-mb-sm">
+              <q-select
+                label="Qual igreja"
+                :options="['Outra denominação', 'Igreja irmã']"
+                outlined
+                v-model="dialogEditLink.link.denomination"
+                @update:model-value="getOrganismsDenominationList"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-select
+                :options="dialogEditLink.organismsoptions"
+                outlined
+                option-label="organismName"
+                v-model="dialogEditLink.link.organismName"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+          </q-card-section>
+          <q-card-section
+            v-if="dialogEditLink.link.linkType === 'Aposentado'" 
+          >
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+          </q-card-section>
+          <q-card-section
+            v-if="dialogEditLink.link.linkType === 'Estudante'" 
+          >
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div class="q-mb-sm">
+              <q-select
+                label="Finalidade"
+                :options="['Intercâmbio', 'Pós-pastoral']"
+                v-model="dialogEditLink.link.goal"
+                outlined
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Local"
+                outlined
+                v-model="dialogEditLink.link.local"
+              >
+              </q-input>
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              flat
+              rounded
+              unelevated
+              no-caps
+              @click="clearDialogEditLink"
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              rounded
+              unelevated
+              no-caps
+              @click="confirmEditLink"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -1726,7 +1937,12 @@ export default defineComponent({
       },
       userIsAdm: null,
       legacyLinks: null,
-      otherLinks: null
+      otherLinks: null,
+      dialogEditLink:{
+        open: false,
+        link: null,
+        organismsoptions: []
+      }
     };
   },
   mounted() {
@@ -1737,6 +1953,47 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    async confirmEditLink() {
+      const opt = {
+        route: '/desktop/adm/confirmEditPastorLink',
+        body: {
+          link: this.dialogEditLink.link
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      else {
+        this.clearDialogEditLink()
+        this.startView()
+      }
+    },
+    clearDialogEditLink() {
+      this.dialogEditLink.open = false
+      this.dialogEditLink.link = null
+      this.dialogEditLink.organismsoptions = []
+    },
+    async getOrganismsDenominationList() {
+      this.dialogEditLink.link.organismName = ''
+      if (this.dialogEditLink.link.denomination === 'Outra denominação') {
+        const opt = {
+          route: '/desktop/adm/getOtherDenomination'
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        this.dialogEditLink.organismsoptions = r.data
+      } else if (this.dialogEditLink.link.denomination === 'Igreja irmã') {
+        const opt = {
+          route: '/desktop/adm/getSisterChurch'
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        this.dialogEditLink.organismsoptions = r.data
+      }
+    },
+    editLink(link) {
+      this.dialogEditLink.open = true
+      this.dialogEditLink.link = {...link}
+    },
     goToOrganismDetailFromTree(data) {
       this.$router.push('/admin/organismDetail?organismId=' + data.organismId)
     },
