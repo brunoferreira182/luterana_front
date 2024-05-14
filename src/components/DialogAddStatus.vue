@@ -872,10 +872,12 @@ function verifyIfCanAddStatus() {
     }
     emits('confirm', data.value.selectedStatusOption.value, licenseData.value)
   } else if (data.value.selectedStatusOption.value === 'trainee') {
+    console.log('entrou no primeiro if')
     if (!traineeData.value.selectedOrganism || !traineeData.value.guildingPastor || (traineeData.value.deadline === '' && !traineeData.value.noDeadline) || !traineeData.value.selectedPastor) {
       Notify.create('Preencha a congregação, o pastor orientador e o prazo para prosseguir')
       return
     } 
+    console.log('emitiu, bora de next')
     emits('confirm', data.value.selectedStatusOption.value, traineeData.value)
   } else if (data.value.selectedStatusOption.value === 'withoutCall') {
     if (!withoutCallData.value.optionSelected || (withoutCallData.value.deadline === '' && !withoutCallData.value.noDeadline) || !withCallData.value.selectedPastor) {

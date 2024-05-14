@@ -81,6 +81,7 @@
         </div>
         
         <div class="col q-gutter-sm text-right">
+          <q-btn color="red" @click="openDialogUserPdfInfo"></q-btn>
           <q-btn
             v-if="userType && userType === 'pastor' && canEdit"
             color="secondary"
@@ -281,9 +282,9 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section v-if="link.linkType === 'Aposentado'">
-                    <item-label lines="1">
+                    <q-item-label lines="1">
                       Tipo: {{link.linkType}}
-                    </item-label>
+                    </q-item-label>
                     <q-item-label lines="2">
                       Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
                     </q-item-label>
@@ -300,6 +301,23 @@
                     </q-item-label>
                     <q-item-label lines="3">
                       Local: {{link.local}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estagiário'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2" >
+                      Pastor orientador: {{ link.pastorName }}
+                    </q-item-label>
+                    <q-item-label lines="3" >
+                      Congregação: {{ link.organismName }}
                     </q-item-label>
                     <q-item-label lines="4">
                       Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
@@ -1518,6 +1536,23 @@
         @hide="clearDialogEditLink"
       >
         <q-card style="width: 300px;border-radius:1rem">
+          <q-card-section v-if="dialogEditLink.link.linkType === 'Estagiário'">
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div class="q-mb-md" >
+              <q-select
+                v-model="dialogEditLink.link.pastorName"
+                label="Pastor orientador"
+                use-input
+                @filter="getPastors"
+                :options="pastorsOptions"
+                outlined
+                option-label="userName"
+              />
+            </div>
+            {{ dialogEditLink.link  }}
+          </q-card-section>
           <q-card-section v-if="dialogEditLink.link.linkType === 'Licença'">
             <div class="text-center text-h6 q-mb-md">
               {{ dialogEditLink.link.linkType }}
@@ -1702,11 +1737,65 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <DialogPdfUserInfo
+        :open="dialogUserInfo.open"
+        :data="userData.userDataTabs"
+      />
+      <!-- <div id="pdf" v-show="showPdf">
+        <q-list bordered class="q-ma-md">
+          <div class="text-center text-h6">
+            <strong>Informações do Cadastro da IELB</strong>
+          </div>
+          <q-list bordered class="q-ma-sm">
+            <div class="text-h6 text-center">
+              <strong class="text-center">Identificação, endereço, e-Mail e telefones</strong>
+            </div>
+            <div class="q-ml-sm row" v-if="userData && userData.userDataTabs && userData.userDataTabs[0]">
+              <div class="col-4">
+                <p>Nome : <strong>{{ userData.userDataTabs[0].fields[0].value }}</strong></p>
+                <p>Profissão - falta</p>
+                <p>Nacionalidade - falta</p>
+                <p>Endereço: {{userData.userDataTabs[3].fields[0].value[0].street}}, {{ userData.userDataTabs[3].fields[0].value[0].number }} </p>
+                <p>Bairro: {{ userData.userDataTabs[3].fields[0].value[0].district }}</p>
+                <p>Cidade: {{ userData.userDataTabs[3].fields[0].value[0].city }}</p>
+                <p>Estado: {{ userData.userDataTabs[3].fields[0].value[0].state }}</p>
+                <p>CEP: {{ userData.userDataTabs[3].fields[0].value[0].cep }}</p>
+                <div>
+                  <span>Caixa postal - falta</span> <span class="q-ml-md" >Cep caixa postal - falta</span>
+                </div>
+                <p>Telefone Celular: {{ userData.userDataTabs[2].fields[2].value[0].value }}</p>
+                <p v-if="userData.userDataTabs[2].fields[2].value[1]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[1].value }}</p>
+                <p v-if="userData.userDataTabs[2].fields[2].value[2]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[2].value }}</p>
+                <p v-if="userData.userDataTabs[2].fields[2].value[3]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[3].value }}</p>
+                <p>Data Ordenação - falta</p>
+                <p>Local Ordenação: falta</p>
+              </div>
+              <div class="col-4">
+                <p>Código IELB: falta</p>
+                <p>Data de nascimento: {{ userData.userDataTabs[0].fields[2].value }}</p>
+                <p>Estado Civil: {{ userData.userDataTabs[2].fields[3] && userData.userDataTabs[2].fields[3].value ? 'Casado' : 'Solteiro' }}</p>
+                <p>Naturalidade: falta</p>
+                <p>Estado naturalidade: falta</p>
+                <p>Complemento: falta</p>
+                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[0]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[0].value }}</p>
+                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[1]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[1].value }}</p>
+                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[2]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[2].value }}</p>
+              </div>
+            </div>
+          </q-list>
+          <q-list bordered class="q-ma-sm">
+            <div class="text-h6 text-center">
+              <strong class="text-center">Casamento</strong>
+            </div>
+          </q-list>
+        </q-list>
+      </div> -->
     </q-page>
   </q-page-container>
 </template>
 
 <script setup>
+import DialogPdfUserInfo from '../../components/DialogPdfUserInfo.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddAddress from '../../components/DialogAddress.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
@@ -1724,6 +1813,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
+// import html2pdf from 'html2pdf.js';
 </script>
 <script>
 import { defineComponent } from "vue";
@@ -1732,6 +1822,9 @@ export default defineComponent({
   name: "UserDetail",
   data() {
     return {
+      dialogUserInfo: {
+        open: false
+      },
       userCanEdit: false,
       dialogRemoveCall: {
         open: false,
@@ -1896,6 +1989,7 @@ export default defineComponent({
         selectedPerson: null,
         label: null
       },
+      pastorsList: null,
       dialogAddMaritalStatus: {
         open:false,
         fieldIndex: null,
@@ -1953,6 +2047,19 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    openDialogUserPdfInfo() {
+      this.dialogUserInfo.open = true
+    },
+    // generatePdf() {
+    //   let pdf = document.getElementById('pdf')
+    //   let configs = {
+    //     margin: 0,
+    //     filename: `Ficha cadastral de ${this.userData.userDataTabs[0].fields[0].value}`,
+    //     jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
+    //     pagebreak: {mode: ['avoid-all']}
+    //   }
+    //   html2pdf().set(configs).from(pdf).save()
+    // },
     async confirmEditLink() {
       const opt = {
         route: '/desktop/adm/confirmEditPastorLink',
