@@ -1740,6 +1740,8 @@
       <DialogPdfUserInfo
         :open="dialogUserInfo.open"
         :data="userData.userDataTabs"
+        :userId="$route.query.userId"
+        :userImage="userProfileImage"
       />
       <!-- <div id="pdf" v-show="showPdf">
         <q-list bordered class="q-ma-md">

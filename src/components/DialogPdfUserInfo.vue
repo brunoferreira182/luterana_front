@@ -4,7 +4,7 @@
       style="width: 1000px;"
     > 
       <q-card-section>
-        <q-list bordered class="q-ma-md">
+        <q-list bordered class="q-ma-md" v-if="  props.data &&  props.data[0]">
           <div class="text-center text-h6">
             <strong>Informações do Cadastro da IELB</strong>
           </div>
@@ -12,8 +12,8 @@
             <div class="text-h6 text-center">
               <strong class="text-center">Identificação, endereço, e-mail e telefones</strong>
             </div>
-            <div class="q-ml-sm" v-if="  props.data &&  props.data[0]">
-              <div>
+            <div class="q-ml-sm row" >
+              <div class="col-9">
                 <p>Nome : <strong>{{  props.data[0].fields[0].value }}</strong></p>
                 <p>Profissão - falta</p>
                 <p>Nacionalidade - falta</p>
@@ -41,7 +41,13 @@
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[1]" >E-mail: {{  props.data[2].fields[0].value[1].value }}</p>
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[2]" >E-mail: {{  props.data[2].fields[0].value[2].value }}</p>
               </div>
-              <div class="col-4">
+              <div class="col-3"> 
+                <q-img 
+                  style="border-radius: 1rem"
+                  :src="props.userImage ? utils.makeFileUrl(userProfileImage) : avatar" 
+                  width="74px" 
+                  height="74px"
+                />
               </div>
             </div>
           </q-list>
@@ -49,16 +55,134 @@
             <div class="text-h6 text-center">
               <strong class="text-center">Casamento</strong>
             </div>
+            <div class="q-ml-sm">
+              <p>Cônjuge: {{props.data[1].fields[3].value[0].partner.name}}</p>
+              <p>Data de nascimento cônjuge: {{ partnerData.birthDate }}</p>
+              <p>Data início: {{ props.data[1].fields[3].value[0].partner.dates.initialDate }}</p>
+              <p>Data fim: {{ props.data[1].fields[3].value[0].partner.dates.finalDate }}</p>
+              <p>Local casamento: Falta</p>
+            </div>
+          </q-list>
+          <q-list class="q-ma-sm" bordered>
+            <div class="text-h6 text-center">
+              <strong class="text-center">Pais</strong>
+            </div>
+            <div
+              class="q-ml-sm text-center"
+            >
+              {{ props.data[1].fields[0].value[0].userName }} e {{ props.data[1].fields[1].value[0].userName }}
+            </div>
+          </q-list>
+          <q-list
+            class="q-ma-sm"
+            bordered  
+          >
+            <div class="text-h6 text-center">
+              <strong class="text-center">Filhos</strong>
+            </div>
+            <div
+              class="q-ml-sm"
+              v-if="props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[2] && props.data[1].fields[2].value"
+            >
+              <p 
+              v-for="child in props.data[1].fields[2].value"
+              :key="child"
+              >
+                Nome: {{ child.userName }} - Data de nascimento: {{ child.birthDate }}
+              </p>
+            </div>
+          </q-list>
+          <q-list
+            class="q-ma-sm"
+            bordered
+          >
+            <div class="text-h6 text-center">
+              <strong class="text-center">Formação</strong>
+            </div>
           </q-list>
         </q-list>
-        {{ props.data[0] }}
       </q-card-section>
-    OIIIIIII
     </q-card>
   </q-dialog>
 </template>
 <script setup>
 
-  const props = defineProps(['open', 'data'])
+  const props = defineProps(['open', 'data', 'userImage','userId'])
+  import useFetch from 'src/boot/useFetch';
+  import avatar from '../assets/avatar.svg'
+  import { watchEffect, ref } from 'vue'
+
+
+  watchEffect(() =>  {
+    getParterInfo();
+    getPartnerBirthDate()
+    getChildsBirthDate()
+    getUserFormationsFromSga()
+});
+
+  const userData = ref({
+    partners: []
+  })
+
+  const partnerData = ref({
+    birthDate: null
+  })
+
+  async function getParterInfo() {
+    const opt = {
+      route: '/desktop/adm/getParents',
+      body: {
+        userId: props.userId
+      }
+    }
+    let r = await useFetch(opt)
+    if (r.error) return
+    userData.value.partners = r.data
+  }
+
+  async function getPartnerBirthDate() {
+    if (props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[3] && 
+      props.data[1].fields[3].value && props.data[1].fields[3].value[0] && props.data[1].fields[3].value[0].partner &&
+      props.data[1].fields[3].value[0].partner.partnerId
+    ) {
+      const opt = {
+        route: "/desktop/adm/getUserBirthDate",
+        body:{
+          userId: props.data[1].fields[3].value[0].partner.partnerId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      partnerData.value.birthDate = r.data.birthDate
+    }
+  }
+
+  async function getChildsBirthDate() {
+    if (props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[2].value) {
+      for (let i = 0; i < props.data[1].fields[2].value.length; i++) {
+        let child = props.data[1].fields[2].value[i]
+        const opt = {
+          route: '/desktop/adm/getUserBirthDate',
+          body: {
+            userId: child._id
+          }
+        }
+        let r = await useFetch(opt)
+        if (r.error) return
+        child.birthDate = r.data.birthDate
+      }
+    }
+  }
+
+  async function getUserFormationsFromSga() {
+    const opt = {
+      route: '/desktop/adm/getUserFormationsFromSga',
+      body: {
+        userId: props.userId
+      }
+    }
+    let r = await useFetch(opt)
+    if (r.error) return
+  }
 
 </script>
