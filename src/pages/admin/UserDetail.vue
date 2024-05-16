@@ -1742,6 +1742,7 @@
         :data="userData.userDataTabs"
         :userId="$route.query.userId"
         :userImage="userProfileImage"
+        @closeDialog="closeDialogShowPdfInfo"
       />
       <!-- <div id="pdf" v-show="showPdf">
         <q-list bordered class="q-ma-md">
@@ -2049,19 +2050,12 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    closeDialogShowPdfInfo() {
+      this.dialogUserInfo.open = false
+    },
     openDialogUserPdfInfo() {
       this.dialogUserInfo.open = true
     },
-    // generatePdf() {
-    //   let pdf = document.getElementById('pdf')
-    //   let configs = {
-    //     margin: 0,
-    //     filename: `Ficha cadastral de ${this.userData.userDataTabs[0].fields[0].value}`,
-    //     jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
-    //     pagebreak: {mode: ['avoid-all']}
-    //   }
-    //   html2pdf().set(configs).from(pdf).save()
-    // },
     async confirmEditLink() {
       const opt = {
         route: '/desktop/adm/confirmEditPastorLink',
