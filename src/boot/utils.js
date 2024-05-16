@@ -3,56 +3,25 @@ import CryptoJS from "crypto-js";
 import { LocalStorage } from "quasar";
 import useFetch from "./useFetch";
 import { calculateMasterServerAttachmentsRoute } from "./masterServerRoutes";
+import { masterServerRoute } from './masterServerRoutes'
+import { Plugins } from '@capacitor/core';
+const { Filesystem } = Plugins;
 
 const useUtils = {
-  // forceFileDownload(response, options) {
-  //   const url = window.URL.createObjectURL(new Blob([response], {type: 'arraybuffer'}))
-  //   console.log(url)
-  //   const link = document.createElement('a')
-  //   link.href = url
-  //   link.setAttribute('download', options.originalname)
-  //   document.body.appendChild(link)
-  //   console.log(link)
-  //   link.click()
-  //   document.body.removeChild(link)
-  // },
-  // downloadFile(options) {
-  //   const opt = {
-  //     route: '/download/' + options.filename,
-  //     method: 'GET',
-  //     responseType: 'blob'
-  //   }
-  //   useFetch(opt).then((response) => {
-  //     console.log(typeof response, 'response tipo')
-  //     const blob = new Blob([response], {type: options.type})
-  //     console.log(typeof blob, 'tipo2')
-  //     const url = window.URL.createObjectURL(blob);
-  //     const link = document.createElement('a');
-  //     link.href = url;
-  //     link.setAttribute('download', 'file.pdf');
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     URL.revokeObjectURL(url);
-  //   })
-  // },
-  downloadFile (options) {
+  async downloadFile (obj) {
     const opt = {
+      url: `${masterServerRoute()}/static/${obj.filename}`,
       method: 'GET',
-      responseType: 'blob',
-      route: '/download/' + options.filename
     }
-    useFetch(opt).then((response) => {
-      console.log('entrou', typeof response)
-      const blob = new Blob([response], {type: options.type})
-      console.log('blob', blob)
-      const link = URL.createObjectURL(blob)
-      const a = document.createElement("a");
-      document.body.appendChild(a);
-      a.href = link;
-      a.download = options.originalname;
-      a.click();
-      URL.revokeObjectURL(link);
-    })
+    const dl = await Filesystem.downloadFile(opt)
+    const blob = new Blob([dl.blob], {type: obj.mimetype})
+    const link = URL.createObjectURL(blob)
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.href = link;
+    a.download = obj.originalname;
+    a.click();
+    URL.revokeObjectURL(link);
   },
   // downloadFile (options) {
   //   const opt = {

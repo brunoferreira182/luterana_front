@@ -305,11 +305,11 @@ export default defineComponent({
       if(this.linkForDownload !== null){
         opt.body.linkForDownload = this.linkForDownload
       }
-      if(this.files !== null){
+      if(this.files !== null) {
         const file = [{file:this.files,name:this.files.name}]
         opt.files = file
       }
-      switch(this.receiverType){
+      switch(this.receiverType) {
         case 'specificDistrict':
           opt.body.subType = 'district'
           opt.body.receivers = this.newReceiver._id
