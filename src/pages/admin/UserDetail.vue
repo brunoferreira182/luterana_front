@@ -1,6 +1,10 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      <UserDetail
+        :userId="$route.query.userId"
+        :adm="true"
+      />
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="row">
           <q-item-section avatar>
@@ -1816,6 +1820,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
+import UserDetail from '../../components/UserDetail.vue'
 // import html2pdf from 'html2pdf.js';
 </script>
 <script>
@@ -3475,6 +3480,7 @@ export default defineComponent({
           let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
             if (link.functionSubtype === 'chamado') {
+              console.log('HHEHEHEUHFUSAHFSUDFHASUDH')
               this.callList.push(link)
             } 
           })
