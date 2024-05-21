@@ -797,6 +797,11 @@ async function getStatusOptions() {
   }
   let r = await useFetch(opt)
   if (r.error) return
+  r.data.forEach((status, i) => {
+    if (status.value === 'acting') {
+      r.data.splice(i, 1)
+    }
+  })
   data.value.statusOptions = r.data
 }
 

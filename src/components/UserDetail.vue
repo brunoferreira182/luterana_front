@@ -39,7 +39,7 @@
             Acesso ao sistema: 
             <q-badge color="red">Não</q-badge>
             <q-btn
-              v-if="canEdit"
+              v-if="data.canEdit"
               icon="sync"
               color="primary"
               rounded
@@ -76,6 +76,17 @@
           class="text-h6 q-ma-sm q-ml-md"
         >
           Vínculos:
+          <q-btn
+            v-if="data.canEdit"            
+            icon="add"
+            color="primary"
+            size="12px"
+            dense
+            flat
+            rounded
+            no-caps
+            @click.stop="openDialogAddStatusToPastor"
+          />
         </div>
         <div class="q-ml-sm">
           <q-tree
@@ -96,7 +107,7 @@
               />
               <span class="text-weight-bold">{{ prop.node.label }}</span>
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 color="primary"
                 icon="add"
                 flat
@@ -105,7 +116,7 @@
                 @click.stop="addAtuacaoToPastor(prop.node)"
               />
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 color="primary"
                 icon="edit"
                 flat
@@ -114,7 +125,7 @@
                 @click.stop="editCall(prop.node)"
               />
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 @click.stop="removeCall(prop.node)"
                 color="red"
                 rounded
@@ -123,7 +134,7 @@
                 size="8px"
               />
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 @click.stop="goToOrganismDetailFromTree(prop.node)"
                 color="primary"
                 rounded
@@ -145,7 +156,7 @@
               />
               <span class="">{{ prop.node.label }}</span>
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 color="primary"
                 rounded
                 icon="edit"
@@ -154,7 +165,7 @@
                 @click.stop="editAct(prop.node)"
               /> 
               <q-btn
-                v-if="canEdit"
+                v-if="data.canEdit"
                 size="8px"
                 color="red"
                 rounded
@@ -328,9 +339,9 @@
         </div>
         <!-- TESTETESTETESTETESTE -->
         <q-list bordered>
-          <div v-for="(tabs, i) in userData.userDataTabs" :key="i">
+          <div v-for="(tabs, i) in data.userData.userDataTabs" :key="i">
             <q-expansion-item
-              v-if="userType === 'user' ? tabs.tabLabel !== 'Dados pastorais' : tabs.tabLabel"
+              v-if="data.userType === 'user' ? tabs.tabLabel !== 'Dados pastorais' : tabs.tabLabel"
               group="somegroup"
               class="bg-grey-3"
               header-class="text-primary"
@@ -372,8 +383,7 @@
                             :mask="field.type.mask"
                             v-model="field.value"
                             outlined
-                            >
-                          </q-input>
+                          />
                         </div>
                         <q-file
                           v-if="field.type.type === 'image'"
@@ -490,7 +500,7 @@
                               flat
                               color="primary"
                               icon="add"
-                              v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && canEdit"
+                              v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && data.canEdit"
                               @click="clkOpenAddOrganismDialog(fieldIndex, i)"
                             />
                             <CardOrganism
@@ -527,7 +537,7 @@
                               :data="field"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
-                              :canEdit="canEdit"
+                              :canEdit="data.canEdit"
                               @remove="removePerson"
                             />
                           </div>
@@ -538,7 +548,7 @@
                             flat
                             color="primary"
                             icon="add"
-                            v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && canEdit"
+                            v-if="(field.multiple || !field.value || field.value ==='' || field.value.length === 0) && data.canEdit"
                             @click="clkOpenAddPersonDialog(fieldIndex, i, field.label)"
                           />
                         </div>
@@ -549,7 +559,7 @@
                               :data="field.value"
                               :fieldIndex="fieldIndex"
                               :tabsIndex="i"
-                              :canEdit="canEdit"
+                              :canEdit="data.canEdit"
                               @remove="removeMaritalStatus"
                             />
                           </div>
@@ -633,8 +643,24 @@
           </div>
         </q-list>
       </div>
+      <DialogAddStatus
+        v-if="data.userData && data.userData.userDataTabs && data.userData.userDataTabs[0].fields[0].value"
+        :open="data.dialogAddStatus.open"
+        :userId="props.userId"
+        :userName="data.userData.userDataTabs[0].fields[0].value"
+        @closeDialog="clearDialogAddStatus"
+        @confirm="confirmAddStatus"
+      />
+      <DialogAddActing
+        v-if="data.userData && data.userData.userDataTabs && data.userData.userDataTabs[0] && data.dialogActing.organismCallerSelected "
+        :open="data.dialogActing.open"
+        :userName="data.userData.userDataTabs[0].fields[0].value"
+        :userId="props.userId"
+        :organismName="data.dialogActing.organismCallerSelected.nome"
+        :organismId="data.dialogActing.organismCallerSelected.organismId"
+        @confirm="confirmAddActing"
+      />
       Oi macaco
-      {{ props.userId }}
     </q-page>
   </q-page-container>
 </template>
@@ -646,6 +672,15 @@
   import utils from '../boot/utils'
   import useFetch from 'src/boot/useFetch';
   import avatar from '../assets/avatar.svg'
+  import CardOrganism from '../components/CardOrganism.vue'
+  import CardAddress from '../components/CardAddress.vue'
+  import CardPerson from '../components/CardPerson.vue'
+  import CardMaritalStatus from '../components/CardMaritalStatus.vue'
+  import CardBankData from '../components/CardBankData.vue'
+  import CardPhoneMobileEmail from '../components/CardPhoneMobileEmail.vue'
+  import CardFormation from '../components/CardFormation.vue'
+  import DialogAddStatus from '../components/DialogAddStatus.vue'
+  import DialogAddActing from '../components/DialogAddActing.vue'
 
   const data = ref({
     userIsAdm: false,
@@ -662,7 +697,17 @@
     tab: null,
     userData: null,
     statusTree: null,
-    pastoralStatusTypes: null
+    pastoralStatusTypes: null,
+    dialogAddStatus: {
+      open:false,
+      functionId: null
+    },
+    dialogActing: {
+      open: false,
+      organismCallerSelected: null,
+      call: null,
+      callId: null
+    },
   })
 
   onBeforeMount(() => {
@@ -678,14 +723,58 @@
 
     if (props.adm) {
       verifyIfHAsAdmPermission()
-
       getUserCanEditStatus()
-
       getUserDetailById()
-
       getPastoralStatusTypes()
-
     }
+  }
+
+  function addAtuacaoToPastor(call) {
+    data.value.dialogActing.organismCallerSelected = {
+      nome: call.organismName,
+      organismId: call.organismId,
+    }
+    data.value.dialogActing.open = true
+    data.value.dialogActing.call = call
+    data.value.dialogActing.callId = call.callId
+  }
+
+  async function confirmAddActing(info) {
+    data = info._value
+    const opt = {
+      route: '/desktop/adm/insertActingToCall',
+      body: {
+        data: info,
+        callId: data.value.dialogActing.callId,
+        userId: data.value.$route.query.userId
+      }
+    }
+    let r = await useFetch(opt)
+    if (r.error) return
+    this.clearDialogACting()
+    this.startView()
+  }
+
+  async function confirmAddStatus(status, info) {
+    const opt = {
+      route: '/desktop/adm/insertPastorStatus',
+      body: {
+        status,
+        data: info,
+        functionId: data.value.dialogAddStatus.functionId
+      }
+    }
+    let r = await useFetch(opt)
+    if (r.error) return
+    clearDialogAddStatus()
+  }
+
+  function openDialogAddStatusToPastor() {
+    data.value.dialogAddStatus.open = true
+  }
+
+  function clearDialogAddStatus() {
+    data.value.dialogAddStatus.open = false
   }
 
   async function verifyIfHAsAdmPermission() {
