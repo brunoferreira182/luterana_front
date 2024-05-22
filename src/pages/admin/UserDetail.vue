@@ -1,10 +1,6 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      <UserDetail
-        :userId="$route.query.userId"
-        :adm="true"
-      />
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="row">
           <q-item-section avatar>
@@ -85,7 +81,13 @@
         </div>
         
         <div class="col q-gutter-sm text-right">
-          <q-btn color="red" @click="openDialogUserPdfInfo"></q-btn>
+          <!-- <q-btn 
+            color="primary"
+            @click="openDialogUserPdfInfo"
+            label="Ficha cadastral"
+            rounded
+            outline
+          /> -->
           <q-btn
             v-if="userType && userType === 'pastor' && canEdit"
             color="secondary"
@@ -245,7 +247,7 @@
             <div v-if="otherLinks">
               <q-list>
                 <q-item
-                  v-for="(link, i) in otherLinks"
+                  v-for="(link) in otherLinks"
                   :key="link"
                   class="bg-grey-2 q-ma-md"
                   style="border-radius:1rem"
@@ -348,7 +350,7 @@
                         flat
                         unelevated
                         class="q-mx-sm"
-                        @click="removeLink(i)"
+                        @click="openDialogremoveLink(link)"
                       />
                     </q-item-label>
                   </q-item-section>
@@ -1546,7 +1548,7 @@
             </div>
             <div class="q-mb-md" >
               <q-select
-                v-model="dialogEditLink.link.pastorName"
+                v-model="dialogEditLink.link.selectedPastor"
                 label="Pastor orientador"
                 use-input
                 @filter="getPastors"
@@ -1555,7 +1557,41 @@
                 option-label="userName"
               />
             </div>
-            {{ dialogEditLink.link  }}
+            <div class="q-mb-md" >
+              <q-select
+                v-model="dialogEditLink.link.selectedOrganism"
+                label="Congregação"
+                use-input
+                @filter="getOrganismsList"
+                :options="organismList"
+                outlined
+                option-label="nome"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
           </q-card-section>
           <q-card-section v-if="dialogEditLink.link.linkType === 'Licença'">
             <div class="text-center text-h6 q-mb-md">
@@ -1614,7 +1650,7 @@
                 :options="dialogEditLink.organismsoptions"
                 outlined
                 option-label="organismName"
-                v-model="dialogEditLink.link.organismName"
+                v-model="dialogEditLink.link.selectedOrganism"
               />
             </div>
             <div class="q-mb-sm">
@@ -1741,6 +1777,42 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogRemoveLink.open"
+      >
+        <q-card style="width: 300px">
+          <q-card-section class="text-center text-h6" >
+            Deseja realmente inativar esse vínculo?
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              outlined
+              v-model="dialogRemoveLink.link.dates.finalDate"
+              label="Data fim"
+              mask="##/##/####"
+            />
+          </q-card-section>
+          <q-card-actions align="center"   >
+            <q-btn
+              label="Cancelar"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              flat
+              @click="clearDialogRemoveLink"
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              @click="confirmRemoveLink"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <DialogPdfUserInfo
         :open="dialogUserInfo.open"
         :data="userData.userDataTabs"
@@ -1820,7 +1892,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
-import UserDetail from '../../components/UserDetail.vue'
+// import UserDetail from '../../components/UserDetail.vue'
 // import html2pdf from 'html2pdf.js';
 </script>
 <script>
@@ -2043,7 +2115,14 @@ export default defineComponent({
       dialogEditLink:{
         open: false,
         link: null,
+        selectedOrganism: null,
+        selectedPastor: null,
         organismsoptions: []
+      },
+      dialogRemoveLink:{
+        linkId: null,
+        link: null,
+        open: false
       }
     };
   },
@@ -2055,12 +2134,37 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    async confirmRemoveLink() {
+      const opt = {
+        route: '/desktop/adm/removeLink',
+        body: {
+          linkId: this.dialogRemoveLink.linkId,
+          finalDate: this.dialogRemoveLink.link.dates.finalDate
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogRemoveLink()
+      this.startView()
+    },
+    clearDialogRemoveLink() {
+      this.dialogRemoveLink = {
+        linkId: null,
+        link: null,
+        open: false
+      }
+    },
     closeDialogShowPdfInfo() {
       this.dialogUserInfo.open = false
     },
     openDialogUserPdfInfo() {
       this.dialogUserInfo.open = true
     },
+    openDialogremoveLink(link) {
+      this.dialogRemoveLink.linkId = link.linkId
+      this.dialogRemoveLink.link = link
+      this.dialogRemoveLink.open = true
+    },  
     async confirmEditLink() {
       const opt = {
         route: '/desktop/adm/confirmEditPastorLink',
@@ -2079,9 +2183,14 @@ export default defineComponent({
       this.dialogEditLink.open = false
       this.dialogEditLink.link = null
       this.dialogEditLink.organismsoptions = []
+      this.dialogEditLink.selectedOrganism = null
+      this.dialogEditLink.selectedPastor = null
     },
     async getOrganismsDenominationList() {
       this.dialogEditLink.link.organismName = ''
+      this.dialogEditLink.link.organismId = ''
+      this.dialogEditLink.link.selectedOrganism.organismId = ''
+      this.dialogEditLink.link.selectedOrganism.organismName = ''
       if (this.dialogEditLink.link.denomination === 'Outra denominação') {
         const opt = {
           route: '/desktop/adm/getOtherDenomination'
@@ -2101,6 +2210,21 @@ export default defineComponent({
     editLink(link) {
       this.dialogEditLink.open = true
       this.dialogEditLink.link = {...link}
+      if (link.linkType === 'Cedido') {
+        this.dialogEditLink.link.selectedOrganism = {
+          organismName: link.organismName,
+          organismId: link.organismId
+        }
+      } else if (link.linkType === 'Estagiário') {
+        this.dialogEditLink.link.selectedOrganism = {
+          nome: link.organismName,
+          organismId: link.organismId
+        }
+        this.dialogEditLink.link.selectedPastor = {
+          userName: link.pastorName,
+          _id: link.pastorId
+        }
+      }
     },
     goToOrganismDetailFromTree(data) {
       this.$router.push('/admin/organismDetail?organismId=' + data.organismId)
@@ -2449,6 +2573,7 @@ export default defineComponent({
       let r = await useFetch(opt)
       if (r.error) return
       this.clearDialogAddStatus()
+      this.startView()
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false
