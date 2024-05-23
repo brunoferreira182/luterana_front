@@ -262,9 +262,12 @@
                       Motivo: {{ link.reason }}
                     </q-item-label>
                     <q-item-label lines="3">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="4" v-if="link.deadline !== ''">
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -281,9 +284,12 @@
                       Organismo: {{link.organismName}}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -292,9 +298,12 @@
                       Tipo: {{link.linkType}}
                     </q-item-label>
                     <q-item-label lines="2">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="3" v-if="link.deadline !== ''">
+                    <q-item-label lines="3">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="4" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -309,9 +318,12 @@
                       Local: {{link.local}}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -326,9 +338,12 @@
                       Congregação: {{ link.organismName }}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -372,14 +387,112 @@
                   class="bg-grey-2 q-my-sm q-mx-md"
                   style="border-radius: 1rem"
                 >
-                  <q-item-section>
+                <q-item-section
+                    v-if="link.linkType === 'Licença'"
+                  >
                     <q-item-label lines="1">
-                      {{ link.functionConfigName }} - {{ link.organismName }}
+                      Tipo: {{ link.linkType }}
                     </q-item-label>
                     <q-item-label lines="2">
-                      Data inicial: {{ link.functionDates.initialDate }}
+                      Motivo: {{ link.reason }}
                     </q-item-label>
                     <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Cedido'"
+                  > 
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Denominação: {{link.denomination}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Organismo: {{link.organismName}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Aposentado'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="4" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estudante'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Motivo: {{link.goal}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Local: {{link.local}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estagiário'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2" >
+                      Pastor orientador: {{ link.pastorName }}
+                    </q-item-label>
+                    <q-item-label lines="3" >
+                      Congregação: {{ link.organismName }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Atuação'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      {{ link.functionConfigName }} - {{ link.organismName }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data inicial: {{ link.functionDates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
                       Data Final: {{ link.functionDates.finalDate }}
                     </q-item-label>
                   </q-item-section>
@@ -2466,102 +2579,6 @@ export default defineComponent({
       this.userIsAdm = r.data
     },
     async confirmAddStatus(status, data) {
-      let qry
-      if (status === 'license' ) {
-        qry = {
-          subtype: status,
-          licenseOption: data.selectedlicenseOption,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'trainee') {
-        qry = {
-          subtype: status,
-          selectedOrganism: data.selectedOrganism.organismId,
-          guildingPastor: data.guildingPastor.userIdString,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'ceded') {
-        qry = {
-          subtype: status,
-          local: data.local,
-          where: data.where,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'retired') {
-        qry = {
-          subtype: status,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'student') {
-        qry = {
-          subtype: status,
-          selectedGoal: data.selectedGoal,
-          where: data.where,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'withoutCall') {
-        qry = {
-          subtype: status,
-          position: data.optionSelected,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'withCall') {
-        qry = {
-          caller: data.selectedCallOption,
-          selectedPastor: data.selectedPastor,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          organism: data.selectedOrganism,
-          deadline: null
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      }
       const opt = {
         route: '/desktop/adm/insertPastorStatus',
         body: {
@@ -2853,6 +2870,10 @@ export default defineComponent({
       this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
     },
     openDialogAddCallToPastor() {
+      if (this.callList && this.callList.length > 0) {
+        this.$q.notify('Para adicionar um vínculo, é necessário que os outros estejam inativos.')
+        return
+      }
       this.dialogAddStatus.open = true
       // this.dialogAddCallToPastor.functionType = 'Pastor'
       // this.dialogAddCallToPastor.subtype = 'chamado'
