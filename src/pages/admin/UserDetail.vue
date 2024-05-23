@@ -141,7 +141,7 @@
           <div class="q-ml-sm">
             <q-tree
               v-if="statusTree"
-              class="q-ml-sm"
+              class="q-mx-md"
               :nodes="statusTree"
               accordion
               node-key="label"
@@ -2875,6 +2875,7 @@ export default defineComponent({
         return
       }
       this.dialogAddStatus.open = true
+      console.log(this.dialogAddStatus.open)
       // this.dialogAddCallToPastor.functionType = 'Pastor'
       // this.dialogAddCallToPastor.subtype = 'chamado'
       // this.dialogAddCallToPastor.open = true
