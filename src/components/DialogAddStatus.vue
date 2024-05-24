@@ -9,6 +9,7 @@
           outlined
           :options="data.statusOptions"
           v-model="data.selectedStatusOption"
+          @update:model-value="clearDialogInfo"
         />
       </q-card-section>
       <q-card-section
@@ -757,7 +758,7 @@ function getOrganismData() {
   }
 }
 
-function verifyIfIsUserScreen() {
+async function verifyIfIsUserScreen() {
   if (props.userId && props.userName) {
     pastorDisable = true
     retiredData.value.selectedPastor = {
@@ -905,90 +906,86 @@ function verifyIfCanAddStatus() {
   } else if (data.value.selectedStatusOption.value === 'ceded') {
     if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline) || !cededData.value.selectedPastor) {
       Notify.create('Preencha qual a igreja, onde e o prazo final')
+      return
     }
     emits('confirm', data.value.selectedStatusOption.value, cededData.value)
   }
 }
 
+function clearDialogInfo() {
+
+  retiredData.value.initialDate = '';
+  retiredData.value.finalDate = '';
+  retiredData.value.deadline = null;
+  retiredData.value.noDeadline = false;
+  retiredData.value.disable = false;
+  retiredData.value.pastorDisable = false;
+
+  cededData.value.localOptions = ['Outra denominação', 'Igreja irmã'];
+  cededData.value.local = null;
+  cededData.value.where = null;
+  cededData.value.initialDate = '';
+  cededData.value.finalDate = '';
+  cededData.value.deadline = '';  
+  cededData.value.noDeadline = false;
+  cededData.value.disable = false;
+  cededData.value.pastorDisable = false;
+
+  traineeData.value.selectedOrganism = null;
+  traineeData.value.guildingPastor = null;
+  traineeData.value.initialDate = '';
+  traineeData.value.finalDate = '';
+  traineeData.value.deadline = null;  
+  traineeData.value.noDeadline = false;
+  traineeData.value.disable = false;
+  traineeData.value.pastorDisable = false;
+  traineeData.value.selectOrganismDisable = false;
+
+  licenseData.value.licenseOptions = ['Saúde', 'Estudos', 'Interesse', 'Outro'];
+  licenseData.value.selectedLicenseOption = null;
+  licenseData.value.otherReason = '';
+  licenseData.value.initialDate = '';
+  licenseData.value.finalDate = '';
+  licenseData.value.deadline = '';  
+  licenseData.value.disable = false;
+  licenseData.value.noDeadline = false;
+  licenseData.value.pastorDisable = false;
+
+  studentData.value.goalOptions = ['Intercâmbio', 'Pós-pastoral'];
+  studentData.value.selectedGoal = null;
+  studentData.value.where = '';
+  studentData.value.initialDate = '';
+  studentData.value.finalDate = '';
+  studentData.value.deadline = '';  
+  studentData.value.noDeadline = false;
+  studentData.value.disable = false;
+  studentData.value.pastorDisable = false;
+
+  withoutCallData.value.optionsType = ['Em colóquio', 'Aguardando chamado'];
+  withoutCallData.value.optionSelected = null;
+  withoutCallData.value.initialDate = '';
+  withoutCallData.value.finalDate = '';
+  withoutCallData.value.deadline = ''; 
+  withoutCallData.value.noDeadline = false;
+  withoutCallData.value.disable = false;
+  withoutCallData.value.pastorDisable = false;
+
+  withCallData.value.selectedOrgamism = [];
+  withCallData.value.callOptions = ['Diretoria Nacional', 'Congregação'];
+  withCallData.value.selectedCallOption = null;
+  withCallData.value.initialDate = '';
+  withCallData.value.finalDate = '';
+  withCallData.value.deadline = '';  
+  withCallData.value.noDeadline = false;
+  withCallData.value.disable = false;
+  withCallData.value.pastorDisable = false;
+  withCallData.value.selectOrganismDisable = false;
+
+}
+
 function closeDialog() {
   emits('closeDialog')
-  data.value.statusOptions = null;
-  data.value.selectedStatusOption = null;
-  // pastorDisable = false;
-
-retiredData.value.initialDate = '';
-retiredData.value.finalDate = '';
-retiredData.value.selectedPastor = null;
-retiredData.value.deadline = null;
-retiredData.value.noDeadline = false;
-retiredData.value.disable = false;
-retiredData.value.pastorDisable = false;
-
-cededData.value.localOptions = ['Outra denominação', 'Igreja irmã'];
-cededData.value.local = null;
-cededData.value.where = null;
-cededData.value.selectedPastor = null;
-cededData.value.initialDate = '';
-cededData.value.finalDate = '';
-cededData.value.deadline = '';  
-cededData.value.noDeadline = false;
-cededData.value.disable = false;
-cededData.value.pastorDisable = false;
-
-traineeData.value.selectedOrganism = null;
-traineeData.value.guildingPastor = null;
-traineeData.value.selectedPastor = null;
-traineeData.value.initialDate = '';
-traineeData.value.finalDate = '';
-traineeData.value.deadline = null;  
-traineeData.value.noDeadline = false;
-traineeData.value.disable = false;
-traineeData.value.pastorDisable = false;
-traineeData.value.selectOrganismDisable = false;
-
-licenseData.value.licenseOptions = ['Saúde', 'Estudos', 'Interesse', 'Outro'];
-licenseData.value.selectedLicenseOption = null;
-licenseData.value.selectedPastor = null;
-licenseData.value.otherReason = '';
-licenseData.value.initialDate = '';
-licenseData.value.finalDate = '';
-licenseData.value.deadline = '';  
-licenseData.value.disable = false;
-licenseData.value.noDeadline = false;
-licenseData.value.pastorDisable = false;
-
-studentData.value.goalOptions = ['Intercâmbio', 'Pós-pastoral'];
-studentData.value.selectedGoal = null;
-studentData.value.selectedPastor = null;
-studentData.value.where = '';
-studentData.value.initialDate = '';
-studentData.value.finalDate = '';
-studentData.value.deadline = '';  
-studentData.value.noDeadline = false;
-studentData.value.disable = false;
-studentData.value.pastorDisable = false;
-
-withoutCallData.value.optionsType = ['Em colóquio', 'Aguardando chamado'];
-withoutCallData.value.selectedPastor = null;
-withoutCallData.value.optionSelected = null;
-withoutCallData.value.initialDate = '';
-withoutCallData.value.finalDate = '';
-withoutCallData.value.deadline = ''; 
-withoutCallData.value.noDeadline = false;
-withoutCallData.value.disable = false;
-withoutCallData.value.pastorDisable = false;
-
-withCallData.value.selectedOrgamism = [];
-withCallData.value.selectedPastor = null;
-withCallData.value.callOptions = ['Diretoria Nacional', 'Congregação'];
-withCallData.value.selectedCallOption = null;
-withCallData.value.initialDate = '';
-withCallData.value.finalDate = '';
-withCallData.value.deadline = '';  
-withCallData.value.noDeadline = false;
-withCallData.value.disable = false;
-withCallData.value.pastorDisable = false;
-withCallData.value.selectOrganismDisable = false;
+  clearDialogInfo()
 }
 
 function resetOrganismName() {

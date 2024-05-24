@@ -140,7 +140,7 @@
           </div>
           <div class="q-ml-sm">
             <q-tree
-              v-if="statusTree"
+              v-if="statusTree && statusTree.length > 0"
               class="q-mx-md"
               :nodes="statusTree"
               accordion
@@ -157,37 +157,37 @@
                   />
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
                   <q-btn
+                    class="q-ml-sm"
                     v-if="canEdit"
                     color="primary"
                     icon="add"
                     flat
-                    rounded
+                    round
                     size="8px"
                     @click.stop="addAtuacaoToPastor(prop.node)"
-                  />
+                  >
+                    <q-tooltip>
+                      Adicionar atuação
+                    </q-tooltip>
+                  </q-btn>
                   <q-btn
                     v-if="canEdit"
                     color="primary"
                     icon="edit"
                     flat
-                    rounded
+                    round
                     size="8px"
                     @click.stop="editCall(prop.node)"
-                  />
-                  <q-btn
-                    v-if="canEdit"
-                    @click.stop="removeCall(prop.node)"
-                    color="red"
-                    rounded
-                    icon="delete"
-                    flat
-                    size="8px"
-                  />
+                  >
+                    <q-tooltip>
+                      Editar vínculo
+                    </q-tooltip>
+                  </q-btn>
                   <q-btn
                     v-if="canEdit"
                     @click.stop="goToOrganismDetailFromTree(prop.node)"
                     color="primary"
-                    rounded
+                    round
                     icon="arrow_forward"
                     flat
                     size="8px"
@@ -196,6 +196,7 @@
                       Ir para o organismo
                     </q-tooltip>
                   </q-btn>
+                  <div class="text-weight-ligth q-ml-lg text-grey-6">Data inicial: {{ prop.node.dates.initialDate }}</div>
                 </div>
                 <div v-if="prop.node.type === 'Atuação'">
                   <q-icon
@@ -205,24 +206,19 @@
                     class="q-mr-sm"
                   />
                   <span class="">{{ prop.node.label }}</span>
-                  <q-btn
+                  <q-btn 
+                    class="q-ml-sm"
                     v-if="canEdit"
                     color="primary"
-                    rounded
+                    round
                     icon="edit"
                     flat
                     size="8px"
                     @click.stop="editAct(prop.node)"
-                  /> 
-                  <q-btn
-                    v-if="canEdit"
-                    size="8px"
-                    color="red"
-                    rounded
-                    icon="delete"
-                    flat
-                    @click.stop="removeAct(prop.node)"
-                  />
+                  > 
+                    <q-tooltip>Editar chamado</q-tooltip>
+                  </q-btn>
+                  <div class="text-weight-ligth q-ml-lg text-grey-6">Data inicial: {{ prop.node.dates.initialDate }}</div>
                   <!-- <q-btn
                     @click.stop="goToOrganismDetailFromTree(prop.node)"
                     color="primary"
@@ -237,12 +233,12 @@
                   </q-btn> -->
                 </div>
               </template>
-              <template v-slot:default-body="prop">
+              <!-- <template v-slot:default-body="prop">
                 <div v-if="prop.node.type === 'Chamado'">
                   <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
                   <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
                 </div>
-              </template>
+              </template> -->
             </q-tree>
             <div v-if="otherLinks">
               <q-list>
@@ -357,35 +353,32 @@
                         unelevated
                         class="q-mx-sm"
                         @click="editLink(link)"
-                      />
-                      <q-btn
-                        icon="delete"
-                        color="red"
-                        rounded
-                        flat
-                        unelevated
-                        class="q-mx-sm"
-                        @click="openDialogremoveLink(link)"
-                      />
+                      >
+                        <q-tooltip>
+                          Editar vínculo
+                        </q-tooltip>                      
+                      </q-btn>
                     </q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
             </div>
           </div>
-          <q-separator class="q-mx-lg"/>
+          <q-separator class="q-mx-md"/>
           <div class="q-my-sm">
             <q-expansion-item
               label="Histórico de vínculos"
               dense-toggle
-              class="q-mx-md"
+              class="text-h6"
             >
-              <q-list>
+              <q-list class="text-subtitle1 q-mx-sm">
                 <q-item
                   v-for="link in legacyLinks"
                   :key="link"
-                  class="bg-grey-2 q-my-sm q-mx-md"
+                  class="bg-grey-2 q-my-sm q-ml-md q-mr-sm"
                   style="border-radius: 1rem"
+                  :clickable="(link.linkType === 'Atuação' && link.organismFunctionUserId) ? true : false"
+                  @click="openDialogCallDetail(link)"
                 >
                 <q-item-section
                     v-if="link.linkType === 'Licença'"
@@ -1505,6 +1498,13 @@
               class="q-pa-sm"
             />
             <q-input
+              outlined
+              v-model="dialogEditCall.data.dates.finalDate"
+              mask="##/##/####"
+              label="Data final"
+              class="q-pa-sm"
+            />
+            <q-input
               label="Prazo do chamado"
               mask="##/##/####"
               class="q-pa-sm"
@@ -1581,6 +1581,13 @@
             <q-input
               label="Data inicial"
               v-model="dialogEditAct.data.dates.initialDate"
+              class="q-pa-sm"
+              outlined
+              mask="##/##/####"
+            />
+            <q-input
+              label="Data final"
+              v-model="dialogEditAct.data.dates.finalDate"
               class="q-pa-sm"
               outlined
               mask="##/##/####"
@@ -1933,6 +1940,36 @@
         :userImage="userProfileImage"
         @closeDialog="closeDialogShowPdfInfo"
       />
+      <q-dialog
+        v-model="dialogCallDetail.open"
+      >
+        <q-card style="border-radius:1rem;width: 500px">
+          <q-card-section class="text-center text-h6">
+            {{dialogCallDetail.data.status}} - {{dialogCallDetail.data.functionName}}
+          </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Organismo:</strong> {{dialogCallDetail.data.organismName}}
+            </div>
+            <div>
+              <strong>Data inicial:</strong> {{ dialogCallDetail.data.dates.initialDate }}
+            </div>
+            <div>
+              <strong>Data final:</strong> {{ dialogCallDetail.data.dates.finalDate }}
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              rounded
+              no-caps
+              unelevated
+              @click="clearDialogCallDetail"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <!-- <div id="pdf" v-show="showPdf">
         <q-list bordered class="q-ma-md">
           <div class="text-center text-h6">
@@ -2236,6 +2273,10 @@ export default defineComponent({
         linkId: null,
         link: null,
         open: false
+      },
+      dialogCallDetail: {
+        open: false,
+        data: null
       }
     };
   },
@@ -2247,6 +2288,25 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    clearDialogCallDetail() {
+      this.dialogCallDetail.open = false
+      this.dialogCallDetail.data = null
+    },
+    async openDialogCallDetail(link) {
+      let callId = link.organismFunctionUserId
+      const opt = {
+        route: '/desktop/adm/getCallDetailByCallId',
+        body: {
+          callId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      else {
+        this.dialogCallDetail.data = r.data
+        this.dialogCallDetail.open = true
+      }
+    },
     async confirmRemoveLink() {
       const opt = {
         route: '/desktop/adm/removeLink',
@@ -2870,12 +2930,11 @@ export default defineComponent({
       this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
     },
     openDialogAddCallToPastor() {
-      if (this.callList && this.callList.length > 0) {
+      if ((this.callList && this.callList.length > 0) || (this.otherLinks && this.otherLinks.length > 0)) {
         this.$q.notify('Para adicionar um vínculo, é necessário que os outros estejam inativos.')
         return
       }
       this.dialogAddStatus.open = true
-      console.log(this.dialogAddStatus.open)
       // this.dialogAddCallToPastor.functionType = 'Pastor'
       // this.dialogAddCallToPastor.subtype = 'chamado'
       // this.dialogAddCallToPastor.open = true
