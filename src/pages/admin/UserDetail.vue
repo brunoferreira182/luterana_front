@@ -343,6 +343,27 @@
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Sem chamado'"
+                  >
+                    <q-item-section>
+                      <q-item-label lines="1">
+                        Tipo: {{link.linkType}}
+                      </q-item-label>
+                      <q-item-label lines="2">
+                        Posição: {{link.position}}
+                      </q-item-label>
+                      <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                    </q-item-section>
+                  </q-item-section>
                   <q-item-section side>
                     <q-item-label>
                       <q-btn
@@ -380,7 +401,27 @@
                   :clickable="(link.linkType === 'Atuação' && link.organismFunctionUserId) ? true : false"
                   @click="openDialogCallDetail(link)"
                 >
-                <q-item-section
+                  <q-item-section
+                    v-if="link.linkType === 'Sem chamado'"
+                  >
+                    <q-item-label lines="1">
+                      Tipo: {{ link.linkType }}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Posição: {{ link.position }}
+                    </q-item-label>
+                    
+                    <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
                     v-if="link.linkType === 'Licença'"
                   >
                     <q-item-label lines="1">
@@ -1710,7 +1751,58 @@
                 v-model="dialogEditLink.link.deadline"
                 outlined
                 mask="##/##/####"
+                @update:model-value="verifyNoDeadline"
               />
+            </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
+          </q-card-section>
+          <q-card-section
+            v-if="dialogEditLink.link.linkType === 'Sem chamado'"
+          >
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div>
+              <q-input
+                label="Posição"
+                v-model="dialogEditLink.link.position"
+                outlined
+                class="q-mb-sm"
+              />
+              <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+                @update:model-value="verifyNoDeadline"
+              />
+            </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
             </div>
           </q-card-section>
           <q-card-section v-if="dialogEditLink.link.linkType === 'Licença'">
@@ -1745,10 +1837,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Cedido'"
@@ -1793,10 +1891,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Aposentado'" 
@@ -1824,10 +1928,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Estudante'" 
@@ -1871,10 +1981,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -2267,7 +2383,8 @@ export default defineComponent({
         link: null,
         selectedOrganism: null,
         selectedPastor: null,
-        organismsoptions: []
+        organismsoptions: [],
+        noDeadline: null
       },
       dialogRemoveLink:{
         linkId: null,
@@ -2288,6 +2405,14 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    verifyNoDeadline() {
+      if (this.dialogEditLink.link.deadline !== '') {
+        this.dialogEditLink.noDeadline = false
+      }
+    },
+    changeDeadlineLinkStatus() {
+      if (this.dialogEditLink.noDeadline) this.dialogEditLink.link.deadline = ''
+    },
     clearDialogCallDetail() {
       this.dialogCallDetail.open = false
       this.dialogCallDetail.data = null
@@ -2381,6 +2506,9 @@ export default defineComponent({
       }
     },
     editLink(link) {
+      if (link.deadline) {
+        this.dialogEditLink.noDeadline = false
+      } else this.dialogEditLink.noDeadline = true
       this.dialogEditLink.open = true
       this.dialogEditLink.link = {...link}
       if (link.linkType === 'Cedido') {

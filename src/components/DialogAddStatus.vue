@@ -188,11 +188,27 @@
           use-input
           option-label="nome"
           outlined
-          @filter="getOrganismsList"
-          :options="organismsList.data"
+          @filter="getFiliatedOrganismsList"
+          :options="filiatedOrganismsList.data"
           v-model="traineeData.selectedOrganism"
           :disable="traineeData.selectOrganismDisable"
-        />
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           class="q-mb-md"
           label="qual o Pastor orientador"
@@ -615,9 +631,6 @@ import { onBeforeMount, ref } from 'vue';
 import useFetch from "../boot/useFetch";
 import { Notify } from 'quasar';
 
-const organismsList = ref({
-  data: ''
-})
 const pastorList = ref({
   data: ''
 })
@@ -1034,26 +1047,6 @@ function getFiliatedOrganismsList(val, update, abort) {
   useFetch(opt).then((r) => {
     update(() => {
       filiatedOrganismsList.value.data = r.data.list;
-    })
-  });
-}
-
-function getOrganismsList(val, update, abort) {
-  if(val.length < 3) {
-    abort()
-    return
-  }
-  const opt = {
-    route: "/desktop/adm/getOrganismsList",
-    body: {
-      searchString: val,
-      page: 1,
-      rowsPerPage: 50
-    }
-  };
-  useFetch(opt).then((r) => {
-    update(() => {
-      organismsList.value.data = r.data.list
     })
   });
 }
