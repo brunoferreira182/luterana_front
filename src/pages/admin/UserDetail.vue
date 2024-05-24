@@ -163,7 +163,7 @@
                     icon="add"
                     flat
                     round
-                    size="8px"
+                    size="12px"
                     @click.stop="addAtuacaoToPastor(prop.node)"
                   >
                     <q-tooltip>
@@ -176,7 +176,7 @@
                     icon="edit"
                     flat
                     round
-                    size="8px"
+                    size="12px"
                     @click.stop="editCall(prop.node)"
                   >
                     <q-tooltip>
@@ -190,7 +190,7 @@
                     round
                     icon="arrow_forward"
                     flat
-                    size="8px"
+                    size="12px"
                   >
                     <q-tooltip>
                       Ir para o organismo
@@ -2487,7 +2487,7 @@ export default defineComponent({
     editCall(data) {
       if (data.deadline) {
         this.dialogEditCall.noDeadline = false
-      }
+      } else this.dialogEditCall.noDeadline = true
       this.dialogEditCall.data = {...data}
       this.dialogEditCall.selectedOrganism = {
         nome: data.organismName,
