@@ -191,6 +191,8 @@
             <div v-if="prop.node.type === 'Chamado'">
               <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
               <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
+              <div v-if="!prop.node.deadline" class="text-weight-light">Prazo final:  indefinido</div>
+
             </div>
           </template>
           </q-tree>
@@ -202,6 +204,22 @@
                 class="bg-grey-2 q-ma-md"
                 style="border-radius:1rem"
               > 
+                <q-item-section
+                  v-if="link.linkType === 'Sem chamado'"
+                >
+                  <q-item-label lines="1">
+                    Tipo: {{ link.linkType }}
+                  </q-item-label>
+                  <q-item-label lines="2">
+                    Motivo: {{ link.reason }}
+                  </q-item-label>
+                  <q-item-label lines="3">
+                    Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                  </q-item-label>
+                  <q-item-label lines="4" v-if="link.deadline !== ''">
+                    Prazo final: {{link.deadline}}
+                  </q-item-label>
+                </q-item-section>
                 <q-item-section
                   v-if="link.linkType === 'Licença'"
                 >

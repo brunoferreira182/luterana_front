@@ -146,7 +146,7 @@
               ref="tree"
             >
               <template v-slot:default-header="prop">
-                <div v-if="prop.node.type === 'Chamado'">
+                <div v-if="prop.node.type === 'Chamado'" >
                   <q-icon
                     name="donut_small"
                     color="primary"
@@ -154,6 +154,7 @@
                     class="q-mr-sm"
                   />
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
+                  <span class="text-weight-bold">{{ prop.node.type }}</span>
                   <q-btn
                     v-if="canEdit"
                     color="primary"
@@ -237,7 +238,7 @@
               </template>
               <template v-slot:default-body="prop">
                 <div v-if="prop.node.type === 'Chamado'">
-                  <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
+                  <span class="">Data inicial: {{ prop.node.dates.initialDate }}</span>
                   <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
                 </div>
               </template>

@@ -59,8 +59,16 @@
           v-model="retiredData.finalDate"
         />
         <q-input
+          v-if="!retiredData.noDeadline"
           label="Prazo final"
           mask="##/##/####"
+          outlined
+          :disable="retiredData.disable"
+          v-model="retiredData.deadline"
+        />
+        <q-input
+          v-if="retiredData.noDeadline"
+          label="Prazo final"
           outlined
           :disable="retiredData.disable"
           v-model="retiredData.deadline"
@@ -135,11 +143,20 @@
           v-model="licenseData.finalDate"
         />
         <q-input
+          v-if="!licenseData.noDeadline"
           class="q-mb-md"
           label="Prazo final"
           outlined
           :disable="licenseData.disable"
           mask="##/##/####"
+          v-model="licenseData.deadline"
+        />
+        <q-input
+          v-if="licenseData.noDeadline"
+          class="q-mb-md"
+          label="Prazo final"
+          outlined
+          :disable="licenseData.disable"
           v-model="licenseData.deadline"
         />
         <q-checkbox
@@ -217,10 +234,19 @@
           v-model="traineeData.finalDate"
         />
         <q-input
+          v-if="!traineeData.noDeadline"
           class="q-mb-md"
           label="Prazo final"
           outlined
           mask="##/##/####"
+          :disable="traineeData.disable"
+          v-model="traineeData.deadline"
+        />
+        <q-input
+          v-if="traineeData.noDeadline"
+          class="q-mb-md"
+          label="Prazo final"
+          outlined
           :disable="traineeData.disable"
           v-model="traineeData.deadline"
         />
@@ -285,10 +311,19 @@
           mask="##/##/####"
         />
         <q-input
+          v-if="!withoutCallData.noDeadline"
           v-model="withoutCallData.deadline"
           outlined
           class="q-mb-md"
           mask="##/##/####"
+          :disable="withoutCallData.disable"
+          label="Prazo final"
+        />
+        <q-input
+          v-if="withoutCallData.noDeadline"
+          v-model="withoutCallData.deadline"
+          outlined
+          class="q-mb-md"
           :disable="withoutCallData.disable"
           label="Prazo final"
         />
@@ -359,11 +394,21 @@
           mask="##/##/####"
         />
         <q-input
+          v-if="!studentData.noDeadline"
           v-model="studentData.deadline"
           outlined
           class="q-mb-md"
           label="Prazo final"
           mask="##/##/####"
+          :disable="studentData.disable"
+        />
+        <q-input
+          v-if="studentData.noDeadline"
+          v-model="studentData.deadline"
+          outlined
+          class="q-mb-md"
+          label="Prazo final"
+          
           :disable="studentData.disable"
         />
         <q-checkbox
@@ -488,9 +533,18 @@
           v-model="withCallData.finalDate"
         />
         <q-input
+          v-if="!withCallData.noDeadline"
           class="q-mb-md"
           outlined
           mask="##/##/####"
+          label="Prazo final"
+          v-model="withCallData.deadline"
+          :disable="withCallData.disable"
+        />
+        <q-input
+          v-if="withCallData.noDeadline"
+          class="q-mb-md"
+          outlined
           label="Prazo final"
           v-model="withCallData.deadline"
           :disable="withCallData.disable"
@@ -574,9 +628,18 @@
           v-model="cededData.finalDate"
         />
         <q-input
+          v-if="!cededData.noDeadline"
           class="q-mb-md"
           outlined
           mask="##/##/####"
+          label="Prazo final"
+          v-model="cededData.deadline"
+          :disable="cededData.disable"
+        />
+        <q-input
+          v-if="cededData.noDeadline"
+          class="q-mb-md"
+          outlined
           label="Prazo final"
           v-model="cededData.deadline"
           :disable="cededData.disable"
@@ -808,58 +871,67 @@ async function getStatusOptions() {
 
 function changeCededDeadline() {
   if (cededData.value.noDeadline) {
-    cededData.value.deadline = '',
+    cededData.value.deadline = 'indefinido',
     cededData.value.disable = true
   } else {
     cededData.value.disable = false
+    cededData.value.deadline = ''
   }
 }
 function changewithCallDeadline() {
+  console.log(withCallData.value.noDeadline)
   if (withCallData.value.noDeadline) {
-    withCallData.value.deadline = '',
+    withCallData.value.deadline = 'indefinido',
+    
     withCallData.value.disable = true
   } else {
     withCallData.value.disable = false
+    withCallData.value.deadline = ''
   }
 }
 function changeStudentDeadline() {
   if (studentData.value.noDeadline) {
-    studentData.value.deadline = '',
+    studentData.value.deadline = 'indefinido',
     studentData.value.disable = true
   } else {
     studentData.value.disable = false
+    studentData.value.deadline = ''
   }
 }
 function changewithoutCallDeadline() {
   if (withoutCallData.value.noDeadline) {
-    withoutCallData.value.deadline = '',
+    withoutCallData.value.deadline = 'indefinido',
     withoutCallData.value.disable = true
   } else {
     withoutCallData.value.disable = false
+    withoutCallData.value.deadline = ''
   }
 }
 function changeTraineeDeadline() {
   if (traineeData.value.noDeadline) {
-    traineeData.value.deadline = '',
+    traineeData.value.deadline = 'indefinido',
     traineeData.value.disable = true
   } else {
     traineeData.value.disable = false
+    traineeData.value.deadline = ''
   }
 }
 function changeRetiredDeadline() {
   if (retiredData.value.noDeadline) {
-    retiredData.value.deadline = '',
+    retiredData.value.deadline = 'indefinido',
     retiredData.value.disable = true
   } else {
     retiredData.value.disable = false
+    retiredData.value.deadline = ''
   }
 }
 function changeLicenseDeadline() {
   if (licenseData.value.noDeadline) {
-    licenseData.value.deadline = '',
+    licenseData.value.deadline = 'indefinido',
     licenseData.value.disable = true
   } else {
     licenseData.value.disable = false
+    licenseData.value.deadline = ''
   }
 }
 
