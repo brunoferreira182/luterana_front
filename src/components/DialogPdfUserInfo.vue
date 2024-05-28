@@ -13,7 +13,7 @@
               <div class="text-h6 text-center">
                 <strong class="text-center">Identificação, endereço, e-mail e telefones</strong>
               </div>
-              <div class="q-ml-sm row" >
+              <div class="q-ml-sm row">
                 <div class="col-9">
                   <p>Nome : <strong>{{  props.data[0].fields[0].value }}</strong></p>
                   <p>Endereço: {{ props.data[3].fields[0].value[0].street}}, {{  props.data[3].fields[0].value[0].number }} </p>
