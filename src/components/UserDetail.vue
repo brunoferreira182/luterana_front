@@ -191,6 +191,8 @@
             <div v-if="prop.node.type === 'Chamado'">
               <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
               <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
+              <div v-if="!prop.node.deadline" class="text-weight-light">Prazo final:  indefinido</div>
+
             </div>
           </template>
           </q-tree>
@@ -202,6 +204,22 @@
                 class="bg-grey-2 q-ma-md"
                 style="border-radius:1rem"
               > 
+                <q-item-section
+                  v-if="link.linkType === 'Sem chamado'"
+                >
+                  <q-item-label lines="1">
+                    Tipo: {{ link.linkType }}
+                  </q-item-label>
+                  <q-item-label lines="2">
+                    Motivo: {{ link.reason }}
+                  </q-item-label>
+                  <q-item-label lines="3">
+                    Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                  </q-item-label>
+                  <q-item-label lines="4" v-if="link.deadline !== ''">
+                    Prazo final: {{link.deadline}}
+                  </q-item-label>
+                </q-item-section>
                 <q-item-section
                   v-if="link.linkType === 'Licença'"
                 >
@@ -660,7 +678,7 @@
         :organismId="data.dialogActing.organismCallerSelected.organismId"
         @confirm="confirmAddActing"
       />
-      Oi macaco
+    
     </q-page>
   </q-page-container>
 </template>
@@ -740,19 +758,19 @@
   }
 
   async function confirmAddActing(info) {
-    data = info._value
+    data.value = info._value; 
     const opt = {
       route: '/desktop/adm/insertActingToCall',
       body: {
         data: info,
-        callId: data.value.dialogActing.callId,
-        userId: data.value.$route.query.userId
+        callId: data.value.dialogActing.callId, 
+        userId: data.value.$route.query.userId 
       }
-    }
-    let r = await useFetch(opt)
-    if (r.error) return
-    this.clearDialogACting()
-    this.startView()
+    };
+    let r = await useFetch(opt);
+    if (r.error) return;
+    clearDialogActing(); 
+    startView();
   }
 
   async function confirmAddStatus(status, info) {
@@ -816,11 +834,11 @@
       this.$q.notify("Ocorreu um erro, tente novamente");
       return
     }
-    if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.otherLinks && r.data.userLinksToOrganisms.links.length > 0) {
-      data.value.callList = r.data.userLinksToOrganisms.links
+    if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links.length > 0) {
+      data.value.callList = r.data.userLinksToOrganisms.links;
     }
     if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.otherLinks && r.data.userLinksToOrganisms.otherLinks.length > 0) {
-      data.value.otherLinks = r.data.userLinksToOrganisms.otherLinks
+      data.value.otherLinks = r.data.userLinksToOrganisms.otherLinks;
     }
     data.value.userCanEdit = r.data.canEdit
     data.value.userLinks = r.data.userLinksToOrganisms.data
@@ -842,33 +860,34 @@
   }
 
   function verifyLinksToOrganize() {
-    let congregationLinks = []
-    let parishLinks = []
+    let congregationLinks = [];
+    let parishLinks = [];
     if (data.value.userLinks && data.value.userLinks.length === 2) {
       data.value.userLinks.forEach((link, i) => {
         if (link.organismConfigName === 'Distrito') {
-          data.value.userLinks.splice(i, 1)
+          data.value.userLinks.splice(i, 1);
         }
         if (link.organismConfigName === 'Congregação') {
           congregationLinks.push({
             index: i
-          })
+          });
         }
         if (link.organismConfigName === 'Paróquia') {
           parishLinks.push({
             index: i
-          })
+          });
         }
         if (congregationLinks.length > 0) {
           if (parishLinks.length > 0) {
             parishLinks.forEach((pl) => {
-              this.userLinks.splice(pl.index, 1)
-            })
+              data.value.userLinks.splice(pl.index, 1); 
+            });
           }
         }
-      })
+      });
     }
   }
+
 
   async function getPastoralStatusTypes() {
     const opt = {

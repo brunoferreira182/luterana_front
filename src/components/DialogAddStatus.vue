@@ -9,6 +9,7 @@
           outlined
           :options="data.statusOptions"
           v-model="data.selectedStatusOption"
+          @update:model-value="clearDialogInfo"
         />
       </q-card-section>
       <q-card-section
@@ -59,8 +60,16 @@
           v-model="retiredData.finalDate"
         />
         <q-input
+          v-if="!retiredData.noDeadline"
           label="Prazo final"
           mask="##/##/####"
+          outlined
+          :disable="retiredData.disable"
+          v-model="retiredData.deadline"
+        />
+        <q-input
+          v-if="retiredData.noDeadline"
+          label="Prazo final"
           outlined
           :disable="retiredData.disable"
           v-model="retiredData.deadline"
@@ -135,11 +144,20 @@
           v-model="licenseData.finalDate"
         />
         <q-input
+          v-if="!licenseData.noDeadline"
           class="q-mb-md"
           label="Prazo final"
           outlined
           :disable="licenseData.disable"
           mask="##/##/####"
+          v-model="licenseData.deadline"
+        />
+        <q-input
+          v-if="licenseData.noDeadline"
+          class="q-mb-md"
+          label="Prazo final"
+          outlined
+          :disable="licenseData.disable"
           v-model="licenseData.deadline"
         />
         <q-checkbox
@@ -187,11 +205,27 @@
           use-input
           option-label="nome"
           outlined
-          @filter="getOrganismsList"
-          :options="organismsList.data"
+          @filter="getFiliatedOrganismsList"
+          :options="filiatedOrganismsList.data"
           v-model="traineeData.selectedOrganism"
           :disable="traineeData.selectOrganismDisable"
-        />
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           class="q-mb-md"
           label="qual o Pastor orientador"
@@ -217,10 +251,19 @@
           v-model="traineeData.finalDate"
         />
         <q-input
+          v-if="!traineeData.noDeadline"
           class="q-mb-md"
           label="Prazo final"
           outlined
           mask="##/##/####"
+          :disable="traineeData.disable"
+          v-model="traineeData.deadline"
+        />
+        <q-input
+          v-if="traineeData.noDeadline"
+          class="q-mb-md"
+          label="Prazo final"
+          outlined
           :disable="traineeData.disable"
           v-model="traineeData.deadline"
         />
@@ -285,10 +328,19 @@
           mask="##/##/####"
         />
         <q-input
+          v-if="!withoutCallData.noDeadline"
           v-model="withoutCallData.deadline"
           outlined
           class="q-mb-md"
           mask="##/##/####"
+          :disable="withoutCallData.disable"
+          label="Prazo final"
+        />
+        <q-input
+          v-if="withoutCallData.noDeadline"
+          v-model="withoutCallData.deadline"
+          outlined
+          class="q-mb-md"
           :disable="withoutCallData.disable"
           label="Prazo final"
         />
@@ -359,11 +411,21 @@
           mask="##/##/####"
         />
         <q-input
+          v-if="!studentData.noDeadline"
           v-model="studentData.deadline"
           outlined
           class="q-mb-md"
           label="Prazo final"
           mask="##/##/####"
+          :disable="studentData.disable"
+        />
+        <q-input
+          v-if="studentData.noDeadline"
+          v-model="studentData.deadline"
+          outlined
+          class="q-mb-md"
+          label="Prazo final"
+          
           :disable="studentData.disable"
         />
         <q-checkbox
@@ -488,9 +550,18 @@
           v-model="withCallData.finalDate"
         />
         <q-input
+          v-if="!withCallData.noDeadline"
           class="q-mb-md"
           outlined
           mask="##/##/####"
+          label="Prazo final"
+          v-model="withCallData.deadline"
+          :disable="withCallData.disable"
+        />
+        <q-input
+          v-if="withCallData.noDeadline"
+          class="q-mb-md"
+          outlined
           label="Prazo final"
           v-model="withCallData.deadline"
           :disable="withCallData.disable"
@@ -511,7 +582,6 @@
           label="Nome do pastor"
           class="q-mb-md"
           option-label="userName"
-          :options="pastorList.data"
           hint="Pastor que ocupará a função"
           @filter="getUsers"
           :loading="false"
@@ -574,9 +644,18 @@
           v-model="cededData.finalDate"
         />
         <q-input
+          v-if="!cededData.noDeadline"
           class="q-mb-md"
           outlined
           mask="##/##/####"
+          label="Prazo final"
+          v-model="cededData.deadline"
+          :disable="cededData.disable"
+        />
+        <q-input
+          v-if="cededData.noDeadline"
+          class="q-mb-md"
+          outlined
           label="Prazo final"
           v-model="cededData.deadline"
           :disable="cededData.disable"
@@ -595,6 +674,7 @@
           unelevated
           flat
           no-caps
+          @click="closeDialog"
         />
         <q-btn
           label="Adicionar status"
@@ -614,9 +694,6 @@ import { onBeforeMount, ref } from 'vue';
 import useFetch from "../boot/useFetch";
 import { Notify } from 'quasar';
 
-const organismsList = ref({
-  data: ''
-})
 const pastorList = ref({
   data: ''
 })
@@ -757,7 +834,7 @@ function getOrganismData() {
   }
 }
 
-function verifyIfIsUserScreen() {
+async function verifyIfIsUserScreen() {
   if (props.userId && props.userName) {
     pastorDisable = true
     retiredData.value.selectedPastor = {
@@ -803,63 +880,77 @@ async function getStatusOptions() {
     }
   })
   data.value.statusOptions = r.data
+  data.value.statusOptions.forEach((status, i) => {
+    if (status.label === 'Atuação') {
+      data.value.statusOptions.splice(i, 1)
+    }
+  })
 }
 
 
 function changeCededDeadline() {
   if (cededData.value.noDeadline) {
-    cededData.value.deadline = '',
+    cededData.value.deadline = 'indefinido',
     cededData.value.disable = true
   } else {
     cededData.value.disable = false
+    cededData.value.deadline = ''
   }
 }
 function changewithCallDeadline() {
+  console.log(withCallData.value.noDeadline)
   if (withCallData.value.noDeadline) {
-    withCallData.value.deadline = '',
+    withCallData.value.deadline = 'indefinido',
+    
     withCallData.value.disable = true
   } else {
     withCallData.value.disable = false
+    withCallData.value.deadline = ''
   }
 }
 function changeStudentDeadline() {
   if (studentData.value.noDeadline) {
-    studentData.value.deadline = '',
+    studentData.value.deadline = 'indefinido',
     studentData.value.disable = true
   } else {
     studentData.value.disable = false
+    studentData.value.deadline = ''
   }
 }
 function changewithoutCallDeadline() {
   if (withoutCallData.value.noDeadline) {
-    withoutCallData.value.deadline = '',
+    withoutCallData.value.deadline = 'indefinido',
     withoutCallData.value.disable = true
   } else {
     withoutCallData.value.disable = false
+    withoutCallData.value.deadline = ''
   }
 }
 function changeTraineeDeadline() {
   if (traineeData.value.noDeadline) {
-    traineeData.value.deadline = '',
+    traineeData.value.deadline = 'indefinido',
     traineeData.value.disable = true
   } else {
     traineeData.value.disable = false
+    traineeData.value.deadline = ''
   }
 }
 function changeRetiredDeadline() {
   if (retiredData.value.noDeadline) {
-    retiredData.value.deadline = '',
+    retiredData.value.deadline = 'indefinido',
     retiredData.value.disable = true
   } else {
     retiredData.value.disable = false
+    retiredData.value.deadline = ''
   }
 }
 function changeLicenseDeadline() {
   if (licenseData.value.noDeadline) {
-    licenseData.value.deadline = '',
+    licenseData.value.deadline = 'indefinido',
     licenseData.value.disable = true
   } else {
     licenseData.value.disable = false
+    licenseData.value.deadline = ''
   }
 }
 
@@ -905,13 +996,86 @@ function verifyIfCanAddStatus() {
   } else if (data.value.selectedStatusOption.value === 'ceded') {
     if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline) || !cededData.value.selectedPastor) {
       Notify.create('Preencha qual a igreja, onde e o prazo final')
+      return
     }
     emits('confirm', data.value.selectedStatusOption.value, cededData.value)
   }
 }
 
+function clearDialogInfo() {
+
+  retiredData.value.initialDate = '';
+  retiredData.value.finalDate = '';
+  retiredData.value.deadline = null;
+  retiredData.value.noDeadline = false;
+  retiredData.value.disable = false;
+  retiredData.value.pastorDisable = false;
+
+  cededData.value.localOptions = ['Outra denominação', 'Igreja irmã'];
+  cededData.value.local = null;
+  cededData.value.where = null;
+  cededData.value.initialDate = '';
+  cededData.value.finalDate = '';
+  cededData.value.deadline = '';  
+  cededData.value.noDeadline = false;
+  cededData.value.disable = false;
+  cededData.value.pastorDisable = false;
+
+  traineeData.value.selectedOrganism = null;
+  traineeData.value.guildingPastor = null;
+  traineeData.value.initialDate = '';
+  traineeData.value.finalDate = '';
+  traineeData.value.deadline = null;  
+  traineeData.value.noDeadline = false;
+  traineeData.value.disable = false;
+  traineeData.value.pastorDisable = false;
+  traineeData.value.selectOrganismDisable = false;
+
+  licenseData.value.licenseOptions = ['Saúde', 'Estudos', 'Interesse', 'Outro'];
+  licenseData.value.selectedLicenseOption = null;
+  licenseData.value.otherReason = '';
+  licenseData.value.initialDate = '';
+  licenseData.value.finalDate = '';
+  licenseData.value.deadline = '';  
+  licenseData.value.disable = false;
+  licenseData.value.noDeadline = false;
+  licenseData.value.pastorDisable = false;
+
+  studentData.value.goalOptions = ['Intercâmbio', 'Pós-pastoral'];
+  studentData.value.selectedGoal = null;
+  studentData.value.where = '';
+  studentData.value.initialDate = '';
+  studentData.value.finalDate = '';
+  studentData.value.deadline = '';  
+  studentData.value.noDeadline = false;
+  studentData.value.disable = false;
+  studentData.value.pastorDisable = false;
+
+  withoutCallData.value.optionsType = ['Em colóquio', 'Aguardando chamado'];
+  withoutCallData.value.optionSelected = null;
+  withoutCallData.value.initialDate = '';
+  withoutCallData.value.finalDate = '';
+  withoutCallData.value.deadline = ''; 
+  withoutCallData.value.noDeadline = false;
+  withoutCallData.value.disable = false;
+  withoutCallData.value.pastorDisable = false;
+
+  withCallData.value.selectedOrgamism = [];
+  withCallData.value.callOptions = ['Diretoria Nacional', 'Congregação'];
+  withCallData.value.selectedCallOption = null;
+  withCallData.value.initialDate = '';
+  withCallData.value.finalDate = '';
+  withCallData.value.deadline = '';  
+  withCallData.value.noDeadline = false;
+  withCallData.value.disable = false;
+  withCallData.value.pastorDisable = false;
+  withCallData.value.selectOrganismDisable = false;
+
+}
+
 function closeDialog() {
   emits('closeDialog')
+  clearDialogInfo()
 }
 
 function resetOrganismName() {
@@ -960,26 +1124,6 @@ function getFiliatedOrganismsList(val, update, abort) {
   useFetch(opt).then((r) => {
     update(() => {
       filiatedOrganismsList.value.data = r.data.list;
-    })
-  });
-}
-
-function getOrganismsList(val, update, abort) {
-  if(val.length < 3) {
-    abort()
-    return
-  }
-  const opt = {
-    route: "/desktop/adm/getOrganismsList",
-    body: {
-      searchString: val,
-      page: 1,
-      rowsPerPage: 50
-    }
-  };
-  useFetch(opt).then((r) => {
-    update(() => {
-      organismsList.value.data = r.data.list
     })
   });
 }

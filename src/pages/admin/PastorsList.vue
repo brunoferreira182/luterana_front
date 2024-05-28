@@ -100,6 +100,7 @@
               />
             </q-td>
             <q-td
+              style="cursor: pointer;"
               v-for="col in props.cols"
               :key="col.name"
               :props="props"

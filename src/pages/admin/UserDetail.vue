@@ -85,7 +85,13 @@
         </div>
         
         <div class="col q-gutter-sm text-right">
-          <q-btn color="red" @click="openDialogUserPdfInfo"></q-btn>
+          <!-- <q-btn 
+            color="primary"
+            @click="openDialogUserPdfInfo"
+            label="Ficha cadastral"
+            rounded
+            outline
+          /> -->
           <q-btn
             v-if="userType && userType === 'pastor' && canEdit"
             color="secondary"
@@ -138,15 +144,15 @@
           </div>
           <div class="q-ml-sm">
             <q-tree
-              v-if="statusTree"
-              class="q-ml-sm"
+              v-if="statusTree && statusTree.length > 0"
+              class="q-mx-md"
               :nodes="statusTree"
               accordion
               node-key="label"
               ref="tree"
             >
               <template v-slot:default-header="prop">
-                <div v-if="prop.node.type === 'Chamado'">
+                <div v-if="prop.node.type === 'Chamado'" >
                   <q-icon
                     name="donut_small"
                     color="primary"
@@ -154,46 +160,48 @@
                     class="q-mr-sm"
                   />
                   <span class="text-weight-bold">{{ prop.node.label }}</span>
+                  <span class="text-weight-bold">{{ prop.node.type }}</span>
                   <q-btn
+                    class="q-ml-sm"
                     v-if="canEdit"
                     color="primary"
                     icon="add"
                     flat
-                    rounded
-                    size="8px"
+                    round
+                    size="12px"
                     @click.stop="addAtuacaoToPastor(prop.node)"
-                  />
+                  >
+                    <q-tooltip>
+                      Adicionar atuação
+                    </q-tooltip>
+                  </q-btn>
                   <q-btn
                     v-if="canEdit"
                     color="primary"
                     icon="edit"
                     flat
-                    rounded
-                    size="8px"
+                    round
+                    size="12px"
                     @click.stop="editCall(prop.node)"
-                  />
-                  <q-btn
-                    v-if="canEdit"
-                    @click.stop="removeCall(prop.node)"
-                    color="red"
-                    rounded
-                    icon="delete"
-                    flat
-                    size="8px"
-                  />
+                  >
+                    <q-tooltip>
+                      Editar vínculo
+                    </q-tooltip>
+                  </q-btn>
                   <q-btn
                     v-if="canEdit"
                     @click.stop="goToOrganismDetailFromTree(prop.node)"
                     color="primary"
-                    rounded
+                    round
                     icon="arrow_forward"
                     flat
-                    size="8px"
+                    size="12px"
                   >
                     <q-tooltip>
                       Ir para o organismo
                     </q-tooltip>
                   </q-btn>
+                  <div class="text-weight-ligth q-ml-lg text-grey-6">Data inicial: {{ prop.node.dates.initialDate }}</div>
                 </div>
                 <div v-if="prop.node.type === 'Atuação'">
                   <q-icon
@@ -203,24 +211,19 @@
                     class="q-mr-sm"
                   />
                   <span class="">{{ prop.node.label }}</span>
-                  <q-btn
+                  <q-btn 
+                    class="q-ml-sm"
                     v-if="canEdit"
                     color="primary"
-                    rounded
+                    round
                     icon="edit"
                     flat
                     size="8px"
                     @click.stop="editAct(prop.node)"
-                  /> 
-                  <q-btn
-                    v-if="canEdit"
-                    size="8px"
-                    color="red"
-                    rounded
-                    icon="delete"
-                    flat
-                    @click.stop="removeAct(prop.node)"
-                  />
+                  > 
+                    <q-tooltip>Editar chamado</q-tooltip>
+                  </q-btn>
+                  <div class="text-weight-ligth q-ml-lg text-grey-6">Data inicial: {{ prop.node.dates.initialDate }}</div>
                   <!-- <q-btn
                     @click.stop="goToOrganismDetailFromTree(prop.node)"
                     color="primary"
@@ -235,17 +238,17 @@
                   </q-btn> -->
                 </div>
               </template>
-              <template v-slot:default-body="prop">
+              <!-- <template v-slot:default-body="prop">
                 <div v-if="prop.node.type === 'Chamado'">
-                  <span class="text-weight-light">Data inicial: {{ prop.node.dates.initialDate }}</span>
+                  <span class="">Data inicial: {{ prop.node.dates.initialDate }}</span>
                   <div v-if="prop.node.deadline" class="text-weight-light">Prazo final: {{ prop.node.deadline }}</div>
                 </div>
-              </template>
+              </template> -->
             </q-tree>
             <div v-if="otherLinks">
               <q-list>
                 <q-item
-                  v-for="(link, i) in otherLinks"
+                  v-for="(link) in otherLinks"
                   :key="link"
                   class="bg-grey-2 q-ma-md"
                   style="border-radius:1rem"
@@ -260,9 +263,12 @@
                       Motivo: {{ link.reason }}
                     </q-item-label>
                     <q-item-label lines="3">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="4" v-if="link.deadline !== ''">
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -279,9 +285,12 @@
                       Organismo: {{link.organismName}}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -290,9 +299,12 @@
                       Tipo: {{link.linkType}}
                     </q-item-label>
                     <q-item-label lines="2">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="3" v-if="link.deadline !== ''">
+                    <q-item-label lines="3">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="4" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -307,9 +319,12 @@
                       Local: {{link.local}}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
                     </q-item-label>
-                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
                   </q-item-section>
@@ -324,11 +339,35 @@
                       Congregação: {{ link.organismName }}
                     </q-item-label>
                     <q-item-label lines="4">
-                      Data inicial: {{ link.dates.initialDate }} / Data final: {{link.dates.finalDate}}
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Sem chamado'"
+                  >
+                    <q-item-section>
+                      <q-item-label lines="1">
+                        Tipo: {{link.linkType}}
+                      </q-item-label>
+                      <q-item-label lines="2">
+                        Posição: {{link.position}}
+                      </q-item-label>
+                      <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
                     </q-item-label>
                     <q-item-label lines="5" v-if="link.deadline !== ''">
                       Prazo final: {{link.deadline}}
                     </q-item-label>
+                    </q-item-section>
                   </q-item-section>
                   <q-item-section side>
                     <q-item-label>
@@ -340,44 +379,159 @@
                         unelevated
                         class="q-mx-sm"
                         @click="editLink(link)"
-                      />
-                      <q-btn
-                        icon="delete"
-                        color="red"
-                        rounded
-                        flat
-                        unelevated
-                        class="q-mx-sm"
-                        @click="removeLink(i)"
-                      />
+                      >
+                        <q-tooltip>
+                          Editar vínculo
+                        </q-tooltip>                      
+                      </q-btn>
                     </q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
             </div>
           </div>
-          <q-separator class="q-mx-lg"/>
+          <q-separator class="q-mx-md"/>
           <div class="q-my-sm">
             <q-expansion-item
               label="Histórico de vínculos"
               dense-toggle
-              class="q-mx-md"
+              class="text-h6"
             >
-              <q-list>
+              <q-list class="text-subtitle1 q-mx-sm">
                 <q-item
                   v-for="link in legacyLinks"
                   :key="link"
-                  class="bg-grey-2 q-my-sm q-mx-md"
+                  class="bg-grey-2 q-my-sm q-ml-md q-mr-sm"
                   style="border-radius: 1rem"
+                  :clickable="(link.linkType === 'Atuação' && link.organismFunctionUserId) ? true : false"
+                  @click="openDialogCallDetail(link)"
                 >
-                  <q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Sem chamado'"
+                  >
                     <q-item-label lines="1">
-                      {{ link.functionConfigName }} - {{ link.organismName }}
+                      Tipo: {{ link.linkType }}
                     </q-item-label>
                     <q-item-label lines="2">
-                      Data inicial: {{ link.functionDates.initialDate }}
+                      Posição: {{ link.position }}
+                    </q-item-label>
+                    
+                    <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Licença'"
+                  >
+                    <q-item-label lines="1">
+                      Tipo: {{ link.linkType }}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Motivo: {{ link.reason }}
                     </q-item-label>
                     <q-item-label lines="3">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="5" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    v-if="link.linkType === 'Cedido'"
+                  > 
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Denominação: {{link.denomination}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Organismo: {{link.organismName}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Aposentado'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="4" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estudante'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      Motivo: {{link.goal}}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Local: {{link.local}}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Estagiário'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2" >
+                      Pastor orientador: {{ link.pastorName }}
+                    </q-item-label>
+                    <q-item-label lines="3" >
+                      Congregação: {{ link.organismName }}
+                    </q-item-label>
+                    <q-item-label lines="4">
+                      Data inicial: {{ link.dates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="5">
+                      Data final: {{link.dates.finalDate}}
+                    </q-item-label>
+                    <q-item-label lines="6" v-if="link.deadline !== ''">
+                      Prazo final: {{link.deadline}}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section v-if="link.linkType === 'Atuação'">
+                    <q-item-label lines="1">
+                      Tipo: {{link.linkType}}
+                    </q-item-label>
+                    <q-item-label lines="2">
+                      {{ link.functionConfigName }} - {{ link.organismName }}
+                    </q-item-label>
+                    <q-item-label lines="3">
+                      Data inicial: {{ link.functionDates.initialDate }}
+                    </q-item-label>
+                    <q-item-label lines="4">
                       Data Final: {{ link.functionDates.finalDate }}
                     </q-item-label>
                   </q-item-section>
@@ -1390,6 +1544,13 @@
               class="q-pa-sm"
             />
             <q-input
+              outlined
+              v-model="dialogEditCall.data.dates.finalDate"
+              mask="##/##/####"
+              label="Data final"
+              class="q-pa-sm"
+            />
+            <q-input
               label="Prazo do chamado"
               mask="##/##/####"
               class="q-pa-sm"
@@ -1470,6 +1631,13 @@
               outlined
               mask="##/##/####"
             />
+            <q-input
+              label="Data final"
+              v-model="dialogEditAct.data.dates.finalDate"
+              class="q-pa-sm"
+              outlined
+              mask="##/##/####"
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1546,7 +1714,7 @@
             </div>
             <div class="q-mb-md" >
               <q-select
-                v-model="dialogEditLink.link.pastorName"
+                v-model="dialogEditLink.link.selectedPastor"
                 label="Pastor orientador"
                 use-input
                 @filter="getPastors"
@@ -1555,7 +1723,92 @@
                 option-label="userName"
               />
             </div>
-            {{ dialogEditLink.link  }}
+            <div class="q-mb-md" >
+              <q-select
+                v-model="dialogEditLink.link.selectedOrganism"
+                label="Congregação"
+                use-input
+                @filter="getOrganismsList"
+                :options="organismList"
+                outlined
+                option-label="nome"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+                @update:model-value="verifyNoDeadline"
+              />
+            </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
+          </q-card-section>
+          <q-card-section
+            v-if="dialogEditLink.link.linkType === 'Sem chamado'"
+          >
+            <div class="text-center text-h6 q-mb-md">
+              {{ dialogEditLink.link.linkType }}
+            </div>
+            <div>
+              <q-input
+                label="Posição"
+                v-model="dialogEditLink.link.position"
+                outlined
+                class="q-mb-sm"
+              />
+              <div class="q-mb-sm">
+              <q-input
+                label="Data inicial"
+                v-model="dialogEditLink.link.dates.initialDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Data final"
+                v-model="dialogEditLink.link.dates.finalDate"
+                outlined
+                mask="##/##/####"
+              />
+            </div>
+            <div class="q-mb-sm">
+              <q-input
+                label="Prazo final"
+                v-model="dialogEditLink.link.deadline"
+                outlined
+                mask="##/##/####"
+                @update:model-value="verifyNoDeadline"
+              />
+            </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
+            </div>
           </q-card-section>
           <q-card-section v-if="dialogEditLink.link.linkType === 'Licença'">
             <div class="text-center text-h6 q-mb-md">
@@ -1589,10 +1842,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Cedido'"
@@ -1614,7 +1873,7 @@
                 :options="dialogEditLink.organismsoptions"
                 outlined
                 option-label="organismName"
-                v-model="dialogEditLink.link.organismName"
+                v-model="dialogEditLink.link.selectedOrganism"
               />
             </div>
             <div class="q-mb-sm">
@@ -1637,10 +1896,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Aposentado'" 
@@ -1668,10 +1933,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-section
             v-if="dialogEditLink.link.linkType === 'Estudante'" 
@@ -1715,10 +1986,16 @@
               <q-input
                 label="Prazo final"
                 v-model="dialogEditLink.link.deadline"
+                @update:model-value="verifyNoDeadline"
                 outlined
                 mask="##/##/####"
               />
             </div>
+            <q-checkbox
+              label="Prazo do chamado é indefinido"
+              v-model="dialogEditLink.noDeadline"
+              @update:model-value="changeDeadlineLinkStatus"
+            />
           </q-card-section>
           <q-card-actions align="center">
             <q-btn
@@ -1741,6 +2018,42 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog
+        v-model="dialogRemoveLink.open"
+      >
+        <q-card style="width: 300px">
+          <q-card-section class="text-center text-h6" >
+            Deseja realmente inativar esse vínculo?
+          </q-card-section>
+          <q-card-section>
+            <q-input
+              outlined
+              v-model="dialogRemoveLink.link.dates.finalDate"
+              label="Data fim"
+              mask="##/##/####"
+            />
+          </q-card-section>
+          <q-card-actions align="center"   >
+            <q-btn
+              label="Cancelar"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              flat
+              @click="clearDialogRemoveLink"
+            />
+            <q-btn
+              label="Confirmar"
+              color="primary"
+              no-caps
+              rounded
+              unelevated
+              @click="confirmRemoveLink"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <DialogPdfUserInfo
         :open="dialogUserInfo.open"
         :data="userData.userDataTabs"
@@ -1748,6 +2061,36 @@
         :userImage="userProfileImage"
         @closeDialog="closeDialogShowPdfInfo"
       />
+      <q-dialog
+        v-model="dialogCallDetail.open"
+      >
+        <q-card style="border-radius:1rem;width: 500px">
+          <q-card-section class="text-center text-h6">
+            {{dialogCallDetail.data.status}} - {{dialogCallDetail.data.functionName}}
+          </q-card-section>
+          <q-card-section>
+            <div>
+              <strong>Organismo:</strong> {{dialogCallDetail.data.organismName}}
+            </div>
+            <div>
+              <strong>Data inicial:</strong> {{ dialogCallDetail.data.dates.initialDate }}
+            </div>
+            <div>
+              <strong>Data final:</strong> {{ dialogCallDetail.data.dates.finalDate }}
+            </div>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              label="Voltar"
+              color="primary"
+              rounded
+              no-caps
+              unelevated
+              @click="clearDialogCallDetail"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <!-- <div id="pdf" v-show="showPdf">
         <q-list bordered class="q-ma-md">
           <div class="text-center text-h6">
@@ -1820,6 +2163,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import CardMaritalStatus from '../../components/CardMaritalStatus.vue'
 import utils from '../../boot/utils'
 import avatar from '../../assets/avatar.svg'
+// import UserDetail from '../../components/UserDetail.vue'
 // import UserDetail from '../../components/UserDetail.vue'
 // import html2pdf from 'html2pdf.js';
 </script>
@@ -2043,7 +2387,19 @@ export default defineComponent({
       dialogEditLink:{
         open: false,
         link: null,
-        organismsoptions: []
+        selectedOrganism: null,
+        selectedPastor: null,
+        organismsoptions: [],
+        noDeadline: null
+      },
+      dialogRemoveLink:{
+        linkId: null,
+        link: null,
+        open: false
+      },
+      dialogCallDetail: {
+        open: false,
+        data: null
       }
     };
   },
@@ -2055,12 +2411,64 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    verifyNoDeadline() {
+      if (this.dialogEditLink.link.deadline !== '') {
+        this.dialogEditLink.noDeadline = false
+      }
+    },
+    changeDeadlineLinkStatus() {
+      if (this.dialogEditLink.noDeadline) this.dialogEditLink.link.deadline = ''
+    },
+    clearDialogCallDetail() {
+      this.dialogCallDetail.open = false
+      this.dialogCallDetail.data = null
+    },
+    async openDialogCallDetail(link) {
+      let callId = link.organismFunctionUserId
+      const opt = {
+        route: '/desktop/adm/getCallDetailByCallId',
+        body: {
+          callId
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      else {
+        this.dialogCallDetail.data = r.data
+        this.dialogCallDetail.open = true
+      }
+    },
+    async confirmRemoveLink() {
+      const opt = {
+        route: '/desktop/adm/removeLink',
+        body: {
+          linkId: this.dialogRemoveLink.linkId,
+          finalDate: this.dialogRemoveLink.link.dates.finalDate
+        }
+      }
+      let r = await useFetch(opt)
+      if (r.error) return
+      this.clearDialogRemoveLink()
+      this.startView()
+    },
+    clearDialogRemoveLink() {
+      this.dialogRemoveLink = {
+        linkId: null,
+        link: null,
+        open: false
+      }
+    },
     closeDialogShowPdfInfo() {
       this.dialogUserInfo.open = false
     },
     openDialogUserPdfInfo() {
       this.dialogUserInfo.open = true
     },
+    openDialogremoveLink(link) {
+      this.dialogRemoveLink.linkId = link.linkId
+      this.dialogRemoveLink.link = link
+      this.dialogRemoveLink.open = true
+    },  
     async confirmEditLink() {
       const opt = {
         route: '/desktop/adm/confirmEditPastorLink',
@@ -2079,9 +2487,14 @@ export default defineComponent({
       this.dialogEditLink.open = false
       this.dialogEditLink.link = null
       this.dialogEditLink.organismsoptions = []
+      this.dialogEditLink.selectedOrganism = null
+      this.dialogEditLink.selectedPastor = null
     },
     async getOrganismsDenominationList() {
       this.dialogEditLink.link.organismName = ''
+      this.dialogEditLink.link.organismId = ''
+      this.dialogEditLink.link.selectedOrganism.organismId = ''
+      this.dialogEditLink.link.selectedOrganism.organismName = ''
       if (this.dialogEditLink.link.denomination === 'Outra denominação') {
         const opt = {
           route: '/desktop/adm/getOtherDenomination'
@@ -2099,8 +2512,26 @@ export default defineComponent({
       }
     },
     editLink(link) {
+      if (link.deadline) {
+        this.dialogEditLink.noDeadline = false
+      } else this.dialogEditLink.noDeadline = true
       this.dialogEditLink.open = true
       this.dialogEditLink.link = {...link}
+      if (link.linkType === 'Cedido') {
+        this.dialogEditLink.link.selectedOrganism = {
+          organismName: link.organismName,
+          organismId: link.organismId
+        }
+      } else if (link.linkType === 'Estagiário') {
+        this.dialogEditLink.link.selectedOrganism = {
+          nome: link.organismName,
+          organismId: link.organismId
+        }
+        this.dialogEditLink.link.selectedPastor = {
+          userName: link.pastorName,
+          _id: link.pastorId
+        }
+      }
     },
     goToOrganismDetailFromTree(data) {
       this.$router.push('/admin/organismDetail?organismId=' + data.organismId)
@@ -2190,7 +2621,7 @@ export default defineComponent({
     editCall(data) {
       if (data.deadline) {
         this.dialogEditCall.noDeadline = false
-      }
+      } else this.dialogEditCall.noDeadline = true
       this.dialogEditCall.data = {...data}
       this.dialogEditCall.selectedOrganism = {
         nome: data.organismName,
@@ -2342,102 +2773,6 @@ export default defineComponent({
       this.userIsAdm = r.data
     },
     async confirmAddStatus(status, data) {
-      let qry
-      if (status === 'license' ) {
-        qry = {
-          subtype: status,
-          licenseOption: data.selectedlicenseOption,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'trainee') {
-        qry = {
-          subtype: status,
-          selectedOrganism: data.selectedOrganism.organismId,
-          guildingPastor: data.guildingPastor.userIdString,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'ceded') {
-        qry = {
-          subtype: status,
-          local: data.local,
-          where: data.where,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'retired') {
-        qry = {
-          subtype: status,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'student') {
-        qry = {
-          subtype: status,
-          selectedGoal: data.selectedGoal,
-          where: data.where,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null,
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'withoutCall') {
-        qry = {
-          subtype: status,
-          position: data.optionSelected,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          deadline: null
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      } else if (status === 'withCall') {
-        qry = {
-          caller: data.selectedCallOption,
-          selectedPastor: data.selectedPastor,
-          dates: {
-            initialDate: data.initialDate,
-            finalDate: data.finalDate
-          },
-          organism: data.selectedOrganism,
-          deadline: null
-        }
-        if (!data.noDeadline) {
-          qry.deadline = data.deadline
-        }
-      }
       const opt = {
         route: '/desktop/adm/insertPastorStatus',
         body: {
@@ -2449,6 +2784,7 @@ export default defineComponent({
       let r = await useFetch(opt)
       if (r.error) return
       this.clearDialogAddStatus()
+      this.startView()
     },
     clearDialogAddStatus() {
       this.dialogAddStatus.open = false
@@ -2728,6 +3064,10 @@ export default defineComponent({
       this.dialogAddCallToPastor.undefinedCallee ? this.dialogAddCallToPastor.undefinedCallee = false : this.dialogAddCallToPastor.calleeDate = ''
     },
     openDialogAddCallToPastor() {
+      if ((this.callList && this.callList.length > 0) || (this.otherLinks && this.otherLinks.length > 0)) {
+        this.$q.notify('Para adicionar um vínculo, é necessário que os outros estejam inativos.')
+        return
+      }
       this.dialogAddStatus.open = true
       // this.dialogAddCallToPastor.functionType = 'Pastor'
       // this.dialogAddCallToPastor.subtype = 'chamado'

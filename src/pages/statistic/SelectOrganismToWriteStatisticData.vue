@@ -139,7 +139,7 @@ export default defineComponent({
       }
     },
     goToCompleteStatistic(organism) {
-      console.log(organism)
+      console.log(organism, 'aqui esta o console que eu quero')
       if (organism.gestaoParoquial && organism.gestaoParoquial.managementType === 'SIPAR') return
       if (this.$route.query.parishId) {
         this.$router.push('/statistic/completeStatistic?organismId=' + organism.childOrganismId + '&parishId=' + this.$route.query.parishId)  

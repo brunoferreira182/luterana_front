@@ -59,13 +59,13 @@
               >
                 <q-tooltip>Abrir informações sobre a paróquia {{ prop.node.type }}</q-tooltip>
               </q-btn> -->
-              <q-badge
+              <!-- <q-badge
                 class="q-mx-sm"
                 color="primary"
                 text-color="white"
               >
                 Estatística: {{ prop.node.statusStatistic }}
-              </q-badge>
+              </q-badge> -->
               <q-btn
                 icon="navigate_next"
                 round
@@ -109,13 +109,13 @@
               v-if="prop.node.type === 'Congregação'"
               class="items-center"
             >
-              <q-badge
+              <!-- <q-badge
                 class="q-mx-sm"
                 color="primary"
                 text-color="white"
               >
                 Estatística: {{ prop.node.statusStatistic }}
-              </q-badge>
+              </q-badge> -->
               <q-btn
                 icon="navigate_next"
                 round

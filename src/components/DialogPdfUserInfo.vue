@@ -16,28 +16,18 @@
               <div class="q-ml-sm row" >
                 <div class="col-9">
                   <p>Nome : <strong>{{  props.data[0].fields[0].value }}</strong></p>
-                  <p>Profissão - falta</p>
-                  <p>Nacionalidade - falta</p>
                   <p>Endereço: {{ props.data[3].fields[0].value[0].street}}, {{  props.data[3].fields[0].value[0].number }} </p>
                   <p>Bairro: {{  props.data[3].fields[0].value[0].district }}</p>
                   <p>Cidade: {{  props.data[3].fields[0].value[0].city }}</p>
                   <p>Estado: {{  props.data[3].fields[0].value[0].state }}</p>
                   <p>CEP: {{  props.data[3].fields[0].value[0].cep }}</p>
-                  <div>
-                    <span>Caixa postal - falta</span> <span class="q-ml-md" >Cep caixa postal - falta</span>
-                  </div>
                   <p>Telefone Celular: {{  props.data[2].fields[2].value[0].value }}</p>
                   <p v-if=" props.data[2].fields[2].value[1]" >Telefone: {{  props.data[2].fields[2].value[1].value }}</p>
                   <p v-if=" props.data[2].fields[2].value[2]" >Telefone: {{  props.data[2].fields[2].value[2].value }}</p>
                   <p v-if=" props.data[2].fields[2].value[3]" >Telefone: {{  props.data[2].fields[2].value[3].value }}</p>
-                  <p>Data Ordenação - falta</p>
-                  <p>Local Ordenação: falta</p>
                   <p v-if="userIdLegado.id">Código IELB: {{ userIdLegado.id }}</p>
                   <p>Data de nascimento: {{  props.data[0].fields[2].value }}</p>
                   <p>Estado Civil: {{ props.data[1].fields[3] && props.data[1].fields[3].value && props.data[1].fields[3].value[0] ? 'Casado' : 'Solteiro' }}</p>
-                  <p>Naturalidade: falta</p>
-                  <p>Estado naturalidade: falta</p>
-                  <p>Complemento: falta</p>
                   <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[0]" >E-mail: {{  props.data[2].fields[0].value[0].value }}</p>
                   <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[1]" >E-mail: {{  props.data[2].fields[0].value[1].value }}</p>
                   <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[2]" >E-mail: {{  props.data[2].fields[0].value[2].value }}</p>
@@ -61,7 +51,6 @@
                 <p>Data de nascimento cônjuge: {{ partnerData.birthDate }}</p>
                 <p>Data início: {{ props.data[1].fields[3].value[0].partner.dates.initialDate }}</p>
                 <p>Data fim: {{ props.data[1].fields[3].value[0].partner.dates.finalDate }}</p>
-                <p>Local casamento: Falta</p>
               </div>
             </q-list>
             <q-list class="q-ma-sm" bordered>
@@ -70,7 +59,7 @@
               </div>
               <div
                 class="q-ml-sm"
-                v-if="props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[0] && props.data[1].fields[0].value && props.data[1].fields[0].value[0] && props.data[1].fields[1] && props.data[1].fields[0].value[0].userName && props.data[1].fields[1].value[0].userName"
+                v-if="props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[0] && props.data[1].fields[0].value && props.data[1].fields[0].value[0] && props.data[1].fields[1] && props.data[1].fields[1].value && props.data[1].fields[1].value[0] && props.data[1].fields[1].value[0].userName && props.data[1].fields[1].value[0].userName"
               >
                 {{ props.data[1].fields[0].value[0].userName }} e {{ props.data[1].fields[1].value[0].userName }}
               </div>
@@ -180,6 +169,7 @@
   const props = defineProps(['open', 'data', 'userImage','userId'])
   const emits = defineEmits(['closeDialog'])
   import useFetch from 'src/boot/useFetch';
+  import utils from '../boot/utils'
   import avatar from '../assets/avatar.svg'
   import { watchEffect, ref } from 'vue'
   import html2pdf from 'html2pdf.js'
