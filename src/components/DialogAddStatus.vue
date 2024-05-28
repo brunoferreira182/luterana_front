@@ -9,6 +9,7 @@
           outlined
           :options="data.statusOptions"
           v-model="data.selectedStatusOption"
+          @update:model-value="clearDialogInfo"
         />
       </q-card-section>
       <q-card-section
@@ -204,11 +205,27 @@
           use-input
           option-label="nome"
           outlined
-          @filter="getOrganismsList"
-          :options="organismsList.data"
+          @filter="getFiliatedOrganismsList"
+          :options="filiatedOrganismsList.data"
           v-model="traineeData.selectedOrganism"
           :disable="traineeData.selectOrganismDisable"
-        />
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                Nenhum resultado
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section>
+                <q-item-label>{{ scope.opt.nome }}</q-item-label>
+                <q-item-label caption>{{ scope.opt.city }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
         <q-select
           class="q-mb-md"
           label="qual o Pastor orientador"
@@ -565,7 +582,6 @@
           label="Nome do pastor"
           class="q-mb-md"
           option-label="userName"
-          :options="pastorList.data"
           hint="Pastor que ocupará a função"
           @filter="getUsers"
           :loading="false"
@@ -658,6 +674,7 @@
           unelevated
           flat
           no-caps
+          @click="closeDialog"
         />
         <q-btn
           label="Adicionar status"
@@ -677,9 +694,6 @@ import { onBeforeMount, ref } from 'vue';
 import useFetch from "../boot/useFetch";
 import { Notify } from 'quasar';
 
-const organismsList = ref({
-  data: ''
-})
 const pastorList = ref({
   data: ''
 })
@@ -820,7 +834,7 @@ function getOrganismData() {
   }
 }
 
-function verifyIfIsUserScreen() {
+async function verifyIfIsUserScreen() {
   if (props.userId && props.userName) {
     pastorDisable = true
     retiredData.value.selectedPastor = {
@@ -866,6 +880,11 @@ async function getStatusOptions() {
     }
   })
   data.value.statusOptions = r.data
+  data.value.statusOptions.forEach((status, i) => {
+    if (status.label === 'Atuação') {
+      data.value.statusOptions.splice(i, 1)
+    }
+  })
 }
 
 
@@ -977,13 +996,86 @@ function verifyIfCanAddStatus() {
   } else if (data.value.selectedStatusOption.value === 'ceded') {
     if (!cededData.value.local || !cededData.value.where || (cededData.value.deadline === '' && !cededData.value.noDeadline) || !cededData.value.selectedPastor) {
       Notify.create('Preencha qual a igreja, onde e o prazo final')
+      return
     }
     emits('confirm', data.value.selectedStatusOption.value, cededData.value)
   }
 }
 
+function clearDialogInfo() {
+
+  retiredData.value.initialDate = '';
+  retiredData.value.finalDate = '';
+  retiredData.value.deadline = null;
+  retiredData.value.noDeadline = false;
+  retiredData.value.disable = false;
+  retiredData.value.pastorDisable = false;
+
+  cededData.value.localOptions = ['Outra denominação', 'Igreja irmã'];
+  cededData.value.local = null;
+  cededData.value.where = null;
+  cededData.value.initialDate = '';
+  cededData.value.finalDate = '';
+  cededData.value.deadline = '';  
+  cededData.value.noDeadline = false;
+  cededData.value.disable = false;
+  cededData.value.pastorDisable = false;
+
+  traineeData.value.selectedOrganism = null;
+  traineeData.value.guildingPastor = null;
+  traineeData.value.initialDate = '';
+  traineeData.value.finalDate = '';
+  traineeData.value.deadline = null;  
+  traineeData.value.noDeadline = false;
+  traineeData.value.disable = false;
+  traineeData.value.pastorDisable = false;
+  traineeData.value.selectOrganismDisable = false;
+
+  licenseData.value.licenseOptions = ['Saúde', 'Estudos', 'Interesse', 'Outro'];
+  licenseData.value.selectedLicenseOption = null;
+  licenseData.value.otherReason = '';
+  licenseData.value.initialDate = '';
+  licenseData.value.finalDate = '';
+  licenseData.value.deadline = '';  
+  licenseData.value.disable = false;
+  licenseData.value.noDeadline = false;
+  licenseData.value.pastorDisable = false;
+
+  studentData.value.goalOptions = ['Intercâmbio', 'Pós-pastoral'];
+  studentData.value.selectedGoal = null;
+  studentData.value.where = '';
+  studentData.value.initialDate = '';
+  studentData.value.finalDate = '';
+  studentData.value.deadline = '';  
+  studentData.value.noDeadline = false;
+  studentData.value.disable = false;
+  studentData.value.pastorDisable = false;
+
+  withoutCallData.value.optionsType = ['Em colóquio', 'Aguardando chamado'];
+  withoutCallData.value.optionSelected = null;
+  withoutCallData.value.initialDate = '';
+  withoutCallData.value.finalDate = '';
+  withoutCallData.value.deadline = ''; 
+  withoutCallData.value.noDeadline = false;
+  withoutCallData.value.disable = false;
+  withoutCallData.value.pastorDisable = false;
+
+  withCallData.value.selectedOrgamism = [];
+  withCallData.value.callOptions = ['Diretoria Nacional', 'Congregação'];
+  withCallData.value.selectedCallOption = null;
+  withCallData.value.initialDate = '';
+  withCallData.value.finalDate = '';
+  withCallData.value.deadline = '';  
+  withCallData.value.noDeadline = false;
+  withCallData.value.disable = false;
+  withCallData.value.pastorDisable = false;
+  withCallData.value.selectOrganismDisable = false;
+
+}
+
 function closeDialog() {
   emits('closeDialog')
+  clearDialogInfo()
 }
 
 function resetOrganismName() {
@@ -1032,26 +1124,6 @@ function getFiliatedOrganismsList(val, update, abort) {
   useFetch(opt).then((r) => {
     update(() => {
       filiatedOrganismsList.value.data = r.data.list;
-    })
-  });
-}
-
-function getOrganismsList(val, update, abort) {
-  if(val.length < 3) {
-    abort()
-    return
-  }
-  const opt = {
-    route: "/desktop/adm/getOrganismsList",
-    body: {
-      searchString: val,
-      page: 1,
-      rowsPerPage: 50
-    }
-  };
-  useFetch(opt).then((r) => {
-    update(() => {
-      organismsList.value.data = r.data.list
     })
   });
 }
