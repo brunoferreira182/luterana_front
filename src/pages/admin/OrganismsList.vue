@@ -53,6 +53,7 @@
                 </template>
               </q-input>
               <q-btn 
+                v-if="canEdit"
                 @click="$router.push('/admin/createOrganism')" 
                 color="primary" 
                 unelevated 
