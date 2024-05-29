@@ -1,6 +1,6 @@
 <template>
   <q-card
-    style="width: 50vw;"
+    style="width: 100vw;"
   > 
     <q-card-section>
       <div :id="'pdf' + userId">
@@ -152,7 +152,7 @@
         @click="closeDialog"
       /> -->
       <q-btn
-        v-if="showButtonDownload"
+        v-if="$route.path !== '/admin/pastoralArchive'"
         label="Baixar pdf"
         rounded
         color="primary"
@@ -166,7 +166,6 @@
 <script setup>
 
   const props = defineProps([ 'data', 'userImage','userId'])
-  // const emits = defineEmits(['closeDialog'])
   import useFetch from 'src/boot/useFetch';
   import utils from '../boot/utils'
   import avatar from '../assets/avatar.svg'
@@ -179,14 +178,14 @@
     getPartnerBirthDate()
     getChildsBirthDate()
     // getUserFormationsFromSga()
-    getAllLinksByUserId()
     // getIdLegadoByUserId()
+    getAllLinksByUserId()
 });
 
   const userData = ref({
     partners: []
   })
-
+ 
   const partnerData = ref({
     birthDate: null
   })
@@ -204,22 +203,8 @@
   })
 
 
-  // function closeDialog() {
-  //   emits('closeDialog')
-  // }
-
-  // function generatePdf() {
-  //   let pdf = document.getElementById('pdf');
-  //   let configs = {
-  //     margin: 0,
-  //     filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
-  //     jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
-  //     pagebreak: { mode: ['avoid-all'] }
-  //   };
-  //   html2pdf().set(configs).from(pdf).save();
-  // }
   function generatePdf() {
-    let pdf = document.getElementById('pdf')
+    let pdf = document.getElementById('pdf'+ props.userId)
     let configs = {
       margin: 0,
       filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
@@ -284,7 +269,6 @@
   //     }
   //   }
   //   let r = await useFetch(opt)
-  //   console.log("🚀 ~ getUserFormationsFromSga ~ r:", r)
   //   if (r.error) return
   //   formationData.value.data = r.data
   // }

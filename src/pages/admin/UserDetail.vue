@@ -2054,13 +2054,17 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <DialogPdfUserInfo
-        :open="dialogUserInfo.open"
-        :data="userData.userDataTabs"
-        :userId="$route.query.userId"
-        :userImage="userProfileImage"
-        @closeDialog="closeDialogShowPdfInfo"
-      /> -->
+      <q-dialog
+        v-model="dialogUserInfo.open"
+      >
+
+        <PdfUserInfo
+          :data="userData.userDataTabs"
+          :userId="$route.query.userId"
+          :userImage="userProfileImage"
+          @closeDialog="closeDialogShowPdfInfo"
+        />
+      </q-dialog>
       <q-dialog
         v-model="dialogCallDetail.open"
       >
@@ -2145,7 +2149,7 @@
 </template>
 
 <script setup>
-// import DialogPdfUserInfo from '../../components/PdfUserInfo.vue'
+import PdfUserInfo from '../../components/PdfUserInfo.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddAddress from '../../components/DialogAddress.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'

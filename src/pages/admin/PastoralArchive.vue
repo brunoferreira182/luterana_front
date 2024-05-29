@@ -58,6 +58,19 @@
                 @click="props.expand = !props.expand" :icon="props.expand ? 'expand_less' : 'expand_more'" 
               />
             </q-td>
+            <q-td auto-width >
+              <q-btn 
+                size="sm" 
+                color="primary" 
+                unelevated
+                round dense 
+                @click="clkAddPastorToArray(col, props.row)" icon="add" 
+              >
+                <q-tooltip>
+                  Selecionar usuário para download de ficha pastoral
+                </q-tooltip>
+              </q-btn>
+            </q-td>
             <q-td
               style="cursor: pointer;"
               v-for="col in props.cols"
@@ -125,7 +138,6 @@
           :ref="'pdfComponent' + index"
           :data="pastor.userDataTabs"
           :userId="pastor.userId"
-          :showButtonDownload="false"
           :userImage="pastor.userProfileImage"
         />
       </div>
