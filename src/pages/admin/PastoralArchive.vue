@@ -35,34 +35,6 @@
           </q-input>
         </div>
       </template>
-        <!-- <template #top>
-        <div class="flex row justify-end q-gutter-sm">
-          
-          <div class="background-radio flex q-gutter-xs">
-            <q-radio 
-              dense dark color="white" 
-              v-model="canBeDead" val="true" 
-              label="Falecidos" 
-              style="color: white;">
-            </q-radio>
-            <q-radio 
-              dense dark color="white" 
-              v-model="canBeDead" val="false" 
-              label="Não Falecidos" 
-              style="color: white;">
-            </q-radio>
-          </div>
-          <q-select
-            no-caps
-            dark
-            dense
-            class="background-radio"
-            v-model="optionValueFilter" 
-            :options="optionsFilter" label="Filtro"
-          > 
-          </q-select> 
-          </div>
-        </template> -->
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th auto-width />
@@ -129,41 +101,54 @@
       <div class="q-px-md">
         <div class="text-h5">
           Pastores selecionados 
-          <q-btn icon="download" flat round color="primary">
+          <q-btn icon="download" flat round color="primary" @click="downloadPastoralFiles">
             <q-tooltip>
               Baixar ficha pastoral
             </q-tooltip>
           </q-btn>
         </div>
-        <div v-if="!pastorsArray.length">
+        <div class="q-px-sm" v-if="!pastorsArray.length">
           Nenhum pastor selecionado
         </div>
         <q-chip 
-          v-for="item in pastorsArray" 
-          :key="item"
+          v-for="(item, i) in pastorsArray" 
+          :key="i"
           removable
           @remove="removePastorFromArray(i)"
         >
-          {{ item.name }}
+          {{ item.userDataTabs[0].fields[0].value }}
         </q-chip>
       </div>
-      <DialogPdfUserInfo
-        :open="dialogUserInfo.open"
-        :data="userData.userDataTabs"
-        :userId="$route.query.userId"
-        :userImage="userProfileImage"
-        @closeDialog="closeDialogShowPdfInfo"
-      />
+      <div v-for="(pastor, index) in pastorsArray" :key="index"  style="display: none;">
+        <PdfUserInfo
+          :id="'pastoralFile' + index"
+          :ref="'pdfComponent' + index"
+          :data="pastor.userDataTabs"
+          :userId="pastor.userId"
+          :showButtonDownload="false"
+          :userImage="pastor.userProfileImage"
+        />
+      </div>
+      <div >
+        <!-- <PdfUserInfo
+          :data="userData.userDataTabs"
+          :userId="$route.query.userId"
+          :userImage="userProfileImage"
+        /> -->
+      </div>
+      
     </q-page>
   </q-page-container>
 </template>
 <script setup>
 import { defineComponent, computed } from "vue";
-// import DialogPdfUserInfo from '../../components/DialogPdfUserInfo.vue'
+import PdfUserInfo from '../../components/PdfUserInfo.vue'
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { savedPastorsList } from "stores/pastorsList";
 import utils from "../../boot/utils";
+
+import html2pdf from 'html2pdf.js'
 </script>
 <script>
 
@@ -178,59 +163,11 @@ export default defineComponent({
       selectFilter: "Selecionar",
       optionValueFilter: "",
       userData: [],
+      show:false,
       dialogUserInfo: {
         open: false
       },
-      optionsFilter: [
-        {
-          label: 'Falecido',
-          value:  'true'
-        },
-        {
-          label: 'Não falecido',
-          value:  'false'
-        },
-        {
-          label: 'Com chamado',
-          value: 'withCall'
-        },
-        {
-          label: 'Sem chamado',
-          value: 'withoutCall '
-        },
-        {
-          label: 'Cedido',
-          value:  'ceded'
-        },
-        {
-          label: 'Licença',
-          value:  'license'
-        },
-        {
-          label: 'Estagiário',
-          value:  'trainee'
-        },
-        {
-          label: 'Aposentado',
-          value:  'retired'
-        },
-        {
-          label: 'Estudante',
-          value:  'student'
-        },
-        {
-          label: 'Atuação',
-          value:  'acting'
-        },
-      ],
       canBeDead: "false",
-      initialPagination: {
-        sortBy: 'desc',
-        descending: false,
-        page: 1,
-        rowsPerPage: 10
-        // rowsNumber: xx if getting data from a server
-      },
       pagination: {
         sortBy: '',
         page: 1,
@@ -267,6 +204,31 @@ export default defineComponent({
   //   optionValueFilter: 'getPastorList'
   // },
   methods: {
+    downloadPastoralFiles () {
+      this.pastorsArray.forEach((pastor, i) => {
+        this.generatePdf('pastoralFile' + i, 'Ficha cadastral de ' + pastor.userDataTabs[0].fields[0].value)
+      })
+    },
+    generatePdf(elementId, fileName) {
+      let pdf = document.getElementById(elementId)
+      let configs = {
+        margin: 0,
+        // filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
+        fileName,
+        jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
+        pagebreak: {mode: ['avoid-all']}
+      }
+      html2pdf().set(configs).from(pdf).save()
+    },
+    async clkAddPastorToArray(c, r) {
+      const userData = await this.getUserDetailById(r.userIdString); // Aguarda a promessa ser resolvida
+      console.log("🚀 ~ clkAddPastorToArray ~ userData:", userData);
+      if (userData) {
+        this.pastorsArray.push(userData);
+      } else {
+        this.$q.notify("Erro ao obter os dados do usuário. Tente novamente em alguns instantes");
+      }
+    },
     async getUserDetailById(userIdString) {
       const userId = userIdString;
       const opt = {
@@ -276,46 +238,56 @@ export default defineComponent({
         },
       };
       this.$q.loading.show();
-      await useFetch(opt).then(async (r) => {
-        if(r.error) {
-          this.$q.notify("Ocorreu um erro, tente novamente")
-          return
+
+      try {
+        const r = await useFetch(opt);
+        if (r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente");
+          return null;
         }
-        // this.userDetail = r.data
-        const userConfig = await this.getUsersConfig(r.data.userType)
+
+        const userConfig = await this.getUsersConfig(r.data.userType);
         if (userConfig.error) {
           this.$q.notify("Ocorreu um erro, tente novamente");
-          return
+          return null;
         }
-        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links && r.data.userLinksToOrganisms.links.length > 0) {
-          let links = r.data.userLinksToOrganisms.links
-          links.forEach((link) => {
-            if (link.functionSubtype === 'chamado') {
-              console.log('HHEHEHEUHFUSAHFSUDFHASUDH')
-              this.callList.push(link)
-            } 
-          })
+
+        const userData = {
+          ...r.data,
+          userConfig: userConfig.data
+        };
+
+        if (r.data.userLinksToOrganisms) {
+          const { links, otherLinks } = r.data.userLinksToOrganisms;
+          if (links && links.length > 0) {
+            links.forEach((link) => {
+              if (link.functionSubtype === 'chamado') {
+                this.callList.push(link);
+              }
+            });
+          }
+          this.otherLinks = otherLinks || [];
+          this.callList = links || [];
         }
-        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.otherLinks && r.data.userLinksToOrganisms.otherLinks.length > 0) {
-          this.otherLinks = r.data.userLinksToOrganisms.otherLinks
-        }
-        this.otherLinks = r.data.userLinksToOrganisms.otherLinks
-        this.userCanEdit = r.data.canEdit
-        this.callList = r.data.userLinksToOrganisms.links
-        this.userData = userConfig.data
-        this.userType = r.data.userType
-        this.canUseSystem = r.data.canUseSystem
-        if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
-          this.pastoralStatusData = r.data.pastoralStatus.data
-        }
-        if (r.data.legacyLinks) {
-          this.legacyLinks = r.data.legacyLinks
-        }
-        this.userProfileImage = r.data.profileImage
-        this.verifyLinks()
-        this.verifyInactiveStatus()
+
+        this.userCanEdit = r.data.canEdit;
+        this.userData = userConfig.data;
+        this.userType = r.data.userType;
+        this.canUseSystem = r.data.canUseSystem;
+        this.pastoralStatusData = r.data.pastoralStatus?.data || null;
+        this.legacyLinks = r.data.legacyLinks || null;
+        this.userProfileImage = r.data.profileImage;
+        
+        this.verifyLinks();
+        this.verifyInactiveStatus();
+        
+        return userData;
+      } catch (error) {
+        this.$q.notify("Ocorreu um erro, tente novamente");
+        return null;
+      } finally {
         this.$q.loading.hide();
-      });
+      }
     },
     getUsersConfig(userType) {
       const opt = {
@@ -396,12 +368,7 @@ export default defineComponent({
     getStatusColor(isActive) {
       return isActive === 0 ? "red" : "primary";
     },
-    clkAddPastorToArray(c, r) {
-      const userData = this.getUserDetailById(r.userIdString)
-      console.log("🚀 ~ clkAddPastorToArray ~ userData:", userData)
-      this.pastorsArray.push(userData)
-      
-    },
+ 
     removePastorFromArray(i){
       this.pastorsArray.splice(i, 1)
     },
