@@ -119,6 +119,11 @@ const useUtils = {
           route: "/admin/admSugestionsList",
           icon: "format_list_bulleted",
         },
+        {
+          label: "Ficha pastoral",
+          route: "/admin/pastoralArchive",
+          icon: "format_list_bulleted",
+        },
       ],
       config: [
         {

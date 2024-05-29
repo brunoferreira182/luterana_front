@@ -85,13 +85,13 @@
         </div>
         
         <div class="col q-gutter-sm text-right">
-          <!-- <q-btn 
+          <q-btn 
             color="primary"
             @click="openDialogUserPdfInfo"
             label="Ficha cadastral"
             rounded
             outline
-          /> -->
+          />
           <q-btn
             v-if="userType && userType === 'pastor' && canEdit"
             color="secondary"
@@ -2090,13 +2090,17 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <DialogPdfUserInfo
-        :open="dialogUserInfo.open"
-        :data="userData.userDataTabs"
-        :userId="$route.query.userId"
-        :userImage="userProfileImage"
-        @closeDialog="closeDialogShowPdfInfo"
-      />
+      <q-dialog
+        v-model="dialogUserInfo.open"
+      >
+
+        <PdfUserInfo
+          :data="userData.userDataTabs"
+          :userId="$route.query.userId"
+          :userImage="userProfileImage"
+          @closeDialog="closeDialogShowPdfInfo"
+        />
+      </q-dialog>
       <q-dialog
         v-model="dialogCallDetail.open"
       >
@@ -2181,7 +2185,7 @@
 </template>
 
 <script setup>
-import DialogPdfUserInfo from '../../components/DialogPdfUserInfo.vue'
+import PdfUserInfo from '../../components/PdfUserInfo.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddAddress from '../../components/DialogAddress.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'

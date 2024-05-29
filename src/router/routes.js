@@ -82,6 +82,10 @@ const routes = [
         path: "/admin/districtDetail",
         component: () => import("src/pages/admin/DistrictDetail.vue"),
       },
+      {
+        path: "/admin/pastoralArchive",
+        component: () => import("src/pages/admin/PastoralArchive.vue"),
+      },
       
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },
