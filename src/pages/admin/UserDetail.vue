@@ -1536,19 +1536,55 @@
                 </q-item>
               </template>
             </q-select>
+            <q-select
+              v-model="dialogEditCall.data.userInstaller"
+              outlined
+              use-input
+              label="Quem instalou"
+              option-label="userName"
+              options-dense
+              class="q-pa-sm"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item"
+            />
+            <q-input
+              outlined
+              v-model="dialogEditCall.data.ataKeyInstallation"
+              label="Chave ata instalação"
+              class="q-pa-sm"
+            />
             <q-input
               outlined
               v-model="dialogEditCall.data.dates.initialDate"
               mask="##/##/####"
-              label="Data inicial"
+              label="Data de instalação"
+              class="q-pa-sm"
+            />
+            <q-input
+              outlined
+              v-model="dialogEditCall.data.ataKeyUninstallation"
+              label="Chave ata desinstalação"
               class="q-pa-sm"
             />
             <q-input
               outlined
               v-model="dialogEditCall.data.dates.finalDate"
               mask="##/##/####"
-              label="Data final"
+              label="Data de desinstalação"
               class="q-pa-sm"
+            />
+            <q-select
+              v-model="dialogEditCall.data.userUninstaller"
+              outlined
+              use-input
+              label="Quem desinstalou"
+              option-label="userName"
+              options-dense
+              class="q-pa-sm"
+              :options="usersOptions"
+              @filter="getUsers"
+              :option-value="(item) => item"
             />
             <q-input
               label="Prazo do chamado"
@@ -2374,7 +2410,7 @@ export default defineComponent({
         data: null,
         selectedOrganism: null,
         noDeadline: false,
-        disable: false
+        disable: false,
       },
       dialogEditAct: {
         open: false,
@@ -2619,6 +2655,7 @@ export default defineComponent({
       }
     },
     editCall(data) {
+      console.log(data, 'oi')
       if (data.deadline) {
         this.dialogEditCall.noDeadline = false
       } else this.dialogEditCall.noDeadline = true
@@ -2626,6 +2663,22 @@ export default defineComponent({
       this.dialogEditCall.selectedOrganism = {
         nome: data.organismName,
         organismId: data.organismId
+      }
+      if (!data.userInstallerData) {
+        data.userInstaller = null
+      } else if (data.userInstallerData && data.userInstallerData.userName !== '') {
+        this.dialogEditCall.data.userInstaller = data.userInstallerData
+      }
+      if (!data.ataKeyInstallation) {
+        data.ataKeyInstallation = ''
+      }
+      if (!data.ataKeyUninstallation) {
+        data.ataKeyUninstallation = ''
+      }
+      if (!data.userUninstallerData) {
+        data.userUninstallerData = null
+      } else if (data.userUninstallerData && data.userUninstallerData.userName !== '') {
+        this.dialogEditCall.data.userUninstaller = data.userUninstallerData
       }
       this.dialogEditCall.open = true
     },
@@ -2707,7 +2760,11 @@ export default defineComponent({
           },
           organismFunctionUserId: item.organismFunctionUserId,
           organismId: item.organismId,
-          organismName: item.organismName
+          organismName: item.organismName,
+          ataKeyInstallation: item.ataKeyInstallation ? item.ataKeyInstallation : '',
+          ataKeyUninstallation: item.ataKeyUninstallation ? item.ataKeyUninstallation : '',
+          userInstallerData: item.userInstallerData ? item.userInstallerData : null,
+          userUninstallerData: item.userUninstallerData ? item.userUninstallerData : null
         })
         if (item.functionsAtuacao && item.functionsAtuacao.length > 0) {
           item.functionsAtuacao.forEach((act) => {

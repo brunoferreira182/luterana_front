@@ -543,13 +543,6 @@
           v-model="withCallData.initialDate"
         />
         <q-input
-          class="q-mb-md"
-          outlined
-          mask="##/##/####"
-          label="Data de término"
-          v-model="withCallData.finalDate"
-        />
-        <q-input
           v-if="!withCallData.noDeadline"
           class="q-mb-md"
           outlined

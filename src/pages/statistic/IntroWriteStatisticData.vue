@@ -196,7 +196,7 @@
           :disable="canSendStatistic ? false : true"
           @click="insertCongregationalStatisticsDone"
           no-caps 
-        />
+          />
         
       </div>
     </q-page>
@@ -354,17 +354,6 @@ export default defineComponent({
       })
     },
     getValidationResumeByOrganism () {
-      // let allSipar = true
-      // this.userOrganismList.childData.forEach((child) => {
-      //   console.log(child, 'qua qua qua')
-      //   if (!child.gestaoParoquial || child.gestaoParoquial.managementType !== 'SIPAR') {
-      //     allSipar = false
-      //   }
-      // })
-      // if (allSipar) {
-      //   this.canSendStatistic = true
-      //   this.allSipar = true
-      // }
       const opt = {
         route: '/desktop/statistics/getValidationResumeAllOrganisms',
         body: {
