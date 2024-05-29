@@ -129,9 +129,9 @@
       <div class="q-px-md">
         <div class="text-h5">
           Pastores selecionados 
-          <q-btn icon="send" flat round color="primary">
+          <q-btn icon="download" flat round color="primary">
             <q-tooltip>
-              Enviar ficha pastoral
+              Baixar ficha pastoral
             </q-tooltip>
           </q-btn>
         </div>
@@ -147,15 +147,26 @@
           {{ item.name }}
         </q-chip>
       </div>
+      <DialogPdfUserInfo
+        :open="dialogUserInfo.open"
+        :data="userData.userDataTabs"
+        :userId="$route.query.userId"
+        :userImage="userProfileImage"
+        @closeDialog="closeDialogShowPdfInfo"
+      />
     </q-page>
   </q-page-container>
 </template>
-<script>
+<script setup>
 import { defineComponent, computed } from "vue";
+// import DialogPdfUserInfo from '../../components/DialogPdfUserInfo.vue'
 import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import { savedPastorsList } from "stores/pastorsList";
 import utils from "../../boot/utils";
+</script>
+<script>
+
 export default defineComponent({
   name: "PastoralArchive",
   data() {
@@ -166,6 +177,10 @@ export default defineComponent({
       filter: "",
       selectFilter: "Selecionar",
       optionValueFilter: "",
+      userData: [],
+      dialogUserInfo: {
+        open: false
+      },
       optionsFilter: [
         {
           label: 'Falecido',
@@ -252,6 +267,115 @@ export default defineComponent({
   //   optionValueFilter: 'getPastorList'
   // },
   methods: {
+    async getUserDetailById(userIdString) {
+      const userId = userIdString;
+      const opt = {
+        route: "/desktop/adm/getUserDetailById",
+        body: {
+          _id: userId,
+        },
+      };
+      this.$q.loading.show();
+      await useFetch(opt).then(async (r) => {
+        if(r.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente")
+          return
+        }
+        // this.userDetail = r.data
+        const userConfig = await this.getUsersConfig(r.data.userType)
+        if (userConfig.error) {
+          this.$q.notify("Ocorreu um erro, tente novamente");
+          return
+        }
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links && r.data.userLinksToOrganisms.links.length > 0) {
+          let links = r.data.userLinksToOrganisms.links
+          links.forEach((link) => {
+            if (link.functionSubtype === 'chamado') {
+              console.log('HHEHEHEUHFUSAHFSUDFHASUDH')
+              this.callList.push(link)
+            } 
+          })
+        }
+        if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.otherLinks && r.data.userLinksToOrganisms.otherLinks.length > 0) {
+          this.otherLinks = r.data.userLinksToOrganisms.otherLinks
+        }
+        this.otherLinks = r.data.userLinksToOrganisms.otherLinks
+        this.userCanEdit = r.data.canEdit
+        this.callList = r.data.userLinksToOrganisms.links
+        this.userData = userConfig.data
+        this.userType = r.data.userType
+        this.canUseSystem = r.data.canUseSystem
+        if (r.data.pastoralStatus && r.data.pastoralStatus.data) {
+          this.pastoralStatusData = r.data.pastoralStatus.data
+        }
+        if (r.data.legacyLinks) {
+          this.legacyLinks = r.data.legacyLinks
+        }
+        this.userProfileImage = r.data.profileImage
+        this.verifyLinks()
+        this.verifyInactiveStatus()
+        this.$q.loading.hide();
+      });
+    },
+    getUsersConfig(userType) {
+      const opt = {
+        route: "/desktop/adm/getUsersConfig",
+      };
+      if (userType) opt.body = { userType }
+      return useFetch(opt)
+    },
+    verifyInactiveStatus() {
+      this.inactiveStatus = []
+      let activeStatus = []
+      if (this.pastoralStatusData && this.pastoralStatusData.length > 0) {
+        this.pastoralStatusData.forEach((status) => {
+          if (status.dates.finalDate && status.dates.finalDate !== '') {
+            this.inactiveStatus.push(status)
+          } else if (!status.dates.finalDate || status.dates.finalDate === "") {
+            activeStatus.push(status)
+            this.pastoralStatusData = activeStatus
+          }
+        })
+      }
+    },
+    verifyLinks() {
+      let congregationLinks = []
+      let parishLinks = []
+      if (this.userLinks && this.userLinks.length === 2) {
+        this.userLinks.forEach((link, i) => {
+          if (link.organismConfigName === 'Distrito') {
+            this.userLinks.splice(i, 1)
+          }
+          if (link.organismConfigName === 'Congregação') {
+            congregationLinks.push({
+              index: i
+            })
+          }
+          if (link.organismConfigName === 'Paróquia') {
+            parishLinks.push({
+              index: i
+            })
+          }
+          if (congregationLinks.length > 0) {
+            if (parishLinks.length > 0) {
+              parishLinks.forEach((pl) => {
+                this.userLinks.splice(pl.index, 1)
+              })
+            }
+          }
+        })
+      }
+    },
+    // generatePdf() {
+    //   let pdf = document.getElementById('pdf')
+    //   let configs = {
+    //     margin: 0,
+    //     filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
+    //     jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
+    //     pagebreak: {mode: ['avoid-all']}
+    //   }
+    //   html2pdf().set(configs).from(pdf).save()
+    // },
     async startView () {
       const permStatus = await utils.getPermissionStatus('ADMIN')
       if (permStatus.data === 'onMaitenance') {
@@ -273,11 +397,8 @@ export default defineComponent({
       return isActive === 0 ? "red" : "primary";
     },
     clkAddPastorToArray(c, r) {
-      const userData = {
-        name: r.userName,
-        userIdString: r.userIdString,
-        userId: r.userId,
-      }
+      const userData = this.getUserDetailById(r.userIdString)
+      console.log("🚀 ~ clkAddPastorToArray ~ userData:", userData)
       this.pastorsArray.push(userData)
       
     },

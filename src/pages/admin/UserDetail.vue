@@ -85,13 +85,13 @@
         </div>
         
         <div class="col q-gutter-sm text-right">
-          <!-- <q-btn 
+          <q-btn 
             color="primary"
             @click="openDialogUserPdfInfo"
             label="Ficha cadastral"
             rounded
             outline
-          /> -->
+          />
           <q-btn
             v-if="userType && userType === 'pastor' && canEdit"
             color="secondary"
