@@ -90,6 +90,7 @@
             @click="openDialogUserPdfInfo"
             label="Ficha cadastral"
             rounded
+            no-caps
             outline
           />
           <q-btn
@@ -2093,13 +2094,16 @@
       <q-dialog
         v-model="dialogUserInfo.open"
       >
-
-        <PdfUserInfo
-          :data="userData.userDataTabs"
-          :userId="$route.query.userId"
-          :userImage="userProfileImage"
-          @closeDialog="closeDialogShowPdfInfo"
-        />
+        <q-card 
+          style="max-width: 1000px"
+        >
+          <PdfUserInfo
+            :data="userData.userDataTabs"
+            :userId="$route.query.userId"
+            :userImage="userProfileImage"
+            @closeDialog="closeDialogShowPdfInfo"
+          />
+        </q-card>
       </q-dialog>
       <q-dialog
         v-model="dialogCallDetail.open"

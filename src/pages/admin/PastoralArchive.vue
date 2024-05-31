@@ -140,14 +140,6 @@
           :userImage="pastor.userProfileImage"
         />
       </div>
-      <div >
-        <!-- <PdfUserInfo
-          :data="userData.userDataTabs"
-          :userId="$route.query.userId"
-          :userImage="userProfileImage"
-        /> -->
-      </div>
-      
     </q-page>
   </q-page-container>
 </template>
