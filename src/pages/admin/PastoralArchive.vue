@@ -49,7 +49,7 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props" class="pointer-cursor">
-            <q-td auto-width >
+            <q-td>
               <q-btn 
                 size="sm" 
                 color="primary" 
@@ -57,11 +57,10 @@
                 round dense 
                 @click="props.expand = !props.expand" :icon="props.expand ? 'expand_less' : 'expand_more'" 
               />
-            </q-td>
-            <q-td auto-width >
               <q-btn 
                 size="sm" 
                 color="primary" 
+                class="q-mx-md"
                 unelevated
                 round dense 
                 @click="clkAddPastorToArray(col, props.row)" icon="add" 
@@ -137,7 +136,7 @@
           :id="'pastoralFile' + index"
           :ref="'pdfComponent' + index"
           :data="pastor.userDataTabs"
-          :userId="pastor.userId"
+          :userId="pastor._id"
           :userImage="pastor.userProfileImage"
         />
       </div>
@@ -233,11 +232,11 @@ export default defineComponent({
       html2pdf().set(configs).from(pdf).save()
     },
     async clkAddPastorToArray(c, r) {
-      const userData = await this.getUserDetailById(r.userIdString); // Aguarda a promessa ser resolvida
+      const userData = await this.getUserDetailById(r.userIdString)
       if (userData) {
-        this.pastorsArray.push(userData);
+        this.pastorsArray.push(userData)
       } else {
-        this.$q.notify("Erro ao obter os dados do usuário. Tente novamente em alguns instantes");
+        this.$q.notify("Erro ao obter os dados do usuário. Tente novamente em alguns instantes")
       }
     },
     async getUserDetailById(userIdString) {
