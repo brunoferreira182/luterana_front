@@ -835,6 +835,27 @@
                             :tabsIndex="i"
                           />
                         </div>
+                        <div v-if="field.type.type === 'social_network'">
+                          <q-btn
+                            label="Rede social"
+                            no-caps
+                            rounded
+                            unelevated
+                            flat
+                            color="primary"
+                            icon="add"
+                            @click="clkAddSocialNetwork(fieldIndex, i)"
+                            class="q-mt-xs"
+                            :disable="tabs.onlyAdm"
+                          />
+                          <CardSocialNetwork
+                            :data="field.value"
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="i"
+                            @edit="editSocialNetwork"
+                            @remove="removeSocialNetwork"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2105,6 +2126,13 @@
           />
         </q-card>
       </q-dialog>
+      <DialogAddSocialNetwork
+        :open="dialogAddSocialNetwork.open"
+        :dataProp="dialogAddSocialNetwork.data"
+        :type="dialogAddSocialNetwork.type"
+        @confirm="confirmAddSocialNetwork"
+        @closeDialog="clearDialogSocialNetwork"
+      />
       <q-dialog
         v-model="dialogCallDetail.open"
       >
@@ -2135,61 +2163,14 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- <div id="pdf" v-show="showPdf">
-        <q-list bordered class="q-ma-md">
-          <div class="text-center text-h6">
-            <strong>Informações do Cadastro da IELB</strong>
-          </div>
-          <q-list bordered class="q-ma-sm">
-            <div class="text-h6 text-center">
-              <strong class="text-center">Identificação, endereço, e-Mail e telefones</strong>
-            </div>
-            <div class="q-ml-sm row" v-if="userData && userData.userDataTabs && userData.userDataTabs[0]">
-              <div class="col-4">
-                <p>Nome : <strong>{{ userData.userDataTabs[0].fields[0].value }}</strong></p>
-                <p>Profissão - falta</p>
-                <p>Nacionalidade - falta</p>
-                <p>Endereço: {{userData.userDataTabs[3].fields[0].value[0].street}}, {{ userData.userDataTabs[3].fields[0].value[0].number }} </p>
-                <p>Bairro: {{ userData.userDataTabs[3].fields[0].value[0].district }}</p>
-                <p>Cidade: {{ userData.userDataTabs[3].fields[0].value[0].city }}</p>
-                <p>Estado: {{ userData.userDataTabs[3].fields[0].value[0].state }}</p>
-                <p>CEP: {{ userData.userDataTabs[3].fields[0].value[0].cep }}</p>
-                <div>
-                  <span>Caixa postal - falta</span> <span class="q-ml-md" >Cep caixa postal - falta</span>
-                </div>
-                <p>Telefone Celular: {{ userData.userDataTabs[2].fields[2].value[0].value }}</p>
-                <p v-if="userData.userDataTabs[2].fields[2].value[1]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[1].value }}</p>
-                <p v-if="userData.userDataTabs[2].fields[2].value[2]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[2].value }}</p>
-                <p v-if="userData.userDataTabs[2].fields[2].value[3]" >Telefone: {{ userData.userDataTabs[2].fields[2].value[3].value }}</p>
-                <p>Data Ordenação - falta</p>
-                <p>Local Ordenação: falta</p>
-              </div>
-              <div class="col-4">
-                <p>Código IELB: falta</p>
-                <p>Data de nascimento: {{ userData.userDataTabs[0].fields[2].value }}</p>
-                <p>Estado Civil: {{ userData.userDataTabs[2].fields[3] && userData.userDataTabs[2].fields[3].value ? 'Casado' : 'Solteiro' }}</p>
-                <p>Naturalidade: falta</p>
-                <p>Estado naturalidade: falta</p>
-                <p>Complemento: falta</p>
-                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[0]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[0].value }}</p>
-                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[1]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[1].value }}</p>
-                <p v-if="userData.userDataTabs[2].fields[0].value && userData.userDataTabs[2].fields[0].value[2]" >E-mail: {{ userData.userDataTabs[2].fields[0].value[2].value }}</p>
-              </div>
-            </div>
-          </q-list>
-          <q-list bordered class="q-ma-sm">
-            <div class="text-h6 text-center">
-              <strong class="text-center">Casamento</strong>
-            </div>
-          </q-list>
-        </q-list>
-      </div> -->
     </q-page>
   </q-page-container>
 </template>
 
 <script setup>
+import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
 import PdfUserInfo from '../../components/PdfUserInfo.vue'
+import DialogAddSocialNetwork from  '../../components/DialogAddSocialNetwork.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddAddress from '../../components/DialogAddress.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
@@ -2386,6 +2367,19 @@ export default defineComponent({
         label: null
       },
       pastorsList: null,
+      dialogAddSocialNetwork: {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          name: '',
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      },
       dialogAddMaritalStatus: {
         open:false,
         fieldIndex: null,
@@ -2455,6 +2449,58 @@ export default defineComponent({
     this.startView()
   },
   methods: {
+    clkAddSocialNetwork (fieldIndex, tabsIndex) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        fieldIndex,
+        tabsIndex,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: 'add',
+        iValue: null
+      }
+    },
+    confirmAddSocialNetwork(data) {
+      if (this.dialogAddSocialNetwork.action === 'add') {
+        if (!this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value){
+          this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value = []
+        }
+        this.userData.userDataTabs[this.dialogAddSocialNetwork.tabsIndex].fields[this.dialogAddSocialNetwork.fieldIndex].value.push({...data})
+      } else if (this.dialogAddSocialNetwork.action === 'edit') {
+        this
+          .userData
+          .userDataTabs[this.dialogAddSocialNetwork.tabsIndex]
+          .fields[this.dialogAddSocialNetwork.fieldIndex]
+          .value[this.dialogAddSocialNetwork.iValue] = {...data}
+      }
+      this.dialogAddSocialNetwork.open = false
+    },
+    clearDialogSocialNetwork() {
+      this.dialogAddSocialNetwork = {
+        open: false,
+      }
+    },
+    editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this
+        .userData
+        .userDataTabs[tabsIndex]
+        .fields[fieldIndex]
+        .value
+        .splice(iValue, 1)
+    },
     verifyNoDeadline() {
       if (this.dialogEditLink.link.deadline !== '') {
         this.dialogEditLink.noDeadline = false
