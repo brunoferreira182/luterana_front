@@ -76,7 +76,7 @@
         <q-chip
           v-if="validated"
           color="green"
-          label="Validado"
+          label="Preenchido"
           text-color="white"
           icon="done"
         />
@@ -92,7 +92,7 @@
         <q-chip
           v-if="!validated && !culturalActivities"
           color="red"
-          label="Não iniciada"
+          label="Não preenchido"
           text-color="white"
           icon="warning"
         />

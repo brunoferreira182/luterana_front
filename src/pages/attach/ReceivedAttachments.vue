@@ -103,7 +103,6 @@ export default defineComponent({
   },
   methods: {
     downloadAttach(e, r) {
-      console.log(r.attach.filename, typeof r.attach.filename)
       if(r.linkForDownload){
         window.open(r.linkForDownload.includes('https://') ? 
         r.linkForDownload : 'https://' + r.linkForDownload)

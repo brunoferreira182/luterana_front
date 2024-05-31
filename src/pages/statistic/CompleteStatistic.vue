@@ -227,7 +227,6 @@ export default defineComponent({
       },
     };
     useFetch(opt).then((r) => {
-      console.log(r, 'HFDSAHFUASDHFUSDHUHE')
       if (r.error) return;
       this.congregationName = r.data.organismName 
     });

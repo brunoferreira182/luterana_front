@@ -1566,7 +1566,6 @@ export default defineComponent({
 
         opt.files = [{file:this.userImg, name:'userPhoto'}]
       }
-      console.log(opt,"opt")
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -2034,7 +2033,6 @@ export default defineComponent({
       this.clearOrganismInputs()
     },
     clkOpenAddPersonDialog (fieldIndex, tabIndex) {
-      console.log(fieldIndex, tabIndex)
       this.addPerson.fieldIndex = fieldIndex
       this.addPerson.tabIndex = tabIndex
       this.addPerson.dialogOpen = true

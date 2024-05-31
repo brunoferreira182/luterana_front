@@ -353,7 +353,7 @@
         <q-chip
           v-if="validated"
           color="green"
-          label="Validado"
+          label="Preenchido"
           text-color="white"
           icon="done"
         />
@@ -361,7 +361,7 @@
         <q-chip
           v-if="!validated"
           color="red"
-          label="Não Validado"
+          label="Não Preenchido"
           text-color="white"
           icon="warning"
         />

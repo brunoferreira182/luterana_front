@@ -2659,7 +2659,6 @@ export default defineComponent({
       }
     },
     editCall(data) {
-      console.log(data, 'oi')
       if (data.deadline) {
         this.dialogEditCall.noDeadline = false
       } else this.dialogEditCall.noDeadline = true
@@ -3881,7 +3880,6 @@ export default defineComponent({
           let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
             if (link.functionSubtype === 'chamado') {
-              console.log('HHEHEHEUHFUSAHFSUDFHASUDH')
               this.callList.push(link)
             } 
           })

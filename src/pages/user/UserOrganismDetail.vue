@@ -1800,7 +1800,6 @@ export default defineComponent({
       this.isMobile = useScreenStore().isMobile
     },
     async cancelInviteUser(user) {
-      console.log(user)
       const opt = {
         route: '/desktop/commonUsers/cancelFunctionSolicitation',
         body: {

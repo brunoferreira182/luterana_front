@@ -256,7 +256,6 @@
         let r = await useFetch(opt)
         if (r.error) return
         child.birthDate = r.data.birthDate
-        console.log("🚀 ~ getChildsBirthDate ~ r.data:", r.data)
       }
     }
   }

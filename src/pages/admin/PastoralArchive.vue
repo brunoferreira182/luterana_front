@@ -234,7 +234,6 @@ export default defineComponent({
     },
     async clkAddPastorToArray(c, r) {
       const userData = await this.getUserDetailById(r.userIdString); // Aguarda a promessa ser resolvida
-      console.log("🚀 ~ clkAddPastorToArray ~ userData:", userData);
       if (userData) {
         this.pastorsArray.push(userData);
       } else {
