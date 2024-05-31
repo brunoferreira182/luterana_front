@@ -1,6 +1,6 @@
 <template>
-  <q-card
-    style="width: 100vw;"
+  <div
+    style="width: 800px;"
   > 
     <q-card-section>
       <div :id="'pdf' + userId">
@@ -161,7 +161,7 @@
         @click="generatePdf"
       />
     </q-card-actions>
-  </q-card>
+  </div>
 </template>
 <script setup>
 
