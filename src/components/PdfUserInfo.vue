@@ -1,6 +1,6 @@
 <template>
-  <q-card
-    style="width: 100vw;"
+  <div
+    style="width: 800px;"
   > 
     <q-card-section>
       <div :id="'pdf' + userId">
@@ -161,7 +161,7 @@
         @click="generatePdf"
       />
     </q-card-actions>
-  </q-card>
+  </div>
 </template>
 <script setup>
 
@@ -177,8 +177,8 @@
     getParterInfo();
     getPartnerBirthDate()
     getChildsBirthDate()
-    // getUserFormationsFromSga()
-    // getIdLegadoByUserId()
+    getUserFormationsFromSga()
+    getIdLegadoByUserId()
     getAllLinksByUserId()
 });
 
@@ -260,17 +260,19 @@
     }
   }
 
-  // async function getUserFormationsFromSga() {
-  //   const opt = {
-  //     route: '/desktop/adm/getUserFormationsFromSga',
-  //     body: {
-  //       userId: props.userId
-  //     }
-  //   }
-  //   let r = await useFetch(opt)
-  //   if (r.error) return
-  //   formationData.value.data = r.data
-  // }
+  async function getUserFormationsFromSga() {
+    console.log("🚀 ~ getUserFormationsFromSga ~ opt.body.props:", props)
+    const opt = {
+      route: '/desktop/adm/getUserFormationsFromSga',
+      body: {
+        userId: props.userId
+      }
+    }
+    let r = await useFetch(opt)
+    console.log("🚀 ~ getUserFormationsFromSga ~ r:", r)
+    if (r.error) return
+    formationData.value.data = r.data
+  }
 
   async function getAllLinksByUserId() {
     const opt = {
@@ -284,16 +286,16 @@
     linkData.value.data = r.data
   }
 
-  // async function getIdLegadoByUserId() {
-  //   const opt = {
-  //     route: '/desktop/adm/getIdLegadoByUserId',
-  //     body: {
-  //       userId: props.userId
-  //     }
-  //   }
-  //   let r = await useFetch(opt)
-  //   if (r.error) return
-  //   userIdLegado.value.id = r.data.idLegado
-  // }
+  async function getIdLegadoByUserId() {
+    const opt = {
+      route: '/desktop/adm/getIdLegadoByUserId',
+      body: {
+        userId: props.userId
+      }
+    }
+    let r = await useFetch(opt)
+    if (r.error) return
+    userIdLegado.value.id = r.data.idLegado
+  }
 
 </script>

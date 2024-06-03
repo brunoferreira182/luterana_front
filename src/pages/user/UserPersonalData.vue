@@ -70,6 +70,7 @@
               </div>
             </q-tabs>
           </template>
+          
           <template v-slot:after>
             <q-tab-panels 
               v-show="userData && userData.userDataTabs"
@@ -485,6 +486,7 @@
             :label="tabs.tabLabel"
           >
             <q-card>
+              
               <div v-if="tabs.tabLabel === 'Dados obrigatórios'">
                 <div  class="row justify-center">
                   <q-item-section avatar class="q-px-md q-pa-md">
