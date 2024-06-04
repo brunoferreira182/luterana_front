@@ -124,7 +124,7 @@
                         <div class="text-caption text-bold text-wrap text-capitalize" >
                           <div >{{ organism.organismName }}</div>
                           <div class="text-caption">
-                            {{ organism.userFunction }}
+                            {{ organism.userFunction }} - {{ organism.pastoralStatus.label }}
                           </div>
                         </div> 
                       </q-chip>

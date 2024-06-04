@@ -32,7 +32,7 @@
                 unelevated
                 color="primary"
                 flat
-                v-on:click.stop="clkParent(prop.node.organismId)"
+                v-on:click.stop="clkParent(prop.node)"
               >
                 <q-tooltip>Entrar no detalhe do(a) {{ prop.node.type }}</q-tooltip>
               </q-btn>
@@ -206,8 +206,12 @@ export default defineComponent({
       this.getMyOrganisms();
       this.isMobile = useScreenStore().isMobile
     },
-    clkParent (organismParentId) {
-      this.$router.push("/user/userOrganismDetail?organismId=" + organismParentId);
+    clkParent (organismParentData) {
+      if(organismParentData.type === 'Distrito'){
+        this.$router.push("/user/districtDetail?organismId=" + organismParentData.organismId);
+        return
+      }
+      this.$router.push("/user/userOrganismDetail?organismId=" + organismParentData.organismId);
     },
     clkOpenUserOrganismDetail(org) {
       const organismParentId = org.organismParentId;
