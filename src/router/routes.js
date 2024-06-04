@@ -267,6 +267,10 @@ const routes = [
         component: () => import("pages/user/AttachmentsDetail.vue"),
       },
       {
+        path: "/user/districtDetail",
+        component: () => import("pages/user/DistrictDetail.vue"),
+      },
+      {
         path: "/user/organismsList",
         component: () => import("pages/user/OrganismsList.vue"),
       },
