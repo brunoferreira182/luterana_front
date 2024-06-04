@@ -65,21 +65,28 @@
           ></q-select>
           <q-input
             outlined
-            label="Link para download"
+            label="Link para download (Opcional)"
             v-model="linkForDownload"
             hint="Copie e cole aqui o link para download"
           />
-          <q-file
+          <PhotoHandler
+            :start="startPhotoHandler"
+            :camera="true"
+            :gallery="true"
+            :documents="true"
+            :noCrop="true"
+            @captured="captured"
+            @cancel="cancelPhotoHandler"
+          />
+          <q-btn
+            class="q-mr-xs"
             v-if="$route.path === '/attach/createAttachment'"
-            v-model="files"
-            label="Clique aqui para adicionar arquivos"
-            outlined
-          >
-            <template #append>
-              <q-icon name="attach_file" />
-            </template>
-          </q-file>
-
+            flat
+            no-caps
+            color="primary"
+            :label="addFileButtonText"
+            @click="clkAddAttachment"
+          />
           <div class="text-h5 q-my-md" >
             Destinatário
             <q-btn
@@ -182,13 +189,17 @@
 <script>
 import { openURL } from "quasar";
 import { defineComponent } from "vue";
+import PhotoHandler from '../components/PhotoHandler.vue'
 import useFetch from "../boot/useFetch";
 import utils from "../boot/utils";
 export default defineComponent({
+  components:{
+    PhotoHandler
+  },
   name: "CreateAttachment",
   data() {
     return {
-      files: null,
+      fileSelected: null,
       linkForDownload: null,
       newReceiver: null,
       attachmentInfo: {
@@ -196,6 +207,7 @@ export default defineComponent({
         description: "",
         priority: 1,
       },
+      addFileButtonText: 'Clique para inserir um arquivo',
       selectedFilters: [],
       addReceiverDialog: false,
       receiverType: "",
@@ -204,6 +216,7 @@ export default defineComponent({
       organismsList: [],
       currentTypeName: "",
       filename: "",
+      startPhotoHandler: false,
       fileUrl: "",
     };
   },
@@ -217,6 +230,23 @@ export default defineComponent({
     this.getSpecificDistrictsToSendAttach();
   },
   methods: {
+    clkAddAttachment () {
+      this.step = 'addAttachment'
+      this.startPhotoHandler = true
+    },
+    cancelPhotoHandler () {
+      this.startPhotoHandler = false
+      this.step = 'initial'
+    },
+    captured(img, imgBlob, fileName) {
+      this.step = 'initial'
+      this.startPhotoHandler = false
+      this.fileSelected = {
+        file: imgBlob,
+        name: fileName
+      }
+      this.addFileButtonText = fileName
+    },
     removeSelectedFilter(i){
       this.selectedFilters.splice(i, 1)
       this.newReceiver = null
@@ -284,11 +314,9 @@ export default defineComponent({
       //   ? this.updateAttachment()
       //   : this.createAttachment();
     },
-    createAttachment() {
-      
-      // return
-      if(this.attachmentInfo.title === '' || this.attachmentInfo.description === ''){
-        this.$q.notify('Preencha título e descrição')
+    async createAttachment() {
+      if(this.attachmentInfo.title === '' || this.fileSelected === null){
+        this.$q.notify('Preencha título e insira um arquivo')
         return
       }
       const opt = {
@@ -300,14 +328,10 @@ export default defineComponent({
             priority: this.attachmentInfo.priority,
           },
         },
-        files: [],
+        file: [ this.fileSelected ]
       };
       if(this.linkForDownload !== null){
         opt.body.linkForDownload = this.linkForDownload
-      }
-      if(this.files !== null) {
-        const file = [{file:this.files,name:this.files.name}]
-        opt.files = file
       }
       switch(this.receiverType) {
         case 'specificDistrict':
@@ -325,14 +349,15 @@ export default defineComponent({
           return
       }
       this.$q.loading.show();
-      useFetch(opt).then(r => {
+      const r = await useFetch(opt)
         this.$q.loading.hide();
-        if(r.errorMessage){
-          this.$q.notify(r.errorMessage)
+        if(r.error){
+          this.$q.notify('Falha ao enviar documento!')
           return
         }
+        this.fileSelected = null
+        this.addFileButtonText = 'Clique para inserir um arquivo'
         this.$q.notify("Enviado!");
-      });
     },
     updateAttachment() {
       const opt = {
