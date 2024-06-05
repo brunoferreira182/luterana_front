@@ -4,11 +4,11 @@ import { LocalStorage } from "quasar";
 import useFetch from "./useFetch";
 import { calculateMasterServerAttachmentsRoute } from "./masterServerRoutes";
 import { masterServerRoute } from './masterServerRoutes'
-import { Plugins } from '@capacitor/core';
-const { Filesystem } = Plugins;
+import { Filesystem } from '@capacitor/filesystem';
 
 const useUtils = {
-  async downloadFile (obj) {
+  async download (obj) {
+    console.log("🚀 ~ download ~ obj:", obj)
     const opt = {
       url: `${masterServerRoute()}/static/${obj.filename}`,
       method: 'GET',

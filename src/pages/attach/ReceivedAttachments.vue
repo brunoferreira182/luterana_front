@@ -102,16 +102,17 @@ export default defineComponent({
     this.getAttachByPastor();
   },
   methods: {
-    downloadAttach(e, r) {
+    async downloadAttach(e, r) {
+      console.log(r, 'ODAPSKDOPASKD')
       if(r.linkForDownload){
         window.open(r.linkForDownload.includes('https://') ? 
         r.linkForDownload : 'https://' + r.linkForDownload)
         return
       }
-      utils.downloadFile({
-        filename: r.attach.filename,
-        originalname: r.attach.originalname,
-        type: r.attach.mimetype
+      await utils.download({
+        filename: r.file.filename,
+        originalname: r.file.originalname,
+        type: r.file.mimetype
       })
     },
     getSelectedString() {

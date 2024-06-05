@@ -11,7 +11,7 @@
         </div>
         <div class="col text-right self-center">
           <q-btn
-            @click="clkSaveAttachment"
+            @click="createAttachment"
             color="primary"
             no-caps
             class="q-pa-sm"
@@ -308,12 +308,12 @@ export default defineComponent({
         }
       }else{ this.addReceiverDialog = false;}
     },
-    clkSaveAttachment() {
-      this.createAttachment();
-      // this.$route.path === "/attach/attachmentDetail"
-      //   ? this.updateAttachment()
-      //   : this.createAttachment();
-    },
+    // clkSaveAttachment() {
+    //   this.createAttachment();
+    //   // this.$route.path === "/attach/attachmentDetail"
+    //   //   ? this.updateAttachment()
+    //   //   : this.createAttachment();
+    // },
     async createAttachment() {
       if(this.attachmentInfo.title === '' || this.fileSelected === null){
         this.$q.notify('Preencha título e insira um arquivo')
