@@ -104,7 +104,6 @@ export default defineComponent({
   },
   methods: {
     async downloadAttach(e, r) {
-      console.log(r, 'ODAPSKDOPASKD')
       if(r.linkForDownload){
         window.open(r.linkForDownload.includes('https://') ? 
         r.linkForDownload : 'https://' + r.linkForDownload)

@@ -277,7 +277,6 @@
   }
 
   async function getUserFormationsFromSga() {
-    console.log("🚀 ~ getUserFormationsFromSga ~ opt.body.props:", props)
     const opt = {
       route: '/desktop/adm/getUserFormationsFromSga',
       body: {
@@ -285,7 +284,6 @@
       }
     }
     let r = await useFetch(opt)
-    console.log("🚀 ~ getUserFormationsFromSga ~ r:", r)
     if (r.error) return
     formationData.value.data = r.data
   }
