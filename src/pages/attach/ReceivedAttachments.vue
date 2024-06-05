@@ -100,6 +100,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getAttachByPastor();
+    this.getAttachByUserInSpecificDistrict()
   },
   methods: {
     async downloadAttach(e, r) {
@@ -143,25 +144,18 @@ export default defineComponent({
         this.attachFiles = r.data.list
       });
     },
-    // getAttachmentsListByUserId() {
-    //   const opt = {
-    //     route: "/desktop/attach/getAttachmentsListByUserId",
-    //     body: {
-    //       searchString: this.filter,
-    //       page: this.pagination.page,
-    //       rowsPerPage:this.pagination.rowsPerPage,
-    //       isActive: 1,
-    //     },
-    //   };
-    //   if (this.selectFilter === "Ativos") {
-    //     opt.body.isActive = 1;
-    //   } else if (this.selectFilter === "Inativos") {
-    //     opt.body.isActive = 0;
-    //   }
-    //   useFetch(opt).then((r) => {
-    //     this.structureList = r.data;
-    //   });
-    // },
+    getAttachByUserInSpecificDistrict() {
+      const opt = {
+        route: "/desktop/attach/getAttachByUserInSpecificDistrict",
+        // body: {
+        //   page: this.pagination.page,
+        //   rowsPerPage:this.pagination.rowsPerPage,
+        // },
+      };
+      useFetch(opt).then((r) => {
+        console.log("🚀 ~ useFetch ~ r:", r)
+      });
+    },
   },
 });
 </script>

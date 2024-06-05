@@ -103,6 +103,15 @@
             <q-chip v-if="receiverType === 'pastors'">
               Todos os pastores
             </q-chip>
+            <q-chip v-if="subType === 'pastors'">
+              Todos os pastores
+            </q-chip>
+            <q-chip v-if="subType === 'general'">
+              Todos
+            </q-chip>
+            <q-chip v-if="subType === 'pastors'">
+              Distrito 
+            </q-chip>
             <q-chip v-if="receiverType === 'general'">
               Todos
             </q-chip>
@@ -209,6 +218,7 @@ export default defineComponent({
       },
       addFileButtonText: 'Clique para inserir um arquivo',
       selectedFilters: [],
+      subType: '',
       addReceiverDialog: false,
       receiverType: "",
       receiverOptions: [],
@@ -301,7 +311,6 @@ export default defineComponent({
           this.addReceiverDialog = false;
           
           this.selectedFilters.push({
-            typeName: this.currentTypeName,
             type: this.receiverType,
             ...this.newReceiver,
           });
@@ -389,9 +398,9 @@ export default defineComponent({
       this.$q.loading.show();
       useFetch(opt).then((r) => {
         this.attachmentInfo = r.data.attachmentInfo;
-        this.selectedFilters = r.data.receivers;
-        this.filename = r.data.files[0].originalname;
-        this.fileUrl = utils.attachmentsAddress() + r.data.files[0].filename;
+        this.subType = r.data.subType;
+        this.filename = r.data.file.originalname;
+        this.fileUrl = utils.attachmentsAddress() + r.data.file.filename;
       });
     },
   },
