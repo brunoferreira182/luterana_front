@@ -277,7 +277,6 @@ export default defineComponent({
   },
   mounted() {
     this.$q.loading.hide();
-    console.log(height(document.getElementById("idMainLayout")), height(document.getElementById("idMainToolbar")))
     this.heightRouterView =
       height(document.getElementById("idMainLayout")) -
       height(document.getElementById("idMainToolbar"));

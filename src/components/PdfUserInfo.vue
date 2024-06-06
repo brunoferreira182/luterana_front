@@ -14,7 +14,8 @@
             </div>
             <div class="q-ml-sm row">
               <div class="col-9">
-                <p>Nome : <strong>{{  props.data[0].fields[0].value }}</strong></p>
+                <p>Nome: <strong>{{  props.data[0].fields[0].value }}</strong></p>
+                <p v-if="props.data[0].fields[1].value">Email: {{  props.data[0].fields[1].value }}</p>
                 <p>Endereço: {{ props.data[3].fields[0].value[0].street}}, {{  props.data[3].fields[0].value[0].number }} </p>
                 <p>Bairro: {{  props.data[3].fields[0].value[0].district }}</p>
                 <p>Cidade: {{  props.data[3].fields[0].value[0].city }}</p>
@@ -27,6 +28,7 @@
                 <p v-if="userIdLegado.id">Código IELB: {{ userIdLegado.id }}</p>
                 <p>Data de nascimento: {{  props.data[0].fields[2].value }}</p>
                 <p>Estado Civil: {{ props.data[1].fields[3] && props.data[1].fields[3].value && props.data[1].fields[3].value[0] ? 'Casado' : 'Solteiro' }}</p>
+                <p>Cpf: {{ props.data[0].fields[4].value }}</p>
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[0]" >E-mail: {{  props.data[2].fields[0].value[0].value }}</p>
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[1]" >E-mail: {{  props.data[2].fields[0].value[1].value }}</p>
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[2]" >E-mail: {{  props.data[2].fields[0].value[2].value }}</p>
@@ -45,7 +47,11 @@
             <div class="text-h6 text-center">
               <strong class="text-center">Casamento</strong>
             </div>
-            <div class="q-ml-sm" v-if="props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[3] && props.data[1].fields[3].value && props.data[1].fields[3] && props.data[1].fields[3].value && props.data[1].fields[3].value[0] && props.data[1].fields[3].value[0].partner && props.data[1].fields[3].value[0].partner.name">
+            <div class="q-ml-sm" v-if="props && props.data && props.data[1] 
+            && props.data[1].fields && props.data[1].fields[3] 
+            && props.data[1].fields[3].value && props.data[1].fields[3] 
+            && props.data[1].fields[3].value && props.data[1].fields[3].value[0] 
+            && props.data[1].fields[3].value[0].partner && props.data[1].fields[3].value[0].partner.name">
               <p>Cônjuge: {{props.data[1].fields[3].value[0].partner.name}}</p>
               <p>Data de nascimento cônjuge: {{ partnerData.birthDate }}</p>
               <p>Data início: {{ props.data[1].fields[3].value[0].partner.dates.initialDate }}</p>
@@ -58,9 +64,19 @@
             </div>
             <div
               class="q-ml-sm"
-              v-if="props && props.data && props.data[1] && props.data[1].fields && props.data[1].fields[0] && props.data[1].fields[0].value && props.data[1].fields[0].value[0] && props.data[1].fields[1] && props.data[1].fields[1].value && props.data[1].fields[1].value[0] && props.data[1].fields[1].value[0].userName && props.data[1].fields[1].value[0].userName"
             >
-              {{ props.data[1].fields[0].value[0].userName }} e {{ props.data[1].fields[1].value[0].userName }}
+              <p v-if="props && props.data
+              && props.data[1] && props.data[1].fields
+              && props.data[1].fields[0] && props.data[1].fields[0].value
+              && props.data[1].fields[0].value[0] && props.data[1].fields[0].value[0].userName">
+                Pai: {{ props.data[1].fields[0].value[0].userName }}
+              </p>
+              <p v-if="props && props.data
+              && props.data[1] && props.data[1].fields
+              && props.data[1].fields[1] && props.data[1].fields[1].value
+              && props.data[1].fields[1].value[0] && props.data[1].fields[1].value[0].userName">
+                Mãe: {{ props.data[1].fields[1].value[0].userName }}
+              </p>
             </div>
           </q-list>
           <q-list
@@ -261,7 +277,6 @@
   }
 
   async function getUserFormationsFromSga() {
-    console.log("🚀 ~ getUserFormationsFromSga ~ opt.body.props:", props)
     const opt = {
       route: '/desktop/adm/getUserFormationsFromSga',
       body: {
@@ -269,7 +284,6 @@
       }
     }
     let r = await useFetch(opt)
-    console.log("🚀 ~ getUserFormationsFromSga ~ r:", r)
     if (r.error) return
     formationData.value.data = r.data
   }

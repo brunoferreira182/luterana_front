@@ -216,7 +216,6 @@ export default defineComponent({
       let pdf = document.getElementById(elementId)
       let configs = {
         margin: 0,
-        // filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
         fileName,
         jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
         pagebreak: {mode: ['avoid-all']}

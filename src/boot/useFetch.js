@@ -52,7 +52,6 @@ const useFetch = async ({
   /// ANEXOS ///////////////////////////////////////
   let form;
   if (file && file.length > 0) {
-    console.log(file, 'entrou nofile')
     newBody.destinationserver = destinationserver
     newBody.destinationroute = destinationroute
     form = new FormData();
@@ -62,9 +61,7 @@ const useFetch = async ({
       // const blob = await fileToBlob(f.file);
       const blob = new Blob([f.file], { type: f.file.type });
       form.append('file', blob, fileName);
-      console.log(f, 'dentro do for da porra')
     });
-    console.log('form', form.entries())
     bodyToSend = form;
   }
   //////////////////////////////////////////////////
