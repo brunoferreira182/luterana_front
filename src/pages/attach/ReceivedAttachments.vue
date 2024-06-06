@@ -9,7 +9,7 @@
         :rows="attachFiles"
         row-key="_id"
         rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado recebido até o momento"
+        no-data-label="Nenhum arquivo recebido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="downloadAttach"
@@ -99,7 +99,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAttachByPastor();
+    // this.getAttachByPastor();
     this.getAttachByUserInSpecificDistrict()
   },
   methods: {
