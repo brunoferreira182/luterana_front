@@ -269,6 +269,36 @@ export const useTableColumns = defineStore("tableColumns", {
         sortable: true,
       },
     ],
+    membershipList:[
+      {
+        name: "name",
+        align: "left",
+        label: "Nome",
+        field: 'name',
+        sortable: true,
+      },
+      {
+        name: "initialDate",
+        align: "left",
+        label: "Data Início",
+        field: (row) => row.dates.initialDate,
+        sortable: true,
+      },
+      {
+        name: "finalDate",
+        align: "left",
+        label: "Data Fim",
+        field: (row) => row.dates.finalDate,
+        sortable: true,
+      },
+      {
+        name: "organism",
+        align: "left",
+        label: "Organismos",
+        field: (row) => row.organismName,
+        sortable: true,
+      },
+    ],
     organismList: [
       {
         name: "nome",

@@ -86,7 +86,10 @@ const routes = [
         path: "/admin/pastoralArchive",
         component: () => import("src/pages/admin/PastoralArchive.vue"),
       },
-      
+      {
+        path: "/admin/userMembershipandHistory",
+        component: () => import("src/pages/admin/userMembershipandHistory.vue"),
+      },
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },
       {
@@ -299,6 +302,11 @@ const routes = [
         path: "/user/userSugestionsList",
         component: () => import("src/pages/user/UserSugestionsList.vue"),
       },
+      {
+        path: "/user/userMembershipandHistory",
+        component: () => import("src/pages/user/userMembershipandHistory.vue"),
+      },
+      
       // {
       //   path: "/user/statistic",
       //   component: () => import("src/pages/user/Statistic.vue"),
