@@ -8,7 +8,6 @@ import { Filesystem } from '@capacitor/filesystem';
 
 const useUtils = {
   async download (obj) {
-    console.log("🚀 ~ download ~ obj:", obj)
     const opt = {
       url: `${masterServerRoute()}/static/${obj.filename}`,
       method: 'GET',
