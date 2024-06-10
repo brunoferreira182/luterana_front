@@ -1232,7 +1232,7 @@ import utils from '../../boot/utils'
 import { defineComponent } from "vue";
 import { useScreenStore } from "stores/checkIsMobile";
 export default defineComponent({
-  name: "UserPersonalData",
+  name: "",
   data() {
     return {
       dialogShowOtherData: {

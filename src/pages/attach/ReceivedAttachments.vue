@@ -9,7 +9,7 @@
         :rows="attachFiles"
         row-key="_id"
         rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado recebido até o momento"
+        no-data-label="Nenhum arquivo recebido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
         @row-click="downloadAttach"
@@ -151,8 +151,14 @@ export default defineComponent({
         //   rowsPerPage:this.pagination.rowsPerPage,
         // },
       };
+      this.$q.loading.show()
       useFetch(opt).then((r) => {
-        console.log("🚀 ~ useFetch ~ r:", r)
+        this.$q.loading.hide()
+        if(!r.error){
+          this.attachFiles.push(...r.data)
+        }else{
+          this.$q.nofity(r.errorMessage)
+        }
       });
     },
   },

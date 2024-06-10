@@ -8,7 +8,6 @@ import { Filesystem } from '@capacitor/filesystem';
 
 const useUtils = {
   async download (obj) {
-    console.log("🚀 ~ download ~ obj:", obj)
     const opt = {
       url: `${masterServerRoute()}/static/${obj.filename}`,
       method: 'GET',
@@ -124,6 +123,11 @@ const useUtils = {
           route: "/admin/pastoralArchive",
           icon: "format_list_bulleted",
         },
+        // {
+        //   label: "Membresia",
+        //   route: "/admin/userMembershipandHistory",
+        //   icon: "equalizer",
+        // },
       ],
       config: [
         {
@@ -216,6 +220,11 @@ const useUtils = {
           label: "Estatística",
           route: "/statistic/introWriteStatisticData",
           icon: "equalizer",
+        },
+        {
+          label: "Membresia",
+          route: "/user/userMembershipandHistory",
+          icon: "group",
         },
       ],
     };
