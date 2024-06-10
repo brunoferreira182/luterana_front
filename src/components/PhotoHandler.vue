@@ -3,13 +3,14 @@
     <q-dialog v-model="openDialog" class="app-font" @hide="clkBack">
       <q-card style="border-radius: 1rem;">
         <q-card-section>
-          <div class="text-h6 text-center">Escolha uma opção</div>
+          <div v-if="$route.path !== '/user/userPersonalData'" class="text-h6 text-center">Escolha uma opção</div>
+          <div v-if="$route.path === '/user/userPersonalData'" class="text-h6 text-center">Selecione a imagem</div>
         </q-card-section>
 
         <q-card-actions>
-          <q-btn color="primary" flat no-caps label="Câmera" @click="openCamera" v-if="camera" />
+          <q-btn color="primary" flat no-caps label="Câmera" @click="openCamera" v-if="camera && $route.path !== '/user/userPersonalData'" />
           <q-btn color="primary" flat no-caps label="Galeria" @click="pickFile('gallery')" v-if="gallery"/>
-          <q-btn color="primary" flat no-caps label="Arquivo" @click="pickFile('documents')" v-if="documents" />
+          <q-btn color="primary" flat no-caps label="Arquivo" @click="pickFile('documents')" v-if="documents && $route.path !== '/user/userPersonalData'" />
           <q-btn color="red-8" flat no-caps label="Cancelar" @click="clkBack" />
         </q-card-actions>
       </q-card>

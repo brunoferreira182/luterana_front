@@ -99,39 +99,23 @@
                     Solicitar alterações
                   </q-btn>
                   <div class="text-center" v-if="tabs.tabLabel === 'Dados obrigatórios'">
-                      <q-item-section avatar class="items-center no-padding">
-                        <q-img 
-                          style="border-radius: 1rem"
-                          :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
-                          width="208px" 
-                          height="208px"
-                        />
-                      </q-item-section>
-                        <q-btn
-                          label="Trocar foto"
-                          @click="clkOpenFilePicker"
-                          color="primary"
-                          unelevated
-                          rounded
-                          no-caps
-                        />
-                        <q-file
-                          v-model="userImg"
-                          label="Clique para inserir foto"
-                          borderless
-                          clearable
-                          class="q-px-lg"
-                          @update:model-value="addUserImage()"
-                          accept=".png, .jpg, image/*"
-                          @rejected="rejectUserPhoto"
-                          max-files="1"
-                          ref="filePicker"
-                          style="display: none"
-                        >
-                          <template v-slot:prepend>
-                            <q-icon name="photo_camera" />
-                          </template>
-                        </q-file>
+                    <q-item-section avatar class="items-center no-padding q-ma-sm">
+                      <q-img 
+                        style="border-radius: 1rem"
+                        :src="userData.profileImage ? utils.makeFileUrl(userData.profileImage) : avatar" 
+                        width="208px" 
+                        height="208px"
+                      />
+                    </q-item-section>
+                    <q-btn
+                      label="Trocar foto"
+                      color="primary"
+                      unelevated
+                      rounded
+                      no-caps
+                      class="q-mr-xs"
+                      @click="clkAddAttachment"
+                    />
                   </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
@@ -502,29 +486,13 @@
                   <div class="col q-px-xl">
                     <q-btn
                       label="Trocar foto"
-                      @click="clkOpenFilePicker"
                       color="primary"
                       unelevated
                       rounded
                       no-caps
+                      class="q-mr-xs"
+                      @click="clkAddAttachment"
                     />
-                    <q-file
-                      v-model="userImg"
-                      label="Clique para inserir foto"
-                      borderless
-                      clearable
-                      class="q-px-lg"
-                      @update:model-value="addUserImage()"
-                      accept=".png, .jpg, image/*"
-                      @rejected="rejectUserPhoto"
-                      max-files="1"
-                      ref="filePicker"
-                      style="display: none"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="photo_camera" />
-                      </template>
-                    </q-file>
                   </div>
                 </div>
               </div>
@@ -1196,6 +1164,15 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <PhotoHandler
+        :start="startPhotoHandler"
+        :camera="true"
+        :gallery="true"
+        :documents="true"
+        :noCrop="true"
+        @captured="captured"
+        @cancel="cancelPhotoHandler"
+      />
     </q-page>
   </q-page-container>
 </template>
@@ -1226,6 +1203,7 @@ import CardFormation from '../../components/CardFormation.vue'
 import DialogRemovePhoneMobileEmail from '../../components/DialogRemovePhoneMobileEmail.vue'
 import avatar from '../../assets/avatar.svg'
 import utils from '../../boot/utils'
+import PhotoHandler from '../../components/PhotoHandler.vue'
 </script>
 
 <script>
@@ -1233,11 +1211,15 @@ import { defineComponent } from "vue";
 import { useScreenStore } from "stores/checkIsMobile";
 export default defineComponent({
   name: "UserPersonalData",
+  components:{
+    PhotoHandler
+  },
   data() {
     return {
       dialogShowOtherData: {
         open: false
       },
+      startPhotoHandler: false,
       otherData: null,
       userImg:null,
       isMobileState: useScreenStore().checkScreenSize(),
@@ -1388,6 +1370,7 @@ export default defineComponent({
         tabsIndex: null,
         i: null,
         usersList: [],
+        fileSelected: null
       }
     };
   },
@@ -1490,10 +1473,6 @@ export default defineComponent({
       this.dialogEditMaritalRelation.i = i
       this.dialogEditMaritalRelation.data = this.userData.userDataTabs[tabsIndex].fields[fieldIndex].value[i].partner
     },
-    clkOpenFilePicker () {
-      console.log(this.$refs.filePicker[0].pickFiles())
-      // this.$refs.filePicker.pickFiles()
-    },
     editAttach(fieldIndex, tabsIndex, field, value, iValue) {
       this.dialogAddAttach.open = true,
       this.dialogAddAttach.fieldIndex = fieldIndex
@@ -1560,23 +1539,42 @@ export default defineComponent({
         message: 'Os formatos de imagem aceitos são jpg e png'
       })
     },
-    addUserImage() {
+    clkAddAttachment () {
+      this.step = 'addAttachment'
+      this.startPhotoHandler = true
+    },
+    cancelPhotoHandler () {
+      this.startPhotoHandler = false
+      this.step = 'initial'
+    },
+    captured(img, imgBlob, fileName) {
+      this.step = 'initial'
+      this.startPhotoHandler = false
+      this.fileSelected = {
+        file: imgBlob,
+        name: fileName
+      }
+      this.addUserImage()
+    },
+    async addUserImage() {
+      if(!this.fileSelected){
+        this.$q.notify('Insira uma imagem válida')
+        return
+      }
       const opt = {
         route: "/desktop/user/addUserImage",
+        file: [ this.fileSelected ]
       };
-      if(this.userImg){
-
-        opt.files = [{file:this.userImg, name:'userPhoto'}]
-      }
       this.$q.loading.show();
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        if(r.error){
-          this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
-          return
-        } this.$q.notify('Imagem inserida com sucesso!')
+      const r = await useFetch(opt)
+      this.$q.loading.hide()
+      if(!r.error){
+        this.$q.notify('Imagem inserida com sucesso!')
         this.getUserDetailById()
-      });
+        return
+      } else{
+        this.$q.notify('Ocorreu um erro, tente novamente mais tarde.')
+      }
     },
     confirmAddSocialNetwork(data) {
       if (this.dialogAddSocialNetwork.action === 'add') {

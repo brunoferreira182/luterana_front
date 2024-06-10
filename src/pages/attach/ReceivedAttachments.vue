@@ -99,7 +99,7 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    this.getAttachByPastor();
+    // this.getAttachByPastor();
     this.getAttachByUserInSpecificDistrict()
   },
   methods: {
@@ -153,11 +153,12 @@ export default defineComponent({
       };
       this.$q.loading.show()
       useFetch(opt).then((r) => {
+        console.log("🚀 ~ useFetch ~ r:", r)
         this.$q.loading.hide()
         if(!r.error){
           this.attachFiles.push(...r.data)
         }else{
-          this.$q.nofity(r.errorMessage)
+          this.$q.notify(r.errorMessage)
         }
       });
     },
