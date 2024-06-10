@@ -1210,10 +1210,7 @@ import PhotoHandler from '../../components/PhotoHandler.vue'
 import { defineComponent } from "vue";
 import { useScreenStore } from "stores/checkIsMobile";
 export default defineComponent({
-  name: "UserPersonalData",
-  components:{
-    PhotoHandler
-  },
+  name: "",
   data() {
     return {
       dialogShowOtherData: {

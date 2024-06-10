@@ -123,6 +123,11 @@ const useUtils = {
           route: "/admin/pastoralArchive",
           icon: "format_list_bulleted",
         },
+        // {
+        //   label: "Membresia",
+        //   route: "/admin/userMembershipandHistory",
+        //   icon: "equalizer",
+        // },
       ],
       config: [
         {
@@ -215,6 +220,11 @@ const useUtils = {
           label: "Estatística",
           route: "/statistic/introWriteStatisticData",
           icon: "equalizer",
+        },
+        {
+          label: "Membresia",
+          route: "/user/userMembershipandHistory",
+          icon: "group",
         },
       ],
     };
