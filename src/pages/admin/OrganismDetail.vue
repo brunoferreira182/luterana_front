@@ -258,7 +258,7 @@
               </div>
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
-                  Vinculado a
+                  <!-- Vinculado a -->
                   <!-- <q-btn
                     v-if="canEdit"
                     icon="edit"
@@ -278,8 +278,38 @@
                     v-for="parent in organismParentData"
                     :key="parent"
                     @click="clkShowDialogParentDetail(parent)"
-                  >
-                    <q-item-section >
+                  > 
+                    <q-item-section>
+                      <div class="row">
+                        <div class="q-mt-sm">
+                          {{ parent.parentName }}
+                        </div>
+                        <div >
+                          <q-chip 
+                            outline 
+                            size="15px"
+                            :style="{ color: parent.organismConfigStyle}"
+                            >
+                            {{ parent.organismConfigName }}
+                          </q-chip>
+                        </div>
+                      </div>
+                      <div class="row" v-if="parent.districtName">
+                        <div class="q-mt-sm">
+                          {{parent.districtName}}
+                        </div>
+                        <div>
+                          <q-chip
+                            outline
+                            size="15px"
+                            :style="{ color: parent.organismConfigStyle}"
+                          >
+                            Distrito
+                          </q-chip>
+                        </div>
+                      </div>
+                    </q-item-section>
+                    <!-- <q-item-section >
                       <div class="row">
                         <div class="q-mt-sm">{{ parent.parentName}}</div>
                         <q-chip
@@ -292,7 +322,7 @@
                           -  Distrito: {{parent.districtName}}
                         </div>
                       </div>
-                    </q-item-section>
+                    </q-item-section> -->
                     
                   </q-item>
                 </q-list>
