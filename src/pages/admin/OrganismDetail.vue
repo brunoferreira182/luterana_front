@@ -69,10 +69,10 @@
               </div>
               <q-list class="q-ml-md q-px-sm" v-if="organismChildData && organismChildData.length > 0">
                 <q-item 
-                  v-for="(child, ichild) in organismChildData" 
+                  v-for="(child) in organismChildData" 
                   :key="child" 
                   class="bg-grey-3 q-ma-xs" 
-                  style="border-radius: 0.5rem"
+                  style="border-radius: 1rem"
                   clickable
                   @click="clkShowDialogLink(child)"
                 >
@@ -90,7 +90,7 @@
                     </q-item-label>
                     <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
                       Pastores:
-                      <q-btn
+                      <!-- <q-btn
                         icon="add"
                         color="primary"
                         size="9px"
@@ -101,7 +101,7 @@
                         @click.stop="linkPastorToChildOrganisms(child, ichild)"
                       >
                         <q-tooltip>Adicionar pastor</q-tooltip>
-                      </q-btn>
+                      </q-btn> -->
                     </q-item-label>
                     <q-item-label 
                       v-for="pastor in child.functions.users" 
@@ -120,7 +120,7 @@
                       >
                         <q-tooltip>Trocar pastor</q-tooltip>
                       </q-btn> -->
-                      <q-btn
+                      <!-- <q-btn
                         icon="delete"
                         dense
                         flat
@@ -130,7 +130,7 @@
                         @click.stop="dialogOpenDeletePastorFromFunction(pastor)"
                       >
                         <q-tooltip>Remover pastor</q-tooltip>
-                      </q-btn>
+                      </q-btn> -->
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -242,7 +242,7 @@
                 <q-list class="q-px-sm">
                   <q-item
                     class="bg-grey-3 q-ma-sm"
-                    style="border-radius: 0.5rem;"
+                    style="border-radius: 1rem;"
                     clickable
                     v-for="parent in deptParentData"
                     :key="parent"
@@ -259,7 +259,7 @@
               <div v-if="organismConfigName === 'Congregação' || organismConfigName === 'Paróquia' || organismConfigName !== 'Ponto de Missão'">
                 <div class="text-h6">
                   Vinculado a
-                  <q-btn
+                  <!-- <q-btn
                     v-if="canEdit"
                     icon="edit"
                     flat
@@ -268,7 +268,7 @@
                     unelevated
                   >
                     <q-tooltip>Alterar Vínculo</q-tooltip>
-                  </q-btn>
+                  </q-btn> -->
                 </div>
                 <q-list class="q-px-xs" v-if="organismParentData && organismParentData.length > 0">
                   <q-item 
@@ -457,7 +457,7 @@
               </div>
               <div  v-if="organismConfigName === 'Paróquia' && hidePastorInParoquia === false">
                 <!-- <q-separator class="q-mx-md q-mb-md" /> -->
-                <div class="text-h6" v-if="$route.path.includes('/admin')">
+                <!-- <div class="text-h6" v-if="$route.path.includes('/admin')">
                   Pastores em paróquia
                   <span>
                     <q-btn
@@ -473,7 +473,7 @@
                       <q-tooltip>Adicionar pastor</q-tooltip>
                     </q-btn>
                   </span>
-                </div>
+                </div> -->
                 <div v-for="(func, funcIndex) in functions" :key="func">
                   <cardPastor
                     class="no-margin"
