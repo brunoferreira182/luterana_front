@@ -3,7 +3,7 @@
     <q-page>  
       <div class="q-pa-md q-ml-sm row justify-between">
         <div class="col text-h5 text-capitalize">
-          Lista de solicitações
+          Histórico de Membresia
         </div>
         <q-btn 
           unelevated
@@ -16,15 +16,13 @@
       </div>
       <q-separator/>
       <!-- <div class="q-pa-md">  -->
-        <q-list padding>
-          <q-table
+          <q-table 
               flat
-              class="bg-accent"
-              title="Histórico de Membresia"
+              class="bg-accent q-pa-md"
               :columns="columnsData"
               :rows="recivedSolicitations"
-              virtual-scroll
               row-key="_id"
+              virtual-scroll
               rows-per-page-label="Registros por página"
               no-data-label="Nenhum dado inserido até o momento"
               no-results-label="A pesquisa não retornou nenhum resultado"
@@ -34,9 +32,40 @@
               @request="nextPage"
               >
               <!-- :selected-rows-label="getSelectedString"
-              @row-click="" -->
+              @row-click=""  -->
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th auto-width />
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                  >
+                    {{ col.label }}
+                  </q-th>
+                </q-tr>
+              </template>
+
+              <template v-slot:body="props">
+                <q-tr :props="props">
+                  <q-td auto-width>
+                    <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'edit'" />
+                  </q-td>
+                  <q-td
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                  >
+                    {{ col.value }}
+                  </q-td>
+                </q-tr>
+                <q-tr v-show="props.expand" :props="props">
+                  <q-td colspan="100%">
+                    <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
+                  </q-td>
+                </q-tr>
+              </template>
           </q-table>
-        </q-list>
           <!-- <q-item-label header>Histórico de Membresia</q-item-label>
 
             <q-item clickable v-ripple
