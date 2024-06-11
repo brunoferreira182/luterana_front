@@ -274,7 +274,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "name",
         align: "left",
         label: "Nome",
-        field: 'name',
+        field: (row) => row.userName,
         sortable: true,
       },
       {
@@ -288,7 +288,10 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "finalDate",
         align: "left",
         label: "Data Fim",
-        field: (row) => row.dataFim,
+        field: (row) => {
+          if ( row.dataFim === '' ) return '-'
+          else return row.dataFim 
+        },
         sortable: true,
       },
       {

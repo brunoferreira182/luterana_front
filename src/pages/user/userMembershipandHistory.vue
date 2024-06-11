@@ -34,40 +34,6 @@
             :v-model:pagination="pagination"
             @request="nextPage"
           >
-              <!-- :selected-rows-label="getSelectedString"
-              @row-click=""  -->
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th auto-width />
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                </q-tr>
-              </template>
-
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td auto-width>
-                    <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'edit'" />
-                  </q-td>
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                </q-tr>
-                <q-tr v-show="props.expand" :props="props">
-                  <q-td colspan="100%">
-                    <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
-                  </q-td>
-                </q-tr>
-              </template>
           </q-table>
         </div>
         <q-dialog v-model="addNewMembership.open" @hide="clearDialog()">
@@ -181,7 +147,7 @@ export default defineComponent({
         } else { this.myUserIdMongo = r.data.userIdMongo }
       })
     },
-    getMembershipandHistory(){
+    async getMembershipandHistory(){
       const opt = {
         route: "/desktop/users/getMembershipandHistory",
         body: {
@@ -190,8 +156,6 @@ export default defineComponent({
           isActive: 1,
           rowsPerPage: this.pagination.rowsPerPage,
         },
-        // body: {
-        // },
       };
       useFetch(opt).then((r) => {
         if(r.error){
@@ -220,7 +184,7 @@ export default defineComponent({
         })
       })
     },
-    saveMembership(){
+    async saveMembership(){
       const opt = {
         route: "/desktop/commonUsers/saveNewMembership",
         body: {
@@ -231,6 +195,7 @@ export default defineComponent({
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente por favor')
           return
