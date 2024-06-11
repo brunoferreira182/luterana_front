@@ -34,43 +34,22 @@
             :v-model:pagination="pagination"
             @request="nextPage"
           >
-              <!-- :selected-rows-label="getSelectedString"
-              @row-click=""  -->
-              <template v-slot:header="props">
-                <q-tr :props="props">
-                  <q-th auto-width />
-                  <q-th
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.label }}
-                  </q-th>
-                </q-tr>
-              </template>
-
-              <template v-slot:body="props">
-                <q-tr :props="props">
-                  <q-td auto-width>
-                    <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'edit'" />
-                  </q-td>
-                  <q-td
-                    v-for="col in props.cols"
-                    :key="col.name"
-                    :props="props"
-                  >
-                    {{ col.value }}
-                  </q-td>
-                </q-tr>
-                <q-tr v-show="props.expand" :props="props">
-                  <q-td colspan="100%">
-                    <div class="text-left">This is expand slot for row above: {{ props.row.name }}.</div>
-                  </q-td>
-                </q-tr>
-              </template>
+          <template v-slot:body-cell-actions="props">
+            <q-td :props="props">
+              <q-btn
+                unelevated
+                rounded
+                no-caps
+                size="sm"
+                color="primary"
+                label="Editar"
+                @click="editRow(props.row)"
+              />
+            </q-td>
+          </template>
           </q-table>
         </div>
-        <q-dialog v-model="addNewMembership.open" @hide="clearDialog()">
+      <q-dialog v-model="addNewMembership.open" @hide="clearDialog()">
         <q-card style="border-radius: 1rem; height: 150x; width: 400px">
           <div class="text-h6 text-center q-pa-md ">Escreva</div>
           <q-card-section class="q-gutter-md">
@@ -120,6 +99,56 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="editMembership.open" @hide="clearDialog()">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <div class="text-h6 text-center q-pa-md ">Escreva</div>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Data de inicio" mask="##/##/####"
+              autogrow
+              v-model="editMembership.initialDate"
+            />
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="editMembership.organismName"
+              filled
+              use-input
+              label="Nome do organismo"
+              option-label="organismName"
+              :options="options"
+              @filter="getOrganismByString"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              rounded
+              @click="editMembership.open = false"
+            />
+            <q-btn
+              flat
+              label="Salvar"
+              no-caps
+              color="primary"
+              rounded
+              @click="saveMembership()"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -141,6 +170,13 @@ export default defineComponent({
       addNewMembership:{
         open: false,
         initialDate: '',
+      },
+      editMembership:{
+        open: false,
+        initialDate: '',
+        finalDate: '',
+        organismName: '',
+        delete: false,
       },
       options: [],
       organismSelected: '',
@@ -170,6 +206,14 @@ export default defineComponent({
       this.getMembershipandHistory()
       this.isMobile = useScreenStore().isMobile
     },
+    editRow(row) {
+      this.editMembership.open = true
+      this.editMembership.initialDate = row.dataInicio
+      this.editMembership.finalDate = row.dataFim
+      this.editMembership.organismName = row.organismName
+      // Lógica para editar a linha
+      console.log("Editar linha", row);
+    },
     getUserIdMongo() {
       const opt = {
         route: '/desktop/adm/getUserIdMongo',
@@ -181,7 +225,7 @@ export default defineComponent({
         } else { this.myUserIdMongo = r.data.userIdMongo }
       })
     },
-    getMembershipandHistory(){
+    async getMembershipandHistory(){
       const opt = {
         route: "/desktop/users/getMembershipandHistory",
         body: {
@@ -190,8 +234,6 @@ export default defineComponent({
           isActive: 1,
           rowsPerPage: this.pagination.rowsPerPage,
         },
-        // body: {
-        // },
       };
       useFetch(opt).then((r) => {
         if(r.error){
@@ -220,7 +262,7 @@ export default defineComponent({
         })
       })
     },
-    saveMembership(){
+    async saveMembership(){
       const opt = {
         route: "/desktop/commonUsers/saveNewMembership",
         body: {
@@ -231,17 +273,18 @@ export default defineComponent({
       }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
+        this.$q.loading.hide()
         if(r.error){
           this.$q.notify('Ocorreu um erro, tente novamente por favor')
           return
         }
         this.$q.notify(r.message)
+        this.getMembershipandHistory()
       })
       this.$q.loading.hide()
       this.addNewMembership.open= false
       this.addNewMembership.initialDate= ''
       this.organismSelected = ''
-      this.getMembershipandHistory()
     },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
