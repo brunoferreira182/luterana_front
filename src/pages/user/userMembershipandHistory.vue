@@ -292,18 +292,22 @@ export default defineComponent({
         }
         this.$q.notify(r.message)
         this.getMembershipandHistory()
+        this.clearEditMembershipDialog()
+        this.clearAddNewMemberDialog()
       })
-      this.$q.loading.hide()
+    },
+    clearAddNewMemberDialog(){
       this.addNewMembership.open= false
       this.addNewMembership.initialDate= ''
       this.organismSelected = ''
+    },
+    clearEditMembershipDialog(){
       this.editMembership.open = false
       this.editMembership.initialDate = ''
       this.editMembership.finalDate = ''
       this.editMembership.organism._id = ''
       this.editMembership.organism.organismName = ''
     },
-
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;

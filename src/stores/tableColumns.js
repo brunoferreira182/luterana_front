@@ -303,7 +303,7 @@ export const useTableColumns = defineStore("tableColumns", {
       {
         name: "actions",
         align: "center",
-        label: "",
+        label: "  ",
         field: "actions",
       },
     ],
