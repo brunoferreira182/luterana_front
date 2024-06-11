@@ -87,8 +87,8 @@ const routes = [
         component: () => import("src/pages/admin/PastoralArchive.vue"),
       },
       {
-        path: "/admin/userMembershipandHistory",
-        component: () => import("src/pages/admin/userMembershipandHistory.vue"),
+        path: "/admin/membershipHistoryForAdmin",
+        component: () => import("src/pages/admin/membershipHistoryForAdmin.vue"),
       },
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },
@@ -303,8 +303,8 @@ const routes = [
         component: () => import("src/pages/user/UserSugestionsList.vue"),
       },
       {
-        path: "/user/userMembershipandHistory",
-        component: () => import("src/pages/user/userMembershipandHistory.vue"),
+        path: "/user/userMembershipAndHistory",
+        component: () => import("src/pages/user/userMembershipAndHistory.vue"),
       },
       
       // {

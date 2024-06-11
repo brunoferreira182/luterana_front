@@ -5,20 +5,9 @@
         <div class="col text-h5 text-capitalize">
           Histórico de Membresia
         </div>
-        <q-btn 
-          @click="addNewMembership.open = true"
-          unelevated
-          rounded
-          label="Adicionar"
-          no-caps
-          size="md"
-          color="primary"
-          icon-right="add"
-          >
-        </q-btn>
       </div>
       <q-separator/>
-      <div> 
+        <div> 
           <q-table 
             flat
             class="bg-accent q-pa-md"
@@ -49,56 +38,6 @@
           </template>
           </q-table>
         </div>
-      <q-dialog v-model="addNewMembership.open" @hide="clearDialog()">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <div class="text-h6 text-center q-pa-md ">Escreva</div>
-          <q-card-section class="q-gutter-md">
-            <q-input
-              outlined
-              label="Data de inicio" mask="##/##/####"
-              autogrow
-              v-model="addNewMembership.initialDate"
-            />
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="organismSelected"
-              filled
-              use-input
-              label="Nome do organismo"
-              option-label="organismName"
-              :options="options"
-              @filter="getOrganismByString"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Voltar"
-              no-caps
-              color="primary"
-              rounded
-              @click="addNewMembership.open = false"
-            />
-            <q-btn
-              flat
-              label="Salvar"
-              no-caps
-              color="primary"
-              rounded
-              @click="saveMembership()"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
       <q-dialog v-model="editMembership.open" @hide="clearDialog()">
         <q-card style="border-radius: 1rem; height: 150x; width: 400px">
           <div class="text-h6 text-center q-pa-md ">Escreva</div>
@@ -173,11 +112,6 @@ export default defineComponent({
       columnsData: useTableColumns().membershipList,
       membershipHistory: [],
       filter: "",
-      addNewMembership:{
-        open: false,
-        initialDate: '',
-        finalDate: ''
-      },
       editMembership:{
         open: false,
         initialDate: '',
