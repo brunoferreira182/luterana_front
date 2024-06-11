@@ -125,7 +125,7 @@ const useUtils = {
         },
         {
           label: "Membresia",
-          route: "/admin/userMembershipandHistory",
+          route: "/admin/membershipHistoryForAdmin",
           icon: "equalizer",
         },
       ],
@@ -223,7 +223,7 @@ const useUtils = {
         },
         {
           label: "Membresia",
-          route: "/user/userMembershipandHistory",
+          route: "/user/userMembershipAndHistory",
           icon: "group",
         },
       ],
