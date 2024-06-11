@@ -5,11 +5,11 @@
     <q-card-section>
       <div :id="'pdf' + userId">
         <q-list bordered class="q-ma-md" v-if="  props.data &&  props.data[0]">
-          <div class="text-center text-h6">
+          <div class="text-center text-h6 q-my-sm">
             <strong>Informações do Cadastro da IELB</strong>
           </div>
-          <q-list bordered class="q-ma-sm">
-            <div class="text-h6 text-center">
+          <q-list bordered class="q-ma-sm ">
+            <div class="text-h6 text-center q-my-md">
               <strong class="text-center">Identificação, endereço, e-mail e telefones</strong>
             </div>
             <div class="q-ml-sm row">
@@ -33,12 +33,13 @@
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[1]" >E-mail: {{  props.data[2].fields[0].value[1].value }}</p>
                 <p v-if=" props.data[2].fields[0].value &&  props.data[2].fields[0].value[2]" >E-mail: {{  props.data[2].fields[0].value[2].value }}</p>
               </div>
-              <div class="col-3"> 
-                <q-img 
-                  style="border-radius: 1rem"
-                  :src="props.userImage ? utils.makeFileUrl(userProfileImage) : avatar" 
-                  width="74px" 
-                  height="74px"
+              <div class=""> 
+                <q-img
+                  style="left: 20px"
+                  :src="imageSrc"
+                  width="106px" 
+                  height="106px"
+                  @load="onImageLoad"
                 />
               </div>
             </div>
@@ -187,7 +188,13 @@
   import avatar from '../assets/avatar.svg'
   import { watchEffect, ref } from 'vue'
   import html2pdf from 'html2pdf.js'
+  const imageSrc = props.userImage ? utils.makeFileUrl(props.userImage) : avatar
 
+  const imageLoaded = ref(false)
+
+  const onImageLoad = () => {
+    imageLoaded.value = true
+  }
 
   watchEffect(() =>  {
     getParterInfo();
@@ -218,11 +225,12 @@
     id: null
   })
 
-
   function generatePdf() {
     let pdf = document.getElementById('pdf'+ props.userId)
     let configs = {
       margin: 0,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { useCORS: true },
       filename: `Ficha cadastral de ${props.data[0].fields[0].value}`,
       jsPDF: { unit:'mm', format: 'letter', orientation: 'portrait'},
       pagebreak: {mode: ['avoid-all']}
