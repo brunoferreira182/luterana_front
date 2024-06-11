@@ -281,21 +281,14 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "initialDate",
         align: "left",
         label: "Data Início",
-        field: (row) => row.dates.dataIncio,
+        field: (row) => row.dataInicio,
         sortable: true,
       },
       {
         name: "finalDate",
         align: "left",
         label: "Data Fim",
-        field: (row) => row.dates.dataFim,
-        sortable: true,
-      },
-      {
-        name: "organism",
-        align: "left",
-        label: "Organismos",
-        field: (row) => row.organismName,
+        field: (row) => row.dataFim,
         sortable: true,
       },
       {

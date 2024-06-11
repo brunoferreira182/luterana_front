@@ -6,31 +6,34 @@
           Histórico de Membresia
         </div>
         <q-btn 
+          @click="addNewMembership.open = true"
           unelevated
           rounded
-          label="Editar"
+          label="Adicionar"
           no-caps
-          color="primary">
-          <q-icon name="edit" size="xs" class="q-pl-xs"></q-icon>
+          size="md"
+          color="primary"
+          icon-right="add"
+          >
         </q-btn>
       </div>
       <q-separator/>
-      <!-- <div class="q-pa-md">  -->
+      <div> 
           <q-table 
-              flat
-              class="bg-accent q-pa-md"
-              :columns="columnsData"
-              :rows="recivedSolicitations"
-              row-key="_id"
-              virtual-scroll
-              rows-per-page-label="Registros por página"
-              no-data-label="Nenhum dado inserido até o momento"
-              no-results-label="A pesquisa não retornou nenhum resultado"
-              :rows-per-page-options="[10, 20, 30, 50]"
-              :filter="filter"
-              :v-model:pagination="pagination"
-              @request="nextPage"
-              >
+            flat
+            class="bg-accent q-pa-md"
+            :columns="columnsData"
+            :rows="membershipHistory"
+            row-key="_id"
+            virtual-scroll
+            rows-per-page-label="Registros por página"
+            no-data-label="Nenhum dado inserido até o momento"
+            no-results-label="A pesquisa não retornou nenhum resultado"
+            :rows-per-page-options="[10, 20, 30, 50]"
+            :filter="filter"
+            :v-model:pagination="pagination"
+            @request="nextPage"
+          >
               <!-- :selected-rows-label="getSelectedString"
               @row-click=""  -->
               <template v-slot:header="props">
@@ -66,33 +69,57 @@
                 </q-tr>
               </template>
           </q-table>
-          <!-- <q-item-label header>Histórico de Membresia</q-item-label>
-
-            <q-item clickable v-ripple
+        </div>
+        <q-dialog v-model="addNewMembership.open" @hide="clearDialog()">
+        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
+          <div class="text-h6 text-center q-pa-md ">Escreva</div>
+          <q-card-section class="q-gutter-md">
+            <q-input
+              outlined
+              label="Data de inicio" mask="##/##/####"
+              autogrow
+              v-model="addNewMembership.initialDate"
+            />
+          </q-card-section>
+          <q-card-section class="q-gutter-md">
+            <q-select
+              v-model="organismSelected"
+              filled
+              use-input
+              label="Nome do organismo"
+              option-label="organismName"
+              :options="options"
+              @filter="getOrganismByString"
             >
-            v-for="(membership) in membershipHistory"
-            :key="membership" 
-              <q-item-section>
-                <q-item-label>
-                  <q-input :label= "'Insira seu Nome'" > </q-input>
-                  <q-input :label= "'Insira seu Nome'" > </q-input>
-                  <q-input :label= "'Insira seu Nome'" > </q-input>
-
-                </q-item-label>
-                <q-item-label caption>
-                  Set the content filtering level to restrict
-                  apps that can be downloaded
-                </q-item-label>
-                <q-item-label caption>
-                  Set the content filtering level to restrict
-                  apps that can be downloaded
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-separator spaced></q-separator>
-
-        </q-list> 
-      </div> -->
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Nenhum resultado
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+          <q-card-actions align="center">
+            <q-btn
+              flat
+              label="Voltar"
+              no-caps
+              color="primary"
+              rounded
+              @click="addNewMembership.open = false"
+            />
+            <q-btn
+              flat
+              label="Salvar"
+              no-caps
+              color="primary"
+              rounded
+              @click="saveMembership()"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -111,10 +138,13 @@ export default defineComponent({
       columnsData: useTableColumns().membershipList,
       membershipHistory: [],
       filter: "",
-      disableRow: false,
+      addNewMembership:{
+        open: false,
+        initialDate: '',
+      },
+      options: [],
+      organismSelected: '',
       isMobile: false,
-      myUserIdMongo: '',
-      hideDiv: false,
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -131,14 +161,13 @@ export default defineComponent({
   },
   methods: {
     async startView () {
-      this.getMembershipandHistory()
       const permStatus = await utils.getPermissionStatus('USER')
       if (permStatus.data === 'onMaitenance') {
         this.$router.push('/maitenancePage')
         return
         }
       this.getUserIdMongo()
-      this.getFunctionsSolicitationsByUserId()
+      this.getMembershipandHistory()
       this.isMobile = useScreenStore().isMobile
     },
     getUserIdMongo() {
@@ -151,28 +180,6 @@ export default defineComponent({
           return
         } else { this.myUserIdMongo = r.data.userIdMongo }
       })
-    },
-    getFunctionsSolicitationsByUserId() {
-      const opt = {
-        route: "/desktop/commonUsers/getFunctionsSolicitationsByUserId",
-        body: {
-          searchString: this.filter,
-          page: this.pagination.page,
-          isActive: 1,
-          rowsPerPage: this.pagination.rowsPerPage,
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      this.$q.loading.show()
-      useFetch(opt).then((r) => {
-        this.$q.loading.hide()
-        this.recivedSolicitations = r.data.recivedSolicitations.list
-        this.sendedSolicitations = r.data.sendedSolicitations.list
-      });
     },
     getMembershipandHistory(){
       const opt = {
@@ -192,8 +199,49 @@ export default defineComponent({
           return
         }
         this.membershipHistory = r.data.list
-        console.log(this.membershipHistory, 'sdasd')
+        console.log(r, 'sdasd')
       })
+    },
+    getOrganismByString(val, update){
+      if (val < 2) return
+      const opt = {
+        route: "/desktop/adm/getOrganismsNames",
+        body: {
+          searchString: val
+        }
+      }
+      useFetch(opt).then((r) => {
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente por favor')
+          return
+        }
+        update(() => {
+          this.options = r.data
+        })
+      })
+    },
+    saveMembership(){
+      const opt = {
+        route: "/desktop/commonUsers/saveNewMembership",
+        body: {
+          initialDate: this.addNewMembership.initialDate, 
+          finalDate: this.addNewMembership.finalDate,
+          organismSelected: this.organismSelected
+        }
+      }
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        if(r.error){
+          this.$q.notify('Ocorreu um erro, tente novamente por favor')
+          return
+        }
+        this.$q.notify(r.message)
+      })
+      this.$q.loading.hide()
+      this.addNewMembership.open= false
+      this.addNewMembership.initialDate= ''
+      this.organismSelected = ''
+      this.getMembershipandHistory()
     },
     nextPage(e) {
       this.pagination.page = e.pagination.page;
