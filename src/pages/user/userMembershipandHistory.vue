@@ -161,7 +161,7 @@ import { useScreenStore } from "stores/checkIsMobile";
 import utils from '../../boot/utils'
 
 export default defineComponent({
-  name: "UserMembershipandHistory",
+  name: "UserMembershipAndHistory",
   data() {
     return {
       columnsData: useTableColumns().membershipList,
