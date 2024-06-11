@@ -289,8 +289,7 @@ export const useTableColumns = defineStore("tableColumns", {
         align: "left",
         label: "Data Fim",
         field: (row) => {
-          if ( row.dataFim === '' ) return '-'
-          else return row.dataFim 
+          return row.dataFim === '' ? '-' : row.dataFim 
         },
         sortable: true,
       },
@@ -300,6 +299,12 @@ export const useTableColumns = defineStore("tableColumns", {
         label: "Organismos",
         field: (row) => row.organismName,
         sortable: true,
+      },
+      {
+        name: "actions",
+        align: "center",
+        label: "",
+        field: "actions",
       },
     ],
     organismList: [
