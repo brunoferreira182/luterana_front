@@ -1,10 +1,16 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      
+      <div class="text-h6 q-mx-md">
+        Anexos
+      </div>
+      <div class="q-mx-md text-caption">
+        Clique para fazer o download
+      </div>
       <q-table
         flat
         class="bg-accent"
-        title="Anexos"
         :columns="columnsData"
         :rows="attachFiles"
         row-key="_id"
@@ -67,7 +73,6 @@
           </q-td>
         </template> -->
       </q-table>
-        <embed :src="pdfUrl" type="application/pdf"  width="1000" height="720"/>
     </q-page>
   </q-page-container>
 </template>
@@ -99,8 +104,9 @@ export default defineComponent({
     this.$q.loading.hide();
   },
   beforeMount() {
-    // this.getAttachByPastor();
+    this.getAttachByPastor();
     this.getAttachByUserInSpecificDistrict()
+    this.getGeneralAttach()
   },
   methods: {
     async downloadAttach(e, r) {
@@ -143,17 +149,30 @@ export default defineComponent({
         this.attachFiles = r.data.list
       });
     },
-    getAttachByUserInSpecificDistrict() {
+    getGeneralAttach() {
       const opt = {
-        route: "/desktop/attach/getAttachByUserInSpecificDistrict",
-        // body: {
-        //   page: this.pagination.page,
-        //   rowsPerPage:this.pagination.rowsPerPage,
-        // },
+        route: "/desktop/attach/getGeneralAttach",
+        body: {
+          page: this.pagination.page,
+          rowsPerPage:this.pagination.rowsPerPage,
+        },
       };
       this.$q.loading.show()
       useFetch(opt).then((r) => {
-        console.log("🚀 ~ useFetch ~ r:", r)
+        this.$q.loading.hide()
+        if(!r.error){
+          this.attachFiles.push(...r.data)
+        }else{
+          this.$q.notify(r.errorMessage)
+        }
+      });
+    },
+    getAttachByUserInSpecificDistrict() {
+      const opt = {
+        route: "/desktop/attach/getAttachByUserInSpecificDistrict",
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
         this.$q.loading.hide()
         if(!r.error){
           this.attachFiles.push(...r.data)
