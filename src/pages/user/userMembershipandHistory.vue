@@ -109,10 +109,16 @@
               autogrow
               v-model="editMembership.initialDate"
             />
+            <q-input
+              outlined
+              label="Data de Fim" mask="##/##/####"
+              autogrow
+              v-model="editMembership.finalDate"
+            />
           </q-card-section>
           <q-card-section class="q-gutter-md">
             <q-select
-              v-model="editMembership.organismName"
+              v-model="editMembership.organism.organismName"
               filled
               use-input
               label="Nome do organismo"
@@ -170,12 +176,16 @@ export default defineComponent({
       addNewMembership:{
         open: false,
         initialDate: '',
+        finalDate: ''
       },
       editMembership:{
         open: false,
         initialDate: '',
         finalDate: '',
-        organismName: '',
+        organism: {
+          _id: '',
+          organismName: '',
+        },
         delete: false,
       },
       options: [],
@@ -210,7 +220,8 @@ export default defineComponent({
       this.editMembership.open = true
       this.editMembership.initialDate = row.dataInicio
       this.editMembership.finalDate = row.dataFim
-      this.editMembership.organismName = row.organismName
+      this.editMembership.organism._id = row.organismId
+      this.editMembership.organism.organismName = row.organismName
       // Lógica para editar a linha
       console.log("Editar linha", row);
     },
@@ -266,11 +277,12 @@ export default defineComponent({
       const opt = {
         route: "/desktop/commonUsers/saveNewMembership",
         body: {
-          initialDate: this.addNewMembership.initialDate, 
-          finalDate: this.addNewMembership.finalDate,
-          organismSelected: this.organismSelected
+          finalDate: this.addNewMembership.finalDate === '' ? this.editMembership.finalDate : this.addNewMembership.finalDate ,
+          initialDate: this.addNewMembership.initialDate === '' ? this.editMembership.initialDate : this.addNewMembership.initialDate, 
+          organismSelected: this.organismSelected === '' ? this.editMembership.organism : this.organismSelected 
         }
       }
+      console.log(opt.body.finalDate, "aosndkanskdnkjasndnkjsan")
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -285,7 +297,13 @@ export default defineComponent({
       this.addNewMembership.open= false
       this.addNewMembership.initialDate= ''
       this.organismSelected = ''
+      this.editMembership.open = false
+      this.editMembership.initialDate = ''
+      this.editMembership.finalDate = ''
+      this.editMembership.organism._id = ''
+      this.editMembership.organism.organismName = ''
     },
+
     nextPage(e) {
       this.pagination.page = e.pagination.page;
       this.pagination.sortBy = e.pagination.sortBy;
