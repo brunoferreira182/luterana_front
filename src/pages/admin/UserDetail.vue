@@ -160,8 +160,7 @@
                     size="20px"
                     class="q-mr-sm"
                   />
-                  <span class="text-weight-bold">{{ prop.node.label }}</span>
-                  <span class="text-weight-bold">{{ prop.node.type }}</span>
+                  <span class="text-weight-bold">{{ prop.node.label }} - {{ prop.node.type }}</span>
                   <q-btn
                     class="q-ml-sm"
                     v-if="canEdit"
