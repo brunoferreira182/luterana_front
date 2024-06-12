@@ -9,20 +9,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.attachmentInfo.title,
         sortable: true,
       },
-      // {
-      //   name: "organismParentName",
-      //   align: "left",
-      //   label: "Nome do organismo",
-      //   field: (row) => row.organismData.organismParentName,
-      //   sortable: true,
-      // },
-      // {
-      //   name: "saldoAnterior",
-      //   align: "left",
-      //   label: "Saldo anterior",
-      //   field: "saldoAnterior",
-      //   sortable: true,
-      // },
+      {
+        name: "subType",
+        align: "left",
+        label: "Tipo",
+        field: (row) => row.subType,
+        sortable: true,
+      },
     ],
     entryValueAnual: [
       {

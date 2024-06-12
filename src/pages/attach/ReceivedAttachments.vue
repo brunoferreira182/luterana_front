@@ -23,56 +23,7 @@
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
-      >
-        <!-- <template #top-right>
-          <div class="flex row text-right q-gutter-sm items-center">
-            <div class="col">
-              <q-select
-                outlined
-                dense
-                debounce="300"
-                v-model="selectFilter"
-                :options="selectStatus"
-                @update:model-value="getStructures"
-              ></q-select>
-            </div>
-            <div class="col">
-              <q-input
-                @keyup="getStructures"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
-              >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </div>
-          </div>
-        </template>
-        <template #body-cell-status="props">
-          <q-td :props="props">
-            <q-chip
-              outline
-              v-if="props.row.isActive === 1"
-              color="green"
-              size="14px"
-            >
-              Ativo
-            </q-chip>
-            <q-chip
-              outline
-              v-else-if="props.row.isActive === 0"
-              color="red"
-              size="14px"
-            >
-              Inativo
-            </q-chip>
-          </q-td>
-        </template> -->
-      </q-table>
+      />
     </q-page>
   </q-page-container>
 </template>

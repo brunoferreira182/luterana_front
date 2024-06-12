@@ -344,7 +344,7 @@ export default defineComponent({
       }
       switch(this.receiverType) {
         case 'specificDistrict':
-          opt.body.subType = 'district'
+          opt.body.subType = 'Distrito'
           opt.body.receivers = this.newReceiver._id
         break;
         case 'pastors':
