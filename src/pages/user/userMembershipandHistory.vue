@@ -237,7 +237,7 @@ export default defineComponent({
     },
     async getMembershipandHistory(){
       const opt = {
-        route: "/desktop/users/getMembershipAndHistory",
+        route: "/desktop/users/getMembershipByUserId",
         body: {
           searchString: this.filter,
           page: this.pagination.page,
