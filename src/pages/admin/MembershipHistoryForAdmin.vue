@@ -23,7 +23,7 @@
             :v-model:pagination="pagination"
             @request="nextPage"
           >
-          <template v-slot:body-cell-actions="props">
+          <!-- <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn
                 unelevated
@@ -35,65 +35,9 @@
                 @click="editRow(props.row)"
               />
             </q-td>
-          </template>
+          </template> -->
           </q-table>
         </div>
-      <q-dialog v-model="editMembership.open" @hide="clearDialog()">
-        <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <div class="text-h6 text-center q-pa-md ">Escreva</div>
-          <q-card-section class="q-gutter-md">
-            <q-input
-              outlined
-              label="Data de inicio" mask="##/##/####"
-              autogrow
-              v-model="editMembership.initialDate"
-            />
-            <q-input
-              outlined
-              label="Data de Fim" mask="##/##/####"
-              autogrow
-              v-model="editMembership.finalDate"
-            />
-          </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="editMembership.organism.organismName"
-              filled
-              use-input
-              label="Nome do organismo"
-              option-label="organismName"
-              :options="options"
-              @filter="getOrganismByString"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
-          <q-card-actions align="center">
-            <q-btn
-              flat
-              label="Voltar"
-              no-caps
-              color="primary"
-              rounded
-              @click="editMembership.open = false"
-            />
-            <q-btn
-              flat
-              label="Salvar"
-              no-caps
-              color="primary"
-              rounded
-              @click="saveMembership()"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
     </q-page>
   </q-page-container>
 </template>
@@ -150,14 +94,6 @@ export default defineComponent({
       this.getMembershipandHistory()
       this.isMobile = useScreenStore().isMobile
     },
-    editRow(row) {
-      this.editMembership.open = true
-      this.editMembership.initialDate = row.dataInicio
-      this.editMembership.finalDate = row.dataFim
-      this.editMembership.organism._id = row.organismId
-      this.editMembership.organism.organismName = row.organismName
-      console.log("Editar linha", row);
-    },
     getUserIdMongo() {
       const opt = {
         route: '/desktop/adm/getUserIdMongo',
@@ -170,6 +106,8 @@ export default defineComponent({
       })
     },
     async getMembershipandHistory(){
+      const visibility = this.columnsData.find( col => col.name === "actions")
+      if (visibility) visibility.visible=false
       const opt = {
         route: "/desktop/users/getMembershipAndHistory",
         body: {
@@ -187,8 +125,17 @@ export default defineComponent({
         this.membershipHistory = r.data.list
         console.log(r, 'sdasd')
       })
-    },
-    getOrganismByString(val, update){
+      },
+      //talvez saia
+      editRow(row) {
+        this.editMembership.open = true
+        this.editMembership.initialDate = row.dataInicio
+        this.editMembership.finalDate = row.dataFim
+        this.editMembership.organism._id = row.organismId
+        this.editMembership.organism.organismName = row.organismName
+        console.log("Editar linha", row);
+      },
+      getOrganismByString(val, update){
       if (val < 2) return
       const opt = {
         route: "/desktop/adm/getOrganismsNames",
@@ -206,6 +153,7 @@ export default defineComponent({
         })
       })
     },
+    //tbm sai 
     async saveMembership(){
       const opt = {
         route: "/desktop/commonUsers/saveNewMembership",
@@ -229,11 +177,13 @@ export default defineComponent({
         this.clearAddNewMemberDialog()
       })
     },
+    //sai tbm 
     clearAddNewMemberDialog(){
       this.addNewMembership.open= false
       this.addNewMembership.initialDate= ''
       this.organismSelected = ''
     },
+    //sai tbm
     clearEditMembershipDialog(){
       this.editMembership.open = false
       this.editMembership.initialDate = ''

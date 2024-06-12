@@ -293,7 +293,7 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.organismName,
         sortable: true,
       },
-      {
+      { //botao de editar 
         name: "actions",
         align: "center",
         label: "  ",
