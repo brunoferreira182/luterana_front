@@ -796,6 +796,30 @@
                     @remove="removeFormation"
                   />
                 </div>     
+                <div 
+                  v-if="field.type.type === 'social_network'"
+                >
+                <div>
+                  <span class="text-h6">{{ field.label }}</span>
+                  <q-btn
+                    :label="field.label"
+                    no-caps
+                    rounded
+                    unelevated
+                    flat
+                    color="primary"
+                    icon="add"
+                    @click="clkAddSocialNetwork(fieldIndex)"
+                    :disable="field.onlyAdm"
+                  />
+                </div>
+                  <CardSocialNetwork
+                    :data="field.value"
+                    :fieldIndex="fieldIndex"
+                    @edit="editSocialNetwork"
+                    @remove="removeSocialNetwork"
+                  />
+                </div>    
                 
                 
                 <!-- <div v-if="field.type.type === 'secretary'">
@@ -2311,6 +2335,13 @@
     @clear="clearDialogNewUser"
     @confirm="confirmCreateNewUser"
   />
+  <DialogAddSocialNetwork
+    :open="dialogAddSocialNetwork.open"
+    :dataProp="dialogAddSocialNetwork.data"
+    :type="dialogAddSocialNetwork.type"
+    @confirm="confirmAddSocialNetwork"
+    @closeDialog="clearDialogSocialNetwork"
+  />
   <DialogOrganismDetail
     :open="dialogShowOtherDetail.open"
     :orgData="dialogShowOtherDetail.orgData"
@@ -2349,7 +2380,8 @@ import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import CardFunction from '../../components/CardFunction.vue'
 import CardFormation from '../../components/CardFormation.vue'
 import DialogAddNewUserToUseEverywhere from '../../components/DialogAddNewUserToUseEverywhere.vue'
-
+import CardSocialNetwork from "src/components/CardSocialNetwork.vue";
+import DialogAddSocialNetwork from  '../../components/DialogAddSocialNetwork.vue'
 import CardAddress from '../../components/CardAddress.vue'
 import DialogAddPastoralStatus from '../../components/DialogAddPastoralStatus.vue'
 import DialogAddStatus from '../../components/DialogAddStatus.vue'
@@ -2368,7 +2400,8 @@ export default defineComponent({
     CardAddress, CardPerson, CardMaritalStatus,
     CardBankData, CardPhoneMobileEmail, CardFormation,
     DialogPhoneMobileEmail, CardPastor, DialogOrganismDetail, 
-    DialogAddPastoralStatus, CardServices, DialogAddStatus, DialogAddNewUserToUseEverywhere
+    DialogAddPastoralStatus, CardServices, DialogAddStatus, 
+    DialogAddNewUserToUseEverywhere, CardSocialNetwork, DialogAddSocialNetwork
   },
   data() {
     return {
@@ -2654,6 +2687,19 @@ export default defineComponent({
         selectedDay: null,
         initialHour: '',
         finalHour: ''
+      },
+      dialogAddSocialNetwork: {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          name: '',
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
       }
     };
   },
@@ -2693,6 +2739,58 @@ export default defineComponent({
       this.getDaysOfWeek()
       this.getParishChildOrganismsList()
       this.getUserCanEditStatus()
+    },
+    removeSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.organismData.fields[fieldIndex].value.splice(iValue, 1)
+    },
+    editSocialNetwork(fieldIndex, tabsIndex, field, value, iValue) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        tabsIndex,
+        fieldIndex,
+        data: {...value},
+        action: 'edit',
+        iValue,
+        field
+      }
+    },
+    clearDialogSocialNetwork() {
+      this.dialogAddSocialNetwork = {
+        type: null,
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          name: '',
+          value: '',
+          type: ''
+        },
+        action: null,
+        iValue: null
+      }
+    },
+    confirmAddSocialNetwork(data) {
+      if (this.dialogAddSocialNetwork.action === 'add') {
+        if (!this.organismData.fields[this.dialogAddSocialNetwork.fieldIndex].value) {
+          this.organismData.fields[this.dialogAddSocialNetwork.fieldIndex].value = []
+        }
+        this.organismData.fields[this.dialogAddSocialNetwork.fieldIndex].value.push({...data})
+      } else if (this.dialogAddSocialNetwork.action === 'edit') {
+        this.organismData.fields[this.dialogAddSocialNetwork.fieldIndex].value[this.dialogAddSocialNetwork.iValue] = {...data}
+      }
+      this.dialogAddSocialNetwork.open = false
+    },
+    clkAddSocialNetwork(fieldIndex) {
+      this.dialogAddSocialNetwork = {
+        open: true,
+        fieldIndex,
+        data: {
+          value: '',
+          type: ''
+        },
+        action: 'add',
+        iValue: null
+      }
     },
     removeSecretaryHour(i) {
       this.organismData.fields.forEach((field) => {
