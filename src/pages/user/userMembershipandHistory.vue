@@ -213,7 +213,7 @@ export default defineComponent({
         return
         }
       this.getUserIdMongo()
-      // this.getMembershipandHistory()
+      this.getMembershipandHistory()
       this.isMobile = useScreenStore().isMobile
     },
     editRow(row) {
@@ -289,7 +289,7 @@ export default defineComponent({
           return
         }
         this.$q.notify(r.message)
-        // this.getMembershipandHistory()
+        this.getMembershipandHistory()
         this.clearEditMembershipDialog()
         this.clearAddNewMemberDialog()
       })

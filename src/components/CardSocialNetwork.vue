@@ -32,7 +32,7 @@
           {{ value.value }}
         </q-item-label>
         <q-item-label caption >
-          <q-badge v-if="value.type">{{ value.type }}</q-badge>
+          <q-badge v-if="value.type && !props.organism">{{ value.type }}</q-badge>
           <q-badge class="q-ml-xs" color="green" v-if="value.allowPublication">Publicável</q-badge>
         </q-item-label>
       </q-item-section>
@@ -63,7 +63,7 @@
 <script setup>
 // import { ref, watch } from 'vue'
 
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'organism'])
 const emits = defineEmits(['edit', 'remove'])
 
 // const data = ref({

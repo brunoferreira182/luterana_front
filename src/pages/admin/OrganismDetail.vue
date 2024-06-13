@@ -773,6 +773,7 @@
                     :fieldIndex="fieldIndex"
                     :disableButtons="true"
                     :showHeader="field.value && field.value.length > 0 ? field.label : false"
+                    :organism="true"
                     :canEdit="canEdit"
                   />
                 </div> 
@@ -816,6 +817,7 @@
                   <CardSocialNetwork
                     :data="field.value"
                     :fieldIndex="fieldIndex"
+                    :organism="true"
                     @edit="editSocialNetwork"
                     @remove="removeSocialNetwork"
                   />
@@ -1968,6 +1970,7 @@
     :open="dialogAddPhoneMobileEmail.open"
     :dataProp="dialogAddPhoneMobileEmail.data"
     :type="dialogAddPhoneMobileEmail.type"
+    :organism="true"
     @confirm="confirmAddPhoneMobileEmail"
     @closeDialog="clearDialogAddPhoneMobileEmail"
   />
@@ -2339,6 +2342,7 @@
     :open="dialogAddSocialNetwork.open"
     :dataProp="dialogAddSocialNetwork.data"
     :type="dialogAddSocialNetwork.type"
+    :organism="true"
     @confirm="confirmAddSocialNetwork"
     @closeDialog="clearDialogSocialNetwork"
   />
@@ -2367,7 +2371,6 @@
     @closeDialog="clearDialogAddStatus"
     @confirm="confirmAddStatus"
   />
-
 </template>
 <script>
 import { defineComponent } from "vue";

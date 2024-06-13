@@ -131,6 +131,7 @@ import useFetch from 'src/boot/useFetch';
 onBeforeMount(async () => {
   await putCongregationName()
   await getActingOptionsByCallerId()
+  await getOrganismsTypes()
 })
 
 
@@ -157,6 +158,15 @@ function clearDialog() {
   emits('clearDialog', true)
 }
 
+async function getOrganismsTypes() {
+  const opt = {
+    route: '/desktop/adm/getOrganismsConfigs'
+  }
+  let r = await useFetch(opt)
+  if (r.error) return
+  console.log(r.data, 'caralhos me mordam')
+}
+
 async function getActingOptionsByCallerId() {
   const opt = {
     route: '/desktop/adm/getActingOrganismsByParishId',
@@ -177,6 +187,8 @@ function putCongregationName() {
     }
   }
 }
+
+
 
 function resetSelectedActing() {
   actingData.value.selectedActingOrganism = null
@@ -202,6 +214,10 @@ function getFiliatedOrganismsList(val, update, abort) {
     })
   });
 }
+
+// const organismsTypes = ref({
+//   list: []
+// })
 
 const actingData = ref({
   organismSelected: null,

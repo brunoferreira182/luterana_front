@@ -3925,6 +3925,7 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
+        console.log(userConfig, 'caralho caralho caralho caralho carralho caralho racalho')
         if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links && r.data.userLinksToOrganisms.links.length > 0) {
           let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
@@ -3959,6 +3960,8 @@ export default defineComponent({
       });
     },
     mountUserData (userDetail) {
+      console.log(this.userData, 'console 1')
+      console.log(this.userData.userDataTabs, 'console 2')
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {

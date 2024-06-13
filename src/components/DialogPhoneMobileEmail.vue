@@ -30,6 +30,7 @@
           v-else-if="type.type === 'email'"
         />
         <q-select
+          v-if="!props.organism"
           :options="options"
           v-model="data.type"
           outlined
@@ -62,7 +63,7 @@
 import { ref, watch } from 'vue'
 import { Notify } from 'quasar'
 
-const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint'])
+const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint', 'organism'])
 const emits = defineEmits(['closeDialog', 'confirm'])
 
 watch(() => props.dataProp, (nV) => {
@@ -78,7 +79,7 @@ const data = ref({
 const options = ref(['Pessoal', 'Profissional', 'Outro'])
 
 function confirm () {
-  if (data.value.value === '' || data.value.type === '') {
+  if (data.value.value === '' || (!props.organism && data.value.type === '')) {
     Notify('Prencha os campos')
     return
   }

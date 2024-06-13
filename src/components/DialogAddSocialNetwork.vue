@@ -22,6 +22,7 @@
           outlined
         />
         <q-select
+          v-if="!props.organism"
           label="Tipo de perfil"
           hint="Insira o tipo de perfil"
           v-model="data.type"
@@ -38,6 +39,7 @@
           outlined
         />
         <q-select
+          v-if="!props.organism"
           label="Tipo de perfil"
           hint="Insira o tipo de perfil"
           v-model="data.type"
@@ -54,6 +56,7 @@
           outlined
         />
         <q-select
+          v-if="!props.organism"
           label="Tipo de perfil"
           hint="Insira o tipo de perfil"
           v-model="data.type"
@@ -65,10 +68,11 @@
         <q-input
           label="URL"
           hint="Insira a url do seu site"
-          v-model="data.value"
+          v-model="data.name"
           outlined
         />
         <q-select
+          v-if="!props.organism"
           label="Tipo de perfil"
           hint="Insira o tipo de perfil"
           v-model="data.type"
@@ -104,7 +108,7 @@ import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 
 const quasar = useQuasar()
-const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint'])
+const props = defineProps(['open', 'dataProp', 'type', 'label', 'hint', 'organism'])
 const emits = defineEmits(['confirm', 'closeDialog'])
 const options = ref([ 'Instagram', 'Facebook', 'Youtube', 'Site pessoal'])
 const typeProfileOptions = ref (['Pessoal', 'Profissional'])
@@ -126,19 +130,19 @@ function clearInputs () {
 }
 function confirm () {
   if (data.value.selectedSocialType === 'Instagram'
-      ||data.value.selectedSocialType === 'Facebook'
-      || data.value.selectedSocialType === 'Site pessoal' ) {
-        if (data.value.type === '') {
-          quasar.notify("Preencha todos os dados")
-          return
-        }
-      }
-  if (data.value.selectedSocialType === 'Site pessoal') {
-      if (data.value.value === '') {
-        quasar.notify('Preencha os campos')
+    ||data.value.selectedSocialType === 'Facebook'
+    || data.value.selectedSocialType === 'Site pessoal' ) {
+      if (data.value.type === '' && !props.organism) {
+        quasar.notify("Preencha todos os dados")
         return
       }
     }
+  if (data.value.selectedSocialType === 'Site pessoal') {
+    if (data.value.name === '') {
+      quasar.notify('Preencha os campos')
+      return
+    }
+  }
   emits('confirm', data.value)
 }
 
