@@ -123,11 +123,6 @@ const useUtils = {
           route: "/admin/pastoralArchive",
           icon: "format_list_bulleted",
         },
-        {
-          label: "Membresia",
-          route: "/admin/membershipHistoryForAdmin",
-          icon: "equalizer",
-        },
       ],
       config: [
         {
