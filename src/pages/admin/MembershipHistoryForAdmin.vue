@@ -91,7 +91,7 @@ export default defineComponent({
         return
         }
       this.getUserIdMongo()
-      this.getMembershipandHistory()
+      // this.getMembershipandHistory()
       this.isMobile = useScreenStore().isMobile
     },
     getUserIdMongo() {
@@ -123,7 +123,6 @@ export default defineComponent({
           return
         }
         this.membershipHistory = r.data.list
-        console.log(r, 'sdasd')
       })
       },
       //talvez saia
@@ -133,7 +132,6 @@ export default defineComponent({
         this.editMembership.finalDate = row.dataFim
         this.editMembership.organism._id = row.organismId
         this.editMembership.organism.organismName = row.organismName
-        console.log("Editar linha", row);
       },
       getOrganismByString(val, update){
       if (val < 2) return
@@ -163,7 +161,6 @@ export default defineComponent({
           organismSelected: this.organismSelected === '' ? this.editMembership.organism : this.organismSelected 
         }
       }
-      console.log(opt.body.finalDate, "aosndkanskdnkjasndnkjsan")
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
@@ -172,7 +169,7 @@ export default defineComponent({
           return
         }
         this.$q.notify(r.message)
-        this.getMembershipandHistory()
+        // this.getMembershipandHistory()
         this.clearEditMembershipDialog()
         this.clearAddNewMemberDialog()
       })

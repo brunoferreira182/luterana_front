@@ -13,7 +13,7 @@ export const useTableColumns = defineStore("tableColumns", {
         name: "subType",
         align: "left",
         label: "Tipo",
-        field: (row) => row.subType,
+        field: (row) => row.subType === 'district' ? 'Distrito' : row.subType,
         sortable: true,
       },
     ],
