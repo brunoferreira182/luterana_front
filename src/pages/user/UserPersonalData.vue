@@ -117,6 +117,27 @@
                       @click="clkAddAttachment"
                     />
                   </div>
+                  <div class="text-center" v-if="tabs.tabLabel === 'Membresia'">
+                    <q-list bordered separator> 
+                      <q-item :clickable = "index.dataFim === '' || !index.dataFim"
+                        @click= "editMembership.open = true"
+                        v-for= "(index) in tabs.fields[0].value" :key="index"
+                      >  
+                        <q-item-section align="left" >
+                          <q-item-label>{{ index.organismName }}</q-item-label>
+                          <q-item-label caption lines="1">{{ index.userName }}</q-item-label>
+                        </q-item-section>
+                        <q-separator />
+                        <q-item-section align='left'>
+                          <q-item-label >Data de Início: {{ index.dataInicio }}</q-item-label>
+                          <q-item-label >Data de Fim: {{ index.dataFim }}</q-item-label>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-icon v-if= "index.dataFim === '' || !index.dataFim" name="edit" color="primary" />
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
                   <div
                     v-for="(field, fieldIndex) in tabs.fields"
                     :key="fieldIndex"
@@ -838,6 +859,12 @@
         @closeDialog="clearMaritalStatus"
         @addPerson="confirmAddMaritalRelation"
       />
+      <DialogEditMembership
+        :open="editMembership.open"
+        :dataProp="editMembership.data"
+        @closeDialog="clearEditMembership"
+        @addPerson="saveEditMembership"
+      />
       <DialogUserTitle
         :open="openDialogVinculateUserToTitle"
         @closeDialog="openDialogVinculateUserToTitle = false"
@@ -1188,6 +1215,7 @@ import DialogBankData from '../../components/DialogBankData.vue'
 import DialogPhoneMobileEmail from '../../components/DialogPhoneMobileEmail.vue'
 import DialogUserTitle from '../../components/DialogUserTitle.vue'
 import DialogFormation from '../../components/DialogFormation.vue'
+import DialogEditMembership from '../../components/DialogEditMembership.vue'
 import DialogMaritalStatus from '../../components/DialogMaritalStatus.vue'
 import DialogAddPastoralData from '../../components/DialogAddPastoralData.vue'
 import CardSocialNetwork from '../../components/CardSocialNetwork.vue'
@@ -1342,6 +1370,17 @@ export default defineComponent({
         action: null,
         iValue: null,
       },
+      editMembership: {
+        open: false, 
+        tabsIndex: null,
+        fieldIndex: null,
+        data: {
+          status: '',
+          spouses: []
+        },
+        action: null,
+        iValue: null,
+      },
       userPhoto: null,
       dialogAddPastoralData: {
         open: false,
@@ -1425,6 +1464,23 @@ export default defineComponent({
         if (r.error) return
         this.clearMaritalStatus()
         this.getUsersConfig()
+      } 
+    },
+    async saveEditMembership(data) {
+      if (this.maritalStatus.action === 'add') {
+        const opt = {
+        route: "/desktop/commonUsers/saveNewMembership",
+        body: {
+          finalDate: data.finalDate === '' ,
+          initialDate: data.initialDate === '', 
+          organismSelected: data.organismSelected === '' 
+        }
+      }
+      let r = await useFetch(opt)
+
+      if (r.error) return
+      this.clearEditMembership()
+      this.getUsersConfig()
       } 
     },
     confirmChangeSelectedUserFromMaritalRelation() {
@@ -1617,6 +1673,15 @@ export default defineComponent({
     closeAddPastoralDataDialog () {
       this.dialogAddPastoralData.open = true
       this.dialogAddPastoralData.data = {...this.dialogAddPastoralData.fields}
+    },
+    clearEditMembership (){
+      this.editMembership = {
+        open: false,
+        tabsIndex: null,
+        fieldIndex: null,
+        data: null,
+        action: null,
+      }
     },
     clearMaritalStatus () {
       this.maritalStatus = {

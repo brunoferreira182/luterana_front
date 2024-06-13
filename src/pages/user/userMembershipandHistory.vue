@@ -237,7 +237,7 @@ export default defineComponent({
     },
     async getMembershipandHistory(){
       const opt = {
-        route: "/desktop/users/getMembershipAndHistory",
+        route: "/desktop/users/getMembershipByUserId",
         body: {
           searchString: this.filter,
           page: this.pagination.page,
@@ -281,7 +281,6 @@ export default defineComponent({
           organismSelected: this.organismSelected === '' ? this.editMembership.organism : this.organismSelected 
         }
       }
-      console.log(opt.body.finalDate, "aosndkanskdnkjasndnkjsan")
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
