@@ -3778,7 +3778,7 @@ export default defineComponent({
           this.dialogLinkDetail.orgId = r.data._id
           this.dialogLinkDetail.open = true
         }
-      })
+      })                              
     },
     saveFormData(){
       const opt = {
