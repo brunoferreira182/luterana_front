@@ -86,10 +86,6 @@ const routes = [
         path: "/admin/pastoralArchive",
         component: () => import("src/pages/admin/PastoralArchive.vue"),
       },
-      {
-        path: "/admin/membershipHistoryForAdmin",
-        component: () => import("src/pages/admin/membershipHistoryForAdmin.vue"),
-      },
       //configurations// tipos de organismos
       { path: "/config", redirect: "/config/OrganismTypeConfigList" },
       {
