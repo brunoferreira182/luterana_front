@@ -278,10 +278,9 @@
                   <q-item 
                     class="bg-grey-3 q-ma-sm" 
                     style="border-radius: 0.5rem"
-                    clickable
                     v-for="parent in organismParentData"
                     :key="parent"
-                    @click="clkShowDialogParentDetail(parent)"
+                    
                   > 
                     <q-item-section>
                       <div class="row">
@@ -313,28 +312,33 @@
                         </div>
                       </div>
                     </q-item-section>
-                    <!-- <q-item-section >
-                      <div class="row">
-                        <div class="q-mt-sm">{{ parent.parentName}}</div>
-                        <q-chip
-                          class="q-ml-sm"
-                          :style="{ color: parent.organismConfigStyle}" 
-                          size="15px" 
-                          outline
-                        >{{ parent.organismConfigName }}</q-chip>
-                        <div class="q-mt-sm q-ml-sm" v-if="parent.districtName">
-                          -  Distrito: {{parent.districtName}}
-                        </div>
+                    <q-item-section top side>
+                      <div class="text-grey-8 q-gutter-xs q-my-md">
+                        <q-btn 
+                          no-caps
+                          unelevated
+                          color="primary"
+                          label="Visualizar"
+                          rounded
+                          @click="clkShowDialogParentDetail(parent)"
+                        />
+                        <q-btn 
+                          no-caps
+                          unelevated
+                          color="primary"
+                          label="Ir para organismo"
+                          rounded
+                          @click="goToDetail(parent)"
+                        />
                       </div>
-                    </q-item-section> -->
-                    
+                      <div class="text-grey-8 q-gutter-xs">
+                      </div>
+                    </q-item-section>
                   </q-item>
                 </q-list>
-                <q-list v-else class="text-h6">
-                  <q-item class="bg-grey-3 q-ma-sm" style="border-radius: 1rem">
-                    Nenhum vínculo criado
-                  </q-item>
-                </q-list>
+                <div v-else class="bg-grey-3 text-h6 q-pa-md" style="border-radius: 1rem">
+                  Nenhum vínculo criado
+                </div>
               </div>
               <div v-if="organismConfigName === 'Congregação'">
                 <div class="text-h6" v-if="$route.path.includes('/admin')">
@@ -2357,7 +2361,6 @@
     :orgFunc="dialogShowOtherDetail.orgFunc"
     :isAdm="true"
     @closeDialog="closeDialogOrganismDetail"
-    @goToDetail="goToDetail"
   />
   <DialogAddPastoralStatus
     :pastoralStatusTypes="pastoralStatusTypes"
@@ -3172,8 +3175,8 @@ export default defineComponent({
     changeOrganismCaller() {
       this.sameOrganismCalled === true ? this.organismCalleeSelected = [] : this.organismCalleeSelected.push(this.organismCallerSelected) 
     },
-    goToDetail() {
-      this.$router.push('/admin/organismDetail?organismId=' + this.dialogShowOtherDetail.orgId )
+    goToDetail(parent) {
+      this.$router.push('/admin/organismDetail?organismId=' + parent.parentId )
     },
     clearDialogAddServices() {
       this.dialogAddServices.open = false
