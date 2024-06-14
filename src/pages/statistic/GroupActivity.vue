@@ -330,13 +330,13 @@
                     <div class="row">
                       <q-input
                       type="number"
-                      v-model="departamentos[i].departamentoData.freqTotal"
+                      v-model="departamentos[i].departamentoData.qtnEncontros"
                       class="q-pl-sm col q-mr-md"
                       label="Número de encontros"
                       />
                       <q-input
                       type="number"
-                      v-model="departamentos[i].departamentoData.qtnEncontros"
+                      v-model="departamentos[i].departamentoData.freqTotal"
                       class="q-pl-sm col q-mr-md"
                       label="Frequência total "
                       />
