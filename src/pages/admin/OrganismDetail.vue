@@ -103,6 +103,9 @@
                         <q-tooltip>Adicionar pastor</q-tooltip>
                       </q-btn> -->
                     </q-item-label>
+                    <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
+                      Ponto de Missão: {{ child.missionName }}
+                    </q-item-label>
                     <q-item-label 
                       v-for="pastor in child.functions.users" 
                       :key="pastor" 
@@ -133,6 +136,7 @@
                       </q-btn> -->
                     </q-item-label>
                   </q-item-section>
+                  
                   <q-item-section side>
                     <q-item-label>
                       <q-icon
@@ -3931,6 +3935,7 @@ export default defineComponent({
           this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
+          console.log(this.organismName, 'dasd')
           this.organismConfigStyle = r.data.organismData.organismConfigStyle
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName
