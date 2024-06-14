@@ -119,22 +119,37 @@
                   </div>
                   <div class="text-center" v-if="tabs.tabLabel === 'Membresia'">
                     <q-list bordered separator> 
-                      <q-item :clickable = "index.dataFim === '' || !index.dataFim"
-                        @click= "editMembership.open = true"
-                        v-for= "(index) in tabs.fields[0].value" :key="index"
+                      <q-item 
+                        v-for= "(membership, index) in tabs.fields[0].value" :key="index"
+                        @click= "openDialogEditMembership(membership)" 
+                        
                       >  
                         <q-item-section align="left" >
-                          <q-item-label>{{ index.organismName }}</q-item-label>
-                          <q-item-label caption lines="1">{{ index.userName }}</q-item-label>
+                          <q-item-label>{{ membership.organism.organismName }}</q-item-label>
+                          <q-item-label caption lines="1">{{ membership.userName }}</q-item-label>
                         </q-item-section>
                         <q-separator />
                         <q-item-section align='left'>
-                          <q-item-label >Data de Início: {{ index.dataInicio }}</q-item-label>
-                          <q-item-label >Data de Fim: {{ index.dataFim }}</q-item-label>
+                          <q-item-label >Data de Início: {{ membership.dataInicio }}</q-item-label>
+                          <q-item-label >Data de Fim: {{ membership.dataFim }}</q-item-label>
                         </q-item-section>
                         <q-item-section side>
-                          <q-icon v-if= "index.dataFim === '' || !index.dataFim" name="edit" color="primary" />
+                          <q-icon v-if= "membership.dataFim === '' || !membership.dataFim" 
+                            name="edit"  
+                            color="primary" 
+                            class="cursor-pointer"
+                            @click= "openDialogEditMembership(membership)" 
+                            />
+                          <q-icon v-else/>
                         </q-item-section>
+                        <!-- <q-item-section side>
+                          <q-icon 
+                          class="cursor-pointer"
+                          name="delete" 
+                          color="primary"
+                          @click= "deleteMembership(membership)"
+                          />
+                        </q-item-section> -->
                       </q-item>
                     </q-list>
                   </div>
@@ -863,7 +878,8 @@
         :open="editMembership.open"
         :dataProp="editMembership.data"
         @closeDialog="clearEditMembership"
-        @addPerson="saveEditMembership"
+        @confirm="saveEditMembership"
+        @delete="inactiveMembership"
       />
       <DialogUserTitle
         :open="openDialogVinculateUserToTitle"
@@ -1372,14 +1388,8 @@ export default defineComponent({
       },
       editMembership: {
         open: false, 
-        tabsIndex: null,
-        fieldIndex: null,
-        data: {
-          status: '',
-          spouses: []
-        },
-        action: null,
-        iValue: null,
+        data: null,
+        fields: null
       },
       userPhoto: null,
       dialogAddPastoralData: {
@@ -1467,21 +1477,34 @@ export default defineComponent({
       } 
     },
     async saveEditMembership(data) {
-      if (this.maritalStatus.action === 'add') {
-        const opt = {
+      const opt = {
         route: "/desktop/commonUsers/saveNewMembership",
         body: {
-          finalDate: data.finalDate === '' ,
-          initialDate: data.initialDate === '', 
-          organismSelected: data.organismSelected === '' 
+          initialDate: data.dataInicio, 
+          finalDate: data.dataFim,
+          organismSelected: data.organism
+        }
+      }
+      console.log(opt,'req')
+      let r = await useFetch(opt)
+
+      if (r.error) return console.log(e.error)
+      this.clearEditMembership()
+      this.getUsersConfig()
+    },
+    async inactiveMembership(data){
+      const opt = {
+        route: "/desktop/commonUsers/inactiveMembership",
+        body: {
+          organismId: data.organism.organismId
         }
       }
       let r = await useFetch(opt)
-
-      if (r.error) return
-      this.clearEditMembership()
-      this.getUsersConfig()
-      } 
+      if (r.error) return console.log(e.error)
+        this.$q.notify(r.message)
+        this.getUsersConfig()
+        this.clearEditMembership()
+      // console.log(membership)
     },
     confirmChangeSelectedUserFromMaritalRelation() {
       this.dialogEditMaritalRelation.data.name = this.dialogEditUserInMaritalRelation.userSelected.userName
@@ -1674,13 +1697,15 @@ export default defineComponent({
       this.dialogAddPastoralData.open = true
       this.dialogAddPastoralData.data = {...this.dialogAddPastoralData.fields}
     },
+    openDialogEditMembership (membership) {
+      this.editMembership.open = true
+      this.editMembership.data = { ...membership }
+      console.log(membership)
+    },
     clearEditMembership (){
       this.editMembership = {
         open: false,
-        tabsIndex: null,
-        fieldIndex: null,
         data: null,
-        action: null,
       }
     },
     clearMaritalStatus () {
@@ -1692,9 +1717,6 @@ export default defineComponent({
         action: null,
       }
     },
-    // closeDialog() {
-    //   thius.dialogAddPastoralData.open = false
-    // },
     clkAddMaritalStatus (fieldIndex, tabsIndex) {
       this.maritalStatus = {
         open: true,

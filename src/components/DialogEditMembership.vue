@@ -1,9 +1,10 @@
 <template>
   <q-dialog :model-value="open" @hide="closeDialog">
       <q-card style="border-radius: 1rem; height: 150x; width: 400px">
-          <div class="text-h6 text-center q-pa-md ">Insirir Membro</div>
+          <div class="text-h6 text-center q-pa-md ">Editar Membro</div>
           <q-card-section class="q-gutter-md">
             <q-input
+              :readonly= "data.dataInicio !== ''"
               outlined
               label="Data de inicio" mask="##/##/####"
               autogrow
@@ -15,26 +16,26 @@
               autogrow
               v-model="data.dataFim"
             />
+          <q-select
+            v-model="data.organism.organismName"
+            filled
+            use-input
+            label="Nome do organismo"
+            option-label="organismName"
+            :options="options"
+            @filter="getOrganismByString"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  Nenhum resultado
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
           </q-card-section>
-          <q-card-section class="q-gutter-md">
-            <q-select
-              v-model="data.organismSelected"
-              filled
-              use-input
-              label="Nome do organismo"
-              option-label="organismName"
-              :options="options"
-              @filter="getOrganismByString"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    Nenhum resultado
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </q-card-section>
+          <!-- <q-card-section class="q-gutter-md"> -->
+          <!-- </q-card-section> -->
           <q-card-actions align="center">
             <q-btn
               flat
@@ -52,6 +53,15 @@
               rounded
               @click="confirmEdition"
             />
+            <q-btn
+              unelevated
+              size="11px"
+              label="Excluir"
+              no-caps
+              color="red"
+              rounded
+              @click="deleteMembership"
+            />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -62,12 +72,15 @@ import { ref, watch } from 'vue'
 import useFetch from "../boot/useFetch.js";
 
 const props = defineProps(['open', 'dataProp'])
-const emits = defineEmits(['closeDialog', 'confirm'])
+const emits = defineEmits(['closeDialog', 'confirm', 'delete'])
 
 const data = ref({
   dataInicio: '',
   dataFim: '',
-  organismSelected: ''
+  organism: {
+    organismName: '',
+    organismId: ''
+  }, 
 })
 
 const options =  ref([])
@@ -81,16 +94,13 @@ watch(() => props.dataProp, (nV) => {
 // }, { deep: true })
 
 function confirmEdition() {
-  // let errorMessage = ''
-  // if (doc.value === '') errorMessage = 'Preencha o documento'
-  // else if (data.value.bank === '') errorMessage = 'Preencha o banco'
-  // else if (data.value.bank !== '' && data.value.agency === '') errorMessage = 'Preencha a agência'
-  // else if (data.value.bank !== '' && data.value.agency !== '' && data.value.account === '') errorMessage = 'Preencha a conta'
-  // if (errorMessage !== '') {
-  //   Notify(errorMessage)
-  //   return
-  // }
+  console.log(data)
   emits('confirm', data.value )
+}
+
+function deleteMembership() {
+  console.log(data)
+  emits('delete', data.value )
 }
 
 function getOrganismByString(val, update){

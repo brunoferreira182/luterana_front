@@ -298,11 +298,6 @@ const routes = [
         path: "/user/userSugestionsList",
         component: () => import("src/pages/user/UserSugestionsList.vue"),
       },
-      {
-        path: "/user/userMembershipAndHistory",
-        component: () => import("src/pages/user/userMembershipAndHistory.vue"),
-      },
-      
       // {
       //   path: "/user/statistic",
       //   component: () => import("src/pages/user/Statistic.vue"),

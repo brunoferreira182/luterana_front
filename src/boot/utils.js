@@ -215,12 +215,7 @@ const useUtils = {
           label: "Estatística",
           route: "/statistic/introWriteStatisticData",
           icon: "equalizer",
-        },
-        {
-          label: "Membresia",
-          route: "/user/userMembershipAndHistory",
-          icon: "group",
-        },
+        }
       ],
     };
     return obj[type];

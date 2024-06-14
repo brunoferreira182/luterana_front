@@ -549,6 +549,38 @@
               header-class="text-primary"
               :label="tabs.tabLabel"
             >
+            <!-- <div class="text-center" v-if="tabs.tabLabel === 'Membresia'"> -->
+              <q-card>
+                <q-card-section v-if="tabs.tabLabel === 'Membresia'"> 
+                  <q-list background bordered separator > 
+                    <q-item 
+                      v-for= "(membership) in tabs.fields[0].value" :key="membership"
+                      @click= "openDialogEditMembership(membership)" 
+                      :clickable = "membership.dataFim === '' || !membership.dataFim" 
+                    >  
+                      <q-item-section align="left" >
+                        <q-item-label>{{ membership.organism.organismName }}</q-item-label>
+                        <q-item-label caption lines="1">{{ membership.userName }}</q-item-label>
+                      </q-item-section>
+                      <q-separator />
+                      <q-item-section align='left'>
+                        <q-item-label >Data de Início: {{ membership.dataInicio }}</q-item-label>
+                        <q-item-label >Data de Fim: {{ membership.dataFim }}</q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-icon v-if= "membership.dataFim === '' || !membership.dataFim" 
+                          name="edit" 
+                          color="primary" 
+                          />
+                        <q-icon v-else/>
+                      </q-item-section>
+                      <q-item-section side>
+                        <q-icon name="delete" color="primary"/>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-card-section>
+              </q-card>
               <q-card>
                 <q-card-section v-if="tabs.tabLabel !== 'Dados pastorais'">
                   <div
@@ -855,6 +887,27 @@
                             @remove="removeSocialNetwork"
                           />
                         </div>
+                        <!-- <div v-if="field.type.type === 'membresia'">
+                          <q-btn
+                            label="Rede social"
+                            no-caps
+                            rounded
+                            unelevated
+                            flat
+                            color="primary"
+                            icon="add"
+                            @click="clkAddSocialNetwork(fieldIndex, i)"
+                            class="q-mt-xs"
+                            :disable="tabs.onlyAdm"
+                          />
+                          <CardSocialNetwork
+                            :data="field.value"
+                            :fieldIndex="fieldIndex"
+                            :tabsIndex="i"
+                            @edit="editSocialNetwork"
+                            @remove="removeSocialNetwork"
+                          />
+                        </div> -->
                       </div>
                     </div>
                   </div>
