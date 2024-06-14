@@ -94,12 +94,10 @@ watch(() => props.dataProp, (nV) => {
 // }, { deep: true })
 
 function confirmEdition() {
-  console.log(data)
   emits('confirm', data.value )
 }
 
 function deleteMembership() {
-  console.log(data)
   emits('delete', data.value )
 }
 
