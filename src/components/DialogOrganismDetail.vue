@@ -318,15 +318,6 @@
           color="primary"
           @click="closeDialog"
         />
-        <q-btn
-          v-if="isAdm"
-          unelevated
-          rounded
-          label="Ir para o organismo"
-          no-caps
-          color="primary"
-          @click="goToDetail"
-        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -344,13 +335,10 @@ import CardMaritalStatus from './CardMaritalStatus.vue'
 import CardBankData from './CardBankData.vue'
 import CardPhoneMobileEmail from './CardPhoneMobileEmail.vue'
 const props = defineProps(['orgData', 'orgFields', 'orgFunc', 'open', 'isAdm'])
-const emits = defineEmits(['closeDialog', 'goToDetail'])
+const emits = defineEmits(['closeDialog'])
 
 function closeDialog() {
   emits('closeDialog')
 };
 
-function goToDetail() {
-  emits('goToDetail')
-};
 </script>
