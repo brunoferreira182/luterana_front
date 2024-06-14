@@ -1627,6 +1627,7 @@
               v-model="dialogEditCall.data.ataKeyInstallation"
               label="Chave ata instalação"
               class="q-pa-sm"
+              mask="AAA-AAA-###/###.##"
               hint="Exemplo: AAA-AAA-123/2024.01"
             />
             <q-input
@@ -1641,13 +1642,14 @@
               v-model="dialogEditCall.data.ataKeyUninstallation"
               label="Chave ata desinstalação"
               class="q-pa-sm"
+              mask="AAA-AAA-###/###.##"
               hint="Exemplo: AAA-AAA-123/2024.01"
             />
             <q-input
               outlined
               v-model="dialogEditCall.data.dates.finalDate"
               mask="##/##/####"
-              label="Data de desinstalação"
+              label="Data de desinstalação/encerramento"
               class="q-pa-sm"
             />
             <q-select
