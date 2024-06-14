@@ -100,7 +100,7 @@ export default defineComponent({
   },
   beforeMount() {
     this.getOrganismsList();
-    this.getAllOrganismsByString()
+    // this.getAllOrganismsByString()
   },
   methods: {
     clkOpenUserOrganismDetail(e, r) {
@@ -121,24 +121,24 @@ export default defineComponent({
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
       // this.getOrganismsList();
     },
-    getAllOrganismsByString() {
-      const opt = {
-        route: "/desktop/commonUsers/getAllOrganismsByString",
-        body: {
-          searchString: 'Organismo 12',
-          page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage
-        },
-      };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
-      useFetch(opt).then((r) => {
-        console.log(r)
-      });
-    },
+    // getAllOrganismsByString() {
+    //   const opt = {
+    //     route: "/desktop/commonUsers/getAllOrganismsByString",
+    //     body: {
+    //       searchString: 'Organismo 12',
+    //       page: this.pagination.page,
+    //       rowsPerPage: this.pagination.rowsPerPage
+    //     },
+    //   };
+    //   if (this.selectFilter === "Ativos") {
+    //     opt.body.isActive = 1;
+    //   } else if (this.selectFilter === "Inativos") {
+    //     opt.body.isActive = 0;
+    //   }
+    //   useFetch(opt).then((r) => {
+    //     console.log(r)
+    //   });
+    // },
     getOrganismsList() {
       const opt = {
         route: "/desktop/commonUsers/getOrganismsByUserId",

@@ -4017,8 +4017,6 @@ export default defineComponent({
       });
     },
     mountUserData (userDetail) {
-      console.log(this.userData, 'console 1')
-      console.log(this.userData.userDataTabs, 'console 2')
       this.userData.userDataTabs.forEach((configTab, iConfigTab) => {
         configTab.fields.forEach((configField, iConfigField) => {
           userDetail.userDataTabs.forEach((userTab) => {

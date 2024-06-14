@@ -1485,10 +1485,9 @@ export default defineComponent({
           organismSelected: data.organism
         }
       }
-      console.log(opt,'req')
       let r = await useFetch(opt)
 
-      if (r.error) return console.log(e.error)
+      if (r.error) return 
       this.clearEditMembership()
       this.getUsersConfig()
     },
@@ -1500,11 +1499,10 @@ export default defineComponent({
         }
       }
       let r = await useFetch(opt)
-      if (r.error) return console.log(e.error)
+      if (r.error) return 
         this.$q.notify(r.message)
         this.getUsersConfig()
         this.clearEditMembership()
-      // console.log(membership)
     },
     confirmChangeSelectedUserFromMaritalRelation() {
       this.dialogEditMaritalRelation.data.name = this.dialogEditUserInMaritalRelation.userSelected.userName
@@ -1700,7 +1698,6 @@ export default defineComponent({
     openDialogEditMembership (membership) {
       this.editMembership.open = true
       this.editMembership.data = { ...membership }
-      console.log(membership)
     },
     clearEditMembership (){
       this.editMembership = {
