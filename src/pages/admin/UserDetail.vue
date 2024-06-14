@@ -2925,6 +2925,7 @@ export default defineComponent({
         route: '/desktop/adm/getStatusByUserId'
       }
       let r = await useFetch(opt)
+      console.log("🚀 ~ getStatusByUserId ~ r:", r)
       if (r.error) return
     },
     async verifyIfHAsAdmPermission() {
@@ -3982,7 +3983,6 @@ export default defineComponent({
           this.$q.notify("Ocorreu um erro, tente novamente");
           return
         }
-        console.log(userConfig, 'caralho caralho caralho caralho carralho caralho racalho')
         if (r.data && r.data.userLinksToOrganisms && r.data.userLinksToOrganisms.links && r.data.userLinksToOrganisms.links.length > 0) {
           let links = r.data.userLinksToOrganisms.links
           links.forEach((link) => {
