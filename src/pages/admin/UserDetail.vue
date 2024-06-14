@@ -1576,12 +1576,12 @@
         @hide="clearDialogEditCall"
       >
         <q-card
-          style="width: 300px;border-radius: 1rem"
+          style="width: 380px;border-radius: 1rem"
         >
           <q-card-section class="text-h6 text-center">
             Editar dados do chamado
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-gutter-y-md">
             <q-select
               v-model="dialogEditCall.selectedOrganism"
               outlined
@@ -1627,6 +1627,7 @@
               v-model="dialogEditCall.data.ataKeyInstallation"
               label="Chave ata instalação"
               class="q-pa-sm"
+              hint="Exemplo: AAA-AAA-123/2024.01"
             />
             <q-input
               outlined
@@ -1640,6 +1641,7 @@
               v-model="dialogEditCall.data.ataKeyUninstallation"
               label="Chave ata desinstalação"
               class="q-pa-sm"
+              hint="Exemplo: AAA-AAA-123/2024.01"
             />
             <q-input
               outlined
