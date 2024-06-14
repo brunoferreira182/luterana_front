@@ -16,7 +16,7 @@
           {{ value.value }}
         </q-item-label>
         <q-item-label caption >
-          <q-badge>{{ value.type }}</q-badge>
+          <q-badge v-if="!props.organism"> {{ value.type }}</q-badge>
           <q-badge class="q-ml-xs" color="green" v-if="value.allowPublication">Publicável</q-badge>
         </q-item-label>
       </q-item-section>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'canEdit'])
+const props = defineProps(['data', 'fieldIndex', 'tabsIndex', 'disableButtons', 'showHeader', 'canEdit', 'organism'])
 const emits = defineEmits(['edit', 'remove'])
 
 // function edit(fieldIndex, tabsIndex, field, value, iValue) {
