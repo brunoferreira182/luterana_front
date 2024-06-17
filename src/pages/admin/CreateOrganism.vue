@@ -59,6 +59,19 @@
             />
           </div>
           <q-separator v-if="organismData.fields.length" />
+          <div>
+            <div>
+              <span class="text-h5">Vinculado a:</span>
+              <q-btn
+                color="primary"
+                icon="add"
+                round
+                flat
+                class="q-mb-sm"
+                @click="addLinkToNewOrganism"
+              />
+            </div>
+          </div>
           <div v-if="organismData.fields.length" class="text-h5">
             Preencha os dados necessários:
           </div>
@@ -278,6 +291,17 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <q-dialog
+          v-model="dialogAddLink.open"
+        >
+          <q-card
+            style="width: 400px;border-radius: 1rem;"
+          >
+            <q-card-section class="text-h6">
+              Selecione qual será a paróquia dessa Congregação:
+            </q-card-section>
+          </q-card>
+        </q-dialog>
 
         <DialogPhoneMobileEmail
           :open="dialogAddPhoneMobileEmail.open"
@@ -373,6 +397,12 @@ export default defineComponent({
       },
       canEdit: false,
       dialogOrganismNotCreatedInSGA: false,
+      dialogAddLink: {
+        open: false,
+        parishList: [],
+        selectedParish: null,
+        selectedDistrict: null
+      }
     };
   },
   mounted() {
@@ -390,6 +420,29 @@ export default defineComponent({
       }
       this.getUserCanEditStatus()
       this.getOrganismsConfigs()
+    },
+    async getParishList(val, update, abort) {
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/getParishesList',
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      let r = await useFetch(opt)
+      update(() => {
+        this.dialogAddLink.parishList = r.data.list
+      })
+    },
+    addLinkToNewOrganism() {
+      console.log('oi')
+      this.dialogAddLink.open = true
     },
     getUserCanEditStatus(){
       const opt = {
