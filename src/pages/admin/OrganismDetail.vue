@@ -3938,7 +3938,6 @@ export default defineComponent({
           this.parentOrganismId = r.data.organismData.organismParentId
           this.organismConfigId = r.data.organismData.organismConfigId
           this.organismName = r.data.organismData.organismName
-          console.log(this.organismName, 'dasd')
           this.organismConfigStyle = r.data.organismData.organismConfigStyle
           this.organismData.fields = r.data.organismData.fields
           this.organismConfigName = r.data.organismData.organismConfigName

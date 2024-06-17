@@ -222,7 +222,6 @@ export default defineComponent({
       this.editMembership.finalDate = row.dataFim
       this.editMembership.organism._id = row.organismId
       this.editMembership.organism.organismName = row.organismName
-      console.log("Editar linha", row);
     },
     getUserIdMongo() {
       const opt = {
@@ -251,7 +250,6 @@ export default defineComponent({
           return
         }
         this.membershipHistory = r.data.list
-        console.log(r, 'sdasd')
       })
     },
     getOrganismByString(val, update){

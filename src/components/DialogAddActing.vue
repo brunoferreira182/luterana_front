@@ -164,7 +164,6 @@ async function getOrganismsTypes() {
   }
   let r = await useFetch(opt)
   if (r.error) return
-  console.log(r.data, 'caralhos me mordam')
   organismsTypes.value.list = r.data
 }
 
