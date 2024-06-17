@@ -89,7 +89,7 @@
                       </q-badge>
                     </q-item-label>
                     <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
-                      Pastores:
+                      Pastores: {{ child.pastorName }}
                       <!-- <q-btn
                         icon="add"
                         color="primary"
