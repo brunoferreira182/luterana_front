@@ -1,60 +1,48 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
+      
+      <div class="text-h6 q-mx-md">
+        Anexos
+      </div>
+      <div class="q-mx-md text-caption">
+        Clique para fazer o download
+      </div>
       <q-table
         flat
         class="bg-accent"
-        title="Anexos"
         :columns="columnsData"
-        :rows="attachmentsList"
+        :rows="attachFiles"
         row-key="_id"
-        virtual-scroll
         rows-per-page-label="Registros por página"
-        no-data-label="Nenhum dado inserido até o momento"
+        no-data-label="Nenhum arquivo recebido até o momento"
         no-results-label="A pesquisa não retornou nenhum resultado"
         :rows-per-page-options="[10, 20, 30, 50]"
+        @row-click="downloadAttach"
         :selected-rows-label="getSelectedString"
-        @row-click="clkGoToAttachDetail"
         :filter="filter"
-        v-model:pagination="pagination"
+        :v-model:pagination="pagination"
         @request="nextPage"
-      >
-        <template #top-right>
-          <div class="row justify-end q-gutter-sm items-center">
-            <div class="col">
-              <q-input
-                @keyup="getAttachedFilesByUserId"
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Procurar"
-              >
-                <template #append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </div>
-          </div>
-        </template>
-      </q-table>
+      />
     </q-page>
   </q-page-container>
 </template>
+
 <script>
 import { defineComponent } from "vue";
 import useFetch from "../../boot/useFetch";
-import utils from "../../boot/utils";
 import { useTableColumns } from "stores/tableColumns";
-
+import utils from "../../boot/utils";
 export default defineComponent({
-  name: "UserAttachments",
+  name: "ReceivedAttachments",
   data() {
     return {
-      columnsData: useTableColumns().userAttachments,
-      attachmentsList: [],
+      columnsData: useTableColumns().attach,
+      attachFiles: [],
+      selectStatus: ["Ativos", "Inativos"],
       filter: "",
-      selectFilter: "Selecionar",
+      pdfUrl: '',
+      selectFilter: "Ativos",
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -63,22 +51,26 @@ export default defineComponent({
       },
     };
   },
-  beforeMount(){
-    this.startView()
+  mounted() {
+    this.$q.loading.hide();
+  },
+  beforeMount() {
+    this.getAttachByPastor();
+    this.getAttachByUserInSpecificDistrict()
+    this.getGeneralAttach()
   },
   methods: {
-    async startView () {
-      const permStatus = await utils.getPermissionStatus('USER')
-      if (permStatus.data === 'onMaitenance') {
-        this.$router.push('/maitenancePage')
+    async downloadAttach(e, r) {
+      if(r.linkForDownload){
+        window.open(r.linkForDownload.includes('https://') ? 
+        r.linkForDownload : 'https://' + r.linkForDownload)
         return
       }
-      this.getAttachedFilesByUserId()
-      this.isMobile = useScreenStore().isMobile
-    },
-    clkGoToAttachDetail(e, r){
-      const attachFileId = r._id;
-      this.$router.push("/user/attachmentsDetail?attachFileId=" + attachFileId);
+      await utils.download({
+        filename: r.file.filename,
+        originalname: r.file.originalname,
+        type: r.file.mimetype
+      })
     },
     getSelectedString() {
       return this.selected.length === 0
@@ -92,27 +84,52 @@ export default defineComponent({
       this.pagination.sortBy = e.pagination.sortBy;
       this.pagination.descending = e.pagination.descending;
       this.pagination.rowsPerPage = e.pagination.rowsPerPage;
-      this.getAttachedFilesByUserId();
+      this.getStructures();
     },
-    getAttachedFilesByUserId() {
+    getAttachByPastor() {
       const opt = {
-        route: "/desktop/commonUsers/getAttachedFilesByUserId",
+        route: "/desktop/users/getAttachByPastor",
         body: {
-          filterValue: this.filter,
           page: this.pagination.page,
-          rowsPerPage: this.pagination.rowsPerPage
+          rowsPerPage:this.pagination.rowsPerPage,
         },
       };
-      if (this.selectFilter === "Ativos") {
-        opt.body.isActive = 1;
-      } else if (this.selectFilter === "Inativos") {
-        opt.body.isActive = 0;
-      }
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        this.attachmentsList = r.data.list;
-        r.data.count[0] ? this.pagination.rowsNumber = r.data.count[0].count : this.pagination.rowsNumber = 0
+        this.attachFiles = r.data.list
+      });
+    },
+    getGeneralAttach() {
+      const opt = {
+        route: "/desktop/users/getGeneralAttach",
+        body: {
+          page: this.pagination.page,
+          rowsPerPage:this.pagination.rowsPerPage,
+        },
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(!r.error){
+          this.attachFiles.push(...r.data)
+        }else{
+          this.$q.notify(r.errorMessage)
+        }
+      });
+    },
+    getAttachByUserInSpecificDistrict() {
+      const opt = {
+        route: "/desktop/users/getAttachByUserInSpecificDistrict",
+      };
+      this.$q.loading.show()
+      useFetch(opt).then((r) => {
+        this.$q.loading.hide()
+        if(!r.error){
+          this.attachFiles.push(...r.data)
+        }else{
+          this.$q.notify(r.errorMessage)
+        }
       });
     },
   },

@@ -106,15 +106,6 @@
                     <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
                       Ponto de Missão: {{ child.missionName }}
                     </q-item-label>
-                    <div v-if="child.functions && child.functions.users">
-                      <q-item-label 
-                        v-for="pastor in child.functions.users" 
-                        :key="pastor" 
-                        class="text-subtitle2" lines="3"
-                      >
-                        {{ pastor.userName }}
-                      </q-item-label>
-                    </div>
                   </q-item-section>
                   
                   <q-item-section side>

@@ -307,7 +307,7 @@
           </template>
         </q-select>
         <q-select
-          label="Posição do chamado"
+          label="Posição"
           :options="withoutCallData.optionsType"
           v-model="withoutCallData.optionSelected"
           class="q-mb-md"

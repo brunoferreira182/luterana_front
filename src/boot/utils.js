@@ -215,6 +215,11 @@ const useUtils = {
           label: "Estatística",
           route: "/statistic/introWriteStatisticData",
           icon: "equalizer",
+        },
+        {
+          label: "Documentos IELB",
+          route: "/user/UserAttachments",
+          icon: "attach_file",
         }
       ],
     };

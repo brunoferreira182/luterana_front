@@ -2925,7 +2925,6 @@ export default defineComponent({
         route: '/desktop/adm/getStatusByUserId'
       }
       let r = await useFetch(opt)
-      console.log("🚀 ~ getStatusByUserId ~ r:", r)
       if (r.error) return
     },
     async verifyIfHAsAdmPermission() {

@@ -59,7 +59,7 @@
             />
           </div>
           <q-separator v-if="organismData.fields.length" />
-          <div>
+          <div v-if="organismData && organismData.organismConfigId && organismData.organismConfigId.organismConfigName === 'Congregação'">
             <div>
               <span class="text-h5">Vinculado a:</span>
               <q-btn
@@ -298,11 +298,24 @@
             style="width: 400px;border-radius: 1rem;"
           >
             <q-card-section class="text-h6">
-              Selecione qual será a paróquia dessa Congregação:
+              Selecione qual será a paróquia dessa congregação:
+            </q-card-section>
+            <q-card-section>  
+              <q-select
+                outlined
+                label="Paróquia"
+                :option-value="(item) => item.parishId"
+                option-label="parishName"
+                emit-value
+                use-input
+                @filter="getParishList"
+                map-options
+                v-model="dialogAddLink.parishList"
+                :options="organismConfigOptions"
+              />
             </q-card-section>
           </q-card>
         </q-dialog>
-
         <DialogPhoneMobileEmail
           :open="dialogAddPhoneMobileEmail.open"
           :dataProp="dialogAddPhoneMobileEmail.data"
@@ -316,7 +329,6 @@
           @confirmAddress="confirmAddress"
           @closeDialog="clearAddressInputs"
         />
-        
       </div>
     </q-page>
   </q-page-container>
@@ -441,7 +453,6 @@ export default defineComponent({
       })
     },
     addLinkToNewOrganism() {
-      console.log('oi')
       this.dialogAddLink.open = true
     },
     getUserCanEditStatus(){
