@@ -614,17 +614,17 @@ export const useTableColumns = defineStore("tableColumns", {
     ],
     sentAttachments: [
       {
-        name: "userId",
+        name: "title",
         align: "left",
         label: "Título",
         field: (row) => row.attachmentInfo.title,
         sortable: true,
       },
       {
-        name: "user",
+        name: "subType",
         align: "left",
-        label: "Descrição",
-        field: (row) => row.attachmentInfo.description,
+        label: "Tipo",
+        field: (row) => row.subType === 'district' ? 'Distrito' : row.subType,
         sortable: true,
       },
     ],
