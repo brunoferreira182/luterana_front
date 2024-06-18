@@ -56,7 +56,7 @@ import useFetch from "../../boot/useFetch";
 import { useTableColumns } from "stores/tableColumns";
 import utils from "../../boot/utils";
 export default defineComponent({
-  name: "ReceivedAttachments",
+  name: "UserAttachments",
   data() {
     return {
       columnsData: useTableColumns().attach,
@@ -119,7 +119,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
+        if(r.data && !r.errorr){
           this.attachFiles = r.data.list
           return
         }
@@ -136,7 +136,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
+        if(r.data && !r.errorr){
           this.attachFiles.push(...r.data)
           return
         }
@@ -149,8 +149,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
-          console.log('apokdposakpdosa')
+        if(r.data && !r.errorr){
           this.attachFiles.push(...r.data)
           return
         }

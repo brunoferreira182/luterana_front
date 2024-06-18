@@ -4,7 +4,7 @@
       <q-table
         flat
         class="bg-accent"
-        title="Estruturas"
+        title="Enviados"
         :columns="columnsData"
         :rows="attachmentList"
         row-key="_id"
@@ -43,19 +43,6 @@
                   <q-icon name="search" />
                 </template>
               </q-input>
-            </div>
-            <div class="col">
-              <q-btn
-                @click="$router.push('/config/createattachment')"
-                color="primary"
-                unelevated
-                rounded
-                no-caps
-                class="q-pa-sm"
-                icon="add"
-              >
-                Estrutura
-              </q-btn>
             </div>
           </div>
         </template>

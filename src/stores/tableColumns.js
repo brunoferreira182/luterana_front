@@ -16,6 +16,13 @@ export const useTableColumns = defineStore("tableColumns", {
         field: (row) => row.subType,
         sortable: true,
       },
+      {
+        name: "nome",
+        align: "left",
+        label: "Nome do organismo",
+        field: (row) => row.organismData?.nome,
+        sortable: true,
+      },
     ],
     entryValueAnual: [
       {

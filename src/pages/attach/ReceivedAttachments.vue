@@ -120,7 +120,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
+        if(r.data && !r.errorr){
           this.attachFiles = r.data.list
           return
         }
@@ -137,7 +137,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
+        if(r.data && !r.errorr){
           this.attachFiles.push(...r.data)
           return
         }
@@ -150,8 +150,7 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error && r.data){
-          console.log('apokdposakpdosa')
+        if(r.data && !r.errorr){
           this.attachFiles.push(...r.data)
           return
         }
