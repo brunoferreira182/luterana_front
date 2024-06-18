@@ -1,7 +1,6 @@
 <template>
   <q-page-container class="no-padding">
     <q-page>
-      
       <div class="text-h6 q-mx-md">
         Anexos
       </div>
@@ -23,7 +22,30 @@
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
-      />
+      >
+        <template #body-cell-subType="props">
+          <q-td :props="props">
+            <div class="text-caption" v-if="props.row.subType === 'district'">
+              Distrito
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Distrito'">
+              Distrito
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'general'">
+              Todos
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'pastors'">
+              Todos os pastores
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Geral'">
+              Todos
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Pastores'">
+              Todos os pastores
+            </div>
+          </q-td>
+        </template>
+      </q-table>
     </q-page>
   </q-page-container>
 </template>
@@ -88,16 +110,19 @@ export default defineComponent({
     },
     getAttachByPastor() {
       const opt = {
-        route: "/desktop/users/getAttachByPastor",
+        route: "/desktop/attach/getAttachByPastor",
         body: {
           page: this.pagination.page,
           rowsPerPage:this.pagination.rowsPerPage,
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        this.attachFiles = r.data.list
+        if(!r.error && r.data){
+          this.attachFiles = r.data.list
+          return
+        }
       });
     },
     getGeneralAttach() {
@@ -111,24 +136,23 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },
     getAttachByUserInSpecificDistrict() {
       const opt = {
-        route: "/desktop/users/getAttachByUserInSpecificDistrict",
+        route: "/desktop/attach/getAttachByUserInSpecificDistrict",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
+          console.log('apokdposakpdosa')
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },

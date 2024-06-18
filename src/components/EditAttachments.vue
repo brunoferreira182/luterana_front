@@ -29,7 +29,7 @@
         <div class="col-12 q-pa-md q-gutter-sm">
           <q-chip
             v-if="$route.path === '/attach/attachmentDetail'"
-            @click="openFile"
+            @click="downloadAttach"
             clickable
             class="q-pa-md"
             size="md"
@@ -196,7 +196,6 @@
   </q-page-container>
 </template>
 <script>
-import { openURL } from "quasar";
 import { defineComponent } from "vue";
 import PhotoHandler from '../components/PhotoHandler.vue'
 import useFetch from "../boot/useFetch";
@@ -226,6 +225,7 @@ export default defineComponent({
       organismsList: [],
       currentTypeName: "",
       filename: "",
+      file: {},
       startPhotoHandler: false,
       fileUrl: "",
     };
@@ -240,6 +240,13 @@ export default defineComponent({
     this.getSpecificDistrictsToSendAttach();
   },
   methods: {
+    async downloadAttach() {
+      await utils.download({
+        filename: this.file.filename,
+        originalname: this.file.originalname,
+        type: this.file.mimetype
+      })
+    },
     clkAddAttachment () {
       this.step = 'addAttachment'
       this.startPhotoHandler = true
@@ -385,9 +392,6 @@ export default defineComponent({
         this.$q.notify("Atualizado!");
       });
     },
-    openFile() {
-      openURL(this.fileUrl);
-    },
     getAttachmentById() {
       const opt = {
         route: "/desktop/attach/getAttachmentById",
@@ -399,6 +403,7 @@ export default defineComponent({
       useFetch(opt).then((r) => {
         this.attachmentInfo = r.data.attachmentInfo;
         this.subType = r.data.subType;
+        this.file = r.data.file
         this.filename = r.data.file.originalname;
         this.fileUrl = utils.attachmentsAddress() + r.data.file.filename;
       });
