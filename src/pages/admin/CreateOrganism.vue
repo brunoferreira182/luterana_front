@@ -24,7 +24,6 @@
             outlined
             label="Nome da configuração"
             option-label="organismConfigName"
-            :option-value="(item) => item"
             emit-value
             map-options
             hint="Informe qual o tipo de configuração que está aplicando"
@@ -69,6 +68,17 @@
                 flat
                 class="q-mb-sm"
                 @click="addLinkToNewOrganism"
+              />
+            </div>
+            <div v-if="linkData.linked">
+              <q-chip v-if="linkData && linkData.district && linkData.district.districtName">{{ linkData.district.districtName }}</q-chip>
+              <q-chip v-if="linkData && linkData.parish && linkData.parish.parishName" >{{ linkData.parish.parishName }}</q-chip>
+              <q-btn
+                color="red"
+                round
+                icon="delete"
+                flat
+                @click="removeOrganismLink"
               />
             </div>
           </div>
@@ -293,6 +303,7 @@
         </q-dialog>
         <q-dialog
           v-model="dialogAddLink.open"
+          @hide="clearDialogAddLink"
         >
           <q-card
             style="width: 400px;border-radius: 1rem;"
@@ -304,16 +315,79 @@
               <q-select
                 outlined
                 label="Paróquia"
-                :option-value="(item) => item.parishId"
+                :option-value="(item) => item"
                 option-label="parishName"
                 emit-value
                 use-input
                 @filter="getParishList"
                 map-options
-                v-model="dialogAddLink.parishList"
-                :options="organismConfigOptions"
+                v-model="dialogAddLink.selectedParish"
+                :options="dialogAddLink.parishList"
+                :disable="dialogAddLink.withOutParish"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.parishName }}</q-item-label>
+                      <q-item-label caption>{{ scope.opt.districtName }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <q-checkbox
+                label="Congregação de paróquia única"
+                v-model="dialogAddLink.withOutParish"
+                class="q-mt-md"
+                @update:model-value="clearParishAndDistrictModel"
               />
+              <q-select
+                v-if="dialogAddLink.withOutParish"
+                class="q-mt-md"
+                outlined
+                label="Distrito"
+                :option-value="(item) => item"
+                option-label="districtName"
+                emit-value
+                use-input
+                @filter="getDistrictsList"
+                map-options
+                v-model="dialogAddLink.selectedDistrict"
+                :options="dialogAddLink.districtList"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Nenhum resultado
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
             </q-card-section>
+            <q-card-actions align="center">
+              <q-btn
+                label="Voltar"
+                color="primary"
+                rounded
+                no-caps
+                unelevated
+                @click="clearDialogAddLink"
+              />
+              <q-btn
+                label="Confirmar"
+                color="primary"
+                rounded
+                no-caps
+                unelevated
+                @click="insertLink"
+              />
+            </q-card-actions>
           </q-card>
         </q-dialog>
         <DialogPhoneMobileEmail
@@ -407,13 +481,20 @@ export default defineComponent({
         action: null,
         iValue: null
       },
+      linkData: {
+        linked: false,
+        parish: null,
+        district: null
+      },
       canEdit: false,
       dialogOrganismNotCreatedInSGA: false,
       dialogAddLink: {
         open: false,
         parishList: [],
+        districtList: [],
         selectedParish: null,
-        selectedDistrict: null
+        selectedDistrict: null,
+        withOutParish: false,
       }
     };
   },
@@ -433,6 +514,31 @@ export default defineComponent({
       this.getUserCanEditStatus()
       this.getOrganismsConfigs()
     },
+    removeOrganismLink() {
+      this.linkData.linked = false
+      this.linkData.parish = null
+      this.linkData.district = null
+    },
+    insertLink() {
+      if (!this.dialogAddLink.selectedParish && !this.dialogAddLink.selectedDistrict) {
+        this.$q.notify('Informe a qual organismo será vinculado')
+        return
+      }
+      this.linkData.parish = this.dialogAddLink.selectedParish
+      this.linkData.district = this.dialogAddLink.selectedDistrict
+      this.linkData.linked = true
+      this.dialogAddLink.open = false
+    },
+    clearParishAndDistrictModel() {
+      this.dialogAddLink.selectedParish = null
+      this.dialogAddLink.selectedDistrict = null
+    },
+    clearDialogAddLink() {
+      this.dialogAddLink.open = false
+      this.dialogAddLink.selectedParish = null
+      this.dialogAddLink.parishList = []
+      this.dialogAddLink.selectedDistrict = null
+    },
     async getParishList(val, update, abort) {
       if (val.length < 3) {
         this.$q.notify('Digite no mínimo 3 caracteres')
@@ -450,6 +556,25 @@ export default defineComponent({
       let r = await useFetch(opt)
       update(() => {
         this.dialogAddLink.parishList = r.data.list
+      })
+    },
+    async getDistrictsList(val, update, abort) {
+      if (val.length < 3) {
+        this.$q.notify('Digite no mínimo 3 caracteres')
+        abort()
+        return
+      }
+      const opt = {
+        route: '/desktop/adm/getDistrictsList',
+        body: {
+          searchString: val,
+          page: 1,
+          rowsPerPage: 50
+        }
+      }
+      let r = await useFetch(opt)
+      update(() => {
+        this.dialogAddLink.districtList = r.data.list
       })
     },
     addLinkToNewOrganism() {
@@ -811,6 +936,9 @@ export default defineComponent({
           organismLinks: organismLinksIds
         },
       };
+      if (this.organismData.organismConfigId.organismConfigName === 'Congregação') {
+        opt.body.link = this.linkData
+      }
       this.$q.loading.show()
       useFetch(opt).then(r => {
         this.$q.loading.hide()

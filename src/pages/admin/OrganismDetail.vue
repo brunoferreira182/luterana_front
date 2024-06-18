@@ -103,9 +103,9 @@
                         <q-tooltip>Adicionar pastor</q-tooltip>
                       </q-btn> -->
                     </q-item-label>
-                    <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
+                    <!-- <q-item-label class="text-subtitle1 text-bold flex justify-end" lines="2">
                       Ponto de Missão: {{ child.missionName }}
-                    </q-item-label>
+                    </q-item-label> -->
                   </q-item-section>
                   
                   <q-item-section side>
