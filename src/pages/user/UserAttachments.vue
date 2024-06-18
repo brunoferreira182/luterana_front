@@ -110,16 +110,19 @@ export default defineComponent({
     },
     getAttachByPastor() {
       const opt = {
-        route: "/desktop/users/getAttachByPastor",
+        route: "/desktop/attach/getAttachByPastor",
         body: {
           page: this.pagination.page,
           rowsPerPage:this.pagination.rowsPerPage,
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        this.attachFiles = r.data.list
+        if(!r.error && r.data){
+          this.attachFiles = r.data.list
+          return
+        }
       });
     },
     getGeneralAttach() {
@@ -133,24 +136,23 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },
     getAttachByUserInSpecificDistrict() {
       const opt = {
-        route: "/desktop/users/getAttachByUserInSpecificDistrict",
+        route: "/desktop/attach/getAttachByUserInSpecificDistrict",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
+          console.log('apokdposakpdosa')
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },

@@ -118,9 +118,12 @@ export default defineComponent({
         },
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        this.attachFiles = r.data.list
+        if(!r.error && r.data){
+          this.attachFiles = r.data.list
+          return
+        }
       });
     },
     getGeneralAttach() {
@@ -134,10 +137,9 @@ export default defineComponent({
       this.$q.loading.show()
       useFetch(opt).then((r) => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },
@@ -146,12 +148,12 @@ export default defineComponent({
         route: "/desktop/attach/getAttachByUserInSpecificDistrict",
       };
       this.$q.loading.show()
-      useFetch(opt).then((r) => {
+      useFetch(opt).then(r => {
         this.$q.loading.hide()
-        if(!r.error){
+        if(!r.error && r.data){
+          console.log('apokdposakpdosa')
           this.attachFiles.push(...r.data)
-        }else{
-          this.$q.notify(r.errorMessage)
+          return
         }
       });
     },
