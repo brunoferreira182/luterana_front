@@ -23,7 +23,30 @@
         :filter="filter"
         :v-model:pagination="pagination"
         @request="nextPage"
-      />
+      >
+        <template #body-cell-subType="props">
+          <q-td :props="props">
+            <div class="text-caption" v-if="props.row.subType === 'district'">
+              Distrito
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Distrito'">
+              Distrito
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'general'">
+              Todos
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'pastors'">
+              Todos os pastores
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Geral'">
+              Todos
+            </div>
+            <div class="text-caption" v-if="props.row.subType === 'Pastores'">
+              Todos os pastores
+            </div>
+          </q-td>
+        </template>
+      </q-table>
     </q-page>
   </q-page-container>
 </template>
